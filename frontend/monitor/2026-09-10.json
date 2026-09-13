@@ -418,8 +418,8 @@
       "tier": "theme",
       "title": "Declared thesis — what would falsify it, and by when",
       "state": "refused",
-      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
-      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer. The machine says the window closed; you read whether it fired.",
+      "caveat": "Nothing here is measured — no card carries a metric. Each criterion shows its deadline and where it would be checked; a source outside this repo is marked unverifiable.",
       "cadence": "event",
       "missing": [
         {
@@ -439,8 +439,8 @@
       "tier": "theme",
       "title": "Declared thesis — what would falsify it, and by when",
       "state": "ready",
-      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
-      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer. The machine says the window closed; you read whether it fired.",
+      "caveat": "Nothing here is measured — no card carries a metric. Each criterion shows its deadline and where it would be checked; a source outside this repo is marked unverifiable.",
       "cadence": "event",
       "missing": [],
       "reason": "",
@@ -498,8 +498,8 @@
       "tier": "theme",
       "title": "Declared thesis — what would falsify it, and by when",
       "state": "refused",
-      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
-      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer. The machine says the window closed; you read whether it fired.",
+      "caveat": "Nothing here is measured — no card carries a metric. Each criterion shows its deadline and where it would be checked; a source outside this repo is marked unverifiable.",
       "cadence": "event",
       "missing": [
         {
@@ -519,8 +519,8 @@
       "tier": "theme",
       "title": "Declared thesis — what would falsify it, and by when",
       "state": "refused",
-      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
-      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer. The machine says the window closed; you read whether it fired.",
+      "caveat": "Nothing here is measured — no card carries a metric. Each criterion shows its deadline and where it would be checked; a source outside this repo is marked unverifiable.",
       "cadence": "event",
       "missing": [
         {
@@ -540,8 +540,8 @@
       "tier": "theme",
       "title": "Declared thesis — what would falsify it, and by when",
       "state": "ready",
-      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
-      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer. The machine says the window closed; you read whether it fired.",
+      "caveat": "Nothing here is measured — no card carries a metric. Each criterion shows its deadline and where it would be checked; a source outside this repo is marked unverifiable.",
       "cadence": "event",
       "missing": [],
       "reason": "",
@@ -590,8 +590,8 @@
       "tier": "theme",
       "title": "Declared thesis — what would falsify it, and by when",
       "state": "refused",
-      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
-      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer. The machine says the window closed; you read whether it fired.",
+      "caveat": "Nothing here is measured — no card carries a metric. Each criterion shows its deadline and where it would be checked; a source outside this repo is marked unverifiable.",
       "cadence": "event",
       "missing": [
         {
@@ -611,7 +611,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -630,9 +630,9 @@
       "ticker": "AORT",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -677,10 +677,10 @@
       "ticker": "AORT",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -868,10 +868,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -880,10 +885,10 @@
       "ticker": "AORT",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -908,10 +913,10 @@
       "ticker": "AORT",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -927,10 +932,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2025-08-08",
+          "S-3ASR": "2024-03-01"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226",
+        "shelf registrations 1 (S-3ASR, last 2024-03-01) · employee-plan (S-8) 1 (S-8, last 2025-08-08) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -938,10 +948,10 @@
       "ticker": "AORT",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -959,23 +969,41 @@
       "ticker": "AORT",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001628280-26-054746",
-          "8-K 0001628280-26-054294 EX-99.1",
-          "8-K 0001628280-26-035798 EX-99.1",
-          "8-K 0001628280-26-032097 EX-99.1",
-          "8-K 0001628280-26-007674 EX-99.1",
-          "8-K 0001628280-25-050164 EX-99.1",
-          "8-K 0001628280-25-038873 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226",
+              "shelf registrations 1 (S-3ASR, last 2024-03-01) · employee-plan (S-8) 1 (S-8, last 2025-08-08) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -986,7 +1014,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -1005,9 +1033,9 @@
       "ticker": "BRBR",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -1066,10 +1094,10 @@
       "ticker": "BRBR",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -1197,10 +1225,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -1209,10 +1242,10 @@
       "ticker": "BRBR",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -1234,10 +1267,10 @@
       "ticker": "BRBR",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -1249,10 +1282,14 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2024-09-12"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983",
+        "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -1260,10 +1297,10 @@
       "ticker": "BRBR",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -1281,22 +1318,41 @@
       "ticker": "BRBR",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001772016-26-000022",
-          "8-K 0001628280-26-052137 EX-99.1",
-          "8-K 0001628280-26-030115 EX-99.1",
-          "8-K 0001628280-26-004789 EX-99.1",
-          "8-K 0001628280-25-053329 EX-99.1",
-          "8-K 0001628280-25-052773 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983",
+              "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -1307,7 +1363,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -1326,9 +1382,9 @@
       "ticker": "EPAM",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -1380,10 +1436,10 @@
       "ticker": "EPAM",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -1555,10 +1611,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -1567,10 +1628,10 @@
       "ticker": "EPAM",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -1592,10 +1653,10 @@
       "ticker": "EPAM",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -1611,10 +1672,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2026-08-06",
+          "S-3ASR": "2023-10-03"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685",
+        "shelf registrations 1 (S-3ASR, last 2023-10-03) · employee-plan (S-8) 3 (S-8, last 2026-08-06) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -1622,10 +1688,10 @@
       "ticker": "EPAM",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -1643,22 +1709,41 @@
       "ticker": "EPAM",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001352010-26-000046",
-          "8-K 0001352010-26-000043 EX-99.1",
-          "8-K 0001352010-26-000026 EX-99.1",
-          "8-K 0001352010-26-000010 EX-99.1",
-          "8-K 0001352010-25-000053 EX-99.1",
-          "8-K 0001352010-25-000050 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685",
+              "shelf registrations 1 (S-3ASR, last 2023-10-03) · employee-plan (S-8) 3 (S-8, last 2026-08-06) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -1669,7 +1754,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "ready",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [],
@@ -1693,9 +1778,9 @@
       "ticker": "GOOGL",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -1718,184 +1803,190 @@
       "ticker": "GOOGL",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
       "value": {
-        "metric": "EV/EBITDA (TEV/LTM)",
-        "current": 25.809247,
-        "low": 10.934315,
-        "high": 24.782368,
-        "median": 17.365283,
-        "percentile": 1.0,
+        "metric": "P/LTM EPS",
+        "current": 27.264892,
+        "low": 17.496159,
+        "high": 57.63035,
+        "median": 27.713261,
+        "percentile": 0.4864864864864865,
         "n_closes": 37,
         "as_of": "2026-06-30",
         "series": [
           [
             "2017-03-31",
-            16.659732
+            30.411905
           ],
           [
             "2017-06-30",
-            17.538375
+            31.415494
           ],
           [
             "2017-09-29",
-            17.947729
+            35.288864
           ],
           [
             "2017-12-29",
-            18.387363
+            35.207101
           ],
           [
             "2018-03-29",
-            17.365283
+            57.63035
           ],
           [
             "2018-06-29",
-            18.578737
+            47.806398
           ],
           [
             "2018-09-28",
-            19.282916
+            52.130245
           ],
           [
             "2018-12-31",
-            15.788764
+            39.215539
           ],
           [
             "2019-03-29",
-            17.60915
+            26.928989
           ],
           [
             "2019-06-28",
-            14.854759
+            27.16366
           ],
           [
             "2019-09-30",
-            16.183809
+            24.651894
           ],
           [
             "2019-12-31",
-            17.215785
+            28.741571
           ],
           [
             "2020-03-31",
-            13.767523
+            23.63472
           ],
           [
             "2020-06-30",
-            17.049333
+            28.605947
           ],
           [
             "2020-09-30",
-            18.374552
+            32.21637
           ],
           [
             "2020-12-31",
-            21.2367
+            33.866353
           ],
           [
             "2021-03-31",
-            22.204411
+            35.188588
           ],
           [
             "2021-06-30",
-            23.477481
+            32.540044
           ],
           [
             "2021-09-30",
-            21.25664
+            29.001165
           ],
           [
             "2021-12-31",
-            20.427852
+            27.908412
           ],
           [
             "2022-03-31",
-            18.303308
+            24.789878
           ],
           [
             "2022-06-30",
-            13.422001
+            19.706693
           ],
           [
             "2022-09-30",
-            11.521566
+            17.787585
           ],
           [
             "2022-12-30",
-            10.934315
+            17.496159
           ],
           [
             "2023-03-31",
-            13.234257
+            22.76034
           ],
           [
             "2023-06-30",
-            15.384011
+            26.615667
           ],
           [
             "2023-09-29",
-            16.454258
+            27.713261
           ],
           [
             "2023-12-29",
-            16.642059
+            26.810968
           ],
           [
             "2024-03-28",
-            17.32194
+            26.019807
           ],
           [
             "2024-06-28",
-            19.165507
+            27.957106
           ],
           [
             "2024-09-30",
-            16.522989
+            23.80273
           ],
           [
             "2024-12-31",
-            17.686616
+            25.123634
           ],
           [
             "2025-03-31",
-            13.642264
+            19.225356
           ],
           [
             "2025-06-30",
-            14.833976
+            19.668612
           ],
           [
             "2025-09-30",
-            19.832636
+            25.901667
           ],
           [
             "2025-12-31",
-            24.782368
+            30.88284
           ],
           [
             "2026-03-31",
-            21.955508
+            26.624515
           ],
           [
             "2026-06-30",
-            25.809247
+            27.264892
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": true,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {
+        "valuation_metric": "P/LTM EPS",
         "load_bearing_axis": "multiple"
       }
     },
@@ -1903,10 +1994,10 @@
       "ticker": "GOOGL",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -1928,10 +2019,10 @@
       "ticker": "GOOGL",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -1955,10 +2046,17 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B2": "2026-08-07",
+          "424B5": "2026-08-06",
+          "S-8": "2026-07-23",
+          "S-3ASR": "2026-06-01"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264",
+        "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-08-24"
       ],
       "render_config": {}
     },
@@ -1966,10 +2064,10 @@
       "ticker": "GOOGL",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "ready",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -1988,33 +2086,11 @@
     },
     {
       "ticker": "GOOGL",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
-      "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001652044-26-000071",
-          "8-K 0001652044-26-000066 EX-99.1",
-          "8-K 0001193125-26-257724 EX-99.1",
-          "8-K 0001652044-26-000043 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "GOOGL",
       "key": "commissioning",
       "tier": "cohort",
       "title": "Built but not running",
       "state": "refused",
-      "changes_the_call": "A ratio that climbs while the in-service base stops growing says capital is going in and not yet earning — the duration question the memo calls the whole trade. Falling back toward the in-service growth rate says the buildout is converting.",
+      "changes_the_call": "Climbing while the in-service base flattens says capital is going in and not yet earning. Falling back toward that base's growth says the buildout is converting.",
       "caveat": "Assets not yet in service spans EVERY asset type, while the denominator is the technical-infrastructure member alone — so this is not a commissioning RATE. The like-for-like figure is reported beside it.",
       "cadence": "quarterly",
       "missing": [
@@ -2057,7 +2133,7 @@
       "title": "Cost of borrowing",
       "state": "ready",
       "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
-      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "caveat": "Read the coverage beside the rate — a low coverage means the average describes a small slice of the stack. Floating tranches and lease liabilities are held out, not averaged in, and the denominator is the listed tranches only.",
       "cadence": "quarterly",
       "missing": [],
       "reason": "",
@@ -2078,12 +2154,76 @@
       "render_config": {}
     },
     {
+      "ticker": "GOOGL",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-08-14 · benchmark SPY (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264",
+              "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-08-24"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)"
+            ]
+          }
+        ],
+        "n_panels": 6,
+        "n_refs": 8
+      },
+      "sources": [],
+      "render_config": {}
+    },
+    {
       "ticker": "IT",
       "key": "the_call",
       "tier": "universal",
       "title": "The call",
       "state": "ready",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [],
@@ -2107,9 +2247,9 @@
       "ticker": "IT",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -2147,10 +2287,10 @@
       "ticker": "IT",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -2322,10 +2462,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -2334,10 +2479,10 @@
       "ticker": "IT",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -2362,10 +2507,10 @@
       "ticker": "IT",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -2381,10 +2526,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B5": "2025-11-17",
+          "S-3ASR": "2025-11-12"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946",
+        "shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -2392,10 +2542,10 @@
       "ticker": "IT",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "ready",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -2416,22 +2566,55 @@
       "ticker": "IT",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0000749251-26-000245",
-          "8-K 0000749251-26-000243 EX-99.1",
-          "8-K 0000749251-26-000165 EX-99.1",
-          "8-K 0000749251-26-000028 EX-99.1",
-          "8-K 0000749251-25-000080 EX-99.1",
-          "8-K 0000749251-25-000044 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-07-20 · benchmark MDY (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via bear reason amendment",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946",
+              "shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          }
+        ],
+        "n_panels": 5,
+        "n_refs": 7
       },
       "sources": [],
       "render_config": {}
@@ -2442,7 +2625,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -2461,9 +2644,9 @@
       "ticker": "LLY",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -2482,10 +2665,10 @@
       "ticker": "LLY",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -2657,10 +2840,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -2669,10 +2857,10 @@
       "ticker": "LLY",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "refused",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [
         {
@@ -2690,10 +2878,10 @@
       "ticker": "LLY",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -2709,10 +2897,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B2": "2026-05-08",
+          "S-3ASR": "2025-02-19"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175",
+        "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -2720,10 +2913,10 @@
       "ticker": "LLY",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -2734,29 +2927,6 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "LLY",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
-      "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0000059478-26-000081",
-          "8-K 0000059478-26-000077 EX-99.1",
-          "8-K 0000059478-26-000008 EX-99.1",
-          "8-K 0000059478-25-000251 EX-99.1",
-          "8-K 0000059478-25-000202 EX-99.1"
-        ]
-      },
       "sources": [],
       "render_config": {}
     },
@@ -2788,7 +2958,7 @@
       "title": "Cost of borrowing",
       "state": "ready",
       "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
-      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "caveat": "Read the coverage beside the rate — a low coverage means the average describes a small slice of the stack. Floating tranches and lease liabilities are held out, not averaged in, and the denominator is the listed tranches only.",
       "cadence": "quarterly",
       "missing": [],
       "reason": "",
@@ -2809,12 +2979,54 @@
       "render_config": {}
     },
     {
+      "ticker": "LLY",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175",
+              "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
+      "render_config": {}
+    },
+    {
       "ticker": "MVST",
       "key": "the_call",
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -2833,9 +3045,9 @@
       "ticker": "MVST",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -2880,10 +3092,10 @@
       "ticker": "MVST",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -2927,10 +3139,14 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -2939,10 +3155,10 @@
       "ticker": "MVST",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -2969,10 +3185,10 @@
       "ticker": "MVST",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -2992,10 +3208,16 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B5": "2025-10-03",
+          "S-3/A": "2025-04-28",
+          "S-3": "2025-01-24"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882",
+        "shelf registrations 2 (S-3/S-3/A, last 2025-04-28); prospectus supplements 1 (424B5, last 2025-10-03) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -3003,10 +3225,10 @@
       "ticker": "MVST",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -3024,22 +3246,41 @@
       "ticker": "MVST",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001628280-26-055372",
-          "8-K 0001628280-26-055471 EX-99.1",
-          "8-K 0001628280-26-033601 EX-99.1",
-          "8-K 0001628280-26-018235 EX-99.1",
-          "8-K 0001628280-25-051130 EX-99.1",
-          "8-K 0001628280-25-039708 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882",
+              "shelf registrations 2 (S-3/S-3/A, last 2025-04-28); prospectus supplements 1 (424B5, last 2025-10-03) — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -3050,7 +3291,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -3069,9 +3310,9 @@
       "ticker": "NCNO",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -3116,10 +3357,10 @@
       "ticker": "NCNO",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -3179,10 +3420,14 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -3191,10 +3436,10 @@
       "ticker": "NCNO",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -3219,10 +3464,10 @@
       "ticker": "NCNO",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -3234,10 +3479,14 @@
             3
           ]
         ],
+        "last_by_form": {
+          "S-8": "2026-03-31"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024",
+        "no shelf/supplement/fresh registration · employee-plan (S-8) 3 (S-8, last 2026-03-31) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -3245,10 +3494,10 @@
       "ticker": "NCNO",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -3266,23 +3515,41 @@
       "ticker": "NCNO",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001902733-26-000066",
-          "8-K 0001902733-26-000064 EX-99.1",
-          "8-K 0001902733-26-000019 EX-99.1",
-          "8-K 0001902733-25-000133 EX-99.1",
-          "8-K 0001902733-25-000130 EX-99.1",
-          "8-K 0001902733-25-000105 EX-99.1",
-          "8-K 0001902733-25-000074 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024",
+              "no shelf/supplement/fresh registration · employee-plan (S-8) 3 (S-8, last 2026-03-31) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -3293,7 +3560,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -3312,9 +3579,9 @@
       "ticker": "NFLX",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -3333,10 +3600,10 @@
       "ticker": "NFLX",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -3508,10 +3775,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -3520,10 +3792,10 @@
       "ticker": "NFLX",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "refused",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [
         {
@@ -3541,10 +3813,10 @@
       "ticker": "NFLX",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -3564,10 +3836,16 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B5": "2026-07-21",
+          "424B2": "2026-07-20",
+          "S-3ASR": "2024-07-29"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568",
+        "shelf registrations 1 (S-3ASR, last 2024-07-29); prospectus supplements 4 (424B2/424B5, last 2026-07-21) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -3575,10 +3853,10 @@
       "ticker": "NFLX",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -3594,33 +3872,11 @@
     },
     {
       "ticker": "NFLX",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
-      "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001065280-26-000212",
-          "8-K 0001065280-26-000211 EX-99.1",
-          "8-K 0001065280-26-000137 EX-99.1",
-          "8-K 0001065280-26-000033 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "NFLX",
       "key": "commissioning",
       "tier": "cohort",
       "title": "Built but not running",
       "state": "refused",
-      "changes_the_call": "A ratio that climbs while the in-service base stops growing says capital is going in and not yet earning — the duration question the memo calls the whole trade. Falling back toward the in-service growth rate says the buildout is converting.",
+      "changes_the_call": "Climbing while the in-service base flattens says capital is going in and not yet earning. Falling back toward that base's growth says the buildout is converting.",
       "caveat": "Assets not yet in service spans EVERY asset type, while the denominator is the technical-infrastructure member alone — so this is not a commissioning RATE. The like-for-like figure is reported beside it.",
       "cadence": "quarterly",
       "missing": [
@@ -3663,7 +3919,7 @@
       "title": "Cost of borrowing",
       "state": "ready",
       "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
-      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "caveat": "Read the coverage beside the rate — a low coverage means the average describes a small slice of the stack. Floating tranches and lease liabilities are held out, not averaged in, and the denominator is the listed tranches only.",
       "cadence": "quarterly",
       "missing": [],
       "reason": "",
@@ -3684,12 +3940,54 @@
       "render_config": {}
     },
     {
+      "ticker": "NFLX",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568",
+              "shelf registrations 1 (S-3ASR, last 2024-07-29); prospectus supplements 4 (424B2/424B5, last 2026-07-21) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
+      "render_config": {}
+    },
+    {
       "ticker": "SMPL",
       "key": "the_call",
       "tier": "universal",
       "title": "The call",
       "state": "ready",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [],
@@ -3713,9 +4011,9 @@
       "ticker": "SMPL",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -3774,10 +4072,10 @@
       "ticker": "SMPL",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -3937,10 +4235,14 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -3949,10 +4251,10 @@
       "ticker": "SMPL",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -3974,10 +4276,10 @@
       "ticker": "SMPL",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -3989,10 +4291,14 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2026-02-06"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163",
+        "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2026-02-06) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -4000,10 +4306,10 @@
       "ticker": "SMPL",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "ready",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -4024,22 +4330,55 @@
       "ticker": "SMPL",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001702744-26-000023",
-          "8-K 0001702744-26-000021 EX-99.1",
-          "8-K 0001702744-26-000010 EX-99.1",
-          "8-K 0001702744-26-000004 EX-99.1",
-          "8-K 0001702744-25-000043 EX-99.1",
-          "8-K 0001702744-25-000035 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-08-04 · benchmark IWM (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163",
+              "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2026-02-06) — routine — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          }
+        ],
+        "n_panels": 5,
+        "n_refs": 7
       },
       "sources": [],
       "render_config": {}
@@ -4050,7 +4389,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4069,9 +4408,9 @@
       "ticker": "TECX",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4090,10 +4429,10 @@
       "ticker": "TECX",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "refused",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [
         {
@@ -4110,7 +4449,6 @@
       "reason": "metric_path 'valuation.ev_ebitda' — the current multiple is the left-hand side of the distance; without it there is no distance to draw. TEV/LTM EBITDA is NM at the latest Close [2026-06-30] — no meaningful current multiple, and an older quarter is not one; metric_path 'valuation.range_position' — a multiple alone is not a position — 25.8x means nothing until it is placed in the name's own range, which is what makes compression visible. TEV/LTM EBITDA is NM at the latest Close [2026-06-30] — no range position",
       "value": {},
       "sources": [
-        "",
         ""
       ],
       "render_config": {}
@@ -4119,10 +4457,10 @@
       "ticker": "TECX",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "refused",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [
         {
@@ -4140,10 +4478,10 @@
       "ticker": "TECX",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -4183,10 +4521,21 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8 POS": "2026-03-09",
+          "S-8": "2026-02-27",
+          "424B3": "2025-07-15",
+          "S-3": "2025-07-07",
+          "424B5": "2025-06-11",
+          "S-1": "2025-03-26",
+          "S-4/A": "2024-04-29",
+          "S-4": "2024-02-14"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838",
+        "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24"
       ],
       "render_config": {}
     },
@@ -4194,10 +4543,10 @@
       "ticker": "TECX",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -4213,38 +4562,12 @@
     },
     {
       "ticker": "TECX",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
-      "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001193125-26-338062",
-          "8-K 0001193125-26-338000 EX-99.1",
-          "8-K 0001193125-26-266040 EX-99.1",
-          "8-K 0001193125-26-212069 EX-99.1",
-          "8-K 0001193125-26-076843 EX-99.1",
-          "8-K 0001193125-25-269573 EX-99.1",
-          "8-K 0001193125-25-256958 EX-99.1",
-          "8-K 0001193125-25-175567 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "TECX",
       "key": "cost_of_borrowing",
       "tier": "cohort",
       "title": "Cost of borrowing",
       "state": "refused",
       "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
-      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "caveat": "Read the coverage beside the rate — a low coverage means the average describes a small slice of the stack. Floating tranches and lease liabilities are held out, not averaged in, and the denominator is the listed tranches only.",
       "cadence": "quarterly",
       "missing": [],
       "reason": "no tranche states both a principal and a fixed coupon (2 instrument(s), 0musd non-lease principal, of which 0musd floating; 1musd of lease liabilities excluded as not borrowed money) — a weighted average struck here would be a number about nothing",
@@ -4255,12 +4578,40 @@
       "render_config": {}
     },
     {
+      "ticker": "TECX",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838",
+              "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24"
+            ]
+          }
+        ],
+        "n_panels": 1,
+        "n_refs": 2
+      },
+      "sources": [],
+      "render_config": {}
+    },
+    {
       "ticker": "UBER",
       "key": "the_call",
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4279,9 +4630,9 @@
       "ticker": "UBER",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4300,10 +4651,10 @@
       "ticker": "UBER",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -4371,10 +4722,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -4383,10 +4739,10 @@
       "ticker": "UBER",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "refused",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [
         {
@@ -4404,10 +4760,10 @@
       "ticker": "UBER",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -4431,10 +4787,17 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-3ASR": "2026-02-13",
+          "424B2": "2025-09-10",
+          "424B3": "2025-09-08",
+          "S-8": "2025-02-14"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059",
+        "shelf registrations 1 (S-3ASR, last 2026-02-13); prospectus supplements 4 (424B2/424B3, last 2025-09-10) · employee-plan (S-8) 2 (S-8, last 2025-02-14) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -4442,10 +4805,10 @@
       "ticker": "UBER",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -4456,29 +4819,6 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "UBER",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
-      "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001543151-26-000032",
-          "8-K 0001543151-26-000027 EX-99.1",
-          "8-K 0001543151-26-000019 EX-99.1",
-          "8-K 0001543151-26-000011 EX-99.1",
-          "8-K 0001543151-25-000030 EX-99.1"
-        ]
-      },
       "sources": [],
       "render_config": {}
     },
@@ -4510,7 +4850,7 @@
       "title": "Cost of borrowing",
       "state": "ready",
       "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
-      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "caveat": "Read the coverage beside the rate — a low coverage means the average describes a small slice of the stack. Floating tranches and lease liabilities are held out, not averaged in, and the denominator is the listed tranches only.",
       "cadence": "quarterly",
       "missing": [],
       "reason": "",
@@ -4531,12 +4871,54 @@
       "render_config": {}
     },
     {
+      "ticker": "UBER",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059",
+              "shelf registrations 1 (S-3ASR, last 2026-02-13); prospectus supplements 4 (424B2/424B3, last 2025-09-10) · employee-plan (S-8) 2 (S-8, last 2025-02-14) — routine — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
+      "render_config": {}
+    },
+    {
       "ticker": "V",
       "key": "the_call",
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4555,9 +4937,9 @@
       "ticker": "V",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4576,10 +4958,10 @@
       "ticker": "V",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -4751,10 +5133,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -4763,10 +5150,10 @@
       "ticker": "V",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "refused",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [
         {
@@ -4784,10 +5171,10 @@
       "ticker": "V",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -4815,10 +5202,18 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B3": "2026-04-13",
+          "S-4/A": "2026-04-06",
+          "S-4": "2026-03-05",
+          "424B2": "2026-02-04",
+          "S-3ASR": "2024-07-24"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096",
+        "shelf registrations 1 (S-3ASR, last 2024-07-24); prospectus supplements 6 (424B2/424B3, last 2026-04-13); merger registrations 5 (S-4/S-4/A, last 2026-04-06) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -4826,10 +5221,10 @@
       "ticker": "V",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -4840,28 +5235,6 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "V",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
-      "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001403161-26-000104",
-          "8-K 0001403161-26-000103 EX-99.1",
-          "8-K 0001403161-26-000077 EX-99.1",
-          "8-K 0001403161-26-000044 EX-99.1"
-        ]
-      },
       "sources": [],
       "render_config": {}
     },
@@ -4893,7 +5266,7 @@
       "title": "Cost of borrowing",
       "state": "ready",
       "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
-      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "caveat": "Read the coverage beside the rate — a low coverage means the average describes a small slice of the stack. Floating tranches and lease liabilities are held out, not averaged in, and the denominator is the listed tranches only.",
       "cadence": "quarterly",
       "missing": [],
       "reason": "",
@@ -4914,12 +5287,54 @@
       "render_config": {}
     },
     {
+      "ticker": "V",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096",
+              "shelf registrations 1 (S-3ASR, last 2024-07-24); prospectus supplements 6 (424B2/424B3, last 2026-04-13); merger registrations 5 (S-4/S-4/A, last 2026-04-06) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
+      "render_config": {}
+    },
+    {
       "ticker": "VRRM",
       "key": "the_call",
       "tier": "universal",
       "title": "The call",
       "state": "ready",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [],
@@ -4943,9 +5358,9 @@
       "ticker": "VRRM",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -4964,10 +5379,10 @@
       "ticker": "VRRM",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -5063,10 +5478,15 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -5075,10 +5495,10 @@
       "ticker": "VRRM",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "refused",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [
         {
@@ -5096,20 +5516,22 @@
       "ticker": "VRRM",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
       "value": {
         "line": "no registration statements or prospectus supplements on file in the 3y to 2026-08-14",
         "forms": [],
+        "last_by_form": {},
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+        "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -5117,10 +5539,10 @@
       "ticker": "VRRM",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "ready",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -5141,21 +5563,47 @@
       "ticker": "VRRM",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001193125-26-335490",
-          "8-K 0001193125-26-335111 EX-99.1",
-          "8-K 0001193125-26-239351 EX-99.1",
-          "8-K 0001193125-26-209031 EX-99.1",
-          "8-K 0001193125-26-067015 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-06-17 · benchmark IWM (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+              "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          }
+        ],
+        "n_panels": 4,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -5166,7 +5614,7 @@
       "tier": "universal",
       "title": "The call",
       "state": "refused",
-      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "changes_the_call": "Nothing — this IS the call. Every other tile is read against it.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -5185,9 +5633,9 @@
       "ticker": "WERN",
       "key": "kills",
       "tier": "universal",
-      "title": "Kill criteria, with the number beside each",
+      "title": "Kill criteria",
       "state": "refused",
-      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "changes_the_call": "A criterion crossing its threshold. The machine shows the reading; you declare the kill.",
       "caveat": "",
       "cadence": "event",
       "missing": [
@@ -5225,10 +5673,10 @@
       "ticker": "WERN",
       "key": "multiple_and_price",
       "tier": "universal",
-      "title": "Multiple & price — distance to the underwritten multiple",
+      "title": "Multiple vs its own history",
       "state": "ready",
-      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
-      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "changes_the_call": "Where the case rests on the multiple, movement here IS the call moving. Where it rests on earnings, this line can travel a long way without the thesis changing.",
+      "caveat": "Trailing (LTM), not forward. No underwritten multiple is on file for this name, so the comparison shown is against its OWN history, not against a target.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -5400,10 +5848,14 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -5412,10 +5864,10 @@
       "ticker": "WERN",
       "key": "filing_watch",
       "tier": "universal",
-      "title": "Filing watch — what has printed since the underwrite",
+      "title": "Printed since the underwrite",
       "state": "ready",
-      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
-      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "changes_the_call": "An unread print means the call is standing on older evidence than exists.",
+      "caveat": "The next date is estimated from this filer's own cadence, not scheduled — late is not yet missed.",
       "cadence": "daily",
       "missing": [],
       "reason": "",
@@ -5443,20 +5895,22 @@
       "ticker": "WERN",
       "key": "dilution",
       "tier": "universal",
-      "title": "Dilution pipeline",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
-      "caveat": "",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
       "value": {
         "line": "no registration statements or prospectus supplements on file in the 3y to 2026-08-14",
         "forms": [],
+        "last_by_form": {},
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+        "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -5464,10 +5918,10 @@
       "ticker": "WERN",
       "key": "attribution",
       "tier": "universal",
-      "title": "Attribution — position against its assigned benchmark",
+      "title": "Position vs its benchmark",
       "state": "refused",
-      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
-      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "changes_the_call": "Nothing — it says whether the call is being PAID. A position whose whole return is its benchmark's is a call that has not yet been right about anything.",
+      "caveat": "Price returns both sides; dividends excluded. Do not read beside a total-return series.",
       "cadence": "daily",
       "missing": [
         {
@@ -5485,20 +5939,41 @@
       "ticker": "WERN",
       "key": "sources",
       "tier": "universal",
-      "title": "Sources — what the numbers above rest on",
+      "title": "Sources",
       "state": "ready",
-      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
-      "caveat": "",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0000793074-26-000140",
-          "8-K 0000793074-26-000129 EX-99.1",
-          "8-K 0000793074-26-000092 EX-99.1",
-          "8-K 0000793074-26-000009 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via bull reason amendment",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+              "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}

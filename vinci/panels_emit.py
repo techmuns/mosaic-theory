@@ -128,10 +128,20 @@ def panel_rows_for(
             "AND the benchmark alike)"])
     val = m.get("valuation") or {}
     if val:
-        mp = pay.multiple_and_price(val)
-        builders["multiple_and_price"] = (mp, [
-            str((val.get("ev_ebitda") or {}).get("source_ref") or ""),
-            str((val.get("own_history") or {}).get("source_ref") or "")])
+        # THE NAME'S DECLARED BASIS reaches the payload builder, not just the renderer: which
+        # metric to read is a selection, and selections happen before markup. Undeclared, the
+        # builder uses the repo default and stamps the payload so the tile can say which.
+        _mp_cfg = (declarations.get(ticker) or {}).get("multiple_and_price") or {}
+        _want = _mp_cfg.get("valuation_metric")
+        try:
+            mp = pay.multiple_and_price(val, metric=_want)
+        except pay.MetricNotFoundError as exc:
+            # A DECLARED METRIC THAT IS NOT THERE IS A LOUD REFUSAL, never a substitution: showing
+            # a different multiple under a heading the name chose is the defect this replaced.
+            mp = None
+            why_empty["multiple_and_price"] = str(exc)
+        # The payload's OWN citation, not one picked per metric by the caller.
+        builders["multiple_and_price"] = (mp, [str((mp or {}).get("source_ref") or "")])
     if freshness:
         builders["filing_watch"] = (pay.filing_watch(freshness), [
             f"last evidence via {freshness.get('last_evidence_source')}",
@@ -139,11 +149,12 @@ def panel_rows_for(
         builders["kills"] = (pay.kills(freshness, record), ["scenario record measured_triggers"])
     dil = m.get("dilution_pipeline") or {}
     if dil:
-        builders["dilution"] = (pay.dilution(dil), [
-            str((dil.get("line") or {}).get("source_ref") or "")])
-    prim = m.get("primary_source") or {}
-    if prim:
-        builders["sources"] = (pay.sources(prim), [])
+        _dil = pay.dilution(dil)
+        # The assembler's own sentence is PROVENANCE, not body text — it names the form codes the
+        # tile now translates, and its dates travel structurally above.
+        builders["dilution"] = (_dil, [
+            str((dil.get("line") or {}).get("source_ref") or ""),
+            str(_dil.get("line") or "")])
     cs = m.get("capital_structure") or {}
     if cs:
         cob, cob_why = pay.cost_of_borrowing(cs)
@@ -152,9 +163,17 @@ def panel_rows_for(
         if cob_why:
             why_empty["cost_of_borrowing"] = cob_why
 
+    # SOURCES IS BUILT LAST, because it describes the panels above it. Deferring one decision out
+    # of the loop is the price of the tile's title being true: a provenance tile assembled from a
+    # dossier section it does not share with any other panel is how the first cut came to cite four
+    # filings that sourced nothing on the page.
+    deferred: PanelDecision | None = None
     for dec in resolve_universal(
         dossier=dossier, row=row, freshness=freshness, record=record, registry=ureg,
     ):
+        if dec.key == "sources":
+            deferred = dec
+            continue
         v, src = builders.get(dec.key, (None, []))
         # THE NAME'S OWN RENDER CONFIG, resolved here so the renderer needs no second lookup. Only
         # keys the SPEC declares are carried: a stray key in `followed.json` is already refused at
@@ -178,6 +197,20 @@ def panel_rows_for(
         v, src = builders.get(dec.key, (None, []))
         r = _row(dec, ticker=ticker, registry=creg, value=v, sources=src,
                  no_value_reason=why_empty.get(dec.key, ""))
+        if r is not None:
+            out.append(r)
+
+    # ...and now the sources tile, from what the page above it actually cites. A panel that
+    # REFUSED cites nothing, so it contributes nothing — the tile indexes the numbers on show, not
+    # the ones that could not be built.
+    if deferred is not None:
+        cited = [(r.key, r.title, list(r.sources)) for r in out
+                 if r.state == "ready" and r.sources]
+        payload = pay.sources(cited)
+        r = _row(deferred, ticker=ticker, registry=ureg, value=payload, sources=[],
+                 no_value_reason=(
+                     "no panel on this page cites a source, so there is no provenance to index — "
+                     "which means every figure above is either refused or unsourced"))
         if r is not None:
             out.append(r)
     # THE AMBIGUITY REASON TRAVELS, appended rather than substituted: the requirement's own `why`

@@ -95,7 +95,10 @@ def test_googl_declares_the_multiple_and_no_name_declares_an_axis_it_cannot_supp
     NOT set — its underwrite has not landed, and a value invented ahead of the record would be the
     coverage-that-isn't this field exists to prevent."""
     decl = read_declarations(root=ROOT)
-    assert decl["GOOGL"]["multiple_and_price"] == {"load_bearing_axis": "multiple"}
+    # The panel now carries a second per-name key (`valuation_metric`), so this asserts the AXIS
+    # rather than the whole config object — a pin on the exact dict reddens whenever the panel
+    # gains an unrelated knob, which is noise rather than a finding.
+    assert decl["GOOGL"]["multiple_and_price"]["load_bearing_axis"] == "multiple"
     axes = {t: p.get("multiple_and_price", {}).get("load_bearing_axis")
             for t, p in decl.items()}
     assert {t for t, a in axes.items() if a} == {"GOOGL"}, (

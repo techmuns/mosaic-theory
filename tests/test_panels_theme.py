@@ -105,7 +105,7 @@ def test_a_corrupted_deadline_still_renders_its_row() -> None:
 def test_the_panel_says_it_measures_nothing() -> None:
     """Verified before the panel was written: no trigger on any committed card carries a metric or
     a threshold. The caveat is the channel that keeps the page honest about it."""
-    assert "nothing here is measured" in THEME_THESIS.caveat
+    assert "othing here is measured" in THEME_THESIS.caveat  # case-agnostic on the lead word
     assert THEME_THESIS.tier == "theme"
     assert THEME_THESIS.changes_the_call.strip()
     for p in (ROOT / "data" / "themes" / "thesis").glob("*.json"):
@@ -159,8 +159,12 @@ const { panelGridHtml } = await import(pathToFileURL(
 const base = { changes_the_call: "c", caveat: "", cadence: "event", sources: [], value: {},
   missing: [], reason: "" };
 const rows = [
+  // The sources payload groups by the panel that shows each number; the flat `refs` shape this
+  // fixture used no longer builds a body, so the row would correctly demote to a refusal and the
+  // assertion below would be reading the wrong tile.
   { ...base, ticker: "AORT", tier: "universal", key: "sources", title: "S", state: "ready",
-    value: { refs: ["r"] } },
+    value: { by_panel: [{ key: "the_call", title: "The call", refs: ["r"] }],
+             n_panels: 1, n_refs: 1 } },
   { ...base, ticker: "ai-datacenter", tier: "theme", key: "theme_thesis", title: "T",
     state: "refused", missing: [{ kind: "metric_path", detail: "thesis_card", why: "W" }],
     reason: "metric_path 'thesis_card' — W. no thesis card is declared" },

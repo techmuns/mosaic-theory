@@ -47,7 +47,7 @@ PanelTier = Literal["universal", "cohort", "theme", "name"]
 #: What a requirement is ABOUT. Kept as data rather than a callable so a spec can be read, diffed
 #: and reviewed without executing it — and so a refusal can name the thing that failed.
 RequirementKind = Literal["tag", "rfile_note", "metric_path", "feed", "upload",
-                          "ledger_row", "snapshot_field", "criterion"]
+                          "ledger_row", "snapshot_field", "criterion", "page_sources"]
 
 
 class Requirement(BaseModel, frozen=True):
@@ -105,7 +105,13 @@ class Requirement(BaseModel, frozen=True):
 
 
 class RenderOption(BaseModel, frozen=True):
-    """One per-name knob that parameterises what a panel SAYS, not what it probes.
+    """One per-name knob consumed AFTER the gate — by the payload builder or the renderer.
+
+    NOT "render-only", despite the name: `valuation_metric` selects WHICH entry of a name's
+    valuation history the payload reads, which is upstream of any markup. The dividing line that
+    matters is the GATE: `config_schema` keys are read by a REQUIREMENT and decide what gets
+    probed, so a key no requirement reads is a silent no-op and is refused. These keys are read
+    after the decision is made, so that check would reject them while being right about probe keys.
 
     A SECOND KIND OF CONFIG, kept apart from `config_schema` deliberately. `config_schema` keys are
     read by a REQUIREMENT — they decide what gets probed, and a key no requirement reads is a silent
@@ -365,9 +371,8 @@ COMMISSIONING = PanelSpec(
         "economic question under a name of its own, which is why this is config and not code",
     },
     cadence="quarterly",
-    changes_the_call="A ratio that climbs while the in-service base stops growing says capital is "
-    "going in and not yet earning — the duration question the memo calls the whole trade. Falling "
-    "back toward the in-service growth rate says the buildout is converting.",
+    changes_the_call="Climbing while the in-service base flattens says capital is going in and "
+    "not yet earning. Falling back toward that base's growth says the buildout is converting.",
     caveat="Assets not yet in service spans EVERY asset type, while the denominator is the "
     "technical-infrastructure member alone — so this is not a commissioning RATE. The "
     "like-for-like figure is reported beside it.",
@@ -413,13 +418,9 @@ COST_OF_BORROWING = PanelSpec(
     changes_the_call="Every leverage leg is underwritten at a cost of debt. A stack repricing "
     "upward as tranches mature raises the bar the business must clear before equity sees anything, "
     "and it moves without any operating news at all.",
-    caveat="The average covers only tranches stating BOTH a principal and a FIXED coupon, and its "
-    "coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its "
-    "own share rather than averaged in at zero, which would fabricate a lower cost exactly where a "
-    "name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists "
-    "them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, "
-    "and their principal is reported separately. The denominator is the LISTED tranches, which for "
-    "several names is a fraction of the stack the same panel's summary totals.",
+    caveat="Read the coverage beside the rate — a low coverage means the average describes a "
+    "small slice of the stack. Floating tranches and lease liabilities are held out, not averaged "
+    "in, and the denominator is the listed tranches only.",
 )
 
 

@@ -32,15 +32,13 @@ THE_CALL = PanelSpec(
         ),
     ),
     cadence="event",
-    changes_the_call="Nothing here changes the call — this IS the call, and it is the anchor every "
-    "other panel is read against. It earns its place by making the other six answerable: a number "
-    "that moved is only meaningful against the verdict and basis it was underwritten on.",
+    changes_the_call="Nothing — this IS the call. Every other tile is read against it.",
 )
 
 KILLS = PanelSpec(
     key="kills",
     tier="universal",
-    title="Kill criteria, with the number beside each",
+    title="Kill criteria",
     requires=(
         Requirement(
             kind="criterion",
@@ -50,15 +48,14 @@ KILLS = PanelSpec(
         ),
     ),
     cadence="event",
-    changes_the_call="A criterion whose metric has crossed its threshold is the call changing, and "
-    "this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human "
-    "declares the kill — the machine never adjudicates.",
+    changes_the_call="A criterion crossing its threshold. The machine shows the reading; you "
+    "declare the kill.",
 )
 
 MULTIPLE_AND_PRICE = PanelSpec(
     key="multiple_and_price",
     tier="universal",
-    title="Multiple & price — distance to the underwritten multiple",
+    title="Multiple vs its own history",
     requires=(
         Requirement(
             kind="metric_path",
@@ -79,13 +76,16 @@ MULTIPLE_AND_PRICE = PanelSpec(
     # generalised to every name and FALSE for a name whose call breaks on earnings arrival, where
     # the multiple has been paid nothing for. It said the distance MEANS something it only means for
     # one archetype. This states the distance and lets the name say which axis binds.
-    changes_the_call="The distance between today's multiple and the one underwritten is what this "
-    "panel measures. Whether closing that distance is what breaks the call depends on which axis "
-    "the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one "
-    "whose case is earnings arrival can travel a long way on this line without the thesis moving. "
-    "The name declares which, and until it does this panel reports a distance and claims nothing "
-    "about what it costs.",
+    changes_the_call="Where the case rests on the multiple, movement here IS the call moving. "
+    "Where it rests on earnings, this line can travel a long way without the thesis changing.",
     render_config={
+        "valuation_metric": RenderOption(
+            means="which multiple THIS NAME'S case is underwritten on, named exactly as the "
+            "dossier's own history labels it — 'P/LTM EPS' for a P/E-basis underwrite, "
+            "'EV/EBITDA (TEV/LTM)' for an enterprise-basis one. Undeclared, the panel shows the "
+            "repo default and SAYS so: 'the multiple the case rests on' and 'a multiple' are "
+            "different claims.",
+            allowed=("EV/EBITDA (TEV/LTM)", "P/LTM EPS")),
         "load_bearing_axis": RenderOption(
             means="which axis this name's underwrite actually rests on, read off its own record "
             "— 'multiple' when the case turns on the multiple re-rating or de-rating (GOOGL: bear "
@@ -94,15 +94,14 @@ MULTIPLE_AND_PRICE = PanelSpec(
             "price has tracked earnings and the multiple contributes nothing",
             allowed=("multiple", "earnings")),
     },
-    caveat="A trailing multiple and a forward multiple are different numbers and this panel must "
-    "name which it shows — the repo has already shipped one defect from two EBITDA rows on "
-    "different bases sitting in one table.",
+    caveat="Trailing (LTM), not forward. No underwritten multiple is on file for this name, so "
+    "the comparison shown is against its OWN history, not against a target.",
 )
 
 FILING_WATCH = PanelSpec(
     key="filing_watch",
     tier="universal",
-    title="Filing watch — what has printed since the underwrite",
+    title="Printed since the underwrite",
     requires=(
         Requirement(
             kind="snapshot_field",
@@ -112,17 +111,15 @@ FILING_WATCH = PanelSpec(
         ),
     ),
     cadence="daily",
-    changes_the_call="An unread print is the single commonest way a thesis goes stale without "
-    "anyone deciding it should: the numbers on the page are from before the filing. It changes the "
-    "call by saying the call is being made on old evidence.",
-    caveat="The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled "
-    "date — a late print is not yet a missed one.",
+    changes_the_call="An unread print means the call is standing on older evidence than exists.",
+    caveat="The next date is estimated from this filer's own cadence, not scheduled — late is not "
+    "yet missed.",
 )
 
 DILUTION = PanelSpec(
     key="dilution",
     tier="universal",
-    title="Dilution pipeline",
+    title="New securities registered for sale",
     requires=(
         Requirement(
             kind="metric_path",
@@ -132,15 +129,17 @@ DILUTION = PanelSpec(
         ),
     ),
     cadence="weekly",
-    changes_the_call="Per-share value is the denominator of every leg underwritten. A live shelf "
-    "being drawn on moves that denominator without any operating news at all, which is why it is "
-    "watched separately from the business.",
+    changes_the_call="New SHARES sold shrink every per-share figure the case rests on, with no "
+    "operating news at all. Bonds sold do not — and the count above includes both.",
+    caveat="These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of "
+    "eight of Alphabet's showed three bond offerings and four share registrations. It counts "
+    "filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
 )
 
 ATTRIBUTION = PanelSpec(
     key="attribution",
     tier="universal",
-    title="Attribution — position against its assigned benchmark",
+    title="Position vs its benchmark",
     requires=(
         Requirement(
             kind="snapshot_field",
@@ -150,29 +149,28 @@ ATTRIBUTION = PanelSpec(
         ),
     ),
     cadence="daily",
-    changes_the_call="It does not change the call — it says whether the call is being PAID, which "
-    "is the fund's only evidence its discriminator works. A position whose whole return is its "
-    "benchmark's return is a call that has not yet been right about anything.",
-    caveat="Both sides are PRICE returns with dividends excluded — the bias is not zero and not "
-    "symmetric, and this panel must never be read beside a total-return series.",
+    changes_the_call="Nothing — it says whether the call is being PAID. A position whose whole "
+    "return is its benchmark's is a call that has not yet been right about anything.",
+    caveat="Price returns both sides; dividends excluded. Do not read beside a total-return "
+    "series.",
 )
 
 SOURCES = PanelSpec(
     key="sources",
     tier="universal",
-    title="Sources — what the numbers above rest on",
+    title="Sources",
     requires=(
         Requirement(
-            kind="metric_path",
-            detail="primary_source.filing",
-            why="every other panel's figure is only as good as the filing behind it; this panel is "
-            "where a reader checks rather than trusts",
+            kind="page_sources",
+            detail="panels on this page that cite a source",
+            why="this tile answers where the numbers ABOVE came from, so it is built from those "
+            "panels — with none of them citing anything there is no provenance to show",
         ),
     ),
     cadence="event",
-    changes_the_call="A figure whose source cannot be reached is not evidence, and the fund's "
-    "source-binding rule exists so the human verifies instead of trusting the summary. This panel "
-    "is what makes the other six auditable rather than merely legible.",
+    changes_the_call="Nothing — it makes the other tiles checkable rather than merely legible.",
+    caveat="Each entry is the source the panel above it actually reads. A source listed here is "
+    "not the same as a source verified: it names where to look, and looking is still yours.",
 )
 
 #: Declaration order is RENDER order, and it is an argument rather than a list: the call first

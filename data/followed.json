@@ -59,7 +59,8 @@
    },
    "cost_of_borrowing": {},
    "multiple_and_price": {
-    "load_bearing_axis": "multiple"
+    "load_bearing_axis": "multiple",
+    "valuation_metric": "P/LTM EPS"
    }
   }
  },

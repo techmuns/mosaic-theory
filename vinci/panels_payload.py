@@ -23,10 +23,11 @@ a missing optional key (an older committed snapshot will not carry a field added
                        range_excludes_current}
   filing_watch        {last_evidence_date, last_evidence_source, newer_filings: [...],
                        next_expected_print, next_expected_basis, unread_print}
-  dilution            {line, forms: [[form, count], …], window_days}
+  dilution            {line, forms: [[form, count], …], last_by_form: {form: date},
+                       window_days}
   attribution         {position_return, benchmark, benchmark_return, excess, days_elapsed,
                        horizon_days}
-  sources             {refs: [...]}
+  sources             {by_panel: [{key, title, refs: [...]}], n_panels, n_refs}
   commissioning       {periods: [{period, not_yet_in_service, in_service, ratio, like_for_like}]}
   segment_economics   {rows: [{segment, metric, period, value}]}
   cost_of_borrowing   {fixed_pct, fixed_coverage, all_in_pct, all_in_coverage, floating_share,
@@ -67,13 +68,52 @@ def attribution(row: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def multiple_and_price(valuation: dict[str, Any]) -> dict[str, Any] | None:
-    """The name's own multiple history. SERIES PASSES THROUGH AS NUMBERS — the renderer draws the
-    sparkline from these pairs, so no chart geometry is computed here and none is parsed there."""
+#: The metric a name's multiple panel shows when it has NOT declared one. NAMED, not positional —
+#: the whole defect this replaces was `hist[0]`, which returned whichever metric the assembler
+#: happened to emit first. A default is a decision; an index is an accident.
+DEFAULT_VALUATION_METRIC = "EV/EBITDA (TEV/LTM)"
+
+
+class MetricNotFoundError(LookupError):
+    """The named valuation metric is not in this name's history — refuse rather than substitute."""
+
+
+def pick_metric(hist: list[dict[str, Any]], want: str) -> dict[str, Any]:
+    """The entry whose `metric` is `want`. BY NAME, NEVER BY POSITION.
+
+    DOCUMENT ORDER IS NOT A CONTRACT — the repo wrote that down in `edgar/segments.py` after taking
+    the first of two segment reports and filing geography figures as segment economics. This is the
+    same defect one layer up: `own_history` carries TWO entries for most names (EV/EBITDA and
+    P/LTM EPS), `hist[0]` took EV/EBITDA for every one of them, and GOOGL's case is underwritten on
+    P/E — 25.8x at the 100th percentile shown, 27.3x at the 49th meant, with the right number
+    sitting unread at index 1.
+
+    Matching is exact on the metric label. A near-match is NOT accepted: two valuation metrics whose
+    names differ by a word are different numbers, which is the basis-confusion class this repo has
+    already paid for.
+    """
+    for h in hist:
+        if str(h.get("metric") or "").strip() == want.strip():
+            return h
+    raise MetricNotFoundError(
+        f"no history for metric {want!r} — this name carries "
+        f"{[str(h.get('metric')) for h in hist]}. Showing another metric under this panel's "
+        f"heading would report a number the case does not rest on.")
+
+
+def multiple_and_price(valuation: dict[str, Any], *,
+                       metric: str | None = None) -> dict[str, Any] | None:
+    """The name's own multiple history, for the metric its case rests on.
+
+    `metric` is the name's declared basis; absent, the repo default is used and the payload says
+    so, because a reader must be able to tell "this is the metric the underwrite is on" from "this
+    is the metric we show when nobody said".
+    """
     hist = (valuation.get("own_history") or {}).get("value") or []
     if not hist or not isinstance(hist, list):
         return None
-    h = hist[0]
+    want = metric or DEFAULT_VALUATION_METRIC
+    h = pick_metric(hist, want)
     cur = _num(h.get("current"))
     if cur is None:
         return None
@@ -83,11 +123,6 @@ def multiple_and_price(valuation: dict[str, Any]) -> dict[str, Any] | None:
     # extra point is the CURRENT mark appended to the historical closes. `low`/`high`/`median`/
     # `percentile` are struck over the HISTORICAL window and exclude it — which is why SMPL's
     # current 5.56x sits BELOW its own stated 6.11x low, a real state and not a data error.
-    #
-    # Stated as a FLAG rather than left to the renderer to infer: a sparkline drawn over every point
-    # beneath a band drawn over n_closes would show a line leaving its own range with nothing saying
-    # why, and the obvious "fix" for that appearance is to widen the band — which would silently
-    # restate the percentile the whole panel turns on.
     n = h.get("n_closes")
     current_is_last = (
         isinstance(n, int) and len(series) == n + 1
@@ -100,6 +135,19 @@ def multiple_and_price(valuation: dict[str, Any]) -> dict[str, Any] | None:
         "n_closes": n, "as_of": h.get("as_of"), "series": series,
         "current_is_last_point": current_is_last,
         "range_excludes_current": current_is_last,
+        # WHETHER THIS IS THE NAME'S DECLARED BASIS or the repo default. The tile must be able to
+        # say which: "the multiple the case rests on" and "a multiple" are different claims.
+        # THE CITATION TRAVELS WITH THE DATA. The emitter used to attach `valuation.ev_ebitda`'s
+        # source_ref — which names TEV/LTM EBITDA — and once the metric became selectable that
+        # citation described a different number from the one shown. `own_history` is where the
+        # series actually comes from and its ref is metric-agnostic, so the payload carries it and
+        # no caller has to guess.
+        "source_ref": str((valuation.get("own_history") or {}).get("source_ref") or ""),
+        "metric_is_declared": metric is not None,
+        # SORTED, so the payload carries no trace of the input's order. Left as-is this list was
+        # the one remaining thing a reshuffle could change — which the order-independence pin
+        # caught immediately, on the very defect it was written for.
+        "metrics_available": sorted(str(x.get("metric")) for x in hist),
     }
 
 
@@ -155,27 +203,57 @@ def kills(freshness: dict[str, Any], record: dict[str, Any] | None) -> dict[str,
 
 
 def dilution(pipeline: dict[str, Any]) -> dict[str, Any]:
+    """Filing counts by form, and the LATEST DATE per form — both structured.
+
+    THE DATE IS CARRIED, NOT PARSED BACK OUT. The assembler's `line` is a display string
+    ("prospectus supplements 28 (424B2/424B5, last 2026-08-07)") and the only thing in it the bars
+    do not already say is that date. Re-reading it from the rendered sentence is the prohibited
+    re-parse, so the date travels as a value and the sentence goes to the tile's Sources tier where
+    provenance belongs.
+    """
     forms: dict[str, int] = {}
+    last: dict[str, str] = {}
     for f in pipeline.get("filings") or []:
-        if isinstance(f, dict):
-            k = str(f.get("form"))
-            forms[k] = forms.get(k, 0) + 1
+        if not isinstance(f, dict):
+            continue
+        k = str(f.get("form"))
+        forms[k] = forms.get(k, 0) + 1
+        d = str(f.get("filing_date") or "")
+        if d and d > last.get(k, ""):
+            last[k] = d
     return {
         "line": (pipeline.get("line") or {}).get("value"),
         "forms": sorted(forms.items(), key=lambda kv: (-kv[1], kv[0])),
+        "last_by_form": last,
         "window_days": pipeline.get("window_days"),
     }
 
 
-def sources(primary: dict[str, Any]) -> dict[str, Any]:
-    refs: list[str] = []
-    filing = primary.get("filing") or {}
-    if filing.get("source_ref"):
-        refs.append(str(filing["source_ref"]))
-    for r in primary.get("releases") or []:
-        if isinstance(r, dict) and r.get("source_ref"):
-            refs.append(str(r["source_ref"]))
-    return {"refs": refs}
+def sources(cited: list[tuple[str, str, list[str]]]) -> dict[str, Any] | None:
+    """Where each number ON THIS PAGE came from, grouped by the panel that shows it.
+
+    BUILT FROM THE OTHER PANELS, not from the dossier's primary-source section. The first cut read
+    `primary_source.filing` and listed the name's 10-Q and three 8-K exhibits under the heading
+    "what the numbers above rest on" — and NOT ONE of them sourced anything on the page. Measured:
+    zero of ten tiles' real sources appeared in it. The multiple comes from CIQ Multiples, the cost
+    of borrowing from the CIQ capital panel, attribution from Polygon closes, the shelf count from
+    the EDGAR filing INDEX, the call from the ledger row. A provenance tile that cites none of them
+    is the same class as the other two defects this build found: a heading describing what the
+    panel was meant to show rather than what it holds.
+
+    `cited` is `(key, title, refs)` per rendered panel, so the tile answers its own title by
+    construction and cannot drift from the tiles above it.
+    """
+    groups = [{"key": k, "title": title, "refs": [r for r in refs if str(r).strip()]}
+              for k, title, refs in cited]
+    groups = [g for g in groups if g["refs"]]
+    if not groups:
+        return None
+    return {
+        "by_panel": groups,
+        "n_panels": len(groups),
+        "n_refs": sum(len(g["refs"]) for g in groups),
+    }
 
 
 def cost_of_borrowing(capital_structure: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:

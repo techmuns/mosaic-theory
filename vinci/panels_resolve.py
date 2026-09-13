@@ -131,6 +131,10 @@ def _resolve_requirement(
             return False, "this name is in neither the snapshot's rows nor its freshness list"
         return (src.get(req.detail) is not None), (
             f"the snapshot carries no {req.detail!r} for this name")
+    if req.kind == "page_sources":
+        # Resolved by the EMITTER, which is the only layer that can see the other panels. The
+        # resolver answers presence from committed artifacts and has no view of the page.
+        return True, ""
     if req.kind == "criterion":
         if record is None:
             return False, ("no scenario record on file, so there is no measured criterion to put a "
