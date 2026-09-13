@@ -702,6 +702,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -709,7 +710,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -805,20 +805,38 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001628280-26-054746",
-          "8-K 0001628280-26-054294 EX-99.1",
-          "8-K 0001628280-26-035798 EX-99.1",
-          "8-K 0001628280-26-032097 EX-99.1",
-          "8-K 0001628280-26-007674 EX-99.1",
-          "8-K 0001628280-25-050164 EX-99.1",
-          "8-K 0001628280-25-038873 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226",
+              "shelf registrations 1 (S-3ASR, last 2024-03-01) · employee-plan (S-8) 1 (S-8, last 2025-08-08) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -1041,6 +1059,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -1048,7 +1067,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -1136,19 +1154,38 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001772016-26-000022",
-          "8-K 0001628280-26-052137 EX-99.1",
-          "8-K 0001628280-26-030115 EX-99.1",
-          "8-K 0001628280-26-004789 EX-99.1",
-          "8-K 0001628280-25-053329 EX-99.1",
-          "8-K 0001628280-25-052773 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983",
+              "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -1408,6 +1445,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -1415,7 +1453,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -1508,19 +1545,38 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001352010-26-000046",
-          "8-K 0001352010-26-000043 EX-99.1",
-          "8-K 0001352010-26-000026 EX-99.1",
-          "8-K 0001352010-26-000010 EX-99.1",
-          "8-K 0001352010-25-000053 EX-99.1",
-          "8-K 0001352010-25-000050 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685",
+              "shelf registrations 1 (S-3ASR, last 2023-10-03) · employee-plan (S-8) 3 (S-8, last 2026-08-06) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -1743,6 +1799,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": true,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -1750,7 +1807,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {
@@ -1847,28 +1903,6 @@
     },
     {
       "ticker": "GOOGL",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources",
-      "state": "ready",
-      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001652044-26-000071",
-          "8-K 0001652044-26-000066 EX-99.1",
-          "8-K 0001193125-26-257724 EX-99.1",
-          "8-K 0001652044-26-000043 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "GOOGL",
       "key": "commissioning",
       "tier": "cohort",
       "title": "Built but not running",
@@ -1934,6 +1968,48 @@
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)"
       ],
+      "render_config": {}
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264",
+              "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-08-24"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
       "render_config": {}
     },
     {
@@ -2182,6 +2258,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -2189,7 +2266,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -2288,19 +2364,52 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0000749251-26-000245",
-          "8-K 0000749251-26-000243 EX-99.1",
-          "8-K 0000749251-26-000165 EX-99.1",
-          "8-K 0000749251-26-000028 EX-99.1",
-          "8-K 0000749251-25-000080 EX-99.1",
-          "8-K 0000749251-25-000044 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-07-20 · benchmark MDY (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via bear reason amendment",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946",
+              "shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          }
+        ],
+        "n_panels": 5,
+        "n_refs": 7
       },
       "sources": [],
       "render_config": {}
@@ -2527,6 +2636,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -2534,7 +2644,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -2618,29 +2727,6 @@
     },
     {
       "ticker": "LLY",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources",
-      "state": "ready",
-      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0000059478-26-000081",
-          "8-K 0000059478-26-000077 EX-99.1",
-          "8-K 0000059478-26-000008 EX-99.1",
-          "8-K 0000059478-25-000251 EX-99.1",
-          "8-K 0000059478-25-000202 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "LLY",
       "key": "segment_economics",
       "tier": "cohort",
       "title": "Segment revenue and operating income",
@@ -2685,6 +2771,48 @@
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)"
       ],
+      "render_config": {}
+    },
+    {
+      "ticker": "LLY",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175",
+              "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
       "render_config": {}
     },
     {
@@ -2807,13 +2935,13 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)"
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -2915,19 +3043,38 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001628280-26-055372",
-          "8-K 0001628280-26-055471 EX-99.1",
-          "8-K 0001628280-26-033601 EX-99.1",
-          "8-K 0001628280-26-018235 EX-99.1",
-          "8-K 0001628280-25-051130 EX-99.1",
-          "8-K 0001628280-25-039708 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882",
+              "shelf registrations 2 (S-3/S-3/A, last 2025-04-28); prospectus supplements 1 (424B5, last 2025-10-03) — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -3068,13 +3215,13 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)"
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -3162,20 +3309,38 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001902733-26-000066",
-          "8-K 0001902733-26-000064 EX-99.1",
-          "8-K 0001902733-26-000019 EX-99.1",
-          "8-K 0001902733-25-000133 EX-99.1",
-          "8-K 0001902733-25-000130 EX-99.1",
-          "8-K 0001902733-25-000105 EX-99.1",
-          "8-K 0001902733-25-000074 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024",
+              "no shelf/supplement/fresh registration · employee-plan (S-8) 3 (S-8, last 2026-03-31) — routine — 3y window to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -3402,6 +3567,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -3409,7 +3575,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -3498,28 +3663,6 @@
     },
     {
       "ticker": "NFLX",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources",
-      "state": "ready",
-      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001065280-26-000212",
-          "8-K 0001065280-26-000211 EX-99.1",
-          "8-K 0001065280-26-000137 EX-99.1",
-          "8-K 0001065280-26-000033 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "NFLX",
       "key": "commissioning",
       "tier": "cohort",
       "title": "Built but not running",
@@ -3585,6 +3728,48 @@
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)"
       ],
+      "render_config": {}
+    },
+    {
+      "ticker": "NFLX",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568",
+              "shelf registrations 1 (S-3ASR, last 2024-07-29); prospectus supplements 4 (424B2/424B5, last 2026-07-21) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
       "render_config": {}
     },
     {
@@ -3835,13 +4020,13 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)"
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -3932,19 +4117,52 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001702744-26-000023",
-          "8-K 0001702744-26-000021 EX-99.1",
-          "8-K 0001702744-26-000010 EX-99.1",
-          "8-K 0001702744-26-000004 EX-99.1",
-          "8-K 0001702744-25-000043 EX-99.1",
-          "8-K 0001702744-25-000035 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-08-04 · benchmark IWM (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via underwrite_date",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163",
+              "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2026-02-06) — routine — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          }
+        ],
+        "n_panels": 5,
+        "n_refs": 7
       },
       "sources": [],
       "render_config": {}
@@ -4015,7 +4233,6 @@
       "reason": "metric_path 'valuation.ev_ebitda' — the current multiple is the left-hand side of the distance; without it there is no distance to draw. TEV/LTM EBITDA is NM at the latest Close [2026-06-30] — no meaningful current multiple, and an older quarter is not one; metric_path 'valuation.range_position' — a multiple alone is not a position — 25.8x means nothing until it is placed in the name's own range, which is what makes compression visible. TEV/LTM EBITDA is NM at the latest Close [2026-06-30] — no range position",
       "value": {},
       "sources": [
-        "",
         ""
       ],
       "render_config": {}
@@ -4129,32 +4346,6 @@
     },
     {
       "ticker": "TECX",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources",
-      "state": "ready",
-      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001193125-26-338062",
-          "8-K 0001193125-26-338000 EX-99.1",
-          "8-K 0001193125-26-266040 EX-99.1",
-          "8-K 0001193125-26-212069 EX-99.1",
-          "8-K 0001193125-26-076843 EX-99.1",
-          "8-K 0001193125-25-269573 EX-99.1",
-          "8-K 0001193125-25-256958 EX-99.1",
-          "8-K 0001193125-25-175567 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "TECX",
       "key": "cost_of_borrowing",
       "tier": "cohort",
       "title": "Cost of borrowing",
@@ -4168,6 +4359,34 @@
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)"
       ],
+      "render_config": {}
+    },
+    {
+      "ticker": "TECX",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838",
+              "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24"
+            ]
+          }
+        ],
+        "n_panels": 1,
+        "n_refs": 2
+      },
+      "sources": [],
       "render_config": {}
     },
     {
@@ -4288,6 +4507,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -4295,7 +4515,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -4389,29 +4608,6 @@
     },
     {
       "ticker": "UBER",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources",
-      "state": "ready",
-      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001543151-26-000032",
-          "8-K 0001543151-26-000027 EX-99.1",
-          "8-K 0001543151-26-000019 EX-99.1",
-          "8-K 0001543151-26-000011 EX-99.1",
-          "8-K 0001543151-25-000030 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "UBER",
       "key": "segment_economics",
       "tier": "cohort",
       "title": "Segment revenue and operating income",
@@ -4456,6 +4652,48 @@
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)"
       ],
+      "render_config": {}
+    },
+    {
+      "ticker": "UBER",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059",
+              "shelf registrations 1 (S-3ASR, last 2026-02-13); prospectus supplements 4 (424B2/424B3, last 2025-09-10) · employee-plan (S-8) 2 (S-8, last 2025-02-14) — routine — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
       "render_config": {}
     },
     {
@@ -4680,6 +4918,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -4687,7 +4926,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -4786,28 +5024,6 @@
     },
     {
       "ticker": "V",
-      "key": "sources",
-      "tier": "universal",
-      "title": "Sources",
-      "state": "ready",
-      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
-      "cadence": "event",
-      "missing": [],
-      "reason": "",
-      "value": {
-        "refs": [
-          "10-Q 0001403161-26-000104",
-          "8-K 0001403161-26-000103 EX-99.1",
-          "8-K 0001403161-26-000077 EX-99.1",
-          "8-K 0001403161-26-000044 EX-99.1"
-        ]
-      },
-      "sources": [],
-      "render_config": {}
-    },
-    {
-      "ticker": "V",
       "key": "segment_economics",
       "tier": "cohort",
       "title": "Segment revenue and operating income",
@@ -4852,6 +5068,48 @@
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)"
       ],
+      "render_config": {}
+    },
+    {
+      "ticker": "V",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources",
+      "state": "ready",
+      "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096",
+              "shelf registrations 1 (S-3ASR, last 2024-07-24); prospectus supplements 6 (424B2/424B3, last 2026-04-13); merger registrations 5 (S-4/S-4/A, last 2026-04-06) — 3y window to 2026-08-14"
+            ]
+          },
+          {
+            "key": "cost_of_borrowing",
+            "title": "Cost of borrowing",
+            "refs": [
+              "CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 4
+      },
+      "sources": [],
       "render_config": {}
     },
     {
@@ -5005,6 +5263,7 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)",
@@ -5012,7 +5271,6 @@
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -5092,18 +5350,44 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0001193125-26-335490",
-          "8-K 0001193125-26-335111 EX-99.1",
-          "8-K 0001193125-26-239351 EX-99.1",
-          "8-K 0001193125-26-209031 EX-99.1",
-          "8-K 0001193125-26-067015 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "the_call",
+            "title": "The call",
+            "refs": [
+              "monitor snapshot row · entry 2026-06-17 · benchmark IWM (cap band, assigned at entry)"
+            ]
+          },
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+              "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
+            ]
+          },
+          {
+            "key": "attribution",
+            "title": "Position vs its benchmark",
+            "refs": [
+              "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+            ]
+          }
+        ],
+        "n_panels": 4,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
@@ -5349,13 +5633,13 @@
         ],
         "current_is_last_point": true,
         "range_excludes_current": true,
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "metric_is_declared": false,
         "metrics_available": [
           "EV/EBITDA (TEV/LTM)"
         ]
       },
       "sources": [
-        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {}
@@ -5441,17 +5725,38 @@
       "title": "Sources",
       "state": "ready",
       "changes_the_call": "Nothing — it makes the other tiles checkable rather than merely legible.",
-      "caveat": "",
+      "caveat": "Each entry is the source the panel above it actually reads. A source listed here is not the same as a source verified: it names where to look, and looking is still yours.",
       "cadence": "event",
       "missing": [],
       "reason": "",
       "value": {
-        "refs": [
-          "10-Q 0000793074-26-000140",
-          "8-K 0000793074-26-000129 EX-99.1",
-          "8-K 0000793074-26-000092 EX-99.1",
-          "8-K 0000793074-26-000009 EX-99.1"
-        ]
+        "by_panel": [
+          {
+            "key": "multiple_and_price",
+            "title": "Multiple vs its own history",
+            "refs": [
+              "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+            ]
+          },
+          {
+            "key": "filing_watch",
+            "title": "Printed since the underwrite",
+            "refs": [
+              "last evidence via bull reason amendment",
+              "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+            ]
+          },
+          {
+            "key": "dilution",
+            "title": "New securities registered for sale",
+            "refs": [
+              "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+              "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
+            ]
+          }
+        ],
+        "n_panels": 3,
+        "n_refs": 5
       },
       "sources": [],
       "render_config": {}
