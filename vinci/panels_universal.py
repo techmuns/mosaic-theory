@@ -161,14 +161,16 @@ SOURCES = PanelSpec(
     title="Sources",
     requires=(
         Requirement(
-            kind="metric_path",
-            detail="primary_source.filing",
-            why="every other panel's figure is only as good as the filing behind it; this panel is "
-            "where a reader checks rather than trusts",
+            kind="page_sources",
+            detail="panels on this page that cite a source",
+            why="this tile answers where the numbers ABOVE came from, so it is built from those "
+            "panels — with none of them citing anything there is no provenance to show",
         ),
     ),
     cadence="event",
     changes_the_call="Nothing — it makes the other tiles checkable rather than merely legible.",
+    caveat="Each entry is the source the panel above it actually reads. A source listed here is "
+    "not the same as a source verified: it names where to look, and looking is still yours.",
 )
 
 #: Declaration order is RENDER order, and it is an argument rather than a list: the call first

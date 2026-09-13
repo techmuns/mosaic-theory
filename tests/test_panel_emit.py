@@ -338,23 +338,19 @@ const forms = [["424B2", 20], ["8-K", 9], ["S-8", 4], ["S-3", 3],
                ["S-4", 2], ["6-K", 1], ["FWP", 1]];
 const dil = panelGridHtml([{ ...base, key: "dilution", title: "D",
   value: { line: "a line", forms, window_days: 1095 } }], { ticker: "AAA" });
-const refs = Array.from({length: 8}, (_, i) => `10-Q 000165204${i}-26-0000${i}`);
-const src = panelGridHtml([{ ...base, key: "sources", title: "S", value: { refs } }],
-  { ticker: "AAA" });
+
 // ...and the same three when nothing overflows: no summary line may appear.
 const tl2 = panelGridHtml([{ ...base, key: "filing_watch", title: "F",
   value: { last_evidence_date: "2026-01-01", newer_filings: nine.slice(0, 3),
            next_expected_print: "2026-11-01", unread_print: false } }], { ticker: "AAA" });
-const src2 = panelGridHtml([{ ...base, key: "sources", title: "S",
-  value: { refs: refs.slice(0, 2) } }], { ticker: "AAA" });
+
 console.log(JSON.stringify({
   timelineStatesRest: /\+5 more/.test(tl) && /of 9 filed since/.test(tl),
   timelineDrawsFour: (tl.match(/filed since/g) || []).length === 5,   // 4 dots + the overflow
   formsStateRest: /showing 5 of 7 form types/.test(dil),
-  sourcesStateRest: /showing 5 of 8/.test(src),
-  sourcesHeadlineIsTheTruth: /pn-big">8</.test(src),
+
   quietTimelineSaysNothing: !/more/.test(tl2),
-  quietSourcesSayNothing: !/showing/.test(src2),
+
 }));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
@@ -384,11 +380,13 @@ def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
         base = [_re.sub(r"\s*(POS|POSASR)$|/A$", "", str(c)).strip() for c, _n in forms]
         return len({means.get(b, b) for b in base})
 
-    forms_max = refs_max = newer_max = 0
+    forms_max = newer_max = 0
     for p in _snap().get("panels") or []:
         v = p.get("value") or {}
         forms_max = max(forms_max, _groups(v.get("forms") or []))
-        refs_max = max(refs_max, len(v.get("refs") or []))
+        # `sources` no longer truncates — it groups by panel and is bounded by the panel count, so
+        # there is no cap here to witness. Measuring the old flat `refs` would be measuring a
+        # quantity nothing reads.
         newer_max = max(newer_max, len(v.get("newer_filings") or []))
     # STATED, NOT ASSERTED: after grouping, the deepest name (TECX) sits at exactly the cap, so the
     # form-bar truncation has NO corpus witness today — it is proven by construction only, like the
@@ -397,7 +395,7 @@ def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
     assert forms_max <= 5, (
         f"a name now shows {forms_max} filing KINDS — the form-bar truncation has a corpus witness "
         f"again, so assert the overflow instead of this line")
-    assert refs_max > 5, f"no committed dossier overflows the source list (max {refs_max})"
+
     # Stated, not asserted: the timeline cap is unwitnessed on this corpus today.
     assert newer_max <= 4, (
         f"a name now carries {newer_max} newer filings — the timeline cap HAS a corpus witness, so "

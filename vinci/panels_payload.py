@@ -27,7 +27,7 @@ a missing optional key (an older committed snapshot will not carry a field added
                        window_days}
   attribution         {position_return, benchmark, benchmark_return, excess, days_elapsed,
                        horizon_days}
-  sources             {refs: [...]}
+  sources             {by_panel: [{key, title, refs: [...]}], n_panels, n_refs}
   commissioning       {periods: [{period, not_yet_in_service, in_service, ratio, like_for_like}]}
   segment_economics   {rows: [{segment, metric, period, value}]}
   cost_of_borrowing   {fixed_pct, fixed_coverage, all_in_pct, all_in_coverage, floating_share,
@@ -137,6 +137,12 @@ def multiple_and_price(valuation: dict[str, Any], *,
         "range_excludes_current": current_is_last,
         # WHETHER THIS IS THE NAME'S DECLARED BASIS or the repo default. The tile must be able to
         # say which: "the multiple the case rests on" and "a multiple" are different claims.
+        # THE CITATION TRAVELS WITH THE DATA. The emitter used to attach `valuation.ev_ebitda`'s
+        # source_ref — which names TEV/LTM EBITDA — and once the metric became selectable that
+        # citation described a different number from the one shown. `own_history` is where the
+        # series actually comes from and its ref is metric-agnostic, so the payload carries it and
+        # no caller has to guess.
+        "source_ref": str((valuation.get("own_history") or {}).get("source_ref") or ""),
         "metric_is_declared": metric is not None,
         # SORTED, so the payload carries no trace of the input's order. Left as-is this list was
         # the one remaining thing a reshuffle could change — which the order-independence pin
@@ -223,15 +229,31 @@ def dilution(pipeline: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def sources(primary: dict[str, Any]) -> dict[str, Any]:
-    refs: list[str] = []
-    filing = primary.get("filing") or {}
-    if filing.get("source_ref"):
-        refs.append(str(filing["source_ref"]))
-    for r in primary.get("releases") or []:
-        if isinstance(r, dict) and r.get("source_ref"):
-            refs.append(str(r["source_ref"]))
-    return {"refs": refs}
+def sources(cited: list[tuple[str, str, list[str]]]) -> dict[str, Any] | None:
+    """Where each number ON THIS PAGE came from, grouped by the panel that shows it.
+
+    BUILT FROM THE OTHER PANELS, not from the dossier's primary-source section. The first cut read
+    `primary_source.filing` and listed the name's 10-Q and three 8-K exhibits under the heading
+    "what the numbers above rest on" — and NOT ONE of them sourced anything on the page. Measured:
+    zero of ten tiles' real sources appeared in it. The multiple comes from CIQ Multiples, the cost
+    of borrowing from the CIQ capital panel, attribution from Polygon closes, the shelf count from
+    the EDGAR filing INDEX, the call from the ledger row. A provenance tile that cites none of them
+    is the same class as the other two defects this build found: a heading describing what the
+    panel was meant to show rather than what it holds.
+
+    `cited` is `(key, title, refs)` per rendered panel, so the tile answers its own title by
+    construction and cannot drift from the tiles above it.
+    """
+    groups = [{"key": k, "title": title, "refs": [r for r in refs if str(r).strip()]}
+              for k, title, refs in cited]
+    groups = [g for g in groups if g["refs"]]
+    if not groups:
+        return None
+    return {
+        "by_panel": groups,
+        "n_panels": len(groups),
+        "n_refs": sum(len(g["refs"]) for g in groups),
+    }
 
 
 def cost_of_borrowing(capital_structure: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:

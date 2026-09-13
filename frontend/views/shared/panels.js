@@ -50,7 +50,10 @@ const rate = (v, d = 2) => (typeof v === "number" && isFinite(v) ? v.toFixed(d) 
 // beside a partial body is what makes it convincing.
 const TIMELINE_DOTS = 4;   // "filed since" dots before the overflow dot
 const FORM_BARS = 5;       // form-mix bars before the summary line
-const SOURCE_REFS = 5;     // primary filings listed before the summary line
+// NO CAP ON SOURCES. It was capped at 5 while it held a flat list of filings; it now groups by the
+// panel that shows each number and is bounded by the panel count — one or two refs each. Truncating
+// the one tile a reader opens to CHECK would defeat its purpose, and the list can no longer run
+// away. Removed deliberately rather than left at a number that never fires.
 
 // --- exhibits -------------------------------------------------------------------------------
 // Geometry is computed from the SAME numbers that are printed beside it, so a bar can never
@@ -249,39 +252,16 @@ const BODY = {
       + latestLine(v);
   },
   sources(v) {
-    const refs = v.refs || [];
-    const shown = refs.slice(0, SOURCE_REFS);
-    // The count in the headline is CORRECT and the body is PARTIAL — exactly the pair the rule
-    // names as what makes a truncation convincing. This is the tile a reader opens to CHECK rather
-    // than trust, so an unstated remainder here is the worst-placed instance of the three.
-    const more = refs.length > shown.length
-      ? `<p class="pn-sub">showing ${fmtInt(shown.length)} of ${fmtInt(refs.length)} —
-         the full list is in the day's monitor JSON</p>` : "";
-    return `<p class="pn-big">${fmtInt(refs.length)}<small>primary filings behind the numbers
-      above</small></p>` + shown.map((r) =>
-      `<p class="pn-mono">${escapeHtml(String(r))}</p>`).join("") + more;
-  },
-  theme_thesis(v) {
-    const ts = v.triggers || [];
-    if (!ts.length) return "";
-    // THE BASIS RENDERS BESIDE THE TRIGGER, because a criterion nobody can check is not a
-    // criterion — and a basis naming a source OUTSIDE this repo is marked as such rather than
-    // sharing the look of one checkable against filing cadence. An unchecked claim must not borrow
-    // the credibility of a checked one.
-    return `<ul class="pn-theme">${ts.map((t) => {
-      const days = typeof t.days_remaining === "number"
-        ? (t.days_remaining < 0 ? `${fmtInt(-t.days_remaining)}d past`
-          : `${fmtInt(t.days_remaining)}d left`) : DASH;
-      const kind = t.basis_kind === "timing" ? "checkable"
-        : t.basis_kind === "external" ? "outside this repo" : "no basis stated";
-      return `<li class="${t.deadline_passed ? "passed" : ""}">
-        <span class="pn-tk">${escapeHtml(String(t.kind || ""))}</span>
-        ${escapeHtml(String(t.trigger || ""))}
-        <span class="pn-tmeta">${escapeHtml(fmtDate(t.deadline))} · ${days}${
-        t.deadline_passed ? " · WINDOW CLOSED" : ""}</span>
-        <span class="pn-tbasis ${t.basis_kind}">basis (${kind}): ${
-        escapeHtml(String(t.basis || "—"))}</span></li>`;
-    }).join("")}</ul>`;
+    const groups = v.by_panel || [];
+    if (!groups.length) return "";
+    // GROUPED BY THE PANEL THAT SHOWS THE NUMBER, so the tile answers its own heading. A flat list
+    // of filings told a reader that something on the page rested on them without saying what — and
+    // in the first cut, nothing did.
+    return `<p class="pn-lead">Where each figure on this page comes from — <b>${
+      fmtInt(v.n_refs)}</b> sources behind ${fmtInt(v.n_panels)} panels.</p>`
+      + `<ul class="pn-srcgrp">${groups.map((g) =>
+        `<li><b>${escapeHtml(String(g.title || g.key))}</b>${g.refs.map((r) =>
+          `<span>${escapeHtml(String(r))}</span>`).join("")}</li>`).join("")}</ul>`;
   },
   cost_of_borrowing(v) {
     // COVERAGE IS NEVER OPTIONAL BESIDE A RATE. AORT's fixed average is struck over one $0.9M bond

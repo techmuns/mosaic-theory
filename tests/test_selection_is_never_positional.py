@@ -122,3 +122,61 @@ def test_every_name_shown_a_default_metric_is_marked_as_such() -> None:
         seen_declared |= v["metric_is_declared"]
     assert seen_default and seen_declared, (
         "the corpus no longer exercises both paths — this check would prove nothing")
+
+
+def test_the_sources_tile_indexes_the_panels_on_its_own_page() -> None:
+    """THE THIRD INSTANCE of the claim/data class, closed.
+
+    The tile is headed "where each figure on this page comes from". Its first cut read
+    `primary_source.filing` and listed the name's 10-Q and three 8-K exhibits — and **not one of
+    them sourced anything on the page**. Measured at the time: zero of ten tiles' real sources
+    appeared in it. The multiple comes from CIQ Multiples, the cost of borrowing from the CIQ
+    capital panel, attribution from Polygon closes, the shelf count from the EDGAR filing INDEX,
+    the call from the ledger row.
+
+    Asserted as a RELATIONSHIP, not a list: the set the tile indexes must equal the set of panels
+    on the page that cite anything. That holds whatever panels exist next year, which a pin on
+    today's six would not.
+    """
+    snap = json.loads((ROOT / "data" / "monitor" / "2026-09-10.json").read_text())
+    by_ticker: dict[str, list[dict]] = {}
+    for p in snap["panels"]:
+        by_ticker.setdefault(p["ticker"], []).append(p)
+
+    checked = 0
+    for ticker, panels in by_ticker.items():
+        src = next((p for p in panels if p["key"] == "sources"), None)
+        if src is None or src["state"] != "ready":
+            continue
+        checked += 1
+        indexed = {g["key"] for g in src["value"]["by_panel"]}
+        citing = {p["key"] for p in panels
+                  if p["key"] != "sources" and p["state"] == "ready" and p.get("sources")}
+        assert indexed == citing, (
+            f"{ticker}: the sources tile indexes {sorted(indexed)} but the page's citing panels "
+            f"are {sorted(citing)}")
+        # ...and every ref it shows is a ref one of those panels actually carries.
+        on_page = {r for p in panels for r in (p.get("sources") or [])}
+        for g in src["value"]["by_panel"]:
+            for ref in g["refs"]:
+                assert ref in on_page, f"{ticker}: sources tile cites {ref!r}, on no panel"
+    assert checked, "no ready sources tile in the corpus — this check would prove nothing"
+
+
+def test_the_multiple_panel_cites_the_metric_it_shows() -> None:
+    """A citation that names a different metric from the number above it is the same defect wearing
+    provenance. The emitter attached `valuation.ev_ebitda`'s ref — which says TEV/LTM EBITDA — and
+    once the metric became selectable that described a number the tile no longer showed."""
+    snap = json.loads((ROOT / "data" / "monitor" / "2026-09-10.json").read_text())
+    seen = 0
+    for p in snap["panels"]:
+        if p["key"] != "multiple_and_price" or p["state"] != "ready":
+            continue
+        seen += 1
+        metric = str(p["value"]["metric"])
+        refs = " ".join(p.get("sources") or [])
+        if "EPS" in metric:
+            assert "EBITDA" not in refs, (
+                f"{p['ticker']}: shows {metric} and cites an EBITDA source")
+        assert refs.strip(), f"{p['ticker']}: shows a multiple and cites nothing"
+    assert seen, "no ready multiple panel — this check would prove nothing"

@@ -47,7 +47,7 @@ PanelTier = Literal["universal", "cohort", "theme", "name"]
 #: What a requirement is ABOUT. Kept as data rather than a callable so a spec can be read, diffed
 #: and reviewed without executing it — and so a refusal can name the thing that failed.
 RequirementKind = Literal["tag", "rfile_note", "metric_path", "feed", "upload",
-                          "ledger_row", "snapshot_field", "criterion"]
+                          "ledger_row", "snapshot_field", "criterion", "page_sources"]
 
 
 class Requirement(BaseModel, frozen=True):
