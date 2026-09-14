@@ -38,8 +38,16 @@ class ChartingSeries:
     dates: tuple[date, ...]
     #: column name -> value per date, ``None`` where absent OR sentinel-dropped
     values: dict[str, tuple[float | None, ...]]
-    #: column name -> (sentinel value, count dropped, first real date)
+    #: column name -> (sentinel value, count dropped, first real date AFTER the run)
     sentinels: dict[str, tuple[float, int, date | None]] = field(default_factory=dict)
+    #: column name -> (first, last) date of an INTERIOR run. `first real date` alone is misleading
+    #: for these — there is real data BEFORE the run too — so the span is carried separately.
+    interior: dict[str, tuple[date, date]] = field(default_factory=dict)
+    #: column name -> why it carries NO USABLE DATA. A column that is placeholder-then-nothing has
+    #: no varying data to contrast against, so no sentinel is reported and the banner would
+    #: otherwise read clean. CoreWeave (NasdaqGS:CRWV) in the Set-1 pane is 905 cells of 42.0 then
+    #: 350 nulls: loss-making, so no positive forward EPS and no forward P/E exists to pull.
+    unusable: dict[str, str] = field(default_factory=dict)
     non_numeric: int = 0
 
     @property
@@ -47,16 +55,24 @@ class ChartingSeries:
         return sum(n for _, n, _ in self.sentinels.values())
 
     def report(self) -> str:
-        """NEVER SILENT — one line naming every cell dropped and why."""
-        if not self.sentinels:
-            return (f"charting: {len(self.dates)} dates x {len(self.columns)} series, "
-                    f"header row {self.header_row} ({self.date_label!r}); no sentinel runs")
-        parts = ", ".join(
-            f"{c}={v:g} x{n} (first real {d})" for c, (v, n, d) in sorted(self.sentinels.items())
-        )
-        return (f"charting: {len(self.dates)} dates x {len(self.columns)} series, header row "
-                f"{self.header_row} ({self.date_label!r}); DROPPED {self.dropped} sentinel cells — "
-                f"{parts}")
+        """NEVER SILENT — one line naming every cell dropped, every interior gap, and every column
+        that carries nothing usable. A clean banner must mean CLEAN DATA, not FOUND NOTHING."""
+        head = (f"charting: {len(self.dates)} dates x {len(self.columns)} series, "
+                f"header row {self.header_row} ({self.date_label!r})")
+        parts = []
+        if self.sentinels:
+            det = ", ".join(
+                f"{c}={v:g} x{n}"
+                + (f" [INTERIOR {self.interior[c][0]}..{self.interior[c][1]}]" if c in self.interior
+                   else f" (first real {d})")
+                for c, (v, n, d) in sorted(self.sentinels.items()))
+            parts.append(f"DROPPED {self.dropped} sentinel cells — {det}")
+        else:
+            parts.append("no sentinel runs")
+        if self.unusable:
+            parts.append("NO USABLE DATA — " + ", ".join(
+                f"{c}: {why}" for c, why in sorted(self.unusable.items())))
+        return head + "; " + "; ".join(parts)
 
     def live_at(self, when: date) -> int:
         """How many series carry real data at ``when`` — the peer set DRIFTS, so a median's
@@ -67,30 +83,71 @@ class ChartingSeries:
         return sum(1 for c in self.columns if self.values[c][i] is not None)
 
 
-def _leading_sentinel(col: list[float | None]) -> tuple[float, int] | None:
-    """``(value, length)`` of a leading run of ONE repeated value, when the column varies after it.
+#: Minimum length for an INTERIOR constant run to be called a sentinel. A LEADING run needs only
+#: n>=2 because its position is already suspicious; an interior repeat of two sessions is ordinary.
+#: Five is a face-validity floor — a forward P/E is price over estimates and BOTH move, so a week of
+#: byte-identical values whose number occurs nowhere else in the column is not a market. Never tuned
+#: on an outcome; raise it if a real series is ever caught.
+_MIN_INTERIOR_RUN = 5
 
-    Shape, not value — nothing here knows about 42.0. THREE conditions, each earned by a case that
-    broke an earlier cut:
 
-    * the run REPEATS (``n >= 2``). A single leading point that merely differs from the next is an
-      ordinary first observation; the first cut flagged Agilent's 22.34 as a one-cell sentinel.
-    * the value NEVER RECURS after the run. In the observed export the sentinel appears zero times
-      once a peer lists, whereas a genuinely repeated price recurs; this is what separates them.
-    * the column VARIES afterwards, so a flat series is never mistaken for a pre-listing run.
+def _constant_runs(col: list[float | None]) -> list[tuple[float, int, int]]:
+    """Every maximal run of ONE repeated non-None value, as ``(value, start, length)``.
+
+    Nulls END a run rather than extending it: a gap is not evidence that the value either side is
+    the same placeholder, and treating it as one would merge two unrelated blocks.
     """
-    first = next((v for v in col if v is not None), None)
-    if first is None:
+    out: list[tuple[float, int, int]] = []
+    i = 0
+    while i < len(col):
+        v = col[i]
+        if v is None:
+            i += 1
+            continue
+        j = i
+        while j < len(col) and col[j] == v:
+            j += 1
+        out.append((v, i, j - i))
+        i = j
+    return out
+
+
+def _sentinel_run(col: list[float | None]) -> tuple[float, int, int] | None:
+    """``(value, start, length)`` of the column's placeholder run — LEADING **OR INTERIOR**.
+
+    Shape, not value — nothing here knows about 42.0. The discriminating condition is the second
+    one: **a placeholder occurs nowhere else in the column, while a genuinely repeated price
+    recurs.** Length only gates how much repetition is needed before the question is worth asking.
+
+    * the run REPEATS — ``n >= 2`` leading, ``n >= _MIN_INTERIOR_RUN`` interior (a leading run's
+      POSITION is already evidence; an interior one's is not). The first cut flagged Agilent's
+      single leading 22.34 as a sentinel, which is why leading needs 2 rather than 1.
+    * the value occurs NOWHERE OUTSIDE the run.
+    * the column VARIES outside the run, so a flat series is never mistaken for a placeholder.
+
+    INTERIOR RUNS WERE INVISIBLE UNTIL 2026-09-14. The original walked from index 0 and stopped at
+    the first differing cell, so it could only ever see a LEADING run. Nebius (NasdaqGS:NBIS) in the
+    Set-1 pane carries 665 cells of 42.0 from 2022-02-28 to 2024-10-18 — the Yandex trading
+    suspension — beginning at index 116, and the banner read *"no sentinel runs"* for it.
+    """
+    runs = _constant_runs(col)
+    for value, start, length in sorted(runs, key=lambda r: -r[2]):
+        if length < (2 if start == 0 else _MIN_INTERIOR_RUN):
+            continue
+        outside = [v for k, v in enumerate(col)
+                   if v is not None and not (start <= k < start + length)]
+        if not outside or value in outside or all(v == value for v in outside):
+            continue
+        return value, start, length
+    return None
+
+
+def _leading_sentinel(col: list[float | None]) -> tuple[float, int] | None:
+    """Back-compat shim: the leading case of :func:`_sentinel_run`, in its original shape."""
+    hit = _sentinel_run(col)
+    if hit is None or hit[1] != 0:
         return None
-    n = 0
-    for v in col:
-        if v != first:
-            break
-        n += 1
-    rest = [v for v in col[n:] if v is not None]
-    if n < 2 or not rest or all(v == first for v in rest) or first in rest:
-        return None
-    return first, n
+    return hit[0], hit[2]
 
 
 def read_charting(rows: list[list[Any]]) -> ChartingSeries:
@@ -128,19 +185,33 @@ def read_charting(rows: list[list[Any]]) -> ChartingSeries:
                 non_numeric += 1
     values: dict[str, tuple[float | None, ...]] = {}
     sentinels: dict[str, tuple[float, int, date | None]] = {}
+    interior: dict[str, tuple[date, date]] = {}
+    unusable: dict[str, str] = {}
     for j, c in enumerate(cols):
         col = raw[j]
-        hit = _leading_sentinel(col)
+        hit = _sentinel_run(col)
         if hit is not None:
-            val, n = hit
-            cleaned: list[float | None] = [None] * n
-            cleaned.extend(col[n:])
-            first_real = dates[n] if n < len(dates) else None
-            sentinels[c] = (val, n, first_real)
+            val, start, n = hit
+            cleaned: list[float | None] = list(col)
+            cleaned[start:start + n] = [None] * n
+            after = next((dates[k] for k in range(start + n, len(dates))
+                          if cleaned[k] is not None), None)
+            sentinels[c] = (val, n, after)
+            if start > 0:
+                interior[c] = (dates[start], dates[start + n - 1])
         else:
             cleaned = list(col)
         values[c] = tuple(cleaned)
-    return ChartingSeries(hdr, label, cols, tuple(dates), values, sentinels, non_numeric)
+        live = [v for v in cleaned if v is not None]
+        if not live:
+            runs = _constant_runs(col)
+            biggest = max((r[2] for r in runs), default=0)
+            unusable[c] = (f"placeholder-then-nothing ({biggest} constant cells, no varying data)"
+                           if biggest >= 2 else "no numeric values at all")
+        elif len(set(live)) == 1:
+            unusable[c] = f"flat at {live[0]:g} for its whole span — no variation to rank"
+    return ChartingSeries(hdr, label, cols, tuple(dates), values, sentinels,
+                          interior, unusable, non_numeric)
 
 
 @dataclass(frozen=True)
