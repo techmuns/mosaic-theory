@@ -160,3 +160,84 @@ def test_a_flat_peer_threshold_does_not_decide_the_verdict() -> None:
     market-wide day reads name-specific. Recorded so the number is never quoted bare."""
     strict = {(s.when - _D0).days: s.market_wide for s in _spikes(peer_threshold=0.20)}
     assert strict[7] is False
+
+
+# ---------------------------------------------------------------------------
+# INTERIOR sentinel runs and columns with nothing usable. Shapes are corpus-
+# observed in the 2026-09-14 Set-1 pane (NBIS 665 interior cells, CRWV
+# placeholder-then-nothing); levels are synthetic, so no licensed value lands here.
+# ---------------------------------------------------------------------------
+_INT_HDR = ["Dates", "Suspended", "Listed", "NeverPriced", "Choppy"]
+_INT_ROWS: list[list[object]] = [
+    _INT_HDR,
+    # Suspended: trades, then a long INTERIOR placeholder run, then trades again — the NBIS shape.
+    # Listed: a LEADING run then real data — the RDDT shape, which must still be caught.
+    # NeverPriced: placeholder for the whole span and nothing after — the CRWV shape.
+    # Choppy: a genuine 3-session repeat whose value RECURS later — must never be flagged.
+    [45000.0, 31.0, 42.0, 42.0, 20.0],
+    [45001.0, 32.0, 42.0, 42.0, 21.0],
+    [45002.0, 42.0, 42.0, 42.0, 21.0],
+    [45003.0, 42.0, 42.0, 42.0, 21.0],
+    [45004.0, 42.0, 30.0, 42.0, 22.0],
+    [45005.0, 42.0, 31.0, 42.0, 21.0],
+    [45006.0, 42.0, 32.0, 42.0, 23.0],
+    [45007.0, 33.0, 33.0, 42.0, 24.0],
+    [45008.0, 34.0, 34.0, 42.0, 25.0],
+]
+
+
+def _int_series():  # type: ignore[no-untyped-def]
+    return read_charting(_INT_ROWS)
+
+
+def test_an_interior_sentinel_run_is_caught_and_its_span_named() -> None:
+    """THE REGRESSION. The original walked from index 0, so it could only ever see a LEADING run —
+    Nebius carried 665 interior cells from a trading suspension and the banner read 'no sentinel
+    runs'. The span is reported because 'first real date' alone is misleading here: there is real
+    data BEFORE the run too."""
+    s = _int_series()
+    val, n, _ = s.sentinels["Suspended"]
+    assert (val, n) == (42.0, 5)
+    d0 = s.dates[0]
+    assert s.interior["Suspended"] == (d0 + timedelta(days=2), d0 + timedelta(days=6))
+    assert "INTERIOR" in s.report()
+    assert s.values["Suspended"][2:7] == (None,) * 5      # the run is blanked, not kept
+    assert s.values["Suspended"][0] == 31.0               # data BEFORE the run survives
+    assert s.values["Suspended"][-1] == 34.0              # and after
+
+
+def test_a_leading_run_is_still_caught_unchanged() -> None:
+    """NO REGRESSION on the case that already worked — the RDDT shape."""
+    s = _int_series()
+    val, n, first_after = s.sentinels["Listed"]
+    assert (val, n) == (42.0, 4)
+    assert "Listed" not in s.interior          # leading, so no span
+    assert first_after == s.dates[0] + timedelta(days=4)  # first date that CARRIES data
+
+
+def test_a_column_that_is_placeholder_then_nothing_is_reported_not_silent() -> None:
+    """THE SECOND SILENT FAILURE. CoreWeave was 905 placeholder cells then 350 nulls: the detector
+    correctly refuses to call it a sentinel (nothing varies to contrast against) and the banner
+    would otherwise read CLEAN for a column that is 100% unusable."""
+    s = _int_series()
+    assert "NeverPriced" not in s.sentinels
+    assert "NeverPriced" in s.unusable
+    assert "NO USABLE DATA" in s.report()
+
+
+def test_a_genuine_repeat_whose_value_recurs_is_never_flagged() -> None:
+    """NEGATIVE PIN, and it is the discriminating condition: a placeholder occurs NOWHERE ELSE in
+    the column, a real repeated price recurs. `Choppy` repeats 21.0 for three sessions and prints
+    21.0 again later — a value-based or length-only rule would eat it."""
+    s = _int_series()
+    assert "Choppy" not in s.sentinels
+    assert "Choppy" not in s.unusable
+    assert all(v is not None for v in s.values["Choppy"])
+
+
+def test_a_short_interior_repeat_is_below_the_floor() -> None:
+    """NEGATIVE PIN on the floor itself: two identical interior sessions are ordinary, which is why
+    an interior run needs `_MIN_INTERIOR_RUN` where a leading one needs only 2."""
+    rows = [_INT_HDR] + [[45000.0 + i, v, 10.0 + i, 5.0 + i, 7.0 + i]
+                         for i, v in enumerate([1.0, 2.0, 99.0, 99.0, 3.0, 4.0, 5.0, 6.0, 7.0])]
+    assert "Suspended" not in read_charting(rows).sentinels
