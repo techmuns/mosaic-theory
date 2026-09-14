@@ -106,6 +106,87 @@ basket is small-cap software near break-even at 72%. **That is a property of the
 is exactly why the measure is a MEDIAN over a window rather than a close** — the window sweep above
 shows the result is unmoved by it.
 
+## THE EARNINGS-BASE CONFOUND — raised 2026-09-14, tested on data in hand, NOT YET SETTLED
+
+**The objection.** Forward P/E diverges as EPS approaches zero. **Matching was on market cap within
+SIC 73 and nothing matched on PROFITABILITY.** If ratified names sit systematically closer to
+break-even than their matched peers — plausible, since they were ratified for growth-adjacent moats
+while passed names skew mature — then **+29.76 is an earnings-base artifact, not a valuation
+premium.** The spike evidence in this record is the objection's own support: **72% inverted at
+1.477%** is the signature of a near-zero denominator.
+
+**The premise is partly confirmed.** Ratified names DO carry higher multiples and sit nearer the
+explosive region:
+
+| multiple band | ratified | passed |
+|---|---:|---:|
+| <20x | 29 | **50** |
+| 20–35x | **15** | 8 |
+| 35–60x | **9** | 5 |
+| >60x | **6** | 3 |
+
+Median **20.3x ratified against 14.5x passed**; share above 60x **10% against 5%**.
+
+**But the confound's own prediction FAILS.** If the gap lived in the near-zero-EPS region it would
+collapse once names with comfortably positive earnings are the only ones left. **It does not:**
+
+| keep pairs where BOTH < | n | median gap | 95% CI |
+|---|---:|---:|---|
+| no trim | 56 | +29.8 | [+12.2, +33.3] |
+| 100x | 52 | **+31.5** | [+14.2, +35.4] |
+| 60x | 47 | **+32.1** | [+16.1, +36.9] |
+| 40x | 40 | **+30.4** | [+15.4, +36.4] |
+| 30x | 34 | +23.2 | [+11.7, +33.4] |
+
+**The CI's lower bound stays above the +10 threshold at every trim**, and trimming at 100x — which
+removes NET (198.0x), VRNS (198.6x) and PRCH (232.0x) — **raises** the gap. **NET is not the
+exhibit it appears to be: deleting it makes the finding stronger.**
+
+**This is a DIAGNOSTIC, NOT A REPLACEMENT ESTIMATE.** Trimming on the outcome variable is selection,
+and a name at 25x can still carry a depressed earnings base relative to its pair. **The confound is
+weakened, not eliminated — EV/Sales remains the deciding test**, on the same pairs, strata, window
+and registered method, where the denominator cannot approach zero. **Operator ruling 2026-09-14: the
+EV/Sales replication runs before the seven-name screen and before any leg-closing decision.**
+
+## THE PAIRED-DIFFERENCE DISTRIBUTION, which the CI hides
+
+| percentile | 0 | 10 | 25 | 50 | 75 | 90 | 100 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| gap | **−95.2** | −28.6 | +7.1 | **+31.0** | +51.8 | +70.8 | +80.4 |
+
+**Heavy left tail: 12 negative pairs carrying −460 of rank mass against +1,733 positive.** All
+twelve, shown in full:
+
+| ratified | | passed | | stratum | gap |
+|---|---:|---|---:|---|---:|
+| CLVT | 3.1x | CCO | 71.4x | small | **−95.2** |
+| DV | 12.3x | PRCH | 232.0x | mid | −78.6 |
+| BLKB | 8.4x | ASAN | 24.3x | mid | −66.1 |
+| CRNC | 11.2x | FVRR | 42.0x | small | −57.1 |
+| OTEX | 6.2x | TTD | 15.1x | mid | −44.6 |
+| NCNO | 15.7x | PAYO | 29.8x | mid | −32.1 |
+| CASS | 16.8x | CEVA | 40.3x | small | −28.6 |
+| ALRM | 19.4x | APPN | 31.0x | mid | −25.0 |
+| WIX | 13.9x | NIQ | 15.1x | mid | −12.5 |
+| FA | 15.3x | FRSH | 16.8x | mid | −8.9 |
+| YEXT | 9.1x | NRDS | 10.2x | small | −7.1 |
+| GTLB | 52.8x | NAVN | 108.7x | mid | −3.6 |
+
+**The seven-name residual IS this left tail** — CLVT, DV, BLKB, OTEX, YEXT appear here by
+construction. **So the "disagreement" set and the negative pairs are the same object seen twice**,
+which is coherent but means the seven are not independent corroboration of the headline.
+
+## TWO RECORDED LIMITS
+
+**N AND THE THRESHOLD ARE NO LONGER MATCHED.** N=69 was chosen because it detects **10.1** rank
+points at 80% power, against a threshold registered at 10. **Attrition to 56 pairs moves that to
+11.2 points — above the registered threshold.** Immaterial against an observed gap of ~30, but the
+matching was deliberate and is now broken; recorded rather than left to be rediscovered.
+
+**SCOPE: the finding speaks only to ratified names with POSITIVE FORWARD EPS — 59 of 69.** The ten
+without one are not a sampling gap but a population the metric cannot address at all.
+
+
 **BOUNDARY.** Source: operator's 13 Charting exports, `AI-revalue-theme/NTM PE 5Y/`, pulled
 2026-09-14, read the same day. **138 series — every manifest name present, none missing, none
 extra.** Metric **Forward P/E** on all 138; window 2021-09-13/14 → **2026-09-11** after truncating
