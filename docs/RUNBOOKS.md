@@ -316,6 +316,17 @@ EXPOSURE into an investment view were not written down.
    effective `basis` — and underwrite downward:
    `binding + driver-specific` → `quantified + driver-specific` → `committed + driver-specific`.
    An `indirect` tie is capped at committed by the tie gate and is the last call on anyone's time.
+   **CHECK PRICE HERE, WITH THE MATCHED-PAIR INSTRUMENT — not at step 12.** A ratified name whose
+   durability the market already pays for is not a candidate, and that is answerable BEFORE the
+   underwrite cycles: **matched pairs on size within sector, within-stratum percentile rank of a
+   BASE-FREE forward multiple** (`TEV/Forward Total Revenue` — a forward P/E cannot price a
+   loss-maker and drops it, which is a SELECTION not a reading). *Cause: `ai-value-migration` ran
+   two underwrite cycles and closed at step 12 on exactly this test; `glp1-drug-value-chain` did
+   check price at step 8 but with a point-in-time peer snapshot that gave five bases and four
+   answers. The instrument, not the stage, was what differed — and it now exists.* **NOT a screen
+   for CHEAPNESS: disagreement is only interpretable against a durability framework, and without one
+   cheap is just cheap** — CLVT and TDC sit in the cheap tail for deterioration this repo's own
+   sheet had already recorded.
    **EVERY SHORTLIST ENTRY CARRIES ITS `BOUNDARY` — window, filter, population, unit — beside the
    figure that admitted it.** Same four words as `docs/records/TEMPLATE.md`, applied one stage
    earlier; no command is built for this, it is a FORMAT RULE on the entry itself. *Cause: the

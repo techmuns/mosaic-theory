@@ -203,6 +203,19 @@ verdict placement.
   level down: the path was there, the net just did not carry it.** Any claim of the form "X has been
   doing Y" needs the segments, not the endpoints — and a leg of an underwrite is exactly such a
   claim.
+- **REMOVING A CORRUPTED NAME IS TWO OPERATIONS, NOT ONE.** It leaves the COMPARISON and it leaves
+  the RANKING POOL, and the second silently moves every other name's position. On 2026-09-14 a
+  correction reported *"+29.76 → +29.27 after removing FVRR"* — impossible for a sample median, since
+  dropping a below-median value can only RAISE it. Decomposed: the pair-drop alone gives **+30.95**
+  (the rise the arithmetic demands) and the fall to **+29.27** came from shrinking the stratum 43→42
+  and re-ranking all of it. **Both treatments were correct; reporting them as one hid a re-ranking
+  behind a deletion.** State the two effects separately, or the reader audits an impossible number.
+- **A COUNT TEST CATCHES SPARSE CORRUPTION AND CANNOT CATCH DENSE.** A guard of the form *"at least
+  N observations in the window"* asks whether data is PRESENT, never whether it is REAL. WIT, NTSK
+  and BBAI were excluded because their windows were nearly empty; **FVRR carried a FULL 21
+  observations, every one of them a placeholder** — more data than the threshold demanded, and all
+  of it fake. **Pair every count guard with a check on the VALUES**, or say plainly which half it
+  covers.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never
