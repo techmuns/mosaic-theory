@@ -363,3 +363,21 @@ small-cap panes. **The comparison becomes meaningful only across all 13.**
 **BOUNDARY.** Precision figures use the **observed SD of paired rank differences, 40.25 at n=56**,
 from this record, projected to a balanced split; two-sided 95% normal interval, 80% power, α=0.05.
 Pane arithmetic is 138 names at 11 series per pane. No new measurement. Dated 2026-09-14.
+**2026-09-14 (second entry) — ONE PAIR IN THIS RECORD WAS A SENTINEL, and the EV/Sales replication
+confirms the headline.**
+
+**`CRNC 11.2x vs FVRR 42.0x, gap −57.1`** appears above among the twelve negative pairs as a genuine
+disagreement. **It is not one. FVRR's 28-day measurement window is 21 of 21 placeholder cells**, so
+its median IS the `42.0` sentinel; its real forward values tail off at 0.20/0.21/0.27/0.31/0.07 on
+EV/Sales. The detector missed it because the placeholder also appears as **scattered US-market-holiday
+fills** across ~90% of live series on 38 dates (Memorial Days 2023–26, 2021-12-24, 2025-07-04), which
+makes the value "recur" and defeats the run rule's *occurs-nowhere-outside-the-run* condition.
+
+**Excluding FVRR and its pair moves the headline by 0.5 rank points and STRENGTHENS it** — median
+**+29.76 → +29.27**, mean +22.74 → **+24.28**, CI [+12.19, +33.28] → **[+13.91, +34.65]**, n 56 → 55.
+**The conclusion is unchanged; the count of negative pairs is 11, not 12.**
+
+**And the registered EV/Sales replication CONFIRMS** — median **+36.96**, CI **[+21.13, +38.39]**,
+n=67, with attrition collapsing from 13 names (10 ratified / 3 passed) to **1 (0 / 1)**. The
+earnings-base confound is eliminated as an explanation: the base-free metric gives a **larger** gap.
+See `docs/records/2026-09-14-evsales-replication-confirms.md`.
