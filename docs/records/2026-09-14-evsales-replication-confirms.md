@@ -88,6 +88,91 @@ variable correlated with the arm. It needs revenue as a second series — **13 m
 and the registered split still applies, with its MDE recomputed on **SD 36.04 at ~33 per side ≈ 17.6
 rank points**, so it remains descriptive rather than a test at ±10.
 
+## THE CONFOUND WAS REAL AND ITS DIRECTION WAS BACKWARDS
+
+The objection held that the earnings base **inflated** +29.76. **It was suppressing it.** Forward
+P/E cannot price a loss-making name at all, so those names were **dropped rather than ranked
+expensive** — and they were **10 ratified against 3 passed**. Removing the high end of one arm
+depresses that arm's measured rank. **On the base-free metric, where they are priced, the gap is
+LARGER: +36.96 against +29.27.**
+
+**The mechanism was correctly identified and its net sign was inverted.** Attrition going **13 names
+to 1, and the arm skew 10/3 to 0/1**, is the stronger half of this result: it removes a systematic
+asymmetry rather than merely adding sample.
+
+## THE −0.49 MEDIAN MOVE WAS TWO CHANGES REPORTED AS ONE
+
+**A sample median cannot fall when a below-median value is removed** — with 56 sorted values the
+median is `mean(v28, v29)`, and dropping one below `v28` leaves exactly `v29`, which is ≥ the old
+median. The reported **+29.76 → +29.27** is therefore impossible as stated. Decomposed:
+
+| | n | median | mean |
+|---|---:|---:|---:|
+| **A** as published — FVRR in the rank pool, pair kept | 56 | **+29.76** | +22.74 |
+| **B** pair dropped, FVRR **still ranks** the others | 55 | **+30.95** | +24.19 |
+| **C** FVRR removed from the stratum **entirely** | 55 | **+29.27** | +24.28 |
+
+**B is the arithmetic the objection predicts — the median RISES to +30.95.** The fall to +29.27 comes
+from a **second change that was not stated**: removing FVRR shrinks the small stratum from 43 names
+to 42 and **re-ranks every remaining name in it**. **C is the correct treatment** — a corrupted name
+must not rank others — **but it is two effects, and reporting it as one hid a re-ranking behind a
+deletion.** The conclusion is unchanged; the description was wrong.
+
+## MBGL'S WINDOW, MEASURED RATHER THAN INFERRED — and the guard's real boundary
+
+*"The mass sits outside the window"* was an inference, and FVRR is the precedent for that inference
+failing. Checked explicitly on **every name with ≥20 placeholder cells — 39 on TEV, 46 on P/E:**
+
+| | suppressed candidates | corrupted window | already excluded | **undetected** |
+|---|---:|---:|---|---|
+| TEV/Fwd Revenue | 39 | 2 | WIT | **FVRR** |
+| forward P/E | 46 | 4 | WIT, NTSK, BBAI | **FVRR** |
+
+**MBGL is clean in window** — 1 of 21 cells, median **3.99** (TEV) and **13.40** (P/E) — as are XZO,
+NTSK, KVYO, RDVT and the rest. **The inference held, and is now a measurement.**
+
+**And the guard's boundary is now exact: the ≥10-observation rule catches SPARSE corruption and
+cannot catch DENSE corruption.** WIT, NTSK and BBAI were excluded because their windows were nearly
+empty. **FVRR had a FULL 21 observations, every one of them fake** — more data than the threshold
+demanded, and all of it placeholder. **A count test cannot distinguish present from real.**
+
+**THE HOLIDAY-FILL FINDING IS THE DEEPER ONE, and it is the workstream's own failure shape on a
+third sentinel form:** the run detector's precision condition — *the value occurs nowhere outside
+the run* — is **destroyed as a recall mechanism by scattered fills**, because 38 holiday rows make
+`42.0` recur everywhere. **A precision rule that silently destroys recall.** Two measured costs:
+**(1)** 39 and 46 genuine long runs go unflagged across the two datasets; **(2)** one of them, FVRR,
+reached a published record as a finding. **Proposed, not built** — nulling rows where a supermajority
+of live series share one exact value — and on the ledger with both costs.
+
+## THE GROWTH CONDITION IS AN UNRESOLVED LIMITATION, NOT PENDING WORK
+
+**Not worth 13 panes, and the reason is that both outcomes lead to the same decision.** The binary
+split has **MDE ≈17.6**, so it separates *"persists at full strength"* from *"cannot tell"* and
+nothing finer. **If growth explains the gap**, the unexplored space is slow-growth durable names —
+**which is the left tail already shown contaminated by the reverse defect**. **If it does not**, the
+leg closes anyway. **Recorded as a standing limitation on the finding**: the gap is established as
+**not an earnings-base artifact**, and **not established as durability rather than growth**.
+
+## WHAT THIS CLOSES, AND WHAT IT SAYS ABOUT THE OPPORTUNITY SET
+
+**The ABOVE leg's ratified class is systematically more expensive than matched passed names** —
+base-free, leverage-correct, no attrition skew, CI lower bound more than double the threshold.
+**The sheet identified durability correctly and the market has already paid for it.**
+
+**That lands the AI card where GLP-1 landed.** Two theses run end to end:
+
+| | driver | tradeable expression |
+|---|---|---|
+| `glp1-drug-value-chain` | plausibly real; card confirms or falsifies on its own trigger | **one name**, WST, at WATCHLIST |
+| `ai-value-migration` | ABOVE leg validated; the discriminator works | **already priced** |
+
+**Both validated, neither tradeable.** That is a finding about **the opportunity set**, not about
+either thesis — and it is the finding that should shape what gets declared next. **A card that
+cannot be expressed cheaply is not a failed card; it is a used one**, and the pipeline has now
+produced two in a row. The question it raises for the next declaration is whether the screen should
+select for **disagreement with the market** from the start, rather than for durability and then
+discovering the market agrees.
+
 **BOUNDARY.** Source: operator's 13 `Forward TEV:Total Forward Revenue` exports, pulled 2026-09-14,
 read the same day. **138 series, every manifest name present, none missing, none extra**; metric
 `TEV/Forward Total Revenue` on all 138; window 2021-09-14 → **2026-09-11** after truncating Set 13,
