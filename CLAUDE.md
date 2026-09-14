@@ -216,6 +216,16 @@ verdict placement.
   observations, every one of them a placeholder** — more data than the threshold demanded, and all
   of it fake. **Pair every count guard with a check on the VALUES**, or say plainly which half it
   covers.
+- **THE DURABILITY SCREEN SELECTS PERSISTENTLY EXPENSIVE NAMES — A PROPERTY OF THE METHOD, NOT A
+  RESULT ABOUT ANY ONE THEME.** Measured 2026-09-14 on `ai-value-migration`: ratified names traded
+  **+11.4 rank points** richer than size-and-sector-matched passed names in **2021Q4, before the
+  thesis existed**, and the gap has never been near zero across twenty quarters (now +29.9). The
+  screen keys on qualities the market prices CONTINUOUSLY — regulatory depth, proprietary workflow
+  data, systems of record — **not on a mispricing.** So **any future thesis using it will select
+  expensive names for the same reason**, and price must be checked at the SHORTLIST (RUNBOOKS step
+  8), not discovered at the underwrite. *Corollary: a cheap name surfaced by this screen is more
+  likely deteriorating than mispriced — CLVT and TDC sit in its cheap tail for reasons this repo's
+  own sheet had already recorded.*
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never
