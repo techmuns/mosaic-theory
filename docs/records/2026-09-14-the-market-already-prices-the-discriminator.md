@@ -269,3 +269,62 @@ cannot speak to the 50 ratified names outside it (SIC 36 electronics, 61 credit 
 machinery, 80 health services, 87 research, 38 instruments). **Falsifier: the same test on the
 non-73 cohort returning no gap**, which would make "already priced" a software-sector property
 rather than a property of the verdicts.
+## Amendments
+**2026-09-14 (after review) — three limits on the EV/Sales replication, all registered BEFORE the
+pull so none can be discovered as an excuse afterwards.**
+
+### 1. The MIXED share formula is an APPROXIMATE ATTRIBUTION, not a measured split
+
+`(29.76 − gap) / 29.76` **assumes the two effects are additive on the RANK scale, and they are
+not.** A name can be both high-growth and low-margin, and rank effects do not compose linearly
+because a rank is a position in a distribution rather than a quantity. **Record any MIXED result as
+an approximate attribution with that caveat attached, or the share gets quoted as though measured** —
+the same defect as a percentage quoted without its population.
+
+### 2. THE GROWTH SPLIT CANNOT ADJUDICATE AT THE REGISTERED THRESHOLD — stated in advance
+
+A binary split of ~56 pairs leaves roughly **28 per side**, and at the observed **SD 40.25** that is
+thin:
+
+| n per side | SE | 95% CI half-width | MDE @80% power |
+|---:|---:|---:|---:|
+| **28** | 7.61 | **±14.9** | **21.3** |
+| 20 | 9.00 | ±17.6 | 25.2 |
+| *(56, full sample)* | *5.38* | *±10.5* | *15.1* |
+
+**The minimum detectable effect within a half is 21.3 rank points — more than double the registered
+threshold of 10.** Concretely:
+
+| half-sample gap | 95% CI | reading |
+|---:|---|---|
+| **+29.8** | [+14.9, +44.7] | clears +10 |
+| +20.0 | [+5.1, +34.9] | **spans +10 — cannot tell** |
+| +15.0 | [+0.1, +29.9] | **spans +10 — cannot tell** |
+| +10.0 | [−4.9, +24.9] | **spans +10 — cannot tell** |
+
+**The split can distinguish "the gap persists at full strength" from "cannot tell", and nothing
+finer.** It is a **DESCRIPTIVE check, not a test at the ±10 threshold**, and a wide interval in
+either half must be read as **low power, never as a null.** Registered now precisely so it cannot be
+read the other way when it arrives.
+
+### 3. THE FALLBACK COSTS 38 PANES, NOT 26 — and a bounded robustness check is not one
+
+| construction | series | panes |
+|---|---:|---:|
+| EV/Sales native | 138 | **13** |
+| Market Cap + Revenue → **P/Sales** | 276 | 26 |
+| Market Cap + Revenue + Net Debt → **EV/Sales** | 414 | **38** |
+
+**P/Sales is not an acceptable fallback.** Its leverage bias runs in the **confirming** direction:
+mature passed names carry more debt, so their EV exceeds market cap by more, P/Sales understates
+them, and the measured gap inflates. **A robustness test that can only overstate is not one.** So
+the fallback is the three-series construction at **38 panes — nearly 3x the original pull** — and
+that cost is the operator's to rule on **before** a session is spent, not after.
+
+**SEQUENCE: check EV/Sales availability in the metric search FIRST.** Native → one pull of 13 panes
+with revenue alongside. Absent → **38 panes, and the ruling comes before the run.** TEV/EBITDA stays
+excluded: EBITDA approaches zero on the same names and reproduces the defect being tested.
+
+**BOUNDARY.** Precision figures use the **observed SD of paired rank differences, 40.25 at n=56**,
+from this record, projected to a balanced split; two-sided 95% normal interval, 80% power, α=0.05.
+Pane arithmetic is 138 names at 11 series per pane. No new measurement. Dated 2026-09-14.
