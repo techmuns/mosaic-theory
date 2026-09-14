@@ -325,6 +325,41 @@ that cost is the operator's to rule on **before** a session is spent, not after.
 with revenue alongside. Absent → **38 panes, and the ruling comes before the run.** TEV/EBITDA stays
 excluded: EBITDA approaches zero on the same names and reproduces the defect being tested.
 
+### 4. SET 1 ON `TEV/Forward Total Revenue` — verified 2026-09-14, and two registered numbers move
+
+**The native metric exists and it is better than the planned fallback.** `TEV/Forward Total Revenue`
+is **forward EV/Sales with TEV in the numerator**, so **net debt is already inside it — the leverage
+confound that made P/Sales unacceptable never arises, and the 38-pane construction is not needed.**
+Format parses first try: 11 series, 1,254 dates, **2021-09-14 → 2026-09-11**, end date matching the
+P/E run exactly.
+
+**COVERAGE IMPROVES FROM 9 OF 11 TO 11 OF 11.** CRWV (**4.85x**) and NBIS (**8.91x**) — the two
+names forward P/E could not price at all — are **recovered**, because revenue does not approach
+zero. **If that holds across the panes, the arm-differential attrition that biased the P/E run
+largely disappears and N returns toward 69.**
+
+*The interior-sentinel fix earns its place on this file too: NBIS's 665-cell interior run is caught
+again, and CRWV flips from `placeholder-then-nothing` (unusable on P/E) to a correctly-flagged
+899-cell LEADING sentinel with 355 real observations after it. **Same column, two metrics, two
+different classifications, both right.***
+
+**CONSEQUENCE FOR LIMIT 2: the registered MDE of 21.3 points is P/E-SPECIFIC and must be
+RECOMPUTED.** It was derived from **SD = 40.25, the observed SD of paired rank differences on
+forward P/E**. The SD on TEV/Revenue is unknown until the panes land, and N will be larger if
+coverage holds. **The RULE stands unchanged — the growth split is descriptive, and a wide interval
+is low power rather than a null — but the NUMBER is recomputed on the TEV/Revenue SD before the
+split is read.** Registering the distinction now so the old figure is not carried over by habit.
+
+**AND THE SPIKE COMPARISON IS NOT YET MEANINGFUL — a caution against my own prior reading.** Set 1
+on TEV/Revenue gives **49 spikes (43% inverted) in 13,794 cells = 0.355%**, against **21 (29%) at
+0.152%** on the same pane's forward P/E. That looks like it cuts against the near-zero-denominator
+diagnosis, **and it is not comparable**: on P/E, CRWV was a CONSTANT column (a constant series
+generates zero spikes by construction) and NBIS was two-thirds sentinel, so both contributed
+nothing; on TEV/Revenue they carry live data and contribute spikes. **Set 1 is also the wrong pane
+to judge it on** — it supplied 21 of the 2,612 spikes across 13 P/E panes where a uniform rate
+predicts ~204, so it ran **10x cleaner than average** and the 1.477%/72% figure came from the
+small-cap panes. **The comparison becomes meaningful only across all 13.**
+
 **BOUNDARY.** Precision figures use the **observed SD of paired rank differences, 40.25 at n=56**,
 from this record, projected to a balanced split; two-sided 95% normal interval, 80% power, α=0.05.
 Pane arithmetic is 138 names at 11 series per pane. No new measurement. Dated 2026-09-14.
