@@ -269,3 +269,115 @@ cannot speak to the 50 ratified names outside it (SIC 36 electronics, 61 credit 
 machinery, 80 health services, 87 research, 38 instruments). **Falsifier: the same test on the
 non-73 cohort returning no gap**, which would make "already priced" a software-sector property
 rather than a property of the verdicts.
+## Amendments
+**2026-09-14 (after review) — three limits on the EV/Sales replication, all registered BEFORE the
+pull so none can be discovered as an excuse afterwards.**
+
+### 1. The MIXED share formula is an APPROXIMATE ATTRIBUTION, not a measured split
+
+`(29.76 − gap) / 29.76` **assumes the two effects are additive on the RANK scale, and they are
+not.** A name can be both high-growth and low-margin, and rank effects do not compose linearly
+because a rank is a position in a distribution rather than a quantity. **Record any MIXED result as
+an approximate attribution with that caveat attached, or the share gets quoted as though measured** —
+the same defect as a percentage quoted without its population.
+
+### 2. THE GROWTH SPLIT CANNOT ADJUDICATE AT THE REGISTERED THRESHOLD — stated in advance
+
+A binary split of ~56 pairs leaves roughly **28 per side**, and at the observed **SD 40.25** that is
+thin:
+
+| n per side | SE | 95% CI half-width | MDE @80% power |
+|---:|---:|---:|---:|
+| **28** | 7.61 | **±14.9** | **21.3** |
+| 20 | 9.00 | ±17.6 | 25.2 |
+| *(56, full sample)* | *5.38* | *±10.5* | *15.1* |
+
+**The minimum detectable effect within a half is 21.3 rank points — more than double the registered
+threshold of 10.** Concretely:
+
+| half-sample gap | 95% CI | reading |
+|---:|---|---|
+| **+29.8** | [+14.9, +44.7] | clears +10 |
+| +20.0 | [+5.1, +34.9] | **spans +10 — cannot tell** |
+| +15.0 | [+0.1, +29.9] | **spans +10 — cannot tell** |
+| +10.0 | [−4.9, +24.9] | **spans +10 — cannot tell** |
+
+**The split can distinguish "the gap persists at full strength" from "cannot tell", and nothing
+finer.** It is a **DESCRIPTIVE check, not a test at the ±10 threshold**, and a wide interval in
+either half must be read as **low power, never as a null.** Registered now precisely so it cannot be
+read the other way when it arrives.
+
+### 3. THE FALLBACK COSTS 38 PANES, NOT 26 — and a bounded robustness check is not one
+
+| construction | series | panes |
+|---|---:|---:|
+| EV/Sales native | 138 | **13** |
+| Market Cap + Revenue → **P/Sales** | 276 | 26 |
+| Market Cap + Revenue + Net Debt → **EV/Sales** | 414 | **38** |
+
+**P/Sales is not an acceptable fallback.** Its leverage bias runs in the **confirming** direction:
+mature passed names carry more debt, so their EV exceeds market cap by more, P/Sales understates
+them, and the measured gap inflates. **A robustness test that can only overstate is not one.** So
+the fallback is the three-series construction at **38 panes — nearly 3x the original pull** — and
+that cost is the operator's to rule on **before** a session is spent, not after.
+
+**SEQUENCE: check EV/Sales availability in the metric search FIRST.** Native → one pull of 13 panes
+with revenue alongside. Absent → **38 panes, and the ruling comes before the run.** TEV/EBITDA stays
+excluded: EBITDA approaches zero on the same names and reproduces the defect being tested.
+
+### 4. SET 1 ON `TEV/Forward Total Revenue` — verified 2026-09-14, and two registered numbers move
+
+**The native metric exists and it is better than the planned fallback.** `TEV/Forward Total Revenue`
+is **forward EV/Sales with TEV in the numerator**, so **net debt is already inside it — the leverage
+confound that made P/Sales unacceptable never arises, and the 38-pane construction is not needed.**
+Format parses first try: 11 series, 1,254 dates, **2021-09-14 → 2026-09-11**, end date matching the
+P/E run exactly.
+
+**COVERAGE IMPROVES FROM 9 OF 11 TO 11 OF 11.** CRWV (**4.85x**) and NBIS (**8.91x**) — the two
+names forward P/E could not price at all — are **recovered**, because revenue does not approach
+zero. **If that holds across the panes, the arm-differential attrition that biased the P/E run
+largely disappears and N returns toward 69.**
+
+*The interior-sentinel fix earns its place on this file too: NBIS's 665-cell interior run is caught
+again, and CRWV flips from `placeholder-then-nothing` (unusable on P/E) to a correctly-flagged
+899-cell LEADING sentinel with 355 real observations after it. **Same column, two metrics, two
+different classifications, both right.***
+
+**CONSEQUENCE FOR LIMIT 2: the registered MDE of 21.3 points is P/E-SPECIFIC and must be
+RECOMPUTED.** It was derived from **SD = 40.25, the observed SD of paired rank differences on
+forward P/E**. The SD on TEV/Revenue is unknown until the panes land, and N will be larger if
+coverage holds. **The RULE stands unchanged — the growth split is descriptive, and a wide interval
+is low power rather than a null — but the NUMBER is recomputed on the TEV/Revenue SD before the
+split is read.** Registering the distinction now so the old figure is not carried over by habit.
+
+**AND THE SPIKE COMPARISON IS NOT YET MEANINGFUL — a caution against my own prior reading.** Set 1
+on TEV/Revenue gives **49 spikes (43% inverted) in 13,794 cells = 0.355%**, against **21 (29%) at
+0.152%** on the same pane's forward P/E. That looks like it cuts against the near-zero-denominator
+diagnosis, **and it is not comparable**: on P/E, CRWV was a CONSTANT column (a constant series
+generates zero spikes by construction) and NBIS was two-thirds sentinel, so both contributed
+nothing; on TEV/Revenue they carry live data and contribute spikes. **Set 1 is also the wrong pane
+to judge it on** — it supplied 21 of the 2,612 spikes across 13 P/E panes where a uniform rate
+predicts ~204, so it ran **10x cleaner than average** and the 1.477%/72% figure came from the
+small-cap panes. **The comparison becomes meaningful only across all 13.**
+
+**BOUNDARY.** Precision figures use the **observed SD of paired rank differences, 40.25 at n=56**,
+from this record, projected to a balanced split; two-sided 95% normal interval, 80% power, α=0.05.
+Pane arithmetic is 138 names at 11 series per pane. No new measurement. Dated 2026-09-14.
+**2026-09-14 (second entry) — ONE PAIR IN THIS RECORD WAS A SENTINEL, and the EV/Sales replication
+confirms the headline.**
+
+**`CRNC 11.2x vs FVRR 42.0x, gap −57.1`** appears above among the twelve negative pairs as a genuine
+disagreement. **It is not one. FVRR's 28-day measurement window is 21 of 21 placeholder cells**, so
+its median IS the `42.0` sentinel; its real forward values tail off at 0.20/0.21/0.27/0.31/0.07 on
+EV/Sales. The detector missed it because the placeholder also appears as **scattered US-market-holiday
+fills** across ~90% of live series on 38 dates (Memorial Days 2023–26, 2021-12-24, 2025-07-04), which
+makes the value "recur" and defeats the run rule's *occurs-nowhere-outside-the-run* condition.
+
+**Excluding FVRR and its pair moves the headline by 0.5 rank points and STRENGTHENS it** — median
+**+29.76 → +29.27**, mean +22.74 → **+24.28**, CI [+12.19, +33.28] → **[+13.91, +34.65]**, n 56 → 55.
+**The conclusion is unchanged; the count of negative pairs is 11, not 12.**
+
+**And the registered EV/Sales replication CONFIRMS** — median **+36.96**, CI **[+21.13, +38.39]**,
+n=67, with attrition collapsing from 13 names (10 ratified / 3 passed) to **1 (0 / 1)**. The
+earnings-base confound is eliminated as an explanation: the base-free metric gives a **larger** gap.
+See `docs/records/2026-09-14-evsales-replication-confirms.md`.
