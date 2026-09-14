@@ -127,7 +127,7 @@ explosive region:
 
 Median **20.3x ratified against 14.5x passed**; share above 60x **10% against 5%**.
 
-**But the confound's own prediction FAILS.** If the gap lived in the near-zero-EPS region it would
+**The confound's strongest prediction is not met — but this is WEAKER than the 'prediction fails' an earlier draft of this record claimed.** If the gap lived in the near-zero-EPS region it would
 collapse once names with comfortably positive earnings are the only ones left. **It does not:**
 
 | keep pairs where BOTH < | n | median gap | 95% CI |
@@ -147,6 +147,68 @@ and a name at 25x can still carry a depressed earnings base relative to its pair
 weakened, not eliminated — EV/Sales remains the deciding test**, on the same pairs, strata, window
 and registered method, where the denominator cannot approach zero. **Operator ruling 2026-09-14: the
 EV/Sales replication runs before the seven-name screen and before any leg-closing decision.**
+
+### CORRECTION to the trim reading, and it matters
+
+**"The prediction fails" overstated it.** The series runs **+29.8 → +31.5 → +32.1 → +30.4 →
++23.2** — flat-to-rising through the 40x trim, then a **22% drop at 30x**. **A pure confound
+predicts monotone collapse; pure valuation predicts flat. This is neither** — it is consistent with
+the earnings base contributing a **MINORITY SHARE**, not with its absence.
+
+**And the trim cannot reach the real mechanism.** The confound is not explosive multiples, it is
+**MARGIN DIFFERENCE, which persists at every level of the distribution**: a 5%-margin name and a
+25%-margin name differ **5x on P/E at identical EV/Sales**, and neither need be above 40x. **The
+telling number is the one inside the trimmed range** — ratified median **20.3x** against passed
+**14.5x**.
+
+### THE NEGATIVE PAIRS ARE MANUFACTURED BY THE PASSED SIDE — the same defect, reversed
+
+| group | n | median ratified | median passed |
+|---|---:|---:|---:|
+| all pairs | 56 | 20.3x | 14.5x |
+| **negative pairs** | 12 | 13.1x | **30.4x** |
+| positive pairs | 44 | 22.6x | 12.9x |
+
+**Passed names above 40x: 42% of negative pairs against 2% of positive — a 21x enrichment.** Five of
+the twelve negatives are that shape: **CLVT 3.1x vs CCO 71.4x** (Clear Channel Outdoor — a 71.4x
+forward P/E on an outdoor advertising company is a near-zero earnings base, not a rich valuation),
+DV vs PRCH 232.0x, CRNC vs FVRR 42.0x, CASS vs CEVA 40.3x, GTLB vs NAVN 108.7x.
+
+**So the seven-name residual is produced by the SAME metric defect as the headline, running the
+other way.** The overlap between the residual and the negative tail was already recorded; this makes
+**both suspect for one reason**, which is a stronger argument against screening the seven than the
+overlap alone. **A conclusion this test CAN deliver is "the ratified class is more expensive." A
+conclusion it CANNOT deliver is "these seven are mispriced."**
+
+## THE EV/SALES REPLICATION — DECISION RULE, REGISTERED BEFORE THE PULL
+
+Registering this after seeing +29.8 would be the degree of freedom the threshold discipline exists
+to close. **Same 138 names, same 13 panes, same strata, same window to 2026-09-11, same
+within-stratum rank, same ±10 threshold, same three-state CI logic.**
+
+| outcome | rule | reading |
+|---|---|---|
+| **CONFIRMS** | CI lower bound **> +10** | valuation, not the earnings base. The P/E finding stands, strengthened |
+| **COLLAPSES** | CI fits inside **±10** | a real null — **+29.76 was the earnings base and the conclusion inverts** |
+| **MIXED** | CI lower **> +10** AND CI upper **< +29.76** | both present; the base's share is approximately `(29.76 − gap) / 29.76` |
+| **CANNOT TELL** | CI spans **+10** | underpowered, **not** a null; report and stop |
+
+**THE GROWTH CONDITION, registered with it.** EV/Sales carries its own confound: **high-growth names
+carry higher sales multiples legitimately.** If ratified names are higher-growth, an EV/Sales gap is
+a **growth premium, not a durability premium**. So **revenue must be pulled as a series alongside**,
+which yields growth from the same export at no extra pane cost. **Registered split: pairs where the
+ratified name's trailing 3-year revenue CAGR EXCEEDS its pair's, versus those where it does not.**
+If the gap clears +10 only in the faster-growing half, **the finding is a growth premium** and the
+durability reading is not available.
+
+**AVAILABILITY MUST BE CHECKED BEFORE A SESSION IS SPENT.** EV/Sales may not sit among the chart
+builder's quick metrics. **TEV/EBITDA is NOT a substitute** — EBITDA approaches zero on the same
+names and reproduces the defect. If the fallback is **Market Cap + Revenue as two series**, note
+what changes: that yields **P/Sales, not EV/Sales**, and **P/Sales is confounded by leverage in the
+direction that FLATTERS the finding** — mature passed names carry more debt, so their EV exceeds
+market cap by more, P/Sales understates them, and the measured gap **inflates**. Under the fallback
+either net debt is pulled too, or **a confirming result is an UPPER BOUND and must be recorded as
+one**.
 
 ## THE PAIRED-DIFFERENCE DISTRIBUTION, which the CI hides
 
