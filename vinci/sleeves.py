@@ -207,11 +207,15 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
         twin_outcome="moved on the catalyst / was already priced or faded before the exit.",
         entry="the follow list (operator judgement; reason AND sleeve both required)",
         # THE SAME COMPARATOR QUALITY USES (`vinci/scoring/baseline.py`), scored per verdict over
-        # that verdict's OWN window — so a short `--horizon-days` is what makes this book short.
-        # Nothing enforces the horizon yet; it is stated at log time, verdict by verdict.
-        kill="the sleeve's BUY−PASS curve, each verdict scored at its own short horizon, fails to "
-             "beat simply HOLDING the same followed names over the same windows — the catalyst "
-             "call adds nothing over owning the list",
+        # that verdict's OWN window. HORIZON RULED 180 DAYS (operator, 2026-09-18) — the window
+        # every other book already scores at, and the one the page's copy-paste command suggests.
+        # SO THE SHORT-DATED CLAIM LIVES IN THE CASE, NOT IN THE WINDOW: the bet is a catalyst
+        # inside weeks, and the ledger asks what the name did over six months. A trade that works
+        # and then gives the move back scores as the give-back, which is the operator's choice —
+        # one horizon across the books keeps the per-book curves comparable.
+        kill="the sleeve's BUY−PASS curve, each verdict scored at the fund's 180-day horizon, "
+             "fails to beat simply HOLDING the same followed names over the same windows — the "
+             "catalyst call adds nothing over owning the list",
         ledger_active=True,
     ),
     Sleeve(
