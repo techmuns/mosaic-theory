@@ -40,6 +40,10 @@ from vinci.edgar.concepts import CONCEPT_ALIASES, ConceptPoint, points_for_tag
 
 MIN_YEARS = 10   # the anchor window; below this we print ACTUAL coverage, never extrapolate
 BAR = 2.0               # the fund's ≥2:1 reward-to-risk bar (analyst-specified)
+# Two revenue tags reporting the SAME fiscal year this far apart are not two views of one number —
+# one of them is not total revenue. ONE threshold for the R1 anchor and this block: it lived in
+# anchor.py, where the disagreement was flagged and the median still read the partial years.
+TAG_CONFLICT_PCT = 0.25
 # The scenario `multiple` is an EV/EBITDA turn — the SAME basis as ANCHOR D (`TEV/LTM EBITDA`).
 # Stamped into every record: an EBITDA multiple silently applied to EBIT understates a
 # capital-heavy name by roughly (1 + D&A/EBIT)x. (Fixed 2026-07-19; pinned by the WERN test.)
@@ -59,6 +63,9 @@ class AnnualSeries:
     tag: str | None                      # the alias actually used (None → no data at all)
     by_year: dict[int, float]
     accession_by_year: dict[int, str | None]
+    # years REMOVED because another revenue tag reports over TAG_CONFLICT_PCT more
+    # (``tag_disputes``) — carried so a margin read off this series can say what it left out
+    excluded: tuple[int, ...] = ()
 
     @property
     def years(self) -> list[int]:
@@ -71,13 +78,60 @@ class AnnualSeries:
 
 def annual_series(facts: dict[str, Any], concept: str) -> AnnualSeries:
     """The annual series for ``concept``, taking the alias with the LONGEST annual coverage (ties →
-    CONCEPT_ALIASES priority). One tag = one basis; we never splice tags into a single series."""
+    CONCEPT_ALIASES priority). One tag = one basis; we never splice tags into a single series.
+
+    REVENUE ONLY: each alias first loses the years ``tag_disputes`` cannot trust, and the coverage
+    compared is what survives. Raw length picked WLK's ``Revenues`` — a partial line for FY2011–15 —
+    and printed margins up to 886% as a full 15-year window. No other concept is trimmed: the
+    direction argument is revenue's, and ``ProfitLoss`` exceeds ``NetIncomeLoss`` by design."""
+    raw = [_series_from_points(concept, tag, _annual_points(facts, tag, concept))
+           for tag in CONCEPT_ALIASES[concept]]
+    cands = raw
+    if concept == "revenue":
+        cands = [_without_years(s, tag_disputes(s, [o for o in raw if o is not s])[1])
+                 for s in raw]
     best: AnnualSeries | None = None
-    for tag in CONCEPT_ALIASES[concept]:
-        cand = _series_from_points(concept, tag, _annual_points(facts, tag, concept))
+    for cand in cands:
         if best is None or cand.n_years > best.n_years:
             best = cand
     return best or AnnualSeries(concept=concept, tag=None, by_year={}, accession_by_year={})
+
+
+def tag_disputes(chosen: AnnualSeries,
+                 others: list[AnnualSeries]) -> tuple[list[str], tuple[int, ...]]:
+    """Every fiscal year another revenue tag disagrees with ``chosen`` by over TAG_CONFLICT_PCT →
+    (one note per disagreement, the years ``chosen`` cannot be trusted for).
+
+    A disagreement alone does not say which tag is wrong; its DIRECTION does. A partial revenue line
+    is always SMALLER than total revenue, so a year is untrusted only where ``chosen`` reports the
+    smaller figure. WLK's ``Revenues`` FY2011–15 ($108–446M beside ``SalesRevenueNet``'s $3.6–4.5bn)
+    is that shape, and it turned a clean ten-year 9.8% median into 16.3%. Where ``chosen`` is the
+    LARGER, the other tag is the partial line and the year stands: VRRM's 606 total disagrees with a
+    $13–133M ``Revenues`` line in all six years both report, and dropping every disputed year would
+    have cut its margin history from eight years to two."""
+    notes: list[str] = []
+    untrusted: set[int] = set()
+    for other in others:
+        for y in sorted(set(chosen.by_year) & set(other.by_year)):
+            a, b = chosen.by_year[y], other.by_year[y]
+            scale = max(abs(a), abs(b))
+            if scale and abs(a - b) / scale > TAG_CONFLICT_PCT:
+                notes.append(f"FY{y}: {chosen.tag} {a / 1e6:,.0f}M vs {other.tag} {b / 1e6:,.0f}M "
+                             f"({abs(a - b) / scale * 100:.0f}% apart)")
+                if a < b:
+                    untrusted.add(y)
+    return notes, tuple(sorted(untrusted))
+
+
+def _without_years(s: AnnualSeries, years: tuple[int, ...]) -> AnnualSeries:
+    """``s`` minus ``years``, which it records as excluded — shorter, never silently."""
+    if not years:
+        return s
+    return AnnualSeries(
+        concept=s.concept, tag=s.tag,
+        by_year={y: v for y, v in s.by_year.items() if y not in years},
+        accession_by_year={y: a for y, a in s.accession_by_year.items() if y not in years},
+        excluded=tuple(sorted({*s.excluded, *years})))
 
 
 def _annual_points(facts: dict[str, Any], tag: str, concept: str = "") -> list[ConceptPoint]:
@@ -111,6 +165,8 @@ class MarginAnchor:
     revenue_tag: str | None
     opinc_tag: str | None
     note: str = ""
+    # revenue years the median would have read, left out by ``tag_disputes``
+    excluded_years: tuple[int, ...] = ()
 
     @property
     def years(self) -> list[int]:
@@ -119,6 +175,15 @@ class MarginAnchor:
     @property
     def n_years(self) -> int:
         return len(self.by_year)
+
+    @property
+    def excluded_note(self) -> str:
+        """What the median leaves out, said beside the median — empty when nothing was."""
+        if not self.excluded_years:
+            return ""
+        yrs = ", ".join(f"FY{y}" for y in self.excluded_years)
+        return (f" — {len(self.excluded_years)} FY EXCLUDED ({yrs}): another revenue tag reports "
+                f"over {TAG_CONFLICT_PCT:.0%} more, so {self.revenue_tag} may be a partial line")
 
     @property
     def values(self) -> list[float]:
@@ -149,6 +214,10 @@ class MarginAnchor:
 
     @property
     def coverage_note(self) -> str:
+        return self._span_note + self.excluded_note
+
+    @property
+    def _span_note(self) -> str:
         if not self.by_year:
             return "UNDEFINED — no overlapping revenue/operating-income years"
         span = f"{self.years[0]}–{self.years[-1]}"
@@ -180,13 +249,15 @@ def percentile_of(value: float, sample: list[float]) -> float | None:
 
 def margin_anchor(revenue: AnnualSeries, opinc: AnnualSeries, *, note: str = "") -> MarginAnchor:
     """Operating margin per year, on the years BOTH series report. Zero/negative revenue years are
-    dropped (a margin on non-positive revenue is not a number)."""
+    dropped (a margin on non-positive revenue is not a number). A revenue year excluded upstream is
+    carried where operating income reports it — the years this median would otherwise have read."""
     by_year: dict[int, float] = {}
     for y in sorted(set(revenue.by_year) & set(opinc.by_year)):
         rev = revenue.by_year[y]
         if rev and rev > 0:
             by_year[y] = opinc.by_year[y] / rev
-    return MarginAnchor(by_year=by_year, revenue_tag=revenue.tag, opinc_tag=opinc.tag, note=note)
+    return MarginAnchor(by_year=by_year, revenue_tag=revenue.tag, opinc_tag=opinc.tag, note=note,
+                        excluded_years=tuple(y for y in revenue.excluded if y in opinc.by_year))
 
 
 # --- (b) FUEL-SURCHARGE SPLIT -------------------------------------------------------------------

@@ -242,6 +242,50 @@ def test_uncomputable_margin_is_unresolved_not_r2() -> None:
     assert a.margin is None and a.anchor_base_value_per_share is None
 
 
+def _real(ticker: str) -> dict[str, object]:
+    """A frozen REAL companyfacts subset (scripts/build_companyfacts_fixture.py)."""
+    facts: dict[str, object] = json.loads(
+        (_ROOT / "tests" / "fixtures" / "companyfacts" / f"{ticker}.json").read_text())
+    return facts
+
+
+def test_the_flagged_years_leave_the_median_wlk() -> None:
+    """The anchor flagged WLK's FY2011–15 revenue-tag conflict and capped the margin weak — and
+    still took its median over those years: 16.31% on fifteen, where the clean decade gives 9.78%.
+    A flag beside a contaminated number is not a guard. The years go, the source names them, and
+    the flag and the cap stay (real companyfacts)."""
+    a = compute_anchor(_MECH_OK, facts=_real("WLK"), computed_at=_now())
+    assert a.margin is not None
+    assert a.margin.value == pytest.approx(0.097831, abs=5e-7) and a.margin.anchor_years == 10
+    assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT and a.margin.confidence == "weak"
+    assert sum("apart" in d for d in a.data_quality_detail) == 5
+    assert all(f"FY{y}" in a.margin.source for y in range(2011, 2016))
+
+
+def test_a_disputed_year_the_preferred_tag_wins_stays_in_the_median_vrrm() -> None:
+    """VRRM's 606 total is the LARGER figure in all six disputed years, so the partial line is the
+    other tag: the committed eight-year 20.9061% stands, still flagged (real companyfacts)."""
+    a = compute_anchor(_MECH_OK, facts=_real("VRRM"), computed_at=_now())
+    assert a.margin is not None
+    assert a.margin.value == pytest.approx(0.209061, abs=5e-7) and a.margin.anchor_years == 8
+    assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT
+    assert sum("apart" in d for d in a.data_quality_detail) == 6
+    assert "EXCLUDED" not in a.margin.source
+
+
+def test_a_margin_emptied_by_excluded_years_says_so_in_its_reason() -> None:
+    """When every overlapping year is one the preferred tag may be partial in, 'no fiscal year where
+    both report' would be false — they did report. The refusal names the years it dropped."""
+    facts = _facts(**{
+        _TOTAL: dict.fromkeys(range(2016, 2022), 40e6),    # the preferred tag, partial throughout
+        "Revenues": dict.fromkeys(range(2016, 2022), 160e6),
+        "OperatingIncomeLoss": dict.fromkeys(range(2016, 2022), 16e6),
+    })
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    assert a.recipe_hint == anc.RECIPE_UNRESOLVED and a.margin is None
+    assert all(f"FY{y}" in (a.reason or "") for y in range(2016, 2022))
+
+
 def test_no_total_revenue_tag_flips_applicability_to_unresolved() -> None:
     """Only partial/absent revenue tags → ANCHOR_UNRESOLVED, applicable False. The anchor refuses to
     emit a margin off a partial denominator rather than publishing a fabricated one."""
