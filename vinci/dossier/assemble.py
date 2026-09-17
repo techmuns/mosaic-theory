@@ -192,6 +192,10 @@ class FollowEntry:
 
     reason: str
     sleeve: str
+    #: THE OPERATOR'S RULING when the name is ALSO a screen candidate: the follow's book governs,
+    #: and why. None when no ruling is stated — a name on both routes then refuses to assemble
+    #: (`_finalist`), because neither answer is safe to assume without it.
+    overrides_screen: str | None = None
 
 
 def _follow_entry(cfg: Config, ticker: str) -> FollowEntry | None:
@@ -282,7 +286,24 @@ def _follow_entry(cfg: Config, ticker: str) -> FollowEntry | None:
         sleeve = require_sleeve(entry.get("sleeve"), where=f"{path}: {ticker.upper()}")
     except UnknownSleeveError as exc:
         raise DossierAssemblyError(str(exc)) from exc
-    return FollowEntry(reason=reason.strip(), sleeve=sleeve)
+    # THE ROUTE RULING is optional, and refused when it says nothing or rules on nothing. A blank
+    # ruling would pass `_finalist` as though the operator had decided; a ruling on a name followed
+    # under the DEFAULT book overrides no disagreement (the screen already judges it there) and is
+    # dead config that reads as a decision.
+    ruling = entry.get("overrides_screen")
+    if ruling is not None:
+        if not isinstance(ruling, str) or not ruling.strip(" .\t\r\n"):
+            raise DossierAssemblyError(
+                f"{path}: {ticker.upper()} sets overrides_screen but states no ruling "
+                f"({ruling!r}) — write why the follow's book governs this name rather than the "
+                f"screen's, or remove the field")
+        if sleeve == DEFAULT_SLEEVE:
+            raise DossierAssemblyError(
+                f"{path}: {ticker.upper()} sets overrides_screen on a name followed under "
+                f"{DEFAULT_SLEEVE!r}, the book the screen already judges it under — there is no "
+                f"disagreement to rule on; remove the field")
+        ruling = ruling.strip()
+    return FollowEntry(reason=reason.strip(), sleeve=sleeve, overrides_screen=ruling)
 
 
 def _follow_reason(cfg: Config, ticker: str) -> str | None:
@@ -421,13 +442,27 @@ def _finalist(
         # so the build stops and names exactly which two records disagree.
         followed = _follow_entry(cfg, ticker)
         if followed is not None and followed.sleeve != DEFAULT_SLEEVE:
-            raise DossierAssemblyError(
-                f"{ticker} is BOTH a screen candidate and a followed name under sleeve "
-                f"{followed.sleeve!r} — the two routes disagree about which book it is judged "
-                f"under, and assembling either way silently discards the other's answer. Resolve "
-                f"it deliberately: drop the {ticker} entry from data/followed.json if the screen "
-                f"should now own the name, or keep the follow entry and exclude the name from the "
-                f"ranked queue. (Follow reason on file: {followed.reason!r}.)")
+            if followed.overrides_screen is None:
+                raise DossierAssemblyError(
+                    f"{ticker} is BOTH a screen candidate and a followed name under sleeve "
+                    f"{followed.sleeve!r} — the two routes disagree about which book it is judged "
+                    f"under, and assembling either way silently discards the other's answer. "
+                    f"Resolve it deliberately: drop the {ticker} entry from data/followed.json if "
+                    f"the screen should now own the name, or state the operator's ruling in that "
+                    f"entry's `overrides_screen` field if the follow's book should. (Follow reason "
+                    f"on file: {followed.reason!r}.)")
+            # THE OPERATOR HAS RULED, so the follow's book governs — and the page says so in its
+            # main body, because "the follow wins" is exactly what hides that the name ALSO
+            # qualifies on its own. The candidate record stays the data source: the name IS
+            # screen-admitted, and replacing its record would forge a different history.
+            at = f" at rank {rank}" if rank is not None else ""
+            return Finalist(
+                rec, rank, ref, cap, sleeve=followed.sleeve,
+                screen_status=(
+                    f"ALSO A CURRENT SCREEN CANDIDATE{at} — judged under the {followed.sleeve!r} "
+                    f"book, not {DEFAULT_SLEEVE!r}, by operator ruling: "
+                    f"{followed.overrides_screen.rstrip(' .')}. Follow reason: "
+                    f"{followed.reason.rstrip(' .')}."))
         return Finalist(rec, rank, ref, cap, sleeve=DEFAULT_SLEEVE)
     # THE MAINTENANCE PATH. Not a candidate today — but the band is an ENTRY rule, and a name we
     # already hold a dossier or an underwrite on has to stay refreshable.

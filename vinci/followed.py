@@ -37,7 +37,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-from vinci.sleeves import require_sleeve
+from vinci.sleeves import DEFAULT_SLEEVE, require_sleeve
 
 
 class FollowedListError(ValueError):
@@ -116,6 +116,17 @@ def follow_records(path: Path) -> tuple[FollowRecord, ...]:
             raise FollowedListError(
                 f"{where}: followed_until ({until}) is not after followed_since ({since}) — the "
                 f"name would have been followed for no days at all.")
+        # THE ROUTE RULING, refused on the same shapes the dossier reader refuses: a blank one, and
+        # one on a name followed under the default book, where there is nothing to rule on.
+        ruling = entry.get("overrides_screen")
+        if ruling is not None and (not isinstance(ruling, str)
+                                   or not ruling.strip(" .\t\r\n")):
+            raise FollowedListError(
+                f"{where}: overrides_screen is set but states no ruling ({ruling!r}).")
+        if ruling is not None and sleeve == DEFAULT_SLEEVE:
+            raise FollowedListError(
+                f"{where}: overrides_screen on a name followed under {DEFAULT_SLEEVE!r} rules on "
+                f"no disagreement — the screen already judges it there.")
         out.append(FollowRecord(ticker=ticker, sleeve=sleeve, since=since, until=until))
     return tuple(sorted(out, key=lambda r: (r.sleeve, r.ticker)))
 

@@ -1127,6 +1127,29 @@ def _followed_identity(
     return resolver.resolve_ticker(ticker.upper()), entry.sleeve
 
 
+def _screen_id_book_conflict(cfg: Config, ticker: str) -> str | None:
+    """Why a verdict logged by SCREEN CANDIDATE ID must be refused for ``ticker`` — or None.
+
+    THE LEDGER TWIN OF `_finalist`'s TWO-ROUTES CHECK. A candidate id seals a screen-origin row
+    with no sleeve, which reads as overshoot and counts in the PRIMARY spread. When the operator
+    follows the same name under ANOTHER book (WLK: ruled into `ultra_short_term` while the screen
+    still ranks it), that row would put the verdict into the fund's proof metric under a book the
+    name is not judged in — and the ledger is append-only, so it could not be taken back out. The
+    page's copy-paste command names the candidate id, so this is the likely path, not a contrived
+    one. Logging by TICKER takes the followed route and carries the follow entry's book."""
+    from vinci.dossier.assemble import _follow_entry
+
+    entry = _follow_entry(cfg, ticker.upper())
+    if entry is None or entry.sleeve == DEFAULT_SLEEVE:
+        return None
+    return (
+        f"{ticker.upper()} is FOLLOWED under the {entry.sleeve!r} book, so a verdict logged by its "
+        f"screen candidate id would be sealed as a screen-origin {DEFAULT_SLEEVE!r} verdict and "
+        f"counted in the primary spread — a book this name is not judged in. Log it by ticker "
+        f"(`log-verdict {ticker.upper()} …`) so the row carries the {entry.sleeve!r} book, or "
+        f"remove the follow entry if the screen should own the name.")
+
+
 def _cmd_log_verdict(args: argparse.Namespace) -> int:
     """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price and
     sealing the machine's proposal (from the committed dossier) + the confirm/override disposition
@@ -1137,6 +1160,10 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     with Store(cfg.db_path) as store:
         try:
             cand = store.get_candidate(args.candidate_id)
+            if cand is not None and (
+                clash := _screen_id_book_conflict(cfg, cand.data_record.identity.ticker)
+            ):
+                raise LedgerError(clash)
             # THE FOLLOWED ROUTE. A followed name has NO candidate record by construction, so the
             # positional argument is its TICKER. Resolved here rather than inside `log_verdict`
             # because establishing that a name is genuinely followed is a dossier-layer question

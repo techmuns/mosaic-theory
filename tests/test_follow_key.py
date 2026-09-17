@@ -379,3 +379,151 @@ def test_a_name_that_is_both_followed_and_a_screen_candidate_is_refused(
     fin = asm._finalist(agreeing, UNTOUCHED, cast(Any, object()), {"screen_run_at": "2026-07-29"})
     assert fin is not None and fin.sleeve == DEFAULT_SLEEVE, (
         "a follow entry AGREEING with the screen route is not a conflict and must not refuse")
+
+
+# ---------------------------------------------------------------- the operator's route ruling
+
+
+def _ruled(reason: str, sleeve: str, ruling: Any) -> dict[str, Any]:
+    return {**_e(reason, sleeve), "overrides_screen": ruling}
+
+
+def test_an_operator_ruling_lets_the_follows_book_govern_a_screen_candidate(
+    tmp_path: pathlib.Path,
+) -> None:
+    """WLK, 2026-09-17: followed under `ultra_short_term` while the screen still ranks it (#183).
+    Without a ruling the two routes refuse, and must keep refusing — the pin above. WITH one, the
+    follow's book governs, the candidate record stays the data source (the name IS screen-admitted;
+    swapping in a standalone record would forge a different history), and the page's main body
+    says the name is on BOTH routes, the ruling and the follow reason — "the follow wins" is exactly
+    what would otherwise hide that the name also qualifies on its own."""
+    cfg = _write(tmp_path, {UNTOUCHED: _ruled(
+        "followed as a short-dated trade", "ultra_short_term",
+        "operator decision 2026-09-17 — judged as a trade, not an overshoot")})
+    rec = cast(Any, object())
+    fin = asm._finalist(cfg, UNTOUCHED, rec, {"screen_run_at": "2026-08-24", "rank": 183})
+    assert fin is not None
+    assert fin.sleeve == "ultra_short_term"
+    assert fin.record is rec, "the ruling must not replace the screen's own record"
+    status = fin.screen_status or ""
+    assert "ALSO A CURRENT SCREEN CANDIDATE at rank 183" in status
+    assert "operator decision 2026-09-17 — judged as a trade, not an overshoot" in status
+    assert "followed as a short-dated trade" in status
+
+
+@pytest.mark.parametrize("ruling", ["", "   ", "...", 5, []])
+def test_a_ruling_that_states_nothing_is_refused(tmp_path: pathlib.Path, ruling: Any) -> None:
+    """A blank ruling would pass `_finalist` as though the operator had decided."""
+    cfg = _write(tmp_path, {UNTOUCHED: _ruled("r", "ultra_short_term", ruling)})
+    with pytest.raises(asm.DossierAssemblyError, match="states no ruling"):
+        asm._follow_entry(cfg, UNTOUCHED)
+
+
+def test_a_ruling_on_the_default_book_is_refused(tmp_path: pathlib.Path) -> None:
+    """Followed under overshoot, the name already agrees with the screen route — a ruling there
+    rules on nothing and would read as a decision that was never needed."""
+    cfg = _write(tmp_path, {UNTOUCHED: _ruled("r", DEFAULT_SLEEVE, "operator decision")})
+    with pytest.raises(asm.DossierAssemblyError, match="no disagreement to rule on"):
+        asm._follow_entry(cfg, UNTOUCHED)
+
+
+def test_every_committed_ruling_on_a_current_candidate_assembles_under_the_follows_book() -> None:
+    """CORPUS BEFORE SYNTHETIC — the committed follow file against the committed screen snapshot.
+    Derived, not a roster: every entry carrying `overrides_screen` whose ticker the committed queue
+    still ranks must come out of the REAL loader under the follow's book, with the ruling printed.
+    (A ruled name the screen has since dropped takes the maintenance path instead, which the
+    well-formedness pin above already covers.)"""
+    if not FOLLOWED.exists():
+        pytest.skip("no committed follow file")
+    cfg = get_config()
+    if not (cfg.snapshots_dir / "candidate_records.jsonl").exists():
+        pytest.skip("no committed screen snapshot in this worktree")
+    ruled = {t: e for t, e in json.loads(FOLLOWED.read_text()).items() if "overrides_screen" in e}
+    checked = 0
+    for ticker, entry in sorted(ruled.items()):
+        fin = asm.load_finalists(cfg, ticker=ticker)[0]
+        if fin.record is None:
+            continue
+        assert fin.sleeve == entry["sleeve"], f"{ticker}: the ruling did not reach the finalist"
+        assert "ALSO A CURRENT SCREEN CANDIDATE" in (fin.screen_status or ""), (
+            f"{ticker}: assembled under the follow's book with no main-body note that it is also "
+            f"a screen candidate")
+        checked += 1
+    assert checked or not ruled, "rulings exist but none was checked against the live queue"
+
+
+def test_a_screen_id_verdict_is_refused_for_a_name_followed_under_another_book(
+    tmp_path: pathlib.Path,
+) -> None:
+    """THE LEDGER TWIN OF THE TWO-ROUTES CHECK. A candidate id seals a screen-origin row with no
+    sleeve — overshoot, counted in the PRIMARY spread. For a name followed under another book that
+    would put the verdict in the fund's proof metric under a book it is not judged in, append-only.
+    The refusal names the ticker route that carries the right book; a DEFAULT-book follow and an
+    unfollowed name are not conflicts."""
+    from vinci import cli
+
+    other = _write(tmp_path, {UNTOUCHED: _e("r", "ultra_short_term")})
+    msg = cli._screen_id_book_conflict(other, UNTOUCHED)
+    assert msg is not None
+    assert f"log-verdict {UNTOUCHED}" in msg and "'ultra_short_term'" in msg
+    assert "primary spread" in msg
+    agreeing = _write(tmp_path, {UNTOUCHED: _e("r", DEFAULT_SLEEVE)})
+    assert cli._screen_id_book_conflict(agreeing, UNTOUCHED) is None
+    assert cli._screen_id_book_conflict(agreeing, "NOTFOLLOWED") is None
+
+
+def test_the_screen_id_guard_runs_before_the_ledger_write() -> None:
+    """STRUCTURAL, like the edge-basis gate's: the ledger is append-only, so the refusal has to come
+    before `log_verdict` or not at all."""
+    src = (ROOT / "vinci" / "cli.py").read_text()
+    body = src[src.index("def _cmd_log_verdict"):]
+    body = body[:body.index("\ndef ", 10)]
+    assert body.index("_screen_id_book_conflict") < body.index("= log_verdict("), (
+        "the screen-id guard runs AFTER the ledger write — an append-only row cannot be recalled")
+
+
+def test_logging_a_ruled_name_by_its_screen_id_writes_nothing(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    """END TO END on a COPY of the committed tree: the real snapshots rebuilt into a store, the
+    real follow file, the real parser. Every committed follow entry under a non-default book whose
+    ticker the committed screen ranks is logged by its candidate id — each must refuse, print why,
+    and leave BOTH the store's ledger and the committed JSONL untouched."""
+    import shutil
+
+    from vinci import cli
+    from vinci.store import Store
+
+    snaps = ROOT / "data" / "snapshots"
+    if not FOLLOWED.exists() or not (snaps / "candidate_records.jsonl").exists():
+        pytest.skip("no committed follow file or screen snapshot in this worktree")
+    data = tmp_path / "data"
+    data.mkdir()
+    shutil.copytree(snaps, data / "snapshots")
+    shutil.copy(FOLLOWED, data / "followed.json")
+    cfg = Config(data_dir=data)
+    cfg.ensure_dirs()
+    with Store(cfg.db_path) as store:
+        store.rebuild_from_snapshots(cfg.snapshots_dir)
+    monkeypatch.setattr(cli, "get_config", lambda: cfg)
+
+    queue = [json.loads(ln) for ln in (snaps / "ranked_queue.jsonl").read_text().splitlines()
+             if ln.strip()]
+    follows = json.loads(FOLLOWED.read_text())
+    clashing = [r["candidate_id"] for r in queue
+                if follows.get(r["ticker"], {}).get("sleeve", DEFAULT_SLEEVE) != DEFAULT_SLEEVE]
+    if not clashing:
+        pytest.skip("no committed follow entry is also a current screen candidate")
+    jsonl = (data / "snapshots" / "decision_ledger.jsonl").read_text()
+    for cid in clashing:
+        with Store(cfg.db_path) as store:
+            before = len(list(store.iter_ledger()))
+        args = cli.build_parser().parse_args([
+            "log-verdict", cid, "--verdict", "BUY", "--twin", "t", "--thesis", "th", "--kill", "k",
+            "--horizon-days", "10", "--confidence", "medium",
+            "--edge-basis", "event-structural", "--edge-note", "a dated event 2026-10-01"])
+        assert cli._cmd_log_verdict(args) == 1, f"{cid}: logged under the wrong book"
+        assert "is FOLLOWED under" in capsys.readouterr().out
+        with Store(cfg.db_path) as store:
+            assert len(list(store.iter_ledger())) == before, f"{cid}: a row reached the store"
+    assert (data / "snapshots" / "decision_ledger.jsonl").read_text() == jsonl

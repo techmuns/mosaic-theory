@@ -290,6 +290,12 @@ PR (CLAUDE.md: coin-time translation).
   leaves the margin history, and the page names it. Home: `vinci/dossier/midcycle.py`
   (`tag_disputes`, `TAG_CONFLICT_PCT`), shared by `vinci/dossier/anchor.py`
   (`_total_revenue_series`).
+- **Route ruling (`overrides_screen`)** — a follow entry's stated operator decision that the
+  follow's book governs a name the screen ALSO ranks. Plain words: *this name came in through both
+  doors, and the operator says which question it answers*. Without one, a name on both routes
+  refuses to assemble (`vinci/dossier/assemble.py` `_finalist`); with one, the page says so in its
+  main body. `log-verdict <screen candidate id>` refuses either way for a name followed under
+  another book (`vinci/cli.py` `_screen_id_book_conflict`) — log it by ticker.
 
 ## Local setup (every laptop, every contributor)
 
