@@ -471,3 +471,62 @@ def test_an_outlook_list_is_not_reported_results() -> None:
 # --- a bare excerpt with no period information keeps its historical empty label ------------------
 def test_text_with_no_period_information_at_all_stays_unlabelled_not_skipped() -> None:
     assert _rows("Adjusted EBITDA* of $53.8 million.") == {("adjusted ebitda", "", 53.8)}
+
+
+# --- review fixes (PR #622). SYNTHETIC sentence shapes, not filing excerpts: each reproduces a
+# failure the resolver produced on the shape, and each pins a positive AND a negative case.
+
+
+def test_a_change_amount_before_the_comparison_is_not_read_as_a_sub_unit() -> None:
+    """"$100.0 million, an increase of $10.0 million, compared to adjusted EBITDA of $90.0
+    million": the sub-unit test read the DELTA as the clause's current figure, found it unequal to
+    the stated $100.0M, and dropped the company's own prior-year comparison. A real sub-unit still
+    goes."""
+    t = ("Acme Reports First Quarter 2026 Results. First quarter adjusted EBITDA was $100.0 "
+         "million, an increase of $10.0 million, compared to adjusted EBITDA of $90.0 million in "
+         "the prior year quarter. ")
+    assert ("adjusted ebitda", "Q1 2025", 90.0) in _rows(t)
+    sub = ("Acme Reports First Quarter 2026 Results. First quarter adjusted EBITDA was $100.0 "
+           "million. Acme Logistics had adjusted EBITDA of $4.0 million, compared to adjusted "
+           "EBITDA of $3.0 million in the prior year quarter. ")
+    assert not any(v == 3.0 for _, _, v in _rows(sub))
+
+
+def test_a_fiscal_quarter_ended_date_takes_the_fiscal_year_not_the_calendar_year() -> None:
+    """A fiscal-year filer's Q1 FY2026 is the three months ended December 31, 2025. The date's
+    calendar year labelled the figure Q1 2025 — the prior year's quarter. A calendar filer's date
+    and its year agree, and stay as they were."""
+    fiscal = ("BrandCo Reports Results for the First Quarter of Fiscal 2026. For the three months "
+              "ended December 31, 2025, adjusted EBITDA was $120.0 million. ")
+    assert ("adjusted ebitda", "Q1 2026", 120.0) in _rows(fiscal)
+    calendar = ("Acme Reports First Quarter 2026 Results. For the three months ended March 31, "
+                "2026, adjusted EBITDA was $120.0 million. ")
+    assert ("adjusted ebitda", "Q1 2026", 120.0) in _rows(calendar)
+
+
+def test_projects_as_a_noun_does_not_make_an_actual_an_outlook() -> None:
+    """"higher volumes on major projects, adjusted EBITDA was $100.0 million" is a reported actual;
+    the forward-word list read the noun as the verb and dropped it. The verb still suppresses.
+    """
+    actual = ("Acme Reports First Quarter 2026 Results. Reflecting higher volumes on major "
+              "projects, adjusted EBITDA was $100.0 million. ")
+    assert ("adjusted ebitda", "Q1 2026", 100.0) in _rows(actual)
+    outlook = ("Acme Reports First Quarter 2026 Results. For fiscal 2026 the company projects "
+               "adjusted EBITDA of $400.0 million. ")
+    assert not any(v == 400.0 for _, _, v in _rows(outlook))
+
+
+def test_ltm_ending_a_fourth_quarter_is_that_full_year() -> None:
+    """The LTM ending Q4 of Y is FY(Y) — no composition. Refusing every Q4 left the whole
+    fourth-quarter reporting window 'LTM unavailable'; a full year below its own Q4 still
+    refuses."""
+    from vinci.dossier import schemas as ds
+
+    def rel(rows: list[tuple[str, float]]) -> ds.ReleaseExtract:
+        return ds.ReleaseExtract(source_ref="t", reconciliation=[
+            ds.ReconciliationValue(metric="adjusted ebitda", period=p, value=v, verbatim="v",
+                                   source_ref="t") for p, v in rows])
+
+    assert mech._ltm_adj_ebitda([rel([("2025", 633.5), ("Q4 2025", 113.1)])]) == 633.5
+    assert mech._ltm_adj_ebitda([rel([("2025", 66.2), ("Q4 2025", 113.1)])]) is None
+    assert mech._ltm_adj_ebitda([rel([("Q4 2025", 113.1), ("Q4 2024", 10.9)])]) is None

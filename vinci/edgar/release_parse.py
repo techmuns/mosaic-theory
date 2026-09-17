@@ -190,6 +190,10 @@ class _ReleaseFrame(NamedTuple):
     kind: str
     quarter: int | None
     year: str | None
+    # fiscal year minus the calendar year of the release's own quarter-end date. A fiscal-year filer
+    # (BellRing: Q1 FY2026 is the three months ended December 31, 2025) names its quarters by the
+    # year they END in, so "three months ended December 31, 2025" is Q1 2026, not Q1 2025.
+    fy_offset: int = 0
 
     @property
     def label(self) -> str:
@@ -231,13 +235,25 @@ def _release_frame(text: str) -> _ReleaseFrame:
     "Fourth Quarter 2025 Highlights" subheading happened to fall inside the header window."""
     head = text[:600]
     if c := _HDR_COMBINED.search(head):
-        return _ReleaseFrame("combined", 4, c.group(1))
+        return _ReleaseFrame("combined", 4, c.group(1), _fy_offset(text, c.group(1)))
     if q := _HDR_QUARTER.search(head):
-        return _ReleaseFrame("quarter", _QN[q.group(1).lower()], q.group(2))
+        return _ReleaseFrame("quarter", _QN[q.group(1).lower()], q.group(2),
+                             _fy_offset(text, q.group(2)))
     if a := _HDR_ANNUAL.search(head):
         return _ReleaseFrame("annual", None, a.group(1) or a.group(2))
     y = _HDR_ANY_YEAR.search(head) or re.search(r"(20\d\d)", head)
     return _ReleaseFrame("unknown", None, y.group(1) if y else None)
+
+
+def _fy_offset(text: str, year: str) -> int:
+    """The header's fiscal year minus the LATEST calendar year a "three months / quarter ended
+    <date>" phrase names — the release's own quarter end. 0 when the text names no such date, or
+    when the gap is not a plausible fiscal-year shift (−1..1)."""
+    ends = [int(m.group("qey")) for m in _PHRASE.finditer(text) if m.group("qended")]
+    if not ends:
+        return 0
+    off = int(year) - max(ends)
+    return off if -1 <= off <= 1 else 0
 
 
 def _release_period(text: str) -> str:
@@ -290,12 +306,20 @@ _INTRO = re.compile(r"\b(?:in|for|during|of|over|through|throughout)\s+(?:the\s+
 #: "We currently expect: ● Fiscal 2026 Pro Forma Adjusted EBITDA of $80" (FUBO).
 _FORWARD = re.compile(
     r"\b(?:expects?|expected|expecting|anticipates?|anticipated|outlook|guidance|guides?|"
-    r"forecasts?|projects?|projected|targets?|reaffirm\w*|revis(?:e|es|ed|ing)\s+its)\b",
+    # "projects"/"targets" are NOUNS far more often than verbs in a release ("higher volumes on
+    # major projects, adjusted EBITDA was $100.0 million") — only the unambiguous verb forms count.
+    r"forecasts?|projected|projecting|targeted|targeting|"
+    r"(?:we|company|management)\s+(?:projects|targets|project|target)|"
+    r"reaffirm\w*|revis(?:e|es|ed|ing)\s+its)\b",
     re.I)
 _AMOUNT = re.compile(r"\$\s*\(?\d|\d[\d,.]*\s*(?:million|billion)\b", re.I)
 #: One stated amount in a clause lead, with its scale word when there is one ("$27.6 million",
 #: "$0.05") — how a comparison finds the current value it is the prior of.
 _LEAD_AMOUNT = re.compile(r"\$\s*\(?([\d,]*\.?\d+)\)?\s*(million|billion)?", re.I)
+#: A CHANGE amount's lead-in — the delta beside a figure is not the figure its comparison is about.
+_CHANGE_LEAD = re.compile(
+    r"\b(?:(?:an?\s+)?(?:increase|decrease|improvement|decline|growth|reduction|change)\s+of|"
+    r"(?:up|down|increased|decreased|grew|declined|rose|fell|improved)(?:\s+by)?)\s*$", re.I)
 #: Clause edges — a sentence end or any bullet glyph a release uses.
 _EDGE = re.compile(r"\.\s|[•●○◦■▪]")
 #: A section heading that names ONE period ("Fourth Quarter Fiscal 2025 Highlights", "Fiscal Year
@@ -337,7 +361,7 @@ def _as_current(m: re.Match[str], frame: _ReleaseFrame) -> object:
     if g["qs"]:
         return f"Q{g['qsn']} {g['qsy']}"
     if g["qended"]:
-        return (f"Q{frame.quarter} {g['qey']}"
+        return (f"Q{frame.quarter} {int(g['qey']) + frame.fy_offset}"
                 if frame.quarter and frame.kind in ("quarter", "combined") else None)
     if g["quarterly"]:
         return frame.label if frame.kind in ("quarter", "combined") else None
@@ -372,7 +396,8 @@ def _as_comparison_granularity(m: re.Match[str], frame: _ReleaseFrame) -> object
         rn = _QN[g["relqn"].lower()] if g["relqn"] else frame.quarter
         return f"Q{rn} {frame.year}" if rn and frame.year else None
     if g["qended"]:
-        return f"Q{frame.quarter} {int(g['qey']) + 1}" if frame.quarter else None
+        return (f"Q{frame.quarter} {int(g['qey']) + 1 + frame.fy_offset}"
+                if frame.quarter else None)
     if g["fy"]:
         year = g["fyy"] or g["fyy2"]
         return str(int(year) + 1) if year else _NO
@@ -396,7 +421,7 @@ def _as_prior(m: re.Match[str], frame: _ReleaseFrame) -> object:
         rn = _QN[g["relqn"].lower()] if g["relqn"] else frame.quarter
         return f"Q{rn} {_year_minus(frame.year)}" if rn and frame.year else None
     if g["qended"]:
-        return f"Q{frame.quarter} {g['qey']}" if frame.quarter else None
+        return f"Q{frame.quarter} {int(g['qey']) + frame.fy_offset}" if frame.quarter else None
     if g["fy"]:
         return g["fyy"] or g["fyy2"] or None
     if g["yended"]:
@@ -650,6 +675,8 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
         for a in _LEAD_AMOUNT.finditer(text, lo, marker_start):
             if bool(a.group(2)) != (not eps):  # totals carry million/billion; EPS does not
                 continue
+            if _CHANGE_LEAD.search(text, max(lo, a.start() - 30), a.start()):
+                continue  # "…$100.0 million, an increase of $10.0 million, compared to" — a delta
             amt = a
         if amt is None or (cv := _money(amt.group(1))) is None:
             return False

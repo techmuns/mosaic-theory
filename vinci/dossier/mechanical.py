@@ -3507,6 +3507,10 @@ def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
         return None
     cur = max(quarters, key=lambda p: (int(p[3:7]), int(p[1])))  # latest (year, quarter)
     yr, qn = int(cur[3:7]), int(cur[1])
+    if qn == 4:
+        # the LTM ending Q4 of Y IS FY(Y) — no composition; refuse a year below its own Q4
+        full = vals.get(str(yr))
+        return round(full, 1) if full is not None and full >= vals[cur] else None
     if qn != 1:
         return None
     prior, fy = f"Q{qn} {yr - 1}", str(yr - 1)  # prior-year same quarter; the completed FY
