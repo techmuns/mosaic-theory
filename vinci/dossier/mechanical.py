@@ -94,11 +94,12 @@ from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.data_record import DataRecord, Identity
-from vinci.schemas.envelope import CoverageStatus, DataField
+from vinci.schemas.envelope import CoverageStatus, DataField, SourceTier
 from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     DECLINE_WINDOW_DAYS,
     GAP_DOWN_THRESHOLD,
+    pe_current_and_percentile,
     share_basis_change,
 )
 from vinci.store import Store
@@ -154,6 +155,53 @@ def _companyfacts_or_none(edgar: EdgarClient, cik: str | None) -> dict[str, Any]
         return edgar.companyfacts(cik)
     except (HttpError, KeyError, ValueError):  # ValueError: pad_cik int() on a non-numeric CIK
         return None
+
+
+def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> DataRecord:
+    """The record's CURRENT-PRICE readings re-derived at the LATEST STORED CLOSE — the close the
+    page's own price box shows — with everything else left as the screen recorded it.
+
+    WHAT MOVES: ``prices.last`` and the trailing EDGAR P/E pair (``fundamentals.pe``,
+    ``pe_pctile_vs_history``). Every dossier reader of those asks about NOW: the P/E field, the
+    EDGAR-vs-CIQ conflict caveat, the P/E reconciliation's forward multiple "at the current price",
+    and the adjusted P/E and forward EV "at current $price". The screen record answered all of them
+    at its reference date. PARR, 2026-09-17: the page's price read $84.90 (2026-09-16) while its
+    EDGAR P/E divided $74.33 (2026-08-24) — 10.4x instead of 11.9x — and the conflict caveat set
+    that three-week-old multiple against CIQ's current one.
+
+    WHAT DOES NOT: the drawdown and return features, and the stored screen record itself (the G3
+    gate input). Those describe the screen's own as-of on purpose; only this in-memory copy moves.
+
+    ONE FUNCTION FOR BOTH: the P/E pair comes from `pe_current_and_percentile`, the screen's own
+    derivation, so the dossier's P/E and the screen's can differ only by the close they divide.
+
+    FAIL-HONEST: no stored bars, or EDGAR facts that cannot be read, leave the reading UNKNOWN with
+    its reason — never the screen's older-price figure carried forward as current."""
+    bars = store.get_price_history(record.identity.internal_id)
+    f = record.fundamentals
+    if not bars:
+        none: DataField[float] = DataField.unknown(
+            source="EOD", tier=SourceTier.EOD,
+            note="no stored price bars at assembly — no current close to price a reading on")
+        return record.model_copy(update={
+            "prices": record.prices.model_copy(update={"last": none}),
+            "fundamentals": f.model_copy(update={"pe": none, "pe_pctile_vs_history": none})})
+    bar = max(bars, key=lambda b: b.bar_date)
+    last: DataField[float] = DataField.present(
+        bar.close, as_of=bar.bar_date, source="EOD", tier=SourceTier.EOD)
+    facts = _companyfacts_or_none(edgar, record.identity.cik)
+    if facts is None:
+        pe: DataField[float] = DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=f"EDGAR companyfacts unreadable at assembly — no P/E at the "
+                 f"{bar.bar_date.isoformat()} close")
+        pct = pe
+    else:
+        annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual]
+        pe, pct = pe_current_and_percentile(bars, annual_eps, reference_date=bar.bar_date)
+    return record.model_copy(update={
+        "prices": record.prices.model_copy(update={"last": last}),
+        "fundamentals": f.model_copy(update={"pe": pe, "pe_pctile_vs_history": pct})})
 
 
 def _close_on_or_before(bars: list[PriceBar], ref: date) -> float | None:
@@ -1207,10 +1255,23 @@ def _pe_reconciliation(
     ciq_pe = ciq_sheets.pe_ltm_current(bundle)
     if eps_m and price:  # RESOLVED — the forward adjusted EPS is now sourced
         lo, hi = float(eps_m.group(1)), float(eps_m.group(2))
-        ciq_tail = (
-            f"; CIQ P/LTM {ciq_pe.value:.1f}x uses a different (lower) trailing EPS basis"
-            if ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value else ""
-        )
+        ciq_tail = ""
+        if ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value:
+            # THE EPS DIRECTION IS ARITHMETIC ONLY ON ONE CLOSE. The tail always said CIQ's basis
+            # was "(lower)" — right on its one live instance (VRRM, GAAP 5.6x vs CIQ 16.8x) and
+            # wrong whenever CIQ is the lower multiple (NCNO's 419x vs 154x is that shape). When
+            # both multiples divide the same close, the higher one rests on the smaller EPS; when
+            # the closes differ, price moved between them too, so the date is stated instead.
+            ciq_day = ciq_sheets.pe_ltm_asof(bundle)
+            if ciq_day is not None and ciq_day == record.prices.last.as_of \
+                    and ciq_pe.value != round(pe.value, 1):
+                basis = "lower" if ciq_pe.value > pe.value else "higher"
+                ciq_tail = (f"; CIQ P/LTM {ciq_pe.value:.1f}x, on the same close, uses a "
+                            f"different ({basis}) trailing EPS basis")
+            else:
+                on = f" at its {ciq_day.isoformat()} close" if ciq_day is not None else ""
+                ciq_tail = (f"; CIQ P/LTM {ciq_pe.value:.1f}x{on} uses a different trailing EPS "
+                            f"basis")
         flag = (
             f"RESOLVED (P/E basis) — trailing GAAP P/E {pe.value:.1f}x is one-time-distorted: "
             f"latest GAAP EPS {latest:.2f} is ~{latest / med:.1f}× the recent median {med:.2f}, so "
@@ -1263,10 +1324,10 @@ def _eps_caveat_flags(
 ) -> list[str]:
     """Flag (a) that earnings power (company-adjusted, non-GAAP EPS) is not shown — UNLESS it now is
     (``eps_resolved``: the 99.1 adjusted EPS surfaced it, so the caveat is a resolved fact, not a
-    warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
-    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' — kept UNLESS the
-    LTM GAAP EPS is a known LOSS, where (d) owns it (an 'inflated' EPS framing is wrong when GAAP
-    trailing is negative, and stacking (b)+(d) is flag noise);
+    warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the two divide by
+    different earnings and the synthesis must not anchor on the LOWER of the two (whichever source
+    it is) — kept UNLESS the LTM GAAP EPS is a known LOSS, where (d) owns it (stacking (b)+(d) is
+    flag noise);
     (d) when a displayed trailing P/E multiple (EDGAR and/or CIQ) rests on NORMALIZED earnings
     while the LTM GAAP diluted EPS is a LOSS — SMPL showed EDGAR P/E 10.9x + CIQ P/LTM 16.0x beside
     an LTM GAAP dil EPS of −2.08 (LTM net income −$199M, the $249M impairment inside the window)
@@ -1293,10 +1354,35 @@ def _eps_caveat_flags(
     ):
         ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
         if ratio >= 2:
+            # WHICHEVER MULTIPLE IS LOWER is the one a reader takes as 'cheap', and the inputs say
+            # nothing about WHY the two differ. The first text blamed EDGAR every time ("EDGAR
+            # trailing EPS is one-time-inflated … must not anchor on <EDGAR>x"), true only when
+            # EDGAR is the lower multiple. PARR (EDGAR 10.4x on FY2025 EPS 7.16 vs CIQ 5.0x; its LTM
+            # GAAP EPS row reads 17.09) and NCNO's committed page (416.2x vs 154.3x) carried the
+            # warning on the HIGHER multiple, leaving the low one un-caveated. The two also differ
+            # in more than earnings (price date, CIQ's own EPS definition), so no cause is named.
+            low, low_src = ((pe.value, "EDGAR") if pe.value < ciq_pe.value
+                            else (ciq_pe.value, "CIQ"))
+            # EACH MULTIPLE'S CLOSE, stated in the one sentence that compares them: the EDGAR P/E
+            # is priced at the latest stored close (`_at_latest_close`), CIQ's at its pull, and a
+            # stale pull leaves them weeks apart (NCNO's P/LTM EPS close is 2026-07-17, VRRM's
+            # 2026-03-31, against store prices through 2026-09-16).
+            edgar_day = record.prices.last.as_of if record.prices.last.is_known else None
+            ciq_day = ciq_sheets.pe_ltm_asof(bundle)
+            if edgar_day is not None and edgar_day == ciq_day:
+                closes = f", both at the {edgar_day.isoformat()} close"
+            elif edgar_day is not None and ciq_day is not None:
+                closes = (f" (EDGAR at the {edgar_day.isoformat()} close, CIQ at its "
+                          f"{ciq_day.isoformat()} close — {abs((edgar_day - ciq_day).days)} days "
+                          f"apart)")
+            else:
+                closes = ""
             out.append(
                 f"EDGAR P/E ({pe.value:.1f}x) conflicts ~{ratio:.0f}x with CIQ P/LTM EPS "
-                f"({ciq_pe.value:.1f}x) — EDGAR trailing EPS is one-time-inflated; the "
-                f"synthesis must not anchor on {pe.value:.1f}x as 'cheap'."
+                f"({ciq_pe.value:.1f}x){closes} — EDGAR divides by the latest fiscal-year GAAP "
+                f"diluted EPS, CIQ by its own trailing-twelve-month EPS. The inputs do not say "
+                f"which earnings recur, so the synthesis must not anchor on the lower {low:.1f}x "
+                f"({low_src}) without naming the earnings behind it."
             )
     # (d) The real basis mismatch, keyed on the LTM GAAP EPS SIGN (the signal (b)/(c)/_pe_recon
     # miss). A displayed positive trailing P/E multiple — EDGAR and/or CIQ — while GAAP LTM diluted
@@ -1520,7 +1606,7 @@ def _valuation(
     *, pe_note: str | None = None,
 ) -> Valuation:
     f = record.fundamentals
-    pe = _sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)")
+    pe = _sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD latest stored close")
     if pe_note and pe.status is SourceStatus.PRESENT:
         pe = pe.model_copy(update={"note": pe_note})  # carry the distortion caveat ON the value
     # trailing-only blind-flag: a trailing multiple with NO forward counterpart cannot tell a
@@ -1533,7 +1619,8 @@ def _valuation(
         cross_sectional=ciq_sheets.cross_sectional_valuation(bundle),
         pe=pe,
         pe_percentile_5y=_sourced(
-            f.pe_pctile_vs_history, source_ref="EDGAR/EOD P/E pctile vs ~5y (screen data-record)"
+            f.pe_pctile_vs_history,
+            source_ref="EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         ),
         # The EDGAR screen field `f.ev_ebitda` carries EBITDA *dollars* (screens/assemble.py
         # populates it from ebitda_annual), not the multiple — so the dossier's EV/EBITDA is the
@@ -4072,6 +4159,9 @@ def assemble_mechanical(
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
     distorted-P/E-basis warning). No conclusions. ``screen_cap_usd`` is the ranker's frozen
     screen-time cap — the benchmark-band fallback when the CIQ cap is absent (see below)."""
+    # every "at the current price" reading below — P/E, its percentile, the adjusted and forward
+    # multiples, the conflict caveat — reads the latest stored close, the one the price box shows
+    record = _at_latest_close(record, store, edgar)
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown, drawdown_flags = _drawdown_cause(record, edgar, http)

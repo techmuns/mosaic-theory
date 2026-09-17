@@ -619,6 +619,19 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def pe_ltm_asof(bundle: CiqBundle) -> date | None:
+    """The DATE of the latest P/LTM EPS Close that ``pe_ltm_current`` reports — the `ev_ebitda_asof`
+    twin, so a caller comparing CIQ's trailing P/E with another multiple can say whether the two
+    stand on the same close. None when the sheet, a dated close, or a meaningful value is absent."""
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    # the same cell `pe_ltm_current` reads, via the same selector — value and date move together
+    latest = _latest_close(_multiples_close(rows, "P/LTM EPS"))
+    return latest[0] if latest is not None and latest[1] is not None else None
+
+
 # --- quality: Cash Flow / Income Statement / Capital Structure Details ------------------------
 
 
