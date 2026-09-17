@@ -459,6 +459,35 @@ def test_the_follow_list_reader_refuses_what_the_dossier_reader_refuses(
         followed_by_sleeve(p)
 
 
+@pytest.mark.parametrize(
+    ("entry", "why"),
+    [
+        ({"sleeve": "ultra_short_term", "overrides_screen": "  "}, "states no ruling"),
+        ({"sleeve": "ultra_short_term", "overrides_screen": 7}, "states no ruling"),
+        ({"sleeve": "overshoot", "overrides_screen": "operator decision"}, "overshoot"),
+    ],
+    ids=["blank-ruling", "non-string-ruling", "ruling-on-the-default-book"],
+)
+def test_both_readers_refuse_a_ruling_that_rules_on_nothing(
+    tmp_path: pathlib.Path, entry: dict[str, object], why: str,
+) -> None:
+    """THE ROUTE RULING, refused by BOTH parsers of the file. Matched on the ruling's own message,
+    because each entry is otherwise complete: a bare exception-type check would also pass on a
+    missing date or reason and prove nothing about the ruling."""
+    from vinci.dossier.assemble import DossierAssemblyError, _follow_entry
+
+    p = tmp_path / "followed.json"
+    p.write_text(json.dumps({"AAA": {"reason": "r", "followed_since": "2026-09-17", **entry}}))
+    with pytest.raises(FollowedListError, match="overrides_screen"):
+        followed_by_sleeve(p)
+
+    class _Cfg:
+        data_dir = tmp_path
+
+    with pytest.raises(DossierAssemblyError, match=why):
+        _follow_entry(_Cfg(), "AAA")  # type: ignore[arg-type]
+
+
 def test_an_absent_follow_list_is_the_normal_state(tmp_path: pathlib.Path) -> None:
     """Nothing followed yet is not a failure — it is where every new deployment starts."""
     assert followed_by_sleeve(tmp_path / "nope.json") == {}
