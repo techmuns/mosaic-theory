@@ -166,6 +166,9 @@
     "V": "quality",
     "GOOGL": "quality",
     "TECX": "quality",
-    "ORKA": "quality"
+    "ORKA": "quality",
+    "AMZN": "quality",
+    "PARR": "ultra_short_term",
+    "WLK": "ultra_short_term"
   }
 }
