@@ -282,6 +282,13 @@ PR (CLAUDE.md: coin-time translation).
 - **face-validity** — parameters set because the output looks structurally right, NEVER tuned on
   forward returns (CLAUDE.md guardrail). **assemble-not-conclude** — the machine assembles,
   cites, proposes; it never free-writes a verdict.
+- **Tag dispute / untrusted year** — two XBRL revenue tags report one fiscal year more than 25%
+  apart. Plain words: *one of them is not the right denominator* — the one filed with that year's
+  operating income wins (a restatement is smaller and correct), and when both or neither were, the
+  smaller loses (a partial line is always smaller than the total). The year the tag in use loses
+  leaves the margin history, and the page names it. Home: `vinci/dossier/midcycle.py`
+  (`tag_disputes`, `TAG_CONFLICT_PCT`), shared by `vinci/dossier/anchor.py`
+  (`_total_revenue_series`).
 
 ## Local setup (every laptop, every contributor)
 

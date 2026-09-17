@@ -8,11 +8,21 @@ reward/risk CONVENTION on a worked example (incl. both degenerate cases); and th
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 import pytest
 
 from vinci.dossier import midcycle as mc
+
+_COMPANYFACTS = Path(__file__).resolve().parent / "fixtures" / "companyfacts"
+
+
+def _real(ticker: str) -> dict[str, Any]:
+    """A frozen REAL companyfacts subset (scripts/build_companyfacts_fixture.py)."""
+    facts: dict[str, Any] = json.loads((_COMPANYFACTS / f"{ticker}.json").read_text())
+    return facts
 
 
 def _facts(**tags: dict[int, float]) -> dict[str, Any]:
@@ -65,6 +75,75 @@ def test_short_history_prints_actual_coverage_never_extrapolates() -> None:
     assert "SHORT of the 10y window" in a.coverage_note and "NOT extrapolated" in a.coverage_note
     assert a.median == pytest.approx(0.07)             # the ACTUAL 4y median — no synthetic years
     assert a.years == yrs
+
+
+def test_a_partial_revenue_tag_loses_its_years_on_the_page_wlk() -> None:
+    """WLK's `Revenues` is a partial line for FY2011–15 ($108–446M beside `SalesRevenueNet`'s
+    $3.6–4.5bn). Longest coverage took all fifteen years and the page printed a 15y window, margins
+    up to 886% and a 16.3% median. Pinned where it is read — real companyfacts through the record
+    into the rendered line: the five years go, the line names them, the clean decade remains."""
+    from vinci.dossier.render import _midcycle_section
+    f = _real("WLK")
+    rev, oi = mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income")
+    assert rev.tag == "Revenues" and rev.excluded == (2011, 2012, 2013, 2014, 2015)
+    margin = mc.margin_anchor(rev, oi)
+    rec = mc.assemble_midcycle(margin=margin, fuel=mc.fuel_split(f, rev, oi),
+                               peers=mc.peer_anchor({}), mult=mc.multiple_anchor(None))
+    assert sorted(rec.margin_by_year, key=int) == [str(y) for y in range(2016, 2026)]
+    assert rec.margin_median == pytest.approx(0.097831, abs=5e-7)
+    assert rec.margin_peak is not None and rec.margin_peak < 1       # no 886% "margin" survives
+    line = next(x for x in _midcycle_section(rec) if "Own operating-margin history" in x)
+    assert line.startswith("- **Own operating-margin history** (10y (2016–2025)")
+    assert all(f"FY{y}" in line for y in range(2011, 2016)) and "2011:" not in line
+
+
+def test_the_larger_tag_keeps_its_years_vrrm_and_an_undisputed_series_is_untouched_wern() -> None:
+    """The DIRECTION is the rule, not the disagreement. VRRM's 606 total disagrees with a $13–133M
+    `Revenues` line in all six years both report; the OTHER tag is the partial one, so all eight
+    years stay (dropping every disputed year leaves two). WERN's 18-year `Revenues` — the series the
+    longest-alias rule exists for — has no dispute and is untouched."""
+    vf = _real("VRRM")
+    v = mc.annual_series(vf, "revenue")
+    assert v.tag == "RevenueFromContractWithCustomerExcludingAssessedTax"
+    assert v.years == list(range(2018, 2026)) and v.excluded == ()
+    partial = mc._series_from_points("revenue", "Revenues",
+                                     mc._annual_points(vf, "Revenues", "revenue"))
+    notes, untrusted = mc.tag_disputes(v, [partial], mc.annual_series(vf, "operating_income"))
+    assert len(notes) == 6 and untrusted == ()          # disputed every year, trusted every year
+    wf = _real("WERN")
+    w = mc.annual_series(wf, "revenue")
+    assert w.tag == "Revenues" and w.years == list(range(2008, 2026)) and w.excluded == ()
+    wm = mc.margin_anchor(w, mc.annual_series(wf, "operating_income"))
+    assert wm.excluded_years == () and "EXCLUDED" not in wm.coverage_note
+
+
+def test_longest_coverage_is_counted_after_the_untrusted_years_go() -> None:
+    """Coverage is compared on what SURVIVES. `Revenues` has twelve years, four of them a partial
+    line; `SalesRevenueNet` has ten clean ones. Ten beats eight — counted raw, twelve would win."""
+    rev = {y: (100.0 if 2013 <= y <= 2016 else 1000.0) for y in range(2011, 2023)}
+    f = _facts(Revenues=rev, SalesRevenueNet=dict.fromkeys(range(2011, 2021), 1000.0))
+    s = mc.annual_series(f, "revenue")
+    assert s.tag == "SalesRevenueNet" and s.n_years == 10 and s.excluded == ()
+
+
+def test_only_revenue_is_trimmed_by_a_disagreeing_tag() -> None:
+    """The direction argument is revenue's. `ProfitLoss` exceeds `NetIncomeLoss` by the minority
+    share BY DESIGN — trimming there would discard the parent's own earnings for the larger tag."""
+    f = _facts(NetIncomeLoss=dict.fromkeys(_YEARS, 50.0), ProfitLoss=dict.fromkeys(_YEARS, 100.0))
+    s = mc.annual_series(f, "net_income")
+    assert s.tag == "NetIncomeLoss" and s.n_years == 10 and s.excluded == ()
+
+
+def test_an_excluded_year_the_margin_never_read_is_not_reported() -> None:
+    """The note says what the MEDIAN left out. A revenue year dropped where operating income never
+    reported was never going to be read, so naming it would overstate the exclusion."""
+    rev = {y: (100.0 if y <= 2012 else 1000.0) for y in range(2011, 2023)}
+    f = _facts(Revenues=rev, SalesRevenueNet=dict.fromkeys((2011, 2012), 1000.0),
+               OperatingIncomeLoss=dict.fromkeys(range(2013, 2023), 80.0))
+    s = mc.annual_series(f, "revenue")
+    assert s.tag == "Revenues" and s.excluded == (2011, 2012)
+    a = mc.margin_anchor(s, mc.annual_series(f, "operating_income"))
+    assert a.n_years == 10 and a.excluded_years == () and "EXCLUDED" not in a.coverage_note
 
 
 def _anchor(f: dict[str, Any]) -> mc.MarginAnchor:

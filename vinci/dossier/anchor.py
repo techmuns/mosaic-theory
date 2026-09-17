@@ -60,9 +60,10 @@ _REVENUE_TAG_PREFERENCE = (
     "Revenues",
     "SalesRevenueNet",
 )
-# Two tags reporting the SAME fiscal year this far apart are not two views of one number — one of
-# them is not total revenue. Never silently pick: flag, and use the preferred (total) tag.
-_TAG_CONFLICT_PCT = 0.25
+# Two tags disagreeing by over `midcycle.TAG_CONFLICT_PCT` on one fiscal year are not two views of
+# one number. Never silently pick: flag, use the preferred tag, and drop the years it may be the
+# wrong one in (`midcycle.tag_disputes` — the threshold, the filing test and the direction live
+# there, shared).
 DQ_REVENUE_TAG_CONFLICT = "revenue_tag_conflict"
 _DILUTED_TAG = "WeightedAverageNumberOfDilutedSharesOutstanding"
 _NOTE = (
@@ -248,26 +249,20 @@ def _total_revenue_series(facts: dict[str, Any]) -> tuple[mc.AnnualSeries | None
     fail-loud disagreement notes.
 
     GUARD: when two candidate tags both report a fiscal year and disagree by more than
-    ``_TAG_CONFLICT_PCT``, they are not two views of one number — one is not total revenue. Record
-    the disagreement (the caller flags ``data_quality`` and caps confidence) and use the PREFERRED
-    tag. No candidate at all → ``(None, [])``, and the caller marks the anchor UNRESOLVED rather
-    than deriving a margin from a partial denominator."""
+    ``midcycle.TAG_CONFLICT_PCT``, they are not two views of one number — one is not total revenue.
+    Record the disagreement (the caller flags ``data_quality`` and caps confidence), use the
+    PREFERRED tag, and drop the years ``midcycle.tag_disputes`` cannot trust — the preferred figure
+    was not filed with that year's operating income while the other was, or, the filing aside, it is
+    the SMALLER: a flag beside a median that still read those years published WLK at 16.3% where its
+    clean decade gives 9.8%. No candidate at all → ``(None, [])``, and the caller marks the anchor
+    UNRESOLVED rather than deriving a margin from a partial denominator."""
     cands = _revenue_candidates(facts)
     if not cands:
         return None, []
     tag = next(t for t in _REVENUE_TAG_PREFERENCE if t in cands)
-    chosen = cands[tag]
-    conflicts: list[str] = []
-    for other, s in cands.items():
-        if other == tag:
-            continue
-        for y in sorted(set(chosen.by_year) & set(s.by_year)):
-            a, b = chosen.by_year[y], s.by_year[y]
-            scale = max(abs(a), abs(b))
-            if scale and abs(a - b) / scale > _TAG_CONFLICT_PCT:
-                conflicts.append(f"FY{y}: {tag} {a / _USD_M:,.0f}M vs {other} {b / _USD_M:,.0f}M "
-                                 f"({abs(a - b) / scale * 100:.0f}% apart)")
-    return chosen, conflicts
+    conflicts, untrusted = mc.tag_disputes(cands[tag], [s for t, s in cands.items() if t != tag],
+                                           mc.annual_series(facts, "operating_income"))
+    return mc._without_years(cands[tag], untrusted), conflicts
 
 
 # --- EDGAR source-bound extractors (fail-loud; a gap → None, never a fabricated zero) ----------
@@ -542,7 +537,7 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     ma = mc.margin_anchor(rev_s, oi_s)
     margin_val, margin_years = ma.median, ma.n_years
     margin_source = (f"EDGAR companyfacts {oi_s.tag} / {rev_s.tag} — reported median over "
-                     f"{margin_years} FY") if margin_val is not None else ""
+                     f"{margin_years} FY{ma.excluded_note}") if margin_val is not None else ""
     data_quality = DQ_REVENUE_TAG_CONFLICT if conflicts else None
     forced_weak = bool(conflicts)
     if margin_val is None:
@@ -559,7 +554,7 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         return _with_bridge(Anchor(
             recipe_hint=RECIPE_UNRESOLVED, applicable=False, computed_at=computed_at,
             reason=f"operating margin not computable — no fiscal year where both {oi_s.tag} and "
-                   f"{rev_s.tag} report",
+                   f"{rev_s.tag} report{ma.excluded_note}",
             data_quality=data_quality, data_quality_detail=conflicts), bridge)
 
     # POSITIVITY GUARD (minimal): a COMPUTED but non-positive margin → the revenue-anchored recipe.
