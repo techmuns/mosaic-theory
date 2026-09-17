@@ -1262,7 +1262,12 @@ def _event_impacts(text: str, src: str) -> list[EventImpact]:
 _PRICING = re.compile(
     r"(strategic\s+pricing\s+actions?|pricing\s+actions?|list\s+price\s+increases?|"
     r"price\s+increases?|rais(?:e|ed|ing)\s+(?:our\s+|list\s+)?prices?|"
-    r"increas(?:e|ed|ing)\s+(?:our\s+|the\s+)?(?:average\s+)?(?:selling\s+)?prices?)",
+    r"increas(?:e|ed|ing)\s+(?:our\s+|the\s+)?(?:average\s+)?(?:selling\s+)?prices?)"
+    # THE PHRASE MUST END AT A WORD BOUNDARY. Without it "price increases?" matched INSIDE "price
+    # increased": Westlake's "average sales price increased 14%" — a realized market price in one
+    # segment, beside another segment's 3% fall — became a bare "price increase" pricing-action row
+    # that the synthesis is told to ground price points in.
+    r"\b",
     re.I)
 _PRICING_PCT = re.compile(  # a % TIGHTLY bound to the price action (else stays qualitative) — the
     # gap forbids COMMAS and DIGITS and is short, so a nearby UNRELATED % ('net of 8% rebates',
