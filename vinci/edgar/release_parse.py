@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import html
 import re
+from typing import NamedTuple
 
 from vinci.dossier.schemas import (
     DriverKind,
@@ -176,25 +177,400 @@ def _norm_metric(raw: str) -> str:
     return "adjusted net income"
 
 
+class _ReleaseFrame(NamedTuple):
+    """What a release's HEADER says it covers. A figure falls back to this only when its own
+    sentence, its comparison clause and its section heading are all silent about its period.
+
+    ``kind`` is ``"quarter"`` (one quarter), ``"annual"`` (one fiscal year), ``"combined"`` (a
+    fourth quarter AND its full year in one exhibit) or ``"unknown"``. Only the first two name a
+    single period, so only they may LABEL an unattributed figure. A combined release carries a Q4
+    figure and an FY figure side by side under one header, and the header cannot say which a given
+    number is — that is the defect this frame exists to stop repeating."""
+
+    kind: str
+    quarter: int | None
+    year: str | None
+
+    @property
+    def label(self) -> str:
+        if self.kind in ("quarter", "combined") and self.quarter and self.year:
+            return f"Q{self.quarter} {self.year}"
+        return self.year or ""
+
+
+_QN = {"first": 1, "1st": 1, "second": 2, "2nd": 2, "third": 3, "3rd": 3, "fourth": 4, "4th": 4}
+
+#: "Fourth Quarter and Full Year 2025" / "…and Fiscal Year 2025" / "Fiscal Fourth Quarter and Full
+#: Fiscal Year 2025" / "FOURTH QUARTER AND 2025" / "Fourth Quarter and Annual 2025". Fourth quarter
+#: only: no other quarter is ever reported beside its full year.
+_HDR_COMBINED = re.compile(
+    r"(?:fiscal\s+)?(?:fourth|4th)\s+quarter\s+(?:(?:of\s+)?(?:fiscal\s+)?(?:year\s+)?20\d\d\s+)?"
+    r"and\s+(?:the\s+)?(?:(?:full|fiscal|annual|entire)\s+){0,2}(?:fiscal\s+)?(?:year\s+)?(20\d\d)",
+    re.I)
+# "Second Quarter of Fiscal Year 2026" / "of 2026" / "of fiscal 2026" — the FY phrasing between
+# 'quarter' and the year must not push this to the bare-year fallback (BellRing mislabelled its
+# quarterly figures with the year).
+_HDR_QUARTER = re.compile(
+    r"(first|second|third|fourth)\s+quarter\s+"
+    r"(?:of\s+)?(?:the\s+)?(?:fiscal\s+year\s+|fiscal\s+|fy\s*)?(20\d\d)",
+    re.I)
+#: "Reports 2025 Financial Results" / "Reports Full Year 2025 Financial Results" — one year, no
+#: quarter named anywhere in the header.
+_HDR_ANNUAL = re.compile(
+    r"(?:reports?|announces?)\s+"
+    r"(?:(?:full|fiscal|annual)[- ](?:fiscal\s+)?(?:year\s+)?)?(20\d\d)\s+"
+    r"(?:(?:full[- ]year|fiscal[- ]year|annual|financial)\s+)*results"
+    r"|(?:full|fiscal)[- ]year\s+(20\d\d)\s+(?:financial\s+)?results",
+    re.I)
+_HDR_ANY_YEAR = re.compile(r"(?:reports|results|full[- ]year|fiscal)\D{0,25}?(20\d\d)", re.I)
+
+
+def _release_frame(text: str) -> _ReleaseFrame:
+    """Classify the header. COMBINED is tested FIRST: its text also contains a quarter phrase, and
+    WERN's "Fourth Quarter and Annual 2025 Results" was read as a plain Q4 release only because a
+    "Fourth Quarter 2025 Highlights" subheading happened to fall inside the header window."""
+    head = text[:600]
+    if c := _HDR_COMBINED.search(head):
+        return _ReleaseFrame("combined", 4, c.group(1))
+    if q := _HDR_QUARTER.search(head):
+        return _ReleaseFrame("quarter", _QN[q.group(1).lower()], q.group(2))
+    if a := _HDR_ANNUAL.search(head):
+        return _ReleaseFrame("annual", None, a.group(1) or a.group(2))
+    y = _HDR_ANY_YEAR.search(head) or re.search(r"(20\d\d)", head)
+    return _ReleaseFrame("unknown", None, y.group(1) if y else None)
+
+
 def _release_period(text: str) -> str:
-    """The release's PRIMARY fiscal period from its header — so a reconciliation ACTUAL is not
-    mislabeled with the 'compared to … in {prior year}' comparison year that trails in-sentence."""
-    head = text[:400]
-    # "Second Quarter of Fiscal Year 2026" / "of 2026" / "of fiscal 2026" — the FY phrasing between
-    # 'quarter' and the year must not push this to the bare-year fallback (BellRing mislabelled its
-    # quarterly figures with the year).
-    q = re.search(
-        r"(first|second|third|fourth)\s+quarter\s+"
-        r"(?:of\s+)?(?:the\s+)?(?:fiscal\s+year\s+|fiscal\s+|fy\s*)?(20\d\d)",
-        head, re.I)
-    if q:
-        qn = ["first", "second", "third", "fourth"].index(q.group(1).lower()) + 1
-        return f"Q{qn} {q.group(2)}"
-    y = re.search(r"(?:reports|results|full[- ]year|fiscal)\D{0,25}?(20\d\d)", head, re.I)
-    if y:
-        return y.group(1)
-    any_y = re.search(r"20\d\d", head)
-    return any_y.group(0) if any_y else ""
+    """The release's PRIMARY period as a display label — the quarter for a quarterly or combined
+    release, the year for an annual one. Figures are NOT labelled from this; see _figure_period."""
+    return _release_frame(text).label
+
+
+_MONTH = (r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|"
+          r"sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?")
+#: Every way a release names the period a figure belongs to, most specific first. ORDER MATTERS:
+#: at one position the first alternative wins, so "the prior year fourth quarter" must be read as
+#: a relative QUARTER before "the prior year" can claim it, and a date must swallow its own year
+#: before the bare-year alternative sees it (WERN's "$0.53 in the prior year OMAHA, Neb., February
+#: 5, 2026" was labelled 2026 — the dateline, not the period).
+_PHRASE = re.compile(
+    r"(?P<ytd>\bytd\b|year[- ]to[- ]date|\b(?:six|nine)[- ]months?\s+ended|"
+    r"first\s+(?:half|six\s+months|nine\s+months)|first\s+three\s+quarters)"
+    rf"|(?P<qended>(?:three[- ]months?|quarter)\s+ended\s+"
+    rf"{_MONTH}\s+\d{{1,2}},?\s+(?P<qey>20\d\d))"
+    rf"|(?P<yended>(?:twelve[- ]months?|(?:fiscal\s+)?year)\s+ended\s+"
+    rf"{_MONTH}\s+\d{{1,2}},?\s+(?P<yey>20\d\d))"
+    r"|(?P<relq>(?:the\s+)?"
+    r"(?:prior[- ](?:fiscal[- ])?year|previous[- ]year|year[- ]ago|comparable|same)"
+    r"\s+(?:(?P<relqn>first|second|third|fourth)\s+)?(?:fiscal\s+)?quarter)"
+    r"|(?P<q>(?:fiscal\s+)?(?P<qn>first|second|third|fourth|1st|2nd|3rd|4th)\s+(?:fiscal\s+)?quarter"
+    r"(?:\s+of)?(?:\s+(?:the\s+)?(?:fiscal\s+)?(?:year\s+)?(?P<qy>20\d\d))?)"
+    r"|(?P<qs>\bq(?P<qsn>[1-4])\s*(?:fiscal\s*|fy\s*)?'?(?P<qsy>20\d\d))"
+    r"|(?P<quarterly>\bquarterly\b)"
+    r"|(?P<fy>(?:full|fiscal|entire)[- ](?:fiscal[- ])?year(?:\s+(?:of\s+)?(?P<fyy>20\d\d))?|"
+    r"\b(?:fiscal|fy)\s*'?(?P<fyy2>20\d\d))"
+    r"|(?P<relp>(?:the\s+)?(?:prior|previous)[- ](?:fiscal\s+)?year(?:\s+period)?|"
+    r"(?:the\s+)?(?:comparable\s+)?year[- ]ago\s+period|"
+    r"(?:the\s+)?same\s+period(?:\s+(?:in|of)\s+(?P<relpy>20\d\d))?)"
+    rf"|(?P<date>{_MONTH}\s+\d{{1,2}},?\s+20\d\d)"
+    r"|(?P<bare>\b(?P<bareyear>20\d\d)\b)",
+    re.I)
+#: A comparison clause: the prior-period value is introduced by one of these.
+_CMP = re.compile(
+    r"\b(?:compared\s+(?:to|with)|as\s+compared\s+to|versus|vs\.)"
+    # "Gross margin increased from 32.5% to 34.7%": the FROM value is the comparison. Only a
+    # number may follow, so "income from operations" is not one.
+    r"|\bfrom\s+(?=\(?\$?\s*\d)",
+    re.I)
+#: A period phrase TRAILING a figure only counts when a preposition introduces it: "$8.6 million …
+#: in the fourth quarter of 2025", "$113.1 million for the fourth quarter". Without this, the next
+#: section's heading bleeds in — WERN's Q4 "$0.05, down 29% 2025 Highlights" read as the full year.
+_INTRO = re.compile(r"\b(?:in|for|during|of|over|through|throughout)\s+(?:the\s+)?$", re.I)
+#: Forward-looking words. A figure under one of these is an OUTLOOK, not a reported actual —
+#: "We currently expect: ● Fiscal 2026 Pro Forma Adjusted EBITDA of $80" (FUBO).
+_FORWARD = re.compile(
+    r"\b(?:expects?|expected|expecting|anticipates?|anticipated|outlook|guidance|guides?|"
+    r"forecasts?|projects?|projected|targets?|reaffirm\w*|revis(?:e|es|ed|ing)\s+its)\b",
+    re.I)
+_AMOUNT = re.compile(r"\$\s*\(?\d|\d[\d,.]*\s*(?:million|billion)\b", re.I)
+#: One stated amount in a clause lead, with its scale word when there is one ("$27.6 million",
+#: "$0.05") — how a comparison finds the current value it is the prior of.
+_LEAD_AMOUNT = re.compile(r"\$\s*\(?([\d,]*\.?\d+)\)?\s*(million|billion)?", re.I)
+#: Clause edges — a sentence end or any bullet glyph a release uses.
+_EDGE = re.compile(r"\.\s|[•●○◦■▪]")
+#: A section heading that names ONE period ("Fourth Quarter Fiscal 2025 Highlights", "Fiscal Year
+#: 2025 Summary"). Title Case is required so prose ("fourth quarter results reflect…") is not a
+#: heading; a heading naming BOTH periods ("Fourth Quarter and Fiscal Year 2025 Highlights") says
+#: nothing about any one figure under it.
+_HEADING = re.compile(
+    # Words may carry digits: FuboTV heads a section "Q3 Fiscal 2026 Highlights", and a letters-only
+    # word broke the run at "Q3" and read the heading as "Fiscal 2026" — a full-year section.
+    r"((?:[A-Z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*|20\d\d)"
+    r"(?:\s+(?:[A-Z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*|20\d\d|and)){0,6})"
+    r"\s+(?:Financial\s+)?(Highlights|Summary|Overview|Results)\b")
+#: "Results" alone is too common a word to trust as a heading ("2024 Results" inside a VITL
+#: exhibit labelled its Q2-2025 gross margin as the full year 2024); it needs a period WORD.
+_PERIOD_WORD = re.compile(
+    r"\b(?:quarter|year|fiscal|annual|months|ytd|year-to-date|q[1-4])\b", re.I)
+
+
+_NO = object()  # "this phrase is not evidence either way — keep looking"
+
+
+def _phrases(text: str, lo: int, hi: int) -> list[re.Match[str]]:
+    return list(_PHRASE.finditer(text, max(0, lo), max(lo, hi)))
+
+
+def _year_minus(year: str | None, n: int = 1) -> str | None:
+    return str(int(year) - n) if year else None
+
+
+def _as_current(m: re.Match[str], frame: _ReleaseFrame) -> object:
+    """What a period phrase in a CURRENT figure's own clause says that figure is. Returns a label,
+    ``None`` (a period this extractor must not label — a year-to-date figure), or ``_NO``."""
+    g = m.groupdict()
+    if g["ytd"]:
+        return None
+    if g["q"]:
+        year = g["qy"] or frame.year
+        return f"Q{_QN[g['qn'].lower()]} {year}" if year else None
+    if g["qs"]:
+        return f"Q{g['qsn']} {g['qsy']}"
+    if g["qended"]:
+        return (f"Q{frame.quarter} {g['qey']}"
+                if frame.quarter and frame.kind in ("quarter", "combined") else None)
+    if g["quarterly"]:
+        return frame.label if frame.kind in ("quarter", "combined") else None
+    if g["fy"]:
+        year = g["fyy"] or g["fyy2"]
+        if not year and frame.kind in ("combined", "annual"):
+            year = frame.year
+        return year if year else None
+    if g["yended"]:
+        return g["yey"]
+    if g["bare"]:
+        # In a single-quarter release a bare year beside a figure is far likelier an outlook or a
+        # date than a claim that the figure is annual — the header's quarter stands.
+        return _NO if frame.kind == "quarter" else g["bareyear"]
+    return _NO  # relative phrases and dates describe a comparison, never the current figure
+
+
+def _as_comparison_granularity(m: re.Match[str], frame: _ReleaseFrame) -> object:
+    """What a comparison clause's period says about the CURRENT figure's period: "compared with
+    $346.7 million in the prior year fourth quarter" makes the current value a Q4; "compared to
+    $44.8 million in 2024" makes it the full year after."""
+    g = m.groupdict()
+    if g["ytd"]:
+        return None
+    if g["q"]:
+        n = _QN[g["qn"].lower()]
+        year = str(int(g["qy"]) + 1) if g["qy"] else frame.year
+        return f"Q{n} {year}" if year else None
+    if g["qs"]:
+        return f"Q{g['qsn']} {int(g['qsy']) + 1}"
+    if g["relq"]:
+        rn = _QN[g["relqn"].lower()] if g["relqn"] else frame.quarter
+        return f"Q{rn} {frame.year}" if rn and frame.year else None
+    if g["qended"]:
+        return f"Q{frame.quarter} {int(g['qey']) + 1}" if frame.quarter else None
+    if g["fy"]:
+        year = g["fyy"] or g["fyy2"]
+        return str(int(year) + 1) if year else _NO
+    if g["yended"]:
+        return str(int(g["yey"]) + 1)
+    if g["bare"]:
+        return _NO if frame.kind == "quarter" else str(int(g["bareyear"]) + 1)
+    return _NO  # "the prior year" / "the comparable year ago period" carry no granularity
+
+
+def _as_prior(m: re.Match[str], frame: _ReleaseFrame) -> object:
+    """The period of a COMPARISON figure itself, from its own trailing clause."""
+    g = m.groupdict()
+    if g["ytd"]:
+        return None
+    if g["q"]:
+        return f"Q{_QN[g['qn'].lower()]} {g['qy']}" if g["qy"] else None
+    if g["qs"]:
+        return f"Q{g['qsn']} {g['qsy']}"
+    if g["relq"]:
+        rn = _QN[g["relqn"].lower()] if g["relqn"] else frame.quarter
+        return f"Q{rn} {_year_minus(frame.year)}" if rn and frame.year else None
+    if g["qended"]:
+        return f"Q{frame.quarter} {g['qey']}" if frame.quarter else None
+    if g["fy"]:
+        return g["fyy"] or g["fyy2"] or None
+    if g["yended"]:
+        return g["yey"]
+    if g["relp"]:
+        if frame.kind == "quarter" and frame.quarter and frame.year:
+            return f"Q{frame.quarter} {g['relpy'] or _year_minus(frame.year)}"
+        if frame.kind == "annual" and frame.year:
+            return g["relpy"] or _year_minus(frame.year)
+        return None  # a combined release's "prior year" could be the quarter or the year
+    if g["bare"]:
+        return g["bareyear"]
+    return _NO  # a date — keep reading
+
+
+def _clause(text: str, start: int, end: int, cap: int = 240) -> tuple[int, int]:
+    """The figure's clause: back to the last sentence end, bullet or section heading, forward to
+    the next. A HEADING is an edge because stripped HTML leaves none between a section's last
+    bullet and the next heading — WERN's Q4 "…per share was $0.05, down 29% 2025 Highlights (all
+    metrics compared to 2024)" otherwise hands the Q4 figure the next section's comparison."""
+    lo_floor = max(0, start - cap)
+    lo = lo_floor
+    for e in _EDGE.finditer(text, lo_floor, start):
+        lo = e.end()
+    for h in _HEADING.finditer(text, lo, start):
+        lo = max(lo, h.end())
+    hi_cap = min(len(text), end + cap)
+    nxt = _EDGE.search(text, end, hi_cap)
+    hi = nxt.start() if nxt else hi_cap
+    head = _HEADING.search(text, end, hi)
+    return lo, (head.start(1) if head else hi)
+
+
+def _outside_comparisons(text: str, lo: int, hi: int) -> list[re.Match[str]]:
+    """Period phrases in [lo, hi) that do NOT sit inside a comparison sub-clause. MVST writes
+    "Full Year net loss of $29.2 million, compared to net loss of $195.5 million in 2024; Non-GAAP
+    adjusted net profit of $13.0 million" — the nearest year before the $13.0M is the COMPARISON's
+    2024, and reading it would label a current full-year figure as the prior year."""
+    cut: list[tuple[int, int]] = []
+    for c in _CMP.finditer(text, lo, hi):
+        stop = min((j for j in (text.find(";", c.end(), hi), text.find(". ", c.end(), hi))
+                    if j != -1), default=hi)
+        cut.append((c.start(), stop))
+    return [p for p in _phrases(text, lo, hi) if not any(a <= p.start() < b for a, b in cut)]
+
+
+def _heading_period(text: str, before: int, frame: _ReleaseFrame) -> object:
+    """The period named by the nearest section heading above a figure, or ``_NO``."""
+    heads = [h for h in _HEADING.finditer(text, max(0, before - 6000), before)
+             if h.group(2) != "Results" or _PERIOD_WORD.search(h.group(1))]
+    if not heads:
+        return _NO
+    words = heads[-1].group(1)
+    names = _phrases(words, 0, len(words))
+    if any(p.group("ytd") for p in names):
+        return None  # "Year-to-Date Third Quarter Fiscal Year 2025 Summary" — a YTD section
+    has_q = any(p.group("q") or p.group("qs") for p in names)
+    has_fy = any(p.group("fy") for p in names)
+    if has_q and has_fy and re.search(r"\band\b", words, re.I):
+        return _NO  # "Fourth Quarter and Fiscal Year 2025 Highlights" — both periods, no answer
+    for p in reversed(names):
+        r = _as_current(p, frame)
+        if r is not _NO:
+            return r
+    return _NO
+
+
+def _comparison_at(text: str, lo: int, start: int) -> re.Match[str] | None:
+    """The comparison marker that governs a figure, if the figure IS the compared value: the last
+    marker in the figure's own clause with no other amount between it and the figure. Bounded to
+    the clause on purpose — a 26-character look-back crossed a bullet and read SMPL's previous
+    bullet ("$1.46 versus $1.33 •") as making its YTD adjusted EBITDA a prior-year comparison."""
+    last = None
+    for c in _CMP.finditer(text, lo, start):
+        last = c
+    if last is None or _AMOUNT.search(text, last.end(), start):
+        return None
+    return last
+
+
+def _introduced(text: str, p: re.Match[str]) -> bool:
+    return bool(_INTRO.search(text[max(0, p.start() - 24):p.start()]))
+
+
+def _forward_looking(text: str, lo: int, start: int) -> bool:
+    """True when the figure's own lead-in, or the lead-in of the bullet list it sits in, is an
+    outlook. The list lead-in is the text from the last sentence end to the first bullet of the
+    run the figure belongs to."""
+    if _FORWARD.search(text, lo, start):
+        return True
+    sent = text.rfind(". ", max(0, lo - 1500), lo)
+    sent = sent + 2 if sent != -1 else max(0, lo - 1500)
+    first_bullet = re.search(r"[•●○◦■▪]", text[sent:lo])
+    if not first_bullet:
+        return False
+    return bool(_FORWARD.search(text, sent, sent + first_bullet.start()))
+
+
+def _period_order(label: str) -> tuple[int, int]:
+    m = re.fullmatch(r"Q([1-4])\s+(20\d\d)", label)
+    return (int(m.group(2)), int(m.group(1))) if m else (int(label), 4)
+
+
+def _figure_period(text: str, start: int, end: int, frame: _ReleaseFrame, *,
+                   comparison: bool | None = None) -> str | None:
+    """The period ONE figure belongs to, from evidence about that figure. ``None`` means the text
+    does not say, and the figure must not be labelled.
+
+    Priority for a current figure: its own clause after the value (before any comparison, and only
+    where a preposition introduces the period), its own clause before the value (comparison
+    sub-clauses removed), the granularity its comparison clause implies, its section heading, and
+    only then the header — and the header only when it names ONE period. A combined
+    Q4-and-full-year header names two, so an unattributed figure under it is left unlabelled rather
+    than filed as the year: that guess put BellRing's Q4 adjusted EBITDA of $117.4M, Concentrix's
+    $378.6M and Uber's quarterly $2.5bn on their pages as FY2025.
+
+    ``comparison`` overrides detection (tests); by default it is read from the clause itself."""
+    lo, hi = _clause(text, start, end)
+    marker = _comparison_at(text, lo, start)
+    if comparison is None:
+        comparison = marker is not None
+    if comparison:
+        stop = min((j for j in (text.find(";", end, hi),) if j != -1), default=hi)
+        spans = ([(marker.end(), start)] if marker else []) + [(end, stop)]
+        for a, b in spans:
+            for p in _phrases(text, a, b):
+                if a == end and not _introduced(text, p):
+                    continue
+                r = _as_prior(p, frame)
+                if r is not _NO:
+                    return r if isinstance(r, str) else None
+        return None
+    if _forward_looking(text, lo, start):
+        return None
+    label = _current_period(text, lo, hi, start, end, frame)
+    if label and frame.kind in ("quarter", "combined", "annual") and frame.year:
+        ceiling = (int(frame.year), frame.quarter or 4)
+        if _period_order(label) > ceiling:
+            return None  # an actual cannot postdate the release that reports it
+    return label
+
+
+def _current_period(text: str, lo: int, hi: int, start: int, end: int,
+                    frame: _ReleaseFrame) -> str | None:
+    cmp_at = _CMP.search(text, end, hi)
+    for p in _phrases(text, end, min(cmp_at.start() if cmp_at else hi, end + 90)):
+        if not _introduced(text, p):
+            continue
+        r = _as_current(p, frame)
+        if r is not _NO:
+            return r if isinstance(r, str) else None
+    for p in reversed(_outside_comparisons(text, lo, start)):
+        r = _as_current(p, frame)
+        if r is not _NO:
+            return r if isinstance(r, str) else None
+    if cmp_at:
+        stop = min((j for j in (text.find(";", cmp_at.end(), hi),) if j != -1), default=hi)
+        for p in _phrases(text, cmp_at.end(), stop):
+            r = _as_comparison_granularity(p, frame)
+            if r is not _NO:
+                return r if isinstance(r, str) else None
+    h = _heading_period(text, lo, frame)
+    if h is not _NO:
+        return h if isinstance(h, str) else None
+    if frame.kind == "quarter":
+        return frame.label or None
+    if frame.kind == "annual":
+        return frame.year
+    # No header period AND no year anywhere in it: the text carries no period information at all
+    # (a bare excerpt), so there is nothing to be ambiguous ABOUT and the figure keeps the empty
+    # label it always had — which neither consumer shape (Qn YYYY / YYYY) reads. A release that
+    # DOES carry a year but cannot place this figure is skipped instead: its periods exist, and
+    # a guess among them is the defect this resolver removes.
+    return "" if frame.kind == "unknown" and not frame.year else None
 
 
 # --- (1) non-GAAP reconciliation actuals ---------------------------------------------------------
@@ -239,41 +615,88 @@ _REVENUE = re.compile(
 )
 
 
-def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValue]:
+def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[ReconciliationValue]:
+    """Non-GAAP actuals, headline revenue and GAAP gross margin — each labelled with the period
+    ITS OWN text names (_figure_period), never the header's period by default.
+
+    A figure whose period the release does not state is SKIPPED, not guessed. The two period
+    shapes every consumer reads are ``Qn YYYY`` (a quarter) and a bare ``YYYY`` (a full year):
+    ``_ltm_adj_ebitda`` composes LTM from them and ``_fy_reconciliation`` takes a bare year as the
+    full-year margin input, so a quarter or a year-to-date figure wearing a bare year is not a
+    labelling blemish — it is a wrong input to both, and to the synthesis that reads every row."""
     out: list[ReconciliationValue] = []
     seen: set[tuple[str, str]] = set()  # (metric, period) — current actual AND prior-year comp
+    current = frame.label
+
+    def _segment(at: int) -> bool:
+        # "The Commercial Services segment generated total revenue of $108.1 million" is one
+        # segment, not the company — VRRM's Q4 page would have shown it as company revenue.
+        lo, _ = _clause(text, at, at)
+        return bool(re.search(r"\bsegments?\b", text[lo:at], re.I))
+
+    # A comparison is the prior value OF the current figure in its own clause. If that clause's
+    # current amount is NOT the value the release already stated for the same metric and period, the
+    # clause is about a sub-unit, and its comparison is not the company's. WERN: "Werner Logistics
+    # had a non-GAAP adjusted operating loss of $0.9 million, compared to Non-GAAP adjusted
+    # operating income of $0.7 million in the prior year" follows the company's own "$27.6 million";
+    # with the prior-year period now resolved, the segment's $0.7M would otherwise have stood as the
+    # company's Q1-2025 figure. The test reads the AMOUNT, not the phrasing, so a current figure the
+    # metric pattern cannot parse ("net profit per share of $0.05") still anchors its comparison.
+    stated: dict[tuple[str, str], float] = {}
+
+    def _sub_unit(lo: int, marker_start: int, metric: str) -> bool:
+        eps = metric == "adjusted eps"
+        amt = None
+        for a in _LEAD_AMOUNT.finditer(text, lo, marker_start):
+            if bool(a.group(2)) != (not eps):  # totals carry million/billion; EPS does not
+                continue
+            amt = a
+        if amt is None or (cv := _money(amt.group(1))) is None:
+            return False
+        cp = _figure_period(text, amt.start(), amt.end(), frame, comparison=False)
+        prior = stated.get((metric, cp)) if cp else None
+        # MAGNITUDES, not signs: a release writes a loss as "negative $5.5 million", "a loss of",
+        # "$(5.5)" or "net loss", and reading the sign from the words got MVST's own restated
+        # figure wrong. A sub-unit differs in SIZE (WERN: 0.9 against the company's 27.6).
+        return prior is not None and abs(abs(prior) - cv) > max(0.005 * abs(prior), 1e-9)
+
     for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
-        is_comparison = "compared to" in text[max(0, m.start() - 26):m.start()].lower()
         # the amount comes from EITHER currency branch: "$53.8 million" (group 3) or
         # "53.8 million" (group 4). A bare number with neither marker no longer matches at all.
         metric_raw, sign = m.group(1), (m.group(2) or "").lower()
         num = m.group(3) or m.group(4)
         val, metric = _money(num), _norm_metric(m.group(1))
-        if val is None:
+        if val is None or _segment(m.start()):
             continue
         if "negative" in sign or "loss" in metric_raw.lower():
             val = -abs(val)
-        # a 'compared to …' clause is the PRIOR-YEAR value — period from the trailing 'in {period}',
-        # which must differ from the release period (else skip: never conflate prior with current).
-        p = (_period_near(text, m.start(), m.end()) if is_comparison
-             else (period or _period_near(text, m.start(), m.end())))
-        if (is_comparison and (not p or p == period)) or (metric, p) in seen:
+        lo, _ = _clause(text, m.start(), m.end())
+        marker = _comparison_at(text, lo, m.start())
+        if marker is not None and _sub_unit(lo, marker.start(), metric):
+            continue
+        p = _figure_period(text, m.start(), m.end(), frame, comparison=marker is not None)
+        # a comparison can never share the release's own period (never conflate prior with current)
+        if p is None or (marker is not None and p == current) or (metric, p) in seen:
             continue
         seen.add((metric, p))
+        stated[(metric, p)] = val
         out.append(ReconciliationValue(
             metric=metric, period=p, value=val, change=_change_after(text, m.end()),
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
     for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
         val = _money(m.group(1))
-        if val is None:
+        if val is None or _segment(m.start()):
             continue
-        is_comparison = "compared to" in text[max(0, m.start() - 26):m.start()].lower()
-        p = (_period_near(text, m.start(), m.end()) if is_comparison
-             else (period or _period_near(text, m.start(), m.end())))
-        if (is_comparison and (not p or p == period)) or ("revenue", p) in seen:
+        lo, _ = _clause(text, m.start(), m.end())
+        marker = _comparison_at(text, lo, m.start())
+        if marker is not None and _sub_unit(lo, marker.start(), "revenue"):
+            continue
+        p = _figure_period(text, m.start(), m.end(), frame, comparison=marker is not None)
+        if p is None or (marker is not None and p == current) or ("revenue", p) in seen:
             continue
         seen.add(("revenue", p))
+        stated[("revenue", p)] = val
         out.append(ReconciliationValue(
             metric="revenue", period=p, value=val,
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
@@ -281,10 +704,12 @@ def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValu
     gm = next((mm for mm in _GROSS_MARGIN.finditer(text)
                if "adjusted" not in text[max(0, mm.start() - 12):mm.start()].lower()), None)
     if gm and (v := _money(gm.group(1))) is not None:
-        out.append(ReconciliationValue(
-            metric="gross margin", period=period, value=v,
-            verbatim=_verbatim(text, gm.start(), gm.end()), source_ref=src,
-        ))
+        gp = _figure_period(text, gm.start(), gm.end(), frame)
+        if gp is not None:
+            out.append(ReconciliationValue(
+                metric="gross margin", period=gp, value=v,
+                verbatim=_verbatim(text, gm.start(), gm.end()), source_ref=src,
+            ))
     return out
 
 
@@ -882,7 +1307,7 @@ def parse_release(text: str, *, source_ref: str) -> ReleaseExtract:
     section fails loud with a qa_flag — a miss is UNKNOWN, never a fabricated value."""
     guidance_notes: list[str] = []
     guidance = _guidance(text, source_ref, guidance_notes)
-    reconciliation = _reconciliation(text, source_ref, _release_period(text))
+    reconciliation = _reconciliation(text, source_ref, _release_frame(text))
     one_offs = _one_offs(text, source_ref)
     event_impacts = _event_impacts(text, source_ref)
     flags: list[str] = list(guidance_notes)

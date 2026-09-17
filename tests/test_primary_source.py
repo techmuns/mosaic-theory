@@ -56,8 +56,22 @@ def test_ltm_adj_ebitda_refuses_misperiodized_fy() -> None:
     unavailable'), never a quarter-scale LTM. A plausible FY (≥ its quarters) still composes."""
     poisoned = _adj_ebitda_release([("2025", 66.2), ("Q3 2025", 73.9), ("Q3 2026", 57.0)])
     assert mech._ltm_adj_ebitda([poisoned]) is None
-    sane = _adj_ebitda_release([("2025", 261.9), ("Q3 2025", 73.9), ("Q3 2026", 57.0)])
-    assert mech._ltm_adj_ebitda([sane]) == 245.0
+    sane_q1 = _adj_ebitda_release([("2025", 261.9), ("Q1 2025", 73.9), ("Q1 2026", 57.0)])
+    assert mech._ltm_adj_ebitda([sane_q1]) == 245.0
+
+
+def test_ltm_adj_ebitda_refuses_a_later_quarter_it_cannot_compose() -> None:
+    """THIS PIN USED TO ASSERT 245.0 FOR THE Q3 SHAPE BELOW, and that value was wrong. FY − Q3(Y−1)
+    + Q3(Y) leaves Q1 and Q2 unswapped; the test beside it names SMPL's "real ~$220M LTM" for the
+    same situation, which is 25 away from the 245.0 it certified. The shortfall hid while
+    mis-periodized FY rows tripped the full-year guard: with periods labelled correctly (release
+    parser, 2026-09-17) Par Pacific at Q2 2026 composes $1,067.0M against a true $1,148.3M, and
+    SMPL's page would have gone from 'LTM unavailable' to 261.3. Only Q1 is exact, so only Q1
+    composes."""
+    q3 = _adj_ebitda_release([("2025", 261.9), ("Q3 2025", 73.9), ("Q3 2026", 57.0)])
+    assert mech._ltm_adj_ebitda([q3]) is None
+    parr_q2 = _adj_ebitda_release([("2025", 633.5), ("Q2 2025", 137.8), ("Q2 2026", 571.3)])
+    assert mech._ltm_adj_ebitda([parr_q2]) is None
 
 
 def test_release_revenue_guide_prefers_most_recent() -> None:
