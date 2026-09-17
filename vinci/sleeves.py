@@ -40,6 +40,12 @@ _OVERSHOOT_VERDICTS = ("BUY", "AVOID_TERMINAL")
 #: RECORD in an append-only ledger. The enum member itself lands in Phase 2 (PR-2b).
 _QUALITY_VERDICTS = ("BUY", "PASS")
 
+#: The trade book's legs are quality's labels for the same reason quality's are not overshoot's: a
+#: trade not taken says the catalyst is priced or too uncertain, never that the business is going
+#: away, so recording AVOID_TERMINAL on it would be a false record. Named separately so a change to
+#: one book's vocabulary cannot move the other's.
+_TRADE_VERDICTS = ("BUY", "PASS")
+
 
 @dataclass(frozen=True)
 class Sleeve:
@@ -112,7 +118,7 @@ class Sleeve:
     ledger_active: bool
 
 
-#: THE FOUR. Ordered live-first; the ORDER carries no preference.
+#: THE FIVE. Ordered live-first; the ORDER carries no preference.
 SLEEVE_ROWS: tuple[Sleeve, ...] = (
     Sleeve(
         key="overshoot",
@@ -171,6 +177,41 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
         entry="the follow list (operator judgement; reason AND sleeve both required)",
         kill="the sleeve's BUY−PASS curve fails to beat simply INDEXING the same followed names — "
              "the judgement adds nothing over passive exposure to a list we chose anyway",
+        ledger_active=True,
+    ),
+    Sleeve(
+        key="ultra_short_term",
+        survive_heading="What happened — and is the catalyst still ahead?",
+        read_label="Read — what moved",
+        drawdown_subtitle="The event(s) that moved the price, then whether it moved alone "
+                          "(idiosyncratic) or with its graph cohort.",
+        twin_help="how the priced-or-spent twin is ruled out",
+        thesis_help="the dated catalyst and the exit (or PASS rationale)",
+        drawdown_heading="What moved the price — and did it move alone?",
+        bull_label="Bull case — the catalyst is not yet in the price",
+        bear_label="Bear case — already priced, or spent before the exit",
+        label="Ultra-short-term trade",
+        bet="a dated, nameable catalyst moves the price within weeks, and the market has its size "
+            "or its timing wrong",
+        twin="priced or spent — the catalyst is already in the price, or its move comes and goes "
+             "before the exit",
+        question="What is the dated catalyst — and is it already in the price?",
+        verdicts=_TRADE_VERDICTS,
+        subject="a US equity with a dated, near-term catalyst",
+        tool_subject="the two readings of a near-term catalyst trade",
+        bull_case="The CATALYST case: a dated, nameable event within weeks whose size or timing "
+                  "the price does not yet reflect.",
+        bear_case="The PRICED-OR-SPENT case: the event is already in the price, or its move fades "
+                  "before the exit.",
+        both_cases="the unpriced-catalyst reading AND the priced-or-spent reading",
+        twin_outcome="moved on the catalyst / was already priced or faded before the exit.",
+        entry="the follow list (operator judgement; reason AND sleeve both required)",
+        # THE SAME COMPARATOR QUALITY USES (`vinci/scoring/baseline.py`), scored per verdict over
+        # that verdict's OWN window — so a short `--horizon-days` is what makes this book short.
+        # Nothing enforces the horizon yet; it is stated at log time, verdict by verdict.
+        kill="the sleeve's BUY−PASS curve, each verdict scored at its own short horizon, fails to "
+             "beat simply HOLDING the same followed names over the same windows — the catalyst "
+             "call adds nothing over owning the list",
         ledger_active=True,
     ),
     Sleeve(

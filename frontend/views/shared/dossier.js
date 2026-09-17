@@ -1305,6 +1305,7 @@ function machineReadHtml(eb) {
 const SLEEVE_LEGS = {
   overshoot: ["BUY", "AVOID_TERMINAL"],
   quality: ["BUY", "PASS"],
+  ultra_short_term: ["BUY", "PASS"],
   theme: ["RATIFIED", "NOT-RATIFIED"],
   neglect: ["BUY", "AVOID_TERMINAL"],
 };
@@ -1330,6 +1331,14 @@ const SLEEVE_COPY = {
              subtitle: "The event(s) that moved the price, then whether it moved alone (idiosyncratic) or with its graph cohort.",
              twinHelp: "how the fully-priced twin is ruled out",
              thesisHelp: "the runway thesis (or PASS rationale)" },
+  ultra_short_term: { drawdown: "What moved the price — and did it move alone?",
+             bull: "Bull case — the catalyst is not yet in the price",
+             bear: "Bear case — already priced, or spent before the exit",
+             survive: "What happened — and is the catalyst still ahead?",
+             read: "Read — what moved",
+             subtitle: "The event(s) that moved the price, then whether it moved alone (idiosyncratic) or with its graph cohort.",
+             twinHelp: "how the priced-or-spent twin is ruled out",
+             thesisHelp: "the dated catalyst and the exit (or PASS rationale)" },
   theme: { drawdown: "What moved the basket — and did the members move together?",
            bull: "Bull case — the driver is real and unpriced",
            bear: "Bear case — momentum wearing a story",
