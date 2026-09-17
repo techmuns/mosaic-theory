@@ -273,6 +273,29 @@ def test_a_disputed_year_the_preferred_tag_wins_stays_in_the_median_vrrm() -> No
     assert "EXCLUDED" not in a.margin.source
 
 
+def test_a_restated_year_filed_with_its_operating_income_stays_hwm() -> None:
+    """Howmet's FY2018 is $6,778M in its 2021 10-K — restated to continuing operations after the
+    Arconic separation, filed beside that year's $775M operating income — against Arconic's
+    $14,014M from the 2019 10-K. Size alone dropped the SMALLER figure, which is the right basis
+    here; the filing decides it, and the ten-year 13.47% stands (real companyfacts)."""
+    a = compute_anchor(_MECH_OK, facts=_real("HWM"), computed_at=_now())
+    assert a.margin is not None
+    assert a.margin.value == pytest.approx(0.134738, abs=5e-7) and a.margin.anchor_years == 10
+    assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT and "EXCLUDED" not in a.margin.source
+
+
+def test_a_larger_figure_from_an_older_filing_than_its_operating_income_leaves_wor() -> None:
+    """Worthington's preferred tag holds FY2022–23 as first reported, steel included ($5,242M,
+    $4,916M, 2023 10-K). The operating income beside those years ($49M, $30M) comes from later 10-Ks
+    restated without steel, which restated revenue too ($1,309M, $1,418M, under `Revenues`). Pairing
+    them pulled the median to 0.93%. The mismatched figure is the LARGER one, so size alone kept it;
+    the filing test drops both years (real companyfacts)."""
+    a = compute_anchor(_MECH_OK, facts=_real("WOR"), computed_at=_now())
+    assert a.margin is not None
+    assert a.margin.anchor_years == 3 and a.margin.value == pytest.approx(0.038506, abs=5e-7)
+    assert all(f"FY{y}" in a.margin.source for y in (2022, 2023))
+
+
 def test_a_margin_emptied_by_excluded_years_says_so_in_its_reason() -> None:
     """When every overlapping year is one the preferred tag may be partial in, 'no fiscal year where
     both report' would be false — they did report. The refusal names the years it dropped."""

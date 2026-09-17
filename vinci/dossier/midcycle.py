@@ -63,8 +63,8 @@ class AnnualSeries:
     tag: str | None                      # the alias actually used (None → no data at all)
     by_year: dict[int, float]
     accession_by_year: dict[int, str | None]
-    # years REMOVED because another revenue tag reports over TAG_CONFLICT_PCT more
-    # (``tag_disputes``) — carried so a margin read off this series can say what it left out
+    # years REMOVED because another revenue tag disagrees by over TAG_CONFLICT_PCT and this tag
+    # loses (``tag_disputes``) — carried so a margin read off this series can say what it left out
     excluded: tuple[int, ...] = ()
 
     @property
@@ -88,7 +88,8 @@ def annual_series(facts: dict[str, Any], concept: str) -> AnnualSeries:
            for tag in CONCEPT_ALIASES[concept]]
     cands = raw
     if concept == "revenue":
-        cands = [_without_years(s, tag_disputes(s, [o for o in raw if o is not s])[1])
+        opinc = annual_series(facts, "operating_income")
+        cands = [_without_years(s, tag_disputes(s, [o for o in raw if o is not s], opinc)[1])
                  for s in raw]
     best: AnnualSeries | None = None
     for cand in cands:
@@ -97,29 +98,43 @@ def annual_series(facts: dict[str, Any], concept: str) -> AnnualSeries:
     return best or AnnualSeries(concept=concept, tag=None, by_year={}, accession_by_year={})
 
 
-def tag_disputes(chosen: AnnualSeries,
-                 others: list[AnnualSeries]) -> tuple[list[str], tuple[int, ...]]:
+def tag_disputes(chosen: AnnualSeries, others: list[AnnualSeries],
+                 opinc: AnnualSeries) -> tuple[list[str], tuple[int, ...]]:
     """Every fiscal year another revenue tag disagrees with ``chosen`` by over TAG_CONFLICT_PCT →
     (one note per disagreement, the years ``chosen`` cannot be trusted for).
 
-    A disagreement alone does not say which tag is wrong; its DIRECTION does. A partial revenue line
-    is always SMALLER than total revenue, so a year is untrusted only where ``chosen`` reports the
-    smaller figure. WLK's ``Revenues`` FY2011–15 ($108–446M beside ``SalesRevenueNet``'s $3.6–4.5bn)
-    is that shape, and it turned a clean ten-year 9.8% median into 16.3%. Where ``chosen`` is the
-    LARGER, the other tag is the partial line and the year stands: VRRM's 606 total disagrees with a
-    $13–133M ``Revenues`` line in all six years both report, and dropping every disputed year would
-    have cut its margin history from eight years to two."""
+    A disagreement alone does not say which tag is wrong. Two things do, in this order.
+
+    THE FILING. A margin divides operating income by revenue, so both must come from the same
+    filing. When exactly one of the two revenue figures was filed with that year's operating income,
+    it is the right one. That is a RESTATEMENT: after a divestiture the newest 10-K restates old
+    years to continuing operations — smaller, and the correct basis for the operating income filed
+    beside it. Across 424 real filers, 12 had one (Spectrum Brands FY2019 $2,446M against an older
+    filing's $3,802M; Howmet FY2018 $6,778M against Arconic's $14,014M), and trusting size alone
+    dropped every one of those valid years.
+
+    THE SIZE, when the filing cannot tell them apart. A partial revenue line is always SMALLER than
+    total revenue, so the smaller figure is the untrusted one. WLK's ``Revenues`` FY2011–15
+    ($108–446M beside ``SalesRevenueNet``'s $3.6–4.5bn, in the same 10-Ks) turned a clean ten-year
+    9.8% median into 16.3%; rental companies tag only non-lease revenue as ASC 606 (Sunbelt $2.8bn
+    of $10.9bn) and printed 90% margins. Where ``chosen`` is the larger, the other tag is the
+    partial line and the year stands: VRRM's 606 total beside a $13–133M ``Revenues`` line keeps all
+    eight years."""
     notes: list[str] = []
     untrusted: set[int] = set()
     for other in others:
         for y in sorted(set(chosen.by_year) & set(other.by_year)):
             a, b = chosen.by_year[y], other.by_year[y]
             scale = max(abs(a), abs(b))
-            if scale and abs(a - b) / scale > TAG_CONFLICT_PCT:
-                notes.append(f"FY{y}: {chosen.tag} {a / 1e6:,.0f}M vs {other.tag} {b / 1e6:,.0f}M "
-                             f"({abs(a - b) / scale * 100:.0f}% apart)")
-                if a < b:
-                    untrusted.add(y)
+            if not scale or abs(a - b) / scale <= TAG_CONFLICT_PCT:
+                continue
+            notes.append(f"FY{y}: {chosen.tag} {a / 1e6:,.0f}M vs {other.tag} {b / 1e6:,.0f}M "
+                         f"({abs(a - b) / scale * 100:.0f}% apart)")
+            filed_with = opinc.accession_by_year.get(y)
+            ours = filed_with is not None and chosen.accession_by_year.get(y) == filed_with
+            theirs = filed_with is not None and other.accession_by_year.get(y) == filed_with
+            if theirs and not ours or ours == theirs and a < b:
+                untrusted.add(y)
     return notes, tuple(sorted(untrusted))
 
 
@@ -182,8 +197,9 @@ class MarginAnchor:
         if not self.excluded_years:
             return ""
         yrs = ", ".join(f"FY{y}" for y in self.excluded_years)
-        return (f" — {len(self.excluded_years)} FY EXCLUDED ({yrs}): another revenue tag reports "
-                f"over {TAG_CONFLICT_PCT:.0%} more, so {self.revenue_tag} may be a partial line")
+        return (f" — {len(self.excluded_years)} FY EXCLUDED ({yrs}): another revenue tag "
+                f"disagrees by over {TAG_CONFLICT_PCT:.0%} and {self.revenue_tag} is the smaller "
+                f"figure or not the one filed with that year's operating income")
 
     @property
     def values(self) -> list[float]:

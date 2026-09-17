@@ -108,7 +108,7 @@ def test_the_larger_tag_keeps_its_years_vrrm_and_an_undisputed_series_is_untouch
     assert v.years == list(range(2018, 2026)) and v.excluded == ()
     partial = mc._series_from_points("revenue", "Revenues",
                                      mc._annual_points(vf, "Revenues", "revenue"))
-    notes, untrusted = mc.tag_disputes(v, [partial])
+    notes, untrusted = mc.tag_disputes(v, [partial], mc.annual_series(vf, "operating_income"))
     assert len(notes) == 6 and untrusted == ()          # disputed every year, trusted every year
     wf = _real("WERN")
     w = mc.annual_series(wf, "revenue")

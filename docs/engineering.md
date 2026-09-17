@@ -276,10 +276,12 @@ PR (CLAUDE.md: coin-time translation).
   forward returns (CLAUDE.md guardrail). **assemble-not-conclude** — the machine assembles,
   cites, proposes; it never free-writes a verdict.
 - **Tag dispute / untrusted year** — two XBRL revenue tags report one fiscal year more than 25%
-  apart. Plain words: *one of them is not total revenue, and a partial line is always the smaller
-  number* — so the year leaves the margin history only where the tag in use is the smaller one, and
-  the page names the years it left out. Home: `vinci/dossier/midcycle.py` (`tag_disputes`,
-  `TAG_CONFLICT_PCT`), shared by `vinci/dossier/anchor.py` (`_total_revenue_series`).
+  apart. Plain words: *one of them is not the right denominator* — the one filed with that year's
+  operating income wins (a restatement is smaller and correct), and when both or neither were, the
+  smaller loses (a partial line is always smaller than the total). The year the tag in use loses
+  leaves the margin history, and the page names it. Home: `vinci/dossier/midcycle.py`
+  (`tag_disputes`, `TAG_CONFLICT_PCT`), shared by `vinci/dossier/anchor.py`
+  (`_total_revenue_series`).
 
 ## Local setup (every laptop, every contributor)
 

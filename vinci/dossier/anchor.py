@@ -62,7 +62,8 @@ _REVENUE_TAG_PREFERENCE = (
 )
 # Two tags disagreeing by over `midcycle.TAG_CONFLICT_PCT` on one fiscal year are not two views of
 # one number. Never silently pick: flag, use the preferred tag, and drop the years it may be the
-# partial one in (`midcycle.tag_disputes` — the threshold and the direction live there, shared).
+# wrong one in (`midcycle.tag_disputes` — the threshold, the filing test and the direction live
+# there, shared).
 DQ_REVENUE_TAG_CONFLICT = "revenue_tag_conflict"
 _DILUTED_TAG = "WeightedAverageNumberOfDilutedSharesOutstanding"
 _NOTE = (
@@ -250,15 +251,17 @@ def _total_revenue_series(facts: dict[str, Any]) -> tuple[mc.AnnualSeries | None
     GUARD: when two candidate tags both report a fiscal year and disagree by more than
     ``midcycle.TAG_CONFLICT_PCT``, they are not two views of one number — one is not total revenue.
     Record the disagreement (the caller flags ``data_quality`` and caps confidence), use the
-    PREFERRED tag, and drop the years where the preferred tag is the SMALLER figure: a flag beside a
-    median that still read those years published WLK at 16.3% where its clean decade gives 9.8%. No
-    candidate at all → ``(None, [])``, and the caller marks the anchor UNRESOLVED rather than
-    deriving a margin from a partial denominator."""
+    PREFERRED tag, and drop the years ``midcycle.tag_disputes`` cannot trust — the preferred figure
+    was not filed with that year's operating income while the other was, or, the filing aside, it is
+    the SMALLER: a flag beside a median that still read those years published WLK at 16.3% where its
+    clean decade gives 9.8%. No candidate at all → ``(None, [])``, and the caller marks the anchor
+    UNRESOLVED rather than deriving a margin from a partial denominator."""
     cands = _revenue_candidates(facts)
     if not cands:
         return None, []
     tag = next(t for t in _REVENUE_TAG_PREFERENCE if t in cands)
-    conflicts, untrusted = mc.tag_disputes(cands[tag], [s for t, s in cands.items() if t != tag])
+    conflicts, untrusted = mc.tag_disputes(cands[tag], [s for t, s in cands.items() if t != tag],
+                                           mc.annual_series(facts, "operating_income"))
     return mc._without_years(cands[tag], untrusted), conflicts
 
 

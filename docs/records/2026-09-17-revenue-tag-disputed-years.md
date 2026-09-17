@@ -7,16 +7,23 @@ supersedes:
 superseded-by:
 ---
 
-# A revenue year the smaller tag cannot vouch for leaves the margin — WLK's cycle-average margin is 9.8%, not 16.3%
+# A revenue year its tag cannot vouch for leaves the margin — WLK's cycle-average margin is 9.8%, not 16.3%
 
-**WHAT.** When two XBRL revenue tags report the same fiscal year more than 25% apart, the year now
-leaves the margin history **only where the tag in use reports the smaller figure**. The R1 anchor
-(`vinci/dossier/anchor.py`) and the mid-cycle block (`vinci/dossier/midcycle.py`) share one check,
-`midcycle.tag_disputes`, and every margin read names the years it left out. The conflict flag and
-the weak-confidence cap are unchanged.
+**WHAT.** When two XBRL revenue tags report the same fiscal year more than 25% apart, one of them is
+not the right denominator. The R1 anchor (`vinci/dossier/anchor.py`) and the mid-cycle block
+(`vinci/dossier/midcycle.py`) now share one check, `midcycle.tag_disputes`, which decides in two steps:
 
-**WHY.** WLK's `Revenues` tag is a partial line for FY2011–15: $108–446M, against
-`SalesRevenueNet` $3,571–4,463M in the same years. Two paths read it:
+1. **The filing.** A margin divides operating income by revenue, so both must come from the same
+   filing. If exactly one of the two revenue figures was filed with that year's operating income,
+   that one wins.
+2. **The size**, when the filing cannot tell them apart. A partial revenue line is always smaller
+   than total revenue, so the smaller figure loses.
+
+A year the tag in use loses leaves the margin history, and every margin read names the years it
+left out. The conflict flag and the weak-confidence cap are unchanged.
+
+**WHY.** WLK's `Revenues` tag is a partial line for FY2011–15: $108–446M, against `SalesRevenueNet`
+$3,571–4,463M in the same 10-Ks. Two paths read it:
 - the **anchor** flagged `revenue_tag_conflict` and capped the margin weak, and still took its
   median over those years — **16.31% on 15 years**;
 - the **mid-cycle block** picked the longest tag with no check at all and printed a 15-year window,
@@ -25,39 +32,58 @@ the weak-confidence cap are unchanged.
 The clean decade, FY2016–25, gives **9.78%**. A flag printed beside a contaminated number does not
 guard it.
 
-The direction is the rule because a disagreement alone does not say which tag is wrong, and a
-partial line is always smaller than the total. **Dropping every disputed year was measured and
-rejected.** VRRM's ASC-606 total is the LARGER figure in all six of its disputed years (its
-`Revenues` is a $13–133M line), and that rule would have cut VRRM's margin history from 8 years to
-2 and its median from 20.91% to 12.89%.
+**Two simpler rules were measured and rejected.**
+- *Drop every disputed year.* VRRM's ASC-606 total is the LARGER figure in all six of its disputed
+  years (its `Revenues` is a $13–133M line); that rule cut VRRM from 8 years to 2.
+- *Drop the smaller figure* — this record's first version — was wrong on real filers. Across 424
+  companies it moved 24, and 12 of those were **restatements**. After a divestiture the newest 10-K
+  restates old years to continuing operations: a smaller figure, and the correct basis for the
+  operating income filed beside it. Size alone dropped every one (Howmet FY2018 $6,778M against
+  Arconic's $14,014M; Spectrum Brands, Ashland, Crane NXT, Enerpac, JBT Marel, Element Solutions,
+  Amtech, NN, Applied Digital, Worthington), and flipped Amtech's anchor to the revenue-anchored
+  recipe. The filing step keeps them.
 
-**HOW VERIFIED.**
-- **Both rules, live EDGAR, 35 names**: the 19 with committed dossiers, WLK, PARR, seven chemical
-  peers (OLN HUN TROX EMN DOW LYB CE) and seven refiners (VLO MPC PSX DK CVI PBF DINO). Disputes
-  exist on 2 names, WLK and VRRM. "Drop every disputed year" changes both; the shipped rule changes
-  WLK only.
-- **Old vs new code, the 19 committed dossiers**, recomputed from their frozen companyfacts
-  fixtures: full anchor record plus mid-cycle margin, **19/19 identical**. No committed artifact
-  moves and nothing needs re-assembly. Control inside the same script: WLK reads 16.31% / 15 years
-  on the old code and 9.78% / 10 years on the new.
-- **Pins on real frozen companyfacts.** WLK was added with
-  `scripts/build_companyfacts_fixture.py WLK`, pinned through the anchor and through the mid-cycle
-  record into its rendered line. VRRM stays at 20.9061% / 8 years with its six disputes still
-  flagged. WERN's 18-year `Revenues` series is untouched.
-- **Mutation: 13 of 13 killed**, run with bytecode caching off. A same-length mutation (`0.25` →
-  `0.90`) restored within the same second left stale bytecode behind and reddened the suite after
-  the restore; the battery was re-run clean.
+**HOW VERIFIED.** Real runs on live EDGAR companyfacts, 2026-09-17:
+- **424 companies**, old vs new code: every distinct filer behind 582 EX-99.1 exhibits pulled from
+  EDGAR full-text search. 20 move, each read against its tags, values, filing dates and accessions:
+  - **16 correct.** Impossible margins removed: Charter's anchor 1,176% (its 606 tag is $1.1bn of
+    $55bn), McGrath 103%, Sunbelt 90% and Flowco 75% (rental companies tag only non-lease revenue as
+    ASC 606 — Sunbelt $2.8bn of $10.9bn), EnPro's mid-cycle 525%, Global Partners' anchor on a
+    partial 606 line, Apogee's four bogus years. Years whose older revenue sat beside restated
+    operating income dropped: Worthington's anchor (0.93% → 3.85%), Spectrum Brands, JBT Marel,
+    Enerpac, Natural Resource Partners, Rekor and Applied Digital in the mid-cycle series. Plus
+    LifeMD and RF Industries.
+  - **3 follow the rule but read poorly.** Talen and Seadrill have three-year histories, so one
+    dropped year swings the median (Talen 7.5% → 2.0%). BRC Group is a financial company with no
+    meaningful operating margin.
+  - **1 wrong: Vistra Operations.** Its total revenue is SMALLER than its ASC-606 revenue in 2021
+    because hedge losses sit inside it, in the same filing, so size marks the total as partial. The
+    mid-cycle series switches tag, 10.7% → 12.4%.
+- **The energy and chemical names from the first check**: PARR, OLN, HUN, TROX, EMN, DOW, LYB, CE,
+  VLO, MPC, PSX, DK, CVI, PBF, DINO — none moves; WLK does, 16.31%/15y → 9.78%/10y.
+- **The 19 committed dossiers**, from their frozen fixtures: full anchor record plus mid-cycle margin,
+  **19/19 identical** to `main`. Nothing needs re-assembly.
+- **Pins on real frozen companyfacts** (fixtures built with `scripts/build_companyfacts_fixture.py`):
+  WLK through the anchor and through the mid-cycle record into its rendered line; VRRM unchanged with
+  its six disputes flagged; WERN's 18-year series untouched; **HWM keeps its restated FY2018**
+  (13.47%, 10 years); **WOR drops FY2022–23** (3.85%, 3 years).
+- **Mutation: 16 of 16 killed** with bytecode caching off. That includes size-only, filing-only and
+  ignoring our own filing. A same-length mutation restored within the same second once left stale
+  bytecode behind, so caching stays off for every battery.
 
-**BOUNDARY.** Counts measured 2026-09-17 on live EDGAR companyfacts, then frozen in the fixtures.
-A "dispute" is: same fiscal year, annual duration, values more than 25% apart relative to the
-larger. The population is the 35 names listed above. The 19/19 comparison uses each name's
-committed dossier `mechanical` block and its committed fixture.
+**BOUNDARY.** "Dispute": same fiscal year, annual duration, more than 25% apart relative to the
+larger value. "Filed with": the accession of the latest-filed point for that year equals the
+accession of that year's latest-filed `OperatingIncomeLoss` point. Population: the 424 distinct
+filers behind the 582 exhibits (8-Ks filed 2025-09-01..2026-09-17); the 16 named energy and chemical
+companies; the 19 committed dossiers.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **Excise-heavy filers.** A filer whose assessed taxes exceed 25% of revenue (tobacco-style
-  excise) would lose those years, because the tax-inclusive tag is larger by definition. None of
-  the 35 names has that shape. Falsifier: a name whose excluded years are all
-  including-tax-vs-excluding-tax disputes.
+- **A total made smaller by losses inside it** (Vistra Operations' hedges) is read as partial when
+  the filing cannot separate the tags. 1 of 424.
+- **Short histories swing.** Dropping one of three years moves a median a lot; those anchors are
+  already capped weak by the conflict flag.
+- **Excise-heavy filers.** A filer whose assessed taxes exceed 25% of revenue could lose years where
+  both tags share a filing. None of the 424 was observed doing so.
 - **Reported, not fixed: stale peer windows.** The mid-cycle peer band still takes each peer's
-  longest tag, and no dispute is involved. That gives OLN a 2008–2018 window at 9.75% where its
-  2016–2025 series gives 4.63%; CE has the same shape (2007–2017, 6.73% vs 14.10%).
+  longest tag, and no dispute is involved. OLN gets a 2008–2018 window at 9.75% where its 2016–2025
+  series gives 4.63%; CE has the same shape (2007–2017, 6.73% vs 14.10%).
