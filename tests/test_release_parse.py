@@ -51,6 +51,29 @@ def test_a1_pricing_action_qualitative_and_ma_excluded() -> None:
         "There were no price increases in the period.", source_ref=_SRC) == []
 
 
+def test_a1_realized_price_verb_is_not_a_pricing_action() -> None:
+    """A price that INCREASED is a reported outcome; a price INCREASE is an action taken. The
+    phrase list ends at a word boundary, so 'price increase' no longer matches inside 'price
+    increased'. Real Westlake EX-99.1 sentences (Q1-26 8-K 0001262823-26-000019, Q2-26 8-K
+    0001262823-26-000026) each produced a bare 'price increase' pricing-action row — a commodity
+    segment's realized selling price, written beside another segment's 3% fall."""
+    for wlk in (
+        "Compared to the fourth quarter of 2025, Westlake's first quarter of 2026 sales volume "
+        "increased 6% (excluding sales attributable to plant closures and acquisitions) while "
+        "average sales price increased 1%.",
+        "Housing and Infrastructure Products second quarter average sales price decreased 3% from "
+        "the second quarter of 2025 while Performance and Essential Materials average sales price "
+        "increased 14% year-over-year.",
+    ):
+        rows = rp.operating_drivers(wlk, source_ref=_SRC)
+        assert [r for r in rows if r.kind.value == "pricing_action"] == [], rows
+    # ⊕ the noun still reads as the action — real Bellring EX-99.1 (8-K 0001628280-26-052137)
+    brbr = rp.operating_drivers(
+        "Net sales benefited from higher average net selling prices in connection with "
+        "inflation-driven price increases and international distribution gains.", source_ref=_SRC)
+    assert [r.value for r in brbr if r.kind.value == "pricing_action"] == ["price increases"]
+
+
 def test_a1_leading_indicator_governed_and_false_positives_excluded() -> None:
     """(PR-B A1) A KPI row requires a shipped/added verb GOVERNING the number+unit — the two
     observed false-positive shapes are pinned OUT: an expense line-item carrying a unit word
