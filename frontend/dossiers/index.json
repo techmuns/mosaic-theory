@@ -158,5 +158,14 @@
     "VITL": "overshoot",
     "VRRM": "overshoot",
     "WERN": "overshoot"
+  },
+  "followed": {
+    "LLY": "quality",
+    "NFLX": "overshoot",
+    "UBER": "quality",
+    "V": "quality",
+    "GOOGL": "quality",
+    "TECX": "quality",
+    "ORKA": "quality"
   }
 }

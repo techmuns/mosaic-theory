@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves, getFollowed } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -205,7 +205,7 @@ export async function render(root, params, { item, frame }) {
   // tolerates 404, so it rethrew and this view died at "Loading dossier…". It bit exactly one name:
   // WERN, the only ticker with an underwrite but no dossier, i.e. the only page whose normal path
   // requires a MISSING file. The index lists exactly what the build emitted — ask it, don't probe.
-  const [known, led] = await Promise.all([getDossierIndex(), getLedger()]);
+  const [known, led, followed] = await Promise.all([getDossierIndex(), getLedger(), getFollowed()]);
   const d = known.includes(ticker) ? await getDossier(ticker) : null;
   // The underwrite record is read ONCE, for BOTH paths — a name may have a dossier, a record, or
   // both (IT has both; WERN only a record). Same rule as the dossier: the scenario index is the
@@ -240,7 +240,7 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
           not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false, mark })}
-        ${loggedVerdict(verdict, tk, card.underwriteDate, { sleeve: card.sleeve })}
+        ${loggedVerdict(verdict, tk, card.underwriteDate, { sleeve: card.sleeve, followed })}
         ${assembleHelp()}` });
       return;
     }
@@ -259,7 +259,7 @@ export async function render(root, params, { item, frame }) {
   // watch record; id-binding here would blank the history the moment a record was superseded.
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
   root.innerHTML = frame(item, {
-    crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark) });
+    crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark, followed) });
   // (3-tier) client-side tabs — default Brief; toggle the active panel, no re-fetch, no router change.
   root.querySelectorAll(".ds-tab").forEach((tab) => tab.addEventListener("click", () => {
     const tier = tab.dataset.tier;
@@ -725,7 +725,7 @@ function trajectoryTable(q, m = {}) {
 
 // `card` is the OPTIONAL committed underwrite record (frontend/scenarios/<T>.json) — passed in by
 // render() because it needs a fetch; defaulted so the node smoke test keeps calling with two args.
-export function renderDossier(d, verdict, card = null, mark = null) {  // exported for the module-load smoke test
+export function renderDossier(d, verdict, card = null, mark = null, followed = {}) {  // exported for the module-load smoke test
   const m = d.mechanical || {};              // (renders committed dossier JSON to HTML, no DOM/fetch)
   // (3-tier) Brief (first cut) · Analysis (full dossier) · Appendix (data & audit). ONE document; the
   // tabs are client-side chrome (default Brief, no re-fetch). Mirrors the # Brief / # Analysis /
@@ -736,7 +736,7 @@ export function renderDossier(d, verdict, card = null, mark = null) {  // export
   return header(d) + tierTabs() + `<div class="ds-tiers">
     <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card, mark))}</section>
     <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m, card))}</section>
-    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m, card))}</section>
+    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m, card, followed))}</section>
   </div>`;
 }
 
@@ -824,14 +824,14 @@ function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
 // screening-context panel moved to the Brief's underwrite-detail card — user decision.)
 // verdictFooter is GONE — it was a third copy of the pivot statement (beside the decision strip's
 // sealed-proposal suffix and Record & reproduce's verdict row).
-function appendixTier(d, verdict, m, card) {
+function appendixTier(d, verdict, m, card, followed = {}) {
   return howToRead()
     // (addition #1) the ANALYST's own inputs are audited first — everything below is
     // machine-assembled evidence, so "why these numbers" opens the audit tier.
     + assumptionMethodology(card)
     + appendixBlock(m)
     + positioning(m)                    // (relocation) insider + short interest, from "The street"
-    + recordAndReproduce(d, verdict, card);
+    + recordAndReproduce(d, verdict, card, followed);
 }
 
 // The reading guide — the discipline/methodology language that used to repeat as per-card
@@ -902,7 +902,7 @@ function panelAgeNote(m, assembledAt) {
   return `oldest panel ${days}d old — ${ov} (${ok}), against a ${ref} build`;
 }
 
-function recordAndReproduce(d, verdict, card = null) {
+function recordAndReproduce(d, verdict, card = null, followed = {}) {
   const proc = (d.caveats || []).filter(isProcessCaveat);
   const row = (label, val) => `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
     <div class="fact-val">${val}</div></div>`;
@@ -924,7 +924,8 @@ function recordAndReproduce(d, verdict, card = null) {
     ${proc.length ? row("Assembly log", proc.map(escapeHtml).join("; ")) : ""}
     ${row("Re-run", `<pre class="ds-rerun"><code>python -m vinci dossier --ticker ${escapeHtml(d.ticker)}</code></pre>
       <span class="muted" style="font-size:11px;">regenerates every assembled fact from the same sources; committed values change only when the sources have</span>`)}
-    ${loggedVerdict(verdict, d.ticker, d.reference_date, { bare: true, sleeve: d.sleeve })}
+    ${loggedVerdict(verdict, d.ticker, d.reference_date,
+      { bare: true, sleeve: d.sleeve, rank: d.rank, followed })}
   </div>`;
 }
 
@@ -4059,17 +4060,40 @@ function synthesis(s, m, sleeve) {
   </div>`;
 }
 
-function loggedVerdict(v, ticker, refDate, { bare = false, sleeve } = {}) {
+// THE ID `vinci log-verdict` ACCEPTS FOR THIS NAME — never a reconstructed candidate id for a name
+// that did not come through the screen. The CLI opens two doors (`_cmd_log_verdict`): a SCREEN
+// CANDIDATE by its candidate id, and a FOLLOWED name by its TICKER. The page used to print
+// `<TICKER>-screen2-<date>` for every name, so every followed page (UBER, V, GOOGL, …) offered a
+// command the CLI refuses as "neither a candidate nor a followed ticker" — and for a followed name
+// the screen ALSO ranks, that id would seal a screen-origin overshoot row in the primary spread.
+// A non-default book is reached only through the follow list, so it logs by ticker even when the
+// index predates `followed`; a name followed under the default book logs by ticker unless the
+// screen currently ranks it (then the screen route governs, as `_finalist` decides).
+export function logVerdictId(ticker, refDate, { sleeve, rank = null, followed = {} } = {}) {
+  const tk = String(ticker || "").toUpperCase();
+  const book = sleeve || DEFAULT_SLEEVE;
+  if (book !== DEFAULT_SLEEVE) return tk;
+  if (Object.hasOwn(followed || {}, tk) && rank == null) return tk;
+  return `${tk}-screen2-${String(refDate || "").replace(/-/g, "")}`;
+}
+
+// WHERE THE ENTRY PRICE FREEZES — the CLI's rule, stated once for both forms of the block.
+// `log-verdict` freezes the latest close on or before `--ref`, which defaults to TODAY; the page
+// used to say "the screen's as-of date", which is only true when the analyst passes that date.
+const ENTRY_PRICE_RULE = "the entry price freezes at the latest close on or before the day you "
+  + "run it (pass --ref YYYY-MM-DD to decide as of an earlier date)";
+
+function loggedVerdict(v, ticker, refDate, { bare = false, sleeve, rank = null, followed = {} } = {}) {
   const wrap = (inner) => bare
     ? `<div class="fact"><div class="fact-label">Verdict record</div><div class="fact-val">${inner}</div></div>`
     : inner;
   if (!v) {
-    const cid = `${ticker}-screen2-${String(refDate || "").replace(/-/g, "")}`;
+    const cid = logVerdictId(ticker, refDate, { sleeve, rank, followed });
     if (bare) {
       return wrap(`no verdict logged yet — verdicts are logged via the CLI only, never from this
         dashboard (the friction is the safeguard):
         <pre class="ds-rerun"><code>python -m vinci log-verdict ${escapeHtml(cid)} --verdict &lt;BUY|AVOID_TERMINAL|PASS&gt; …</code></pre>
-        <span class="muted" style="font-size:11px;">append-only — the entry price freezes from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted</span>`);
+        <span class="muted" style="font-size:11px;">append-only — ${escapeHtml(ENTRY_PRICE_RULE)}; a logged verdict cannot be edited or deleted</span>`);
     }
     return `<details class="card ds-section">
       <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— none yet for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
@@ -4080,7 +4104,7 @@ function loggedVerdict(v, ticker, refDate, { bare = false, sleeve } = {}) {
   --thesis "${escapeHtml(sleeveCopy(sleeve).thesisHelp)}" \\
   --kill "what would falsify it" \\
   --horizon-days 180 --confidence &lt;low|medium|high&gt;</code></pre>
-      <div class="subtitle muted" style="margin-top:8px;">Append-only — the entry price is frozen from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted.</div></details>`;
+      <div class="subtitle muted" style="margin-top:8px;">Append-only — ${escapeHtml(ENTRY_PRICE_RULE)}; a logged verdict cannot be edited or deleted.</div></details>`;
   }
   const isBuy = isBuyVerdict(v.verdict);
   // CLOSE-AWARE (2026-07-27) — the FIFTH surface of the same defect. The other four were fixed
