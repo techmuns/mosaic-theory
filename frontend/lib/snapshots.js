@@ -446,6 +446,14 @@ export async function getSleeves() {
   return idx && typeof idx.sleeves === "object" && idx.sleeves ? idx.sleeves : {};
 }
 
+// getFollowed() -> {TICKER: sleeve} — every name in the committed follow file, with its book, so a
+// page can print the log-verdict id the CLI accepts (a followed name logs by TICKER). An index
+// built before the field existed -> {}, and consumers fall back to the book alone.
+export async function getFollowed() {
+  const idx = await _dossierIndex();
+  return idx && typeof idx.followed === "object" && idx.followed ? idx.followed : {};
+}
+
 // The per-name WORKFLOW-state vocabulary — ONE definition (MED-7): getProcessedStates() returns
 // these keys; consumers (the ranker badge/sort) import THIS object instead of re-typing strings.
 export const WORKFLOW_STATES = {

@@ -1538,9 +1538,26 @@ def main(argv: list[str] | None = None) -> None:
                 # committed before the tag existed is overshoot, which is truthful (the screen was
                 # their only route). Emitted for every name so the shelf never has to guess.
                 sleeves[ticker] = str(doc.get("sleeve") or "overshoot")
+    # EVERY FOLLOWED NAME AND ITS BOOK, read verbatim from the committed follow file — the file
+    # `vinci log-verdict` itself reads to open its ticker door. The page needs it to print a
+    # command the CLI accepts: a followed name logs by TICKER, not by a candidate id it never had.
+    # Names without a dossier ride along (a follow can precede its first assembly). The route rule
+    # lives in dossier.js `logVerdictId`; this only mirrors the file, and refuses a shape the CLI
+    # would refuse rather than guessing a book.
+    followed: dict[str, str] = {}
+    fpath = ROOT / "data" / "followed.json"
+    if fpath.exists():
+        fdoc = json.loads(fpath.read_text())
+        if not isinstance(fdoc, dict):
+            raise SystemExit(f"{fpath} must map TICKER -> {{reason, sleeve, ...}}")
+        for key, entry in fdoc.items():
+            if not (isinstance(entry, dict) and isinstance(entry.get("sleeve"), str)):
+                raise SystemExit(f"{fpath}: {key} carries no sleeve — every followed name states "
+                                 f"its book")
+            followed[str(key).upper()] = entry["sleeve"].strip()
     (OUT_DOSS / "index.json").write_text(
         json.dumps({"tickers": tickers, "labels": labels, "reads": reads,
-                    "sleeves": sleeves}, indent=2))
+                    "sleeves": sleeves, "followed": followed}, indent=2))
 
     scen_tickers = emit_scenarios()
     mon_days = emit_monitor()
