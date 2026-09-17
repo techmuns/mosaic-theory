@@ -1263,10 +1263,10 @@ def _eps_caveat_flags(
 ) -> list[str]:
     """Flag (a) that earnings power (company-adjusted, non-GAAP EPS) is not shown — UNLESS it now is
     (``eps_resolved``: the 99.1 adjusted EPS surfaced it, so the caveat is a resolved fact, not a
-    warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
-    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' — kept UNLESS the
-    LTM GAAP EPS is a known LOSS, where (d) owns it (an 'inflated' EPS framing is wrong when GAAP
-    trailing is negative, and stacking (b)+(d) is flag noise);
+    warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the two divide by
+    different earnings and the synthesis must not anchor on the LOWER of the two (whichever source
+    it is) — kept UNLESS the LTM GAAP EPS is a known LOSS, where (d) owns it (stacking (b)+(d) is
+    flag noise);
     (d) when a displayed trailing P/E multiple (EDGAR and/or CIQ) rests on NORMALIZED earnings
     while the LTM GAAP diluted EPS is a LOSS — SMPL showed EDGAR P/E 10.9x + CIQ P/LTM 16.0x beside
     an LTM GAAP dil EPS of −2.08 (LTM net income −$199M, the $249M impairment inside the window)
@@ -1293,10 +1293,21 @@ def _eps_caveat_flags(
     ):
         ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
         if ratio >= 2:
+            # WHICHEVER MULTIPLE IS LOWER is the one a reader takes as 'cheap', and the inputs say
+            # nothing about WHY the two differ. The first text blamed EDGAR every time ("EDGAR
+            # trailing EPS is one-time-inflated … must not anchor on <EDGAR>x"), true only when
+            # EDGAR is the lower multiple. PARR (EDGAR 10.4x on FY2025 EPS 7.16 vs CIQ 5.0x; its LTM
+            # GAAP EPS row reads 17.09) and NCNO's committed page (416.2x vs 154.3x) carried the
+            # warning on the HIGHER multiple, leaving the low one un-caveated. The two also differ
+            # in more than earnings (price date, CIQ's own EPS definition), so no cause is named.
+            low, low_src = ((pe.value, "EDGAR") if pe.value < ciq_pe.value
+                            else (ciq_pe.value, "CIQ"))
             out.append(
                 f"EDGAR P/E ({pe.value:.1f}x) conflicts ~{ratio:.0f}x with CIQ P/LTM EPS "
-                f"({ciq_pe.value:.1f}x) — EDGAR trailing EPS is one-time-inflated; the "
-                f"synthesis must not anchor on {pe.value:.1f}x as 'cheap'."
+                f"({ciq_pe.value:.1f}x) — EDGAR divides by the latest fiscal-year GAAP diluted "
+                f"EPS, CIQ by its own trailing-twelve-month EPS. The inputs do not say which "
+                f"earnings recur, so the synthesis must not anchor on the lower {low:.1f}x "
+                f"({low_src}) without naming the earnings behind it."
             )
     # (d) The real basis mismatch, keyed on the LTM GAAP EPS SIGN (the signal (b)/(c)/_pe_recon
     # miss). A displayed positive trailing P/E multiple — EDGAR and/or CIQ — while GAAP LTM diluted

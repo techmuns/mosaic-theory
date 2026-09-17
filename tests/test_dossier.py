@@ -4599,16 +4599,51 @@ def test_pltm_basis_caveat_on_negative_ltm_gaap_eps(monkeypatch: pytest.MonkeyPa
     # (5) sign UNAVAILABLE + EDGAR absent + CIQ present → the (c) #198 fallback is preserved
     f5 = dm._eps_caveat_flags(rec_pe(None), bundle, eps_resolved=False, ltm_gaap_eps=None)
     assert any("different earnings definition" in f for f in f5)
-    # (6) (b) EDGAR-vs-CIQ conflict (ratio ≥ 2) is SUPPRESSED when GAAP LTM is a known loss — the
-    # 'inflated' framing is wrong there and (d) owns it; with the sign UNKNOWN (b) still fires.
+    # (6) (b) EDGAR-vs-CIQ conflict (ratio ≥ 2) is SUPPRESSED when GAAP LTM is a known loss — (d)
+    # owns that case; with the sign UNKNOWN (b) still fires.
     set_ciq(16.0)  # EDGAR 6.0x vs CIQ 16.0x → ratio 2.67 ≥ 2
     b_loss = dm._eps_caveat_flags(rec_pe(6.0), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
-    assert not any("one-time-inflated" in f for f in b_loss)             # (b) yields to (d)
+    assert not any("conflicts ~" in f for f in b_loss)                   # (b) yields to (d)
     # agreement-neutral: this case shows BOTH multiples, so (d) reads "do not rest". Which caveat
     # FIRES is the question here; its verb agreement is pinned in test_pe_basis_cause_claim.
     assert any("not rest on LTM GAAP" in f for f in b_loss)             # (d) fires instead
     b_unknown = dm._eps_caveat_flags(rec_pe(6.0), bundle, eps_resolved=False, ltm_gaap_eps=None)
-    assert any("one-time-inflated" in f for f in b_unknown)             # sign unknown → (b) kept
+    assert any("conflicts ~" in f for f in b_unknown)                    # sign unknown → (b) kept
+
+
+def test_pe_conflict_caveat_warns_against_the_lower_multiple() -> None:
+    """PARR / NCNO — the EDGAR-vs-CIQ P/E conflict caveat (b) blamed EDGAR every time: "EDGAR
+    trailing EPS is one-time-inflated; the synthesis must not anchor on <EDGAR>x as 'cheap'". That
+    holds only when EDGAR is the LOWER multiple. PARR (EDGAR 10.4x on FY2025 EPS 7.16; CIQ P/LTM
+    5.0x, LTM GAAP EPS 17.09) and NCNO's committed page (EDGAR 416.2x on FY EPS 0.05; CIQ 154.3x,
+    LTM 0.12) put the warning on the HIGHER multiple and left the one that reads as cheap
+    un-caveated. The caveat now names the lower multiple and its source, and no cause — the inputs
+    name none. CIQ is read through the real Multiples-sheet shape, not a patched reader."""
+
+    def multiples(pltm_close: float) -> ciq.CiqBundle:
+        return _fin_bundle({"Multiples": [
+            [f"{cs._MULT_HEADER[0]}", "", 46203.0, 46281.0],  # 2026-06-30, 2026-09-16
+            ["P/LTM EPS", "", "", ""],
+            ["", "Close", 9.9, pltm_close],
+        ]})
+
+    def conflict(edgar: float, ciq_close: float, ltm: float | None) -> list[str]:
+        flags = dm._eps_caveat_flags(_min_record(edgar), multiples(ciq_close),
+                                     eps_resolved=False, ltm_gaap_eps=ltm)
+        return [f for f in flags if "conflicts ~" in f]
+
+    parr = conflict(10.381284916201118, 5.0, 17.09)  # PARR dry run, 2026-09-17
+    assert len(parr) == 1
+    assert "anchor on the lower 5.0x (CIQ)" in parr[0]
+    assert "10.4x (EDGAR)" not in parr[0] and "one-time-inflated" not in parr[0]
+    ncno = conflict(416.19999999999993, 154.3, 0.12)  # NCNO committed page, 2026-08-18
+    assert len(ncno) == 1 and "anchor on the lower 154.3x (CIQ)" in ncno[0]
+    # the original direction still reads right: EDGAR is the lower multiple → EDGAR is named
+    smpl = conflict(6.0, 16.0, None)
+    assert len(smpl) == 1 and "anchor on the lower 6.0x (EDGAR)" in smpl[0]
+    # negative pins, real pairs under 2x: VITL (EDGAR lower) and IT (CIQ lower) stay quiet
+    assert conflict(7.569444444444445, 12.9, 1.05) == []
+    assert conflict(18.76580310880829, 13.9, 10.06) == []
 
 
 # --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----
