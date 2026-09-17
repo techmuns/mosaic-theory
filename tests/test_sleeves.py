@@ -99,12 +99,30 @@ def test_the_default_is_overshoot_because_that_is_what_the_screen_finds() -> Non
     assert sl.DEFAULT_SLEEVE == "overshoot"
 
 
-def test_the_two_ledger_active_sleeves_are_overshoot_and_quality() -> None:
+def test_the_ledger_active_sleeves_are_overshoot_quality_and_the_trade_book() -> None:
     """v1 SCOPE, pinned so it is a DECISION rather than a drift. `theme` validates in its own
     append-only ratification ledger and `neglect` is defined but dormant; a defined-but-inactive
     sleeve is deliberately not the same thing as an unknown one, and flipping one on is a
-    deliberate edit that reddens here first."""
-    assert {s.key for s in sl.SLEEVE_ROWS if s.ledger_active} == {"overshoot", "quality"}
+    deliberate edit that reddens here first.
+
+    `ultra_short_term` joined 2026-09-17 by operator decision (PARR and WLK followed under it), so
+    it records verdicts from its first follow — this pin moved with that decision, not by drift."""
+    assert {s.key for s in sl.SLEEVE_ROWS if s.ledger_active} == {
+        "overshoot", "quality", "ultra_short_term"}
+
+
+def test_the_trade_books_twin_is_priced_or_spent_not_terminal() -> None:
+    """THE QUALITY PIN'S TWIN, for the trade book. A trade not taken says the catalyst is priced or
+    will fade before the exit — never that the business is going away — so its measured-against leg
+    is PASS. Recording AVOID_TERMINAL there would be a false record in an append-only ledger.
+    Asserted on the structured fields, never on prose."""
+    t = sl.BY_KEY["ultra_short_term"]
+    assert t.verdicts == ("BUY", "PASS")
+    assert "terminal" not in t.twin.lower()
+    assert "AVOID_TERMINAL" not in t.verdicts
+    assert t.entry == sl.BY_KEY["quality"].entry, (
+        "the trade book enters through the follow list, exactly as quality does — a name reaches "
+        "it only by an operator follow decision with its reason stated")
 
 
 def test_the_quality_twin_is_priced_not_terminal() -> None:
