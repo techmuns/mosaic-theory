@@ -473,60 +473,150 @@ def test_text_with_no_period_information_at_all_stays_unlabelled_not_skipped() -
     assert _rows("Adjusted EBITDA* of $53.8 million.") == {("adjusted ebitda", "", 53.8)}
 
 
-# --- review fixes (PR #622). SYNTHETIC sentence shapes, not filing excerpts: each reproduces a
-# failure the resolver produced on the shape, and each pins a positive AND a negative case.
+# --- review fixes (PR #622), pinned on REAL exhibit text ----------------------------------------
+# Each shape was measured on 582 EX-99.1 exhibits pulled from EDGAR full-text search, parsed with
+# and without each fix; every row a fix moved was read against its sentence (record of 2026-09-17).
+# The excerpts below were checked at generation to emit, for every pinned figure, what the full
+# filing emits, and nothing the full filing does not.
+
+#: 8-K 0001193125-25-269654 EX-99.1
+_ORGO_Q3_25 = (
+    "Organogenesis Holdings Inc. Reports Third Quarter 2025 Financial Results, Posts Record "
+    "Revenue and Raises 2025 Guidance CANTON, Mass., (November 6, 2025) -- Organogenesis "
+    "Holdings Inc. (Nasdaq: ORGO), a leading regenerative medicine company focused on the "
+    "development, manufacture, and commercialization of product solutions for the Advanced "
+    "Wound Care and Surgical & Sports Medicine markets, today reported financial results for "
+    "the third quarter ended September 30, 2025. Third Quarter 2025 Financial Results "
+    "Summary: • Net product revenue of $150.5 million for the third quarter of 2025, an "
+    "increase of $35.3 million compared to net product revenue of $115.2 million for the "
+    "third quarter of 2024."
+)
+
+
+#: 8-K 0001437749-26-004457 EX-99.1
+_BLIN_Q1_26 = (
+    "Bridgeline Announces Financial Results for the First Quarter of Fiscal 2026 Woburn, "
+    "Mass. - Bridgeline Digital, Inc. (NASDAQ: BLIN ), ● Gross margin was 66% for the quarter"
+    " ended December 31, 2025, as compared to 67% for the same period last year."
+)
+
+
+#: 8-K 0001437749-26-025436 EX-99.1
+_IRT_Q2_26 = (
+    "Independence Realty Trust Announces Second Quarter 2026 Financial Results PHILADELPHIA –"
+    " (BUSINESS WIRE) – August 3, 2026 — Independence Realty Trust, Inc. (“IRT”) (NYSE: IRT),"
+    " • Adjusted EBITDA of $90.3 million for the quarter ended June 30, 2026 compared to "
+    "$87.6 million for the quarter ended June 30, 2025 ."
+)
+
+
+#: 8-K 0001841125-25-000154 EX-99.1
+_BOLT_Q3_25 = (
+    "BOLT PROJECTS HOLDINGS REPORTS Q3 2025 FINANCIAL RESULTS ● Bolt delivered revenue of "
+    "$0.4 million in Q3 2025 , up 7,300% year-over-year. This implies fourth quarter gross "
+    "margins in excess of 40%, well on track toward our target gross margin of 60%."
+)
+
+
+#: 8-K 0001324404-26-000003 EX-99.1
+_CF_FY25 = (
+    "CF Industries Holdings, Inc. Reports Full Year 2025 Net Earnings of $1.46 Billion, "
+    "Adjusted EBITDA of $2.89 Billion • Full year 2025 net earnings (1) of $1.46 billion, or "
+    "$8.97 per diluted share, EBITDA (2) of $2.78 billion, and adjusted EBITDA (2) of $2.89 "
+    "billion • Fourth quarter 2025 net earnings of $404 million, or $2.59 per diluted share, "
+    "EBITDA of $731 million, and adjusted EBITDA of $821 million"
+)
+
+
+#: 8-K 0001104659-26-013423 EX-99.1
+_AM_FY25 = (
+    "Antero Midstream Announces Fourth Quarter 2025 Results and 2026 Guidance Denver, "
+    "Colorado, February 11, 2026—Antero Midstream Corporation (NYSE: AM) (“Antero Midstream” "
+    "or the “Company”) today announced its fourth quarter 2025 financial and operating "
+    "results and 2026 guidance. The Company is forecasting Adjusted EBITDA of $1.19 to $1.24 "
+    "billion, which represents an 8% increase compared to 2025 at the midpoint. Adjusted "
+    "EBITDA was $285 million, a 4% increase compared to the prior year quarter."
+)
+
+
+#: 8-K 0001104659-26-010898 EX-99.1
+_RBBN_FY25 = (
+    "Ribbon Communications Inc. Reports Fourth Quarter and Full Year 2025 Financial Results "
+    "Strong Cash Flow · Revenue was $227 million, compared to $251 million for the fourth "
+    "quarter of 2024 · GAAP Operating Income was $9 million, compared to $33 million for the "
+    "fourth quarter of 2024 · Non-GAAP Adjusted EBITDA was $40 million, compared to $55 "
+    "million for the fourth quarter of 2024 · GAAP Gross Margin was 53.3%, compared to 55.7% "
+    "for the fourth quarter of 2024"
+)
+
+
+#: 8-K 0000749251-26-000028 EX-99.1
+_IT_Q4_25 = (
+    "Gartner Reports Fourth Quarter 2025 Financial Results Contract Value $5.2 billion, +1% "
+    "YoY FX Neutral FOURTH QUARTER 2025 HIGHLIGHTS • Revenues: $1.8 billion, +2% as reported "
+    "and unchanged FX neutral. • Net income: $242 million, -39%; adjusted EBITDA: $436 "
+    "million, +5% as reported, +1% FX neutral."
+)
 
 
 def test_a_change_amount_before_the_comparison_is_not_read_as_a_sub_unit() -> None:
-    """"$100.0 million, an increase of $10.0 million, compared to adjusted EBITDA of $90.0
-    million": the sub-unit test read the DELTA as the clause's current figure, found it unequal to
-    the stated $100.0M, and dropped the company's own prior-year comparison. A real sub-unit still
-    goes."""
-    t = ("Acme Reports First Quarter 2026 Results. First quarter adjusted EBITDA was $100.0 "
-         "million, an increase of $10.0 million, compared to adjusted EBITDA of $90.0 million in "
-         "the prior year quarter. ")
-    assert ("adjusted ebitda", "Q1 2025", 90.0) in _rows(t)
-    sub = ("Acme Reports First Quarter 2026 Results. First quarter adjusted EBITDA was $100.0 "
-           "million. Acme Logistics had adjusted EBITDA of $4.0 million, compared to adjusted "
-           "EBITDA of $3.0 million in the prior year quarter. ")
-    assert not any(v == 3.0 for _, _, v in _rows(sub))
+    """Organogenesis: "$150.5 million for the third quarter of 2025, an increase of $35.3 million
+    compared to net product revenue of $115.2 million for the third quarter of 2024". The sub-unit
+    test read the $35.3M DELTA as the clause's current figure, found it unequal to the $150.5M the
+    release stated, and dropped the company's own prior-year quarter. A real segment's comparison
+    still goes (Werner Logistics' $0.7M)."""
+    rows = _rows(_ORGO_Q3_25)
+    assert ("revenue", "Q3 2025", 150.5) in rows
+    assert ("revenue", "Q3 2024", 115.2) in rows
+    assert ("adjusted operating income", 0.7) not in _values(_WERN_Q1_26)
 
 
 def test_a_fiscal_quarter_ended_date_takes_the_fiscal_year_not_the_calendar_year() -> None:
-    """A fiscal-year filer's Q1 FY2026 is the three months ended December 31, 2025. The date's
-    calendar year labelled the figure Q1 2025 — the prior year's quarter. A calendar filer's date
-    and its year agree, and stay as they were."""
-    fiscal = ("BrandCo Reports Results for the First Quarter of Fiscal 2026. For the three months "
-              "ended December 31, 2025, adjusted EBITDA was $120.0 million. ")
-    assert ("adjusted ebitda", "Q1 2026", 120.0) in _rows(fiscal)
-    calendar = ("Acme Reports First Quarter 2026 Results. For the three months ended March 31, "
-                "2026, adjusted EBITDA was $120.0 million. ")
-    assert ("adjusted ebitda", "Q1 2026", 120.0) in _rows(calendar)
+    """Bridgeline's first quarter of FISCAL 2026 is the quarter ended December 31, 2025, and the
+    date's calendar year filed its gross margin as Q1 2025 — the prior year's quarter. A calendar
+    filer's date and year agree and stay put (Independence Realty Trust, June 30, 2026)."""
+    assert ("gross margin", "Q1 2026", 66.0) in _rows(_BLIN_Q1_26)
+    assert ("adjusted ebitda", "Q2 2026", 90.3) in _rows(_IRT_Q2_26)
 
 
-def test_projects_as_a_noun_does_not_make_an_actual_an_outlook() -> None:
-    """"higher volumes on major projects, adjusted EBITDA was $100.0 million" is a reported actual;
-    the forward-word list read the noun as the verb and dropped it. The verb still suppresses.
-    """
-    actual = ("Acme Reports First Quarter 2026 Results. Reflecting higher volumes on major "
-              "projects, adjusted EBITDA was $100.0 million. ")
-    assert ("adjusted ebitda", "Q1 2026", 100.0) in _rows(actual)
-    outlook = ("Acme Reports First Quarter 2026 Results. For fiscal 2026 the company projects "
-               "adjusted EBITDA of $400.0 million. ")
-    assert not any(v == 400.0 for _, _, v in _rows(outlook))
+def test_projects_in_a_name_is_not_a_forecast_but_a_target_still_is() -> None:
+    """Bolt PROJECTS Holdings: the noun in the company's own name read as the verb and dropped its
+    reported Q3 revenue. In the same release "our target gross margin of 60%" is a goal — taking
+    'target' out of the forward words with 'projects' filed it as the fourth quarter's actual."""
+    assert ("revenue", "Q3 2025", 0.4) in _rows(_BOLT_Q3_25)
+    assert not any(m == "gross margin" for m, _ in _values(_BOLT_Q3_25))
+
+
+def test_a_forecast_in_any_form_is_not_a_reported_figure() -> None:
+    """Antero Midstream: "The Company is forecasting Adjusted EBITDA of $1.19 to $1.24 billion" —
+    'forecasts?' missed 'forecasting', so the range's first number stood as Q4's actual and took
+    the slot the real "$285 million" needed."""
+    assert ("adjusted ebitda", "Q4 2025", 285.0) in _rows(_AM_FY25)
+    assert not any(m == "adjusted ebitda" and v < 10 for m, v in _values(_AM_FY25))
+
+
+def test_a_middle_dot_bullet_ends_the_clause_before_it() -> None:
+    """Ribbon writes its highlights as "·" bullets. Without that glyph as a clause edge each bullet
+    ran into the one before it, whose "compared to … for the fourth quarter of 2024" made the next
+    CURRENT figure a prior-year one: Q4 2025's $40 million adjusted EBITDA and 53.3% gross margin
+    were both filed as Q4 2024."""
+    rows = _rows(_RBBN_FY25)
+    assert ("adjusted ebitda", "Q4 2025", 40.0) in rows
+    assert ("gross margin", "Q4 2025", 53.3) in rows
+    assert not any(p == "Q4 2024" for _, p, _ in rows)
 
 
 def test_ltm_ending_a_fourth_quarter_is_that_full_year() -> None:
-    """The LTM ending Q4 of Y is FY(Y) — no composition. Refusing every Q4 left the whole
-    fourth-quarter reporting window 'LTM unavailable'; a full year below its own Q4 still
-    refuses."""
-    from vinci.dossier import schemas as ds
+    """The LTM ending Q4 of Y IS FY(Y): refusing every Q4 left a name 'LTM unavailable' through its
+    whole fourth-quarter window (Verra Mobility: FY2025 $415.9M beside its Q4 $101.8M). A full year
+    below its own Q4 still refuses — CF Industries' $2.89 is billions beside an $821 million Q4, a
+    unit mismatch, not an LTM — and a Q4 with no full-year figure returns nothing (Gartner)."""
+    def ltm(text: str) -> float | None:
+        return mech._ltm_adj_ebitda([rp.parse_release(text, source_ref="t")])
 
-    def rel(rows: list[tuple[str, float]]) -> ds.ReleaseExtract:
-        return ds.ReleaseExtract(source_ref="t", reconciliation=[
-            ds.ReconciliationValue(metric="adjusted ebitda", period=p, value=v, verbatim="v",
-                                   source_ref="t") for p, v in rows])
-
-    assert mech._ltm_adj_ebitda([rel([("2025", 633.5), ("Q4 2025", 113.1)])]) == 633.5
-    assert mech._ltm_adj_ebitda([rel([("2025", 66.2), ("Q4 2025", 113.1)])]) is None
-    assert mech._ltm_adj_ebitda([rel([("Q4 2025", 113.1), ("Q4 2024", 10.9)])]) is None
+    assert ltm(_VRRM_FY25) == 415.9
+    cf = _rows(_CF_FY25)
+    assert {("adjusted ebitda", "2025", 2.89), ("adjusted ebitda", "Q4 2025", 821.0)} <= cf
+    assert ltm(_CF_FY25) is None
+    assert ("adjusted ebitda", "Q4 2025", 436.0) in _rows(_IT_Q4_25)
+    assert ltm(_IT_Q4_25) is None

@@ -306,10 +306,14 @@ _INTRO = re.compile(r"\b(?:in|for|during|of|over|through|throughout)\s+(?:the\s+
 #: "We currently expect: ● Fiscal 2026 Pro Forma Adjusted EBITDA of $80" (FUBO).
 _FORWARD = re.compile(
     r"\b(?:expects?|expected|expecting|anticipates?|anticipated|outlook|guidance|guides?|"
-    # "projects"/"targets" are NOUNS far more often than verbs in a release ("higher volumes on
-    # major projects, adjusted EBITDA was $100.0 million") — only the unambiguous verb forms count.
-    r"forecasts?|projected|projecting|targeted|targeting|"
-    r"(?:we|company|management)\s+(?:projects|targets|project|target)|"
+    # "projects" is a NOUN in a release far more often than a verb — Bolt Projects Holdings' own
+    # name dropped its "revenue of $0.4 million in Q3 2025" — so only its verb forms count. "target"
+    # stays in EVERY form: as a noun it is still a goal ("well on track toward our target gross
+    # margin of 60%", Bolt, the same release), and dropping it filed that target as Q4's actual.
+    # "forecast" in every form: "The Company is forecasting Adjusted EBITDA of $1.19 to $1.24
+    # billion" (Antero Midstream) was filed as Q4's actual and displaced the real $285 million.
+    r"forecast\w*|projected|projecting|targets?|targeted|targeting|"
+    r"(?:we|company|management)\s+(?:projects|project)|"
     r"reaffirm\w*|revis(?:e|es|ed|ing)\s+its)\b",
     re.I)
 _AMOUNT = re.compile(r"\$\s*\(?\d|\d[\d,.]*\s*(?:million|billion)\b", re.I)
@@ -320,8 +324,10 @@ _LEAD_AMOUNT = re.compile(r"\$\s*\(?([\d,]*\.?\d+)\)?\s*(million|billion)?", re.
 _CHANGE_LEAD = re.compile(
     r"\b(?:(?:an?\s+)?(?:increase|decrease|improvement|decline|growth|reduction|change)\s+of|"
     r"(?:up|down|increased|decreased|grew|declined|rose|fell|improved)(?:\s+by)?)\s*$", re.I)
-#: Clause edges — a sentence end or any bullet glyph a release uses.
-_EDGE = re.compile(r"\.\s|[•●○◦■▪]")
+#: Clause edges — a sentence end or any bullet glyph a release uses. "·" (middle dot) included:
+#: Ribbon's "· Non-GAAP Adjusted EBITDA was $40 million, compared to $55 million for the fourth
+#: quarter of 2024" ran into the bullet before it, whose comparison made the Q4 2025 figure a prior.
+_EDGE = re.compile(r"\.\s|[•●○◦■▪·]")
 #: A section heading that names ONE period ("Fourth Quarter Fiscal 2025 Highlights", "Fiscal Year
 #: 2025 Summary"). Title Case is required so prose ("fourth quarter results reflect…") is not a
 #: heading; a heading naming BOTH periods ("Fourth Quarter and Fiscal Year 2025 Highlights") says
