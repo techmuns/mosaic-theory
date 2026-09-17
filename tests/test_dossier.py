@@ -4646,6 +4646,139 @@ def test_pe_conflict_caveat_warns_against_the_lower_multiple() -> None:
     assert conflict(18.76580310880829, 13.9, 10.06) == []
 
 
+def _priced(pe: float, price: float, day: date) -> sdr.DataRecord:
+    """`_min_record` with its last close placed on ``day`` — the close the P/E divides."""
+    r = _min_record(pe, price=price)
+    last = r.prices.last.model_copy(update={"as_of": day})
+    return r.model_copy(update={"prices": r.prices.model_copy(update={"last": last})})
+
+
+def _pltm_at(close: float | None, day_serial: float) -> ciq.CiqBundle:
+    """A Multiples sheet in the real shape whose LATEST dated P/LTM EPS Close is ``close``."""
+    return _fin_bundle({"Multiples": [
+        [f"{cs._MULT_HEADER[0]}", "", 46022.0, day_serial],  # 2025-12-31, then the latest
+        ["P/LTM EPS", "", "", ""],
+        ["", "Close", 9.9, close if close is not None else "NM"],
+    ]})
+
+
+def test_the_conflict_caveat_states_which_close_each_multiple_divides() -> None:
+    """The two multiples in the conflict caveat can stand on different closes: the EDGAR P/E on the
+    latest stored close, CIQ's on the close of its pull. NCNO's CIQ P/LTM EPS close is 2026-07-17
+    while its prices ran to 2026-09-16 — the caveat compared them with no dates at all. Same close
+    → said once; different closes → both dates and the gap in days. Real values from the fleet run
+    of 2026-09-17: PARR at the 2026-09-16 close ($84.90 ÷ FY2025 EPS 7.16), NCNO 434.0x at the
+    2026-09-16 close vs CIQ 154.3x at 2026-07-17."""
+    parr = dm._eps_caveat_flags(_priced(84.90 / 7.16, 84.90, date(2026, 9, 16)),
+                                _pltm_at(5.0, 46281.0), eps_resolved=False, ltm_gaap_eps=17.09)
+    hit = [f for f in parr if "conflicts ~" in f]
+    assert len(hit) == 1
+    assert "EDGAR P/E (11.9x) conflicts ~2x with CIQ P/LTM EPS (5.0x), both at the 2026-09-16 " \
+           "close — " in hit[0]
+    ncno = dm._eps_caveat_flags(_priced(434.0, 38.0, date(2026, 9, 16)),
+                                _pltm_at(154.3, 46220.0), eps_resolved=False, ltm_gaap_eps=0.12)
+    hit = [f for f in ncno if "conflicts ~" in f]
+    assert len(hit) == 1
+    assert ("(154.3x) (EDGAR at the 2026-09-16 close, CIQ at its 2026-07-17 close — 61 days "
+            "apart) — ") in hit[0]
+    assert "anchor on the lower 154.3x (CIQ)" in hit[0]
+    assert cs.pe_ltm_asof(_pltm_at(5.0, 46281.0)) == date(2026, 9, 16)
+    assert cs.pe_ltm_asof(_pltm_at(None, 46281.0)) is None  # NM at the latest close → no date
+
+
+def test_the_resolved_pe_note_infers_the_eps_direction_only_on_one_close() -> None:
+    """`_pe_reconciliation`'s resolved note always said CIQ's trailing EPS basis was "(lower)".
+    Right on its one live instance — VRRM, GAAP 5.6x vs CIQ 16.8x — and wrong whenever CIQ is the
+    lower multiple. Two multiples on the SAME close differ only by the EPS they divide, so the
+    direction is arithmetic there; on different closes price moved too, and the note states CIQ's
+    close instead of guessing. No committed page has the CIQ-lower shape in this branch (VRRM is
+    the only resolved note), so that direction is pinned here and not claimed from a real run."""
+    edgar = typing.cast(EdgarClient, _StubEdgar(
+        _facts([(2021, 0.28), (2022, 0.28), (2023, 0.28), (2024, 0.85)], shares=1.5e8),
+        net_debt=1e9))
+    rg = ds.Sourced.present("Adjusted EPS of $1.19 to $1.25", source_ref="EDGAR 8-K X Ex-99.1")
+    on_close = date(2026, 6, 30)
+    higher = dm._pe_reconciliation(_priced(5.6, 4.71, on_close), edgar, _pltm_at(16.8, 46203.0), rg)
+    assert higher is not None
+    assert "CIQ P/LTM 16.8x, on the same close, uses a different (lower) trailing EPS basis" \
+        in higher[0]
+    lower = dm._pe_reconciliation(_priced(5.6, 4.71, on_close), edgar, _pltm_at(2.1, 46203.0), rg)
+    assert lower is not None
+    assert "CIQ P/LTM 2.1x, on the same close, uses a different (higher) trailing EPS basis" \
+        in lower[0]
+    apart = dm._pe_reconciliation(_priced(5.6, 4.71, date(2026, 9, 16)), edgar,
+                                  _pltm_at(16.8, 46203.0), rg)
+    assert apart is not None
+    assert "CIQ P/LTM 16.8x at its 2026-06-30 close uses a different trailing EPS basis" \
+        in apart[0]
+    assert "(lower)" not in apart[0] and "(higher)" not in apart[0]
+
+
+class _BarsStore:
+    """Duck-types the one Store method `_at_latest_close` reads."""
+
+    def __init__(self, closes: list[tuple[date, float]]) -> None:
+        from vinci.schemas.market import PriceBar
+
+        self._bars = [PriceBar(internal_id="SEC-X", bar_date=d, open=c, high=c, low=c, close=c,
+                               volume=1e6, source="polygon-aggs") for d, c in closes]
+
+    def get_price_history(self, internal_id: str) -> list[typing.Any]:
+        return list(self._bars)
+
+
+class _FactsDown(_StubEdgar):
+    def companyfacts(self, cik: int | str) -> dict[str, typing.Any]:
+        from vinci.netcache import HttpError
+
+        raise HttpError("companyfacts unavailable")
+
+
+def test_the_dossier_pe_is_priced_at_the_latest_stored_close() -> None:
+    """PARR, 2026-09-17: the page's price read $84.90 (2026-09-16) while its EDGAR P/E divided the
+    screen's $74.33 (2026-08-24) — 10.4x, not 11.9x. `_at_latest_close` re-derives the P/E pair and
+    the last close on the latest stored bar with the screen's own function; the drawdown/return
+    features and the screen record itself stay as the screen recorded them."""
+    screen = _priced(74.33 / 7.16, 74.33, date(2026, 8, 24))
+    screen = screen.model_copy(update={"prices": screen.prices.model_copy(update={
+        "drawdown_from_high": DataField.present(-0.12, as_of=date(2026, 8, 24), source="EOD",
+                                                tier=SourceTier.EOD)})})
+    store = _BarsStore([(date(2026, 8, 24), 74.33), (date(2026, 9, 16), 84.90)])
+    edgar = _StubEdgar(_facts([(2022, 6.08), (2023, 11.94), (2024, -0.59), (2025, 7.16)],
+                              shares=5e7), net_debt=0.0)
+    now = dm._at_latest_close(screen, typing.cast(typing.Any, store),
+                              typing.cast(EdgarClient, edgar))
+    assert now.prices.last.value == 84.90 and now.prices.last.as_of == date(2026, 9, 16)
+    assert now.fundamentals.pe.value == pytest.approx(84.90 / 7.16)
+    assert (now.fundamentals.pe.note or "").startswith(
+        "price 2026-09-16 ÷ annual diluted EPS for the period ending 2025-12-31")
+    assert now.prices.drawdown_from_high == screen.prices.drawdown_from_high  # screen as-of kept
+    # the screen record itself is untouched
+    assert screen.fundamentals.pe.value == pytest.approx(74.33 / 7.16)
+    # facts unreadable → UNKNOWN naming the close, never the screen's older-price P/E carried on
+    down = dm._at_latest_close(screen, typing.cast(typing.Any, store),
+                               typing.cast(EdgarClient, _FactsDown({}, net_debt=0.0)))
+    assert not down.fundamentals.pe.is_known
+    assert "no P/E at the 2026-09-16 close" in (down.fundamentals.pe.note or "")
+    assert down.prices.last.value == 84.90
+    # no stored bars → nothing current to price on
+    bare = dm._at_latest_close(screen, typing.cast(typing.Any, _BarsStore([])),
+                               typing.cast(EdgarClient, edgar))
+    assert not bare.prices.last.is_known and not bare.fundamentals.pe.is_known
+
+
+def test_the_assembler_reprices_before_any_current_price_reader() -> None:
+    """PIN THE CALL SITE, not only the helper: `_at_latest_close` returning the right record is
+    worthless if `assemble_mechanical` stops calling it, or calls it after a reader has consumed
+    the screen's figure."""
+    import inspect
+
+    body = inspect.getsource(dm.assemble_mechanical)
+    at = body.index("record = _at_latest_close(record, store, edgar)")
+    for reader in ("_adjusted_facts(", "_pe_reconciliation(", "_valuation(", "_eps_caveat_flags("):
+        assert at < body.index(reader), f"{reader} runs before the latest-close repricing"
+
+
 # --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----
 def test_geographic_section_parsed() -> None:
     seg: list[list[typing.Any]] = [
