@@ -119,6 +119,13 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Release frame / combined release / figure period** — how an earnings-release figure gets its
+  period. Plain words: *which quarter or year does this number belong to?* The **release frame**
+  is what the header says the exhibit covers; a **combined release** names a fourth quarter AND
+  its full year, so the header cannot label any one figure. A **figure period** comes from that
+  figure's own sentence, comparison clause or section heading, and a figure nothing places is
+  skipped, never guessed. Home: `vinci/edgar/release_parse.py` (`_release_frame`,
+  `_figure_period`).
 - **Former-registrant-name marker / registrant key / restyle** — the rename-vintage caveat on a
   dossier. Plain words: *this CIK used to file under a different company name, so the multi-year
   numbers on this page may not all belong to the same business* — the reverse-merger / SPAC-shell

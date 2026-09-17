@@ -3488,7 +3488,15 @@ _PS_TTL = 24 * 3600  # primary-source fetch cache TTL (seconds)
 def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
     """LTM adjusted EBITDA = FY + latest-Q − prior-year-Q, from the release recon values (the parser
     captures the prior-year comparison distinctly, period-labeled). None unless all three periods
-    are present — never a partial guess (fail-loud)."""
+    are present — never a partial guess (fail-loud).
+
+    EXACT ONLY WHEN THE LATEST QUARTER IS Q1. The LTM ending Q1 of year Y is Q2..Q4 of Y−1 plus Q1
+    of Y, which is FY(Y−1) − Q1(Y−1) + Q1(Y). Ending Q2 or Q3 it also needs every EARLIER quarter
+    swapped, and this composition silently omits them: for Par Pacific at Q2 2026 it gives
+    633.5 − 137.8 + 571.3 = $1,067.0M against a true $1,148.3M. That went unseen because
+    mis-periodized FY rows kept tripping the guard below; once the release parser labels periods
+    correctly the guard stops firing, so a later quarter is refused here instead — 'LTM
+    unavailable' rather than a wrong LTM. A multi-quarter composition is a separate change."""
     vals: dict[str, float] = {}
     for r in releases:
         for rv in r.reconciliation:
@@ -3499,6 +3507,12 @@ def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
         return None
     cur = max(quarters, key=lambda p: (int(p[3:7]), int(p[1])))  # latest (year, quarter)
     yr, qn = int(cur[3:7]), int(cur[1])
+    if qn == 4:
+        # the LTM ending Q4 of Y IS FY(Y) — no composition; refuse a year below its own Q4
+        full = vals.get(str(yr))
+        return round(full, 1) if full is not None and full >= vals[cur] else None
+    if qn != 1:
+        return None
     prior, fy = f"Q{qn} {yr - 1}", str(yr - 1)  # prior-year same quarter; the completed FY
     if prior not in vals or fy not in vals:
         return None
