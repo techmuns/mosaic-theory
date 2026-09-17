@@ -441,3 +441,8 @@
 {"bar_date": "2026-09-04", "close": 92.51, "high": 94.0, "internal_id": "SEC-0000907654-ORKA", "low": 89.38, "open": 90.06, "source": "polygon-aggs", "volume": 600471.462473}
 {"bar_date": "2026-09-08", "close": 94.31, "high": 96.435, "internal_id": "SEC-0000907654-ORKA", "low": 87.676, "open": 90.06, "source": "polygon-aggs", "volume": 868274.126258}
 {"bar_date": "2026-09-09", "close": 91.5, "high": 94.85, "internal_id": "SEC-0000907654-ORKA", "low": 91.23, "open": 93.59, "source": "polygon-aggs", "volume": 524990.335105}
+{"bar_date": "2026-09-10", "close": 91.65, "high": 92.285, "internal_id": "SEC-0000907654-ORKA", "low": 88.07, "open": 90.21, "source": "polygon-aggs", "volume": 554607.945241}
+{"bar_date": "2026-09-11", "close": 92.38, "high": 94.29, "internal_id": "SEC-0000907654-ORKA", "low": 90.48, "open": 93.4, "source": "polygon-aggs", "volume": 585301.539336}
+{"bar_date": "2026-09-14", "close": 95.93, "high": 97.48, "internal_id": "SEC-0000907654-ORKA", "low": 92.55, "open": 92.56, "source": "polygon-aggs", "volume": 773856.954472}
+{"bar_date": "2026-09-15", "close": 92.2, "high": 95.805, "internal_id": "SEC-0000907654-ORKA", "low": 90.41, "open": 95.14, "source": "polygon-aggs", "volume": 784695.988431}
+{"bar_date": "2026-09-16", "close": 93.55, "high": 95.46, "internal_id": "SEC-0000907654-ORKA", "low": 92.185, "open": 92.7, "source": "polygon-aggs", "volume": 926981.069284}
