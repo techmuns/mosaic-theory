@@ -36,6 +36,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, dossier_json
 from vinci.dossier.synthesis import (
     MATERIAL_FIGURE_FLOOR_MUSD,
     SYNTHESIS_CLAIM_LISTS,
@@ -221,41 +222,12 @@ def _rerender_only(path: Path) -> bool:
     return True
 
 
-#: Optional mechanical fields added AFTER the artifacts were committed. Each must be DROPPED when
-#: None, or a no-op refresh writes `"<key>": null` into every committed dossier and that key
-#: asserts WE COMPUTED THIS AND GOT NOTHING — when the truth is the dossier predates the field.
-#: ABSENT is the meaning: NOT YET REFRESHED.
-#:
-#: A LIST RATHER THAN A FOURTH LITERAL BRANCH, and #370 asked for exactly this: it wrote the third
-#: stanza by hand, declined to generalise inside a data-shaped PR, and left the argument "for the
-#: person who adds the fourth field". `peer_capital_intensity` is the fourth.
-#:
-#: THE GENERALISATION ALMOST ATE THE THIRD ONE. The first cut of this list replaced the whole block
-#: and silently dropped `ebitda_basis`, turning a green pin red — a refactor that removes a guard
-#: while claiming to consolidate it. The round-trip pin caught it, which is what it is for.
-#: `(parent field or "" for the mechanical root, key)`. `ebitda_basis` sits one level deeper than
-#: the others — it is a property of the financial-summary TABLE, not of the layer — which is why
-#: the parent is named per entry rather than assumed to be the root.
-_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
-    ("consensus_context", "consensus_levels"),
-    ("financial_summary", "ebitda_basis"),
-    ("", "capital_allocation"),
-    ("", "peer_capital_intensity"),
-    ("", "dilution_pipeline"),
-    ("", "ownership_events"),
-    ("", "sbc"),
-)
-
-
-def _drop_absent_optional_keys(payload: dict[str, Any]) -> None:
-    """Remove optional-added-later mechanical keys that came back None. In place."""
-    mech = payload.get("mechanical")
-    if not isinstance(mech, dict):
-        return
-    for parent, key in _DROP_WHEN_NONE:
-        node = mech.get(parent) if parent else mech
-        if isinstance(node, dict) and key in node and node.get(key) is None:
-            node.pop(key, None)
+#: Optional mechanical fields added AFTER the artifacts were committed, each DROPPED when None —
+#: the table and the writer that applies it now live in `schemas.DROP_WHEN_NONE` / `dossier_json`,
+#: because the ASSEMBLER writes through the same function (see `dossier_json`'s own note). Re-named
+#: here so the existing references — `mechanical.py`'s `sbc` comment, the `sbc` test's docstring —
+#: still resolve to one table.
+_DROP_WHEN_NONE = DROP_WHEN_NONE
 
 
 def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
@@ -307,29 +279,20 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
             "tables no longer show (item 19c, manufactured deliberately). Re-assemble this name "
             "instead; the other names in the batch are unaffected.")
     doc["mechanical"] = after
-    # SERIALIZE THROUGH THE MODEL, not json.dumps. The assembler writes
-    # `dossier.model_dump_json(indent=2)`; `json.dumps` differs on unicode escaping and float
-    # repr, so a no-op refresh rewrote all 11 committed files with zero semantic change. The
-    # round-trip pin caught it on the first run, which is what that pin is for — two serializers
-    # for one artifact is the twin-drift class, and here the second one would have churned every
-    # file it touched. Validating on the way out is the bonus: a refresh that broke the schema
-    # would now fail here rather than ship.
+    # ONE SERIALIZER, SHARED WITH THE ASSEMBLER (`schemas.dossier_json`). This path used to re-dump
+    # the model's payload with `json.dumps`, which differs from the assembler on unicode escaping
+    # and on float repr. The escaping half was fixed by hand; the float half surfaced years later,
+    # when PARR's page carried a dilution item at 0.0000245 of assets and a NO-OP refresh rewrote
+    # two lines as `2.45e-05`. Two serializers for one artifact is the twin-drift class, so the fix
+    # is one writer rather than a second patch. Validating on the way out is the bonus: a refresh
+    # that broke the schema fails here rather than shipping.
     # Imported here, not at module scope: `assemble` imports this module's siblings and a top-level
     # import of the renderer would cycle (the `_read_scenario_card` precedent).
     from vinci.dossier.assemble import _read_scenario_card
     from vinci.dossier.render import render_markdown
-    from vinci.dossier.schemas import Dossier
 
     model = Dossier.model_validate(doc)
-    # VERSION-SCOPED WRITE, the #303 principle applied to the dossier. `consensus_levels` is
-    # optional-with-None, so a plain dump writes `"consensus_levels": null` into all eleven
-    # committed artifacts and a NO-OP refresh stops being byte-identical — the 119-null-keys
-    # defect in a new place. Omitted when None, which also keeps ABSENT meaning "not refreshed"
-    # rather than "the street has no view". Dropped by KEY, not by value: a name that HAS levels
-    # writes them.
-    payload = json.loads(model.model_dump_json())
-    _drop_absent_optional_keys(payload)
-    new_json = json.dumps(payload, indent=2, ensure_ascii=False)
+    new_json = dossier_json(model)
     new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
                              dossiers_root=path.parent.parent)
     md_path = path.with_name("dossier.md")

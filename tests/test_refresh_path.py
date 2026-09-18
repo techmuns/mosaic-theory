@@ -24,6 +24,7 @@ from vinci.dossier.refresh import (
     recompute_derived,
     refresh_dossier,
 )
+from vinci.dossier.schemas import Dossier, dossier_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOSS = ROOT / "data" / "dossiers"
@@ -503,3 +504,37 @@ def test_the_degraded_precondition_is_wired_into_the_write() -> None:
     assert "_refuse_degraded_drawdown_overwrite(dossier, folder)" in src
     guard = src.index("_refuse_degraded_drawdown_overwrite")
     assert guard < src.index('"dossier.json").write_text')
+
+
+def test_one_serializer_writes_the_dossier_and_a_tiny_float_stays_decimal() -> None:
+    """THE SECOND HALF OF THE TWIN, found by the artifact pass rather than by the pin above.
+
+    The assembler wrote `model_dump_json(indent=2)` (pydantic) and this path re-dumped the same
+    payload with `json.dumps` after pruning absent keys. The unicode-escaping half of that
+    difference was fixed by hand; the FLOAT half sat unseen until a page carried a value below
+    1e-4. PARR's `peer_capital_intensity` row 8 reads `pct_assets = 2.451581269919098e-05`:
+    pydantic writes it `0.00002451581269919098`, `json.dumps` writes `2.45…e-05`, so a no-op
+    refresh of that page rewrote two lines with no semantic change — the corpus pin above would
+    have gone red on main the moment PARR was committed.
+
+    Both writers are now `schemas.dossier_json`. This drives the FORMAT on a real committed page
+    carrying PARR's real value, and pins the assembler's call site so it cannot grow a second
+    serializer again.
+    """
+    committed = sorted(DOSS.glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers")
+    doc = json.loads(committed[0].read_text())
+    rows = ((doc["mechanical"].get("peer_capital_intensity") or {}).get("rows") or [])
+    if not rows:
+        pytest.skip("no peer_capital_intensity rows on the first committed page")
+    rows[0]["pct_assets"] = 2.451581269919098e-05          # PARR's real figure
+    text = dossier_json(Dossier.model_validate(doc))
+    assert '"pct_assets": 0.00002451581269919098' in text, (
+        "the shared writer moved to scientific notation — a no-op refresh of any page carrying a "
+        "value under 1e-4 would rewrite it")
+    assert "e-05" not in text
+
+    src = (ROOT / "vinci" / "dossier" / "assemble.py").read_text()
+    assert "write_text(dossier_json(dossier))" in src, "the assembler stopped sharing the writer"
+    assert "dossier.model_dump_json(" not in src, "a second dossier serializer is back"

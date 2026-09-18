@@ -1638,3 +1638,48 @@ class Dossier(BaseModel):
             raise ValueError(str(exc)) from exc
 
     model_config = {"frozen": True}
+
+
+#: OPTIONAL-ADDED-LATER mechanical keys that are OMITTED when None, rather than written as
+#: `"<key>": null`. That key would assert WE COMPUTED THIS AND GOT NOTHING when the truth is the
+#: dossier predates the field: ABSENT means NOT YET REFRESHED. `(parent field or "" for the
+#: mechanical root, key)` — `ebitda_basis` sits one level deeper, a property of the
+#: financial-summary TABLE rather than of the layer, so each entry names its own parent.
+#: Moved here from `vinci/dossier/refresh.py` with `dossier_json` below, which both writers use.
+DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
+    ("consensus_context", "consensus_levels"),
+    ("financial_summary", "ebitda_basis"),
+    ("", "capital_allocation"),
+    ("", "peer_capital_intensity"),
+    ("", "dilution_pipeline"),
+    ("", "ownership_events"),
+    ("", "sbc"),
+)
+
+
+def dossier_json(doc: Dossier) -> str:
+    """THE ONE SERIALIZER for a committed `dossier.json` — the assembler and the refresh path both
+    write through it, so a no-op refresh cannot rewrite bytes the assembler produced.
+
+    THEY WERE TWO. The assembler wrote `model_dump_json(indent=2)` (pydantic) and the refresh path
+    re-dumped the same payload with `json.dumps` after pruning absent keys. The two agree on every
+    value the committed corpus happened to hold until PARR's page carried a dilution item at
+    0.0000245 of assets: pydantic writes that in decimal, `json.dumps` writes `2.45e-05`, so a
+    no-op refresh of PARR rewrote two lines with zero semantic change. Same class as the unicode
+    escaping the pruning comment already named — one artifact, one writer, is the only fix that
+    does not need a second one later.
+
+    The pruning survives as an `exclude` mapping, computed from the values rather than hardcoded:
+    a key is dropped only when it IS None, so a name that HAS the field still writes it.
+    """
+    mech = doc.mechanical
+    root: dict[str, Any] = {}
+    for parent, key in DROP_WHEN_NONE:
+        holder = getattr(mech, parent, None) if parent else mech
+        if holder is None or getattr(holder, key, "absent") is not None:
+            continue
+        if parent:
+            root.setdefault(parent, set()).add(key)
+        else:
+            root[key] = True
+    return doc.model_dump_json(indent=2, exclude={"mechanical": root} if root else None)

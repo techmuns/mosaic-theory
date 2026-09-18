@@ -34,7 +34,13 @@ from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import COVENANT_SEARCH_FOUND_NOTHING, assemble_mechanical
 from vinci.dossier.render import render_markdown
-from vinci.dossier.schemas import Dossier, PriceStoreStamp, Sourced, SourceStatus
+from vinci.dossier.schemas import (
+    Dossier,
+    PriceStoreStamp,
+    Sourced,
+    SourceStatus,
+    dossier_json,
+)
 from vinci.dossier.synthesis import (
     contradiction_flags,
     synthesize,
@@ -620,7 +626,7 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     _refuse_synthesis_overwrite(dossier, folder)
     _refuse_degraded_drawdown_overwrite(dossier, folder)
     folder.mkdir(parents=True, exist_ok=True)
-    (folder / "dossier.json").write_text(dossier.model_dump_json(indent=2))
+    (folder / "dossier.json").write_text(dossier_json(dossier))
     (folder / "dossier.md").write_text(
         render_markdown(dossier, card=_read_scenario_card(dossier.ticker),
                         dossiers_root=folder.parent))
