@@ -628,8 +628,10 @@ def test_guidance_reads_the_auxiliary_filers_actually_write() -> None:
 
     epam = rp._guidance(_EPAM_GUIDE, _SRC)
     assert len(epam) == 1 and epam[0].metric == "revenue"
-    assert (epam[0].low, epam[0].high) == (1385.0, 1400.0) or (epam[0].low, epam[0].high) == (
-        1410.0, 1425.0)
+    # EQUALITY on the numbers the sentence STATES. An `or` over two candidate pairs would accept a
+    # magnitude the verbatim never carries, which is exactly what a value pin on a frozen fixture
+    # exists to refuse.
+    assert (epam[0].low, epam[0].high, epam[0].unit) == (1410.0, 1425.0, "$M")
     assert epam[0].period == "Q3", "the period TRAILS the range, and it is the guide's own"
 
     # "expected to range FROM" is the same range with the other preposition
@@ -698,3 +700,35 @@ def test_recon_reads_a_prefix_free_ebitda_and_only_ebitda() -> None:
     assert ("adjusted ebitda", 731.0) not in got, (
         "the bare EBITDA was filed under the adjusted name — a different figure under a familiar "
         "one")
+
+
+def test_the_lead_in_never_lends_a_forward_guide_the_period_it_just_reported() -> None:
+    """(2026-09-18, review) The lead-in fallback scanned a blind 60 characters back from the metric
+    and took the FIRST period it found there — with neither of the two guards the tail carries. It
+    therefore walked out of the guide's own sentence into the PRIOR one, where a release states the
+    period it has just REPORTED, and dressed a forward guide in a CLOSED quarter:
+
+        "Free cash flow was $1.2 billion in the third quarter of 2025. Net sales are expected to be
+         between $197.0 billion and $202.0 billion."            → labelled **Q3 2025**
+        "Revenues increased 12% compared with the fourth quarter of 2024. Revenues will be in the
+         range of $500 million to $520 million."                → labelled **Q4 2024**
+
+    Both are the failure this module's own comment calls worse than an unlabelled one:
+    `period_scope` reads either as a QUARTER, so the guide is cross-checked against whatever CIQ
+    carries for a period the guide does not govern. `next-fy` is the only honest answer for both.
+    """
+    prior_sentence = ("Free cash flow was $1.2 billion in the third quarter of 2025. Net sales are "
+                      "expected to be between $197.0 billion and $202.0 billion.")
+    got = rp._guidance(prior_sentence, _SRC)
+    assert len(got) == 1 and (got[0].low, got[0].high) == (197000.0, 202000.0)
+    assert got[0].period == "next-fy", f"the prior sentence's closed quarter was taken: {got[0]!r}"
+
+    prior_comparison = ("Revenues increased 12% compared with the fourth quarter of 2024. Revenues "
+                        "will be in the range of $500 million to $520 million.")
+    got = rp._guidance(prior_comparison, _SRC)
+    assert len(got) == 1 and (got[0].low, got[0].high) == (500.0, 520.0)
+    assert got[0].period == "next-fy", f"the comparison's closed quarter was taken: {got[0]!r}"
+
+    # ⊖ the real lead-in still resolves: a bullet-list header carries NO sentence end between it
+    #   and the bullet, which is precisely what distinguishes it from the prior sentence above
+    assert rp._guidance(_AMZN_GUIDE, _SRC)[0].period == "Q3 2026"

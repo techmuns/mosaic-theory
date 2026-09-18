@@ -805,12 +805,12 @@ _GUIDE_RANGE = re.compile(
     # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
     # all guide on these and were invisible), an optional footnote marker, and BOTH range
     # phrasings: "outlook of $X to $Y" and "expected to range between $X and $Y".
-    # OPERATING INCOME and a prefix-free DILUTED EPS joined the vocabulary 2026-09-18: Amazon guides
-    # "Operating income is expected to be between $22.5 billion and $27.5 billion" — the most-read
-    # number in that release — and EPAM guides "diluted EPS will be in the range of $2.33 to $2.41".
-    # The adjusted-diluted variants are listed FIRST so a match starts at "adjusted", not inside it:
-    # `re` is leftmost-first, and a match beginning at "diluted" would lose the prefix and relabel a
-    # non-GAAP guide as a GAAP one.
+    # OPERATING INCOME and a prefix-free DILUTED EPS did NOT join the vocabulary on 2026-09-18 —
+    # Amazon's "Operating income is expected to be between $22.5 billion and $27.5 billion" and
+    # EPAM's "diluted EPS will be in the range of $2.33 to $2.41" are still not extracted. Every one
+    # of the 22 ranges they would add states its period in a bullet-list header the clause cannot
+    # reach, so all 22 would land on `next-fy`, which `period_scope` reads as ANNUAL. See
+    # `_GUIDE_METRICS` above for the measurement and the falsifier.
     rf"(?P<metric>{_GUIDE_METRICS})"
     # Artivion writes "revenues FOR THE FULL YEAR 2026 TO BE in the range of $486 to $504 million";
     # the old pattern required the introducer to follow the metric immediately, so a real, numeric,
@@ -1045,8 +1045,23 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
         # the LEAD-IN, which is where a bullet list states the period once for the bullets under it
         # ("Third Quarter 2026 Guidance • Net sales are expected to be between…"). Quarter-first for
         # the same reason as the verbatim: a quarterly range wearing an annual label is the error.
+        #
+        # BOUNDED THE SAME WAY THE TAIL IS, and for the same reason: a blind 60-character look-back
+        # walks out of the guide's own sentence and into the PRIOR one, where a release states the
+        # period it just REPORTED. "Free cash flow was $1.2 billion in the third quarter of 2025.
+        # Net sales are expected to be between $197.0 billion and $202.0 billion" labelled a forward
+        # guide **Q3 2025**, and "…compared with the fourth quarter of 2024. Revenues will be in the
+        # range of…" labelled one **Q4 2024** — a closed period on a forward guide, which is the
+        # error this function's own comment calls worse than an unlabelled one. So the window stops
+        # at the last sentence end (a bullet lead-in has none, which is why Amazon still resolves)
+        # and again at a comparison marker, which is what `_CMP` cuts on the other side.
         back = max(0, start - 60)
-        tq, ty = _QUARTER.search(text, back, start), _PERIOD.search(text, back, start)
+        sent = text.rfind(". ", back, start)
+        if sent != -1:
+            back = sent + 2
+        lead_cut = _CMP.search(text, back, start)
+        lead_hi = lead_cut.start() if lead_cut is not None else start
+        tq, ty = _QUARTER.search(text, back, lead_hi), _PERIOD.search(text, back, lead_hi)
     if tq is not None:
         yr = re.search(r"20\d\d", ty.group(1)) if ty else None
         return f"Q{_Q_NUM[tq.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
