@@ -63,6 +63,41 @@ recent 8-Ks, EDGAR as of 2026-09-18, filtered to items 2.02/8.01 with no release
 filings, of which exactly 2 furnish one under a bare `EX-99`; the other 27 are genuinely
 release-free (debt take-downs with EX-1.1/EX-4.x, XBRL-only 8-Ks).
 
+**THE ADDED-ON-TOP CASE, MEASURED (2026-09-18, review).** The widening was first measured only
+where NO release was found — the recovery case — which left one question open: how often does a
+filing carry BOTH a dotted `EX-99.1` and a bare `EX-99`, so that the bare form ADDS a document to a
+release already located? Answered by census rather than by sample: **every 8-K in EDGAR's 2026 Q2
+full index — 18,300 filings, zero fetch errors**, each classified by the EX-99 types its own SGML
+header declares.
+
+| | filings | share |
+|---|--:|--:|
+| no EX-99 text document | 8,911 | 48.7% |
+| dotted `EX-99.1` only — unchanged by the widening | 9,164 | 50.1% |
+| **bare `EX-99` only — the recovery case** | **221** | **1.21%** |
+| **both dotted and bare — the added-on-top case** | **4** | **0.022%** |
+
+So the widening recovers a release in about **one 8-K in 83**, not merely PARR's and LLY's, and the
+case it was not measured on occurs in about one in 4,575.
+
+All four were parsed, both documents each. **The bare document adds ZERO rows and produces ZERO
+value conflicts in all four** — the anchored vocabulary finds nothing in any of them:
+
+- CIK 1718405 `0001493152-26-026891` — the bare `EX-99` is `ex96-1.htm`, an 883,297-character S-K
+  1300 mining technical report (Exhibit 96.1) the filer mis-typed. Parses to nothing.
+- CIK 788784 and 81033 `0001193125-26-205254` (one filing, two co-filers) — a genuine Exhibit 99
+  beside a genuine Exhibit 99.1. Both parse to nothing.
+- CIK 885978 `0000885978-26-000017` — **the types are SWAPPED**: `EX-99.1` is `ex10-1.htm`, a
+  529KB credit agreement (Exhibit 10.1), and the bare `EX-99` is `ex99-1.htm`, the actual 2.9KB
+  press release whose own text reads "Exhibit 99.1".
+
+That last filing settles the remedy the review proposed. **Restricting the bare form to filings
+with no dotted `EX-99.1` would have lost the real press release there** and kept the credit
+agreement — so preferring the dotted type is measurably the wrong rule, and the widening stays as
+written. The residual cost is compute, not correctness: a mis-typed exhibit is fetched and scanned
+(883KB in the worst of the four), and the 529KB credit agreement is fetched under the DOTTED type
+regardless of this change.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.** The committed pages keep their bad rows until they are
 re-assembled — this PR changes code only, and the artifact pass is a separate commit by rule.
 Stamps stay MONTH-granular, so an event stated for the 1st of the current month is still published
