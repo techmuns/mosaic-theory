@@ -9845,6 +9845,20 @@ def test_calendar_reads_the_stated_year_and_anchors_an_unstated_one_on_the_row()
     googl = ("Since launching at I/O in May, there's been a 40% increase in daily active users, "
              "creating videos on the Gemini app.")
     assert dm._dated_operating_events(_kd(googl, None), date(2026, 7, 22)) == []
+    # the noun form is the same retrospective
+    assert dm._dated_operating_events(
+        _kd("Since the launch in May, usage is up 40%.", None), date(2026, 3, 1)) == []
+
+    # ⊖ "since" governs backward ONLY where it introduces the matched verb. In the 24-character
+    #    look-back window the other backward words are scanned with, a bare "since" anywhere
+    #    suppressed REAL forward events — a calendar that drops what is ahead fails the same way
+    #    it failed by publishing what is behind. Both of these state their own year.
+    for fwd, want in (
+        ("Deliveries have doubled since 2024; the plant opens in March 2027.", "2027-03"),
+        ("The contract runs since 2024 and will be effective April 2027.", "2027-04"),
+    ):
+        assert [c.expected_date for c in dm._dated_operating_events(
+            _kd(fwd, None), date(2026, 9, 1))] == [want], fwd
 
 
 def test_committed_pages_never_date_an_operating_event_away_from_its_stated_year() -> None:

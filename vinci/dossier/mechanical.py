@@ -2808,11 +2808,19 @@ _CAL_FWD_EVENT = re.compile(
     r"[^.]{0,60}?\b(January|February|March|April|May|June|July|August|September|October|"
     r"November|December)\b(?:\s+\d{1,2}(?:st|nd|rd|th)?(?!\d))?(?:,?\s*(\d{4}))?",
     re.IGNORECASE)
-#: A RETROSPECTIVE is not a catalyst. "since" joined the list on 2026-09-18: "Since launching at
-#: I/O in May, there's been a 40% increase" was publishing a 2027-05 catalyst for a thing that had
-#: already happened. Measured over the committed fleet, adding it drops exactly those two GOOGL
-#: retrospectives and touches no other name.
-_CAL_BACKWARD = re.compile(r"\b(?:last|past|earlier|prior|previous|ago|since)\b", re.IGNORECASE)
+#: A RETROSPECTIVE is not a catalyst. "since" is checked SEPARATELY, in `_CAL_SINCE`, because the
+#: other words in this list only ever look backward, and "since" governs backward only where it
+#: INTRODUCES the verb that matched. In the 24-character look-back window this list is scanned
+#: with, a bare "since" anywhere suppressed genuine forward events: "Deliveries have doubled since
+#: 2024; the plant opens in March 2027" lost a stated-year 2027 catalyst to a clause on the other
+#: side of a semicolon. A calendar that drops what is ahead fails the same way it failed by
+#: publishing what is behind.
+_CAL_BACKWARD = re.compile(r"\b(?:last|past|earlier|prior|previous|ago)\b", re.IGNORECASE)
+#: "Since launching at I/O in May, there's been a 40% increase" — the forward verb is the OBJECT of
+#: "since", so the whole clause is a retrospective and was publishing a 2027-05 catalyst for a
+#: thing that had already happened. Anchored at the end of the text preceding the match, so only a
+#: "since" that actually introduces the verb counts (added 2026-09-18; narrowed at review).
+_CAL_SINCE = re.compile(r"\bsince\s+(?:the\s+|its\s+|our\s+)?$", re.IGNORECASE)
 #: A Key-Development row states its OWN date ("Sep-17-2026") in `period`; that is the date the
 #: sentence was written on, and the one an unstated year resolves against.
 _CAL_ROW_DATE = re.compile(r"^([A-Z][a-z]{2})-(\d{1,2})-(\d{4})$")
@@ -2860,6 +2868,8 @@ def _dated_operating_events(
         for m in _CAL_FWD_EVENT.finditer(text):
             if _CAL_BACKWARD.search(text[max(0, m.start() - 24):m.end()]):
                 continue  # "last September" — a backward reference, not a calendar event
+            if _CAL_SINCE.search(text[max(0, m.start() - 24):m.start()]):
+                continue  # "since launching …" — the verb is the object of a retrospective
             month = _CAL_MONTHS[m.group(1).lower()]
             if m.group(2):
                 year = int(m.group(2))
