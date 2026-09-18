@@ -2794,13 +2794,41 @@ def _next_print_estimate(print_dates: list[date], ref: date) -> tuple[date, str]
 _CAL_MONTHS = {m.lower(): i + 1 for i, m in enumerate(
     ("January", "February", "March", "April", "May", "June", "July",
      "August", "September", "October", "November", "December"))}
+#: THE YEAR IS READ WHEREVER THE DATE STATES IT — after the month ("April 2026") or after the day
+#: ("April 2, 2026", "April 2nd 2026"). The day group carries ``(?!\d)`` because without it
+#: "October 2025" reads as day-20 and a LOST year — the widening would re-break what it fixes.
+#: The year used to be accepted only immediately after the month, so
+#: a month-day-year date read as year-less and fell to the next-occurrence rule below: WLK's
+#: "effective April 2, 2026" was published as a 2027-04 catalyst, and "effective June 15, 2026" as
+#: 2027-06. A calendar whose whole job is what is AHEAD was dating events a year late, and the two
+#: it invented were already in the past.
 _CAL_FWD_EVENT = re.compile(
     r"\b(?:effective|launch(?:es|ing)?|open(?:s|ing)?|begin(?:s|ning)?|start(?:s|ing)?|"
     r"roll(?:s|ing)?\s+out|ship(?:s|ping)?|transition(?:s|ing)?|commenc(?:es|ing))\b"
     r"[^.]{0,60}?\b(January|February|March|April|May|June|July|August|September|October|"
-    r"November|December)\b(?:\s+(\d{4}))?",
+    r"November|December)\b(?:\s+\d{1,2}(?:st|nd|rd|th)?(?!\d))?(?:,?\s*(\d{4}))?",
     re.IGNORECASE)
-_CAL_BACKWARD = re.compile(r"\b(?:last|past|earlier|prior|previous|ago)\b", re.IGNORECASE)
+#: A RETROSPECTIVE is not a catalyst. "since" joined the list on 2026-09-18: "Since launching at
+#: I/O in May, there's been a 40% increase" was publishing a 2027-05 catalyst for a thing that had
+#: already happened. Measured over the committed fleet, adding it drops exactly those two GOOGL
+#: retrospectives and touches no other name.
+_CAL_BACKWARD = re.compile(r"\b(?:last|past|earlier|prior|previous|ago|since)\b", re.IGNORECASE)
+#: A Key-Development row states its OWN date ("Sep-17-2026") in `period`; that is the date the
+#: sentence was written on, and the one an unstated year resolves against.
+_CAL_ROW_DATE = re.compile(r"^([A-Z][a-z]{2})-(\d{1,2})-(\d{4})$")
+
+
+def _cal_row_month(row: OperatingDriver) -> tuple[int, int] | None:
+    """(year, month) the driver row itself is dated at, or None when it states no date."""
+    m = _CAL_ROW_DATE.match((row.period or "").strip())
+    if m is None:
+        return None
+    month = _CAL_MONTHS.get(m.group(1).lower() + {"jan": "uary", "feb": "ruary", "mar": "ch",
+                                                  "apr": "il", "may": "", "jun": "e", "jul": "y",
+                                                  "aug": "ust", "sep": "tember", "oct": "ober",
+                                                  "nov": "ember", "dec": "ember"}
+                            .get(m.group(1).lower(), ""))
+    return (int(m.group(3)), month) if month else None
 
 
 def _dated_operating_events(
@@ -2808,11 +2836,21 @@ def _dated_operating_events(
 ) -> list[CatalystRow]:
     """(source D) MANAGEMENT-STATED dated operating events mined from the already-extracted
     driver verbatims — a price increase 'effective in September', a launch, a plant opening.
-    Month-granular dates render as YYYY-MM (never a fabricated day). Year resolution when
-    unstated: the NEXT occurrence of that month on/after the reference month (a stated month is
-    forward-looking by construction of the pattern). Past-resolved events are dropped — a
-    calendar lists what is ahead. No match → no row, silently (no event stated is a normal
-    state, unlike an unreadable DATE, which flags)."""
+    Month-granular dates render as YYYY-MM (never a fabricated day).
+
+    YEAR RESOLUTION, in order: the year the sentence STATES (after the month or after the day);
+    otherwise the next occurrence of that month on/after THE ROW'S OWN DATE — a Key Development
+    published in March saying "starting on April 15" means that April, not the one sixteen months
+    later; otherwise, for a row that states no date, the reference month. Past-resolved events are
+    dropped — a calendar lists what is ahead.
+
+    BOTH FALLBACKS USED TO RUN OFF THE REFERENCE DATE, and the committed pages showed what that
+    costs: AMZN's Spectrum-TV launch, announced 2026-03-31 for "April 15", was published as a
+    2027-04 catalyst, and Globalstar's May-2026 launch as 2027-05. Anchoring on the row's own date
+    resolves them to their real month, where the past-drop then removes them.
+
+    No match → no row, silently (no event stated is a normal state, unlike an unreadable DATE,
+    which flags)."""
     if od is None:
         return []
     rows: list[CatalystRow] = []
@@ -2826,7 +2864,8 @@ def _dated_operating_events(
             if m.group(2):
                 year = int(m.group(2))
             else:
-                year = reference_date.year + (1 if month < reference_date.month else 0)
+                from_y, from_m = _cal_row_month(r) or (reference_date.year, reference_date.month)
+                year = from_y + (1 if month < from_m else 0)
             stamp = f"{year:04d}-{month:02d}"
             if stamp < reference_date.strftime("%Y-%m"):
                 continue  # resolved to the past — not a calendar row

@@ -276,6 +276,49 @@ def test_sgml_detection_covers_every_real_filename_the_regex_missed() -> None:
     assert by_name < len(_EX991_REAL_NAMES), "the filename rule is a strict subset (the bug)"
 
 
+def test_ex991_urls_accept_the_bare_ex_99_type_that_parr_and_lly_furnish_under() -> None:
+    """(2026-09-18) A filer may type the furnished quarterly release ``EX-99``, not ``EX-99.1``.
+    PARR and LLY both do, and the dotted-only rule made their releases INVISIBLE — PARR's page
+    carried 'carries 2.02 but no EX-99.1 exhibit was found' against a filing that plainly
+    furnishes one, and one 2025 quarter was simply missing from the release set. Both document
+    lists below are the REAL SGML headers of those two filings, verbatim.
+
+    Measured before widening: over 22 names' ten most recent 8-Ks, 29 filings carry item 2.02/8.01
+    with no release found — exactly these 2 furnish one; the other 27 are genuinely release-free.
+    """
+    parr = _FakeHttp(_headers_html([
+        ("8-K", "parr-20251104.htm"),
+        ("EX-99", "a20250930991earningsreleas.htm"),
+        ("EX-101.SCH", "parr-20251104.xsd"),
+        ("EX-101.LAB", "parr-20251104_lab.xml"),
+        ("EX-101.PRE", "parr-20251104_pre.xml"),
+        ("GRAPHIC", "q4fy15earningsv5image1a55a.gif"),
+        ("ZIP", "0001628280-25-048903-xbrl.zip"),
+    ]))
+    parr_urls = rp.exhibit_991_urls(
+        typing.cast(CachedHttp, parr), "0000821483", "0001628280-25-048903")
+    assert [u.rsplit("/", 1)[1] for u in parr_urls] == ["a20250930991earningsreleas.htm"]
+    assert not rp._is_ex991("a20250930991earningsreleas.htm"), "nor the filename rule"
+
+    lly = _FakeHttp(_headers_html([
+        ("8-K", "lly-20260430.htm"),
+        ("EX-99", "q126lillysalesandearningsp.htm"),
+        ("EX-101.DEF", "lly-20260430_def.xml"),
+        ("GRAPHIC", "logoa31.jpg"),
+    ]))
+    lly_urls = rp.exhibit_991_urls(
+        typing.cast(CachedHttp, lly), "0000059478", "0000059478-26-000043")
+    assert [u.rsplit("/", 1)[1] for u in lly_urls] == ["q126lillysalesandearningsp.htm"]
+
+    # ⊖ the widening buys the bare form ONLY: the 99.2 sibling and the 99.1x neighbours stay out,
+    #   and an EX-99 that is not a text document is still never fetched as prose
+    neg = _FakeHttp(_headers_html([("EX-99.2", "slides.htm"), ("EX-99.11", "ex9911.htm"),
+                                   ("EX-99.10", "ex9910.htm"), ("EX-99", "deck.pdf"),
+                                   ("EX-99", "release.htm")]))
+    assert [u.rsplit("/", 1)[1] for u in rp.exhibit_991_urls(
+        typing.cast(CachedHttp, neg), "1", "0-0-0")] == ["release.htm"]
+
+
 # --- parser COVERAGE: verbatim sentences from the real releases the locator fix recovered ---------
 # Each is the exact phrasing that yielded NOTHING before (recovering the document is not the same
 # as reading it). Frozen strings — no network.
