@@ -21,8 +21,20 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 MON = ROOT / "data" / "monitor"
 
 
+#: THE LATEST COMMITTED MONITOR DAY, derived rather than named. The emitter reads the CURRENT
+#: dossiers, so a day is reproducible only against the pages it was emitted with: an artifact pass
+#: re-cuts the dossiers and the panels move with them (the 2026-09-16 pass moved every dilution
+#: row's window end from the 2026-08-14 reference to 2026-08-24). Pinning a fixed day made the
+#: reproduction test a countdown to the next pass; pinning the latest day keeps asking the question
+#: the pin exists for — is the committed artifact regenerable from committed inputs.
+def _latest_day() -> pathlib.Path:
+    days = sorted(p for p in MON.glob("*.json") if re.fullmatch(r"\d{4}-\d{2}-\d{2}", p.stem))
+    assert days, "no dated monitor snapshot committed"
+    return days[-1]
+
+
 def _snap() -> dict:
-    return json.loads((MON / "2026-08-11.json").read_text())
+    return json.loads(_latest_day().read_text())
 
 
 def _dossier(t: str) -> dict | None:
@@ -364,9 +376,10 @@ def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
     REAL rather than invented, and it cannot pass vacuously.
 
     TECX carries 8 form types against 5 bars and 8 source refs against 5 lines, both in the
-    committed artifact. The timeline cap has NO corpus witness (WERN's 4 exactly meets it and does
-    not exceed it), which is recorded rather than papered over: #601 noted the same asymmetry, and
-    a fix with no witness is proven by construction only.
+    committed artifact. THE TIMELINE CAP GAINED ITS WITNESS on the 2026-09-16 day: WERN carries 5
+    newer filings against 4 dots, where it had exactly 4 before. All three caps are now witnessed
+    by the corpus as well as by construction (the node pin above draws nine), so the line that
+    recorded the gap is retired per its own instruction.
     """
     forms_max = refs_max = newer_max = 0
     for p in _snap().get("panels") or []:
@@ -376,7 +389,6 @@ def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
         newer_max = max(newer_max, len(v.get("newer_filings") or []))
     assert forms_max > 5, f"no committed dossier overflows the form bars (max {forms_max})"
     assert refs_max > 5, f"no committed dossier overflows the source list (max {refs_max})"
-    # Stated, not asserted: the timeline cap is unwitnessed on this corpus today.
-    assert newer_max <= 4, (
-        f"a name now carries {newer_max} newer filings — the timeline cap HAS a corpus witness, so "
-        f"pin it in the node test above and retire this line")
+    assert newer_max > 4, (
+        f"no committed name overflows the timeline dots (max {newer_max}) — the witness WERN "
+        f"supplied on 2026-09-16 is gone, so the cap is proven by construction only again")

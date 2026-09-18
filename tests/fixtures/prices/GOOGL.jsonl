@@ -441,3 +441,8 @@
 {"bar_date": "2026-09-04", "close": 338.46, "high": 343.53, "internal_id": "SEC-0001652044-GOOGL", "low": 337.09, "open": 342.465, "source": "polygon-aggs", "volume": 23189321.111772}
 {"bar_date": "2026-09-08", "close": 338.36, "high": 339.68, "internal_id": "SEC-0001652044-GOOGL", "low": 333.22, "open": 335.42, "source": "polygon-aggs", "volume": 22915839.169354}
 {"bar_date": "2026-09-09", "close": 330.65, "high": 331.85, "internal_id": "SEC-0001652044-GOOGL", "low": 327.9, "open": 331.65, "source": "polygon-aggs", "volume": 33151627.317712}
+{"bar_date": "2026-09-10", "close": 332.6, "high": 333.23, "internal_id": "SEC-0001652044-GOOGL", "low": 327.74, "open": 328.225, "source": "polygon-aggs", "volume": 23557551.883172}
+{"bar_date": "2026-09-11", "close": 338.5, "high": 342.98, "internal_id": "SEC-0001652044-GOOGL", "low": 335.03, "open": 335.03, "source": "polygon-aggs", "volume": 24708293.205552}
+{"bar_date": "2026-09-14", "close": 349.39, "high": 349.91, "internal_id": "SEC-0001652044-GOOGL", "low": 342.1361, "open": 343.12, "source": "polygon-aggs", "volume": 35905445.963444}
+{"bar_date": "2026-09-15", "close": 344.98, "high": 348.07, "internal_id": "SEC-0001652044-GOOGL", "low": 342.7, "open": 346.8, "source": "polygon-aggs", "volume": 21928572.320874}
+{"bar_date": "2026-09-16", "close": 342.87, "high": 348.4, "internal_id": "SEC-0001652044-GOOGL", "low": 340.64, "open": 347.08, "source": "polygon-aggs", "volume": 18928864.090422}

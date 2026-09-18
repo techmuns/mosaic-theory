@@ -71,7 +71,11 @@ FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
 #: reported 112.2 then 5.61. Both exactly 20.0x — the July-2022 20-for-1, restated in the FY2022
 #: 10-K, and the detector reads 20.0017 over the windowed points. The percentile is correctly
 #: WITHHELD for GOOGL: split-adjusted prices over as-filed EPS would divide one basis by the other.
-SPLIT_NAMES = {"NFLX", "GOOGL"}
+#: AMZN added 2026-09-18, on the same standard, when its page was first committed: FY2020 reported
+#: 41.83 (2021-02-03, again 2022-02-04) then 2.09 (2023-02-03); FY2021 reported 64.81 (2022-02-04)
+#: then 3.24 (2023-02-03). Both exactly 20.0x — the June-2022 20-for-1, restated in the FY2022
+#: 10-K; the detector reads 20.0087 over the windowed points. Its percentile is correctly WITHHELD.
+SPLIT_NAMES = {"NFLX", "GOOGL", "AMZN"}
 
 
 def _eps(ticker: str) -> list:

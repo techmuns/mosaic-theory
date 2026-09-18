@@ -1,5 +1,6 @@
 {
   "tickers": [
+    "AMZN",
     "AORT",
     "BRBR",
     "CNXC",
@@ -12,15 +13,22 @@
     "NCNO",
     "NFLX",
     "ORKA",
+    "PARR",
     "SMPL",
     "TECX",
     "UBER",
     "V",
     "VITL",
     "VRRM",
-    "WERN"
+    "WERN",
+    "WLK"
   ],
   "labels": {
+    "AMZN": {
+      "industry": "Broadline Retail",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "AORT": {
       "industry": "Health Care Equipment",
       "source": "ciq-gics",
@@ -81,6 +89,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "PARR": {
+      "industry": "Oil and Gas Refining and Marketing",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "SMPL": {
       "industry": "Packaged Foods and Meats",
       "source": "ciq-gics",
@@ -115,30 +128,39 @@
       "industry": "Cargo Ground Transportation",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "WLK": {
+      "industry": "Commodity Chemicals",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     }
   },
   "reads": {
+    "AMZN": "mixed \u2014 accelerating AWS growth and rising estimates offset by cash-negative FCF, softening ROIC, and a forward P/E premium above peers.",
     "AORT": "mixed \u2014 compounding revenue and rising absolute EBITDA against a sharply cut forward-earnings base, worse leverage, dilution and an On-X recall.",
-    "BRBR": "strongly-bearish \u2014 EBITDA down in absolute terms with structural margin/demand deterioration and rising leverage, only partly offset by a cheap optical P/E.",
+    "BRBR": "strongly-bearish \u2014 margin AND absolute EBITDA both collapsed on structural promotional/input-cost pressure with consensus still cutting; recovery lever (FY27 pricing) unproven.",
     "CNXC": "mixed \u2014 flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.",
-    "EPAM": "mixed \u2014 net-cash, still-growing dollar EBITDA and a floor multiple sit against a management-owned structural North American growth gap and relentless downward revisions.",
+    "EPAM": "mixed \u2014 a still-growing, net-cash, FCF-positive grower de-rated to trough multiples, but facing a self-owned, unresolved North American structural growth gap.",
     "FUBO": "mixed \u2014 a raised adjusted-EBITDA guide and subscriber inflection sit against a \u221277% year, \u2212$107.8M FCF, and a \u221237% consensus EBITDA cut.",
-    "GOOGL": "mixed \u2014 accelerating revenue and cloud backlog run into a record-high trailing multiple, falling ROIC and rising capex whose payback is unresolved.",
+    "GOOGL": "strongly-bullish \u2014 accelerating revenue, 82% cloud growth with a $514B backlog and rising absolute EBITDA outweigh a ceiling-level multiple and compressed FCF.",
     "IT": "mixed \u2014 franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.",
-    "LLY": "strongly-bullish \u2014 extraordinary volume-driven revenue and EBITDA compounding with rising returns, though the premium demands the runway keeps delivering.",
-    "MVST": "strongly-bearish \u2014 management-stated going-concern doubt plus a ~$104M near-term wall against negative operating cash flow and falling volumes.",
+    "LLY": "strongly-bullish \u2014 superior, mechanism-backed volume growth and rising absolute EBITDA/RoCE plausibly earn the premium; net-price erosion is the main genuine counterweight.",
+    "MVST": "strongly-bearish \u2014 a filed going-concern doubt plus a ~$104M near-term maturity wall against shrinking volume outweighs peer-relative optical cheapness.",
     "NCNO": "strongly-bullish \u2014 positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
-    "NFLX": "strongly-bullish \u2014 franchise still compounding revenue, margin, ROIC and view hours with a fortress balance sheet, versus a decelerating-top-line counter-case.",
+    "NFLX": "mixed \u2014 a fundamentally growing, low-levered franchise sharply de-rated, but sharp downward revenue revisions and a still-premium forward multiple leave the growth thesis unresolved.",
     "ORKA": "mixed \u2014 validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.",
+    "PARR": "mixed \u2014 strong upgraded near-term momentum and a fortress balance sheet, but a large trailing run-up, a Hawaii-turnaround Q3 drag, and a consensus FY27/FY28 roll-over.",
     "SMPL": "mixed \u2014 a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.",
     "TECX": "mixed \u2014 a cash-rich, analyst-favored single-asset clinical bet whose entire value hinges on one undated, unproven TX45 readout against an accelerating burn.",
-    "UBER": "mixed \u2014 genuine operating inflection (EBITDA, ROIC, FCF, 22% bookings) against a rich decade-long consensus, cut GAAP EPS, and rising cost lines.",
+    "UBER": "strongly-bullish \u2014 absolute EBITDA, ROIC and $10B+ FCF compound while the multiple sits at its own-history floor; near-term estimate cuts and growth-spend are the genuine counterweights.",
     "V": "mixed \u2014 a genuinely lengthening volume/VAS runway and rising ROIC against a fully-earned but growth-matched premium and a year of market underperformance.",
     "VITL": "mixed \u2014 an identifiable, arguably reversible egg-pricing shock with an intact loyal base and near-zero leverage set against a ~97% FY26 EBITDA collapse and cash burn, with recovery still only modelled.",
     "VRRM": "mixed \u2014 a genuine, quantified >10%-customer loss and repeated guide cuts sit against a self-funding, contracted-government-growth franchise at a distressed multiple.",
-    "WERN": "mixed \u2014 a live pricing/mix inflection and rising forward EBITDA offset by still-negative earnings, 1.1% ROIC, above-peer leverage and a near-ceiling own-history multiple."
+    "WERN": "mixed \u2014 a genuine FirstFleet-and-pricing operating inflection sits against a multi-year structural collapse in EBITDA and returns still unproven in GAAP earnings.",
+    "WLK": "mixed \u2014 a genuine, mechanism-backed Q2 earnings jump set against a trailing multiple near its own-history ceiling and an oil-shock catalyst management calls fluid."
   },
   "sleeves": {
+    "AMZN": "quality",
     "AORT": "overshoot",
     "BRBR": "overshoot",
     "CNXC": "overshoot",
@@ -151,13 +173,15 @@
     "NCNO": "overshoot",
     "NFLX": "overshoot",
     "ORKA": "quality",
+    "PARR": "ultra_short_term",
     "SMPL": "overshoot",
     "TECX": "quality",
     "UBER": "quality",
     "V": "quality",
     "VITL": "overshoot",
     "VRRM": "overshoot",
-    "WERN": "overshoot"
+    "WERN": "overshoot",
+    "WLK": "ultra_short_term"
   },
   "followed": {
     "LLY": "quality",
