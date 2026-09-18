@@ -63,3 +63,15 @@ AMZN 7,776. Both were assembled 2026-09-17 against store prices through 2026-09-
    basket is the name being judged.
 3. **The page shows the key, not a label.** The shelf tag and decision-log chip print the raw key
    `ultra_short_term`, as they print `quality`.
+## Amendments
+
+**2026-09-18 — HORIZON RULED: 180 days (operator).** Accepted-risk item 1 above is closed by a
+decision, not by a mechanism: the book scores at the fund's existing 180-day horizon, the window the
+other books use and the one the page's copy-paste command already suggests. No cap is built and no
+per-book page hint is needed.
+
+WHAT THAT MEANS, stated so the curve is not over-read: the short-dated claim now lives entirely in
+the CASE — a dated catalyst inside weeks — while the ledger asks what the name did over six months.
+A trade that works on its catalyst and then gives the move back scores as the give-back, and the
+kill test asks whether the catalyst call still shows at 180 days against simply holding the list.
+One horizon across the books keeps the per-book curves comparable, which is the reason for it.
