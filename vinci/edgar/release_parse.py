@@ -621,7 +621,16 @@ _RECON = re.compile(
     # ("Non-GAAP Diluted EPS of $3.26"). A footnote MARKER may follow the metric name: BellRing
     # writes "Adjusted EBITDA* of $53.8 million", and the un-tolerated '*' silently dropped the
     # whole release. \*? also covers the †/‡ conventions via the [*†‡]? class.
-    r"(?:non-gaap|adjusted)\s+"
+    #
+    # THE PREFIX IS OPTIONAL FOR **EBITDA ALONE** (2026-09-18). Westlake names its reconciled
+    # non-GAAP measure plainly — "EBITDA of $679 million for the second quarter of 2026" — so a
+    # prefix-only rule read NOTHING from either of its 2026 releases and the page showed an empty
+    # primary-source panel for a name whose EBITDA is the whole thesis. EBITDA is never a GAAP line
+    # item, so a bare one is a non-GAAP figure by construction; net income, operating income and EPS
+    # all have GAAP meanings and still REQUIRE the prefix — widening them would read a GAAP actual
+    # as a non-GAAP one, which is the wrong-figure-under-a-familiar-name error `_norm_metric` exists
+    # to refuse. The zero-width lookahead keeps the group numbering the caller reads.
+    r"(?:(?:non-gaap|adjusted)\s+|(?=ebitda\b))"
     r"((?:diluted\s+)?(?:net\s+)?"
     r"(?:ebitda|income\s+from\s+operations|operating\s+income|net\s+(?:income|loss|profit)|"
     r"(?:income|loss)\s+per\s+share|earnings\s+per\s+share|eps))"
@@ -655,6 +664,11 @@ _REVENUE = re.compile(
 )
 
 
+#: A filer that writes BOTH "EBITDA" and "adjusted EBITDA" means two different measures by them.
+_ADJ_EBITDA = re.compile(r"(?:non-gaap|adjusted)\s+ebitda", re.I)
+_RECON_PREFIXED = re.compile(r"(?:non-gaap|adjusted)\s", re.I)
+
+
 def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[ReconciliationValue]:
     """Non-GAAP actuals, headline revenue and GAAP gross margin — each labelled with the period
     ITS OWN text names (_figure_period), never the header's period by default.
@@ -667,6 +681,15 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
     out: list[ReconciliationValue] = []
     seen: set[tuple[str, str]] = set()  # (metric, period) — current actual AND prior-year comp
     current = frame.label
+    # A BARE "EBITDA" IS THE FILER'S NON-GAAP MEASURE ONLY WHERE THE FILER DRAWS NO DISTINCTION
+    # (2026-09-18). Westlake writes "EBITDA of $679 million" and nothing else, so reading it is the
+    # only way its page carries a non-GAAP figure at all. CF Industries writes BOTH in one sentence
+    # — "EBITDA of $731 million, and adjusted EBITDA of $821 million" — and there the bare one is a
+    # DIFFERENT measure: folding it into `adjusted ebitda` let $731M take the (metric, period) slot
+    # and drop the real $821M, a different figure under a familiar name. Measured over the 91
+    # releases the committed pages cite, exactly two state a bare "EBITDA of $" — both Westlake's —
+    # and neither states an adjusted one, so this costs nothing live and closes the conflation.
+    bare_ebitda_is_the_measure = _ADJ_EBITDA.search(text) is None
 
     def _segment(at: int) -> bool:
         # "The Commercial Services segment generated total revenue of $108.1 million" is one
@@ -710,6 +733,9 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
         val, metric = _money(num), _norm_metric(m.group(1))
         if val is None or _segment(m.start()):
             continue
+        if (metric == "adjusted ebitda" and not bare_ebitda_is_the_measure
+                and _RECON_PREFIXED.match(m.group(0)) is None):
+            continue  # this filer states an adjusted EBITDA too — the bare one is not it
         if "negative" in sign or "loss" in metric_raw.lower():
             val = -abs(val)
         lo, _ = _clause(text, m.start(), m.end())
@@ -755,13 +781,37 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
     return out
 
 
+#: THE METRIC NAMES A GUIDANCE RANGE MAY BE ATTRIBUTED TO — ONE declaration, read by the range
+#: pattern AND by the ambiguity refusal below. They were two literals; a metric the range pattern
+#: could attribute but the refusal could not see is a shared-range sentence silently given to one of
+#: two candidates, so they are the same string or they are a bug waiting.
+#:
+#: HELD AT THE NAMES IT ALREADY CARRIED, and that is a decision with a measurement behind it
+#: (2026-09-18). Adding `operating income` and the prefix-free per-share forms extracts 22 more
+#: real ranges across the fleet — Amazon's operating-income guide, EPAM's GAAP diluted EPS,
+#: Concentrix's and nCino's operating income, Uber's non-GAAP EPS — and EVERY ONE of them states
+#: its period in a bullet-list header the clause cannot reach, so all 22 land on the `next-fy`
+#: default, which `period_scope` reads as ANNUAL. A quarterly guide wearing an annual label is a
+#: ~4x error in a decision figure, and more rows are not worth it. The gap is recorded, with its
+#: 22 witnesses, in docs/records/2026-09-18-release-parse-fleet-audit.md.
+_GUIDE_METRICS = (
+    r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
+    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin"
+)
+
+
 # --- (2) guidance ranges + QUALITATIVE-only outlook ----------------------------------------------
 _GUIDE_RANGE = re.compile(
     # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
     # all guide on these and were invisible), an optional footnote marker, and BOTH range
     # phrasings: "outlook of $X to $Y" and "expected to range between $X and $Y".
-    r"(?P<metric>total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
-    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin)"
+    # OPERATING INCOME and a prefix-free DILUTED EPS did NOT join the vocabulary on 2026-09-18 —
+    # Amazon's "Operating income is expected to be between $22.5 billion and $27.5 billion" and
+    # EPAM's "diluted EPS will be in the range of $2.33 to $2.41" are still not extracted. Every one
+    # of the 22 ranges they would add states its period in a bullet-list header the clause cannot
+    # reach, so all 22 would land on `next-fy`, which `period_scope` reads as ANNUAL. See
+    # `_GUIDE_METRICS` above for the measurement and the falsifier.
+    rf"(?P<metric>{_GUIDE_METRICS})"
     # Artivion writes "revenues FOR THE FULL YEAR 2026 TO BE in the range of $486 to $504 million";
     # the old pattern required the introducer to follow the metric immediately, so a real, numeric,
     # in-sentence range was invisible and fell through to the qualitative marker.
@@ -773,8 +823,20 @@ _GUIDE_RANGE = re.compile(
     # moved the match start, which shifted `_period_near`'s window and dropped the year off eight
     # otherwise-correct items. A wildcard between a metric and its number is the same
     # wrong-magnitude class this whole item exists to remove.
-    r"\s*[*†‡]?\s*(?:for\s+the\s+full\s+year(?:\s+20\d\d)?\s+)?(?:to\s+be\s+)?"
-    r"(?:outlook\s+of|expected\s+to\s+range\s+between|to\s+range\s+between|"
+    r"\s*[*†‡]?\s*(?:for\s+the\s+full\s+year(?:\s+20\d\d)?\s+)?"
+    # THE AUXILIARY IS A SLOT, NOT A GAP (2026-09-18). The introducer had to follow the metric
+    # almost immediately, so the most ordinary English shape a filer uses was invisible: "Net sales
+    # ARE EXPECTED TO BE between $197.0 billion and $202.0 billion" (Amazon, both 2026 releases) and
+    # "revenues WILL BE in the range of $1.410 billion" (EPAM, nine statements). Measured over the
+    # 91 releases the committed pages cite, those two shapes are the whole of the guidance miss.
+    # Spelled out, never `[^.]{0,40}?`: a wildcard here is what bound VITL's revenue guide to the
+    # adjusted-EBITDA range one clause later, and the same trap is one character away.
+    r"(?:(?:(?:is|are|was|were)\s+(?:now\s+)?)?"
+    r"(?:expected|anticipated|projected|forecast(?:ed)?)\s+|will\s+be\s+)?"
+    r"(?:to\s+be\s+)?"
+    # "…expected to range FROM $52 million to $56 million" (Simply Good) is the same range, stated
+    # with the other preposition.
+    r"(?:outlook\s+of|expected\s+to\s+range\s+(?:between|from)|to\s+range\s+(?:between|from)|"
     r"in\s+the\s+range\s+of|between|of)\s+"
     # range separator: "to" / "and" / a bare hyphen or en/em dash ("$2.325-$2.365 billion" —
     # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
@@ -905,9 +967,10 @@ def _guide_metric(raw: str) -> str:
     return r.strip()
 
 
-_METRIC_WORDS = re.compile(
-    r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
-    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin", re.I)
+#: THE SAME METRIC VOCABULARY AS `_GUIDE_RANGE`, and it must stay that way: this is what the
+#: ambiguity refusal counts, so a metric the range pattern can attribute but this cannot see is a
+#: metric whose shared-range sentence is silently attributed to one of two candidates.
+_METRIC_WORDS = re.compile(_GUIDE_METRICS, re.I)
 # The prefix a guidance REFUSAL carries. Shared so the rollup in `vinci.dossier.mechanical`
 # selects on the same literal that is emitted here, rather than on a copy that can drift.
 GUIDANCE_REFUSAL_PREFIX = "Guidance stated but not attributable"
@@ -956,7 +1019,55 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
         return f"Q{_Q_NUM[q.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
     if y is not None:
         return re.sub(r"\s+", " ", y.group(1)).strip()
-    return _period_near(text, start, end) or "next-fy"
+    # THE REST OF THE CLAUSE, CUT AT THE COMPARISON (2026-09-18). `_verbatim` snaps BACKWARD to the
+    # bullet start and stops at the match, so a period stated just AFTER the range was unreachable:
+    # EPAM's "revenues will be in the range of $1.410 billion to $1.425 billion FOR THE THIRD
+    # QUARTER" fell through to `next-fy`, and `period_scope` reads that as ANNUAL — which would put
+    # a $1.4bn quarterly range against a full-year CIQ guide on a ~$5.6bn business and report the
+    # 4x as a cross-source mismatch instead of refusing the comparison.
+    #
+    # The cut is what keeps the tail honest: Amazon writes "Operating income is expected to be
+    # between $22.5 billion and $26.5 billion, COMPARED WITH $17.4 billion in third quarter 2025",
+    # and the only period within reach of that guide belongs to the period it is measured against.
+    # A forward guide wearing a closed period is worse than an unlabelled one.
+    # A TRAILING PERIOD COUNTS ONLY WHERE A PREPOSITION INTRODUCES IT — `_introduced`, the guard
+    # `_phrases` already applies for the same reason. Without it the scan walks straight out of the
+    # guide and into the next sentence: Simply Good's FY range "…$220 to $225 million, or -21% to
+    # -19% year-over-year" is followed by the CEO quote "Our THIRD QUARTER results reflect…", and an
+    # unguarded tail labelled a full-year guide a quarter — a ~4x error, the exact shape of the
+    # Concentrix defect above, arrived at from the other end.
+    lo, hi = _clause(text, start, end)
+    cut = _CMP.search(text, end, hi)
+    tail_hi = cut.start() if cut is not None else hi
+    tq = next((x for x in _QUARTER.finditer(text, end, tail_hi) if _introduced(text, x)), None)
+    ty = next((x for x in _PERIOD.finditer(text, end, tail_hi) if _introduced(text, x)), None)
+    if tq is None and ty is None:
+        # the LEAD-IN, which is where a bullet list states the period once for the bullets under it
+        # ("Third Quarter 2026 Guidance • Net sales are expected to be between…"). Quarter-first for
+        # the same reason as the verbatim: a quarterly range wearing an annual label is the error.
+        #
+        # BOUNDED THE SAME WAY THE TAIL IS, and for the same reason: a blind 60-character look-back
+        # walks out of the guide's own sentence and into the PRIOR one, where a release states the
+        # period it just REPORTED. "Free cash flow was $1.2 billion in the third quarter of 2025.
+        # Net sales are expected to be between $197.0 billion and $202.0 billion" labelled a forward
+        # guide **Q3 2025**, and "…compared with the fourth quarter of 2024. Revenues will be in the
+        # range of…" labelled one **Q4 2024** — a closed period on a forward guide, which is the
+        # error this function's own comment calls worse than an unlabelled one. So the window stops
+        # at the last sentence end (a bullet lead-in has none, which is why Amazon still resolves)
+        # and again at a comparison marker, which is what `_CMP` cuts on the other side.
+        back = max(0, start - 60)
+        sent = text.rfind(". ", back, start)
+        if sent != -1:
+            back = sent + 2
+        lead_cut = _CMP.search(text, back, start)
+        lead_hi = lead_cut.start() if lead_cut is not None else start
+        tq, ty = _QUARTER.search(text, back, lead_hi), _PERIOD.search(text, back, lead_hi)
+    if tq is not None:
+        yr = re.search(r"20\d\d", ty.group(1)) if ty else None
+        return f"Q{_Q_NUM[tq.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
+    if ty is not None:
+        return re.sub(r"\s+", " ", ty.group(1)).strip()
+    return "next-fy"
 
 
 def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[GuidanceItem]:

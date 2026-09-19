@@ -587,3 +587,148 @@ def test_one_off_collapses_the_same_item_at_two_scopes_but_keeps_distinct_qualif
     dangling = "Excluding for the current period $4.5 million in restructuring costs, integration."
     off = rp.parse_release(dangling, source_ref=_SRC).one_offs
     assert [o.description for o in off] == ["restructuring costs"], off
+
+
+# --- (2026-09-18) the anchors that read NOTHING from Amazon's and Westlake's releases -------------
+#: Verbatim from `8-K 0001018724-26-000024 EX-99.1` (Amazon Q2 2026). The bullet's lead-in names the
+#: period once for the bullets under it, and the range is followed by its COMPARISON.
+_AMZN_GUIDE = (
+    "This guidance anticipates an unfavorable impact of approximately 80 basis points from foreign "
+    "exchange rates. Third Quarter 2026 Guidance • Net sales are expected to be between $197.0 "
+    "billion and $202.0 billion, or to grow between 9% and 12% compared with third quarter 2025.")
+#: Verbatim from `8-K 0001352010-26-000043 EX-99.1` (EPAM Q2 2026) — the period trails the range.
+_EPAM_GUIDE = ("• The Company expects revenues will be in the range of $1.410 billion to $1.425 "
+               "billion for the third quarter, reflecting year-over-year growth of 1.7%.")
+#: Verbatim from `8-K 0001702744-26-000021 EX-99.1` (Simply Good Q3 2026) — a FULL-YEAR range whose
+#: sentence is followed by a CEO quote that says "third quarter".
+_SMPL_GUIDE = ("• Adjusted EBITDA expected to range between $220 and $225 million, or -21% to -19% "
+               "year-over-year \u201cOur third quarter results reflect initial steps against the "
+               "turnaround priorities we outlined last quarter")
+#: Verbatim from `8-K 0001262823-26-000026 EX-99.1` (Westlake Q2 2026).
+_WLK_RECON = ("Westlake Corporation reported EBITDA of $679 million for the second quarter of "
+              "2026. "
+              "Second quarter 2026 EBITDA increased by $444 million compared to first quarter of "
+              "2026 EBITDA of $235 million.")
+
+
+def test_guidance_reads_the_auxiliary_filers_actually_write() -> None:
+    """(2026-09-18) The introducer had to follow the metric almost immediately, so the most ordinary
+    English shape a filer uses was invisible and AMAZON'S GUIDANCE WAS NOT READ AT ALL — its page
+    said "release NO NUMERIC OUTLOOK" against a release stating $197.0–202.0 billion, the same
+    range CIQ carries. EPAM's "revenues WILL BE in the range of" failed the same way. Measured over
+    the 91 releases the committed pages cite, these two shapes are the whole of the guidance miss.
+    """
+    amzn = rp._guidance(_AMZN_GUIDE, _SRC)
+    assert len(amzn) == 1
+    assert amzn[0].metric == "revenue" or amzn[0].metric == "net sales"
+    assert (amzn[0].low, amzn[0].high, amzn[0].unit) == (197000.0, 202000.0, "$M")
+    # the LEAD-IN names the period for the bullets under it — a quarterly guide wearing an annual
+    # label is a ~4x error, and `period_scope` reads "next-fy" as annual
+    assert amzn[0].period == "Q3 2026"
+
+    epam = rp._guidance(_EPAM_GUIDE, _SRC)
+    assert len(epam) == 1 and epam[0].metric == "revenue"
+    # EQUALITY on the numbers the sentence STATES. An `or` over two candidate pairs would accept a
+    # magnitude the verbatim never carries, which is exactly what a value pin on a frozen fixture
+    # exists to refuse.
+    assert (epam[0].low, epam[0].high, epam[0].unit) == (1410.0, 1425.0, "$M")
+    assert epam[0].period == "Q3", "the period TRAILS the range, and it is the guide's own"
+
+    # "expected to range FROM" is the same range with the other preposition
+    smpl = rp._guidance("Adjusted EBITDA expected to range from $52 to $57 million.", _SRC)
+    assert len(smpl) == 1 and (smpl[0].low, smpl[0].high) == (52.0, 57.0)
+
+
+def test_a_guides_period_is_never_borrowed_from_a_quote_or_a_comparison() -> None:
+    """(2026-09-18) Reading the clause AFTER the range is what lets a trailing period be found — and
+    it is exactly how a period gets stolen. Two real shapes, both refused:
+
+    Simply Good states a FULL-YEAR range and the next sentence is a CEO quote opening "Our THIRD
+    QUARTER results reflect…"; an unguarded tail labelled the full-year guide a quarter, ~4x wrong.
+    Amazon writes "…between $22.5 billion and $26.5 billion, COMPARED WITH $17.4 billion in third
+    quarter 2025" — the only period within reach of that guide belongs to what it is measured
+    against, and a forward guide wearing a CLOSED period is worse than an unlabelled one."""
+    smpl = rp._guidance(_SMPL_GUIDE, _SRC)
+    assert len(smpl) == 1 and (smpl[0].low, smpl[0].high) == (220.0, 225.0)
+    assert "Q3" not in (smpl[0].period or ""), (
+        f"the CEO quote's 'third quarter' was taken as a FULL-YEAR guide's period "
+        f"({smpl[0].period!r}) — a ~4x mislabel")
+
+    comp = rp._guidance(
+        "Adjusted EBITDA is expected to be between $1.10 and $1.20 billion, compared with $0.95 "
+        "billion in third quarter 2025.", _SRC)
+    assert len(comp) == 1 and (comp[0].low, comp[0].high) == (1100.0, 1200.0)
+    # EQUALITY, not a substring: dropping the cut yields "Q3" — the comparison's QUARTER with its
+    # year left behind — which no "2025" test would have caught. Nothing else in this sentence
+    # names the guide's own period, so `next-fy` (unknown) is the only honest answer.
+    assert comp[0].period == "next-fy", (
+        f"the comparison's period was taken as the guide's ({comp[0].period!r})")
+
+
+def test_recon_reads_a_prefix_free_ebitda_and_only_ebitda() -> None:
+    """(2026-09-18) Westlake names its reconciled non-GAAP measure plainly — "EBITDA of $679
+    million" — and a prefix-only rule read NOTHING from either of its 2026 releases, leaving an
+    empty primary-source panel on a name whose EBITDA is the thesis. EBITDA is never a GAAP line
+    item, so a bare one is non-GAAP by construction.
+
+    ⊖ The widening is EBITDA-ONLY. net income, operating income, EPS and revenue all have GAAP
+    meanings and still REQUIRE the prefix — reading a GAAP actual as a non-GAAP one states a
+    different figure under a familiar name, which is what `_norm_metric` exists to refuse."""
+    frame = rp._release_frame(
+        "Westlake Corporation Reports Second Quarter 2026 Results " + _WLK_RECON)
+    rows = rp._reconciliation(_WLK_RECON, _SRC, frame)
+    by_period = {r.period: r.value for r in rows if r.metric == "adjusted ebitda"}
+    assert by_period.get("Q2 2026") == 679.0
+    assert by_period.get("Q1 2026") == 235.0, "the comparison keeps its OWN period"
+
+    for gaap in ("net income of $1.3 million", "operating income of $95.4 million",
+                 "revenue was $116.0 million", "diluted EPS of $1.97"):
+        assert rp._RECON.search(gaap) is None, f"a GAAP actual must still need the prefix: {gaap!r}"
+    assert rp._RECON.search("EBITDA margin of 21%") is None, "a ratio is not an amount"
+    assert rp._RECON.search("Adjusted EBITDA* was $222.4 million") is not None  # unchanged
+
+    # ⊖ AND THE BARE ONE IS THE MEASURE ONLY WHERE THE FILER DRAWS NO DISTINCTION. CF Industries
+    #   states both in one sentence, and they are different numbers; reading the bare one let $731M
+    #   take the (metric, period) slot and DROP the real $821M. Caught by the committed suite, not
+    #   by this file — the rule is pinned here so the reason travels with the widening.
+    cf = ("CF Industries Holdings, Inc. Reports Full Year 2025 Results • Fourth quarter 2025 net "
+          "earnings of $404 million, EBITDA of $731 million, and adjusted EBITDA of $821 "
+          "million")
+    rows = rp._reconciliation(cf, _SRC, rp._release_frame(cf))
+    got = {(r.metric, r.value) for r in rows}
+    assert ("adjusted ebitda", 821.0) in got, "the filer's OWN adjusted EBITDA must win"
+    assert ("adjusted ebitda", 731.0) not in got, (
+        "the bare EBITDA was filed under the adjusted name — a different figure under a familiar "
+        "one")
+
+
+def test_the_lead_in_never_lends_a_forward_guide_the_period_it_just_reported() -> None:
+    """(2026-09-18, review) The lead-in fallback scanned a blind 60 characters back from the metric
+    and took the FIRST period it found there — with neither of the two guards the tail carries. It
+    therefore walked out of the guide's own sentence into the PRIOR one, where a release states the
+    period it has just REPORTED, and dressed a forward guide in a CLOSED quarter:
+
+        "Free cash flow was $1.2 billion in the third quarter of 2025. Net sales are expected to be
+         between $197.0 billion and $202.0 billion."            → labelled **Q3 2025**
+        "Revenues increased 12% compared with the fourth quarter of 2024. Revenues will be in the
+         range of $500 million to $520 million."                → labelled **Q4 2024**
+
+    Both are the failure this module's own comment calls worse than an unlabelled one:
+    `period_scope` reads either as a QUARTER, so the guide is cross-checked against whatever CIQ
+    carries for a period the guide does not govern. `next-fy` is the only honest answer for both.
+    """
+    prior_sentence = ("Free cash flow was $1.2 billion in the third quarter of 2025. Net sales are "
+                      "expected to be between $197.0 billion and $202.0 billion.")
+    got = rp._guidance(prior_sentence, _SRC)
+    assert len(got) == 1 and (got[0].low, got[0].high) == (197000.0, 202000.0)
+    assert got[0].period == "next-fy", f"the prior sentence's closed quarter was taken: {got[0]!r}"
+
+    prior_comparison = ("Revenues increased 12% compared with the fourth quarter of 2024. Revenues "
+                        "will be in the range of $500 million to $520 million.")
+    got = rp._guidance(prior_comparison, _SRC)
+    assert len(got) == 1 and (got[0].low, got[0].high) == (500.0, 520.0)
+    assert got[0].period == "next-fy", f"the comparison's closed quarter was taken: {got[0]!r}"
+
+    # ⊖ the real lead-in still resolves: a bullet-list header carries NO sentence end between it
+    #   and the bullet, which is precisely what distinguishes it from the prior sentence above
+    assert rp._guidance(_AMZN_GUIDE, _SRC)[0].period == "Q3 2026"
