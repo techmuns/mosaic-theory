@@ -70,13 +70,22 @@ def _ex991_names_from_headers(http: CachedHttp, cik: str, accession: str) -> lis
     return [
         fn for ty, fn in _SGML_DOC.findall(text)
         # EX-99.1 exactly — never EX-99.11/99.12, and never the EX-99.2 sibling
-        if re.fullmatch(r"ex-?99[.\-]?1", ty.strip(), re.I) and fn.lower().endswith(_TEXT_DOC)
+        # EX-99.1 or a bare EX-99 — never EX-99.11/99.12, and never the EX-99.2 sibling. The bare
+        # form was missing until 2026-09-18: PARR types its quarterly release `EX-99`, so its
+        # Q3-2025 earnings release was invisible and the page carried "carries 2.02 but no EX-99.1
+        # exhibit was found" against a filing that plainly furnishes one. Measured over the fleet
+        # (22 names, their 10 most recent 8-Ks): 29 filings carry 2.02/8.01 with no release found,
+        # and exactly 2 of those furnish one under this type — PARR's and LLY's. The other 27 are
+        # genuinely release-free (debt take-downs with EX-1.1/EX-4.x, XBRL-only 8-Ks).
+        if re.fullmatch(r"ex-?99(?:[.\-]?1)?", ty.strip(), re.I) and fn.lower().endswith(_TEXT_DOC)
     ]
 
 
 def exhibit_991_urls(http: CachedHttp, cik: str, accession: str) -> list[str]:
     """ALL furnished Exhibit-99.1 press-release URLs in a filing (not first-match — a filing can
     carry more than one, and both must parse).
+
+    ``EX-99.1`` and the bare ``EX-99`` both count — filers use either for the furnished release.
 
     Reads the exhibit TYPE from EDGAR's SGML header rather than pattern-matching the FILENAME:
     filers name the same exhibit 'ex991', 'a991_pressrelease…', 'exhibit991…', 'exh991…' and

@@ -9792,6 +9792,107 @@ def test_dated_operating_events_source_d_real_sentence_and_negatives() -> None:
                                                               "2027-01-31"]
 
 
+def _kd(verbatim: str, period: str | None) -> ds.OperatingDriversExtract:
+    """One REAL Key-Development row, as the assembler stores it (the row carries its own date)."""
+    return ds.OperatingDriversExtract(rows=[ds.OperatingDriver(
+        kind=ds.DriverKind.EVENT, metric="m", value="v", verbatim=verbatim, period=period,
+        source_ref="CIQ Key Developments: k.rtf", tier="llm-fenced")])
+
+
+def test_calendar_reads_the_stated_year_and_anchors_an_unstated_one_on_the_row() -> None:
+    """(2026-09-18, the catalyst-date defect) A stated MONTH-DAY-YEAR date was read as YEAR-LESS —
+    the year was accepted only immediately after the month — so it fell to the next-occurrence
+    rule and published a year late: WLK's "effective April 2, 2026" appeared as a 2027-04
+    CATALYST, an event already in the past. And an unstated year resolved against the REFERENCE
+    date rather than the row's own, so AMZN's Spectrum launch, announced 2026-03-31 for "April
+    15", was published as 2027-04. Verbatims below are the committed rows, unedited."""
+    wlk = ("Situation: On March 30, 2026, Westlake Corporation announced the upcoming retirement "
+           "of Robert F. Buesinger as Executive Vice President, Performance & Essential Materials "
+           "Segment Head of Westlake Corporation, effective April 2, 2026.")
+    # the year is READ from the date, wherever the date states it
+    m = dm._CAL_FWD_EVENT.search(wlk)
+    assert m is not None and m.group(2) == "2026"
+    assert [c.expected_date for c in dm._dated_operating_events(
+        _kd(wlk, "Apr-02-2026"), date(2026, 1, 15))] == ["2026-04"]   # was "2027-04"
+    # ... and on the page's own reference date the event is simply PAST — a calendar lists what is
+    #     ahead, and inventing a 2027 row is how a past retirement became a catalyst
+    assert dm._dated_operating_events(_kd(wlk, "Apr-02-2026"), date(2026, 8, 24)) == []
+
+    # the day group must not swallow the first two digits of a bare year ("October 2025" is not
+    # day-20 with the year lost) — the widening would otherwise re-break what it fixes
+    smarsh = ("Since launching the multi-year initiative in October 2025, Smarsh has enabled "
+              "financial institutions to modernize compliance.")
+    m2 = dm._CAL_FWD_EVENT.search(smarsh)
+    assert m2 is not None and m2.group(2) == "2025"
+    assert dm._dated_operating_events(_kd(smarsh, "Jun-25-2026"), date(2026, 8, 24)) == []
+
+    # an UNSTATED year resolves against the row's own date, then the reference date
+    spectrum = ("Situation: Charter Communications, Inc. and Amazon announced the Spectrum TV App "
+                "will launch on Amazon Fire TV devices starting on April 15, expanding the "
+                "availability of the streaming app.")
+    row = _kd(spectrum, "Mar-31-2026").rows[0]
+    assert dm._cal_row_month(row) == (2026, 3)
+    assert dm._dated_operating_events(_kd(spectrum, "Mar-31-2026"), date(2026, 3, 1)) != []
+    assert [c.expected_date for c in dm._dated_operating_events(
+        _kd(spectrum, "Mar-31-2026"), date(2026, 3, 1))] == ["2026-04"]
+    assert dm._dated_operating_events(_kd(spectrum, "Mar-31-2026"), date(2026, 6, 1)) == []
+    # a row that states NO date of its own still resolves against the reference (unchanged)
+    assert [c.expected_date for c in dm._dated_operating_events(
+        _kd(spectrum, None), date(2026, 6, 1))] == ["2027-04"]
+    assert dm._cal_row_month(_kd(spectrum, "Q1 2026").rows[0]) is None  # not a dated row shape
+
+    # a RETROSPECTIVE is not a catalyst: "since" joined the backward vocabulary with this fix
+    googl = ("Since launching at I/O in May, there's been a 40% increase in daily active users, "
+             "creating videos on the Gemini app.")
+    assert dm._dated_operating_events(_kd(googl, None), date(2026, 7, 22)) == []
+    # the noun form is the same retrospective
+    assert dm._dated_operating_events(
+        _kd("Since the launch in May, usage is up 40%.", None), date(2026, 3, 1)) == []
+
+    # ⊖ "since" governs backward ONLY where it introduces the matched verb. In the 24-character
+    #    look-back window the other backward words are scanned with, a bare "since" anywhere
+    #    suppressed REAL forward events — a calendar that drops what is ahead fails the same way
+    #    it failed by publishing what is behind. Both of these state their own year.
+    for fwd, want in (
+        ("Deliveries have doubled since 2024; the plant opens in March 2027.", "2027-03"),
+        ("The contract runs since 2024 and will be effective April 2027.", "2027-04"),
+    ):
+        assert [c.expected_date for c in dm._dated_operating_events(
+            _kd(fwd, None), date(2026, 9, 1))] == [want], fwd
+
+
+def test_committed_pages_never_date_an_operating_event_away_from_its_stated_year() -> None:
+    """(2026-09-18) The corpus guard for the same defect, derived from every committed page's own
+    driver rows: when the event text states a year, the calendar stamp MUST carry that year, and
+    no derived row may resolve before the page's reference month. Phrasing-independent — the pins
+    are the stated year and the reference floor, never the wording of a living artifact.
+
+    Before the fix this was red on eight names (WLK 2027-04 for "April 2, 2026", TECX 2027-04,
+    BRBR 2027-01, VRRM 2027-06 ...); the witness assert keeps it from passing blind."""
+    stated = re.compile(
+        r"\b(January|February|March|April|May|June|July|August|September|October|November|"
+        r"December)\b(?:\s+\d{1,2}(?:st|nd|rd|th)?(?!\d))?,?\s*(\d{4})\b", re.IGNORECASE)
+    witnesses = 0
+    for jp in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        doc = json.loads(jp.read_text())
+        raw = (doc["mechanical"].get("operating_drivers") or {}).get("rows") or []
+        if not raw:
+            continue
+        ref = date.fromisoformat(doc["reference_date"])
+        rows = [ds.OperatingDriver.model_validate(r) for r in raw]
+        for c in dm._dated_operating_events(
+                ds.OperatingDriversExtract(rows=rows, qa_flags=[]), ref):
+            assert c.expected_date >= ref.strftime("%Y-%m"), f"{jp}: past event as catalyst: {c}"
+            hit = stated.search(c.event)
+            if hit is None:
+                continue          # no year in the clause — the row-date rule governs, not this pin
+            witnesses += 1
+            assert c.expected_date[:4] == hit.group(2), (
+                f"{jp.parent.name}: '{c.event}' states {hit.group(2)} but is dated "
+                f"{c.expected_date}")
+    assert witnesses >= 1, "no committed page states a year in a calendar row — the pin is blind"
+
+
 # --- panel-freshness gate (the SMPL 2026-07-24 stale-inputs incident guard) --------------------
 def _ie(multiples_as_of: str, tev_as_of: str) -> ds.ImpliedExpectations:
     """A minimal ImpliedExpectations carrying only the two as-of stamps the freshness gate reads."""
