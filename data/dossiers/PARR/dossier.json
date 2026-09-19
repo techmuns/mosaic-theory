@@ -4203,7 +4203,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[ABL Credit Facility Due 2028 · 0001193125-14-392228 · amended by 0001193125-15-116573]\n  Principal / commitment amount: Total Revolving Loan Commitment: Five Million Dollars ($5,000,000.00); Total Term…\n  Interest / coupon rate: Base Rate or LIBOR Rate plus Applicable Margin per Pricing Grids. Revolving Loan:…\n  Maturity date: Revolving Loan Maturity Date: three (3) years after the Closing Date; Term Loan…\n  Financial-maintenance covenants: Maximum Leverage Ratio (stepping down from 5.50:1.00 at 6/30/2015 to 3.25:1.00 for…\n[Term Loan Credit Agreement · 0000821483-17-000034]\n  Financial-maintenance covenants: Amends the definition of “Combined Fixed Charges” (a component used in fixed charge…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[ABL Credit Facility Due 2028 · 0001193125-14-392228 · amended by 0001193125-15-116573]\n  Principal / commitment amount: Total Revolving Loan Commitment: $5,000,000.00; Total Term Loan Commitment:…\n  Interest / coupon rate — Revolving Loans (Base Rate): Base Rate plus the Applicable Margin (Revolving Loan Pricing Grid: <3.00x = 25 bps;…\n  Interest / coupon rate — Revolving Loans (LIBOR): LIBOR Rate plus the Applicable Margin (Revolving Loan Pricing Grid for LIBOR Loans:…\n  Interest / coupon rate — Term Loans (Base Rate): Base Rate plus the Applicable Margin (Term Loan Pricing Grid for Base Rate Loans:…\n  Interest / coupon rate — Term Loans (LIBOR): LIBOR Rate plus the Applicable Margin (Term Loan Pricing Grid for LIBOR Loans:…\n  Default interest rate: Applicable Margin increased by 200 basis points during continuance of an Event of…\n  Maturity date — Revolving Loans: three (3) years after the Closing Date\n  Maturity date — Term Loans: seven (7) years after the Closing Date\n  Financial-maintenance covenants: Maximum Leverage Ratio (5.50:1.00 at 6/30/2015 stepping down to 3.25:1.00 for 2020…\n  Maturity date: Revolving Credit Termination Date: the earliest of (i) May 11, 2015, (ii) the date…\n[Term Loan Credit Agreement · 0000821483-17-000034]\n… (+3 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4227,10 +4227,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Total Revolving Loan Commitment: Five Million Dollars ($5,000,000.00); Total Term Loan Commitment: Fifty Million Dollars ($50,000,000.00); Letter of Credit sublimit: Two Million Dollars ($2,000,000.00)",
+              "value": "Total Revolving Loan Commitment: $5,000,000.00; Total Term Loan Commitment: $50,000,000.00; Letter of Credit sublimit: $2,000,000.00",
               "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
               "status": "present",
-              "note": "verbatim: “the aggregate principal amount of all Revolving Loans plus the aggregate principal amount available for drawing under all Letters of Credit made by all Lenders at any time outstanding shall not exceed 22 Five Million Dollars ($5,000,000.00) (such amount, as reduced from time to time pursuant to this Agreement, to be referred to herein as the “ Total Revolving Loan Commitment ”). ... the aggregate principal amount of all Term Loans made by all Lenders shall not exceed Fifty Million Dollars ($50,000,000.00) (such amount to be referred to herein as the “ Total Term Loan Commitment ”).”"
+              "note": "verbatim: “the aggregate principal amount of all Revolving Loans plus the aggregate principal amount available for drawing under all Letters of Credit made by all Lenders at any time outstanding shall not exceed Five Million Dollars ($5,000,000.00) (such amount ... to be referred to herein as the \"Total Revolving Loan Commitment\"). ... the aggregate principal amount of all Term Loans made by all Lenders shall not exceed Fifty Million Dollars ($50,000,000.00) (such amount to be referred to herein as the \"Total Term Loan Commitment\").”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4239,26 +4239,96 @@
             "pik_pct": null
           },
           {
-            "name": "Interest / coupon rate",
+            "name": "Interest / coupon rate — Revolving Loans (Base Rate)",
             "value": {
-              "value": "Base Rate or LIBOR Rate plus Applicable Margin per Pricing Grids. Revolving Loan: LIBOR margin 175/200/225 bps and Base Rate margin -25/0/25 bps by Leverage Ratio; Term Loan: LIBOR margin 200/225/250 bps and Base Rate margin 0/25/50 bps by Leverage Ratio. Applicable Margin increased by 200 basis points upon an Event of Default.",
+              "value": "Base Rate plus the Applicable Margin (Revolving Loan Pricing Grid: <3.00x = 25 bps; ≥3.00x but ≤3.50x = 0 bps; >3.50x = 25 bps)",
               "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
               "status": "present",
-              "note": "verbatim: “During such periods as such Revolving Loan is a Base Rate Loan, at a rate per annum equal to the Base Rate plus the Applicable Margin therefor... During such periods as such Revolving Loan is a LIBOR Loan, at a rate per annum equal at all times during each Interest Period for such LIBOR Loan to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor... Revolving Loan Pricing Grid Leverage Ratio Applicable Margin for LIBOR Loans Applicable Margin for Base Rate Loans (basis points) (basis points) < 3.00x 175 -25 ³ 3.00x but £ 3.50x 200 0 > 3.50x 225 25 ... Term Loan Pricing Grid Leverage Ratio Applicable Margin for LIBOR Loans Applicable Margin for Base Rate Loans (basis points) (basis points) < 3.00x 200 -0- ³ 3.00x but £ 3.50x 225 25 > 3.50x 250 50”"
+              "note": "verbatim: “During such periods as such Revolving Loan is a Base Rate Loan, at a rate per annum equal to the Base Rate plus the Applicable Margin therefor”"
+            },
+            "base_rate_label": "Base Rate",
+            "margin_pct": null,
+            "margin_bps": 25.0,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Interest / coupon rate — Revolving Loans (LIBOR)",
+            "value": {
+              "value": "LIBOR Rate plus the Applicable Margin (Revolving Loan Pricing Grid for LIBOR Loans: <3.00x = 175 bps; ≥3.00x but ≤3.50x = 200 bps; >3.50x = 225 bps)",
+              "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
+              "status": "present",
+              "note": "verbatim: “During such periods as such Revolving Loan is a LIBOR Loan, at a rate per annum equal at all times during each Interest Period for such LIBOR Loan to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor”"
             },
             "base_rate_label": "LIBOR Rate",
+            "margin_pct": null,
+            "margin_bps": 225.0,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Interest / coupon rate — Term Loans (Base Rate)",
+            "value": {
+              "value": "Base Rate plus the Applicable Margin (Term Loan Pricing Grid for Base Rate Loans: <3.00x = 0 bps; ≥3.00x but ≤3.50x = 25 bps; >3.50x = 50 bps)",
+              "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
+              "status": "present",
+              "note": "verbatim: “During such periods as any Portion of such Term Loan is a Base Rate Portion, at a rate per annum on such Portion equal to the Base Rate plus the Applicable Margin therefor”"
+            },
+            "base_rate_label": "Base Rate",
+            "margin_pct": null,
+            "margin_bps": 50.0,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Interest / coupon rate — Term Loans (LIBOR)",
+            "value": {
+              "value": "LIBOR Rate plus the Applicable Margin (Term Loan Pricing Grid for LIBOR Loans: <3.00x = 200 bps; ≥3.00x but ≤3.50x = 225 bps; >3.50x = 250 bps)",
+              "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
+              "status": "present",
+              "note": "verbatim: “During such periods as any portion of such Term Loan is a LIBOR Portion, at a rate per annum on such Portion equal at all times during each Interest Period for such Portion to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor”"
+            },
+            "base_rate_label": "LIBOR Rate",
+            "margin_pct": null,
+            "margin_bps": 250.0,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Default interest rate",
+            "value": {
+              "value": "Applicable Margin increased by 200 basis points during continuance of an Event of Default",
+              "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
+              "status": "present",
+              "note": "verbatim: “each Applicable Margin determined pursuant to the applicable Pricing Grid shall be increased by two hundred (200) basis points on the date an Event of Default occurs and shall continue at such increased rate during the continuance of such Event of Default.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": 200.0,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date — Revolving Loans",
+            "value": {
+              "value": "three (3) years after the Closing Date",
+              "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
+              "status": "present",
+              "note": "verbatim: “\"Revolving Loan Maturity Date\" shall mean the date that is three (3) years after the Closing Date on which date all amounts owing under the Revolving Credit Facility are due and owing.”"
+            },
+            "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null
           },
           {
-            "name": "Maturity date",
+            "name": "Maturity date — Term Loans",
             "value": {
-              "value": "Revolving Loan Maturity Date: three (3) years after the Closing Date; Term Loan Maturity Date: seven (7) years after the Closing Date",
+              "value": "seven (7) years after the Closing Date",
               "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Revolving Loan Maturity Date ” shall mean the date that is three (3) years after the Closing Date on which date all amounts owing under the Revolving Credit Facility are due and owing. ... “ Term Loan Maturity Date ” shall mean the date which is seven (7) years after the Closing Date on which date all amounts owing under the Term Loan Facility are due and owing.”"
+              "note": "verbatim: “\"Term Loan Maturity Date\" shall mean the date which is seven (7) years after the Closing Date on which date all amounts owing under the Term Loan Facility are due and owing.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4269,10 +4339,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Leverage Ratio (stepping down from 5.50:1.00 at 6/30/2015 to 3.25:1.00 for 2020 fiscal year and thereafter); Minimum Fixed Charge Coverage Ratio not less than 1.15:1.00; Minimum Tangible Net Worth of $12,000,000.00",
+              "value": "Maximum Leverage Ratio (5.50:1.00 at 6/30/2015 stepping down to 3.25:1.00 for 2020 fiscal year and thereafter); Minimum Fixed Charge Coverage Ratio not less than 1.15:1.00; Minimum Tangible Net Worth of $12,000,000.00",
               "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
               "status": "present",
-              "note": "verbatim: “5.03 Financial Covenants . Koko`oha shall maintain Koko`oha’s financial status in accordance with the following: (a) A maximum Leverage Ratio ... June 30, 2015 5.50 to 1.00 September 30, 2015 5.25 to 1.00 December 31, 2015 5.00 to 1.00 2016 fiscal year 4.75 to 1.00 2017 fiscal year 4.25 to 1.00 2018 fiscal year 4.00 to 1.00 2019 fiscal year 3.50 to 1.00 2020 fiscal year, and at all times thereafter 3.25 to 1.00 (b) A minimum Fixed Charge Coverage Ratio of not less than 1.15: 1.00 ... (c) A minimum Tangible Net Worth of $12,000,000.00.”"
+              "note": "verbatim: “5.03 Financial Covenants. Koko`oha shall maintain Koko`oha's financial status in accordance with the following: (a) A maximum Leverage Ratio ... June 30, 2015 5.50 to 1.00 ... 2020 fiscal year, and at all times thereafter 3.25 to 1.00 (b) A minimum Fixed Charge Coverage Ratio of not less than 1.15: 1.00 ... (c) A minimum Tangible Net Worth of $12,000,000.00.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4283,10 +4353,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured by Membership Interests/Stock Pledge Agreements (100% of Equity Securities of specified subsidiaries), a Security Agreement (first lien in all present and future assets of Borrower and Subsidiaries), ALTA insured Mortgages (fee simple and leasehold properties), Guaranty, and Hazardous Materials Indemnity. Guarantors: all existing and future direct and indirect Subsidiaries of Borrower, including Mid Pac CS, LLC, Inter Island Petroleum, Inc., Kauai Petroleum Co. Ltd., Senter Petroleum, Inc., Island Petroleum, Inc., Oahu Petroleum, Inc., and Kauai Automated Fuel Service, Inc.",
+              "value": "Secured by: (i) Membership Interests/Stock Pledge Agreements pledging 100% of Equity Securities; (ii) Security Agreement granting first lien security interest in all present and future assets of Borrower and its Subsidiaries; (iii) ALTA insured Mortgages on fee simple and leasehold properties. Guarantors: \"all existing and future direct and indirect Subsidiaries of Borrower, including Mid Pac CS, LLC, Inter Island Petroleum, Inc., Kauai Petroleum Co. Ltd., Senter Petroleum, Inc., Island Petroleum, Inc., Oahu Petroleum, Inc., and Kauai Automated Fuel Service, Inc.\"",
               "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
               "status": "present",
-              "note": "verbatim: “2.15 Security . (a) ... (i) Membership Interests/Stock Pledge Agreement(s)... pledging to Agent for the benefit of Lenders and Counterparty one hundred percent (100%) of the Equity Securities... (ii) A Security Agreement... granting to Agent for the benefit of Lenders and Counterparty a first lien security interest in all present and future assets of Borrower and its Subsidiaries... (iii) ALTA insured Mortgages... granting to Agent... a mortgage and security interest in the fee simple and leasehold properties... “ Guarantors ” shall mean all existing and future direct and indirect Subsidiaries of Borrower, including Mid Pac CS, LLC, Inter Island Petroleum, Inc., Kauai Petroleum Co. Ltd., Senter Petroleum, Inc., Island Petroleum, Inc., Oahu Petroleum, Inc., and Kauai Automated Fuel Service, Inc.”"
+              "note": "verbatim: “2.15 Security. (a) ... The Obligations shall be secured by the following ... (i) Membership Interests/Stock Pledge Agreement(s) ... pledging ... one hundred percent (100%) of the Equity Securities ... (ii) A Security Agreement ... granting to Agent for the benefit of Lenders and Counterparty a first lien security interest in all present and future assets of Borrower and its Subsidiaries ... (iii) ALTA insured Mortgages ... granting to Agent ... a mortgage and security interest in the fee simple and leasehold properties ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4297,10 +4367,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments: (i) 100% of cash proceeds of tangible asset sales not in ordinary course >$2,000,000; (ii) 100% of net casualty/condemnation/insurance proceeds not reinvested within 180 days; (iii) Excess Cash Flow Recapture of 50%/20%/0% based on Leverage Ratio; (iv) upon projected covenant non-compliance from lease/license/permit expiration. Events of Default under Section 6.01 include: payment failures (6.01(a)); false representations (6.01(b)); insolvency/bankruptcy (6.01(c)-(d)); judgments in excess of $2,500,000 (6.01(e)); cross-default on obligations exceeding $2,500,000 (6.01(f)); Material Contract termination (6.01(g)); Credit Document invalidity (6.01(h)); ERISA (6.01(i)); material impairment (6.01(j)); failure to comply with Financial Covenants (6.01(k)); and other covenant breaches with 20-day cure (6.01(l)).",
+              "value": "Mandatory prepayments: (i) 100% of cash proceeds of asset sales >$2,000,000.00 (net); (ii) 100% of net casualty/condemnation/insurance proceeds not reinvested within 180 days; (iii) Excess Cash Flow Recapture (50%/20%/0% based on Leverage Ratio); (iv) prepayment upon projected covenant non-compliance from lease/license/permit expiration. Events of Default per Paragraph 6.01 include payment default, false representations, insolvency/bankruptcy, judgments >$2,500,000.00, cross-default >$2,500,000.00, Material Contract termination, Credit Document invalidity, ERISA events, material impairment, failure to comply with Financial Covenants, and other covenant breaches (20-day cure).",
               "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
               "status": "present",
-              "note": "verbatim: “(d) Mandatory Prepayments . Borrower shall prepay the Loans as follows: (i) One hundred percent (100%) of the cash proceeds of all sales of tangible assets ... (ii) One hundred percent (100%) of the net cash proceeds of any casualty, condemnation or insurance proceeds ... (iii) ... Excess Cash Flow ... (50%/20%/0% based on Leverage Ratio) ... 6.01 Events of Default . The occurrence or existence of anyone or more of the following shall constitute an “ Event of Default ” hereunder: (a) Borrower ... shall fail to pay when due any principal payment ... (k) Borrower fails to comply with the Financial Covenants...”"
+              "note": "verbatim: “2.06 (d) Mandatory Prepayments. Borrower shall prepay the Loans as follows: (i) One hundred percent (100%) of the cash proceeds of all sales of tangible assets ... (ii) One hundred percent (100%) of the net cash proceeds of any casualty, condemnation or insurance proceeds ... (iii) ... Excess Cash Flow ... (iv) ... projecting non-compliance with any financial covenant ... 6.01 Events of Default. The occurrence or existence of anyone or more of the following shall constitute an \"Event of Default\" hereunder: (a) Borrower ... shall fail to pay when due any principal payment ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4367,10 +4437,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Amends the definition of “Combined Fixed Charges” (a component used in fixed charge coverage measurement); no financial-maintenance ratio levels are stated in this Amendment.",
+              "value": "Amends the definition of “Combined Fixed Charges” (component of fixed-charge coverage) and the ECF Certification (Section 6.01(d)) and Budgets and Forecasts (Section 6.01(e)) reporting; no financial-maintenance ratio levels stated in this amendment",
               "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
               "status": "present",
-              "note": "verbatim: ““ Combined Fixed Charges ” means, for any period, as determined on a combined basis and in accordance with GAAP, without duplication, the aggregate of (i) Combined Interest Expense paid or payable in cash during such period, and (ii) scheduled principal payments on Indebtedness of any of the Borrowers and their Subsidiaries due in the twelve months preceding the measurement date.”"
+              "note": "verbatim: ““Combined Fixed Charges” means, for any period, as determined on a combined basis and in accordance with GAAP, without duplication, the aggregate of (i) Combined Interest Expense paid or payable in cash during such period, and (ii) scheduled principal payments on Indebtedness of any of the Borrowers and their Subsidiaries due in the twelve months preceding the measurement date.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4381,10 +4451,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Subsidiary Guarantor: MID PAC CS, LLC",
+              "value": "Subsidiary Guarantor: MID PAC CS, LLC (guaranties reaffirmed); no collateral/security terms stated in this amendment",
               "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
               "status": "present",
-              "note": "verbatim: “The undersigned Subsidiary Guarantor acknowledges the terms of and consents to the foregoing: MID PAC CS, LLC”"
+              "note": "verbatim: “The undersigned Subsidiary Guarantor acknowledges the terms of and consents to the foregoing: MID PAC CS, LLC ... acknowledges and agrees that all of the Loan Documents to which such Subsidiary Guarantor is a party or is otherwise bound shall continue in full force and effect and that all of such Subsidiary Guarantor’s obligations thereunder shall be valid and enforceable and shall not be impaired or limited by the execution or effectiveness of this Amendment”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4395,10 +4465,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "References Default/Event of Default under the Credit Agreement (defined terms not restated); also references Excess Cash Flow / ECF Certification per Section 6.01(d), but no mandatory prepayment amounts or event-of-default triggers are set out in this Amendment.",
+              "value": "References existence of Default/Event of Default under the Credit Agreement (representation only); references Excess Cash Flow via ECF Certification but no mandatory prepayment mechanics or events of default terms stated in this amendment",
               "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
               "status": "present",
-              "note": "verbatim: “(c) no Default or Event of Default exists under the Credit Agreement, nor will any occur immediately after the execution and delivery of this Amendment;”"
+              "note": "verbatim: “no Default or Event of Default exists under the Credit Agreement, nor will any occur immediately after the execution and delivery of this Amendment”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4407,12 +4477,12 @@
             "pik_pct": null
           },
           {
-            "name": "Excess Cash Flow / ECF Certification",
+            "name": "Conversion price / mechanics",
             "value": {
-              "value": "Amends Section 6.01(d) to require a quarterly ECF Certification demonstrating Excess Cash Flow.",
-              "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
-              "status": "present",
-              "note": "verbatim: “(d) ECF Certification . As soon as available and in any event no later than the date that each Compliance Certificate is required to be delivered pursuant to Section 6.01(c) , a certificate in form and detail satisfactory to the Administrative Agent, signed by a Financial Officer, demonstrating Excess Cash Flow for such fiscal quarter and including all financial information and calculations required to determine Excess Cash Flow.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4421,12 +4491,12 @@
             "pik_pct": null
           },
           {
-            "name": "Borrowers",
+            "name": "Principal / commitment amount",
             "value": {
-              "value": "HIE Retail, LLC and Mid Pac Petroleum, LLC",
-              "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
-              "status": "present",
-              "note": "verbatim: “(i) HIE RETAIL, LLC, a Hawaii limited liability company (“ HIE ”), (ii) MID PAC PETROLEUM, LLC, a Delaware limited liability company (“ Mid Pac ” and, together with HIE, collectively, the “ Borrowers ” ...)”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4435,12 +4505,180 @@
             "pik_pct": null
           },
           {
-            "name": "Administrative Agent",
+            "name": "Interest / coupon rate",
             "value": {
-              "value": "KeyBank National Association",
-              "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Financial-maintenance covenants",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Security / collateral / guarantors",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Award of Restricted Stock",
+            "value": {
+              "value": "/$AwardsGranted$/ shares of common stock, $0.01 par value per share",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
               "status": "present",
-              "note": "verbatim: “KEYBANK NATIONAL ASSOCIATION, as the administrative agent (the “ Administrative Agent ”).”"
+              "note": "verbatim: “the Company hereby awards to the Participant, subject to the further terms and conditions set forth in this Agreement, /$AwardsGranted$/ shares (the “ Restricted Stock ”) of its common stock, $0.01 par value per share (the “ Stock ”), as of the Grant Date.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Vesting schedule",
+            "value": {
+              "value": "First anniversary: 33%; Second anniversary: 66%; Third anniversary: 100% (cumulative vesting percentage)",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “First anniversary of the Grant Date 33% Second anniversary of the Grant Date 66% Third anniversary of the Grant Date 100%”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Accelerated vesting (death/Disability/termination not for Cause)",
+            "value": {
+              "value": "100% vested upon death, Disability, or termination not for Cause",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “the Award will be 100% vested upon the Participant’s termination of employment with the Company and/or its Affiliates due to death or Disability or termination not for Cause (as defined in the Plan).”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Change in Control treatment",
+            "value": {
+              "value": "Double-trigger; restrictions lapse if not assumed, or upon involuntary termination other than for Cause within 24 months following the Change in Control",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “(x) in the event of a Change in Control in which the resulting entity does not assume, continue, convert or replace this Agreement, the restrictions on transfer imposed by Section 3 on the shares of Restricted Stock shall lapse as of immediately prior to the Change in Control , or (y) in the event of a Change in Control there is an involuntary termination of the Participant’s employment for any reason other than Cause (as defined in the Plan) within twenty-four (24) months following the Change in Control, the restrictions on transfer imposed by Section 3 on the shares of Restricted Stock shall lapse.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Restrictions on transfer / forfeiture",
+            "value": {
+              "value": "No sale, transfer, assignment, pledge, encumbrance or disposition until restrictions lapse per Section 4",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “Except as otherwise provided in this Agreement, the Participant may not sell, transfer, assign, pledge, encumber or otherwise dispose of any of the shares of Restricted Stock or the rights granted hereunder”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Dividend rights",
+            "value": {
+              "value": "Cash dividends paid in cash; forfeited/repaid if underlying Restricted Stock forfeited due to voluntary termination or termination for Cause",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “All cash dividends on shares of Stock that are the subject of this Agreement shall be paid in cash; provided , however , that cash dividends paid to the Participant with respect to shares of Restricted Stock that are ultimately forfeited pursuant to Section 4 hereof as a result of a voluntary termination or a termination for Cause ... shall be forfeited coincident with the forfeiture of such Restricted Stock and shall be immediately repaid to the Company.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Confidentiality covenant period",
+            "value": {
+              "value": "Five (5) years after termination of employment",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “for a period of five (5) years after the termination of the Participant’s employment with the Company or its Subsidiaries or Affiliates, as applicable, for any reason, the Participant shall not ... divulge, disclose or communicate ... any Confidential Information.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Tax withholding",
+            "value": {
+              "value": "Participant satisfies withholding taxes; may elect share withholding at Fair Market Value",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
+              "status": "present",
+              "note": "verbatim: “the Participant agrees to pay to the Company, at such times as the Company shall determine, such amounts as the Company shall deem necessary to satisfy any withholding taxes due on income that the Participant recognizes”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4451,136 +4689,10 @@
           {
             "name": "Governing law",
             "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
+              "value": "State of Delaware",
+              "source_ref": "latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm",
               "status": "present",
-              "note": "verbatim: “THIS AMENDMENT AND THE RIGHTS AND OBLIGATIONS OF THE PARTIES HEREUNDER AND THEREUNDER SHALL BE GOVERNED BY, AND CONSTRUED AND INTERPRETED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Amendment / effective date",
-            "value": {
-              "value": "February 15, 2017",
-              "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
-              "status": "present",
-              "note": "verbatim: “This AMENDMENT NO. 1 TO CREDIT AGREEMENT (this “ Amendment ”) is entered into as of February 15, 2017”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Underlying Credit Agreement date",
-            "value": {
-              "value": "December 17, 2015",
-              "source_ref": "8-K 0000821483-17-000034 · ex102-midpacxhiekeybankxam.htm",
-              "status": "present",
-              "note": "verbatim: “The Borrowers, the Administrative Agent and the Lenders are parties to the Credit Agreement, dated as of December 17, 2015”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Conversion price / mechanics",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Principal / commitment amount",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Interest / coupon rate",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Maturity date",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Financial-maintenance covenants",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Security / collateral / guarantors",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Mandatory prepayment / events of default",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000821483-26-000005 · a20251231ex1010-formofawar.htm"
+              "note": "verbatim: “This Agreement shall be interpreted, construed and constructed in accordance with the laws of the State of Delaware without regard to its conflicts of law provisions, except as may be superseded by applicable laws of the United States.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4605,10 +4717,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Elected Facility Amount: principal amount of $50,000,000; during the Temporary Maximum Availability Time the Elected Facility Amount shall be $85,000,000. Maximum Availability: principal amount of $50,000,000; during the Temporary Maximum Availability Time the Maximum Availability shall be $85,000,000.",
+              "value": "Elected Facility Amount: $50,000,000; $85,000,000 during the Temporary Maximum Availability Time. Maximum Availability: $50,000,000; $85,000,000 during the Temporary Maximum Availability Time. Schedule C Uncommitted Participation Amount (BNP Paribas): $50,000,000 (all times except Temporary Maximum Availability Time); $85,000,000 (during Temporary Maximum Availability Time).",
               "source_ref": "8-K 0001193125-14-392228 · d814202dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Elected Facility Amount ”: subject to increase or reduction pursuant to Section 2.7(b) of this Agreement, the principal amount of $50,000,000; notwithstanding anything herein to the contrary, during the Temporary Maximum Availability Time the Elected Facility Amount shall be $85,000,000. ... “ Maximum Availability ”: subject to increase pursuant to Section 2.7(a) of this Agreement, the principal amount of $50,000,000; notwithstanding anything herein to the contrary, during the Temporary Maximum Availability Time the Maximum Availability shall be $85,000,000.”"
+              "note": "verbatim: ““ Elected Facility Amount ”: subject to increase or reduction pursuant to Section 2.7(b) of this Agreement, the principal amount of $50,000,000; notwithstanding anything herein to the contrary, during the Temporary Maximum Availability Time the Elected Facility Amount shall be $85,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4647,10 +4759,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Minimum Net Working Capital: less than $10,000,000 if Elected Facility Amount is $30,000,000; less than $15,000,000 if $50,000,000; less than $25,000,000 during Temporary Maximum Availability Time. Minimum Tangible Net Worth: not less than $15,000,000, except during Temporary Maximum Availability Time not less than $25,000,000. Maximum Leverage Ratio: must not be greater than 5.00 to 1.00. Capital Expenditures: must not be greater than $1,000,000 plus proceeds of any equity issuances/capital contributions.",
+              "value": "Minimum Net Working Capital (Section 8.1(a)): not less than $10,000,000 if Elected Facility Amount = $30,000,000; not less than $15,000,000 if Elected Facility Amount = $50,000,000; not less than $25,000,000 during Temporary Maximum Availability Time. Minimum Tangible Net Worth (Section 8.1(b)): not less than $15,000,000, except during the Temporary Maximum Availability Time, not less than $25,000,000. Maximum Leverage Ratio (Section 8.1(c)): must not be greater than 5.00 to 1.00 (per Compliance Certificate). Capital Expenditures (Section 8.8): must not be greater than $1,000,000 plus proceeds of any equity issuances/capital contributions to Texadian (per Compliance Certificate).",
               "source_ref": "8-K 0001193125-14-392228 · d814202dex101.htm",
               "status": "present",
-              "note": "verbatim: ““(a) Minimum Net Working Capital . Permit Texadian’s consolidated Net Working Capital (as calculated on an Economic Basis) at any time (i) to be less than $10,000,000 if... the Elected Facility Amount is equal to $30,000,000, (ii) to be less than $15,000,000 if... equal to $50,000,000 and (iii) to be less than $25,000,000 during the Temporary Maximum Availability Time.” ... “(b) Minimum Tangible Net Worth . Permit Texadian’s consolidated Tangible Net Worth... at any time to be less than $15,000,000, except during the Temporary Maximum Availability Time, in which case the Tangible Net Worth shall not be less than $25,000,000.” ... (a) The consolidated Leverage Ratio is _____ [ratio must not be greater than 5.00 to 1.00] ... [ must not be greater than an aggregate amount equal to $1,000,000, plus the proceeds of any equity issuances by Texadian or capital contributions to Texadian ]”"
+              "note": "verbatim: “(a) Minimum Net Working Capital . Permit Texadian’s consolidated Net Working Capital (as calculated on an Economic Basis) at any time (i) to be less than $10,000,000 if, as of such date of determination, the Elected Facility Amount is equal to $30,000,000, (ii) to be less than $15,000,000 if, as of such date of determination, the Elected Facility Amount is equal to $50,000,000 and (iii) to be less than $25,000,000 during the Temporary Maximum Availability Time.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4661,10 +4773,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "BNP Paribas as Collateral Agent; Parent to issue Subordinated Indebtedness of $10,000,000 to the Borrowers, and upon incurrence the Parent shall execute and deliver a subordination agreement.",
+              "value": "References BNP Paribas as Collateral Agent; approval of Subordinated Indebtedness of $10,000,000 issued by the Parent to the Borrowers, with Parent to execute and deliver a subordination agreement. No specific collateral description or guarantor list is stated in this Amendment.",
               "source_ref": "8-K 0001193125-14-392228 · d814202dex101.htm",
               "status": "present",
-              "note": "verbatim: “The Borrowers, the Administrative Agent, the Collateral Agent, and the Lenders party thereto have entered into that certain Uncommitted Credit Agreement dated as of June 12, 2013 ... In accordance with the terms of the Credit Agreement, the Agent and Lenders hereby approve the incurrence of Subordinated Indebtedness in the amount of $10,000,000 to be issued by the Parent to the Borrowers, provided , however , that upon the incurrence of such Subordinated Indebtedness, the Parent shall execute and deliver a subordination agreement in form and substance satisfactory to the Administrative Agent.”"
+              "note": "verbatim: “The Borrowers, the Administrative Agent, the Collateral Agent, and the Lenders party thereto have entered into that certain Uncommitted Credit Agreement dated as of June 12, 2013”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4675,7 +4787,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "This Amendment constitutes a Loan Document and any breach of any representation or warranty made herein or covenant or agreement contained herein will constitute an Event of Default under the Credit Agreement. (No mandatory prepayment terms stated.)",
+              "value": "Any breach of any representation, warranty, covenant or agreement herein constitutes an Event of Default under the Credit Agreement. Revolving Credit Termination Date includes (ii) the date the Administrative Agent at the direction of the Required Lenders makes demand for payment of all Obligations and terminates the Uncommitted Participation Amounts. No separate mandatory prepayment schedule stated in this Amendment.",
               "source_ref": "8-K 0001193125-14-392228 · d814202dex101.htm",
               "status": "present",
               "note": "verbatim: “This Amendment constitutes a Loan Document (as defined in the Credit Agreement) and any breach of any representation or warranty made herein or covenant or agreement contained herein will constitute an Event of Default under the Credit Agreement.”"
@@ -6285,6 +6397,34 @@
           "qa_flags": [
             "no anchored pattern matched — guidance/outlook: 8-K 0001628280-26-011234 EX-99.1"
           ]
+        },
+        {
+          "filed": "2025-11-04",
+          "source_ref": "8-K 0001628280-25-048903 EX-99.1",
+          "guidance": [],
+          "reconciliation": [
+            {
+              "metric": "adjusted net income",
+              "period": "Q3 2025",
+              "value": 302.6,
+              "change": null,
+              "verbatim": "Adjusted Net Income of $302.6 million",
+              "source_ref": "8-K 0001628280-25-048903 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q3 2025",
+              "value": 372.5,
+              "change": null,
+              "verbatim": "Adjusted EBITDA of $372.5 million",
+              "source_ref": "8-K 0001628280-25-048903 EX-99.1"
+            }
+          ],
+          "one_offs": [],
+          "event_impacts": [],
+          "qa_flags": [
+            "no anchored pattern matched — guidance/outlook: 8-K 0001628280-25-048903 EX-99.1"
+          ]
         }
       ],
       "filing": {
@@ -6326,7 +6466,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no guide in any of the 4 parsed release(s)"
+        "note": "no guide in any of the 5 parsed release(s)"
       },
       "guide_verification": {
         "value": "guide verification (revenue): CIQ 6.08–6.08 vs release NO NUMERIC OUTLOOK → not cross-checked",
@@ -6334,9 +6474,7 @@
         "status": "present",
         "note": null
       },
-      "qa_flags": [
-        "primary-source: 8-K 0001628280-25-048903 carries 2.02 but no EX-99.1 exhibit was found"
-      ]
+      "qa_flags": []
     },
     "management_commentary": {
       "value": "2 earnings-call transcript(s) on file — read in full for management posture: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf; Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
@@ -7973,7 +8111,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "retail same-store fuel sales",
+          "metric": "same-store fuel sales (Retail)",
           "period": "Q1 2026 vs Q1 2025",
           "value": "decreased by 3.3%",
           "value_num": null,
@@ -7985,7 +8123,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "retail same-store in-store sales",
+          "metric": "same-store in-store sales (Retail)",
           "period": "Q1 2026 vs Q1 2025",
           "value": "decreased by 1%",
           "value_num": null,
@@ -7996,10 +8134,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pass_through_structure",
-          "metric": "Hawaii net price lag (contractual prior-period pricing)",
+          "kind": "competitive_position",
+          "metric": "Hawaii margin capture",
           "period": "Q1 2026",
-          "value": "net price lag headwind of approximately $125 million",
+          "value": "42%",
           "value_num": null,
           "unit": null,
           "verbatim": "Hawaii capture was 42%, including a net price lag headwind of approximately $125 million.",
@@ -8008,14 +8146,14 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pass_through_structure",
-          "metric": "Hawaii sales pricing structure",
+          "kind": "competitive_position",
+          "metric": "Hawaii margin capture normalized for lag",
           "period": "Q1 2026",
-          "value": "structured on prior month and prior week average pricing",
+          "value": "92%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, net price lag reflects the Hawaii refineries contractual sales that are structured on prior month and prior week average pricing.",
-          "following_context": "The lag impact was driven by the sharp increase in refined product prices in March, resulting in adjusted gross margin trailing current period market conditions. We would expect price lag to be neutral in a stable pricing environment and to reverse into a capture benefit during periods of declining prices. Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
+          "verbatim": "Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8056,44 +8194,44 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "April Singapore 3-1-2 index",
-          "period": "April 2026",
-          "value": "averaging over $72 per barrel compared with the 2025 average of $16 per barrel",
+          "kind": "pass_through_structure",
+          "metric": "Hawaii contractual sales pricing structure (price lag)",
+          "period": "Q1 2026",
+          "value": "prior month and prior week average pricing",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a result, the April Singapore 3-1-2 index is materially above historical norms, averaging over $72 per barrel compared with the 2025 average of $16 per barrel.",
-          "following_context": "These levels exceed prior highs observed during the early months of the Russia-Ukraine conflict. In addition, mainland seasonal cracks are also rallying to elevated levels.",
+          "verbatim": "As a reminder, net price lag reflects the Hawaii refineries contractual sales that are structured on prior month and prior week average pricing.",
+          "following_context": "The lag impact was driven by the sharp increase in refined product prices in March, resulting in adjusted gross margin trailing current period market conditions. We would expect price lag to be neutral in a stable pricing environment and to reverse into a capture benefit during periods of declining prices. Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "April consolidated refining index",
-          "period": "April 2026",
-          "value": "$42 per barrel, an increase of $23 per barrel compared to the first quarter",
+          "metric": "share repurchases",
+          "period": "Q1 2026",
+          "value": "$28 million ... at an average price of $38 per share",
           "value_num": null,
           "unit": null,
-          "verbatim": "Looking ahead to the second quarter, our April consolidated refining index averaged $42 per barrel, an increase of $23 per barrel compared to the first quarter.",
-          "following_context": "In Hawaii, refining margins continue to reflect a tight refined product supply environment across the Pacific Basin. We expect our second quarter crude differential to be between $4 to $5 per barrel reflecting the extended crude supply chain we built earlier this year. From a financial standpoint, the impact of the upcoming Hawaii turnaround is expected to be limited in the second quarter with most of the impact shifting into the third quarter.",
+          "verbatim": "We repurchased $28 million of common stock during the quarter at an average price of $38 per share.",
+          "following_context": "Gross term debt at quarter end was $638 million remaining below the low end of our leverage targets. Looking ahead to the second quarter, our April consolidated refining index averaged $42 per barrel, an increase of $23 per barrel compared to the first quarter. In Hawaii, refining margins continue to reflect a tight refined product supply environment across the Pacific Basin. We expect our second quarter crude differential to be between $4 to $5 per barrel reflecting the extended crude supply chain we built earlier this year. From a financial standpoint, the impact of the upcoming Hawaii turnaround is expected to be limited in the second quarter with most of the impact shifting into the third quarter.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Hawaii Renewables renewable diesel June throughput",
-          "period": "June 2026",
-          "value": "approximately 3,000 barrels per day",
+          "metric": "cumulative shares repurchased since inception",
+          "period": null,
+          "value": "over 14 million shares or just over 20% of shares outstanding at an average price of $25 per share",
           "value_num": null,
           "unit": null,
-          "verbatim": "Renewable diesel production ramped through the quarter with June throughput reaching approximately 3,000 barrels per day before we commenced the Hawaii plant-wide turnaround.",
-          "following_context": "In addition, we completed first commercial renewable diesel sales during the quarter. Volumes were small and reflect the early-stage nature of the commercial ramp, but they established the operational pathway from production to sales.",
-          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "verbatim": "Since the program's inception, we've repurchased over 14 million shares or just over 20% of shares outstanding at an average price of $25 per share.",
+          "following_context": "Our total liquidity position of $938 million combined with a robust forward cash flow outlook, positions the balance sheet to support our strategic objectives and opportunistic share repurchase framework.",
+          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "retail same-store fuel volumes",
+          "metric": "same-store fuel volumes (Retail)",
           "period": "Q2 2026 vs Q2 2025",
           "value": "declined by 0.8%",
           "value_num": null,
@@ -8105,7 +8243,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "retail same-store in-store sales",
+          "metric": "same-store in-store sales (Retail)",
           "period": "Q2 2026 vs Q2 2025",
           "value": "increased by 1%",
           "value_num": null,
@@ -8117,24 +8255,24 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "combined market index",
-          "period": "Q2 2026",
-          "value": "approximately $33 per barrel, well above the 2025 average of $12.40 per barrel",
+          "metric": "Hawaii Renewables renewable diesel throughput",
+          "period": "June 2026",
+          "value": "approximately 3,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our combined market index averaged approximately $33 per barrel, well above the 2025 average of $12.40 per barrel and exceeding the second quarter 2022 when the Russia-Ukraine conflict was intensifying.",
-          "following_context": "Reduced Persian Gulf and Russian origin refined product exports, Asian refiners running conservatively to preserve crude supply chain duration and protectionist policies restricting free trade drove these favorable market conditions. Looking forward, global refined product inventories remain tight and the structural factors supporting margins remain.",
+          "verbatim": "Renewable diesel production ramped through the quarter with June throughput reaching approximately 3,000 barrels per day before we commenced the Hawaii plant-wide turnaround.",
+          "following_context": "In addition, we completed first commercial renewable diesel sales during the quarter. Volumes were small and reflect the early-stage nature of the commercial ramp, but they established the operational pathway from production to sales.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Washington (Tacoma) throughput",
+          "metric": "Tacoma (Washington) quarterly production rate / utilization",
           "period": "Q2 2026",
-          "value": "a new record quarterly production rate of 41,200 barrels per day or 98.1% utilization",
+          "value": "41,200 barrels per day or 98.1% utilization",
           "value_num": null,
           "unit": null,
-          "verbatim": "In addition, the Tacoma team achieved a new record quarterly production rate of 41,200 barrels per day or 98.1% utilization through the second quarter.",
+          "verbatim": "the Tacoma team achieved a new record quarterly production rate of 41,200 barrels per day or 98.1% utilization through the second quarter.",
           "following_context": "In Hawaii, the Q2 throughput was 73,200 barrels per day and production costs were $6.43 per barrel. The lower production versus plan was a result of the refinery experiencing end-of-cycle conditions.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
@@ -8167,7 +8305,7 @@
           "kind": "leading_indicator",
           "metric": "Washington throughput",
           "period": "Q2 2026",
-          "value": "a new quarterly record at 41,200 barrels per day",
+          "value": "41,200 barrels per day",
           "value_num": null,
           "unit": null,
           "verbatim": "As I stated, Washington throughput set a new quarterly record at 41,200 barrels per day and production costs were $4.21 per barrel, capturing market conditions following the Q1 planned outage.",
@@ -8237,7 +8375,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Montana monthly throughput record",
+          "metric": "Par Montana Refining monthly throughput and OpEx records",
           "period": "May and June 2026",
           "value": "approximately 62,000 barrels per day at $7.56 per barrel",
           "value_num": null,
@@ -8260,14 +8398,26 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pass_through_structure",
-          "metric": "Hawaii net price lag benefit",
+          "kind": "competitive_position",
+          "metric": "Hawaii capture",
           "period": "Q2 2026",
-          "value": "net price lag benefit of approximately $77 million or $11.49 per barrel",
+          "value": "124%",
           "value_num": null,
           "unit": null,
           "verbatim": "Hawaii capture was 124%, including a net price lag benefit of approximately $77 million or $11.49 per barrel.",
           "following_context": "Normalized for the price lag impact, Hawaii capture was 99%.",
+          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "Hawaii capture normalized for price lag",
+          "period": "Q2 2026",
+          "value": "99%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Normalized for the price lag impact, Hawaii capture was 99%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8309,13 +8459,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "July consolidated refining index",
-          "period": "July 2026",
-          "value": "$31.34 per barrel or approximately $1.60 below the Q2 average",
+          "metric": "year-to-date share repurchases",
+          "period": "through Q2 2026",
+          "value": "approximately $48 million of common stock, including cash settled options",
           "value_num": null,
           "unit": null,
-          "verbatim": "Looking to the third quarter, our July consolidated refining index was $31.34 per barrel or approximately $1.60 below the Q2 average.",
-          "following_context": "In Hawaii, the financial impact of the refinery turnaround will be concentrated in the third quarter, increased refined product imports are expected to hold capture below our typical guidance range. Our third quarter Hawaii crude differential is expected to land between $11.50 and $13.50 per barrel, reflecting higher freight costs and steeper backwardation.",
+          "verbatim": "Year-to-date, through the second quarter, we have repurchased approximately $48 million of common stock, including cash settled options.",
+          "following_context": "As of June 30, total liquidity was approximately $1.4 billion, and our cash balance was $185 million.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -8327,159 +8477,168 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — strong upgraded near-term momentum and a fortress balance sheet, but a large trailing run-up, a Hawaii-turnaround Q3 drag, and a consensus FY27/FY28 roll-over.",
+    "evidence_balance": "mixed — a validated, de-levering earnings surge into rising estimates, but the stock has tripled and consensus already models the crack-peak fading.",
     "bull_points": [
       {
-        "claim": "The next results print is a dated near-term catalyst (~2026-11-04) that tests the committed FY26 trajectory, and the current price of $84.90 sits just below the 52-week high of $87.03 into that print.",
+        "claim": "The near-term catalyst is a dated results print expected 2026-11-04 that tests whether the committed FY26 trajectory (consensus EBITDA revised up to ~$1,332M, +213% over 12m) holds against the last quarter's step-change.",
         "source_ref": "cadence: EDGAR submissions (median 91d gap over 37 results 8-Ks; last print 2026-08-05)",
         "cited": true
       },
       {
-        "claim": "Consensus FY26 estimates have been revised sharply upward across the board into the print — FY26 EBITDA rose from $425.7M (12m ago) to $1,332.1M latest (+213%) and FY26 normalized EPS from 3.56 to 21.5 (+505%) — momentum the depressed trailing multiple may not yet reflect.",
+        "claim": "Consensus estimates have been sharply and broadly revised UPWARD into the print: FY26 EPS Normalized 3.56 (12m ago) → 21.5 (latest), +505%, with next-FQ breadth 6↑/0↓ at 3 months.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The near-term revision breadth is overwhelmingly positive: FQ3 2026 EBITDA ran 6↑/0↓ over 3 months and FQ4 2026 EBITDA 6↑/0↓, signalling analysts marking numbers up ahead of the next print.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
-        "cited": true
-      },
-      {
-        "claim": "The mechanism behind the upgrade is a durable margin regime: Q2 2026 combined market index averaged ~$33/bbl vs the 2025 average of $12.40/bbl, with management flagging tight global inventories and structural support persisting.",
+        "claim": "The mechanism behind the earnings surge is validated operating throughput and elevated capture: Q2 2026 system-wide refining capture was 125% (112% normalized) as the combined refining index stepped up sharply.",
         "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Operational execution is running at records into the strong window — Washington (Tacoma) set a record 41,200 bbl/d (98.1% utilization) and Montana set May/June throughput records of ~62,000 bbl/d at $7.56/bbl — supporting the higher capture and EBITDA the trajectory embeds.",
-        "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "claim": "Q2 2026 adjusted EBITDA was reported at $571.3M — the largest quarterly figure in the fleet's history, confirming the market-driven margin surge is realized, not merely forecast.",
+        "source_ref": "8-K 0001628280-26-052766 EX-99.1",
         "cited": true
       },
       {
-        "claim": "The balance sheet is a self-funding strength into the catalyst: net-debt/EBITDA 0.7x with interest coverage 19.3x, well inside targets, giving room to sustain buybacks and growth.",
+        "claim": "Absolute LTM EBITDA reached $1,282M with the EBITDA margin rising to 15% (from 9% at FY25), so the operating recovery is scaling in dollars, not just percentages.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The balance sheet is strong and de-levering: net-debt/EBITDA 0.7x with interest coverage 19.3x, and management reduced net debt by over $220M in Q2 via an inaugural senior unsecured notes issuance.",
         "source_ref": "CIQ Net Debt $949M [Q2 Jun-30-2026] ÷ CIQ EBITDA $1,282M [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "The company is shrinking the share count into rising EPS — shares fell 10.5% over ~1.7y (55.95M → 50.10M) under a $250M buyback authorization announced Feb-2026.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-10-31..2026-07-30",
+        "claim": "On the peer grid PARR shows the highest EBITDA margin (15% vs peer-median 9%) and the lowest leverage (Debt/EBITDA 0.8x vs peer-median 2.1x) alongside the largest EBITDA growth — posing whether the discount to peers is RESIDUAL rather than earned; the human must weigh this against the HETEROGENEOUS peer set.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "On the peer comp, PARR's discount pairs with genuinely superior fundamentals — EBITDA margin 15% vs peer-median 9%, Debt/EBITDA 0.8x vs 2.1x, EBITDA growth 525% vs 130% — posing whether the discount is RESIDUAL (overshoot) rather than EARNED; the human must weigh this against the heterogeneous peer set.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Sell-side sentiment is constructive and rising: 7 targets mean $86.57/median $85.00 with Buy 4/Outperform 2/Hold 1, and the most recent broker raised its target to $104.",
+        "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The catalyst may already be spent: the stock is up +128.7% over the trailing year and +92.9% over 180d vs the benchmark's +5.9%, so the margin upcycle already carried the price to within ~2.5% of its 52-week high before the print.",
+        "claim": "The catalyst may already be spent: the stock returned +129% over 180 days and +287% over 52 weeks, and sits at $84.9 versus a 52-week low of $31.23, so the earnings surge is heavily reflected in price — the sharp upward EPS revisions are the consensus read, not a hidden edge.",
         "source_ref": "EOD PARR 180d to 2026-08-24",
         "cited": true
       },
       {
-        "claim": "The forward path management itself flags is DOWN, not up: consensus FY27 EBITDA is $911.5M and FY28 $602.3M vs FY26 $1,333.5M — the near-term catalyst prints into a consensus that already expects the cycle to roll over.",
+        "claim": "Consensus itself sees the surge as a cyclical peak that fades past the catalyst: FY26E EBITDA $1,332M drops to FY27E $950M and FY28E $602M — a fading crack-spread cycle, not a durable step-up.",
         "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "The Q3 print carries a known negative: the Hawaii turnaround impact is concentrated in Q3 with capture held below the typical guidance range and the crude differential widening to $11.50–$13.50/bbl, and July's index ($31.34/bbl) already ran ~$1.60 below the Q2 average.",
+        "claim": "The Q3 print carries a management-flagged headwind: the Hawaii turnaround concentrates financial impact in Q3 with capture held below the typical range and a wider crude differential of $11.50–$13.50/bbl.",
         "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The headline TEV/LTM EBITDA of 3.5x is trailing-only with no forward basis, and against PARR's own 9-year history the current 24th-percentile level cannot distinguish a temporarily depressed multiple from a permanently impaired one — the low multiple is the consensus MISREAD when it captures a peak-earnings denominator; on a forward basis the NTM TEV/EBITDA of 4.8x is far less cheap.",
+        "claim": "The 3.5x trailing EV/EBITDA — the headline 'cheap vs 8.2x peers' — is trailing-only with no forward basis, so it cannot distinguish a temporarily depressed level from a cyclical-peak denominator that reverses; on a forward basis the NTM multiple is 4.8x, materially narrowing the peer gap.",
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "cited": true
       },
       {
-        "claim": "Insiders are selling only — 0 open-market buys vs 24 sells ($25.64M, 9 insiders) in the last 182 days, with no purchase in the 3-year scan and the latest sale dated 2026-09-11 — a genuine counter-signal to the bullish revision tape, though it is share-disposal, not a fundamental forecast.",
+        "claim": "Insiders are net sellers, not buyers: 0 open-market buys against 24 sells by 9 insiders ($25.64M) in the last 182 days, with no purchase in the 3 years scanned — a genuine counter-signal outweighed by the operating-earnings surge and de-levering.",
         "source_ref": "EDGAR Form 4 (latest 0001437749-26-030443; 225 filings in the 1095d scanned; counts over 182d)",
+        "cited": true
+      },
+      {
+        "claim": "The margin surge rests on an exogenous, non-controllable driver — refined product cracks 'materially above historical norms' — which management itself frames as market-conditions-driven, leaving the trajectory exposed if cracks normalize.",
+        "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "HF Sinclair Corporation",
-        "outcome": "moved on the catalyst / was already priced or faded before the exit",
-        "distinguishing_fact": "An independent refiner whose earnings and multiple swing hard with the crack-spread cycle; a peer whose trailing multiple compresses precisely when reported EBITDA peaks.",
+        "name": "PBF Energy Inc.",
+        "outcome": "was already priced or faded before the exit",
+        "distinguishing_fact": "Independent refiner whose earnings and multiple track the crack-spread cycle; a peer here trading at a low trailing multiple that reflected a fading margin peak rather than a durable rerate.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "PBF Energy Inc.",
-        "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "A pure-play refiner whose margin-cycle earnings make trailing P/E look cheap at peaks and rich at troughs — the classic value-trap optics of a cyclical.",
+        "name": "HF Sinclair Corporation",
+        "outcome": "moved on the catalyst",
+        "distinguishing_fact": "Independent refiner in the peer set that rerated on a strong throughput-and-capture quarter into a favorable margin window before cyclical mean-reversion set in.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Delek US Holdings",
-        "outcome": "moved on the catalyst / was already priced or faded before the exit",
-        "distinguishing_fact": "A small-cap downstream refiner that trades at a discount to larger integrated peers, illustrating the earned-vs-residual discount question for a sub-scale name.",
+        "outcome": "was already priced or faded before the exit",
+        "distinguishing_fact": "Small-cap integrated downstream refiner where a cheap-looking trailing multiple masked cyclical margin compression and goodwill write-downs — a value-trap pattern for the discount-vs-peers read.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "CVR Energy",
         "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "A small refiner whose reported profitability and multiple are dominated by the crack cycle and turnaround timing, so a single quarter's print swings the trailing metrics violently.",
+        "distinguishing_fact": "Independent refiner whose earnings are highly crack-spread and RIN-sensitive; a peer whose optical value flipped as the cyclical margin driver reversed.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Valero Energy Corporation",
+        "outcome": "moved on the catalyst",
+        "distinguishing_fact": "Large independent refiner that rallied through a strong distillate-margin window on elevated capture, illustrating the up-leg of the same refining cycle before it normalizes.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "At the ~2026-11-04 print, does the market read the refining-margin strength as a durable regime that outlasts the exit, or as a peak already in the price with the Hawaii-turnaround Q3 and the consensus FY27/FY28 roll-over pulling attention to the down-cycle?",
+      "question": "At the 2026-11-04 print, does the operating trajectory hold enough to surprise a consensus that has ALREADY revised sharply upward and a price that has ALREADY tripled — or is the crack-spread peak (plus the Hawaii-turnaround Q3 drag) a spent, fading catalyst the market has priced?",
       "evidence_for": [
         {
-          "claim": "Management asserts structural support: Q2 combined index ~$33/bbl vs 2025's $12.40/bbl, with tight global inventories and reduced Persian Gulf/Russian exports cited as persisting drivers.",
-          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "claim": "Estimate breadth into the next two FQs is one-sided upward (EBITDA FQ3 6↑/0↓, FQ4 6↑/0↓ at 3 months) and FY26 EBITDA path ran +213% over 12 months, suggesting momentum can still beat.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "FQ3 and FQ4 2026 EBITDA revision breadth is 6↑/0↓, showing analysts still marking near-term numbers up into the print.",
-          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+          "claim": "The realized Q2 mechanism was exceptional and validated — system-wide capture 125% and record mainland throughput — evidence the asset base can convert a favorable market into outsized earnings.",
+          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management guided the Hawaii turnaround impact into Q3 with capture below the typical range and July's index already ~$1.60 below the Q2 average — a near-term drag the print will show.",
-          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "claim": "Consensus already models the surge fading (FY26E EBITDA $1,332M → FY27E $950M), so a strong Q3 may confirm rather than surprise, while any crack normalization disappoints.",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
           "cited": true
         },
         {
-          "claim": "Consensus already models the cycle rolling over — FY27 EBITDA $911.5M and FY28 $602.3M vs FY26 $1,333.5M — so a strong Q3 print may confirm rather than upgrade the arc.",
-          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
+          "claim": "Management explicitly guided the Hawaii turnaround to concentrate its financial hit in Q3 with capture held below the typical range and a wider $11.50–$13.50/bbl crude differential — a known drag on the very print being tested.",
+          "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the Q3 print beats or misses given the Hawaii turnaround concentrated in Q3 — the exact turnaround cost and capture drag are not quantified in the supplied facts.",
-      "No forward (NTM) EV/EBITDA on a company-adjusted basis and no adjusted EPS in the revised guidance — the 99.1 revised guidance omits both, so a temporarily-depressed vs permanently-impaired trailing multiple cannot be resolved from the facts.",
-      "The EBITDA-basis triangulation is UNRESOLVED: GAAP actuals may be compared against ADJUSTED estimates (implied-D&A ratio sits in the 1.5–2.0x band where a real basis change has gone unflagged) — reconcile the estimate row to the company's guidance basis before trusting the forward multiple.",
-      "Covenant basis and headroom are UNKNOWN (not disclosed); the ABL maturity is 2028 and no near-term wall is stated — an opaque covenant leg is a risk, not a clean all-clear.",
-      "Self-funding read is MIXED, not clean: latest-quarter OCF is negative while LTM FCF is positive — working-capital swings around turnaround/price moves cloud the quarter-to-quarter cash picture.",
-      "Geographic segment disclosure is absent (no Geographic Segment section) — an expected breakdown is missing for a multi-region refiner.",
-      "The peer set is HETEROGENEOUS (caps $4.8B–$116.2B, 24x span) so every peer multiple is a confidence-gated input, not a clean benchmark; the earned-vs-residual discount question cannot be settled on the median alone.",
-      "The export/as-of date on the estimates and catalyst-path data is unverified (a floor ≥ 2026-09-14); the true export is likely weeks newer, so revision recency should be treated cautiously."
+      "No revised forward EBITDA/EPS guidance was disclosed in the Q2 99.1 (adjusted-EBITDA-fwd and adjusted-EPS both UNKNOWN), so the forward-multiple gap to peers cannot be pinned on a company basis — an opaque forward guide is a bearish gap, not a neutral one.",
+      "The trailing EV/EBITDA of 3.5x sits near its own 5y floor (24th pctile) but is TRAILING-ONLY — whether it signals a cyclical-peak denominator (overshoot risk) or a durably re-rated business is unresolved and belongs with the human.",
+      "Whether Q3 crack spreads normalized: the entire margin surge rests on cracks 'materially above historical norms'; the September Singapore pricing that drives Hawaii price-lag is not in the data.",
+      "The company self-funding read is MIXED — latest-quarter OCF was negative on working-capital build while LTM FCF is positive — the durability of cash generation after inventory normalizes is unresolved.",
+      "EBITDA-basis coherence is UNRESOLVED: implied D&A of 97 (actuals) vs 191 (estimates) sits in the 1.5–2.0x band where GAAP-vs-adjusted basis changes have gone unflagged; reconcile before comparing estimate rows across the boundary.",
+      "Peer set is HETEROGENEOUS (caps $4.8B–$116.2B, 24x), so every peer-multiple and peer-median comparison is a confidence-gated input, not a clean benchmark for judging earned-vs-residual discount.",
+      "The 'as-of' date on the estimate/multiple exports is a FLOOR (≥2026-09-14, export date unstamped), so the freshness of the revision and multiple snapshots relative to the print is not fully verifiable."
     ]
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Par Pacific Holdings, a refiner, followed under the ULTRA-SHORT-TERM TRADE book by operator decision 2026-09-17 — judged as a short-dated trade, not a cycle underwrite. Trailing earnings sit far above the last full year: GAAP diluted EPS 7.16 for FY2025 against 17.09 over the last twelve months (CIQ, pulled 2026-09-17). Not a current screen candidate: at the 2026-08-24 reference date it failed the screen's drawdown gate. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-24-01: FAIL (g1_drawdown FAIL).",
-    "primary-source: 8-K 0001628280-25-048903 carries 2.02 but no EX-99.1 exhibit was found",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+1.4s fetch)",
     "EDGAR P/E (11.9x) conflicts ~2x with CIQ P/LTM EPS (5.0x), both at the 2026-09-16 close — EDGAR divides by the latest fiscal-year GAAP diluted EPS, CIQ by its own trailing-twelve-month EPS. The inputs do not say which earnings recur, so the synthesis must not anchor on the lower 5.0x (CIQ) without naming the earnings behind it.",
-    "former registrant name: this CIK filed as \"PAR PETROLEUM CORP/CO\" (2012-09-07 → 2015-10-14) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0000821483)"
+    "former registrant name: this CIK filed as \"PAR PETROLEUM CORP/CO\" (2012-09-07 → 2015-10-14) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0000821483)",
+    "Bare peer-comparison (a bear point): 'The 3.5x trailing EV/EBITDA — the headline 'cheap vs 8.2x peers' — is trailing-only with no forward basis, so it cannot distinguish a temporarily depressed level from a cyclical-peak denominator that reverses; on a forward basis the NTM multiple is 4.8x, materially narrowing the peer gap.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The 3.5x trailing EV/EBITDA — the headline 'cheap vs 8.2x peers' — is trailing-only with no forward basis, so it cannot distinguish a temporarily depressed level from a cyclical-peak denominator that reverses; on a forward basis the NTM multiple is 4.8x, materially narrowing the peer gap.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "(E5) exhibit not extracted (cost bound): Term Loan Credit Agreement·d292719dex102.htm",
-    "operating-drivers: Tier-B row dropped — value figure 42 not in its quote (Hawaii margin capture)",
-    "operating-drivers: Tier-B row dropped — value figure 99 not in its quote (Hawaii margin capture)"
+    "(E5) exhibit not extracted (cost bound): Term Loan Credit Agreement·d292719dex102.htm"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-17T19:02:49.521966Z",
+  "assembled_at": "2026-09-19T12:22:22.755510Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/da9b3c6e-2496-46e5-9725-9830e8c1208f/scratchpad/wt-artifact/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/da9b3c6e-2496-46e5-9725-9830e8c1208f/scratchpad/wt-cal/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-16"
   },
@@ -8502,7 +8661,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-17T19:07:14.674669Z",
+    "computed_at": "2026-09-19T12:25:27.166596Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

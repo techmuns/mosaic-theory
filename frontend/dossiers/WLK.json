@@ -3847,20 +3847,6 @@
           "source_ref": "cadence: EDGAR submissions (median 91d gap over 49 results 8-Ks; last print 2026-08-04)"
         },
         {
-          "event": "effective April 2, 2026",
-          "expected_date": "2027-04",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: Westlake Corporation NYSE WLK Key Developments.rtf · Apr-02-2026"
-        },
-        {
-          "event": "effective June 15, 2026, reporting to Mr",
-          "expected_date": "2027-06",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: Westlake Corporation NYSE WLK Key Developments.rtf · Apr-20-2026"
-        },
-        {
           "event": "Notes Payable $28.0M matures",
           "expected_date": "2027-06-30",
           "date_basis": "stated",
@@ -4286,7 +4272,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027 · 0001193125-07-267027 · amended by 0001193125-10-155766]\n  Principal / commitment amount: $100,000,000 (aggregate principal amount of the Bonds); Initial Drawing $5,000,000,…\n  Interest / coupon rate: Bonds converted to a Term Rate to the Maturity Date; specific rate not stated (the…\n  Maturity date: \"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be…\n  Interest Payment Dates: each May 1 and November 1, commencing May 1, 2008\n[Revolving Credit Facility · 0001193125-09-021484 · amended by 0001193125-16-689964]\n  Principal / commitment amount: $1,000,000,000 (initial aggregate amount of the Lenders' Commitments)\n  Interest / coupon rate: ABR Borrowings: Alternate Base Rate plus the Applicable Rate; Eurodollar Borrowings:…\n  Financial-maintenance covenants: Fixed Charge Coverage Ratio / Adjusted Fixed Charge Coverage Ratio of at least…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027 · 0001193125-07-267027 · amended by 0001193125-10-155766]\n  Principal / commitment amount: $100,000,000\n  Interest / coupon rate: Term Rate (Bonds converted to a Term Rate to the Maturity Date); specific rate not…\n  Maturity date: the stated maturity or such earlier date as the Bonds shall be redeemed (no calendar…\n  Interest Payment Dates: each May 1 and November 1, commencing May 1, 2008\n[Revolving Credit Facility · 0001193125-16-689964 · amended by 0001193125-16-689964]\n  Principal / commitment amount: $1,000,000,000 (initial aggregate Commitments)\n  Interest / coupon rate: ABR Borrowing: Alternate Base Rate plus Applicable Rate; Eurodollar Borrowing:…\n  Maturity date: The fifth anniversary of the Effective Date (or, if such date is not a Business Day,…\n  Financial-maintenance covenants: Total Leverage Ratio not to exceed: (a) Effective Date to Changeover Date, 3.00 to…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4310,10 +4296,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$100,000,000 (aggregate principal amount of the Bonds); Initial Drawing $5,000,000, subsequent Drawing of $95,000,000 on the Final Drawing Date",
+              "value": "$100,000,000",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “To provide funds for the Projects, the Authority agrees that it will sell, issue and deliver the Bonds in the aggregate principal amount of $100,000,000 and make the proceeds of sale of the Bonds available to the Borrower pursuant to this Agreement ... The aggregate principal amount of the Bonds issued under the Indenture shall not exceed $100,000,000.”"
+              "note": "verbatim: “To provide funds for the Projects, the Authority agrees that it will sell, issue and deliver the Bonds in the aggregate principal amount of $100,000,000 and make the proceeds of sale of the Bonds available to the Borrower pursuant to this Agreement... The aggregate principal amount of the Bonds issued under the Indenture shall not exceed $100,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4324,10 +4310,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Bonds converted to a Term Rate to the Maturity Date; specific rate not stated (the Notes bear interest 'at an interest rate at all times equal to the interest rate borne by the Bonds'). Interest Payment Dates: each February 1 and August 1, commencing August 1, 2010.",
+              "value": "Term Rate (Bonds converted to a Term Rate to the Maturity Date); specific rate not stated in this Agreement. Notes bear 'interest at an interest rate at all times equal to the interest rate borne by the Bonds.'",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “pursuant to the Original Indenture, the Authority has requested the draw-down of the remaining $95,000,000 of Bonds and the conversion of all Bonds, including the Initial Bonds, to a Term Rate to the Maturity Date”"
+              "note": "verbatim: “the Authority has requested the draw-down of the remaining $95,000,000 of Bonds and the conversion of all Bonds, including the Initial Bonds, to a Term Rate to the Maturity Date”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4338,7 +4324,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "\"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be redeemed. (No specific calendar date stated in this Agreement.)",
+              "value": "the stated maturity or such earlier date as the Bonds shall be redeemed (no calendar date stated in this Agreement)",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Maturity Date” means the stated maturity or such earlier date as the Bonds shall be redeemed.”"
@@ -4366,7 +4352,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Borrower's obligations under this Agreement are unsecured, general obligations. To secure the obligation to make Payments, the Borrower issues Notes under the Senior Notes Indenture (assigned/pledged to the Trustee). No collateral or guarantors of this Agreement are stated.",
+              "value": "Obligations of the Borrower under this Agreement are unsecured, general obligations. Payments secured on behalf of the Authority by Notes issued under the Senior Notes Indenture (issued and delivered to the Trustee); the Initial Credit Facility (Bank of America letter of credit) has been terminated.",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
               "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
@@ -4380,10 +4366,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Sec. 7.1): (a) Agreement becomes void/unenforceable/impossible by law; (b) Determination of Taxability; (c) excess Bond proceeds after completion. Events of Default (Sec. 10.1): (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (interest on Term Rate Bond: 30 days after Interest Payment Date); (c) failure to perform any other covenant continuing 30 days after notice; (d) bankruptcy/insolvency decree unstayed 90 consecutive days; (e) voluntary bankruptcy/insolvency proceedings. Remedies (Sec. 10.2) include acceleration of Payments.",
+              "value": "Mandatory prepayment (Section 7.1): (a) Agreement void/unenforceable due to law changes; (b) Determination of Taxability; (c) Bond proceeds remaining after completion. Events of Default (Section 10.1): (a) Event of Default under Indenture, Notes or Senior Notes Indenture; (b) default in timely Payment (interest default deemed after 30 days); (c) failure to perform other covenant continuing 30 days after notice; (d) bankruptcy decree/order unstayed 90 consecutive days; (e) voluntary bankruptcy/insolvency proceedings.",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “SECTION 7.1 Obligation to Prepay Installments. The Borrower shall have the obligation to prepay installments payable hereunder in whole ... if any of the following shall have occurred: (a) ... this Agreement shall have become void or unenforceable ...; or (b) A Determination of Taxability shall have occurred; or (c) Proceeds of the Bonds ... shall remain after completion of the Projects ...”"
+              "note": "verbatim: “The Borrower shall have the obligation to prepay installments payable hereunder in whole (or in the case of the events stated in (b) or (c) of this Section 7.1 in whole or in part), if any of the following shall have occurred: (a) ... this Agreement shall have become void or unenforceable ... (b) A Determination of Taxability shall have occurred; or (c) Proceeds of the Bonds ... shall remain after completion of the Projects ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4408,7 +4394,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (initial aggregate amount of the Lenders' Commitments)",
+              "value": "$1,000,000,000 (initial aggregate Commitments)",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
               "note": "verbatim: “The initial aggregate amount of the Lenders' Commitments is $1,000,000,000.”"
@@ -4422,7 +4408,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR Borrowings: Alternate Base Rate plus the Applicable Rate; Eurodollar Borrowings: Adjusted LIBO Rate plus the Applicable Rate. Applicable Rate (Pricing Level III in effect as of date hereof): Eurodollar Revolving Loans 100.0-175.0 bps, ABR Loans 0.0-75.0 bps, Undrawn Commitment Fee 10.0-25.0 bps based on Public Debt Rating",
+              "value": "ABR Borrowing: Alternate Base Rate plus Applicable Rate; Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate. Applicable Rate for Eurodollar Revolving Loans ranges 100.0 bps (Level I) to 175.0 bps (Level V); ABR Loans 0.0 bps to 75.0 bps. 'As of the date hereof, Pricing Level III is in effect' (Eurodollar 125.0 bps / ABR 25.0 bps). Default rate: 2% per annum plus otherwise applicable rate.",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Loans comprising each ABR Borrowing (including each Swingline Loan) shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Loans comprising each Eurodollar Borrowing (including all Alternate Currency Loans) shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
@@ -4430,6 +4416,160 @@
             "base_rate_label": "Adjusted LIBO Rate",
             "margin_pct": null,
             "margin_bps": 125.0,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "The fifth anniversary of the Effective Date (or, if such date is not a Business Day, the immediately preceding Business Day)",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Maturity Date ” means the fifth anniversary of the Effective Date (or, if such date is not a Business Day, the immediately preceding date that is a Business Day).”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Financial-maintenance covenants",
+            "value": {
+              "value": "Total Leverage Ratio not to exceed: (a) Effective Date to Changeover Date, 3.00 to 1.00 (determined without netting unrestricted cash); (b) Changeover Date to December 31, 2017, 3.50 to 1.00; (c) thereafter, 3.00 to 1.00",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “SECTION 6.09. Financial Covenant . The Company will not permit the Total Leverage Ratio as of the last day of any fiscal quarter of the Company to exceed: (a) from the Effective Date to the [Changeover Date], 3.00 to 1.00 ...; (b) from the Changeover Date to December 31, 2017, 3.50 to 1.00; and (c) thereafter, 3.00 to 1.00.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Security / collateral / guarantors",
+            "value": {
+              "value": "Guarantors = the Company and each Subsidiary Guarantor (each Subsidiary that is not an Excluded Subsidiary). Unsecured facility (opinions cover 'customary legal matters for an unsecured bank loan financing'; increase conditions reference 'an unsecured bank loan financing'). No collateral/security interest granted; guaranty under Article XI.",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Guarantors ” means the Company and each Subsidiary Guarantor. ... SECTION 11.01. The Guaranty . (a) The Company hereby unconditionally guarantees to the Administrative Agent, for the benefit of the Lenders, the full and punctual payment ... (b) Each Subsidiary Guarantor hereby unconditionally guarantees ...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": "Mandatory prepayment: within five Business Days if Total Revolving Credit Exposure exceeds total Commitments or Total Alternate Currency Revolving Credit Exposure exceeds the Alternate Currency Sublimit. Events of Default (Section 7.01): (a) failure to pay principal/LC reimbursement; (b) failure to pay interest/fees (5 BD cure); (c) incorrect representation/warranty; (d) breach of Sections 5.02, 5.03 (existence), 5.08 or Article VI; (e) other covenant breach (30-day cure); (f) failure to pay Material Indebtedness; (g) cross-acceleration of Material Indebtedness; (h) involuntary bankruptcy; (i) voluntary bankruptcy; (j) inability to pay debts; (k) judgments in excess of Threshold Amount; (l) ERISA Event; (m) Change in Control; (n) guaranty termination",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “SECTION 2.09. Termination and Reduction of Commitments; Mandatory Repayments . ... (d) ... If after giving effect to any such determination of a Dollar Amount, (1) the Total Revolving Credit Exposure exceeds the aggregate amount of the Commitments or (2) the Total Alternate Currency Revolving Credit Exposure exceeds the Alternate Currency Sublimit, the Borrowers shall in each case, within five Business Days, prepay outstanding Loans ... SECTION 7.01. Events of Default . If any of the following events (“ Events of Default ”) shall occur and be continuing: (a) any Borrower shall fail to pay any principal ...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Alternate Currency Sublimit",
+            "value": {
+              "value": "$250,000,000",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Alternate Currency Sublimit ” means $250,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Letter of Credit Commitment (aggregate)",
+            "value": {
+              "value": "$150,000,000",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The initial aggregate amount of the Issuing Banks' Letter of Credit Commitments is $150,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Swingline Commitment",
+            "value": {
+              "value": "$50,000,000",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “Swingline Lender Swingline Commitment JPMorgan Chase Bank, N.A. $ 50,000,000 TOTAL $ 50,000,000”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Incremental / Increased Commitments cap",
+            "value": {
+              "value": "Aggregate increases not to exceed $500,000,000; each increase not less than $25,000,000; Additional Lender minimum Commitment $10,000,000",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “after giving effect to such increase, the aggregate amount of all increases in Commitments made pursuant to this Section 2.21 shall not exceed $500,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Unused commitment fee",
+            "value": {
+              "value": "Undrawn Commitment Fee at Applicable Rate: 10.0 bps (Level I) to 25.0 bps (Level V) on daily unused Commitment",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Company agrees to pay to the Administrative Agent for the account of each Lender an unused commitment fee, which shall accrue at the Applicable Rate on the daily amount of the unused Commitment ...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Threshold Amount",
+            "value": {
+              "value": "$75,000,000",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Threshold Amount ” means $75,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Use of proceeds",
+            "value": {
+              "value": "(i) financing consideration and related fees/expenses for the Axiall Acquisition and (ii) general corporate purposes, including working capital, Letters of Credit and permitted acquisitions",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The proceeds of the Loans will be used only for (i) the financing of the consideration and related fees and expenses in connection with the Axiall Acquisition and (ii) general corporate purposes, including for working capital, the issuance of Letters of Credit, and permitted acquisitions.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null
           },
@@ -4464,10 +4604,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds",
+              "value": "an interest rate at all times equal to the interest rate borne by the Bonds",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture (i) maturing on the same date and in the same principal amount as the Bonds, (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds”"
+              "note": "verbatim: “the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture (i) maturing on the same date and in the same principal amount as the Bonds, (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4506,10 +4646,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower. (In order to secure, on behalf of the Authority, the obligation of the Borrower to make the Payments, concurrently with the issuance and delivery by the Authority of the Bonds, the Borrower shall issue and deliver to the Trustee a series of its Notes under the Senior Notes Indenture)",
+              "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
+              "note": "verbatim: “SECTION 10.11 Obligations. The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4520,10 +4660,24 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: “The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds.” Events of Default (Section 9.1): (a) An Event of Default shall exist under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (30-day cure for Interest Payment); (c) failure to perform any other covenant continuing 30 days after notice; (d) bankruptcy/insolvency decree unstayed 90 days; (e) institution by Borrower of bankruptcy/insolvency proceedings.",
+              "value": "Borrower shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: “The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Events of Default (defined)",
+            "value": {
+              "value": "(a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (30-day cure for Interest Payment); (c) failure to perform any other covenant continuing 30 days after notice; (d) bankruptcy/insolvency decree unstayed for 90 consecutive days; (e) voluntary bankruptcy/insolvency proceedings",
+              "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: “SECTION 9.1 Events of Default Defined. The terms “Event of Default” and “Default” shall mean any one or more of the following events: (a) An Event of Default shall exist under the Indenture, the Notes or the Senior Notes Indenture; (b) The Borrower shall default in the timely payment of any Payment pursuant to Article IV of this Agreement; provided that such default with respect to an Interest Payment shall be deemed to occur upon the continuance of any such failure of payment for a period of 30 days after the applicable Interest Payment Date; (c) The Borrower shall fail duly to perform, observe or comply with any other covenant, condition or agreement on its part under this Agreement ... and such failure continues for a period of 30 days after the date on which written notice of such failure ... shall have been given to the Borrower by the Trustee ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4546,9 +4700,37 @@
             "pik_pct": null
           },
           {
+            "name": "Acceleration remedy",
+            "value": {
+              "value": "Authority or Trustee may declare all Payments immediately due and payable",
+              "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Authority or the Trustee may declare all Payments under Section 4.2 hereof to be immediately due and payable, whereupon the same shall become immediately due and payable”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Optional prepayment/redemption",
+            "value": {
+              "value": "Borrower option to prepay as necessary to cause the Bonds to be redeemed as set forth in the Indenture and in the Bonds",
+              "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Borrower shall have the option to prepay its obligations hereunder at the times and in the amounts as necessary to exercise its option to cause the Bonds to be redeemed as set forth in the Indenture and in the Bonds.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
             "name": "Change of Control Payment",
             "value": {
-              "value": "an amount sufficient for the payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture)",
+              "value": "amount sufficient for payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture)",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Change of Control Payment” being the an amount sufficient for the payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture).”"
@@ -4562,24 +4744,10 @@
           {
             "name": "Asset Sale Payment",
             "value": {
-              "value": "an amount sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture)",
+              "value": "amount sufficient for payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture)",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Asset Sale Payment” being an amount sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of Louisiana",
-              "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “This Agreement shall be deemed to be a contract made under the laws of the State of Louisiana and for all purposes shall be governed exclusively by and construed in accordance with the laws of the State of Louisiana.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4604,10 +4772,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "No aggregate principal/commitment amount stated in this Amendment; references \"such Lender’s Commitment as set forth on Schedule 1.2 to the Credit Agreement\"",
-              "source_ref": "8-K 0001193125-09-021484 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “the Borrowers shall have paid each Lender that has consented to and executed this Amendment on or prior to the Effective Date an amendment fee equal to 0.20% of such Lender’s Commitment as set forth on Schedule 1.2 to the Credit Agreement”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001193125-09-021484 · dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4618,10 +4786,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Applicable Margin — Base Rate Loans: 1.50% per annum (Feb 5–28, 2009), then per grid 1.25%–2.00%; LIBOR Rate Loans: 3.00% per annum (Feb 5–28, 2009), then per grid 2.75%–3.50%. Base Rate = greatest of (a) Prime Rate; (b) Federal Funds Rate + 0.50%; or (c) LIBOR Rate for 30 day interest period + 1.0%",
+              "value": "Applicable Margin: Base Rate Loans 1.50% per annum (Feb 5-28, 2009) then pricing grid; LIBOR Rate Loans 3.00% per annum (Feb 5-28, 2009) then pricing grid. Grid (Average Daily Excess Availability): < $100,000,000 LIBOR 3.50% / Base 2.00%; > $100,000,000 but < $200,000,000 LIBOR 3.25% / Base 1.75%; > $200,000,000 but < $300,000,000 LIBOR 3.00% / Base 1.50%; > $300,000,000 LIBOR 2.75% / Base 1.25%. Base Rate means the greatest of (a) Prime Rate; (b) Federal Funds Rate plus 0.50%; or (c) LIBOR Rate for a 30 day interest period plus 1.0%. Unused Line Fee 0.875% or 0.75% per annum.",
               "source_ref": "8-K 0001193125-09-021484 · dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Applicable Margin ” means, (i) with respect to Base Rate Loans, (A) from February 5, 2009 to and including February 28, 2009, 1.50% per annum ... (ii) with respect to LIBOR Rate Loans, (A) from February 5, 2009 to and including February 28, 2009, 3.00% per annum ... and on and from March 1, 2009, as set forth in the pricing grid below ... < $100,000,000 3.50 % 2.00 % > $100,000,000 but < $200,000,000 3.25 % 1.75 % > $200,000,000 but < $300,000,000 3.00 % 1.50 % > $300,000,000 2.75 % 1.25 %”"
+              "note": "verbatim: ““ Applicable Margin ” means, (i) with respect to Base Rate Loans, (A) from February 5, 2009 to and including February 28, 2009, 1.50% per annum, and (B) on and from March 1, 2009, as set forth in the pricing grid below; (ii) with respect to LIBOR Rate Loans, (A) from February 5, 2009 to and including February 28, 2009, 3.00% per annum, and (B) on and from March 1, 2009, as set forth in the pricing grid below”"
             },
             "base_rate_label": "LIBOR Rate",
             "margin_pct": 3.0,
@@ -4646,10 +4814,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Fixed Charge Coverage Ratio / Adjusted Fixed Charge Coverage Ratio of at least 1.0:1.0 referenced in connection with Distributions, Acquisitions and the Triggering Date; Section 7.21 financial covenant required upon a Triggering Date (Availability < $75,000,000 for 3 consecutive Business Days or < $65,000,000 at any time)",
+              "value": "Adjusted Fixed Charge Coverage Ratio not less than 1.0 to 1.0 (referenced re Triggering Date / Section 7.21); Triggering Date tied to Availability less than $75,000,000 for three consecutive Business Days or $65,000,000 at any time. Numerous Distribution/Acquisition/prepayment conditions require Fixed Charge Coverage Ratio at least 1:0:1.0 and Availability thresholds ($75,000,000 / $125,000,000 / $200,000,000).",
               "source_ref": "8-K 0001193125-09-021484 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “the requirements of Section 7.21 shall not be required unless a subsequent Triggering Date occurs ... “ Triggering Date ” means the date upon which Availability is less than (a) $75,000,000 for at least three (3) consecutive Business Days, or (b) $65,000,000 at any time; provided that ... (y) the Adjusted Fixed Charge Coverage Ratio on such date of determination is not less than 1.0 to 1.0”"
+              "note": "verbatim: ““ Triggering Date ” means the date upon which Availability is less than (a) $75,000,000 for at least three (3) consecutive Business Days, or (b) $65,000,000 at any time; provided that in the event (x) Availability has been greater than $75,000,000 at all times for ninety (90) consecutive days and (y) the Adjusted Fixed Charge Coverage Ratio on such date of determination is not less than 1.0 to 1.0 ... the requirements of Section 7.21 shall not be required unless a subsequent Triggering Date occurs.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4660,10 +4828,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors ratify guaranties and Liens; collateral references include Eligible Cash \"subject to a control agreement,\" cash collateral (110% of aggregate face amount of Letters of Credit), and \"proceeds from any Collateral.\" Named Guarantors include Geismar Holdings, Inc., Westlake Development Corporation, GVGP, Inc., Westlake Chemical Investments, Inc., Westlake Management Services, Inc., Westlake Olefins Corporation, Westlake Resources Corporation, Westlake Vinyl Corporation, Westlake NG I/III/IV/V Corporation",
+              "value": "Guarantors include GEISMAR HOLDINGS, INC.; WESTLAKE DEVELOPMENT CORPORATION; GVGP, INC.; WESTLAKE CHEMICAL INVESTMENTS, INC.; WESTLAKE MANAGEMENT SERVICES, INC.; WESTLAKE OLEFINS CORPORATION; WESTLAKE RESOURCES CORPORATION; WESTLAKE VINYL CORPORATION; WESTLAKE NG I, III, IV, V CORPORATIONS. Collateral references: Borrowing Base (Eligible Accounts, Eligible Inventory, Eligible Cash); cash collateral of 110% of aggregate face amount of Letters of Credit; all Liens ratified and confirmed.",
               "source_ref": "8-K 0001193125-09-021484 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “each Borrower and each Guarantor (a) consent to the agreements in this Amendment, and (b) agree and acknowledge that ... all Liens, guaranties, and rights thereunder are hereby ratified and confirmed. ... GUARANTORS: GEISMAR HOLDINGS, INC. ... WESTLAKE DEVELOPMENT CORPORATION ... GVGP, INC. ... WESTLAKE CHEMICAL INVESTMENTS, INC. ... [and other named Guarantors]”"
+              "note": "verbatim: “In the event Supporting Letters of Credit are not delivered, then the Loan Parties shall provide cash collateral for all remaining Letters of Credit in an amount equal to 110% of the aggregate face amount of such Letters of Credit. ... GUARANTORS: GEISMAR HOLDINGS, INC., a Delaware corporation WESTLAKE DEVELOPMENT CORPORATION ... all Liens, guaranties, and rights thereunder are hereby ratified and confirmed.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4674,10 +4842,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "References to Default/Event of Default conditions on Distributions, prepayments/redemptions/defeasance (including Bond Debt Prepayment, whether voluntary or mandatory) and Acquisitions; \"after giving effect to this Amendment, no Default or Event of Default shall have occurred and be continuing.\" No standalone list of events of default or mandatory prepayment triggers set out in this Amendment",
+              "value": "References to redemptions, defeasance, or prepayments (whether voluntary or mandatory) of Bond Debt permitted subject to Availability >= $75,000,000 and Fixed Charge Coverage Ratio at least 1:0:1.0 (Sections 7.14(b)(iv), 7.14(c)(ii)). Defaulting Lender defined; conditions require 'no Default or Event of Default shall have occurred and be continuing'. Full events-of-default enumeration not stated in this amendment (references underlying Credit Agreement).",
               "source_ref": "8-K 0001193125-09-021484 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “so long as no Default or Event of Default has occurred and is continuing after giving effect to such prepayment, redemption, or defeasance, redemptions, defeasance, or prepayments (whether voluntary or mandatory) (“ Bond Debt Prepayment ”) of the Bond Debt, if, after giving effect to such Bond Debt Prepayment, (A) Availability equals or exceeds $75,000,000, and (B) the Fixed Charge Coverage Ratio is at least 1:0:1.0”"
+              "note": "verbatim: “(ii) so long as no Default or Event of Default has occurred and is continuing after giving effect to such prepayment, redemption, or defeasance, redemptions, defeasance, or prepayments (whether voluntary or mandatory) (“ Bond Debt Prepayment ”) of the Bond Debt, if, after giving effect to such Bond Debt Prepayment, (A) Availability equals or exceeds $75,000,000, and (B) the Fixed Charge Coverage Ratio is at least 1:0:1.0”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -6136,24 +6304,72 @@
           "filed": "2026-08-04",
           "source_ref": "8-K 0001262823-26-000026 EX-99.1",
           "guidance": [],
-          "reconciliation": [],
+          "reconciliation": [
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q2 2026",
+              "value": 679.0,
+              "change": "+100%",
+              "verbatim": "EBITDA of $679 million",
+              "source_ref": "8-K 0001262823-26-000026 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q2 2025",
+              "value": 340.0,
+              "change": null,
+              "verbatim": "EBITDA of $679 million for the second quarter of 2026 increased by 100% from the second quarter of 2025 EBITDA of $340 million",
+              "source_ref": "8-K 0001262823-26-000026 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q1 2026",
+              "value": 235.0,
+              "change": null,
+              "verbatim": "Second quarter 2026 EBITDA increased by $444 million compared to first quarter of 2026 EBITDA of $235 million",
+              "source_ref": "8-K 0001262823-26-000026 EX-99.1"
+            }
+          ],
           "one_offs": [],
           "event_impacts": [],
           "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0001262823-26-000026 EX-99.1",
-            "no anchored pattern matched — non-GAAP reconciliation: 8-K 0001262823-26-000026 EX-99.1"
+            "no anchored pattern matched — guidance/outlook: 8-K 0001262823-26-000026 EX-99.1"
           ]
         },
         {
           "filed": "2026-05-05",
           "source_ref": "8-K 0001262823-26-000019 EX-99.1",
           "guidance": [],
-          "reconciliation": [],
+          "reconciliation": [
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q1 2026",
+              "value": 235.0,
+              "change": null,
+              "verbatim": "Excluding the effects of the Identified Items, the net loss in the first quarter of 2026 was $100 million, or $0.77 per share, and EBITDA was $235 million",
+              "source_ref": "8-K 0001262823-26-000019 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q1 2025",
+              "value": 295.0,
+              "change": null,
+              "verbatim": "EBITDA of $235 million for the first quarter of 2026 decreased by $60 million compared to first quarter 2025 EBITDA of $295 million",
+              "source_ref": "8-K 0001262823-26-000019 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q4 2025",
+              "value": 196.0,
+              "change": null,
+              "verbatim": "First quarter 2026 EBITDA increased by $39 million compared to fourth quarter 2025 EBITDA of $196 million",
+              "source_ref": "8-K 0001262823-26-000019 EX-99.1"
+            }
+          ],
           "one_offs": [],
           "event_impacts": [],
           "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0001262823-26-000019 EX-99.1",
-            "no anchored pattern matched — non-GAAP reconciliation: 8-K 0001262823-26-000019 EX-99.1"
+            "no anchored pattern matched — guidance/outlook: 8-K 0001262823-26-000019 EX-99.1"
           ]
         }
       ],
@@ -8000,9 +8216,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "global polyethylene supply disrupted by Middle East conflict",
+          "metric": "global polyethylene supply disrupted",
           "period": "Q1 2026",
-          "value": "approximately 10% to 15% of global polyethylene supply",
+          "value": "approximately 10% to 15%",
           "value_num": null,
           "unit": null,
           "verbatim": "Industry consultants estimate that this conflict has disrupted approximately 10% to 15% of global polyethylene supply and approximately 5% of global PVC resin supply.",
@@ -8012,9 +8228,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "global PVC resin supply disrupted by Middle East conflict",
+          "metric": "global PVC resin supply disrupted",
           "period": "Q1 2026",
-          "value": "approximately 5% of global PVC resin supply",
+          "value": "approximately 5%",
           "value_num": null,
           "unit": null,
           "verbatim": "Industry consultants estimate that this conflict has disrupted approximately 10% to 15% of global polyethylene supply and approximately 5% of global PVC resin supply.",
@@ -8026,7 +8242,7 @@
           "kind": "competitive_position",
           "metric": "global oil supply disrupted",
           "period": "Q1 2026",
-          "value": "up to 20% of global oil supply is disrupted",
+          "value": "up to 20%",
           "value_num": null,
           "unit": null,
           "verbatim": "Furthermore, up to 20% of global oil supply is disrupted, which has reduced the availability of chemical feedstocks such as naphtha for much of the global chemical industry, creating further declines in the global supply of polyethylene and PVC.",
@@ -8036,9 +8252,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "PEM sequential sales volume growth",
+          "metric": "PEM sequential volume growth (excluding 2025 plant shutdown impact)",
           "period": "Q1 2026",
-          "value": "3% sequential volume growth, excluding the impact to volumes from our 2025 plant shutdowns",
+          "value": "3% sequential volume growth",
           "value_num": null,
           "unit": null,
           "verbatim": "PEM delivered net sales of $1.7 billion and EBITDA of $36 million on 3% sequential volume growth, excluding the impact to volumes from our 2025 plant shutdowns.",
@@ -8060,45 +8276,45 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "share of products manufactured in North America",
+          "metric": "products manufactured in North America",
           "period": "Q1 2026",
-          "value": "approximately 85% of our products are manufactured",
+          "value": "approximately 85%",
           "value_num": null,
           "unit": null,
-          "verbatim": "our globally advantaged feedstock and energy position in North America, where approximately 85% of our products are manufactured.",
+          "verbatim": "The impact of the conflict in the Middle East on global feedstock and energy costs serves as a powerful reminder of one of Westlake's foundational strength, our globally advantaged feedstock and energy position in North America, where approximately 85% of our products are manufactured.",
           "following_context": "The strategic value of our North American production capacity and globally advantaged cost p",
           "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
-          "metric": "HIP average sales price (year-over-year)",
+          "kind": "leading_indicator",
+          "metric": "HIP average sales price decline year-over-year (excluding acquisition)",
           "period": "Q1 2026 vs Q1 2025",
           "value": "2% decline in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "net sales in our Housing and Infrastructure Products segment of $1 billion, which were in line with the first quarter of 2025 as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
+          "verbatim": "Housing and Infrastructure Products segment of $1 billion, which were in line with the first quarter of 2025 as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
           "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "HIP sales volume (year-over-year, excluding acquisition)",
+          "metric": "HIP sales volume decline year-over-year (excluding acquisition)",
           "period": "Q1 2026 vs Q1 2025",
-          "value": "2% decline in sales volume, excluding the acquisition",
+          "value": "2% decline in sales volume",
           "value_num": null,
           "unit": null,
-          "verbatim": "net sales in our Housing and Infrastructure Products segment of $1 billion, which were in line with the first quarter of 2025 as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
+          "verbatim": "Housing and Infrastructure Products segment of $1 billion, which were in line with the first quarter of 2025 as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
           "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "HIP sequential sales volume increase (including ACI)",
+          "metric": "HIP sequential sales volume increase (including ACI acquisition)",
           "period": "Q1 2026 vs Q4 2025",
-          "value": "15% sequential increase in sales volume, including the ACI acquisition",
+          "value": "15% sequential increase in sales volume",
           "value_num": null,
           "unit": null,
           "verbatim": "When compared to the fourth quarter of 2025, HIP segment sales of $1 billion rose 10% by a 15% sequential increase in sales volume, including the ACI acquisition that more than offset a 5% decrease in average sales prices.",
@@ -8108,7 +8324,7 @@
         },
         {
           "kind": "pricing_action",
-          "metric": "HIP average sales prices (sequential)",
+          "metric": "HIP average sales price sequential decrease",
           "period": "Q1 2026 vs Q4 2025",
           "value": "5% decrease in average sales prices",
           "value_num": null,
@@ -8119,8 +8335,20 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "leading_indicator",
+          "metric": "PEM natural gas price increase sequential",
+          "period": "Q1 2026 vs Q4 2025",
+          "value": "34% higher natural gas price",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "First quarter EBITDA of $36 million decreased by $9 million from the fourth quarter of 2025, largely as a result of a 34% higher natural gas price due to the impact of cold weather early in the quarter.",
+          "following_context": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "pricing_action",
-          "metric": "PEM average sales price (sequential)",
+          "metric": "PEM average sales price sequential increase",
           "period": "Q1 2026 vs Q4 2025",
           "value": "increased 3%",
           "value_num": null,
@@ -8132,9 +8360,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "PEM sales volumes (sequential)",
+          "metric": "PEM sales volume sequential increase (excluding 2025 plant shutdowns)",
           "period": "Q1 2026 vs Q4 2025",
-          "value": "increased 3%, excluding volumes associated with the 2025 plant shutdowns",
+          "value": "increased 3%",
           "value_num": null,
           "unit": null,
           "verbatim": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
@@ -8144,9 +8372,9 @@
         },
         {
           "kind": "pass_through_structure",
-          "metric": "pass-through of transportation and raw material cost increases in HIP",
+          "metric": "HIP pass-through of cost increases (PVC resin, transportation, raw materials)",
           "period": "2026",
-          "value": "we expect to pass these cost increases through",
+          "value": "expect to pass these cost increases through",
           "value_num": null,
           "unit": null,
           "verbatim": "While we expect to pass these cost increases through, the timing of changes in cost and sales prices could create a headwind in the near term.",
@@ -8155,22 +8383,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
-          "metric": "PEM average sales price (sequential)",
-          "period": "Q2 2026 vs Q1 2026",
-          "value": "21% sequential increase in PEM's average sales price",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "During the second quarter, a spike in global oil price drove significantly higher cost for competitors in higher cost regions like Asia and Europe, which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
-          "metric": "share of production capacity in North America",
+          "metric": "PEM production capacity in North America",
           "period": "Q2 2026",
-          "value": "over 85% of our production capacity resides",
+          "value": "over 85%",
           "value_num": null,
           "unit": null,
           "verbatim": "PEMs feedstock and energy cost advantage in North America, where over 85% of our production capacity resides, was an important factor in PEM's second quarter earnings improvement.",
@@ -8179,9 +8395,21 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "pricing_action",
+          "metric": "PEM average sales price sequential increase",
+          "period": "Q2 2026",
+          "value": "21% sequential increase",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "During the second quarter, a spike in global oil price drove significantly higher cost for competitors in higher cost regions like Asia and Europe, which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
-          "metric": "PEM sales volume (sequential)",
-          "period": "Q2 2026 vs Q1 2026",
+          "metric": "PEM sales volume sequential increase",
+          "period": "Q2 2026",
           "value": "2% sequential increase in sales volume",
           "value_num": null,
           "unit": null,
@@ -8192,8 +8420,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "HIP organic sales volume growth (year-over-year)",
-          "period": "Q2 2026 vs Q2 2025",
+          "metric": "HIP organic sales volume growth year-over-year",
+          "period": "Q2 2026",
           "value": "6% year-over-year organic sales volume growth",
           "value_num": null,
           "unit": null,
@@ -8204,9 +8432,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "HIP revenue growth (year-over-year)",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "8% year-over-year",
+          "metric": "HIP revenue growth year-over-year",
+          "period": "Q2 2026",
+          "value": "grew 8% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "HIP second quarter revenue grew 8% year-over-year, driven by solid 6% organic sales volume growth, which translated into stable EBITDA despite cost inflation and a lower average sales price.",
@@ -8216,8 +8444,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "pipe and fittings sales volume growth (year-over-year)",
-          "period": "Q2 2026 vs Q2 2025",
+          "metric": "pipe and fittings sales volume growth year-over-year",
+          "period": "Q2 2026",
           "value": "grew roughly 20% year-over-year",
           "value_num": null,
           "unit": null,
@@ -8234,150 +8462,171 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a genuine, mechanism-backed Q2 earnings jump set against a trailing multiple near its own-history ceiling and an oil-shock catalyst management calls fluid.",
+    "evidence_balance": "mixed — a real Q2 margin/earnings recovery and improving forward multiple offset by trough leverage, ambiguous FCF, and disruption-dependent PEM pricing.",
     "bull_points": [
       {
-        "claim": "The next results print (est. 2026-11-03) is the dated near-term catalyst; PEM's Q2 average sales price jumped 21% sequentially on Middle East supply disruption and North American feedstock advantage, driving Q2 EBITDA to $679M from a depressed Q1 base.",
+        "claim": "Q2 2026 delivered a sharp sequential earnings recovery — EBITDA rose from Q1's $130M to $653M as PEM average sales price jumped 21% sequentially on Middle East supply disruption favoring North American cost-advantaged producers.",
         "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "PEM's second-quarter earnings improvement rested on its cost-advantaged North American footprint, where over 85% of production capacity resides, insulating margins from the oil-price spike hitting Asian/European competitors.",
+        "claim": "The next reported quarter on 2026-11-03 is a dated, near-term catalyst that tests whether the Q2 PEM margin surge and the committed $600M 3-pillar EBITDA improvement plan carry into H2.",
+        "source_ref": "cadence: EDGAR submissions (median 91d gap over 49 results 8-Ks; last print 2026-08-04)",
+        "cited": true
+      },
+      {
+        "claim": "PEM's earnings leverage rests on a structural, source-bound cost advantage — over 85% of production capacity resides in North America on natural-gas/NGL feedstock, largely immune to the oil-price spike that raised competitors' costs in Asia and Europe.",
         "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "HIP delivered 6% year-over-year organic sales volume growth in Q2 with stable segment EBITDA, and pipe-and-fittings volume grew roughly 20% YoY on North American infrastructure and data-center demand — a durable demand leg feeding the next print.",
+        "claim": "HIP posted 6% year-over-year organic sales volume growth with pipe-and-fittings volume up roughly 20% YoY on North American infrastructure and data-center demand, a durable driver independent of the chemical cycle.",
         "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The trajectory into the catalyst is improving: absolute LTM EBITDA of $1,125M is up from the FY25 trough of $834M, so the depressed 7% FY25 margin is recovering even as the % remains optically low.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Consensus FY26 EBITDA has been revised up net +7% over 12 months to the latest snapshot, and the near-dated FQ3 GAAP-EPS breadth is a rare positive skew (3m 2↑/0↓) against the mostly-downward normalized lines.",
+        "claim": "Near-term estimate momentum turned positive — on 2026-09-14 a broker raised FY2026 EBITDA, EPS and target price, and FY26 EBITDA consensus has risen +7% (12m→latest) to $1,913.9M.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Management's 3-pillar profitability plan is tracking ahead of plan, returning the Epoxy business to profitability from >$100M annual losses, with a targeted $600M combined EBITDA benefit in 2026.",
-        "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+        "claim": "KeyBanc initiated/upgraded to Buy on 2026-09-10 with FY26 EBITDA lifted to $1,886M and FCF to $632M, signaling improving sell-side conviction into the print.",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-14 · export date unverified]",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The consensus TEV/LTM EBITDA of 10.7x sits at the 82nd percentile of its own 9.2-year history (median 7.7x) — the trailing multiple is near its ceiling, not cheap, and the reconciler flags it as trailing-only with no forward basis to distinguish a depressed level from an impaired one.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "claim": "The trailing EV/EBITDA of 10.7x sits at the 82nd percentile of the name's own 9.5-year range and above the peer median of 8.4x — but this is a depressed-denominator OPTICAL read (LTM EBITDA $1,125M is trough), and the forward NTM TEV/EBITDA of 6.78x is BELOW the peer NTM median of 7.63x, so the 'expensive' trailing signal is the consensus misread; the forward multiple is the real signal and it is not rich.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "On the mechanism, the Q2 pricing surge is explicitly attributed to a Middle East oil-supply disruption management itself calls fluid — an externally-driven, potentially transient spike rather than a structural earnings step, so the catalyst move may fade before the exit.",
-        "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+        "claim": "The margin trend shows EBITDA margin collapsing from 31% (2021) to 7% (2025) to 10% LTM — but read against absolute EBITDA the same reconciler shows the level RISING off the FY25 trough of $834M to $1,125M LTM, so the falling-% is partly the real cyclical impairment and partly an optical trough that is already turning.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The peer discount looks EARNED, not residual: name EBITDA margin 10% vs peer-median 12%, revenue growth -4% vs -0%, EBITDA growth -13% vs +1%, and Debt/EBITDA 4.7x vs 3.8x — worse on growth, margin and leverage together.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Leverage is elevated and above peers — net-debt/EBITDA 3.6x and total-debt/EBITDA 4.7x vs peer median 3.8x — a genuine cyclical-trough risk, though interest coverage of 5.5x and BBB rating temper it.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-16",
         "cited": true
       },
       {
-        "claim": "Leverage is elevated at net-debt/EBITDA 3.6x and the survival read flags FCF-negative cash burn, with CFO $631M − capex $896M = -$265M on the same LTM period.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "claim": "Cash generation is marginal and sign-ambiguous — LTM levered FCF is barely positive at $23.1M, while CFO $631M minus capex $896M is negative $265M on the same sheet, so the self-fund read is MIXED, a genuine survival caveat outweighed by the Q2 EBITDA recovery.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "Returns remain sub-cost-of-capital through the recovery: LTM RoCE 0.5% and RoE -11.9%, with FY25 goodwill impairment of $727M underscoring value destruction that a single strong print does not reverse.",
-        "source_ref": "CIQ Financials→Ratios [LTM 12 months Jun-30-2026]",
+        "claim": "The PEM price surge that drove Q2 is explicitly tied to a fluid Middle East oil-supply disruption management expects 'could persist throughout 2026' but does not control — a genuine reversal risk if the conflict resolves before the exit.",
+        "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The stock has already re-rated sharply off the trough — trading $70.66 versus a 52-week high of $124.23 but well above the $56.33 low — and consensus rates it Hold with a mean target of $92.81, so much of the recovery view is arguably in the price.",
-        "source_ref": "CIQ Estimates→Consensus",
+        "claim": "FY2025 recorded a $727M goodwill impairment and net income of -$1,508M, and cumulative goodwill impairment is 41% of acquired book vs a peer median of ~7% — a genuine capital-allocation red flag on prior deal quality.",
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2025-01-01→2025-12-31, 364d)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
         "name": "LyondellBasell Industries N.V.",
-        "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "North American cost-advantaged commodity chemical peer in the same trough-margin cycle; a trading-multiple analogue where a cyclical print rarely re-rates a structurally depressed commodity book.",
-        "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+        "outcome": "moved on the catalyst",
+        "distinguishing_fact": "North American gas-advantaged commodity chemical producer whose earnings swing on the global cost curve and supply-demand balance — the same PEM lever, in the source-bound peer roster.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Olin Corporation",
         "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "chlorvinyls/caustic peer whose earnings swing on the same PVC and caustic soda supply-demand balance; a supply-shock-driven price spike that normalises tends to fade before a positioned exit.",
+        "distinguishing_fact": "chlor-alkali/PVC-adjacent commodity producer where a price-driven margin uptick can fade as feedstock and supply normalize; in the peer roster with similar leverage.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Dow Inc.",
         "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "large-cap North American commodity chemical peer also carrying trough margins and a recent goodwill write-down; the analogue for a cyclical bounce that the market discounts as non-durable.",
+        "distinguishing_fact": "large-cap commodity chemical name where a cyclical EBITDA bounce is repeatedly discounted by the market ahead of the print; source-bound peer.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Eastman Chemical Company",
-        "outcome": "moved on the catalyst",
-        "distinguishing_fact": "specialty-tilted chemical peer with a self-help/cost-savings narrative; the analogue for a name where a management improvement plan plus a demand leg delivers a beat that moves the print.",
+        "outcome": "was already priced or faded before the exit",
+        "distinguishing_fact": "specialty/commodity hybrid whose trailing multiple can look full at a trough while forward normalizes; peer with negative EBITDA growth in the same roster.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Celanese Corporation",
+        "outcome": "was already priced or faded before the exit",
+        "distinguishing_fact": "leveraged chemical name carrying large goodwill impairments where deal-quality overhang and cyclical earnings weigh on re-rating; source-bound peer.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is the Q2 PEM pricing surge a durable, structurally-advantaged earnings step that the next print confirms — or a transient, oil-shock-driven spike already reflected in a trailing multiple sitting near its own-history ceiling?",
+      "question": "Will the Q2 PEM margin surge and the $600M 3-pillar cost program hold into the 2026-11-03 print, or does it fade with the Middle East oil disruption before the catalyst is realized?",
       "evidence_for": [
         {
-          "claim": "PEM's 21% sequential average-sales-price jump was converted directly into margin by a North American footprint (over 85% of capacity) largely immune to the oil spike hitting higher-cost regions.",
+          "claim": "PEM's 21% sequential price gain converted directly to margin because production costs are North American gas/NGL-based and declined into Q2, and management targets $600M of combined EBITDA benefit in 2026 from the improvement plan tracking ahead of plan.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "A second, non-commodity leg is growing independently: HIP 6% organic volume growth and pipe-and-fittings up ~20% YoY on infrastructure and data-center demand, with the 3-pillar plan tracking ahead of a $600M EBITDA target.",
+          "claim": "HIP's 6% organic volume growth and ~20% pipe-and-fittings growth are infrastructure/data-center driven and independent of the oil disruption, providing a floor if PEM pricing softens.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "FY26 EBITDA consensus rose +7% (12m→latest) with a fresh 2026-09-14 upward revision to EBITDA, EPS and target price.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management attributes the PEM price gain to a Middle East supply disruption it describes as fluid — an external shock that can reverse, not a committed structural change.",
-          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+          "claim": "Management explicitly frames the supply disruption as fluid, oil-driven, and outside its control, expecting it 'could persist' — an assumption, not a commitment, that could reverse before the exit.",
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The trailing multiple is already near its ceiling (10.7x = 82nd percentile of a 9.2-year range, median 7.7x) with no forward basis to prove the level is depressed rather than impaired.",
-          "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+          "claim": "Next-2-FQ revision breadth is heavily negative for normalized EPS (FQ3 3m 0↑/11↓) and EBITDA (FQ3 3m 0↑/11↓), signaling analysts still cutting the near-term quarter the catalyst reports.",
+          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+          "cited": true
+        },
+        {
+          "claim": "HIP faces a near-term cost-timing headwind as PVC resin, transportation and raw-material increases are passed through only with a lag.",
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward/adjusted EV/EBITDA or adjusted EPS in the revised guidance — the trailing 10.7x cannot be resolved into depressed-vs-impaired without a forward basis (a bearish opacity gap).",
-      "No segment EBITDA is disclosed — revenue is segmented but PEM vs HIP EBITDA is not, so the quality/durability of the earnings mix into the print cannot be verified (a bearish disclosure gap).",
-      "Whether the Middle East supply disruption persists or reverses by the 2026-11-03 print — the single largest swing factor on PEM pricing, unresolved in the facts.",
-      "The self-funding read is MIXED (latest-Q OCF negative, LTM FCF positive) — cash-runway visibility is unresolved and covenant basis is UNKNOWN/not disclosed (a bearish opacity leg).",
-      "Export/true-vintage date of the estimates snapshot is a floor only ('≥2026-09-14', unverified) — the freshness of the revision breadth relative to the print is uncertain.",
-      "P/E is NM because the most recent annual EPS is negative; no positive earnings anchor exists to value the equity on a trailing basis."
+      "Company-adjusted/forward EV/EBITDA and adjusted EPS are not in the revised guidance — the forward valuation basis is incomplete, so a temporarily-depressed vs permanently-impaired trailing multiple cannot be distinguished from disclosure (a bearish opacity).",
+      "No segment EBITDA is disclosed — revenue is segmented but EBITDA is not, so the PEM-vs-HIP earnings mix that the whole thesis turns on is not source-visible (a bearish opacity).",
+      "Whether the Middle East oil-supply disruption persists through the exit is unresolved and drives PEM pricing.",
+      "GAAP P/E is NM and the last positive annual EPS predates the current (negative) reporting basis — no meaningful trailing earnings anchor exists.",
+      "The capital-structure panel is 179 days old and predates a 2026-04-06 Item 1.02 termination of a material definitive agreement, so an instrument may already be terminated — verify before relying on the maturity/covenant schedule (a bearish opacity).",
+      "Covenant basis for leverage is UNKNOWN (not disclosed), so proximity to the Total Leverage Ratio ceiling cannot be assessed.",
+      "FQ3 2026 quarter-to-date operating results beyond the qualitative 'plants running well into July' remark are not quantified."
     ]
   },
   "caveats": [
     "ALSO A CURRENT SCREEN CANDIDATE at rank 183 — judged under the 'ultra_short_term' book, not 'overshoot', by operator ruling: operator decision 2026-09-17 — judged as a short-dated trade rather than an overshoot. Follow reason: Westlake Corp (Performance and Essential Materials; Housing and Infrastructure Products), followed under the ULTRA-SHORT-TERM TRADE book by operator decision 2026-09-17 — judged as a short-dated trade, not as a de-rating to underwrite.",
     "primary-source: 8-K 0001193125-26-324110 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-26-153703 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
+    "primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
     "Net debt/EBITDA (3.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.6x as the covenant-basis leverage.",
-    "former registrant name: this CIK filed as \"WESTLAKE CHEMICAL CORP\" (2003-09-22 → 2022-02-01) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0001262823)"
+    "former registrant name: this CIK filed as \"WESTLAKE CHEMICAL CORP\" (2003-09-22 → 2022-02-01) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0001262823)",
+    "Bare peer-comparison (a bear point): 'The trailing EV/EBITDA of 10.7x sits at the 82nd percentile of the name's own 9.5-year range and above the peer median of 8.4x — but this is a depressed-denominator OPTICAL read (LTM EBITDA $1,125M is trough), and the forward NTM TEV/EBITDA of 6.78x is BELOW the peer NTM median of 7.63x, so the 'expensive' trailing signal is the consensus misread; the forward multiple is the real signal and it is not rich.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The trailing EV/EBITDA of 10.7x sits at the 82nd percentile of the name's own 9.5-year range and above the peer median of 8.4x — but this is a depressed-denominator OPTICAL read (LTM EBITDA $1,125M is trough), and the forward NTM TEV/EBITDA of 6.78x is BELOW the peer NTM median of 7.63x, so the 'expensive' trailing signal is the consensus misread; the forward multiple is the real signal and it is not rich.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
-    "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution"
+    "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-17T19:53:24.672714Z",
+  "assembled_at": "2026-09-19T12:19:14.585852Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/da9b3c6e-2496-46e5-9725-9830e8c1208f/scratchpad/wt-artifact/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/da9b3c6e-2496-46e5-9725-9830e8c1208f/scratchpad/wt-cal/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-16"
   },
@@ -8400,7 +8649,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-17T19:55:44.544478Z",
+    "computed_at": "2026-09-19T12:22:19.577529Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
