@@ -178,8 +178,92 @@ def test_a_measure_in_another_currency_is_refused() -> None:
     unit = re.search(r'unitRef="[^"]+"', tag.group(0))
     assert unit is not None
     moved = tag.group(0).replace(unit.group(0), 'unitRef="eur"')
-    with pytest.raises(sf.SegmentFactsUnavailableError, match="not USD"):
+    # the unit is DECLARED, as a real instance declares it: the currency is read off the unit's own
+    # <measure>, never off its id (review of #637)
+    text = _declare_unit(text, "eur", "iso4217:EUR")
+    with pytest.raises(sf.SegmentFactsUnavailableError, match="in EUR, not USD"):
         sf.parse_instance(text.replace(tag.group(0), moved, 1))
+
+
+def _declare_unit(text: str, uid: str, measure: str) -> str:
+    return text.replace("</xbrl>", f'<unit id="{uid}"><measure>{measure}</measure></unit>\n</xbrl>',
+                        1)
+
+
+# --- (review of #637) mutations of REAL fixtures, each a shape the first cut misread ------------
+def test_the_currency_is_read_off_the_unit_not_its_id() -> None:
+    """The unitRef is an ID the FILER chose ("usd", "U_USD", "U001"). The first cut refused any id
+    without the letters "usd" in it — so a filer naming its dollar unit "U001" lost its whole block
+    to UNKNOWN. ⊕ an opaque id declared as iso4217:USD reads identically; ⊖ an undeclared id is
+    refused, never assumed to be dollars."""
+    text = next(_FIX.glob("AMZN_*.xml")).read_text()
+    assert text.count('<unit id="usd">') == 1
+    opaque = text.replace('<unit id="usd">', '<unit id="U001">').replace(
+        'unitRef="usd"', 'unitRef="U001"')
+    r = sf.parse_instance(opaque)
+    assert r is not None and _m(r)["Amazon Web Services"] == (45_606.0, 128_725.0)
+    assert sum(f.profit for f in r.figures) == r.consolidated == 79_975e6
+    undeclared = text.replace('<unit id="usd">', '<unit id="other">')
+    with pytest.raises(sf.SegmentFactsUnavailableError, match="never declares"):
+        sf.parse_instance(undeclared)
+
+
+def test_a_segment_margin_percentage_is_not_a_currency_defect() -> None:
+    """A filer that tags its segments' adjusted-EBITDA MARGIN (unit pure) matched the filer-measure
+    pattern, and the first cut refused the whole filing as "not USD" — a percentage is not an
+    unconverted currency. It is skipped; the dollar measure beside it still reads."""
+    text = _declare_unit(next(_FIX.glob("AMZN_*.xml")).read_text(), "pure", "xbrli:pure")
+    tag = re.search(
+        r'<us-gaap:OperatingIncomeLoss\b[^>]*>45606000000</us-gaap:OperatingIncomeLoss>', text)
+    assert tag is not None
+    pct = (tag.group(0).replace("us-gaap:OperatingIncomeLoss", "amzn:SegmentAdjustedEBITDAMargin")
+           .replace('unitRef="usd"', 'unitRef="pure"').replace(">45606000000<", ">0.354<"))
+    if "xmlns:amzn=" not in text:
+        text = text.replace("<xbrl ", '<xbrl xmlns:amzn="http://www.amazon.com/20251231" ', 1)
+    r = sf.parse_instance(text.replace(tag.group(0), tag.group(0) + pct, 1))
+    assert r is not None and r.measure == sf.OPERATING_INCOME and len(r.figures) == 3
+
+
+def test_the_period_is_the_required_contexts_end_not_the_dei_value() -> None:
+    """A 52/53-week filer may state DocumentPeriodEndDate as the nominal month-end while every
+    context ends on the actual last day of its fiscal year. Matched on the VALUE, no fact is a
+    fiscal-year fact, no segment is seen, and a three-segment filer returned None — "single
+    segment", silently. The required context's own end is the period."""
+    text = next(_FIX.glob("AMZN_*.xml")).read_text()
+    pe = re.search(r"(<dei:DocumentPeriodEndDate[^>]*>)2025-12-31<", text)
+    assert pe is not None
+    shifted = text.replace(pe.group(0), pe.group(1) + "2026-01-02<", 1)
+    r = sf.parse_instance(shifted)
+    assert r is not None and len(r.figures) == 3 and r.period_end.isoformat() == "2025-12-31"
+
+
+def test_a_segment_stated_twice_is_one_segment_not_two() -> None:
+    """Alphabet states each segment on {segment} AND {segment, OperatingSegments}. The first cut
+    keyed carriers by CONTEXT, so a profit tagged on both listed Cloud twice and summed it twice.
+    ⊕ equal figures → one row, the reconciliation unchanged; ⊖ unequal figures → refused."""
+    text = next(_FIX.glob("GOOGL_*.xml")).read_text()
+    base = sf.parse_instance(text)
+    assert base is not None
+    bare = next(
+        cid for cid, body in re.findall(r'<context id="([^"]+)">(.*?)</context>', text, re.S)
+        if "goog:GoogleCloudMember" in body and "ConsolidationItemsAxis" not in body
+        and "<startDate>2025-01-01</startDate>" in body
+        and body.count("</xbrldi:explicitMember>") == 1)
+    anchor = re.search(
+        r'<us-gaap:OperatingIncomeLoss\b[^>]*>13910000000</us-gaap:OperatingIncomeLoss>', text)
+    assert anchor is not None
+
+    def with_bare(value: str) -> str:
+        extra = (f'<us-gaap:OperatingIncomeLoss contextRef="{bare}" decimals="-6" id="f-dup" '
+                 f'unitRef="usd">{value}</us-gaap:OperatingIncomeLoss>')
+        return text.replace(anchor.group(0), anchor.group(0) + extra, 1)
+
+    twice = sf.parse_instance(with_bare("13910000000"))
+    assert twice is not None
+    assert [f.segment for f in twice.figures].count("Google Cloud") == 1
+    assert _m(twice) == _m(base)
+    with pytest.raises(sf.SegmentFactsUnavailableError, match="twice with different figures"):
+        sf.parse_instance(with_bare("13000000000"))
 
 
 def test_humanise_keeps_the_filers_words() -> None:

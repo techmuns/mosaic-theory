@@ -73,6 +73,7 @@ _REVENUE = ("us-gaap:Revenues", "us-gaap:RevenueFromContractWithCustomerExcludin
             "us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax")
 _XBRLI = "{http://www.xbrl.org/2003/instance}"
 _XBRLDI = "{http://xbrl.org/2006/xbrldi}"
+_ISO4217 = "http://www.xbrl.org/2003/iso4217"
 
 
 class SegmentFactsUnavailableError(RuntimeError):
@@ -169,11 +170,6 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
     def qn(node: ET.Element) -> str:
         return _qname(node.tag, prefixes)
 
-    pe_node = next((n for n in root if qn(n) == "dei:DocumentPeriodEndDate"), None)
-    period_end = _iso(pe_node)
-    if period_end is None:
-        raise SegmentFactsUnavailableError(f"{accession}: no dei:DocumentPeriodEndDate")
-
     contexts: dict[str, tuple[dict[str, str], date | None, date | None]] = {}
     for ctx in root.iter(f"{_XBRLI}context"):
         dims = {m.get("dimension", ""): (m.text or "").strip()
@@ -181,6 +177,29 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
         contexts[ctx.get("id", "")] = (dims,
                                        _iso(ctx.find(f"{_XBRLI}period/{_XBRLI}startDate")),
                                        _iso(ctx.find(f"{_XBRLI}period/{_XBRLI}endDate")))
+
+    pe_node = next((n for n in root if qn(n) == "dei:DocumentPeriodEndDate"), None)
+    if _iso(pe_node) is None or pe_node is None:
+        raise SegmentFactsUnavailableError(f"{accession}: no dei:DocumentPeriodEndDate")
+    # THE PERIOD IS THE REQUIRED CONTEXT'S END, not the dei VALUE. A 52/53-week filer may state
+    # its period end as the nominal month-end while every fact's context ends on the actual last
+    # Saturday; matched on the value, no fact is a fiscal-year fact, no segment is seen, and a
+    # multi-segment filer reads as single-segment — silently. The value is the fallback only.
+    period_end = contexts.get(pe_node.get("contextRef", ""), ({}, None, None))[2] or _iso(pe_node)
+    assert period_end is not None
+
+    # unit id → its currency (the ISO 4217 code), or None for a non-monetary unit (pure, shares,
+    # a ratio). The unitRef is an ID the filer chose ("usd", "U_USD", "U001"); only the unit's own
+    # <measure> says what it is — the id is a label, never read as a fact.
+    ns_of = {pfx: uri for uri, pfx in prefixes.items()}
+    currency: dict[str, str | None] = {}
+    for u in root.iter(f"{_XBRLI}unit"):
+        ms = [(m.text or "").strip() for m in u.iter(f"{_XBRLI}measure")]
+        pfx, _, code = ms[0].partition(":") if len(ms) == 1 else ("", "", "")
+        # the ISO 4217 namespace by its URI; the conventional prefix is accepted only when the
+        # document does not bind it to something else (a trimmed instance may omit the xmlns)
+        iso = ns_of.get(pfx, _ISO4217 if pfx == "iso4217" else "") == _ISO4217
+        currency[u.get("id", "")] = code.upper() if code and iso else None
 
     def fiscal_year(cid: str) -> bool:
         _dims, start, stop = contexts.get(cid, ({}, None, None))
@@ -198,14 +217,25 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
         except ValueError:
             continue
         element, dims = qn(node), contexts[cid][0]
-        unit = (node.get("unitRef") or "").lower()
+        unit_id = node.get("unitRef") or ""
         member_here = _segment_member(dims)
         if member_here is not None:
             segment_members.add(member_here)
-            if unit and "usd" not in unit and _is_measure_or_revenue(element):
+        if unit_id not in currency:
+            if member_here is not None and _is_measure_or_revenue(element):
                 raise SegmentFactsUnavailableError(
-                    f"{accession}: {element} is tagged in {unit!r}, not USD — refused, never "
+                    f"{accession}: {element} names unit {unit_id!r}, which the instance never "
+                    f"declares — refused, never assumed to be USD")
+            continue
+        cur = currency[unit_id]
+        if cur is None:
+            continue    # a margin %, a share count, a ratio — never a profit or a revenue amount
+        if cur != "USD":
+            if member_here is not None and _is_measure_or_revenue(element):
+                raise SegmentFactsUnavailableError(
+                    f"{accession}: {element} is tagged in {cur}, not USD — refused, never "
                     f"printed unconverted")
+            continue
         by_ctx[(element, tuple(sorted(dims.items())))] = val
     # ONE SEGMENT IS A SINGLE-SEGMENT FILER, not a failure. Since the 2024 segment-disclosure rule
     # (ASU 2023-07) a one-segment company tags that one segment too — LLY, NFLX, CNXC, NCNO, VITL,
@@ -216,8 +246,25 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
         return None
 
     def carriers(element: str) -> dict[Dims, float]:
-        return {d: v for (el, d), v in by_ctx.items()
-                if el == element and _segment_member(dict(d)) is not None}
+        """ONE context per SEGMENT MEMBER. A filer may state a segment's figure twice — on
+        {segment} and on {segment, OperatingSegments} (Alphabet does, for revenue) — and a context
+        count would list that segment twice and sum it twice. Equal figures are one segment (the
+        qualified context kept); unequal figures for one member are refused, never picked."""
+        out: dict[str, tuple[Dims, float]] = {}
+        for (el, d), v in by_ctx.items():
+            member = _segment_member(dict(d)) if el == element else None
+            if member is None:
+                continue
+            if member in out:
+                prev_d, prev_v = out[member]
+                if prev_v != v:
+                    raise SegmentFactsUnavailableError(
+                        f"{accession}: {element} states {member} twice with different figures "
+                        f"({prev_v:,.0f} vs {v:,.0f}) — not guessed between")
+                if CONSOLIDATION_AXIS in dict(prev_d):
+                    continue
+            out[member] = (d, v)
+        return dict(out.values())
 
     elements = {el for (el, _d) in by_ctx}
     ordered = ([OPERATING_INCOME]

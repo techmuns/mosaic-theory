@@ -39,7 +39,14 @@ multi-segment, every one reconciling to the filer's own total; 12 single-segment
 | PARR | operating income | 659.3 | 538.8 consolidated (corporate) |
 
 Nine fixtures, each a real 10-K instance trimmed to the facts the rules read and proven, when frozen,
-to read identically to the full filing. 14 pins; **13 mutations, 13 caught.**
+to read identically to the full filing. 18 pins; **18 mutations, 18 caught.**
+
+**Review (medium) found four more, all fixed before merge**, each pinned on a real fixture mutated into the shape the first cut misread:
+- **The period is the required context's END, not the `dei` value.** A 52/53-week filer states a nominal month-end while its facts end on the actual last Saturday; matched on the value, no fact is a fiscal-year fact and a multi-segment filer silently read as single-segment.
+- **The currency is read off the unit's own ISO-4217 measure, never its id.** The first cut looked for the letters "usd" in a filer-chosen unit id — a display-string heuristic — so a filer naming its dollar unit `U001` would have lost its whole block. An undeclared unit is refused.
+- **A non-monetary unit is skipped, not refused.** A segment margin in `pure` whose name matched the filer-measure pattern refused the whole filing as "not USD".
+- **One figure per segment.** A segment stated on both the bare and the qualified context was listed and summed twice; equal figures are one segment, unequal ones are refused.
+Re-run on all 22 committed pages: identical segment sums on all 10 multi-segment names, 12 single-segment, 0 unknown.
 
 **THE CORPUS CORRECTED THE DESIGN FOUR TIMES** before it shipped.
 - **EPAM's segments are geographies** — tagged on the geographical axis beside the operating-segments
