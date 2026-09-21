@@ -640,12 +640,14 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         return None
     yrs = f"{median_years}-year" if median_years else "historical"
     if gap > 0:
-        tail = ("so this value answers what the business is worth if it is still what it was. If "
+        # "an R1 value", never "this value": the flag also rides on an R1 anchor that publishes NO
+        # value (GOOGL, NFLX — inputs incomplete), and "this value" there points at nothing
+        tail = ("so an R1 value answers what the business is worth if it is still what it was. If "
                 "the gap is STRUCTURAL — a changed mix or model — that history understates it; if "
                 "it is a cyclical PEAK, reverting is right.")
         where = "ABOVE"
     else:
-        tail = ("so this value assumes a recovery to what the business was. If the decline is "
+        tail = ("so an R1 value assumes a recovery to what the business was. If the decline is "
                 "STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting "
                 "recovery is right.")
         where = "BELOW"
@@ -661,7 +663,9 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         by, bgap = None, None
     else:
         by, g_m, c_m = basis
-        bgap = abs(c_m - g_m) * 100
+        # decided on the SAME rounding it is stored at (the gap_pts rule above): unrounded, 1.996
+        # read "agree" while the record stored basis_gap_pts=2.0, which the threshold calls "differ"
+        bgap = round(abs(c_m - g_m) * 100, 2)
         if bgap < BASIS_AGREE_PTS:
             bsent = (f" The two sources agree within {bgap:.1f} points on FY{by}, so the gap is "
                      f"the business, not the source.")

@@ -35,7 +35,9 @@ identical inputs: **no value moved on any of 22** (base value, EV/EBIT, margin, 
 quality); **only AMZN's two labels changed.** The flag fires on 7 of 16 R1 anchors — AMZN +6.8,
 GOOGL +6.8, LLY +19.9, NFLX +18.2, PARR +10.5 above; WLK −8.7, BRBR −5.7 below — and is silent on
 the other nine. Preview rendered from committed JSON in both renderers, scanned for
-`undefined`/`null`/`NaN`: none. Nine new pins, each red on the baseline; 12 mutations, 12 caught.
+`undefined`/`null`/`NaN`: none. Ten new pins plus the updated schema-shape pin — every one red on the baseline except the no-churn round-trip guard, which exists to redden only if a null key ever appears; **14 mutations, 14 caught.**
+
+**Review (medium) found two more, both fixed before merge.** The sentence said "this value" on anchors that publish NO value — GOOGL and NFLX fire the flag with inputs incomplete — so it now names "an R1 value". And the basis disagreement was decided unrounded: 1.996 points read "agree" while the record stored 2.0, which the threshold calls "differ" — the same bug class as the five-point boundary, now decided on the stored rounding too. Re-run on all 22: no value moved, the flag fires on the same seven.
 
 **THREE THINGS THE CORPUS CORRECTED BEFORE THIS SHIPPED.**
 - **The two legs are different sources, and the first draft claimed otherwise.** The LTM is CIQ

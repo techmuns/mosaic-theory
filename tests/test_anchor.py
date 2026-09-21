@@ -677,3 +677,32 @@ console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under st
                          capture_output=True, text=True, check=True)
     assert json.loads(out.stdout.strip().splitlines()[-1]) == {"on": True, "sentence": True,
                                                                "off": False}
+
+
+def test_midcycle_basis_verdict_is_decided_on_the_stored_rounding() -> None:
+    """(review of #636) The gap is decided on the rounding it is stored at; the basis disagreement
+    must be too. Unrounded, a 1.996-point disagreement read "agree" while the record stored
+    basis_gap_pts=2.0 — a value the threshold itself calls "differ". Sentence and record must agree.
+    ⊕ just inside the threshold agrees; ⊖ a value that stores as 2.0 differs."""
+    inside = _gap(_AMZN, basis=(2025, 0.100, 0.1198))            # 1.98 points
+    assert inside is not None and inside.basis_gap_pts == pytest.approx(1.98)
+    assert "agree within" in inside.read
+    edge = _gap(_AMZN, basis=(2025, 0.100, 0.119996))            # 1.9996 → stored 2.0
+    assert edge is not None and edge.basis_gap_pts == pytest.approx(2.0)
+    assert "agree within" not in edge.read and "may be basis, not business" in edge.read
+
+
+def test_midcycle_flag_never_points_at_a_value_that_is_not_published() -> None:
+    """(review of #636) The flag rides on EVERY R1 anchor, including the ones that publish no base
+    value (GOOGL, NFLX on 2026-09-21: "R1 inputs incomplete"). "so this value answers …" there
+    points at nothing on the page. Both directions must name the recipe's value, not a
+    demonstrative."""
+    for g in (_gap(_AMZN), _gap(_WLK)):
+        assert g is not None and "this value" not in g.read and "an R1 value" in g.read
+    googl = Dossier.model_validate_json((_ROOT / "data/dossiers/GOOGL/dossier.json").read_text())
+    assert googl.anchor is not None and googl.anchor.anchor_base_value_per_share is None
+    m = googl.mechanical.model_dump(mode="json")
+    g = anc.midcycle_gap(googl.anchor.margin.value if googl.anchor.margin else None, 10,
+                         ltm_ebit=anc._ltm_ebit_from_fs(m), ltm_revenue=anc._ltm_revenue_from_fs(m))
+    assert g is not None, "GOOGL's own numbers no longer fire — the unvalued case is untested"
+    assert "this value" not in g.read
