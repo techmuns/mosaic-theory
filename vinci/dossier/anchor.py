@@ -86,8 +86,9 @@ MIDCYCLE_GAP_PTS = 5.0
 #: litigation charges GAAP carries and CIQ strips. An earlier draft of this note claimed the
 #: threshold "sits well clear of the basis difference"; the fleet showed that false, so the flag
 #: now REPORTS the same-year disagreement beside every gap instead of forcing the legs to match.
-#: Within this many points the sources are said to agree; beyond it the page says part of the gap
-#: may be basis, not business.
+#: Within this many points the sources are said to agree; beyond it the page says which way the
+#: difference pushes the gap — part of it may be basis, or the difference can only be hiding part
+#: of it (WLK, below the median with CIQ above GAAP, is the second kind).
 BASIS_AGREE_PTS = 2.0
 
 
@@ -122,6 +123,11 @@ class AnchorMidcycleGap(BaseModel, frozen=True):
     # how much of ``gap_pts`` could be basis rather than business. None when no common year exists.
     basis_year: int | None = None
     basis_gap_pts: float | None = None  # |CIQ EBIT margin − EDGAR GAAP margin| on basis_year
+    # the two margins themselves on basis_year (fractions, signed), so WHICH WAY the sources
+    # disagree is data, not prose — the sign decides whether the difference can account for part
+    # of the gap or can only hide part of it (``midcycle_gap``). Set exactly when basis_year is.
+    basis_gaap_margin: float | None = None
+    basis_ciq_margin: float | None = None
     # True when R1's median itself came from the committed CIQ panel (EDGAR tags no operating
     # income — LLY), so both legs are ONE source and there is no basis difference to discount
     same_source: bool = False
@@ -619,6 +625,16 @@ def basis_check(gaap_by_year: dict[int, float],
     return y, gaap_by_year[y], ciq[y]
 
 
+def _margin_words(x: float) -> str:
+    """A margin as the screening block may print it: a loss in WORDS, never a signed percentage.
+
+    That block is fenced against any signed percentage (`test_parity_pins`: one there reads as an
+    upside against spot), and a negative margin formatted ``:.1%`` is exactly that token — WLK's
+    FY2025 printed "GAAP -14.1% vs CIQ -1.6%" and turned the fence red on the first artifact pass
+    that carried the flag."""
+    return f"{x:.1%}" if x >= 0 else f"a {abs(x):.1%} loss"
+
+
 def midcycle_gap(median_margin: float | None, median_years: int | None, *,
                  ltm_ebit: float | None, ltm_revenue: float | None,
                  median_source: str = "",
@@ -656,11 +672,11 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         bsent = (" Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, "
                  "so R1's median already came from the committed panel — and there is no source "
                  "difference to discount.")
-        by, bgap = None, None
+        by, bgap, g_m, c_m = None, None, None, None
     elif basis is None:
         bsent = (" The two sources — CIQ EBIT for the twelve months, EDGAR GAAP operating "
                  "income for the median — share no fiscal year to test against each other.")
-        by, bgap = None, None
+        by, bgap, g_m, c_m = None, None, None, None
     else:
         by, g_m, c_m = basis
         # decided on the SAME rounding it is stored at (the gap_pts rule above): unrounded, 1.996
@@ -670,12 +686,32 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
             bsent = (f" The two sources agree within {bgap:.1f} points on FY{by}, so the gap is "
                      f"the business, not the source.")
         else:
-            bsent = (f" On FY{by} the two sources differ by {bgap:.1f} points (GAAP {g_m:.1%} vs "
-                     f"CIQ {c_m:.1%}): GAAP carries charges CIQ's EBIT excludes, and R1's median "
-                     f"sits on the GAAP side, so part of this gap may be basis, not business.")
-    read = (f"The last twelve months' operating margin of {ltm:.1%} (CIQ EBIT) sits "
-            f"{abs(gap):.1f} points {where} the {yrs} median of {median_margin:.1%} ({med_src}) "
-            f"that R1 reverts to. R1 pairs that median with the median multiple "
+            # WHICH WAY THE DIFFERENCE PUSHES THE SHOWN GAP. The twelve months are CIQ and the
+            # median GAAP, so where CIQ reads above GAAP the shown gap is pushed UP: that can
+            # manufacture part of a gap ABOVE, and can only NARROW a gap BELOW — and the mirror
+            # where CIQ reads below. The first draft said "part of this gap may be basis" either
+            # way, and WLK's page (8.7 points BELOW, CIQ 12.5 points ABOVE GAAP on FY2025) told
+            # the reader to discount a gap that measures 8.8 points with CIQ on both legs and
+            # 20.8 with GAAP on both.
+            ciq_above = c_m > g_m
+            if ciq_above:
+                why = ("GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the "
+                       "GAAP side")
+                pull = "pulls the median down toward the twelve months"
+            else:
+                why = "CIQ's EBIT reads below GAAP, and the twelve months sit on the CIQ side"
+                pull = "pulls the twelve months down toward the median"
+            bsent = (f" On FY{by} the two sources differ by {bgap:.1f} points (GAAP "
+                     f"{_margin_words(g_m)} vs CIQ {_margin_words(c_m)}): {why}")
+            if ciq_above == (gap > 0):
+                bsent += ", so part of this gap may be basis, not business."
+            else:
+                bsent += (f" — which {pull}, so the difference narrows this gap rather than "
+                          f"creating it: no reason to discount it, and if anything it "
+                          f"understates it.")
+    read = (f"The last twelve months' operating margin of {_margin_words(ltm)} (CIQ EBIT) sits "
+            f"{abs(gap):.1f} points {where} the {yrs} median of {_margin_words(median_margin)} "
+            f"({med_src}) that R1 reverts to. R1 pairs that median with the median multiple "
             f"from the same history, {tail}{bsent}")
     basis_txt = (f"LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: "
                  f"{median_source or 'the anchor margin'}; flagged at ≥{MIDCYCLE_GAP_PTS:g} "
@@ -685,6 +721,8 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         median_years=int(median_years or 0), gap_pts=round(gap, 2),
         ltm_side="above" if gap > 0 else "below", basis_year=by,
         basis_gap_pts=(round(bgap, 2) if bgap is not None else None),
+        basis_gaap_margin=(round(g_m, 6) if g_m is not None else None),
+        basis_ciq_margin=(round(c_m, 6) if c_m is not None else None),
         same_source=median_from_ciq, basis=basis_txt, read=read)
 
 

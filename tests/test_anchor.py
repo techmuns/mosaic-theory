@@ -7,6 +7,7 @@ positivity guard (non-positive margin → R2_NEEDED), and the byte-preserving ba
 from __future__ import annotations
 
 import json
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -563,7 +564,11 @@ def test_midcycle_flag_fires_both_ways_and_says_what_it_cannot_know() -> None:
     assert "BELOW" in down.read and "TROUGH" in down.read
     # ⊖ the basis the flag cannot hide: WLK's GAAP carries 12.5 points of charges CIQ's EBIT strips
     assert down.basis_gap_pts == pytest.approx(12.5, abs=0.01)
-    assert "may be basis, not business" in down.read
+    # … which pushes the shown gap UP, so on a gap BELOW it can only be hiding part of it. The first
+    # version pinned "may be basis, not business" here — the defect itself, pinned as the expected
+    # output (test_basis_sentence_follows_which_way_the_sources_disagree has the four cases)
+    assert "may be basis, not business" not in down.read
+    assert "narrows this gap rather than creating it" in down.read
 
     # ⊖ inside the threshold, and whenever a leg is missing: SILENT, never "checked and held"
     assert _gap(_EPAM, basis=(2025, 0.095, 0.107)) is None       # −0.7 points
@@ -617,7 +622,12 @@ def test_an_anchor_that_does_not_fire_serialises_without_the_key() -> None:
 
 def test_committed_pages_round_trip_byte_identically_with_the_new_field() -> None:
     """THE CORPUS CHECK for the additive claim: every committed dossier re-serialised through the
-    one writer carries no null key — the new optional field costs no page a single byte."""
+    one writer neither GROWS the key nor loses it — a page with no flag gains no null, a page with
+    one keeps it.
+
+    Asserted as presence PARITY, not absence. The first version asserted the key never appears,
+    which holds only until an artifact pass lands a real flag — and it reddened on exactly that
+    pass (AMZN, 2026-09-21), a guard written for a null key refusing a legitimate one."""
     from vinci.dossier.schemas import dossier_json
     seen = 0
     for jp in sorted((_ROOT / "data" / "dossiers").glob("*/dossier.json")):
@@ -626,7 +636,10 @@ def test_committed_pages_round_trip_byte_identically_with_the_new_field() -> Non
         if doc.anchor is None:
             continue
         seen += 1
-        assert '"midcycle_gap"' not in dossier_json(doc), f"{jp.parent.name} grew a null key"
+        written = dossier_json(doc)
+        assert ('"midcycle_gap"' in written) is ('"midcycle_gap"' in raw), (
+            f"{jp.parent.name} grew or lost the key on round-trip")
+        assert '"midcycle_gap": null' not in written, f"{jp.parent.name} grew a null key"
     assert seen >= 1, "no committed anchor to test against — the pin is blind"
 
 
@@ -706,3 +719,100 @@ def test_midcycle_flag_never_points_at_a_value_that_is_not_published() -> None:
                          ltm_ebit=anc._ltm_ebit_from_fs(m), ltm_revenue=anc._ltm_revenue_from_fs(m))
     assert g is not None, "GOOGL's own numbers no longer fire — the unvalued case is untested"
     assert "this value" not in g.read
+
+
+# --- (2026-09-21, first artifact pass to carry the flag) which way the basis difference points ---
+_INFLATES, _HIDES = "may be basis, not business", "narrows this gap rather than creating it"
+#: the screening-block fence's own pattern (test_parity_pins)
+_SIGNED_PCT = re.compile(r"[+-]\d+(\.\d+)?%")
+
+
+def test_basis_sentence_follows_which_way_the_sources_disagree() -> None:
+    """The twelve months are CIQ and the median GAAP, so a year where CIQ reads above GAAP pushes
+    the shown gap UP: it can manufacture part of a gap ABOVE and can only NARROW a gap BELOW — and
+    the mirror where CIQ reads below. The first version said "part of this gap may be basis" in all
+    four cases; WLK's page (8.7 BELOW, CIQ 12.5 ABOVE GAAP on FY2025) told the reader to discount a
+    gap that measures 8.8 points with CIQ on both legs and 20.8 with GAAP on both."""
+    cases = [  # (median, LTM EBIT on revenue 100, (year, GAAP, CIQ), inflates?)
+        (0.05, 12.0, (2025, 0.02, 0.06), True),     # ABOVE, CIQ above GAAP
+        (0.10, 2.0, (2025, 0.00, 0.05), False),     # BELOW, CIQ above GAAP — WLK's quadrant
+        (0.10, 2.0, (2025, 0.06, 0.02), True),      # BELOW, CIQ below GAAP
+        (0.05, 12.0, (2025, 0.06, 0.02), False),    # ABOVE, CIQ below GAAP
+    ]
+    for med, ebit, basis, inflates in cases:
+        g = anc.midcycle_gap(med, 10, ltm_ebit=ebit, ltm_revenue=100.0, basis=basis)
+        assert g is not None
+        assert (_INFLATES in g.read) is inflates and (_HIDES in g.read) is (not inflates), g.read
+        # the cause is named only where it is the cause: charges GAAP carries put CIQ ABOVE it
+        assert ("carries charges" in g.read) is (basis[2] > basis[1]), g.read
+        # the direction is DATA, not only prose: both margins ride beside the unsigned gap
+        assert (g.basis_gaap_margin, g.basis_ciq_margin) == (basis[1], basis[2])
+    # ⊖ no year to test, or one source: no margins stored and no direction claimed
+    for g in (_gap(_AMZN), _gap(_LLY, median_from_ciq=True)):
+        assert g is not None and g.basis_gaap_margin is None and g.basis_ciq_margin is None
+        assert _INFLATES not in g.read and _HIDES not in g.read
+
+
+def test_the_flag_never_prints_a_signed_percentage() -> None:
+    """The screening block is fenced against ANY signed percentage (test_parity_pins: one there
+    reads as an upside against spot). WLK's FY2025 is a loss on both sources, and the first version
+    printed "GAAP -14.1% vs CIQ -1.6%" — red on the first artifact pass to carry the flag. A loss
+    is stated in words, and so is a loss-making twelve months; a positive margin still prints as a
+    plain level."""
+    wlk = _gap(_WLK, basis=(2025, -0.141, -0.016))
+    assert wlk is not None
+    assert not _SIGNED_PCT.search(wlk.read), wlk.read
+    assert "GAAP a 14.1% loss vs CIQ a 1.6% loss" in wlk.read
+    loss = anc.midcycle_gap(0.06, 10, ltm_ebit=-3.0, ltm_revenue=100.0)
+    assert loss is not None
+    assert not _SIGNED_PCT.search(loss.read), loss.read
+    assert "operating margin of a 3.0% loss" in loss.read
+    amzn = _gap(_AMZN)
+    assert amzn is not None and "operating margin of 12.1%" in amzn.read
+
+
+def test_wlk_flag_reaches_the_screening_block_unsigned_and_the_right_way_round_e2e() -> None:
+    """TEST-LAYER RULE — the failure was OBSERVED on WLK's rendered page, so it is pinned there:
+    WLK's committed JSON, the flag its own committed numbers produce (LTM and median from the page,
+    the basis year checked against its committed CIQ panel), rendered through the screening block
+    the fence reads. The one input frozen here is EDGAR's FY2025 GAAP margin — companyfacts
+    OperatingIncomeLoss −1,578 / Revenues 11,170 ($M, fiscal year ending 2025-12-31), fetched
+    2026-09-21. The direction is asserted from WHICHEVER quadrant the page's numbers land in, so a
+    re-assembled page cannot turn this into a stale value pin."""
+    from vinci.dossier import render as dr
+    wlk = Dossier.model_validate_json((_ROOT / "data/dossiers/WLK/dossier.json").read_text())
+    assert wlk.anchor is not None and wlk.anchor.margin is not None
+    m = wlk.mechanical.model_dump(mode="json")
+    basis = anc.basis_check({2025: -1578 / 11170}, m)
+    assert basis is not None and basis[0] == 2025, "WLK's panel no longer carries FY2025 actuals"
+    gap = anc.midcycle_gap(wlk.anchor.margin.value, wlk.anchor.margin.anchor_years,
+                           ltm_ebit=anc._ltm_ebit_from_fs(m),
+                           ltm_revenue=anc._ltm_revenue_from_fs(m), basis=basis)
+    assert gap is not None, "WLK's own numbers no longer fire the flag — re-pick the fixture"
+    assert gap.basis_gap_pts is not None and gap.basis_gap_pts >= anc.BASIS_AGREE_PTS
+    flagged = wlk.anchor.model_copy(update={"midcycle_gap": gap})
+    md = "\n".join(dr._screening_context_lines(flagged))
+    assert "Mid-cycle assumption under strain." in md and gap.read in md
+    assert not _SIGNED_PCT.search(md), md
+    inflates = (basis[2] > basis[1]) == (gap.gap_pts > 0)
+    assert (_INFLATES in md) is inflates and (_HIDES in md) is (not inflates), md
+
+
+def test_every_committed_flag_states_the_basis_the_right_way_round() -> None:
+    """The corpus half of the direction rule, read from the STRUCTURED margins — never parsed back
+    out of the sentence: wherever a committed flag says the sources differ, it says "may be basis"
+    exactly when the difference pushes the shown gap the way the gap points, and "narrows"
+    otherwise. A flag written before the margins were stored has none, and is refused rather than
+    excused. Until an artifact pass lands a flag this reads nothing — by design: the three pins
+    above carry the rule, and this one was shown to catch WLK's page as the first pass wrote it."""
+    for jp in sorted((_ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        a = Dossier.model_validate_json(jp.read_text()).anchor
+        g = a.midcycle_gap if a is not None else None
+        if g is None or g.basis_gap_pts is None or g.basis_gap_pts < anc.BASIS_AGREE_PTS:
+            continue
+        assert g.basis_gaap_margin is not None and g.basis_ciq_margin is not None, (
+            f"{jp.parent.name}: the flag says the sources differ but stores neither margin — "
+            "written before the direction was data; re-run anchor-backfill")
+        inflates = (g.basis_ciq_margin > g.basis_gaap_margin) == (g.gap_pts > 0)
+        assert (_INFLATES in g.read) is inflates and (_HIDES in g.read) is (not inflates), (
+            jp.parent.name, g.read)

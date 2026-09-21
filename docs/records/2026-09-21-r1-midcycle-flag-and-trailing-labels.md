@@ -60,3 +60,17 @@ Both set by face validity; neither read a forward return.
 are recomputed — `anchor-backfill`, an artifact step, never bundled with this code. The one
 string-parse of these labels (`audit_r1.py`, `"not LTM" in basis`) now correctly stops flagging
 AMZN; it is pre-existing and left as it is.
+## Amendments
+
+**2026-09-21 — two claims above are wrong. The first artifact pass to carry the flag found both.**
+
+1. *"WLK's says 'part of this gap may be basis, not business'"*: it did, and it pointed the wrong
+   way. WLK's gap is BELOW the median and CIQ reads ABOVE GAAP, so the source difference narrows the
+   shown gap rather than creating it. The gap shown is 8.7 points; it is 8.8 with CIQ on both legs
+   and 20.8 with GAAP on both. The same sentence also printed "GAAP -14.1% vs CIQ -1.6%" into the
+   screening block, which is fenced against any signed percentage.
+2. *"the no-churn round-trip guard, which exists to redden only if a null key ever appears"*: as
+   written, it asserted the key never appears at all. So it went red on the first page to carry a
+   real flag.
+
+Both are fixed, with pins, in `docs/records/2026-09-21-r1-flag-basis-direction-and-fence.md`.

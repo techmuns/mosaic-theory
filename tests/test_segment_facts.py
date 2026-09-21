@@ -287,13 +287,21 @@ def test_the_page_sentence_names_the_measure_and_the_reconciliation() -> None:
 
 
 def test_committed_pages_round_trip_without_the_new_key() -> None:
-    """THE CORPUS CHECK for the additive claim: no committed page grows a key on round-trip."""
+    """THE CORPUS CHECK for the additive claim: no committed page grows a key on round-trip — a page
+    without the block gains no null, a page with one keeps it.
+
+    Asserted as presence PARITY, not absence. The first version asserted the key never appears,
+    which holds only until an artifact pass lands a real block — and it reddened on exactly that
+    pass (AMZN, 2026-09-21), a guard written for a null key refusing a legitimate one."""
     from vinci.dossier.schemas import Dossier, dossier_json
     pages = sorted((_ROOT / "data" / "dossiers").glob("*/dossier.json"))
     assert pages, "no committed pages — the pin is blind"
     for jp in pages:
-        written = dossier_json(Dossier.model_validate_json(jp.read_text()))
-        assert '"segment_profit"' not in written, f"{jp.parent.name} grew a null key"
+        raw = jp.read_text()
+        written = dossier_json(Dossier.model_validate_json(raw))
+        assert ('"segment_profit"' in written) is ('"segment_profit"' in raw), (
+            f"{jp.parent.name} grew or lost the key on round-trip")
+        assert '"segment_profit": null' not in written, f"{jp.parent.name} grew a null key"
 
 
 def test_the_line_reaches_both_pages_and_a_single_segment_page_draws_nothing() -> None:
