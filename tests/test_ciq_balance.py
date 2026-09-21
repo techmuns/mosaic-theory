@@ -114,7 +114,7 @@ def test_dep_amort_prefers_the_freshest_tag_not_the_first_alias() -> None:
         DepreciationAndAmortization=[_pt("b", "2024-12-31", 38_500_000.0, 2024)])
     got = _latest_dep_amort(f)
     assert got is not None
-    value, source = got
+    value, source, _basis = got
     assert value == pytest.approx(38_500_000.0), "picked the stale alias"
     assert "DepreciationAndAmortization" in source
     assert "CHOSEN BY VINTAGE" in source and "10y behind" in source
@@ -126,7 +126,7 @@ def test_dep_amort_keeps_the_combined_tag_when_it_is_current() -> None:
     from vinci.dossier.anchor import _latest_dep_amort
     f = _facts_us(
         DepreciationDepletionAndAmortization=[_pt("a", "2025-12-31", 200_309_000.0, 2025)])
-    value, source = _latest_dep_amort(f)  # type: ignore[misc]
+    value, source, _basis = _latest_dep_amort(f)  # type: ignore[misc]
     assert value == pytest.approx(200_309_000.0)
     assert "CHOSEN BY VINTAGE" not in source
 
@@ -138,7 +138,7 @@ def test_dep_amort_takes_a_fresher_split_over_a_stale_combined() -> None:
         DepreciationDepletionAndAmortization=[_pt("a", "2020-12-31", 10_000_000.0, 2020)],
         Depreciation=[_pt("d", "2025-12-31", 53_100_000.0, 2025)],
         AmortizationOfIntangibleAssets=[_pt("m", "2025-12-31", 71_367_000.0, 2025)])
-    value, source = _latest_dep_amort(f)  # type: ignore[misc]
+    value, source, _basis = _latest_dep_amort(f)  # type: ignore[misc]
     assert value == pytest.approx(124_467_000.0)
     assert "split" in source and "CHOSEN BY VINTAGE" in source
 
@@ -151,7 +151,7 @@ def test_dep_amort_refuses_a_misaligned_split() -> None:
         DepreciationDepletionAndAmortization=[_pt("a", "2020-12-31", 10_000_000.0, 2020)],
         Depreciation=[_pt("d", "2025-12-31", 53_100_000.0, 2025)],
         AmortizationOfIntangibleAssets=[_pt("m", "2024-12-31", 71_367_000.0, 2024)])
-    value, _source = _latest_dep_amort(f)  # type: ignore[misc]
+    value, _source, _basis = _latest_dep_amort(f)  # type: ignore[misc]
     assert value == pytest.approx(10_000_000.0), "a misaligned split must not be summed"
 
 
@@ -168,7 +168,7 @@ def test_dep_amort_magnitude_survives_the_dollars_to_millions_boundary() -> None
     would pass either way and catch nothing."""
     from vinci.dossier.anchor import _latest_dep_amort
     f = _facts_us(DepreciationAndAmortization=[_pt("b", "2025-12-31", 124_811_000.0, 2025)])
-    value, _ = _latest_dep_amort(f)  # type: ignore[misc]
+    value, _, _basis = _latest_dep_amort(f)  # type: ignore[misc]
     assert 1e8 < value < 1e9, f"{value} is not a dollar figure for a $125M D&A"
     assert value / 1e6 == pytest.approx(124.811)
 
@@ -179,7 +179,7 @@ def test_vintage_note_names_how_stale_the_loser_was() -> None:
     f = _facts_us(
         DepreciationDepletionAndAmortization=[_pt("a", "2019-12-31", 45_317_000.0, 2019)],
         DepreciationAndAmortization=[_pt("b", "2025-12-31", 124_811_000.0, 2025)])
-    _value, source = _latest_dep_amort(f)  # type: ignore[misc]
+    _value, source, _basis = _latest_dep_amort(f)  # type: ignore[misc]
     assert "FY2019" in source and "6y behind" in source
 
 

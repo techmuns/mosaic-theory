@@ -49,6 +49,9 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         # R2 gate divides cash by, so it is source-bound and basis-stamped like every other input.
         "ltm_fcf",
         "anchor_base_value_per_share", "anchor_ev_ebit", "overall_confidence", "note",
+        # midcycle_gap (2026-09-21): R1's central assumption stated where it is STRETCHED — set
+        # only when the LTM margin sits MIDCYCLE_GAP_PTS or more from the median, else absent.
+        "midcycle_gap",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}
@@ -142,7 +145,7 @@ def test_dep_amort_split_requires_the_same_fiscal_period() -> None:
     applies to its own EBITDA add-back). Misaligned → UNKNOWN, flagged, never blended."""
     aligned = _latest_dep_amort(_da_facts("2025-11-30", "2025-11-30"))   # positive pin
     assert aligned is not None
-    value, source = aligned
+    value, source, _basis = aligned
     assert value == pytest.approx(660e6) and "split, FY2025" in source
     assert _latest_dep_amort(_da_facts("2025-11-30", "2024-11-30")) is None  # negative pin
 
@@ -480,3 +483,226 @@ def test_replace_anchor_block_is_byte_preserving_and_does_not_duplicate() -> Non
     assert parsed["anchor"]["anchor_base_value_per_share"] == 12.34        # replaced
     assert out.count('"anchor":') == 1                                     # not duplicated
     assert out.startswith('{\n  "ticker": "X",\n  "midcycle": null,\n  "anchor": {')
+
+
+
+# --- (2026-09-21) the period a ~12-month EDGAR point COVERS, not the fiscal year of its FILING ---
+def _ttm_facts(tag: str, fy: float, ttm: float) -> dict[str, object]:
+    """One tag carrying Amazon's REAL pair: the FY2025 10-K value and the trailing-twelve-month
+    column of the Q2-2026 10-Q (2025-07-01 → 2026-06-30), which companyfacts stamps fy=2026."""
+    return {"units": {"USD": [
+        {"start": "2025-01-01", "end": "2025-12-31", "val": fy, "filed": "2026-02-06",
+         "fy": 2025, "fp": "FY", "form": "10-K", "accn": "0001018724-26-000004"},
+        {"start": "2025-07-01", "end": "2026-06-30", "val": ttm, "filed": "2026-07-31",
+         "fy": 2026, "fp": "Q2", "form": "10-Q", "accn": "0001018724-26-000025"}]}}
+
+
+def test_a_trailing_10q_window_is_labelled_by_its_period_not_its_filing_year() -> None:
+    """AMZN's anchor read "latest FY2026 (not LTM)" for a free cash flow that is neither: FY2026
+    had not ended, and the figure IS the trailing twelve months — Amazon's 10-Q carries that column,
+    and companyfacts stamps it with the FILING's fiscal year. Its D&A said "FY2026" the same way.
+    The values were right (the trailing window is the fresher, period-matched figure); the claims
+    about them were not. Real values, verbatim from Amazon's filings."""
+    facts = {"facts": {"us-gaap": {
+        "NetCashProvidedByUsedInOperatingActivities": _ttm_facts("ocf", 139_514e6, 161_403e6),
+        "PaymentsToAcquirePropertyPlantAndEquipment": _ttm_facts("capex", 131_819e6, 173_028e6),
+        "DepreciationDepletionAndAmortization": _ttm_facts("da", 65_756e6, 75_200e6)}}}
+    fcf = anc._latest_fcf(facts)
+    assert fcf is not None
+    value, basis, source = fcf
+    assert value == pytest.approx(-11_625e6)                      # the value never changed
+    assert "12m to 2026-06-30" in basis and "12m to 2026-06-30" in source
+    assert "FY2026" not in basis + source, "a filing's fiscal year is not the period's"
+    assert "not LTM" not in basis, "a trailing twelve-month window IS an LTM"
+
+    da = _latest_dep_amort(facts)
+    assert da is not None
+    da_value, da_source, da_basis = da
+    assert da_value == pytest.approx(75_200e6)
+    assert "12m to 2026-06-30" in da_source and "FY2026" not in da_source
+    assert da_basis == "consolidated trailing twelve months (the filer's own 10-Q column)"
+
+    # ⊖ a filer with no trailing column keeps exactly the label it had
+    fy_only = {"facts": {"us-gaap": {
+        "NetCashProvidedByUsedInOperatingActivities": {"units": {"USD": [_ttm_facts(
+            "", 139_514e6, 0)["units"]["USD"][0]]}},                # type: ignore[index]
+        "PaymentsToAcquirePropertyPlantAndEquipment": {"units": {"USD": [_ttm_facts(
+            "", 131_819e6, 0)["units"]["USD"][0]]}}}}}              # type: ignore[index]
+    fy = anc._latest_fcf(fy_only)
+    assert fy is not None and fy[1] == "latest FY2025 (not LTM)"
+
+
+# --- (2026-09-21) the R1 mid-cycle flag — real values, frozen as of the day it shipped --------
+#: (median, years, LTM EBIT $M, LTM revenue $M) from the committed pages on 2026-09-21
+_AMZN = (0.053144, 10, 93_712.0, 775_680.0)
+_WLK = (0.097831, 10, 120.0, 11_294.0)
+_LLY = (0.298207, 10, 39_608.0, 79_666.0)
+_EPAM = (0.118997, 10, 627.861, 5_616.749)
+
+
+def _gap(v: tuple[float, int, float, float], **kw: object) -> anc.AnchorMidcycleGap | None:
+    return anc.midcycle_gap(v[0], v[1], ltm_ebit=v[2], ltm_revenue=v[3], **kw)  # type: ignore[arg-type]
+
+
+def test_midcycle_flag_fires_both_ways_and_says_what_it_cannot_know() -> None:
+    """R1 reverts the margin to its own median and pairs it with the multiple from the SAME history
+    — internally consistent, and only as good as that history. AMZN's 5.3% median against a 12.1%
+    LTM lands its anchor at $245.46 against a $245.96 price: two stale inputs offsetting, not a
+    right answer. The page must say so, in BOTH directions, and never decide structural vs
+    cyclical — that is the human's call."""
+    up = _gap(_AMZN, basis=(2025, 0.112, 0.112))
+    assert up is not None and up.ltm_side == "above"
+    assert up.gap_pts == pytest.approx(6.77, abs=0.01)
+    assert "ABOVE" in up.read and "12.1%" in up.read and "5.3%" in up.read
+    # both readings offered, neither chosen
+    assert "STRUCTURAL" in up.read and "PEAK" in up.read
+    assert "agree within 0.0 points on FY2025" in up.read
+
+    down = _gap(_WLK, basis=(2025, -0.141, -0.016))
+    assert down is not None and down.ltm_side == "below" and down.gap_pts < -5
+    assert "BELOW" in down.read and "TROUGH" in down.read
+    # ⊖ the basis the flag cannot hide: WLK's GAAP carries 12.5 points of charges CIQ's EBIT strips
+    assert down.basis_gap_pts == pytest.approx(12.5, abs=0.01)
+    assert "may be basis, not business" in down.read
+
+    # ⊖ inside the threshold, and whenever a leg is missing: SILENT, never "checked and held"
+    assert _gap(_EPAM, basis=(2025, 0.095, 0.107)) is None       # −0.7 points
+    assert anc.midcycle_gap(0.053144, 10, ltm_ebit=None, ltm_revenue=775_680.0) is None
+    assert anc.midcycle_gap(0.053144, 10, ltm_ebit=93_712.0, ltm_revenue=0.0) is None
+    assert anc.midcycle_gap(None, 10, ltm_ebit=93_712.0, ltm_revenue=775_680.0) is None
+
+
+def test_midcycle_flag_threshold_is_inclusive_at_five_points() -> None:
+    """The boundary, pinned both sides: 4.99 points is silent, 5.00 fires."""
+    assert anc.midcycle_gap(0.10, 10, ltm_ebit=14.99, ltm_revenue=100.0) is None
+    hit = anc.midcycle_gap(0.10, 10, ltm_ebit=15.0, ltm_revenue=100.0)
+    assert hit is not None and hit.gap_pts == pytest.approx(5.0)
+
+
+def test_midcycle_flag_names_one_source_when_r1_already_fell_back_to_ciq() -> None:
+    """LLY tags no OperatingIncomeLoss, so R1's median ALREADY came from the committed CIQ panel —
+    both legs are one source. Calling that median 'EDGAR GAAP' would state a false provenance, and
+    reporting 'no common fiscal year' would imply a comparison was attempted and failed."""
+    g = _gap(_LLY, median_from_ciq=True)
+    assert g is not None and g.same_source and g.basis_year is None
+    assert "(CIQ EBIT)" in g.read and "EDGAR GAAP" not in g.read
+    assert "no source difference to discount" in g.read
+
+
+def test_basis_check_takes_the_latest_common_actual_year() -> None:
+    """Estimates and the LTM column are never a fiscal year; the latest year BOTH sources report
+    wins; no common year → None (the page then says so rather than guessing)."""
+    mech = {"financial_summary": {"annual": {"value": {
+        "columns": ["FY23", "FY24 (R)", "FY25", "LTM", "FY26E"],
+        "is_estimate": [False, False, False, False, True],
+        "rows": [{"label": "Revenue ($M)", "values": [100.0, 110.0, 120.0, 125.0, 130.0]},
+                 {"label": "EBIT ($M)", "values": [10.0, 11.0, 18.0, 19.0, 99.0]}]}}}}
+    assert anc.basis_check({2023: 0.10, 2024: 0.09, 2025: 0.12}, mech) == (2025, 0.12, 0.15)
+    assert anc.basis_check({2023: 0.10, 2024: 0.09}, mech) == (2024, 0.09, 0.1)
+    assert anc.basis_check({2019: 0.10}, mech) is None
+    # ⊖ THE TIMING MISMATCH: EDGAR has filed FY2026 while the CIQ export still carries it as an
+    #   ESTIMATE ("FY26E", is_estimate True). An estimate is not a reported year — the check
+    #   stays on FY2025 — and it is the STRUCTURED flag that says so, not the label's "E".
+    assert anc.basis_check({2024: 0.09, 2025: 0.12, 2026: 0.20}, mech) == (2025, 0.12, 0.15)
+
+
+def test_an_anchor_that_does_not_fire_serialises_without_the_key() -> None:
+    """The field is additive: an anchor it does not apply to writes NO key, so the committed pages
+    it does not fire on stay byte-identical — and one it fires on carries the whole block."""
+    quiet = Anchor(recipe_hint=RECIPE_R1, applicable=True, computed_at=_now())
+    assert "midcycle_gap" not in insert_anchor_block('{\n  "ticker": "X"\n}\n', quiet)
+    loud = quiet.model_copy(update={"midcycle_gap": _gap(_AMZN, basis=(2025, 0.112, 0.112))})
+    assert '"midcycle_gap"' in insert_anchor_block('{\n  "ticker": "X"\n}\n', loud)
+
+
+def test_committed_pages_round_trip_byte_identically_with_the_new_field() -> None:
+    """THE CORPUS CHECK for the additive claim: every committed dossier re-serialised through the
+    one writer carries no null key — the new optional field costs no page a single byte."""
+    from vinci.dossier.schemas import dossier_json
+    seen = 0
+    for jp in sorted((_ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        raw = jp.read_text()
+        doc = Dossier.model_validate_json(raw)
+        if doc.anchor is None:
+            continue
+        seen += 1
+        assert '"midcycle_gap"' not in dossier_json(doc), f"{jp.parent.name} grew a null key"
+    assert seen >= 1, "no committed anchor to test against — the pin is blind"
+
+
+def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
+    """TEST-LAYER RULE: the rendered artifact, from REAL committed JSON. AMZN's own page, given the
+    flag its own numbers produce, prints the heading and the stored sentence in the Python renderer
+    and the JS one; EPAM's page, which does not fire, prints neither."""
+    import shutil
+    import subprocess
+
+    from vinci.dossier import render as dr
+    amzn = Dossier.model_validate_json((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    assert amzn.anchor is not None
+    m = amzn.mechanical.model_dump(mode="json")
+    gap = anc.midcycle_gap(amzn.anchor.margin.value if amzn.anchor.margin else None, 10,
+                           ltm_ebit=anc._ltm_ebit_from_fs(m),
+                           ltm_revenue=anc._ltm_revenue_from_fs(m))
+    assert gap is not None, "AMZN's own numbers no longer fire the flag — re-check the fixture"
+    flagged = amzn.anchor.model_copy(update={"midcycle_gap": gap})
+    py = "\n".join(dr._screening_context_lines(flagged))
+    assert "Mid-cycle assumption under strain." in py and gap.read in py
+    epam = Dossier.model_validate_json((_ROOT / "data/dossiers/EPAM/dossier.json").read_text())
+    assert "Mid-cycle assumption" not in "\n".join(dr._screening_context_lines(epam.anchor))
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    page = json.loads((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    page["anchor"]["midcycle_gap"] = json.loads(gap.model_dump_json())
+    driver = r"""
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
+const { renderDossier } = await import(dj);
+const flagged = renderDossier(JSON.parse(readFileSync(process.argv[1], "utf8")), null);
+const epam = JSON.parse(readFileSync("data/dossiers/EPAM/dossier.json", "utf8"));
+const plain = renderDossier(epam, null);
+console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under strain."),
+  sentence: flagged.includes("sits 6.8 points ABOVE"),
+  off: plain.includes("Mid-cycle assumption") }));
+"""
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        json.dump(page, fh)
+    out = subprocess.run(["node", "--input-type=module", "-e", driver, fh.name], cwd=_ROOT,
+                         capture_output=True, text=True, check=True)
+    assert json.loads(out.stdout.strip().splitlines()[-1]) == {"on": True, "sentence": True,
+                                                               "off": False}
+
+
+def test_midcycle_basis_verdict_is_decided_on_the_stored_rounding() -> None:
+    """(review of #636) The gap is decided on the rounding it is stored at; the basis disagreement
+    must be too. Unrounded, a 1.996-point disagreement read "agree" while the record stored
+    basis_gap_pts=2.0 — a value the threshold itself calls "differ". Sentence and record must agree.
+    ⊕ just inside the threshold agrees; ⊖ a value that stores as 2.0 differs."""
+    inside = _gap(_AMZN, basis=(2025, 0.100, 0.1198))            # 1.98 points
+    assert inside is not None and inside.basis_gap_pts == pytest.approx(1.98)
+    assert "agree within" in inside.read
+    edge = _gap(_AMZN, basis=(2025, 0.100, 0.119996))            # 1.9996 → stored 2.0
+    assert edge is not None and edge.basis_gap_pts == pytest.approx(2.0)
+    assert "agree within" not in edge.read and "may be basis, not business" in edge.read
+
+
+def test_midcycle_flag_never_points_at_a_value_that_is_not_published() -> None:
+    """(review of #636) The flag rides on EVERY R1 anchor, including the ones that publish no base
+    value (GOOGL, NFLX on 2026-09-21: "R1 inputs incomplete"). "so this value answers …" there
+    points at nothing on the page. Both directions must name the recipe's value, not a
+    demonstrative."""
+    for g in (_gap(_AMZN), _gap(_WLK)):
+        assert g is not None and "this value" not in g.read and "an R1 value" in g.read
+    googl = Dossier.model_validate_json((_ROOT / "data/dossiers/GOOGL/dossier.json").read_text())
+    assert googl.anchor is not None and googl.anchor.anchor_base_value_per_share is None
+    m = googl.mechanical.model_dump(mode="json")
+    g = anc.midcycle_gap(googl.anchor.margin.value if googl.anchor.margin else None, 10,
+                         ltm_ebit=anc._ltm_ebit_from_fs(m), ltm_revenue=anc._ltm_revenue_from_fs(m))
+    assert g is not None, "GOOGL's own numbers no longer fire — the unvalued case is untested"
+    assert "this value" not in g.read
