@@ -1,8 +1,8 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-09-21
-prs: []
+prs: [638]
 supersedes:
 superseded-by:
 ---
@@ -66,7 +66,7 @@ redden only if a null key ever appears". Both claims are corrected by an amendme
 - **Mutations, 4 of 4 caught.** The writer leaking a null `midcycle_gap`; `segment_profit` leaving
   `DROP_WHEN_NONE`; the stored margins swapped; the direction inverted (caught by 3 pins).
 - **The post-merge state.** This code plus the pass's three pages, re-backfilled: full offline suite 3,940 passed, 42 skipped, 0 failed.
-  This branch alone, on main's pages: 3,940 passed, 42 skipped, 1 failed — this record's own empty `prs:` trail, closed by naming the PR.
+  This branch alone, on main's pages, at its final commit: 3,941 passed, 42 skipped, 0 failed (the first run's one failure was this record's own empty `prs:` trail, closed by naming #638).
 
 **BOUNDARY.**
 - **Pages:** 22 committed pages at `origin/main` 641e3a6; EDGAR companyfacts fetched 2026-09-21.
