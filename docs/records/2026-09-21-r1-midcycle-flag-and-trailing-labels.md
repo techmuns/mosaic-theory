@@ -1,8 +1,8 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-09-21
-prs: []
+prs: [636]
 supersedes:
 superseded-by:
 ---
