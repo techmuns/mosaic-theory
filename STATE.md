@@ -660,6 +660,7 @@ Each line: *what it does* — *verified how*.
   agreeing independently on the period they share. Neither input exists in companyfacts (both are dimensional PP&E members), so this is the R-file route #578 opened, generalised by topic. **SCOPE STATED, NOT ASSUMED:** the plan's ratio divides ALL not-yet-in-service
   assets by the TECHNICAL-INFRASTRUCTURE member alone — a whole over a part — so the like-for-like figure (40.4% vs 49.7%) is carried beside it and the direction holds either way. The note number moves (R70 in the 10-K, R64 in the 10-Q), which is the plan's own
   Part 7 trap 2; resolution is by ShortName. *NO CONSUMER YET — phase 2 (#590) registers the panel and decides whether it may render; the RENDERER is phase 3, unbuilt.*
+- **R1 states its mid-cycle assumption where it is stretched; a trailing window stops calling itself a fiscal year** (`vinci/dossier/anchor.py`). Fires on 7 of 16 R1 anchors (≥5 pts from the median, both ways), reports the same-year CIQ-vs-GAAP basis disagreement beside each gap, moves no anchor value on any of 22. `docs/records/2026-09-21-r1-midcycle-flag-and-trailing-labels.md`
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**

@@ -1248,10 +1248,13 @@ function anchorInner(a) {
     ? `<div class="notice" style="margin-top:8px;"><b>data_quality: ${escapeHtml(a.data_quality)}</b>${
         (a.data_quality_detail || []).map((x) =>
           `<div class="mono" style="font-size:11px;">${escapeHtml(x)}</div>`).join("")}</div>` : "";
+  // the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
+  const mid = a.midcycle_gap
+    ? `<div class="notice" style="margin-top:8px;"><b>Mid-cycle assumption under strain.</b> ${escapeHtml(a.midcycle_gap.read)}</div>` : "";
   const why = a.reason ? `<div class="muted" style="margin-top:6px;">${escapeHtml(a.reason)}</div>` : "";
   return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
     <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
-    <table class="data"><tbody>${rows}</tbody></table>${dq}${why}</div>`;
+    <table class="data"><tbody>${rows}</tbody></table>${mid}${dq}${why}</div>`;
 }
 
 // (tier redesign) scenarioPanel is GONE — the Brief composes uwCardParts() directly: the masthead

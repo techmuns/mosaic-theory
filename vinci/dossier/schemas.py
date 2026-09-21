@@ -1682,4 +1682,9 @@ def dossier_json(doc: Dossier) -> str:
             root.setdefault(parent, set()).add(key)
         else:
             root[key] = True
-    return doc.model_dump_json(indent=2, exclude={"mechanical": root} if root else None)
+    excl: dict[str, Any] = {"mechanical": root} if root else {}
+    # the anchor's mid-cycle gap is set only when it fires; an anchor that does not fire writes no
+    # key, so every committed page it does not apply to stays byte-identical
+    if doc.anchor is not None and doc.anchor.midcycle_gap is None:
+        excl["anchor"] = {"midcycle_gap"}
+    return doc.model_dump_json(indent=2, exclude=excl or None)

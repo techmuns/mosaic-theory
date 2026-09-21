@@ -12,6 +12,7 @@ NAIVE reported-median margin — cycle / one-off / mix adjustments are the analy
 """
 from __future__ import annotations
 
+import re
 import statistics as st
 from datetime import datetime
 from typing import Any
@@ -71,6 +72,61 @@ _NOTE = (
     "underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored "
     "here."
 )
+
+
+#: The gap, in operating-margin PERCENTAGE POINTS between the last twelve months and R1's median,
+#: at which the page must say the mid-cycle assumption is doing heavy lifting. Set by face
+#: validity, never by what it would have paid: five points of margin is five percent of revenue in
+#: EBIT — half the profit of a business earning 10% — which is material on any reading.
+MIDCYCLE_GAP_PTS = 5.0
+#: THE TWO LEGS ARE DIFFERENT SOURCES, and this is where that is admitted rather than assumed. The
+#: LTM is committed CIQ EBIT, which EXCLUDES unusual items; R1's median is EDGAR GAAP operating
+#: income, which INCLUDES them. Measured on the fleet's latest common fiscal year when this shipped:
+#: median disagreement 1.2 points, but CNXC 15.5, WLK 12.5, V 7.0 and SMPL 5.8 — impairments and
+#: litigation charges GAAP carries and CIQ strips. An earlier draft of this note claimed the
+#: threshold "sits well clear of the basis difference"; the fleet showed that false, so the flag
+#: now REPORTS the same-year disagreement beside every gap instead of forcing the legs to match.
+#: Within this many points the sources are said to agree; beyond it the page says part of the gap
+#: may be basis, not business.
+BASIS_AGREE_PTS = 2.0
+
+
+class AnchorMidcycleGap(BaseModel, frozen=True):
+    """R1's central assumption, stated where it is being STRETCHED — never a correction to it.
+
+    R1 reverts the operating margin to its own history's median and re-rates it at the median
+    multiple of the SAME history. The two are a matched pair, so the anchor is internally
+    consistent: it answers "what is this worth if the business is still what it was?". That
+    answer is only as good as the history, and when the last twelve months sit far from the
+    median the page has to say so — because the machine cannot tell a structural change (a new
+    mix, a new model: history misleads) from a cyclical excursion (a peak or a trough: reverting
+    is right). That call is the human's.
+
+    Measured when this shipped: 7 of the 16 R1 anchors on the committed fleet sit five or more
+    points out, in BOTH directions — LLY +19.9, NFLX +18.2, PARR +10.5, AMZN +6.8, GOOGL +6.8
+    above; WLK -8.7, BRBR -5.7 below. AMZN's is the instructive case: a 5.3% median margin paired
+    with a 24.4x multiple earned on those same margins lands at $245.46 against a $245.96 price —
+    not because the anchor is right, but because two stale inputs offset.
+
+    ``read`` is the ONE sentence both renderers print, written once here; the structured values
+    sit beside it for anything that computes."""
+
+    ltm_margin: float                   # fraction — committed financial_summary EBIT / revenue
+    median_margin: float                # fraction — the anchor's own margin.value
+    median_years: int
+    gap_pts: float                      # (ltm − median) × 100, signed
+    # "above" | "below" the median — a margin's POSITION, named so: `direction` is a forbidden field
+    # token (test_dossier_schema_has_no_conclusion_field), and the guard is right to be blunt
+    ltm_side: str
+    # the latest fiscal year BOTH sources report, and how far they disagree on it — the evidence for
+    # how much of ``gap_pts`` could be basis rather than business. None when no common year exists.
+    basis_year: int | None = None
+    basis_gap_pts: float | None = None  # |CIQ EBIT margin − EDGAR GAAP margin| on basis_year
+    # True when R1's median itself came from the committed CIQ panel (EDGAR tags no operating
+    # income — LLY), so both legs are ONE source and there is no basis difference to discount
+    same_source: bool = False
+    basis: str
+    read: str
 
 
 class AnchorMargin(BaseModel, frozen=True):
@@ -133,6 +189,10 @@ class Anchor(BaseModel, frozen=True):
     # The R2 record takes this as a DEFAULT the analyst may override with a reason. Additive/opt.
     ltm_fcf: AnchorInput | None = None
     anchor_base_value_per_share: float | None = None   # the spot-independent fundamental
+    # (2026-09-21) Set only when the last twelve months sit MIDCYCLE_GAP_PTS or more from the
+    # median margin; absent otherwise, and DROPPED from the JSON when absent (see
+    # `insert_anchor_block`), so an anchor that does not fire serialises byte-identically.
+    midcycle_gap: AnchorMidcycleGap | None = None
     anchor_ev_ebit: float | None = None
     overall_confidence: str | None = None  # firm | weak (the WEAKER of margin/multiple)
     note: str = _NOTE
@@ -266,8 +326,28 @@ def _total_revenue_series(facts: dict[str, Any]) -> tuple[mc.AnnualSeries | None
 
 
 # --- EDGAR source-bound extractors (fail-loud; a gap → None, never a fabricated zero) ----------
-def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str] | None:
-    """Latest-FY consolidated D&A ($) → (value, source). Picks by VINTAGE, not by tag name.
+def _period_label(p: ConceptPoint) -> tuple[str, bool]:
+    """(label, is_trailing) for a ~12-month flow point, read from ITS OWN PERIOD AND FORM.
+
+    NEVER from ``p.fy``. companyfacts stamps each fact with the fiscal year of the FILING that
+    carried it, not of the period the fact covers — and a 10-Q can carry a twelve-month column.
+    Amazon's does: its quarterly cash-flow statement reports the trailing twelve months, so the
+    freshest ~365-day operating-cash-flow point is **2025-07-01 → 2026-06-30** from the Q2-2026
+    10-Q, stamped ``fy=2026``. The label built from ``fy`` read "latest FY2026 (not LTM)" — wrong
+    twice: FY2026 has not ended, and a trailing window is exactly an LTM. The same stamp put
+    "FY2026" on AMZN's D&A (75,200 over those twelve months; the FY2025 10-K says 65,756).
+
+    The VALUES were never wrong — a trailing window is the fresher, better-matched figure, and it
+    pairs with the anchor's LTM revenue over the same months. Only the claim about them was."""
+    if (p.form or "").upper().startswith("10-Q"):
+        return f"12m to {p.period_end.isoformat()}", True
+    return f"FY{p.fy or p.period_end.year}", False
+
+
+def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | None:
+    """Latest consolidated D&A ($) → (value, source, basis). Picks by VINTAGE, not by tag name.
+    The basis says what the twelve months ARE (`_period_label`): a fiscal year, or a filer's own
+    trailing column.
 
     Was: prefer the combined tag whenever present, else the split pair. That preference is a
     landmine for any filer that CHANGED tags — the abandoned tag stays in companyfacts forever at
@@ -287,20 +367,22 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str] | None:
     # `DepreciationAndAmortization` reports FY2025 ($124.8M), and the FY2019 figure was sitting in
     # a committed anchor under a PENDING underwrite. The shared resolver is deliberately left
     # untouched (other consumers depend on its ordering); the vintage rule lives here.
-    cands: list[tuple[Any, float, str]] = []
+    cands: list[tuple[Any, float, str, bool]] = []
     for tag in CONCEPT_ALIASES["dep_amort"]:
         p = latest_annual(points_for_tag(facts, tag))
         if p:
+            lbl, trailing = _period_label(p)
             cands.append((p.period_end, p.value,
-                          f"EDGAR companyfacts {tag} (combined, FY{p.fy or p.period_end.year})"))
+                          f"EDGAR companyfacts {tag} (combined, {lbl})", trailing))
     dep = latest_annual(points_for_tag(facts, "Depreciation"))
     am = latest_annual(points_for_tag(facts, "AmortizationOfIntangibleAssets"))
     # SAME fiscal period or nothing: summing an FY2025 depreciation into an FY2024 amortisation
     # would fabricate a D&A that never existed.
     if dep and am and dep.period_end == am.period_end:
-        fy = dep.fy or dep.period_end.year
+        lbl, trailing = _period_label(dep)
         cands.append((dep.period_end, dep.value + am.value,
-                      f"EDGAR Depreciation + AmortizationOfIntangibleAssets (split, FY{fy})"))
+                      f"EDGAR Depreciation + AmortizationOfIntangibleAssets (split, {lbl})",
+                      trailing))
     if not cands:
         return None
     freshest = max(c[0] for c in cands)
@@ -313,7 +395,9 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str] | None:
         oldest = min(c[0] for c in stale)
         note = (f" — CHOSEN BY VINTAGE over {len(stale)} staler candidate(s), oldest "
                 f"FY{oldest.year} ({(freshest - oldest).days // 365}y behind)")
-    return best[1], best[2] + note
+    basis = ("consolidated trailing twelve months (the filer's own 10-Q column)" if best[3]
+             else "consolidated latest FY")
+    return best[1], best[2] + note, basis
 
 
 def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | None:
@@ -327,10 +411,12 @@ def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | None:
     capex = latest_annual(extract_points(facts, "capex"))
     if not ocf or not capex or ocf.period_end != capex.period_end:
         return None
-    fy = ocf.fy or ocf.period_end.year
+    lbl, trailing = _period_label(ocf)
+    basis = (f"trailing {lbl} (the filer's own 10-Q column)" if trailing
+             else f"latest {lbl} (not LTM)")
     # capex is reported as a POSITIVE outflow in the cash-flow statement; subtract its magnitude
-    return (ocf.value - abs(capex.value), f"latest FY{fy} (not LTM)",
-            f"EDGAR companyfacts operating_cash_flow − capex (FY{fy}, same period)")
+    return (ocf.value - abs(capex.value), basis,
+            f"EDGAR companyfacts operating_cash_flow − capex ({lbl}, same period)")
 
 
 def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
@@ -436,7 +522,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     if ciq is not None and ciq.ok:
         if da is None and (v := ciq.value("d_and_a")) is not None:
             da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) "
-                              f"[{ciq.source_file} sha {ciq.source_sha256}]")
+                              f"[{ciq.source_file} sha {ciq.source_sha256}]",
+                  "consolidated latest FY")
             vendor.append("d_and_a")
         if nd_val is None and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M
@@ -454,7 +541,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
         "da": da, "nd_val": nd_val, "dil": dil, "ltm_rev": ltm_rev,
         "d_and_a": AnchorInput(
             value=(round(da[0] / _USD_M, 3) if da else None), unit="$M",
-            basis="consolidated latest FY",
+            basis=(da[2] if da else "consolidated latest FY"),
             source=(da[1] if da else "UNKNOWN — no D&A tag (combined or split)")),
         "net_debt": AnchorInput(value=(round(nd_val / _USD_M, 3) if nd_val is not None else None),
                                 unit="$M", basis="lease-inclusive net debt (latest 10-Q)",
@@ -502,6 +589,101 @@ def _with_bridge(anchor: Anchor, bridge: dict[str, Any]) -> Anchor:
 
 
 # --- the shared anchor computation (called by assembly AND the backfill writer) ----------------
+def basis_check(gaap_by_year: dict[int, float],
+                mechanical: dict[str, Any]) -> tuple[int, float, float] | None:
+    """(year, gaap_margin, ciq_margin) on the LATEST fiscal year both sources report, else None.
+
+    GAAP from R1's own margin series (EDGAR, keyed by the fiscal year's end); CIQ from the
+    committed annual panel's ACTUAL columns ("FY25" / "FY25 (R)"), estimates skipped. No common year
+    → None, and the page says the two could not be tested against each other rather than guessing.
+    """
+    ann = _fs_annual(mechanical)
+    cols = ann.get("columns") or []
+    ise = ann.get("is_estimate") or []
+    rows = {r.get("label"): (r.get("values") or []) for r in ann.get("rows") or []}
+    ebit, rev = rows.get("EBIT ($M)") or [], rows.get("Revenue ($M)") or []
+    ciq: dict[int, float] = {}
+    for i, col in enumerate(cols):
+        # the LABEL only names the year ("FY25", "FY25 (R)", "FY26E"); whether a column is an
+        # estimate is read from the STRUCTURED is_estimate flag, never from its "E" — a display
+        # suffix is not a fact, and the two only agree until an export writes one without the other
+        m = re.fullmatch(r"FY(\d\d)(?:E| \(R\))?", str(col).strip())
+        if (m is None or (i < len(ise) and ise[i]) or i >= len(ebit) or i >= len(rev)
+                or ebit[i] is None or not rev[i]):
+            continue
+        ciq[2000 + int(m.group(1))] = ebit[i] / rev[i]
+    common = sorted(set(ciq) & set(gaap_by_year))
+    if not common:
+        return None
+    y = common[-1]
+    return y, gaap_by_year[y], ciq[y]
+
+
+def midcycle_gap(median_margin: float | None, median_years: int | None, *,
+                 ltm_ebit: float | None, ltm_revenue: float | None,
+                 median_source: str = "",
+                 basis: tuple[int, float, float] | None = None,
+                 median_from_ciq: bool = False) -> AnchorMidcycleGap | None:
+    """The mid-cycle gap when it is large enough to state (``MIDCYCLE_GAP_PTS``), else None.
+
+    Needs both legs: a margin R1 actually computed, and an LTM EBIT over a positive LTM revenue.
+    Either missing → None, which is "nothing to say", not "no gap" — the page stays silent rather
+    than implying the assumption was checked and held."""
+    if median_margin is None or ltm_ebit is None or not ltm_revenue or ltm_revenue <= 0:
+        return None
+    ltm = ltm_ebit / ltm_revenue
+    # DECIDED ON THE SAME ROUNDING IT IS STORED AT. Unrounded, (0.15 − 0.10) × 100 is
+    # 4.999999999999999 and a gap that is five points on any human reading stayed silent — caught
+    # by the boundary pin, not by inspection.
+    gap = round((ltm - median_margin) * 100, 2)
+    if abs(gap) < MIDCYCLE_GAP_PTS:
+        return None
+    yrs = f"{median_years}-year" if median_years else "historical"
+    if gap > 0:
+        tail = ("so this value answers what the business is worth if it is still what it was. If "
+                "the gap is STRUCTURAL — a changed mix or model — that history understates it; if "
+                "it is a cyclical PEAK, reverting is right.")
+        where = "ABOVE"
+    else:
+        tail = ("so this value assumes a recovery to what the business was. If the decline is "
+                "STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting "
+                "recovery is right.")
+        where = "BELOW"
+    med_src = "CIQ EBIT" if median_from_ciq else "EDGAR GAAP operating income"
+    if median_from_ciq:
+        bsent = (" Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, "
+                 "so R1's median already came from the committed panel — and there is no source "
+                 "difference to discount.")
+        by, bgap = None, None
+    elif basis is None:
+        bsent = (" The two sources — CIQ EBIT for the twelve months, EDGAR GAAP operating "
+                 "income for the median — share no fiscal year to test against each other.")
+        by, bgap = None, None
+    else:
+        by, g_m, c_m = basis
+        bgap = abs(c_m - g_m) * 100
+        if bgap < BASIS_AGREE_PTS:
+            bsent = (f" The two sources agree within {bgap:.1f} points on FY{by}, so the gap is "
+                     f"the business, not the source.")
+        else:
+            bsent = (f" On FY{by} the two sources differ by {bgap:.1f} points (GAAP {g_m:.1%} vs "
+                     f"CIQ {c_m:.1%}): GAAP carries charges CIQ's EBIT excludes, and R1's median "
+                     f"sits on the GAAP side, so part of this gap may be basis, not business.")
+    read = (f"The last twelve months' operating margin of {ltm:.1%} (CIQ EBIT) sits "
+            f"{abs(gap):.1f} points {where} the {yrs} median of {median_margin:.1%} ({med_src}) "
+            f"that R1 reverts to. R1 pairs that median with the median multiple "
+            f"from the same history, {tail}{bsent}")
+    basis_txt = (f"LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: "
+                 f"{median_source or 'the anchor margin'}; flagged at ≥{MIDCYCLE_GAP_PTS:g} "
+                 f"points; sources said to agree within {BASIS_AGREE_PTS:g}")
+    return AnchorMidcycleGap(
+        ltm_margin=round(ltm, 6), median_margin=round(median_margin, 6),
+        median_years=int(median_years or 0), gap_pts=round(gap, 2),
+        ltm_side="above" if gap > 0 else "below", basis_year=by,
+        basis_gap_pts=(round(bgap, 2) if bgap is not None else None),
+        same_source=median_from_ciq, basis=basis_txt, read=read)
+
+
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                    computed_at: datetime, ciq: Any = None) -> Anchor:
     """The R1 anchor from SOURCE-BOUND inputs. ``mechanical`` is the mechanical layer as a dict
@@ -540,12 +722,14 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                      f"{margin_years} FY{ma.excluded_note}") if margin_val is not None else ""
     data_quality = DQ_REVENUE_TAG_CONFLICT if conflicts else None
     forced_weak = bool(conflicts)
+    median_from_ciq = False
     if margin_val is None:
         fb = _margin_from_fs(mechanical)
         if fb is not None:
             margin_val, margin_years = fb
             margin_source = "financial_summary (short history) — EBIT/Revenue reported median"
             forced_weak = True
+            median_from_ciq = True
 
     # Two DIFFERENT facts, never lumped (the same fail-loud discipline edgar/client.py applies to
     # its own UNKNOWNs): a margin we could not COMPUTE is not a margin we computed and found
@@ -651,7 +835,12 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         margin=margin_blk, multiple=multiple_blk,
         **{k: bridge[k] for k in _BRIDGE_FIELDS},
         anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall,
-        data_quality=dq, data_quality_detail=detail)
+        data_quality=dq, data_quality_detail=detail,
+        midcycle_gap=midcycle_gap(margin_val, margin_years, ltm_ebit=ltm_ebit,
+                                  ltm_revenue=ltm_rev, median_source=margin_source,
+                                  basis=(None if median_from_ciq
+                                         else basis_check(ma.by_year, mechanical)),
+                                  median_from_ciq=median_from_ciq))
 
 
 def insert_anchor_block(text: str, anchor: Anchor) -> str:
@@ -660,7 +849,8 @@ def insert_anchor_block(text: str, anchor: Anchor) -> str:
     field (unavoidable JSON syntax); every other field stays byte-for-byte identical. The backfill
     uses this rather than a model round-trip, because re-serializing older-schema dossiers drifts
     their other fields (new-default materialisation) — a corruption the string insert avoids."""
-    body = anchor.model_dump_json(indent=2)  # a top-level-indented anchor object
+    body = anchor.model_dump_json(  # a top-level-indented anchor object
+        indent=2, exclude={"midcycle_gap"} if anchor.midcycle_gap is None else None)
     inner = "\n".join("  " + ln for ln in body.split("\n"))      # +2 so it sits at the field level
     field = '  "anchor": ' + inner.lstrip()                      # -> '  "anchor": {\n    …\n  }'
     end = text.rstrip()

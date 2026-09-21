@@ -3128,6 +3128,9 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
+    # the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
+    if anchor.midcycle_gap is not None:
+        out += [f"**Mid-cycle assumption under strain.** {anchor.midcycle_gap.read}", ""]
     if anchor.data_quality:
         out.append(f"**data_quality: {anchor.data_quality}**")
         out += [f"- {x}" for x in anchor.data_quality_detail]
