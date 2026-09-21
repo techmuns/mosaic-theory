@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xbrl xmlns="http://www.xbrl.org/2003/instance" xmlns:dei="http://xbrl.sec.gov/dei/2025" xmlns:tecx="http://www.tectonictx.com/20251231" xmlns:us-gaap="http://fasb.org/us-gaap/2025" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <context id="C_a24fa680-0bf6-4120-9fc8-82c5f790b08e">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:ChemistryManufacturingAndControlExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_acb6911e-3b6c-4172-8562-6b1dca5bf26e">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_dd22b32a-d53a-4d7f-8e17-e1a09702e891">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:Non-ClinicalScienceExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_e0432e24-3e96-46b5-8f16-ddb79a40aaec">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:EmployeeRelatedExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_ec2386e4-391b-416d-b307-33829f4bcb22">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:Non-ClinicalScienceExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_0295b1db-541d-4267-9d4e-2eed70e6d492">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_06f20ba0-2adc-49cb-b3ae-8b6c522d7a3a">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:ClinicalAndDevelopmentExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_211396d1-3712-4ed5-92d9-7e06a5638e0e">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:ChemistryManufacturingAndControlExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_23dbb010-670e-4104-bf94-bec0dc3c508f">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:ResearchAndPre-ClinicalExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_39eb753b-10b8-473f-8fd5-809bc5cc466d">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_3b9d7b73-8f7e-4b25-9ab0-5bb68bca5bf5">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:ClinicalAndDevelopmentExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_40574739-ee32-48c7-8a10-d69646eef17b">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:ResearchAndPre-ClinicalExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_71f16300-4a64-4126-9483-7f4addf7af69">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+    <context id="C_763d99dd-eb99-4913-a79a-7f2f2e466df2">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001681087</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:IncomeStatementLocationAxis">tecx:EmployeeRelatedExpensesMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+    <unit id="U_USD">
+        <measure>iso4217:USD</measure>
+    </unit>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_dd22b32a-d53a-4d7f-8e17-e1a09702e891" id="F_332a0e9e-d8ab-44db-b372-5cf96f27f3e7" unitRef="U_USD" xsi:nil="true" />
+    <dei:DocumentPeriodEndDate contextRef="C_0295b1db-541d-4267-9d4e-2eed70e6d492" id="F_8dd39dd2-e221-4e58-b8b3-5bd5dc0f3221">2025-12-31</dei:DocumentPeriodEndDate>
+    <us-gaap:OperatingIncomeLoss contextRef="C_0295b1db-541d-4267-9d4e-2eed70e6d492" decimals="-3" id="F_4767d015-82e0-46aa-95b4-9b73f902779c" unitRef="U_USD">-84036000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:OperatingIncomeLoss contextRef="C_acb6911e-3b6c-4172-8562-6b1dca5bf26e" decimals="-3" id="F_9b721abd-af54-4596-b502-ee52a9ea8676" unitRef="U_USD">-58015000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_763d99dd-eb99-4913-a79a-7f2f2e466df2" decimals="-3" id="F_83f3a062-9cbf-436d-b1a9-8d17489ae412" unitRef="U_USD">12961000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_e0432e24-3e96-46b5-8f16-ddb79a40aaec" decimals="-3" id="F_fdb71455-3e83-4e0e-be26-5efb80389650" unitRef="U_USD">11135000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:GeneralAndAdministrativeExpense contextRef="C_763d99dd-eb99-4913-a79a-7f2f2e466df2" decimals="-3" id="F_461a62cb-afd6-43ba-882d-d64d26c3b7d8" unitRef="U_USD">5548000</us-gaap:GeneralAndAdministrativeExpense>
+    <us-gaap:GeneralAndAdministrativeExpense contextRef="C_e0432e24-3e96-46b5-8f16-ddb79a40aaec" decimals="-3" id="F_966edbe9-bb90-4fa0-a2e9-aa0dd819c10c" unitRef="U_USD">5553000</us-gaap:GeneralAndAdministrativeExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_40574739-ee32-48c7-8a10-d69646eef17b" decimals="-3" id="F_533418cb-1d33-4880-a072-4a9566a1e9a1" unitRef="U_USD">7001000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_23dbb010-670e-4104-bf94-bec0dc3c508f" decimals="-3" id="F_f9a92800-cb40-41ab-9143-8a30be9ee3c4" unitRef="U_USD">8477000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_3b9d7b73-8f7e-4b25-9ab0-5bb68bca5bf5" decimals="-3" id="F_86ed6e0f-0716-4c8f-ba75-fccaea8e1b7c" unitRef="U_USD">23798000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_06f20ba0-2adc-49cb-b3ae-8b6c522d7a3a" decimals="-3" id="F_5fbbef22-1ea5-4a89-ae64-611c7262f8dc" unitRef="U_USD">15380000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_a24fa680-0bf6-4120-9fc8-82c5f790b08e" decimals="-3" id="F_7395b403-732c-4a54-a1fd-84ee82ded82a" unitRef="U_USD">10052000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_211396d1-3712-4ed5-92d9-7e06a5638e0e" decimals="-3" id="F_7885ddb6-0ad1-4539-9792-39541f541ecb" unitRef="U_USD">3570000</us-gaap:ResearchAndDevelopmentExpense>
+    <us-gaap:ResearchAndDevelopmentExpense contextRef="C_ec2386e4-391b-416d-b307-33829f4bcb22" decimals="-3" id="F_46205775-ff22-484e-96bd-a412fa79b641" unitRef="U_USD">3667000</us-gaap:ResearchAndDevelopmentExpense>
+    <tecx:Non-ControllableExpenses contextRef="C_39eb753b-10b8-473f-8fd5-809bc5cc466d" decimals="-3" id="F_51840130-97a2-4739-b160-e8c0b7d8fdb6" unitRef="U_USD">8985000</tecx:Non-ControllableExpenses>
+    <tecx:Non-ControllableExpenses contextRef="C_71f16300-4a64-4126-9483-7f4addf7af69" decimals="-3" id="F_f9d78ec2-2f65-4157-abad-93ece896c490" unitRef="U_USD">8733000</tecx:Non-ControllableExpenses>
+    <us-gaap:OtherIncome contextRef="C_39eb753b-10b8-473f-8fd5-809bc5cc466d" decimals="-3" id="F_54d0e11c-69d3-48ca-9ed8-6b18e81f5675" unitRef="U_USD">2139000</us-gaap:OtherIncome>
+    <us-gaap:OtherIncome contextRef="C_71f16300-4a64-4126-9483-7f4addf7af69" decimals="-3" id="F_f68dc46d-8a64-4938-b3f6-1b8ef4bcaa6e" unitRef="U_USD">5134000</us-gaap:OtherIncome>
+    <us-gaap:NetIncomeLoss contextRef="C_39eb753b-10b8-473f-8fd5-809bc5cc466d" decimals="-3" id="F_8f0dd631-ab33-4fb9-be5f-b54516d1d85f" unitRef="U_USD">74151000</us-gaap:NetIncomeLoss>
+    <us-gaap:NetIncomeLoss contextRef="C_71f16300-4a64-4126-9483-7f4addf7af69" decimals="-3" id="F_3711e0cd-d085-4b59-9c80-7b4ab9dd11b4" unitRef="U_USD">57982000</us-gaap:NetIncomeLoss>
+    </xbrl>

@@ -68,13 +68,15 @@ from vinci.dossier.schemas import (
     RegistrationFiling,
     ReleaseExtract,
     SbcLine,
+    SegmentEconomics,
+    SegmentProfitRow,
     Sourced,
     SourceStatus,
     StockInfo,
     StockPerformance,
     Valuation,
 )
-from vinci.edgar import filing_sections, primary_source, release_parse
+from vinci.edgar import filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar.client import EdgarClient, Filing
 from vinci.edgar.concepts import (
     CONCEPT_ALIASES,
@@ -1803,12 +1805,93 @@ def _quality(
     )
 
 
-def _concentration(bundle: CiqBundle) -> Concentration:
+def _money_m(v: float) -> str:
+    return f"−${abs(v):,.0f}M" if v < 0 else f"${v:,.0f}M"
+
+
+def _segment_profit_line(read: segment_facts.SegmentProfitRead) -> str:
+    """The ONE sentence both renderers print for the segment-profit block — written here, never
+    re-composed in JS. States the measure by its own name, each segment's margin where the filing
+    tags revenue on the same context, and how the segments reconcile to the filer's own totals.
+
+    A margin beyond ±100% prints "n.m.": Alphabet's Other Bets loses $7,515M on $1,537M of revenue,
+    and −488.9% is arithmetic, not information."""
+    if read.measure_kind == "operating income":
+        head = f"FY{read.period_end.year} segment operating income (10-K XBRL)"
+    elif read.measure_kind == "gross profit":
+        head = f"FY{read.period_end.year} segment gross profit — the filer's measure (10-K XBRL)"
+    else:
+        head = (f"FY{read.period_end.year} segment profit on the filer's own measure, "
+                f"{read.measure} (10-K XBRL)")
+    parts = []
+    for f in read.figures:
+        if f.revenue:
+            m = f.profit / f.revenue
+            margin = (" (margin n.m.)" if abs(m) > 1 else
+                      f" ({'−' if m < 0 else ''}{abs(m):.1%} margin)")
+        else:
+            margin = ""
+        parts.append(f"{f.segment} {_money_m(f.profit / 1e6)}{margin}")
+    seg_sum = sum(f.profit for f in read.figures) / 1e6
+    recon = f"segments sum {_money_m(seg_sum)}"
+    if read.consolidated is not None:
+        con = read.consolidated / 1e6
+        recon += (f" = consolidated {_money_m(con)}" if abs(con - seg_sum) < 0.5 else
+                  f" vs consolidated {_money_m(con)} ({_money_m(con - seg_sum)} not allocated to "
+                  f"segments)")
+    elif read.segments_total is not None:
+        recon += f" = the filer's segments total {_money_m(read.segments_total / 1e6)}"
+    return f"{head}: " + " · ".join(parts) + f" — {recon}."
+
+
+def _segment_profit(edgar: EdgarClient, http: CachedHttp,
+                    cik: str | None) -> Sourced[SegmentEconomics] | None:
+    """Segment profit from the latest 10-K's XBRL instance. None = a single-segment filer (or no
+    10-K yet): nothing to show, and nothing to flag. A multi-segment filer whose profit could not be
+    read is UNKNOWN with the reason — fail loud, never an empty breakdown."""
+    if not cik:
+        return None
+    try:
+        tenk = edgar.recent_filings(cik, forms=("10-K",))
+    except Exception as exc:  # noqa: BLE001 — a failed enumeration is stated, never fatal
+        return Sourced.unknown(note=f"10-K enumeration failed ({type(exc).__name__})")
+    if not tenk:
+        return None
+    acc = tenk[0].accession
+    try:
+        read = segment_facts.segment_profit(http, cik, acc)
+    except segment_facts.SegmentFactsUnavailableError as exc:
+        return Sourced.unknown(note=str(exc))
+    except Exception as exc:  # noqa: BLE001 — one unreadable instance must not sink assembly
+        return Sourced.unknown(note=f"10-K {acc} XBRL instance unreadable ({type(exc).__name__})")
+    if read is None:
+        return None
+    block = SegmentEconomics(
+        measure=read.measure, measure_kind=read.measure_kind,
+        fiscal_year_end=read.period_end.isoformat(),
+        rows=[SegmentProfitRow(segment=f.segment, member=f.member, profit=round(f.profit / 1e6, 3),
+                               revenue=(round(f.revenue / 1e6, 3) if f.revenue is not None
+                                        else None))
+              for f in read.figures],
+        segments_sum=round(sum(f.profit for f in read.figures) / 1e6, 3),
+        segments_total=(round(read.segments_total / 1e6, 3)
+                        if read.segments_total is not None else None),
+        consolidated=(round(read.consolidated / 1e6, 3) if read.consolidated is not None
+                      else None),
+        line=_segment_profit_line(read))
+    return Sourced.present(block, source_ref=(
+        f"EDGAR 10-K {acc} XBRL instance {read.instance} — {read.measure} on the segment "
+        f"contexts, fiscal year ending {read.period_end.isoformat()}"))
+
+
+def _concentration(bundle: CiqBundle, edgar: EdgarClient, http: CachedHttp,
+                   cik: str | None) -> Concentration:
     return Concentration(
         segments=ciq_sheets.segments(bundle),
         segment_ebitda=ciq_sheets.segment_ebitda(bundle),
         customers=ciq_sheets.customers(bundle),
         geographic=ciq_sheets.geographic(bundle),
+        segment_profit=_segment_profit(edgar, http, cik),
     )
 
 
@@ -4280,7 +4363,7 @@ def assemble_mechanical(
     mech = MechanicalLayer(
         valuation=valuation,
         quality=quality,
-        concentration=_concentration(bundle),
+        concentration=_concentration(bundle, edgar, http, record.identity.cik),
         peer_comps=peer_comps,
         drawdown_cause=drawdown,
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(

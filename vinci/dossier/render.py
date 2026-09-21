@@ -3860,6 +3860,12 @@ def _business_quality_lines(m: MechanicalLayer) -> list[str]:
     out += [
         _fact("Segments (revenue share)", m.concentration.segments),
         _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
+        # (2026-09-21) segment profit from the 10-K's XBRL instance. ABSENT for a single-segment
+        # filer, and then NOT rendered — an UNKNOWN badge would claim a gap in a breakdown the
+        # company does not have. The sentence is written once, in mechanical._segment_profit_line.
+        *([_fact("Segments (profit — the filer's own measure, 10-K)",
+                 m.concentration.segment_profit, lambda v: str(v.line))]
+          if m.concentration.segment_profit is not None else []),
         _fact("Customers", m.concentration.customers, _fmt_customers),
         _fact("Geographic", m.concentration.geographic),
         "",

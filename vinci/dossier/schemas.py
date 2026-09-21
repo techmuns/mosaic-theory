@@ -275,6 +275,38 @@ class Quality(BaseModel):
     model_config = {"frozen": True}
 
 
+class SegmentProfitRow(BaseModel):
+    """One segment's profit on the FILER'S OWN measure, and its revenue from the identical
+    context."""
+
+    segment: str                     # the member humanised ("Amazon Web Services")
+    member: str                      # the XBRL member, verbatim — the key a human can check
+    profit: float                    # $M
+    revenue: float | None = None     # $M; None when the filing does not tag it on that context
+
+    model_config = {"frozen": True}
+
+
+class SegmentEconomics(BaseModel):
+    """(2026-09-21) Where the profit sits, from the latest 10-K's own XBRL instance — the source
+    that works for every multi-segment name in the book, where CIQ's ``segment_ebitda`` covers
+    two. The MEASURE is the filer's own and is named: an operating income, a gross profit, or a
+    filer-defined segment measure is never relabelled as another. ``line`` is the ONE display
+    sentence both renderers print; the rows are the structured values anything that computes
+    reads."""
+
+    measure: str                     # the XBRL element, verbatim ("us-gaap:OperatingIncomeLoss")
+    measure_kind: str                # "operating income" | "gross profit" | "filer-defined …"
+    fiscal_year_end: str             # ISO date
+    rows: list[SegmentProfitRow]
+    segments_sum: float              # $M
+    segments_total: float | None = None   # $M — the filer's own operating-segments total, if tagged
+    consolidated: float | None = None     # $M — the measure for the whole company, if tagged
+    line: str
+
+    model_config = {"frozen": True}
+
+
 class Concentration(BaseModel):
     """Segment / customer / geographic concentration (CIQ Segments + Customers & Suppliers).
 
@@ -286,6 +318,10 @@ class Concentration(BaseModel):
     segment_ebitda: Sourced[str]  # EBITDA share — where the profit (and the customer risk) sits
     customers: Sourced[str]
     geographic: Sourced[str]
+    # (2026-09-21) segment PROFIT from the 10-K's XBRL instance. None for a single-segment filer —
+    # a breakdown it does not have is not a gap — and dropped from the JSON when None, so the
+    # committed pages it does not apply to stay byte-identical (DROP_WHEN_NONE).
+    segment_profit: Sourced[SegmentEconomics] | None = None
 
     model_config = {"frozen": True}
 
@@ -1647,6 +1683,7 @@ class Dossier(BaseModel):
 #: financial-summary TABLE rather than of the layer, so each entry names its own parent.
 #: Moved here from `vinci/dossier/refresh.py` with `dossier_json` below, which both writers use.
 DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
+    ("concentration", "segment_profit"),
     ("consensus_context", "consensus_levels"),
     ("financial_summary", "ebitda_basis"),
     ("", "capital_allocation"),

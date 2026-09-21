@@ -3088,6 +3088,13 @@ function concentration(c) {
   return sec("Business quality", "What it sells, where the profit sits, to whom, and where.",
     fact("Segments (revenue share)", c.segments) +
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
+    // (2026-09-21) segment profit from the 10-K's XBRL instance — ABSENT for a single-segment filer
+    // and then not drawn at all (fact() would badge a missing field UNKNOWN, claiming a gap in a
+    // breakdown the company does not have). The sentence is written once, in Python.
+    (c.segment_profit
+      ? fact("Segment profit (the filer's own measure, 10-K)", c.segment_profit,
+             (v) => escapeHtml(v.line), { hi: true })
+      : "") +
     fact("Customers", c.customers, fmtCustomers) +
     fact("Geographic", c.geographic));
 }
