@@ -66,9 +66,20 @@ OPERATING_SEGMENTS = "us-gaap:OperatingSegmentsMember"
 #: segment measure is the chief operating decision maker's own and outranks a gross profit.
 OPERATING_INCOME = "us-gaap:OperatingIncomeLoss"
 GROSS_PROFIT = "us-gaap:GrossProfit"
-_FILER_MEASURE = re.compile(
+#: A plain EBIT is a filer-defined measure too. Nike's CODM runs its segments on EBIT and tags it
+#: `nke:EarningsBeforeInterestAndTaxes` beside `us-gaap:GrossProfit` on the SAME two segments;
+#: with only the ADJUSTED spelling listed here, gross profit won by default and NKE's first page
+#: called it "the filer's measure" (2026-09-22). No us-gaap element carries this name, so it can
+#: only ever match a filer's own extension.
+#: RANKED BELOW every segment-specific spelling (review of #640): the candidates are otherwise
+#: tried alphabetically, and a filer tagging both a plain `xyz:EarningsBeforeInterestAndTaxes` and
+#: its CODM's `xyz:SegmentProfit` on the same segments would have had "E" beat "S" — the plain EBIT
+#: printed as the filer's segment measure over the one the filer names as its segment measure.
+_SEGMENT_MEASURE = re.compile(
     r"Segment(?:Operating)?Profit|SegmentAdjusted|AdjustedEarningsBeforeInterest|AdjustedEBITDA|"
     r"Segment(?:Gross)?Contribution", re.I)
+_PLAIN_EBIT = re.compile(r"EarningsBeforeInterestAndTaxes", re.I)
+_FILER_MEASURE = re.compile(f"{_SEGMENT_MEASURE.pattern}|{_PLAIN_EBIT.pattern}", re.I)
 _REVENUE = ("us-gaap:Revenues", "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
             "us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax")
 _XBRLI = "{http://www.xbrl.org/2003/instance}"
@@ -268,7 +279,8 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
 
     elements = {el for (el, _d) in by_ctx}
     ordered = ([OPERATING_INCOME]
-               + sorted(el for el in elements if _FILER_MEASURE.search(el.split(":", 1)[-1]))
+               + sorted((el for el in elements if _FILER_MEASURE.search(el.split(":", 1)[-1])),
+                        key=lambda el: (_SEGMENT_MEASURE.search(el.split(":", 1)[-1]) is None, el))
                + [GROSS_PROFIT])
     measure: str | None = None
     kind = ""
