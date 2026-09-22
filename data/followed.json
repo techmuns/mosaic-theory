@@ -91,5 +91,10 @@
   "sleeve": "ultra_short_term",
   "reason": "Westlake Corp (Performance and Essential Materials; Housing and Infrastructure Products), followed under the ULTRA-SHORT-TERM TRADE book by operator decision 2026-09-17 — judged as a short-dated trade, not as a de-rating to underwrite.",
   "overrides_screen": "operator decision 2026-09-17 — judged as a short-dated trade rather than an overshoot"
+ },
+ "NKE": {
+  "followed_since": "2026-09-22",
+  "sleeve": "overshoot",
+  "reason": "NIKE, the athletic footwear and apparel company (NIKE, Jordan, Converse), followed as an OVERSHOOT candidate by operator decision 2026-09-22: at $36.10 on 2026-09-21 it is down 51.6% from its 52-week closing high of $74.57 (2025-10-02) and 1.7% above its 52-week low ($35.51, 2026-09-18) — a ~$53.6bn market cap on $46.4bn of FY2026 (May) revenue. The question is whether the de-rating overshoots the business. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
  }
 }
