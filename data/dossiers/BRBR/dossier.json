@@ -8,31 +8,31 @@
   "mechanical": {
     "valuation": {
       "cross_sectional": {
-        "value": "EV/EBITDA 9.2x vs peer median 6.6x (+39%); P/E 8.1x vs peer median 16.6x (-51%)",
+        "value": "EV/EBITDA 6.4x vs peer median 6.3x (+2%); P/E 6.3x vs peer median 21.9x (-71%)",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "status": "present",
         "note": null
       },
       "pe": {
-        "value": 5.410714285714286,
+        "value": 5.3273809523809526,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-09-16 ÷ annual diluted EPS for the period ending 2025-09-30 (351d old, filed 2025-11-18)"
+        "note": "price 2026-09-21 ÷ annual diluted EPS for the period ending 2025-09-30 (356d old, filed 2025-11-18)"
       },
       "pe_percentile_5y": {
-        "value": 0.017543859649122806,
+        "value": 0.013556618819776715,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         "status": "present",
-        "note": "1254 P/E observations over 1825d; price 2026-09-16 ÷ annual diluted EPS for the period ending 2025-09-30 (351d old, filed 2025-11-18)"
+        "note": "1254 P/E observations over 1825d; price 2026-09-21 ÷ annual diluted EPS for the period ending 2025-09-30 (356d old, filed 2025-11-18)"
       },
       "ev_ebitda": {
-        "value": 9.2,
+        "value": 6.4,
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "status": "present",
         "note": "trailing only — no forward basis; cannot distinguish a temporarily depressed level from a permanently impaired one"
       },
       "ev_ebitda_percentile_5y": {
-        "value": 0.111,
+        "value": 0.037,
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 27 quarters spanning 2019-12-31..2026-06-30 (6.5y) (partial last column excluded from the distribution)",
         "status": "present",
         "note": null
@@ -50,7 +50,7 @@
         "note": "adjusted figure not in the 99.1 revised guidance"
       },
       "range_position": {
-        "value": "EV/EBITDA (TEV/LTM) 9.2x as-of 2026-08-07 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 11%ile → near-floor; P/LTM EPS 8.1x",
+        "value": "EV/EBITDA (TEV/LTM) 6.4x as-of 2026-09-21 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 4%ile → near-floor; P/LTM EPS 6.3x",
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "status": "present",
         "note": null
@@ -59,14 +59,14 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 9.180781,
+            "current": 6.406247,
             "low": 4.287579,
             "high": 27.868415,
             "median": 19.761409,
-            "percentile": 0.1111111111111111,
+            "percentile": 0.037037037037037035,
             "n_closes": 27,
-            "as_of": "2026-08-07",
-            "mean": 18.417415555555557,
+            "as_of": "2026-09-21",
+            "mean": 18.245317962962964,
             "series": [
               [
                 "2019-12-31",
@@ -166,41 +166,41 @@
               ],
               [
                 "2025-12-31",
-                11.037542
+                9.345871
               ],
               [
                 "2026-03-31",
-                8.818111
+                7.348071
               ],
               [
                 "2026-06-30",
-                8.494121
+                7.009197
               ],
               [
-                "2026-08-07",
-                9.180781
+                "2026-09-21",
+                6.406247
               ]
             ],
             "periodicity_days_median": 91.0,
-            "window_span_years": 6.6,
+            "window_span_years": 6.72,
             "periodicity": "quarterly",
             "data_quality": null,
             "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
-            "implied_ebitda_margin": 0.114117,
-            "implied_ebit_margin": 0.103245,
+            "implied_ebitda_margin": 0.143421,
+            "implied_ebit_margin": 0.132549,
             "implied_d_and_a_margin": 0.010872,
-            "source_sha256": "f531ad2527",
-            "source_mtime": "2026-09-01T17:49:32+00:00"
+            "source_sha256": "cb902c8d1d",
+            "source_mtime": "2026-09-22T08:52:22+00:00"
           },
           {
             "metric": "P/LTM EPS",
-            "current": 8.091656,
+            "current": 6.264734,
             "low": 5.210892,
             "high": 57.265856,
             "median": 33.734174,
-            "percentile": 0.14814814814814814,
+            "percentile": 0.1111111111111111,
             "n_closes": 27,
-            "as_of": "2026-08-07",
+            "as_of": "2026-09-21",
             "mean": 29.70739037037037,
             "series": [
               [
@@ -312,20 +312,20 @@
                 10.08451
               ],
               [
-                "2026-08-07",
-                8.091656
+                "2026-09-21",
+                6.264734
               ]
             ],
             "periodicity_days_median": 91.0,
-            "window_span_years": 6.6,
+            "window_span_years": 6.72,
             "periodicity": "quarterly",
             "data_quality": null,
             "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
             "implied_ebitda_margin": null,
             "implied_ebit_margin": null,
             "implied_d_and_a_margin": null,
-            "source_sha256": "f531ad2527",
-            "source_mtime": "2026-09-01T17:49:32+00:00"
+            "source_sha256": "cb902c8d1d",
+            "source_mtime": "2026-09-22T08:52:22+00:00"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -337,36 +337,36 @@
           {
             "label": "name NTM TEV/EBITDA",
             "metric": "EBITDA",
-            "multiple": 7.99,
+            "multiple": 7.01,
             "multiple_source": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
-            "implied_level": 308.7,
+            "implied_level": 308.6,
             "is_identity": true,
             "note": null
           },
           {
             "label": "peer-median NTM TEV/EBITDA",
             "metric": "EBITDA",
-            "multiple": 8.3,
+            "multiple": 9.27,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 297.2,
+            "implied_level": 233.4,
             "is_identity": false,
             "note": null
           },
           {
             "label": "peer-median LTM TEV/EBITDA",
             "metric": "EBITDA",
-            "multiple": 6.6,
+            "multiple": 6.3,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 373.8,
+            "implied_level": 343.4,
             "is_identity": false,
             "note": null
           },
           {
             "label": "name NTM TEV/Rev",
             "metric": "Revenue",
-            "multiple": 1.04,
+            "multiple": 0.91,
             "multiple_source": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
-            "implied_level": 2372.0,
+            "implied_level": 2377.4,
             "is_identity": true,
             "note": null
           },
@@ -375,7 +375,7 @@
             "metric": "Revenue",
             "multiple": 1.13,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 2183.1,
+            "implied_level": 1914.5,
             "is_identity": false,
             "note": null
           },
@@ -384,14 +384,14 @@
             "metric": "Revenue",
             "multiple": 1.1,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 2242.6,
+            "implied_level": 1966.7,
             "is_identity": false,
             "note": null
           }
         ],
         "tev": {
-          "value": 2466.9,
-          "source_ref": "TEV = mcap 1344.2 + net debt 1122.7 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-07, exported 2026-08-09) — simple-TEV basis",
+          "value": 2163.4,
+          "source_ref": "TEV = mcap 1040.7 + net debt 1122.7 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-21, exported 2026-09-22) — simple-TEV basis",
           "status": "present",
           "note": null
         },
@@ -402,16 +402,16 @@
           "note": null
         },
         "rev_anchors": {
-          "value": "FY26E $2356.2M · FY27E $2385.5M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
+          "value": "FY26E $2358.3M · FY27E $2383.5M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
           "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
           "status": "present",
           "note": null
         },
-        "heterogeneity_gate": "market caps span $94M–$36.9B (392x); the name is $1.3B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
-        "tev_as_of": "2026-08-07",
-        "multiples_as_of": "2026-08-06",
+        "heterogeneity_gate": "market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "tev_as_of": "2026-09-21",
+        "multiples_as_of": "2026-08-26",
         "vintage_coherent": true,
-        "coherence_note": "vintage-coherent: derived FY26 $288.2M vs direct consensus $288.1M (residual 0.000 ≤ 0.10 tolerance)",
+        "coherence_note": "vintage-coherent: derived FY26 $288.1M vs direct consensus $288.1M (residual 0.000 ≤ 0.10 tolerance)",
         "net_debt_reconciled": true
       }
     },
@@ -423,20 +423,20 @@
         "note": null
       },
       "free_cash_flow": {
-        "value": 158.0,
+        "value": 201.1,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "status": "present",
-        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $234.1M − capex $9.1M = $225.0M — 0.70x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
+        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $234.1M − capex $9.1M = $225.0M — 0.89x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
       },
       "margin_trend": {
-        "value": "EBITDA margin: Sep-30-2016 12% → Sep-30-2017 (R) 16% → Sep-30-2018 18% → Sep-30-2019 23% → Sep-30-2020 19% → Sep-30-2021 18% → Sep-30-2022 (R) 17% → Sep-30-2023 (R) 19% → Sep-30-2024 21% → Sep-30-2025 16% → Jun-30-2026 (LTM) 11%; gross margin: Sep-30-2016 31% → Sep-30-2017 (R) 34% → Sep-30-2018 34% → Sep-30-2019 36% → Sep-30-2020 34% → Sep-30-2021 31% → Sep-30-2022 (R) 31% → Sep-30-2023 (R) 32% → Sep-30-2024 35% → Sep-30-2025 33% → Jun-30-2026 (LTM) 29%; absolute EBITDA: Sep-30-2016 67 → Sep-30-2017 (R) 117 → Sep-30-2018 146 → Sep-30-2019 194 → Sep-30-2020 191 → Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 316 → Sep-30-2024 424 → Sep-30-2025 376 → Jun-30-2026 (LTM) 263; absolute revenue: Sep-30-2016 575 → Sep-30-2017 (R) 713 → Sep-30-2018 828 → Sep-30-2019 854 → Sep-30-2020 988 → Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Jun-30-2026 (LTM) 2,355  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
+        "value": "EBITDA margin: Sep-30-2017 (R) 16% → Sep-30-2018 18% → Sep-30-2019 23% → Sep-30-2020 19% → Sep-30-2021 18% → Sep-30-2022 (R) 17% → Sep-30-2023 (R) 19% → Sep-30-2024 21% → Sep-30-2025 19% → Jun-30-2026 (LTM) 14%; gross margin: Sep-30-2017 (R) 34% → Sep-30-2018 34% → Sep-30-2019 36% → Sep-30-2020 34% → Sep-30-2021 31% → Sep-30-2022 (R) 31% → Sep-30-2023 (R) 32% → Sep-30-2024 35% → Sep-30-2025 33% → Jun-30-2026 (LTM) 29%; absolute EBITDA: Sep-30-2017 (R) 117 → Sep-30-2018 146 → Sep-30-2019 194 → Sep-30-2020 191 → Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 321 → Sep-30-2024 424 → Sep-30-2025 445 → Jun-30-2026 (LTM) 332; absolute revenue: Sep-30-2017 (R) 713 → Sep-30-2018 828 → Sep-30-2019 854 → Sep-30-2020 988 → Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Jun-30-2026 (LTM) 2,355  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "status": "present",
         "note": null
       },
       "net_debt_to_ebitda": {
-        "value": 4.3,
-        "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $263M [LTM 12 months Jun-30-2026]",
+        "value": 3.4,
+        "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $332M [LTM 12 months Jun-30-2026]",
         "status": "present",
         "note": null
       },
@@ -453,13 +453,13 @@
         "note": "adjusted figure not in the 99.1 revised guidance"
       },
       "survival_capacity": {
-        "value": "net-debt/EBITDA 4.3x (CIQ) | FCF-positive → self-funding",
+        "value": "net-debt/EBITDA 3.4x (CIQ) | FCF-positive → self-funding",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "status": "present",
         "note": null
       },
       "interest_coverage": {
-        "value": 3.3,
+        "value": 4.2,
         "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]",
         "status": "present",
         "note": null
@@ -483,7 +483,7 @@
         "note": null
       },
       "multi_year_trajectory": {
-        "value": "Revenue: Sep-30-2016 575 → Sep-30-2017 (R) 713 → Sep-30-2018 828 → Sep-30-2019 854 → Sep-30-2020 988 → Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Jun-30-2026 (LTM) 2,355; EBITDA: Sep-30-2016 67 → Sep-30-2017 (R) 117 → Sep-30-2018 146 → Sep-30-2019 194 → Sep-30-2020 191 → Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 316 → Sep-30-2024 424 → Sep-30-2025 376 → Jun-30-2026 (LTM) 263; ROIC: Sep-30-2018 16.0% → Sep-30-2019 22.5% → Sep-30-2020 20.0% → Sep-30-2021 23.1% → Sep-30-2022 23.9% → Sep-30-2023 33.4% → Sep-30-2024 43.1% → Sep-30-2025 34.5% → Jun-30-2026 (LTM) 21.6%  [R reclassified; per-period values, never YoY'd across a basis]",
+        "value": "Revenue: Sep-30-2017 (R) 713 → Sep-30-2018 828 → Sep-30-2019 854 → Sep-30-2020 988 → Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Jun-30-2026 (LTM) 2,355; EBITDA: Sep-30-2017 (R) 117 → Sep-30-2018 146 → Sep-30-2019 194 → Sep-30-2020 191 → Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 321 → Sep-30-2024 424 → Sep-30-2025 445 → Jun-30-2026 (LTM) 332; ROIC: Sep-30-2018 16.0% → Sep-30-2019 22.5% → Sep-30-2020 20.0% → Sep-30-2021 23.1% → Sep-30-2022 23.9% → Sep-30-2023 33.9% → Sep-30-2024 43.1% → Sep-30-2025 41.2% → Jun-30-2026 (LTM) 27.7%  [R reclassified; per-period values, never YoY'd across a basis]",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "status": "present",
         "note": null
@@ -512,7 +512,7 @@
           },
           {
             "period": "Sep-30-2023",
-            "value": 0.333544
+            "value": 0.339209
           },
           {
             "period": "Sep-30-2024",
@@ -520,11 +520,11 @@
           },
           {
             "period": "Sep-30-2025",
-            "value": 0.345354
+            "value": 0.412028
           },
           {
             "period": "Jun-30-2026 (LTM)",
-            "value": 0.215697
+            "value": 0.27692
           }
         ],
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
@@ -560,8 +560,8 @@
     },
     "ev_gap": {
       "vintages": {
-        "tev_as_of": "2026-08-07",
-        "consensus_as_of": "≥2026-08-06"
+        "tev_as_of": "2026-09-21",
+        "consensus_as_of": "≥2026-08-26"
       },
       "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)",
       "anchor_fy": "2026",
@@ -572,7 +572,7 @@
           "route": "three-ratio",
           "estimates": "13/13",
           "n": 13,
-          "dispersion": 0.014245738997710469,
+          "dispersion": 0.007886034088018279,
           "caution": false,
           "reason": "13 estimates"
         },
@@ -595,33 +595,33 @@
       "ratios": {
         "revenue_ratio": 1.0113923513948953,
         "margin_ratio": 1.0326835732153061,
-        "multiple_ratio": 0.9923385625684056,
-        "ev_gap": 1.036446292310187
+        "multiple_ratio": 1.1315521863733011,
+        "ev_gap": 1.1818477204862716
       },
       "at_adjacent": {
-        "revenue_ratio": 0.9979019282113084,
-        "margin_ratio": 0.9405102345892313,
-        "multiple_ratio": 1.1043212128582431,
-        "ev_gap": 1.036446292310187
+        "revenue_ratio": 1.0026789918838177,
+        "margin_ratio": 0.9360293615364926,
+        "multiple_ratio": 1.2592447074050106,
+        "ev_gap": 1.1818477204862716
       },
       "shape": {
-        "anchor": "earnings",
-        "adjacent": "multiple",
-        "agree": false,
-        "note": "the shape MOVES between years — earnings at the anchor, multiple adjacent; neither is the answer on its own"
+        "anchor": "multiple-dominant",
+        "adjacent": "multiple-dominant",
+        "agree": true,
+        "note": "both years give the same shape"
       },
       "bridge": {
-        "tev": 2466.9,
+        "tev": 2163.4,
         "net_debt": 1122.7,
         "shares": 116.478194,
         "our_ev": 2556.8093585,
         "our_ebitda": 300.801101,
-        "market_multiple": 8.565625
+        "market_multiple": 7.511805555555556
       },
       "consensus": {
         "Revenue": {
           "median": 2358.6,
-          "std_dev": 8.83223,
+          "std_dev": 4.58078,
           "estimates": "13/13"
         },
         "EBITDA": {
@@ -633,25 +633,25 @@
     },
     "peer_comps": {
       "peer_set": {
-        "value": "10 peers — The Simply Good Foods Company $982M — engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally. (United States); The J. M. Smucker Company $12.8B — manufactures and markets branded food and beverage products worldwide. (United States); Conagra Brands $7.2B — operates as a branded consumer packaged goods food company primarily in the United States. (United States); The Hershey Company $36.6B — engages in the manufacture and sale of confectionery products and pantry items in the United States and internationally. (United States); Nu Skin Enterprises $266M — engages in the development and distribution of various beauty and wellness products worldwide. (United States); Herbalife Ltd. $1.3B — provides health and wellness products in North America, Mexico, South and Central America, Europe, the Middle East, Africa, China, and the Asia Pacific. (United States); USANA Health Sciences $286M — develops, manufactures, and sells science-based nutritional, personal care, and skincare products in the Asia Pacific, the Americas, and Europe. (United States); Kenvue Inc. $36.9B — operates as a consumer health company in the United States, rest of North America, Europe, the Middle East, Africa, the Asia-Pacific, and Latin America. (United States); Nature's Sunshine Products $288M — manufactures and sells nutritional and personal care products in Asia, Europe, North America, Latin America, and internationally. (United States); FitLife Brands $94M — provides nutritional supplements and wellness products for health-conscious consumers in the United States and internationally. (United States) | the name: $1.3B",
+        "value": "10 peers — The Simply Good Foods Company $881M — engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally. (United States); e.l.f. Beauty $5.8B — provides cosmetics and skin care products worldwide. (United States); The J. M. Smucker Company $12.8B — manufactures and markets branded food and beverage products worldwide. (United States); Conagra Brands $7.1B — operates as a branded consumer packaged goods food company primarily in the United States. (United States); The Hershey Company $33.7B — engages in the manufacture and sale of confectionery products and pantry items in the United States and internationally. (United States); Nu Skin Enterprises $228M — engages in the development and distribution of various beauty and wellness products worldwide. (United States); Herbalife Ltd. $1.2B — provides health and wellness products in North America, Mexico, South and Central America, Europe, the Middle East, Africa, China, and the Asia Pacific. (United States); USANA Health Sciences $268M — develops, manufactures, and sells science-based nutritional, personal care, and skincare products in the Asia Pacific, the Americas, and Europe. (United States); Kenvue Inc. $33.9B — operates as a consumer health company in the United States, rest of North America, Europe, the Middle East, Africa, the Asia-Pacific, and Latin America. (United States); Nature's Sunshine Products $229M — manufactures and sells nutritional and personal care products in Asia, Europe, North America, Latin America, and internationally. (United States) | the name: $1.0B",
         "source_ref": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)",
         "status": "present",
         "note": null
       },
       "comparability": {
-        "value": "market caps span $94M–$36.9B (392x); the name is $1.3B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "value": "market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
         "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
         "status": "present",
         "note": null
       },
       "trading_multiples": {
-        "value": "TEV/Rev: name 1 vs peers Low 0.2 / Median 1.1 / Mean 1.4 / High 3.4; TEV/EBITDA: name 9.2 vs peers Low 2.2 / Median 6.6 / Mean 7.4 / High 15; P/E: name 8.1 vs peers Low 5.1 / Median 16.5 / Mean 15.6 / High 24.9; NTM TEV/Rev: name 1.04 vs peers Low 0.18 / Median 1.13 / Mean 1.35 / High 3.36; NTM TEV/EBITDA: name 7.99 vs peers Low 2.2 / Median 8.3 / Mean 7.61 / High 12.86; NTM P/E: name 9.45 vs peers Low 4.63 / Median 11.38 / Mean 11.53 / High 19.65  [NM = a real state (negative base), not missing]",
+        "value": "TEV/Rev: name 0.9 vs peers Low 0.2 / Median 1.1 / Mean 1.5 / High 3.6; TEV/EBITDA: name 6.4 vs peers Low 1.8 / Median 6.3 / Mean 8.7 / High 28; P/E: name 6.3 vs peers Low 7.7 / Median 21.9 / Mean 36.4 / High 98.3; NTM TEV/Rev: name 0.91 vs peers Low 0.16 / Median 1.13 / Mean 1.47 / High 3.15; NTM TEV/EBITDA: name 7.01 vs peers Low 1.96 / Median 9.27 / Mean 8.22 / High 17.23; NTM P/E: name 7.31 vs peers Low 4.47 / Median 11.98 / Mean 12.85 / High 32  [NM = a real state (negative base), not missing]",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "status": "present",
         "note": null
       },
       "fundamental_deltas": {
-        "value": "EBITDA margin name 11% vs peer-median 15%; rev growth name 6% vs peer-median 3%; EBITDA growth name -42% vs peer-median -3%; Debt/EBITDA name 4.4 vs peer-median 2.4; LT EPS growth name -12% vs peer-median 12%; beta name 0.5 vs peer-median 0.3  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+        "value": "EBITDA margin name 14% vs peer-median 14%; rev growth name 6% vs peer-median 3%; EBITDA growth name -27% vs peer-median 1%; Debt/EBITDA name 3.5 vs peer-median 2.4; LT EPS growth name -12% vs peer-median 12%; beta name 0.5 vs peer-median 0.6  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "status": "present",
         "note": null
@@ -663,82 +663,82 @@
             "ticker": "KVUE",
             "is_name": false,
             "is_median": false,
-            "market_cap": 36936.5,
+            "market_cap": 33940.1,
             "ebitda_margin": 0.226,
             "rev_growth_1y": 0.0176,
             "ebitda_growth_1y": 0.1204,
             "debt_to_ebitda": "2.4",
             "net_debt": 7503.0,
-            "tev_ebitda": "12.6",
-            "tev_rev": "2.9",
-            "pe": "22.6"
+            "tev_ebitda": "11.7",
+            "tev_rev": "2.7",
+            "pe": "20.8"
           },
           {
             "name": "The Hershey Company",
             "ticker": "HSY",
             "is_name": false,
             "is_median": false,
-            "market_cap": 36638.8,
+            "market_cap": 33735.4,
             "ebitda_margin": 0.224,
             "rev_growth_1y": 0.0769,
             "ebitda_growth_1y": 0.0219,
             "debt_to_ebitda": "2.1",
             "net_debt": 5132.1,
-            "tev_ebitda": "15",
-            "tev_rev": "3.4",
-            "pe": "24.9"
+            "tev_ebitda": "13.9",
+            "tev_rev": "3.2",
+            "pe": "22.9"
           },
           {
             "name": "The J. M. Smucker Company",
             "ticker": "SJM",
             "is_name": false,
             "is_median": false,
-            "market_cap": 12842.8,
-            "ebitda_margin": 0.213,
-            "rev_growth_1y": 0.0372,
-            "ebitda_growth_1y": -0.1068,
-            "debt_to_ebitda": "3.5",
-            "net_debt": 7071.2,
-            "tev_ebitda": "9.8",
+            "market_cap": 12806.0,
+            "ebitda_margin": 0.247,
+            "rev_growth_1y": 0.0508,
+            "ebitda_growth_1y": 0.2207,
+            "debt_to_ebitda": "2.9",
+            "net_debt": 6897.0,
+            "tev_ebitda": "8.3",
             "tev_rev": "2.2",
-            "pe": "NM"
+            "pe": "55.8"
           },
           {
             "name": "Conagra Brands",
             "ticker": "CAG",
             "is_name": false,
             "is_median": false,
-            "market_cap": 7231.1,
+            "market_cap": 7111.5,
             "ebitda_margin": 0.154,
             "rev_growth_1y": -0.0285,
             "ebitda_growth_1y": -0.1554,
             "debt_to_ebitda": "4.2",
             "net_debt": 7257.1,
-            "tev_ebitda": "7.5",
+            "tev_ebitda": "7.4",
             "tev_rev": "1.3",
             "pe": "NM"
           },
           {
-            "name": "BellRing Brands",
-            "ticker": "BRBR",
-            "is_name": true,
+            "name": "e.l.f. Beauty",
+            "ticker": "ELF",
+            "is_name": false,
             "is_median": false,
-            "market_cap": 1344.2,
-            "ebitda_margin": 0.112,
-            "rev_growth_1y": 0.0586,
-            "ebitda_growth_1y": -0.4219,
-            "debt_to_ebitda": "4.4",
-            "net_debt": 1122.7,
-            "tev_ebitda": "9.2",
-            "tev_rev": "1",
-            "pe": "8.1"
+            "market_cap": 5770.4,
+            "ebitda_margin": 0.119,
+            "rev_growth_1y": 0.3123,
+            "ebitda_growth_1y": 0.1529,
+            "debt_to_ebitda": "4.1",
+            "net_debt": 585.1,
+            "tev_ebitda": "28",
+            "tev_rev": "3.6",
+            "pe": "98.3"
           },
           {
             "name": "Herbalife Ltd.",
             "ticker": "HLF",
             "is_name": false,
             "is_median": false,
-            "market_cap": 1294.3,
+            "market_cap": 1249.3,
             "ebitda_margin": 0.12,
             "rev_growth_1y": 0.0552,
             "ebitda_growth_1y": 0.0003,
@@ -746,21 +746,51 @@
             "net_debt": 1833.3,
             "tev_ebitda": "4.5",
             "tev_rev": "0.6",
-            "pe": "8"
+            "pe": "7.7"
+          },
+          {
+            "name": "BellRing Brands",
+            "ticker": "BRBR",
+            "is_name": true,
+            "is_median": false,
+            "market_cap": 1040.7,
+            "ebitda_margin": 0.141,
+            "rev_growth_1y": 0.0586,
+            "ebitda_growth_1y": -0.2702,
+            "debt_to_ebitda": "3.5",
+            "net_debt": 1122.7,
+            "tev_ebitda": "6.4",
+            "tev_rev": "0.9",
+            "pe": "6.3"
           },
           {
             "name": "The Simply Good Foods Company",
             "ticker": "SMPL",
             "is_name": false,
             "is_median": false,
-            "market_cap": 981.9,
+            "market_cap": 881.1,
             "ebitda_margin": 0.156,
             "rev_growth_1y": -0.0448,
             "ebitda_growth_1y": -0.191,
             "debt_to_ebitda": "1.9",
             "net_debt": 324.6,
-            "tev_ebitda": "5.7",
+            "tev_ebitda": "5.2",
             "tev_rev": "0.9",
+            "pe": "NM"
+          },
+          {
+            "name": "USANA Health Sciences",
+            "ticker": "USNA",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 267.7,
+            "ebitda_margin": 0.081,
+            "rev_growth_1y": 0.0157,
+            "ebitda_growth_1y": -0.1609,
+            "debt_to_ebitda": null,
+            "net_debt": -168.6,
+            "tev_ebitda": "1.8",
+            "tev_rev": "0.2",
             "pe": "NM"
           },
           {
@@ -768,78 +798,48 @@
             "ticker": "NATR",
             "is_name": false,
             "is_median": false,
-            "market_cap": 288.2,
+            "market_cap": 229.1,
             "ebitda_margin": 0.087,
             "rev_growth_1y": 0.0677,
             "ebitda_growth_1y": 0.2254,
             "debt_to_ebitda": "0.4",
             "net_debt": -61.1,
-            "tev_ebitda": "4.7",
-            "tev_rev": "0.5",
-            "pe": "16.4"
-          },
-          {
-            "name": "USANA Health Sciences",
-            "ticker": "USNA",
-            "is_name": false,
-            "is_median": false,
-            "market_cap": 285.6,
-            "ebitda_margin": 0.082,
-            "rev_growth_1y": 0.0157,
-            "ebitda_growth_1y": -0.0667,
-            "debt_to_ebitda": null,
-            "net_debt": -168.6,
-            "tev_ebitda": "2.2",
-            "tev_rev": "0.2",
-            "pe": "NM"
+            "tev_ebitda": "3.5",
+            "tev_rev": "0.3",
+            "pe": "13"
           },
           {
             "name": "Nu Skin Enterprises",
             "ticker": "NUS",
             "is_name": false,
             "is_median": false,
-            "market_cap": 266.5,
-            "ebitda_margin": 0.092,
-            "rev_growth_1y": -0.1417,
-            "ebitda_growth_1y": -0.1456,
-            "debt_to_ebitda": "1.9",
-            "net_debt": 102.8,
-            "tev_ebitda": "2.3",
-            "tev_rev": "0.3",
-            "pe": "5.1"
-          },
-          {
-            "name": "FitLife Brands",
-            "ticker": "FTLF",
-            "is_name": false,
-            "is_median": false,
-            "market_cap": 94.2,
-            "ebitda_margin": 0.15,
-            "rev_growth_1y": 0.4227,
-            "ebitda_growth_1y": 0.0273,
-            "debt_to_ebitda": "3.1",
-            "net_debt": 41.0,
-            "tev_ebitda": "9.9",
-            "tev_rev": "1.5",
-            "pe": "16.7"
+            "market_cap": 227.8,
+            "ebitda_margin": 0.087,
+            "rev_growth_1y": -0.1544,
+            "ebitda_growth_1y": -0.2329,
+            "debt_to_ebitda": "2",
+            "net_debt": 96.7,
+            "tev_ebitda": "2.2",
+            "tev_rev": "0.2",
+            "pe": "NM"
           },
           {
             "name": "Peer median",
             "ticker": "",
             "is_name": false,
             "is_median": true,
-            "market_cap": 1138.1,
-            "ebitda_margin": 0.152,
-            "rev_growth_1y": 0.0274,
-            "ebitda_growth_1y": -0.0332,
+            "market_cap": 3509.85,
+            "ebitda_margin": 0.137,
+            "rev_growth_1y": 0.0342,
+            "ebitda_growth_1y": 0.0111,
             "debt_to_ebitda": "2.4",
-            "net_debt": 1078.95,
-            "tev_ebitda": "6.6",
+            "net_debt": 1209.2,
+            "tev_ebitda": "6.3",
             "tev_rev": "1.1",
-            "pe": "16.55"
+            "pe": "21.85"
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-07",
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21",
         "status": "present",
         "note": null
       }
@@ -904,7 +904,7 @@
       },
       "market_180d_return": {
         "value": 0.12620001511830092,
-        "source_ref": "EOD IWM 180d to 2026-08-24 (cap-band: $1.3B @ 2026-08-24 → small (<$4B) → IWM)",
+        "source_ref": "EOD IWM 180d to 2026-08-24 (cap-band: $1.0B @ 2026-08-24 → small (<$4B) → IWM)",
         "status": "present",
         "note": null
       },
@@ -927,7 +927,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "IWM",
-      "benchmark_basis": "cap-band: $1.3B @ 2026-08-24 → small (<$4B) → IWM"
+      "benchmark_basis": "cap-band: $1.0B @ 2026-08-24 → small (<$4B) → IWM"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -936,24 +936,24 @@
             "fy": "2026",
             "median": 2358.6,
             "high": 2363.6,
-            "low": 2330.0,
-            "std_dev": 8.83223,
+            "low": 2345.0,
+            "std_dev": 4.58078,
             "estimates": "13/13"
           },
           {
             "fy": "2027",
-            "median": 2390.48541,
+            "median": 2379.09642,
             "high": 2425.6,
             "low": 2319.05439,
-            "std_dev": 29.40801,
+            "std_dev": 29.21145,
             "estimates": "13/13"
           },
           {
             "fy": "2028",
-            "median": 2465.75988,
+            "median": 2465.30988,
             "high": 2563.0,
             "low": 2429.81927,
-            "std_dev": 40.69583,
+            "std_dev": 40.86835,
             "estimates": "8/8"
           },
           {
@@ -1017,13 +1017,13 @@
         ]
       },
       "eps_trend": {
-        "value": "EPS (GAAP) FY 2026: 0↑/4↓ last mo",
+        "value": "EPS (GAAP) FY 2026: 0↑/0↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "status": "present",
         "note": null
       },
       "revenue_trend": {
-        "value": "Revenue FY 2026: 11↑/0↓ last mo",
+        "value": "Revenue FY 2026: 1↑/0↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "status": "present",
         "note": null
@@ -1043,31 +1043,31 @@
     },
     "catalyst_path": {
       "as_of": {
-        "value": "≥2026-08-06",
+        "value": "≥2026-08-26",
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
       },
       "horizon_read": {
-        "value": "EPS Normalized FQ4 2026: 1m 0↑/13↓, 2m 0↑/13↓, 3m 0↑/12↓; EPS Normalized FQ1 2027: 1m 6↑/3↓, 2m 6↑/3↓, 3m 6↑/3↓; EPS (GAAP) FQ4 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 0↑/1↓; EPS (GAAP) FQ1 2027: 1m 1↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; Revenue FQ4 2026: 1m 5↑/6↓, 2m 5↑/6↓, 3m 4↑/6↓; Revenue FQ1 2027: 1m 2↑/6↓, 2m 2↑/6↓, 3m 2↑/6↓; EBITDA FQ4 2026: 1m 0↑/11↓, 2m 0↑/11↓, 3m 0↑/10↓; EBITDA FQ1 2027: 1m 4↑/3↓, 2m 4↑/3↓, 3m 4↑/3↓; EBIT FQ4 2026: 1m 0↑/11↓, 2m 0↑/11↓, 3m 0↑/10↓; EBIT FQ1 2027: 1m 4↑/3↓, 2m 4↑/3↓, 3m 4↑/3↓; Interest Expense FQ4 2026: 1m 0↑/10↓, 2m 0↑/10↓, 3m 0↑/9↓; Interest Expense FQ1 2027: 1m 3↑/3↓, 2m 3↑/3↓, 3m 3↑/3↓; EBT (GAAP) FQ4 2026: 1m 0↑/4↓, 2m 0↑/4↓, 3m 0↑/3↓; EBT (GAAP) FQ1 2027: 1m 0↑/3↓, 2m 0↑/3↓, 3m 0↑/3↓; Net Income (Excl. Excep) FQ4 2026: 1m 0↑/10↓, 2m 0↑/10↓, 3m 0↑/9↓; Net Income (Excl. Excep) FQ1 2027: 1m 4↑/2↓, 2m 4↑/2↓, 3m 4↑/2↓; Net Income (GAAP) FQ4 2026: 1m 8↑/2↓, 2m 8↑/2↓, 3m 7↑/3↓  [data ≥ 2026-08-06 · export date unverified]",
+        "value": "EPS Normalized FQ4 2026: 1m 0↑/0↓, 2m 0↑/13↓, 3m 0↑/13↓; EPS Normalized FQ1 2027: 1m 0↑/0↓, 2m 6↑/3↓, 3m 6↑/3↓; EPS (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓; EPS (GAAP) FQ1 2027: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; Revenue FQ4 2026: 1m 0↑/0↓, 2m 4↑/7↓, 3m 5↑/6↓; Revenue FQ1 2027: 1m 0↑/0↓, 2m 2↑/6↓, 3m 2↑/6↓; EBITDA FQ4 2026: 1m 0↑/0↓, 2m 0↑/11↓, 3m 0↑/11↓; EBITDA FQ1 2027: 1m 0↑/0↓, 2m 4↑/3↓, 3m 4↑/3↓; EBIT FQ4 2026: 1m 0↑/0↓, 2m 0↑/11↓, 3m 0↑/11↓; EBIT FQ1 2027: 1m 0↑/0↓, 2m 4↑/3↓, 3m 4↑/3↓; Interest Expense FQ4 2026: 1m 0↑/0↓, 2m 0↑/10↓, 3m 0↑/10↓; Interest Expense FQ1 2027: 1m 0↑/0↓, 2m 3↑/3↓, 3m 3↑/3↓; EBT (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 0↑/4↓, 3m 0↑/4↓; EBT (GAAP) FQ1 2027: 1m 0↑/0↓, 2m 0↑/3↓, 3m 0↑/3↓; Net Income (Excl. Excep) FQ4 2026: 1m 0↑/0↓, 2m 0↑/10↓, 3m 0↑/10↓; Net Income (Excl. Excep) FQ1 2027: 1m 0↑/0↓, 2m 4↑/2↓, 3m 4↑/2↓; Net Income (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 5↑/2↓, 3m 8↑/2↓  [data ≥ 2026-08-26 · export date unverified]",
         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "status": "present",
         "note": null
       },
       "acceleration_read": {
-        "value": "FY 2026 EPS Normalized: 2.37 (12m) → 2.31 (9m) → 1.92 (6m) → 1.25 (3m) → 1.25 (2m) → 1.24 (1m) → 1.04 (latest); net -56% (12m→latest) | FY 2026 EPS (GAAP): 2.34 (12m) → 2.25 (9m) → 1.93 (6m) → 1.42 (3m) → 1.40 (2m) → 1.38 (1m) → 1.18 (latest); net -50% (12m→latest) | FY 2026 Revenue: 2,534.5 (12m) → 2,520.1 (9m) → 2,417.2 (6m) → 2,333.9 (3m) → 2,333.5 (2m) → 2,331.9 (1m) → 2,356.2 (latest); net -7% (12m→latest) | FY 2026 EBITDA: 512.3 (12m) → 499.9 (9m) → 424.5 (6m) → 318.8 (3m) → 318.6 (2m) → 317.4 (1m) → 288.1 (latest); net -44% (12m→latest) | FY 2026 EBIT: 469.1 (12m) → 458.2 (9m) → 384.4 (6m) → 279.7 (3m) → 278.8 (2m) → 277.6 (1m) → 246.3 (latest); net -47% (12m→latest) | FY 2026 Interest Expense: -65.1 (12m) → -68.8 (9m) → -79.9 (6m) → -80.5 (3m) → -79.9 (2m) → -80.2 (1m) → -79.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 395.5 (12m) → 381.8 (9m) → 317.1 (6m) → 223.0 (3m) → 223.0 (2m) → 217.5 (1m) → 184.7 (latest); net -53% (12m→latest) | FY 2026 Net Income (Excl. Excep): 303.3 (12m) → 293.1 (9m) → 229.1 (6m) → 148.8 (3m) → 148.4 (2m) → 147.3 (1m) → 123.0 (latest); net -59% (12m→latest) | FY 2026 Net Income (GAAP): 297.7 (12m) → 287.1 (9m) → 234.3 (6m) → 165.8 (3m) → 164.8 (2m) → 163.2 (1m) → 138.2 (latest); net -54% (12m→latest)  [data ≥ 2026-08-06 · export date unverified]",
+        "value": "FY 2026 EPS Normalized: 2.34 (12m) → 1.94 (9m) → 1.91 (6m) → 1.25 (3m) → 1.25 (2m) → 1.04 (1m) → 1.04 (latest); net -56% (12m→latest) | FY 2026 EPS (GAAP): 2.30 (12m) → 1.97 (9m) → 1.93 (6m) → 1.40 (3m) → 1.38 (2m) → 1.18 (1m) → 1.18 (latest); net -49% (12m→latest) | FY 2026 Revenue: 2,525.9 (12m) → 2,430.3 (9m) → 2,415.5 (6m) → 2,333.5 (3m) → 2,337.0 (2m) → 2,356.2 (1m) → 2,358.3 (latest); net -7% (12m→latest) | FY 2026 EBITDA: 505.3 (12m) → 434.5 (9m) → 424.9 (6m) → 318.6 (3m) → 317.9 (2m) → 288.1 (1m) → 288.1 (latest); net -43% (12m→latest) | FY 2026 EBIT: 462.7 (12m) → 392.6 (9m) → 383.8 (6m) → 278.8 (3m) → 278.1 (2m) → 246.3 (1m) → 246.3 (latest); net -47% (12m→latest) | FY 2026 Interest Expense: -65.7 (12m) → -73.0 (9m) → -79.9 (6m) → -79.9 (3m) → -80.2 (2m) → -79.7 (1m) → -79.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 383.7 (12m) → 326.1 (9m) → 315.2 (6m) → 223.0 (3m) → 218.3 (2m) → 184.7 (1m) → 184.7 (latest); net -52% (12m→latest) | FY 2026 Net Income (Excl. Excep): 298.1 (12m) → 245.1 (9m) → 227.9 (6m) → 148.4 (3m) → 147.7 (2m) → 123.0 (1m) → 123.0 (latest); net -59% (12m→latest) | FY 2026 Net Income (GAAP): 288.8 (12m) → 245.2 (9m) → 232.0 (6m) → 164.8 (3m) → 163.4 (2m) → 138.2 (1m) → 138.2 (latest); net -52% (12m→latest)  [data ≥ 2026-08-26 · export date unverified]",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "status": "present",
         "note": null
       },
       "cross_name_anchor": {
-        "value": "NTM: TEV/REV 1.04 · TEV/EBITDA 7.99 · TEV/EBIT 9.26 · Price/Earnings 9.45 · PEG – · P/BV – | FY 2026: TEV/REV 1.05 · TEV/EBITDA 8.56 · TEV/EBIT 10.01 · Price/Earnings 11.07 · PEG – · P/BV – | FY 2027: TEV/REV 1.03 · TEV/EBITDA 7.64 · TEV/EBIT 8.74 · Price/Earnings 8.75 · PEG – · P/BV – | FY 2028: TEV/REV 1.00 · TEV/EBITDA 7.15 · TEV/EBIT 8.12 · Price/Earnings 7.56 · PEG – · P/BV – | FY 2029: TEV/REV 0.97 · TEV/EBITDA 7.06 · TEV/EBIT 8.13 · Price/Earnings 7.47 · PEG – · P/BV – | FY 2030: TEV/REV 0.95 · TEV/EBITDA 6.80 · TEV/EBIT 7.79 · Price/Earnings 6.90 · PEG – · P/BV 8.13  [data ≥ 2026-08-06 · export date unverified]",
+        "value": "NTM: TEV/REV 0.91 · TEV/EBITDA 7.01 · TEV/EBIT 8.12 · Price/Earnings 7.31 · PEG – · P/BV – | FY 2026: TEV/REV 0.92 · TEV/EBITDA 7.51 · TEV/EBIT 8.78 · Price/Earnings 8.57 · PEG – · P/BV – | FY 2027: TEV/REV 0.91 · TEV/EBITDA 6.70 · TEV/EBIT 7.66 · Price/Earnings 6.77 · PEG – · P/BV – | FY 2028: TEV/REV 0.87 · TEV/EBITDA 6.27 · TEV/EBIT 7.12 · Price/Earnings 5.85 · PEG – · P/BV – | FY 2029: TEV/REV 0.85 · TEV/EBITDA 6.19 · TEV/EBIT 7.13 · Price/Earnings 5.79 · PEG – · P/BV – | FY 2030: TEV/REV 0.84 · TEV/EBITDA 5.96 · TEV/EBIT 6.83 · Price/Earnings 5.34 · PEG – · P/BV 6.29  [data ≥ 2026-08-26 · export date unverified]",
         "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "status": "present",
         "note": null
       },
       "guidance_bridge": {
-        "value": "Revenue: latest guide '2,335.00 - 2,375.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 9/11 resolved; most recent guidance outcome: FY 2025 MET; EBITDA: latest guide '275.00 - 295.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 7/7 resolved; most recent guidance outcome: FY 2025 MET; Capital Expenditure: latest guide -10.0 for FY 2026 (dated 2026-08-04); spend ≤ guided ceiling 6/6 resolved; most recent guidance outcome: FY 2025 MET; Gross Margin %: latest guide '28.20 - 32.40' for FQ4 2022 (dated 2022-08-05) (stale — 1480d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FQ4 2022 MET; Interest Expense: latest guide -47.0 for FY 2020 (dated 2020-02-07) (stale — 2390d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2020 MISSED  [data ≥ 2026-08-06 · export date unverified]",
+        "value": "Revenue: latest guide '2,335.00 - 2,375.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 9/11 resolved; most recent guidance outcome: FY 2025 MET; EBITDA: latest guide '275.00 - 295.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 7/7 resolved; most recent guidance outcome: FY 2025 MET; Capital Expenditure: latest guide -10.0 for FY 2026 (dated 2026-08-04); spend ≤ guided ceiling 6/6 resolved; most recent guidance outcome: FY 2025 MET; Gross Margin %: latest guide '28.20 - 32.40' for FQ4 2022 (dated 2022-08-05) (stale — 1480d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FQ4 2022 MET; Interest Expense: latest guide -47.0 for FY 2020 (dated 2020-02-07) (stale — 2390d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2020 MISSED  [data ≥ 2026-08-26 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1126,6 +1126,17 @@
       },
       "revision_events": {
         "value": [
+          {
+            "date": "2026-08-26",
+            "change_type": "Upward Revision",
+            "broker": "Consumer Edge Research, LLC",
+            "metric": "Revenue",
+            "period": "FY 2026",
+            "broker_prior": "2330.0",
+            "broker_current": "2358.0",
+            "consensus_before": "2356.16",
+            "consensus_after": "2358.31"
+          },
           {
             "date": "2026-08-06",
             "change_type": "-",
@@ -3660,17 +3671,6 @@
             "date": "2026-08-04",
             "change_type": "Downward Revision",
             "broker": "William Blair & Company L.L.C.",
-            "metric": "Gross Margin %",
-            "period": "FQ4 2026",
-            "broker_prior": "25.6",
-            "broker_current": "22.8",
-            "consensus_before": "25.61",
-            "consensus_after": "25.15"
-          },
-          {
-            "date": "2026-08-04",
-            "change_type": "Downward Revision",
-            "broker": "William Blair & Company L.L.C.",
             "metric": "Effective Tax Rate %",
             "period": "FQ4 2026",
             "broker_prior": "26.0",
@@ -3693,23 +3693,23 @@
             "date": "2026-08-04",
             "change_type": "Downward Revision",
             "broker": "William Blair & Company L.L.C.",
+            "metric": "EPS Normalized",
+            "period": "FQ4 2026",
+            "broker_prior": "0.37",
+            "broker_current": "0.19",
+            "consensus_before": "0.22",
+            "consensus_after": "0.21"
+          },
+          {
+            "date": "2026-08-04",
+            "change_type": "Downward Revision",
+            "broker": "William Blair & Company L.L.C.",
             "metric": "EBITDA",
             "period": "FQ4 2026",
             "broker_prior": "88.7",
             "broker_current": "61.6",
             "consensus_before": "78.9",
             "consensus_after": "69.87"
-          },
-          {
-            "date": "2026-08-04",
-            "change_type": "Downward Revision",
-            "broker": "William Blair & Company L.L.C.",
-            "metric": "EBT (Excl. Excep)",
-            "period": "FQ4 2026",
-            "broker_prior": "57.7",
-            "broker_current": "30.3",
-            "consensus_before": "45.35",
-            "consensus_after": "31.65"
           },
           {
             "date": "2026-08-04",
@@ -3724,14 +3724,14 @@
           },
           {
             "date": "2026-08-04",
-            "change_type": "Upward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBIT",
+            "change_type": "Downward Revision",
+            "broker": "William Blair & Company L.L.C.",
+            "metric": "Gross Margin %",
             "period": "FQ4 2026",
-            "broker_prior": "72.0",
-            "broker_current": "78.0",
-            "consensus_before": "75.98",
-            "consensus_after": "52.15"
+            "broker_prior": "25.6",
+            "broker_current": "22.8",
+            "consensus_before": "25.61",
+            "consensus_after": "25.15"
           },
           {
             "date": "2026-08-04",
@@ -3834,12 +3834,12 @@
           },
           {
             "date": "2026-08-04",
-            "change_type": "Downward Revision",
+            "change_type": "Upward Revision",
             "broker": "broker undisclosed",
             "metric": "EBIT",
             "period": "FQ4 2026",
-            "broker_prior": "117.0",
-            "broker_current": "81.0",
+            "broker_prior": "72.0",
+            "broker_current": "78.0",
             "consensus_before": "75.98",
             "consensus_after": "52.15"
           },
@@ -3877,12 +3877,12 @@
             "consensus_after": "52.15"
           }
         ],
-        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-06 · export date unverified]",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-26 · export date unverified]",
         "status": "present",
         "note": null
       },
       "consensus_stats": {
-        "value": "Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-06 · export date unverified]",
+        "value": "Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-26 · export date unverified]",
         "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
         "status": "present",
         "note": null
@@ -3915,52 +3915,31 @@
           "date_basis": "cadence-estimate",
           "tests_what": "the committed revised outlook (see Revised guidance — the print is the checkpoint that confirms or refutes it)",
           "source_ref": "cadence: EDGAR submissions (median 91d gap over 28 results 8-Ks; last print 2026-08-04) · guide: EDGAR 8-K 0001628280-26-030115 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbrexh991-q22026earningsr.htm"
-        },
-        {
-          "event": "effective January 1, 2026",
-          "expected_date": "2027-01",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-14-2025"
-        },
-        {
-          "event": "effective as of June 24, 2026, and departed the Company effective as of September 1, 2026.",
-          "expected_date": "2027-06",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jun-24-2026"
-        },
-        {
-          "event": "effective July 29, 2026",
-          "expected_date": "2027-07",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026"
         }
       ],
       "qa_flags": []
     },
     "leverage_survival": {
       "net_debt_to_ebitda": {
-        "value": 4.3,
-        "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $263M [LTM 12 months Jun-30-2026]",
+        "value": 3.4,
+        "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $332M [LTM 12 months Jun-30-2026]",
         "status": "present",
         "note": null
       },
       "total_debt_to_ebitda": {
-        "value": "name 4.4x vs peer median 2.4x (comps TOTAL-debt/EBITDA basis)",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-07",
+        "value": "name 3.5x vs peer median 2.4x (comps TOTAL-debt/EBITDA basis)",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
       "interest_coverage": {
-        "value": 3.3,
+        "value": 4.2,
         "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]",
         "status": "present",
         "note": null
       },
       "survival": {
-        "value": "net-debt/EBITDA 4.3x (CIQ) | FCF-positive → self-funding",
+        "value": "net-debt/EBITDA 3.4x (CIQ) | FCF-positive → self-funding",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "status": "present",
         "note": null
@@ -3977,74 +3956,74 @@
         "value": [
           {
             "basis": "LTM Total Revenue",
-            "low": -705.8,
-            "median": 1494.0,
-            "mean": 2109.6,
-            "high": 6963.0
+            "low": -751.9,
+            "median": 1396.3,
+            "mean": 2435.6,
+            "high": 7369.7
           },
           {
             "basis": "LTM EBITDA",
-            "low": -552.1,
-            "median": 601.9,
-            "mean": 827.4,
-            "high": 2818.6
+            "low": -536.8,
+            "median": 971.9,
+            "mean": 1751.0,
+            "high": 8179.8
           },
           {
             "basis": "LTM EBIT",
-            "low": -175.0,
-            "median": 1003.3,
-            "mean": 1251.9,
-            "high": 3509.4
+            "low": -40.7,
+            "median": 1358.1,
+            "mean": 2617.6,
+            "high": 11650.2
           },
           {
             "basis": "NTM Revenue (Capital IQ)",
-            "low": -706.43,
-            "median": 1562.06,
-            "mean": 2082.95,
-            "high": 6848.58
+            "low": -752.5,
+            "median": 1568.95,
+            "mean": 2361.58,
+            "high": 6354.69
           },
           {
             "basis": "NTM EBITDA (Capital IQ)",
-            "low": -443.3,
-            "median": 1439.58,
-            "mean": 1226.94,
-            "high": 2847.98
+            "low": -518.49,
+            "median": 1740.14,
+            "mean": 1414.33,
+            "high": 4195.84
           },
           {
             "basis": "LTM Basic EPS",
-            "low": 847.19,
-            "median": 2765.44,
-            "mean": 2610.2,
-            "high": 4164.96
+            "low": 1290.59,
+            "median": 3654.62,
+            "mean": 6088.26,
+            "high": 16427.64
           },
           {
             "basis": "NTM EPS (Capital IQ)",
-            "low": 658.95,
-            "median": 1620.08,
-            "mean": 1640.87,
-            "high": 2796.93
+            "low": 636.01,
+            "median": 1705.24,
+            "mean": 1828.73,
+            "high": 4554.22
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-07",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
       "bridge": {
         "value": "TEV→equity bridge: + cash $50.40M, − total debt $1,173.10M",
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-07",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
       "bridge_cash": 50.4,
       "bridge_debt": 1173.1,
       "market_cap": {
-        "value": 1344.2,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-07",
+        "value": 1040.7,
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
       "comparability_gate": {
-        "value": "market caps span $94M–$36.9B (392x); the name is $1.3B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "value": "market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
         "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
         "status": "present",
         "note": null
@@ -4166,7 +4145,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans);…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000 (Schedule I: 2021 Refinancing Term…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…\n  Withholding Advances interest rate: Prime Rate as of the date of such Withholding Advances plus 2.0% per annum",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4190,7 +4169,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000",
+              "value": "aggregate principal amount up to $636,200,000 (Schedule I: 2021 Refinancing Term Commitments — Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
               "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “2021 Refinancing Term Loans”)”"
@@ -4204,10 +4183,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans",
+              "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans; Eurodollar Rate floor: in the case of Term Loans, less than 0.75% per annum (Revolving Credit Loans floor 1.00% per annum)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Clause (a) of the defined term “Applicable Rate” ... amended and restated ... “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
+              "note": "verbatim: “Clause (a) of the defined term “Applicable Rate” ... amended and restated in its entirety to read as follows: “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
             },
             "base_rate_label": "Eurodollar Rate",
             "margin_pct": 4.0,
@@ -4246,10 +4225,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; Liens and guaranties under the Collateral Agreement reaffirmed. Guarantors/Loan Parties executing: Bellring Brands, LLC (Borrower); Dymatize Enterprises, LLC; Premier Nutrition Company, LLC; Supreme Protein, LLC; TA/DEI-A Acquisition Corp.",
+              "value": "2021 Refinancing Term Loans constitute Obligations, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents; each Loan Party reaffirms each Lien granted to the Administrative Agent for the benefit of the Secured Parties and the guaranties made pursuant to the Collateral Agreement. Guarantors signatory: Dymatize Enterprises, LLC; Premier Nutrition Company, LLC; Supreme Protein, LLC; TA/DEI-A Acquisition Corp.",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Each Loan Party party hereto hereby (i) acknowledges and agrees that all of its pledges, grants of security interests and Liens and other obligations under the Collateral Agreement and the other Loan Documents to which it is a party are reaffirmed and remain in full force and effect on a continuous basis, (ii) reaffirms (x) each Lien granted by it to the Administrative Agent for the benefit of the Secured Parties and (y) the guaranties made by it pursuant to the Collateral Agreement ... Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
+              "note": "verbatim: “Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4260,10 +4239,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Repricing Event (Section 2.05(b)(ix)): within 6 months after Amendment No. 2 Effective Date, a 1.00% premium on the aggregate principal amount of Term B Loans repriced/refinanced or subject to such amendment. Also, Section 2(d): notice of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans; Section 5(i): 100% of proceeds applied to repay all outstanding Existing Term Loans.",
+              "value": "Repricing Event premium: if on or before 6 months after the Amendment No. 2 Effective Date a Repricing Event occurs, Borrower pays 1.00% of the aggregate principal amount of the Term B Loans repriced/refinanced or subject to such amendment. Also (prepayment of Existing Term Loans): 'This Amendment constitutes notice by the Borrower to the Administrative Agent of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date.' No new events of default enumerated; Amendment references existing conditions that no Default or Event of Default shall exist.",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Section 2.05(b)(ix) ... “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any (i) prepayment or repayment of Term B Loans ... bearing interest at an ‘effective’ interest rate that is less than the ‘effective’ interest rate applicable to the Term B Loans ... (any such transaction or event ..., a ‘Repricing Event’), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... (I) ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced ... and (II) ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans that are the subject of such Repricing Event ...””"
+              "note": "verbatim: “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any ... a “Repricing Event” ... then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... (I) in the case of clause (i) above, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced ... and (II) ... 1.00% of the aggregate principal amount of the Term B Loans that are the subject of such Repricing Event”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4370,12 +4349,12 @@
             "pik_pct": null
           },
           {
-            "name": "Redemption Right / mechanics (Nonvoting Common Units)",
+            "name": "Redemption Right of a Member (unit redemption mechanics)",
             "value": {
-              "value": "Each Member (other than Pubco) may cause the Company to redeem its Nonvoting Common Units; Redeeming Member entitled to receive the Share Settlement or the Cash Settlement, with the Company (as determined by the Board) selecting the settlement method.",
+              "value": "Redeeming Member entitled to Share Settlement or Cash Settlement; Company (Board) elects settlement method; Redemption Date not less than seven (7) Business Days nor more than ten (10) Business Days after delivery of Redemption Notice",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
               "status": "present",
-              "note": "verbatim: “Subject to the provisions set forth in this Section 9.01, each Member (other than Pubco) shall be entitled to cause the Company to redeem (a “ Redemption ”) its Nonvoting Common Units (the “ Redemption Right ”) at any time (subject to any applicable lock-up agreements).”"
+              "note": "verbatim: “each Member (other than Pubco) shall be entitled to cause the Company to redeem (a “ Redemption ”) its Nonvoting Common Units (the “ Redemption Right ”) at any time (subject to any applicable lock-up agreements). ... In exercising its Redemption Right, a Redeeming Member shall be entitled to receive the Share Settlement or the Cash Settlement”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4384,7 +4363,7 @@
             "pik_pct": null
           },
           {
-            "name": "Share Settlement (exchange ratio)",
+            "name": "Share Settlement definition",
             "value": {
               "value": "a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e)",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
@@ -4398,7 +4377,7 @@
             "pik_pct": null
           },
           {
-            "name": "Cash Settlement",
+            "name": "Cash Settlement definition",
             "value": {
               "value": "immediately available funds in U.S. dollars in an amount equal to the Redeemed Units Equivalent",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
@@ -4412,26 +4391,12 @@
             "pik_pct": null
           },
           {
-            "name": "Redeemed Units Equivalent",
-            "value": {
-              "value": "the product of (a) the Share Settlement and (b) the Common Unit Redemption Price",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Redeemed Units Equivalent ” means the product of (a) the Share Settlement and (b) the Common Unit Redemption Price.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
             "name": "Common Unit Redemption Price",
             "value": {
-              "value": "arithmetic average of the volume weighted average prices for a share of Class A Common Stock ... for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date",
+              "value": "arithmetic average of the VWAP for a share of Class A Common Stock over the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Common Unit Redemption Price ” means the arithmetic average of the volume weighted average prices for a share of Class A Common Stock on the principal U.S. securities exchange or automated or electronic quotation system on which the Class A Common Stock is traded or quoted, as reported by Bloomberg, L.P. or its successor, for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date, subject to appropriate and equitable adjustment for any stock splits, reverse splits, stock dividends or similar events affecting the Class A Common Stock.”"
+              "note": "verbatim: ““ Common Unit Redemption Price ” means the arithmetic average of the volume weighted average prices for a share of Class A Common Stock ... for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date, subject to appropriate and equitable adjustment for any stock splits, reverse splits, stock dividends or similar events”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4440,9 +4405,9 @@
             "pik_pct": null
           },
           {
-            "name": "Units issued (Nonvoting Common Units)",
+            "name": "Units issued (reclassification/issuance amounts)",
             "value": {
-              "value": "97,474,180 Nonvoting Common Units (reclassified, held by Holdings); 39,428,571 Nonvoting Common Units issued to Pubco; one Voting Common Unit issued to Pubco",
+              "value": "97,474,180 Nonvoting Common Units (reclassified); 39,428,571 Nonvoting Common Units issued to Pubco; one Voting Common Unit issued to Pubco",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
               "status": "present",
               "note": "verbatim: “All limited liability company interests in the Company outstanding as of immediately prior to the Effective Time, all of which are held by Holdings, shall be reclassified into 97,474,180 Nonvoting Common Units, and the Company hereby issues 39,428,571 Nonvoting Common Units to Pubco”"
@@ -4454,7 +4419,21 @@
             "pik_pct": null
           },
           {
-            "name": "Term (existence)",
+            "name": "Withholding Advances interest rate",
+            "value": {
+              "value": "Prime Rate as of the date of such Withholding Advances plus 2.0% per annum",
+              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
+              "status": "present",
+              "note": "verbatim: “All Withholding Advances made on behalf of an Economic Member, plus interest thereon at a rate equal to the Prime Rate as of the date of such Withholding Advances plus 2.0% per annum”"
+            },
+            "base_rate_label": "Prime Rate",
+            "margin_pct": 2.0,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Term / duration",
             "value": {
               "value": "perpetual existence unless sooner dissolved",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
@@ -4468,12 +4447,12 @@
             "pik_pct": null
           },
           {
-            "name": "Tax Distributions",
+            "name": "Governing law",
             "value": {
-              "value": "quarterly cash distributions to each Economic Member pro rata equal to its Assumed Tax Liability (Tax Rate multiplied by allocated taxable income)",
+              "value": "State of Delaware",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
               "status": "present",
-              "note": "verbatim: “the Company, subject to availability of sufficient cash, shall make quarterly cash distributions ... to each Economic Member pro rata, in accordance with the Member’s Economic Percentage Interest ... until each Member has received an amount at least equal to its Assumed Tax Liability”"
+              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4482,12 +4461,12 @@
             "pik_pct": null
           },
           {
-            "name": "Governing law",
+            "name": "Tax Distributions",
             "value": {
-              "value": "State of Delaware",
+              "value": "quarterly cash distributions pro rata by Economic Percentage Interest up to each Member's Assumed Tax Liability",
               "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
               "status": "present",
-              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to the conflicts of law rules of such State”"
+              "note": "verbatim: “the Company, subject to availability of sufficient cash, shall make quarterly cash distributions ... to each Economic Member pro rata, in accordance with the Member’s Economic Percentage Interest ... until each Member has received an amount at least equal to its Assumed Tax Liability”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4688,11 +4667,11 @@
         {
           "ticker": "BRBR",
           "is_subject": true,
-          "market_cap": 1344.2,
+          "market_cap": 1040.7,
           "acquired": 178.1,
           "total_assets": 1052.1,
           "pct_assets": 0.16928048664575612,
-          "pct_market_cap": 0.13249516441005801,
+          "pct_market_cap": 0.17113481310656287,
           "note": null,
           "impairment": {
             "state": "untagged",
@@ -4714,11 +4693,11 @@
         {
           "ticker": "KVUE",
           "is_subject": false,
-          "market_cap": 36936.5,
+          "market_cap": 33940.1,
           "acquired": 17671.0,
           "total_assets": 26735.0,
           "pct_assets": 0.6609687675331962,
-          "pct_market_cap": 0.4784156593071894,
+          "pct_market_cap": 0.5206525614243919,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -4740,11 +4719,11 @@
         {
           "ticker": "HSY",
           "is_subject": false,
-          "market_cap": 36638.8,
+          "market_cap": 33735.4,
           "acquired": 5410.712,
           "total_assets": 13973.052,
           "pct_assets": 0.3872247809569449,
-          "pct_market_cap": 0.14767710732884265,
+          "pct_market_cap": 0.16038677472328772,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -4766,11 +4745,11 @@
         {
           "ticker": "SJM",
           "is_subject": false,
-          "market_cap": 12842.8,
+          "market_cap": 12806.0,
           "acquired": 10825.0,
           "total_assets": 16203.2,
           "pct_assets": 0.6680779105361904,
-          "pct_market_cap": 0.8428847291867817,
+          "pct_market_cap": 0.8453068873965329,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -4792,11 +4771,11 @@
         {
           "ticker": "CAG",
           "is_subject": false,
-          "market_cap": 7231.1,
+          "market_cap": 7111.5,
           "acquired": 9950.0,
           "total_assets": 17274.4,
           "pct_assets": 0.5759968508312878,
-          "pct_market_cap": 1.3760008850658958,
+          "pct_market_cap": 1.3991422344090558,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -4816,13 +4795,39 @@
           }
         },
         {
+          "ticker": "ELF",
+          "is_subject": false,
+          "market_cap": 5770.4,
+          "acquired": 1395.451,
+          "total_assets": 2460.649,
+          "pct_assets": 0.5671068892800233,
+          "pct_market_cap": 0.24182916262304174,
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 5,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "ImpairmentOfIntangibleAssetsFinitelived",
+            "note": "the filer REPORTS this concept and states zero — 5 annual period(s) in the window under ImpairmentOfIntangibleAssetsFinitelived, every one nil. A measurement that they did not write down, not a missing figure"
+          }
+        },
+        {
           "ticker": "HLF",
           "is_subject": false,
-          "market_cap": 1294.3,
+          "market_cap": 1249.3,
           "acquired": 459.1,
           "total_assets": 2857.7,
           "pct_assets": 0.16065367253385593,
-          "pct_market_cap": 0.3547091091709805,
+          "pct_market_cap": 0.3674857920435444,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
@@ -4844,11 +4849,11 @@
         {
           "ticker": "SMPL",
           "is_subject": false,
-          "market_cap": 981.9,
+          "market_cap": 881.1,
           "acquired": 1508.857,
           "total_assets": 2062.444,
           "pct_assets": 0.7315868939956672,
-          "pct_market_cap": 1.536670740401263,
+          "pct_market_cap": 1.712469640222449,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -4868,39 +4873,13 @@
           }
         },
         {
-          "ticker": "NATR",
-          "is_subject": false,
-          "market_cap": 288.2,
-          "acquired": 0.269,
-          "total_assets": 259.823,
-          "pct_assets": 0.0010353201987506882,
-          "pct_market_cap": 0.000933379597501735,
-          "note": null,
-          "impairment": {
-            "state": "untagged",
-            "state_label": "does not tag",
-            "window_start": "2015-10-01",
-            "window_end": "2020-09-30",
-            "observations": 0,
-            "charged_years": 0,
-            "total": null,
-            "pct_acquired": null,
-            "last_charge_end": null,
-            "last_charge_amount": null,
-            "pending": null,
-            "pending_span": null,
-            "tags": null,
-            "note": "no annual impairment point under any of GoodwillImpairmentLoss, GoodwillAndIntangibleAssetImpairment, ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — the filer does not tag the concept, which is NOT the same as reporting zero"
-          }
-        },
-        {
           "ticker": "USNA",
           "is_subject": false,
-          "market_cap": 285.6,
+          "market_cap": 267.7,
           "acquired": 233.756,
           "total_assets": 703.21,
           "pct_assets": 0.332412792764608,
-          "pct_market_cap": 0.8184733893557422,
+          "pct_market_cap": 0.8732013447889428,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -4920,13 +4899,39 @@
           }
         },
         {
+          "ticker": "NATR",
+          "is_subject": false,
+          "market_cap": 229.1,
+          "acquired": 0.269,
+          "total_assets": 259.823,
+          "pct_assets": 0.0010353201987506882,
+          "pct_market_cap": 0.0011741597555652555,
+          "note": null,
+          "impairment": {
+            "state": "untagged",
+            "state_label": "does not tag",
+            "window_start": "2015-10-01",
+            "window_end": "2020-09-30",
+            "observations": 0,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": null,
+            "note": "no annual impairment point under any of GoodwillImpairmentLoss, GoodwillAndIntangibleAssetImpairment, ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — the filer does not tag the concept, which is NOT the same as reporting zero"
+          }
+        },
+        {
           "ticker": "NUS",
           "is_subject": false,
-          "market_cap": 266.5,
+          "market_cap": 227.8,
           "acquired": 42.634,
           "total_assets": 1121.53,
           "pct_assets": 0.038014141396128506,
-          "pct_market_cap": 0.15997748592870545,
+          "pct_market_cap": 0.18715539947322213,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
@@ -4944,45 +4949,19 @@
             "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill",
             "note": "the filer REPORTS this concept and states zero — 1 annual period(s) in the window under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, every one nil. A measurement that they did not write down, not a missing figure"
           }
-        },
-        {
-          "ticker": "FTLF",
-          "is_subject": false,
-          "market_cap": 94.2,
-          "acquired": 70.285,
-          "total_assets": 102.592,
-          "pct_assets": 0.6850924048658764,
-          "pct_market_cap": 0.7461252653927812,
-          "note": null,
-          "impairment": {
-            "state": "explicit-zero",
-            "state_label": "reports nil",
-            "window_start": "2021-06-30",
-            "window_end": "2026-06-30",
-            "observations": 2,
-            "charged_years": 0,
-            "total": null,
-            "pct_acquired": null,
-            "last_charge_end": "2017-12-31",
-            "last_charge_amount": 5.929,
-            "pending": null,
-            "pending_span": null,
-            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived",
-            "note": "the filer REPORTS this concept and states zero — 2 annual period(s) in the window under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived, every one nil. A measurement that they did not write down, not a missing figure"
-          }
         }
       ],
       "size_floor": 1000.0,
       "subject_pct_assets": 0.16928048664575612,
-      "subject_pct_market_cap": 0.13249516441005801,
-      "median_all_assets": 0.48161081589411636,
-      "median_all_market_cap": 0.6122704623499853,
-      "median_large_assets": 0.5759968508312878,
-      "median_large_market_cap": 0.4784156593071894,
+      "subject_pct_market_cap": 0.17113481310656287,
+      "median_all_assets": 0.4771658351184841,
+      "median_all_market_cap": 0.4440691767339682,
+      "median_large_assets": 0.5715518700556556,
+      "median_large_market_cap": 0.4440691767339682,
       "n_all": 10,
-      "n_large": 5,
+      "n_large": 6,
       "imp_window_years": 5,
-      "imp_n_large_assessed": 5,
+      "imp_n_large_assessed": 6,
       "imp_n_large_charged": 4,
       "imp_median_large_pct": 0.11374265582771997,
       "imp_subject_pct": null,
@@ -4992,7 +4971,6 @@
       "annual": {
         "value": {
           "columns": [
-            "FY16",
             "FY17 (R)",
             "FY18",
             "FY19",
@@ -5010,7 +4988,6 @@
             {
               "label": "Revenue ($M)",
               "cells": [
-                "575",
                 "713",
                 "828",
                 "854",
@@ -5021,11 +4998,10 @@
                 "1,996",
                 "2,317",
                 "2,355",
-                "2,356",
-                "2,385"
+                "2,358",
+                "2,384"
               ],
               "values": [
-                574.7,
                 713.2,
                 827.5,
                 854.4,
@@ -5036,8 +5012,8 @@
                 1996.2,
                 2316.6,
                 2354.6,
-                2356.16,
-                2385.47
+                2358.31,
+                2383.54
               ],
               "material": false
             },
@@ -5045,7 +5021,6 @@
               "label": "Revenue growth",
               "cells": [
                 "—",
-                "— (basis)",
                 "— (basis)",
                 "+3%",
                 "+16%",
@@ -5064,32 +5039,30 @@
             {
               "label": "EBITDA ($M)",
               "cells": [
-                "67",
                 "117",
                 "146",
                 "194",
                 "191",
                 "227",
                 "234",
-                "316",
+                "321",
                 "424",
-                "376",
-                "263",
+                "445",
+                "332",
                 "288",
                 "323"
               ],
               "values": [
-                66.7,
                 117.4,
                 145.7,
                 194.5,
                 191.2,
                 226.6,
                 233.7,
-                315.6,
+                320.6,
                 424.2,
-                376.0,
-                262.9,
+                445.0,
+                331.9,
                 288.05,
                 322.74
               ],
@@ -5098,7 +5071,6 @@
             {
               "label": "EBITDA margin",
               "cells": [
-                "12%",
                 "16%",
                 "18%",
                 "23%",
@@ -5107,8 +5079,8 @@
                 "17%",
                 "19%",
                 "21%",
-                "16%",
-                "11%",
+                "19%",
+                "14%",
                 "12%",
                 "14%"
               ],
@@ -5118,32 +5090,30 @@
             {
               "label": "EBIT ($M)",
               "cells": [
-                "42",
                 "92",
                 "120",
                 "169",
                 "166",
                 "203",
                 "212",
-                "294",
+                "299",
                 "405",
-                "357",
-                "243",
+                "426",
+                "312",
                 "246",
                 "282"
               ],
               "values": [
-                41.7,
                 92.1,
                 119.8,
                 169.2,
                 165.9,
                 202.8,
                 212.4,
-                294.4,
+                299.4,
                 405.1,
-                357.4,
-                243.1,
+                426.4,
+                312.1,
                 246.35,
                 282.25
               ],
@@ -5152,7 +5122,6 @@
             {
               "label": "Net income ($M)",
               "cells": [
-                "20",
                 "35",
                 "0",
                 "0",
@@ -5167,7 +5136,6 @@
                 "153"
               ],
               "values": [
-                19.9,
                 35.2,
                 0.0,
                 0.0,
@@ -5189,7 +5157,6 @@
                 "—",
                 "—",
                 "—",
-                "—",
                 "0.60",
                 "0.70",
                 "0.88",
@@ -5201,7 +5168,6 @@
                 "1.34"
               ],
               "values": [
-                null,
                 null,
                 null,
                 null,
@@ -5221,31 +5187,29 @@
               "label": "EPS (Normalized)",
               "cells": [
                 "—",
-                "—",
                 "-0.62",
                 "-0.44",
                 "-0.18",
                 "0.33",
                 "0.73",
-                "1.06",
+                "1.08",
                 "1.64",
-                "1.41",
-                "0.86",
+                "1.74",
+                "1.22",
                 "1.04",
                 "1.32"
               ],
               "values": [
-                null,
                 null,
                 -0.62,
                 -0.44,
                 -0.18,
                 0.326196,
                 0.728144,
-                1.060309,
+                1.083612,
                 1.638321,
-                1.405642,
-                0.856128,
+                1.741245,
+                1.216329,
                 1.04,
                 1.32
               ],
@@ -5254,7 +5218,6 @@
             {
               "label": "Restructuring Charges ($M)",
               "cells": [
-                "—",
                 "—",
                 "—",
                 "—",
@@ -5273,7 +5236,6 @@
                 null,
                 null,
                 null,
-                null,
                 -4.7,
                 null,
                 -7.1,
@@ -5288,7 +5250,6 @@
             {
               "label": "Impairment of Goodwill ($M)",
               "cells": [
-                "—",
                 "-26",
                 "—",
                 "—",
@@ -5303,42 +5264,7 @@
                 "—"
               ],
               "values": [
-                null,
                 -26.5,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-              ],
-              "material": false
-            },
-            {
-              "label": "Gain (Loss) On Sale Of Assets ($M)",
-              "cells": [
-                "-4",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—",
-                "—"
-              ],
-              "values": [
-                -4.5,
-                null,
                 null,
                 null,
                 null,
@@ -5360,7 +5286,6 @@
                 "—",
                 "—",
                 "—",
-                "—",
                 "-30",
                 "—",
                 "—",
@@ -5371,7 +5296,6 @@
                 "—"
               ],
               "values": [
-                null,
                 null,
                 null,
                 null,
@@ -5390,32 +5314,30 @@
             {
               "label": "Legal Settlements ($M)",
               "cells": [
-                "-6",
                 "—",
                 "—",
                 "—",
                 "—",
                 "—",
                 "—",
+                "-5",
                 "—",
-                "—",
-                "—",
-                "69",
+                "-69",
+                "0",
                 "—",
                 "—"
               ],
               "values": [
-                -5.5,
                 null,
                 null,
                 null,
                 null,
                 null,
                 null,
+                -5.0,
                 null,
-                null,
-                null,
-                69.0,
+                -69.0,
+                0.0,
                 null,
                 null
               ],
@@ -5424,7 +5346,6 @@
             {
               "label": "Other Unusual Items ($M)",
               "cells": [
-                "—",
                 "—",
                 "—",
                 "-7",
@@ -5439,7 +5360,6 @@
                 "—"
               ],
               "values": [
-                null,
                 null,
                 null,
                 -6.7,
@@ -5458,7 +5378,6 @@
             {
               "label": "CFO ($M)",
               "cells": [
-                "41",
                 "80",
                 "141",
                 "98",
@@ -5473,7 +5392,6 @@
                 "164"
               ],
               "values": [
-                40.8,
                 80.4,
                 141.2,
                 98.3,
@@ -5493,7 +5411,6 @@
               "label": "Capex ($M)",
               "cells": [
                 "-4",
-                "-4",
                 "-5",
                 "-3",
                 "-2",
@@ -5507,7 +5424,6 @@
                 "-8"
               ],
               "values": [
-                -4.4,
                 -3.9,
                 -5.0,
                 -3.2,
@@ -5527,31 +5443,29 @@
               "label": "FCF ($M)",
               "cells": [
                 "—",
-                "—",
                 "121",
                 "69",
                 "61",
                 "178",
                 "-5",
-                "192",
+                "195",
                 "162",
-                "224",
-                "158",
+                "267",
+                "201",
                 "—",
                 "—"
               ],
               "values": [
-                null,
                 null,
                 120.575,
                 68.55,
                 61.4,
                 178.05,
                 -5.1,
-                191.9875,
+                195.1125,
                 162.35,
-                223.525,
-                158.0,
+                266.65,
+                201.125,
                 null,
                 null
               ],
@@ -5560,7 +5474,6 @@
             {
               "label": "D&A ($M)",
               "cells": [
-                "25",
                 "25",
                 "26",
                 "25",
@@ -5575,7 +5488,6 @@
                 "—"
               ],
               "values": [
-                25.0,
                 25.3,
                 25.9,
                 25.3,
@@ -5604,12 +5516,10 @@
                 "—",
                 "—",
                 "—",
-                "—",
                 "165",
                 "195"
               ],
               "values": [
-                null,
                 null,
                 null,
                 null,
@@ -5638,12 +5548,10 @@
                 "—",
                 "—",
                 "—",
-                "—",
                 "20",
                 "21"
               ],
               "values": [
-                null,
                 null,
                 null,
                 null,
@@ -5660,9 +5568,8 @@
               "material": false
             }
           ],
-          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-06; (R) = Reclassified basis",
+          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-26; (R) = Reclassified basis",
           "is_estimate": [
-            false,
             false,
             false,
             false,
@@ -5713,7 +5620,7 @@
             "FY24",
             "FY24",
             "FY24",
-            "FY25",
+            "FY25 (R)",
             "FY25 (R)",
             "FY25",
             "FY25",
@@ -5837,11 +5744,11 @@
                 "116",
                 "117",
                 "120",
-                "100",
+                "101",
                 "118",
-                "107",
+                "176",
                 "83",
-                "72",
+                "71",
                 "71"
               ],
               "values": [],
@@ -5881,7 +5788,7 @@
                 "22%",
                 "17%",
                 "21%",
-                "17%",
+                "27%",
                 "16%",
                 "12%",
                 "12%"
@@ -5921,8 +5828,8 @@
                 "+4%",
                 "+8%",
                 "-4%",
-                "+10%",
                 "— (basis)",
+                "-7%",
                 "— (basis)",
                 "-17%",
                 "+11%",
@@ -5994,17 +5901,17 @@
         "note": null
       },
       "as_of": {
-        "value": "≥2026-08-06",
+        "value": "≥2026-08-26",
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
       },
       "ebitda_basis": {
-        "actual_implied_dna": 23.799999999999983,
+        "actual_implied_dna": 22.549999999999983,
         "estimate_implied_dna": 41.09500000000001,
-        "ratio": 1.7266806722689094,
+        "ratio": 1.8223946784922413,
         "divergent": false,
-        "note": "implied D&A is 24 in the actuals and 41 in the estimates (1.73x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement. This ratio sits in the 1.5-2.0x BAND WHERE A REAL BASIS CHANGE HAS BEEN OBSERVED ON THIS FLEET WITHOUT BEING FLAGGED (GAAP actuals against ADJUSTED estimates), so treat this as UNRESOLVED rather than clear: reconcile the estimate row against the company's own guidance basis before comparing across the boundary."
+        "note": "implied D&A is 23 in the actuals and 41 in the estimates (1.82x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement. This ratio sits in the 1.5-2.0x BAND WHERE A REAL BASIS CHANGE HAS BEEN OBSERVED ON THIS FLEET WITHOUT BEING FLAGGED (GAAP actuals against ADJUSTED estimates), so treat this as UNRESOLVED rather than clear: reconcile the estimate row against the company's own guidance basis before comparing across the boundary."
       }
     },
     "primary_source": {
@@ -6204,7 +6111,7 @@
         "note": null
       },
       "basis_triangulation": {
-        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 4.3x\n  total debt / EBITDA (CIQ comps, GAAP basis): 4.4x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: no structured source for this decision vintage",
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 3.4x\n  total debt / EBITDA (CIQ comps, GAAP basis): 3.5x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: no structured source for this decision vintage",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
         "status": "present",
         "note": null
@@ -6232,7 +6139,7 @@
       "note": null
     },
     "key_ratios": {
-      "value": "RoCE 21.6%; RoA 14.9%; current ratio 2.25; dividend: none; not reported this period: RoE, total debt/equity [LTM 12 months Jun-30-2026]",
+      "value": "RoCE 27.7%; RoA 19.1%; current ratio 2.25; dividend: none; not reported this period: RoE, total debt/equity [LTM 12 months Jun-30-2026]",
       "source_ref": "CIQ Financials→Ratios [LTM 12 months Jun-30-2026]",
       "status": "present",
       "note": null
@@ -6240,7 +6147,6 @@
     "return_ratios": {
       "value": {
         "columns": [
-          "FY16",
           "FY17",
           "FY18",
           "FY19",
@@ -6257,7 +6163,6 @@
             "label": "RoE %",
             "cells": [
               "—",
-              "—",
               "20.5%",
               "26.2%",
               "61.5%",
@@ -6269,7 +6174,6 @@
               "—"
             ],
             "values": [
-              null,
               null,
               0.205319,
               0.262445,
@@ -6287,29 +6191,27 @@
             "label": "RoCE %",
             "cells": [
               "—",
-              "—",
               "16.0%",
               "22.5%",
               "20.0%",
               "23.1%",
               "23.9%",
-              "33.4%",
+              "33.9%",
               "43.1%",
-              "34.5%",
-              "21.6%"
+              "41.2%",
+              "27.7%"
             ],
             "values": [
-              null,
               null,
               0.159972,
               0.225455,
               0.200284,
               0.230937,
               0.239081,
-              0.333544,
+              0.339209,
               0.430884,
-              0.345354,
-              0.215697
+              0.412028,
+              0.27692
             ],
             "material": false
           },
@@ -6317,36 +6219,33 @@
             "label": "RoA %",
             "cells": [
               "—",
-              "—",
               "13.1%",
               "18.3%",
               "16.6%",
               "18.8%",
               "18.9%",
-              "26.3%",
+              "26.8%",
               "33.1%",
-              "25.1%",
-              "14.9%"
+              "30.0%",
+              "19.1%"
             ],
             "values": [
-              null,
               null,
               0.130946,
               0.183132,
               0.166165,
               0.187777,
               0.189142,
-              0.263082,
+              0.26755,
               0.331267,
-              0.251265,
-              0.148536
+              0.299775,
+              0.190695
             ],
             "material": false
           },
           {
             "label": "Current ratio",
             "cells": [
-              "—",
               "2.16x",
               "1.74x",
               "2.37x",
@@ -6373,7 +6272,6 @@
               "none",
               "none",
               "none",
-              "none",
               "none"
             ],
             "values": [],
@@ -6382,7 +6280,6 @@
         ],
         "note": "",
         "is_estimate": [
-          false,
           false,
           false,
           false,
@@ -6401,7 +6298,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 9.09,
+        "value": 8.95,
         "source_ref": "EOD BRBR last close",
         "status": "present",
         "note": null
@@ -6410,13 +6307,13 @@
         "value": 43.02,
         "source_ref": "EOD BRBR 52-week high",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-16: spans 387d over 267 bars"
+        "note": "52-week window 2025-08-24→2026-09-21: spans 392d over 270 bars"
       },
       "low_52w": {
         "value": 7.82,
         "source_ref": "EOD BRBR 52-week low",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-16: spans 387d over 267 bars"
+        "note": "52-week window 2025-08-24→2026-09-21: spans 392d over 270 bars"
       },
       "shares_out": {
         "value": 116278194.0,
@@ -6431,13 +6328,13 @@
         "note": null
       },
       "market_cap": {
-        "value": 1344.2,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-07",
+        "value": 1040.7,
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-16",
-      "market_cap_as_of": "2026-08-07"
+      "as_of": "2026-09-21",
+      "market_cap_as_of": "2026-09-21"
     },
     "stock_performance": {
       "points": [
@@ -7894,7 +7791,7 @@
           "value": "BellRing Brands, Inc. (NYSE:BRBR) announces an Equity Buyback for $600 million worth of its shares.",
           "value_num": null,
           "unit": null,
-          "verbatim": "Situation: BellRing Brands, Inc. (NYSE:BRBR) announces a share repurchase program. Under the program, the company will repurchase up to $600 million worth of its shares. The program will expire in 2 years.",
+          "verbatim": "Situation: BellRing Brands, Inc. (NYSE:BRBR) announces a share repurchase program. Under the program, the company will repurchase up to $600 million worth of its shares. The program will expire in 2 years and is valid till November 19, 2027.",
           "following_context": null,
           "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-20-2025",
           "tier": "anchored"
@@ -7948,34 +7845,10 @@
           "tier": "anchored"
         },
         {
-          "kind": "event",
-          "metric": "Buyback Transaction Announcements",
-          "period": "Sep-02-2025",
-          "value": "BellRing Brands, Inc. (NYSE:BRBR) announces an Equity Buyback for $400 million worth of its shares.",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Situation: BellRing Brands, Inc. (NYSE:BRBR) announces a share repurchase program. Under the program, the company will repurchase up to $400 million worth of its shares. The program will expire in 2 years.",
-          "following_context": null,
-          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Sep-02-2025",
-          "tier": "anchored"
-        },
-        {
-          "kind": "event",
-          "metric": "Buyback Transaction Announcements",
-          "period": "Sep-02-2025",
-          "value": "BellRing Brands, Inc. authorizes a Buyback Plan.",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Situation: The Board of Directors of BellRing Brands, Inc. has authorized a buyback plan on September 2, 2025.",
-          "following_context": null,
-          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Sep-02-2025",
-          "tier": "anchored"
-        },
-        {
           "kind": "leading_indicator",
           "metric": "RTD shake category volumes sold on price promotion",
           "period": "Q2 2026",
-          "value": "27%, up 8 percentage points versus last year",
+          "value": "27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year",
           "value_num": null,
           "unit": null,
           "verbatim": "As a result, 27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year and a meaningful step-up from Q1.",
@@ -7987,7 +7860,7 @@
           "kind": "leading_indicator",
           "metric": "RTD shake category growth",
           "period": "Q2 2026",
-          "value": "up 8%",
+          "value": "RTD shakes up 8%",
           "value_num": null,
           "unit": null,
           "verbatim": "In short, the category remains strong with RTD shakes up 8%, which is well ahead of the broader food and beverage industry.",
@@ -7997,13 +7870,49 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier RTD shake net sales",
+          "metric": "Total BellRing net sales growth",
+          "period": "Q2 2026",
+          "value": "up 2% year-over-year",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Total BellRing net sales for the second quarter were $599 million, up 2% year-over-year with adjusted EBITDA of $54 million.",
+          "following_context": "As Darcy noted, sales were modestly below our expectations, while adjusted EBITDA margin of 9% was 400 basis points below our guide of 13%.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier Protein net sales growth",
+          "period": "Q2 2026",
+          "value": "grew 1.7%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Premier Protein net sales grew 1.7% with RTD shake net sales up 2.3%.",
+          "following_context": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier RTD shake net sales growth",
           "period": "Q2 2026",
           "value": "increased 2.3%",
           "value_num": null,
           "unit": null,
           "verbatim": "Premier RTD shake net sales increased 2.3% with double-digit volume growth mostly offset by price/mix declines.",
           "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Dymatize net sales growth",
+          "period": "Q2 2026",
+          "value": "down 2%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Net sales increased 2% in the second quarter with Premier Protein net sales in line and Dymatize sales down 2%.",
+          "following_context": "Premier RTD shake net sales increased 2.3% with double-digit volume growth mostly offset by price/mix declines.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8033,33 +7942,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Total BellRing net sales",
+          "metric": "Premier Shake volume growth",
           "period": "Q2 2026",
-          "value": "$599 million, up 2% year-over-year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Total BellRing net sales for the second quarter were $599 million, up 2% year-over-year with adjusted EBITDA of $54 million.",
-          "following_context": "As Darcy noted, sales were modestly below our expectations, while adjusted EBITDA margin of 9% was 400 basis points below our guide of 13%.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Premier Protein net sales growth",
-          "period": "Q2 2026",
-          "value": "grew 1.7%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Premier Protein net sales grew 1.7% with RTD shake net sales up 2.3%.",
-          "following_context": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Premier Shake volumes and price mix",
-          "period": "Q2 2026",
-          "value": "volumes increased 12% with unfavorable price mix of 9%",
+          "value": "increased 12% with unfavorable price mix of 9%",
           "value_num": null,
           "unit": null,
           "verbatim": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
@@ -8068,34 +7953,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "Dymatize sales",
-          "period": "Q2 2026",
-          "value": "declined 2%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Dymatize sales declined 2%, impacted by elasticities due to inflation-driven price increases.",
-          "following_context": "Adjusted gross profit was $136 million with adjusted gross margin of 22.7% compared to 34.5% a year ago. The year-over-year decline was driven by significant input cost inflation, including tariffs, the unfavorable price mix I just described, higher freight and the inventory-related charge.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Adjusted gross margin",
-          "period": "Q2 2026",
-          "value": "22.7% compared to 34.5% a year ago",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Adjusted gross profit was $136 million with adjusted gross margin of 22.7% compared to 34.5% a year ago.",
-          "following_context": "The year-over-year decline was driven by significant input cost inflation, including tariffs, the unfavorable price mix I just described, higher freight and the inventory-related charge.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
           "metric": "club channel share of BellRing sales",
-          "period": "fiscal 2026",
-          "value": "just over 40%",
+          "period": null,
+          "value": "just over 40% of BellRing sales",
           "value_num": null,
           "unit": null,
           "verbatim": "Retailers also expanded space, particularly in the club channel, which represents just over 40% of BellRing sales.",
@@ -8104,10 +7965,34 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "market leadership position",
+          "period": null,
+          "value": "the rising cost required to maintain our leadership position",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "As the year progressed, the most meaningful change has been the rising cost required to maintain our leadership position.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "advertising investment",
+          "period": "fiscal 2026",
+          "value": "approximately 4% of sales",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "we expect to maintain our investment this year at approximately 4% of sales with more tempered near-term returns given the more competitive promotional environment.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "RTD shake category volumes sold on price promotion",
           "period": "Q3 2026",
-          "value": "70%",
+          "value": "70% of RTD shake category volumes were sold on price promotion",
           "value_num": null,
           "unit": null,
           "verbatim": "In the third quarter, 70% of RTD shake category volumes were sold on price promotion.",
@@ -8116,7 +8001,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "Premier household penetration",
           "period": "Q3 2026",
           "value": "almost 23%",
@@ -8128,10 +8013,22 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "leading_indicator",
+          "metric": "total net sales growth",
+          "period": "Q3 2026",
+          "value": "increased 4%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Net sales increased 4% in the third quarter, with both brands ahead o",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "pricing_action",
           "metric": "price increase on Premier shakes and powders",
           "period": "Q1 fiscal 2027",
-          "value": "double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027",
+          "value": "a double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027",
           "value_num": null,
           "unit": null,
           "verbatim": "First, we have announced a double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027.",
@@ -8140,13 +8037,37 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "Net sales growth",
+          "kind": "competitive_position",
+          "metric": "shake repeat rate",
           "period": "Q3 2026",
-          "value": "increased 4%",
+          "value": "the highest in the category",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net sales increased 4% in the third quarter, with both brands ahead o",
+          "verbatim": "Premier household penetration has reached almost 23%, with shake repeat rate consistently the highest in the category.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "club shake assortment change",
+          "period": "fiscal 2027",
+          "value": "one item representing a low single-digit sales percentage of this year's net sales expected to rotate out",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In club, we currently expect our shake assortment next year to be generally consistent with this year, with one item representing a low single-digit sales percentage of this year's net sales expected to rotate out.",
+          "following_context": "We expect to retain a portion of that demand with our remaining flavors and continue to see opportunities to expand our club presence through innovation and new offerings that align with retailers' evolving assortment strategies.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "advertising investment",
+          "period": "fiscal 2026",
+          "value": "approximately 4% of sales",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Campaign ROI is stronger than last year, and our full year outlook continues to reflect advertising investment at approximately 4% of sales.",
           "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "tier": "llm-fenced"
@@ -8156,83 +8077,83 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — margin AND absolute EBITDA both collapsed on structural promotional/input-cost pressure with consensus still cutting; recovery lever (FY27 pricing) unproven.",
+    "evidence_balance": "mixed — category still grows and pricing action is dated, but a real -43% forward-EBITDA reset, rising promo/inflation costs and CEO transition are load-bearing.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded from $67M (FY16) to a $424M peak (FY24) even as the current LTM print of $263M reflects a cyclical, not structural, retreat — the % margin fell but the dollar base is many times its base-period level.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Revenue has never declined on a full-year basis, running from $575M (FY16) to $2,355M LTM, so the drawdown is a margin/profitability event, not a demand-collapse event.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "The category the name leads remains among the fastest-growing in CPG, with RTD shakes up 8% and Premier consumption outside club up 15% and mass channel up high teens — top-line demand is intact.",
+        "claim": "The RTD shake category BellRing leads grew 8% in Q2 2026 — well ahead of the broader food and beverage industry — evidencing that the demand pool is intact rather than in secular decline.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Management has announced a double-digit price increase on Premier shakes plus additional powder pricing effective Q1 FY27 to offset input inflation and rebuild margin, expecting elasticity only slightly above 1 — a concrete, dated margin-recovery mechanism.",
+        "claim": "Net sales still grew 4% in Q3 2026 with both brands ahead of expectations, so the top line is expanding even as margins compress — a mechanism pointing to a margin-and-mix problem, not a revenue collapse.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Q3 net sales increased 4% with both brands ahead of expectations, and consumption exceeded expectations — a sequential improvement over the Q2 shortfall.",
+        "claim": "Management announced a double-digit price increase on Premier shakes plus additional powder pricing effective Q1 FY2027 to offset input inflation and rebuild margin, a dated, specific mechanism to reverse the very margin pressure driving the de-rate.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The company is FCF-positive on an LTM basis ($158M levered FCF) and buying back stock (share count down 9.7% over ~1.7y; $137.2M repurchased FY-to-date), so it is self-funding rather than distressed.",
+        "claim": "The falling EBITDA margin (FY24 21% → LTM 14%) is a % decline against a still-large absolute base: absolute EBITDA rose from 117 in FY17 to 445 in FY25 before the LTM step-down to 332, so the recent hit is a partial retracement off a structurally higher level, not a return to trough economics.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The business is FCF-positive on an LTM basis ($201.1M) with interest coverage of 4.2x, so it can service its 3.4x leverage while funding operations rather than facing a solvency wall.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "P/E sits at the 1.8 percentile of its own ~5y history and EV/EBITDA at the 11th percentile of a 6.6y trailing range — the de-rating is extreme relative to the name's own past levels, posing whether the collapse is overshoot; note this own-history floor is a neutral input, not itself proof of over/under-shoot.",
-        "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
+        "claim": "Premier household penetration reached almost 23% with the highest shake repeat rate in the category in Q3 2026, indicating durable brand equity underpinning the franchise.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The company is actively buying back stock, reducing shares ~9.7% over ~1.7 years under a $600M program, so capital return is compounding per-share value while the multiple is depressed.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-11-12..2026-07-28",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The EBITDA margin has fallen from a 21% FY24 peak to 11% LTM AND the absolute EBITDA has also fallen ($424M FY24 → $263M LTM) — so this is the REAL signal, not an optical %-only artifact: both the ratio and the dollar base are declining together.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Consensus FY26 EBITDA has been cut ~44% over 12 months (512 → 288) and normalized EPS ~56% (2.37 → 1.04), with FQ4 breadth 0↑/11↓ on EBITDA — the estimate path is still actively deteriorating, not stabilizing.",
+        "claim": "Consensus FY26 EBITDA has been cut from 505.3 (12m ago) to 288.1 (latest), a -43% path, so the de-rate reflects a genuine and sharp forward-earnings reset, not merely a sentiment overshoot.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The margin collapse is driven by structural competitive intensity: 27% of RTD category volume was on price promotion in Q2 (up 8pts YoY) with the first decline in per-household buy rate in 5 years — a value-seeking-consumer and insurgent-competition dynamic, not a one-off.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Gross margin dropped to 22.7% from 34.5% a year ago on input-cost inflation, tariffs, unfavorable price/mix, higher freight and an inventory charge — a broad cost stack, not a single reversible item.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Leverage is elevated at net-debt/EBITDA 4.3x (total-debt basis 4.4x vs peer median 2.4x) with interest coverage only 3.3x — a compressing-EBITDA denominator against a fixed 7.00% $840M senior-notes stack raises the stakes on any further profit slippage.",
-        "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $263M [LTM 12 months Jun-30-2026]",
-        "cited": true
-      },
-      {
-        "claim": "The drawdown was a discrete idiosyncratic gap-down on the 2026-05-05 earnings print (item 2.02), with the name down 39.9% over 180d against IWM up 12.6% — a company-specific repricing, not a market move.",
-        "source_ref": "EOD BRBR−IWM 180d to 2026-08-24 (assembly, cap-band)",
-        "cited": true
-      },
-      {
-        "claim": "Fundamental deltas vs peers show the discount is largely EARNED: EBITDA margin 11% vs peer-median 15%, EBITDA growth -42% vs -3%, LT EPS growth -12% vs +12%, and leverage 4.4x vs 2.4x — worse on margin, growth and leverage simultaneously.",
+        "claim": "EBITDA growth is -27% for the name vs +1% peer median while leverage (Debt/EBITDA 3.5 vs 2.4) is worse — the P/E discount to peers (6.3x vs 21.9x) appears substantially EARNED by inferior growth and higher leverage rather than purely residual overshoot, though the peer set is heterogeneous.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "The self-fund read is not clean: latest-quarter OCF turned negative while only LTM FCF is positive, and consensus FY26 FCF was cut to $19.3M at one broker with a -$37.6M FQ4 print — the cash-generation cushion is thinning.",
-        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
+        "claim": "The margin collapse is competition-driven and structural in the near term: 27% of RTD category volumes sold on promotion in Q2 (up 8pts YoY) with the first decline in RTD buy-rate per household in 5 years, signaling the cost to defend share is rising, not transient.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The single gap-down (2026-05-05, -38% that day) was earnings-driven with adjusted EBITDA margin of 9% landing 400bps below the 13% guide, confirming a real operational miss rather than a market-wide move.",
+        "source_ref": "8-K 0001628280-26-030115 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "Nine-month operating profit fell $45.3M (-18%) driven by higher net product costs of $94.3M, increased advertising and reorganization charges — a cost-side deterioration grounded in filings, not one-off noise.",
+        "source_ref": "10-Q 0001772016-26-000022",
+        "cited": true
+      },
+      {
+        "claim": "Protein-driven commodity inflation is running above initial assumptions and will bite hardest in Q4, so the input-cost headwind is still building rather than abating.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Book value per share is negative (-$4.02) and LT EPS growth consensus is -12% vs +12% peer median, so the forward earnings trajectory the market is pricing is one of decline, not recovery.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Leadership is in near-total transition — CEO Davenport retiring, a new CEO (Axelrod) seven days in at the Q3 call, and the Chief Growth Officer departed — removing execution continuity precisely as the turnaround plan is being set.",
+        "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026",
         "cited": true
       }
     ],
@@ -8240,79 +8161,63 @@
       {
         "name": "The Simply Good Foods Company",
         "outcome": "recovered",
-        "distinguishing_fact": "In-peer nutrition/snack player that absorbed category promotional pressure and margin compression and kept a self-funding profile; a scaled brand navigating a value-seeking consumer.",
+        "distinguishing_fact": "Same nutrition/meal-replacement snacking space; a scaled brand owner that has weathered a competitive/margin scare, useful as a same-category comparability check on whether a protein-nutrition franchise re-rates.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Conagra Brands",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-peer branded-food name whose EBITDA growth turned negative under input-cost and volume pressure and which carries comparably elevated leverage with repeated impairment charges — the value-trap analogue where discount was earned.",
-        "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+        "distinguishing_fact": "A leveraged branded-CPG name where input-cost inflation and negative EBITDA growth compressed both earnings and the multiple concurrently — the value-trap analogue where a cheap-looking multiple stayed cheap on eroding fundamentals.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Herbalife Ltd.",
         "outcome": "went terminal",
-        "distinguishing_fact": "Similar-cap wellness name trading at a very low earnings and EBITDA multiple with heavy leverage and flat growth — a persistently cheap-optics name where the low multiple reflected structural pressure rather than overshoot.",
-        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-07"
-      },
-      {
-        "name": "The J. M. Smucker Company",
-        "outcome": "went terminal",
-        "distinguishing_fact": "In-peer packaged-food name that took large repeated goodwill/intangible writedowns amid negative EBITDA growth — the branded-CPG margin-and-impairment erosion pattern.",
+        "distinguishing_fact": "A heavily levered wellness brand trading at a low single-digit P/E where the discount persisted rather than mean-reverting — the pattern of an optically-cheap multiple that the market kept re-affirming.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Monster Beverage",
+        "name": "e.l.f. Beauty",
         "outcome": "recovered",
-        "distinguishing_fact": "A single-category leader that faced a wave of insurgent competition and promotional intensity yet defended share via pricing power and innovation, restoring margins over time.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "A fast-growing consumer brand that endured competitive/promotional scares yet re-rated on sustained volume-led category growth — the overshoot analogue where category momentum outweighed near-term margin noise.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is the FY24-to-LTM margin collapse a transitory input-cost/promotional-intensity trough that the announced FY27 double-digit price increase and productivity actions will reverse, or a structural re-rating of a single-category, single-segment brand facing permanent competitive intensity and a value-seeking consumer?",
+      "question": "Is the margin collapse a transient competition-and-inflation squeeze that the announced FY27 double-digit price increase and cost actions can reverse, or a permanent reset of unit economics as insurgent brands and value-seeking consumers structurally raise the cost of defending share?",
       "evidence_for": [
         {
-          "claim": "Management has announced a double-digit Premier shake price increase plus powder pricing effective Q1 FY27 with expected elasticity only slightly above 1, an explicit dated margin-repair lever.",
+          "claim": "Management has announced a double-digit Premier shake price increase plus powder pricing effective Q1 FY2027 explicitly to offset input inflation and support a healthier margin profile over time, with expected elasticity only slightly greater than 1.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Q3 net sales grew 4% with both brands ahead of expectations and consumption exceeding expectations, suggesting demand is intact while margin repair is pursued.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "Consensus rebuilds EBITDA to $322.7M FY27 from $288.1M FY26, implying analysts model a partial margin recovery next year.",
-          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
+          "claim": "The underlying RTD shake category still grew 8% ahead of the broader food industry and Premier holds ~23% household penetration with the highest repeat rate, suggesting demand and brand equity to carry pricing.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Q2 category dynamics — 27% of volume promoted (up 8pts YoY) and the first buy-rate decline in 5 years — point to a persistent value-seeking consumer and insurgent competition, not a one-quarter blip.",
+          "claim": "Promotional intensity hit 27% of category volumes on promotion in Q2 (up 8pts YoY) with the first buy-rate-per-household decline in 5 years, and management flags the rising cost required to maintain leadership — evidence the competitive cost step-up may be structural.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Protein-driven commodity inflation was running above initial assumptions with a greater impact expected into Q4, so the cost side that crushed gross margin to 22.7% is still building.",
+          "claim": "Protein-driven commodity inflation is running above initial assumptions with the greatest impact landing in Q4, so the cost base against which any price increase must work is still rising.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "The estimate path is still cutting — FY26 EBITDA down ~44% over 12 months and FQ4 EBITDA breadth 0↑/11↓ — with no evidence yet of stabilization.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Adjusted (company-basis) forward EV/EBITDA, adjusted EPS and adjusted net-debt/EBITDA are all UNKNOWN (not in the 99.1 revised guidance) — the leverage and forward-multiple picture cannot be read on the company's own covenant/adjusted basis.",
-      "The EBITDA-basis triangulation is UNRESOLVED: implied D&A is 24 in actuals vs 41 in estimates (1.73x, inside the 1.5-2.0x band where a GAAP-vs-adjusted basis change has been seen unflagged) — reconcile estimate rows against the company's guidance basis before comparing across the FY25/FY26E boundary.",
-      "Whether the announced FY27 double-digit price increase holds volume at elasticity ~1 or triggers larger trade-down is untested — the 2026-11-03 print and FY27 guide are the first checkpoints.",
-      "Single-segment (Protein-Based Consumer Goods) reporting means there is NO segment-EBITDA breakout to isolate Premier vs Dymatize profitability — an opacity gap that hides where the margin damage concentrates.",
-      "Self-funding is genuinely MIXED: latest-quarter OCF negative while LTM FCF positive, and a broker FY26 FCF cut to $19.3M with a -$37.6M FQ4 — the durability of the cash cushion against the 7.00% $840M notes is unresolved.",
-      "A CEO/President transition (Davenport retiring; Axelrod in seat only ~7 days at the Q3 call) leaves the FY27 strategic plan and margin-recovery execution unproven under new leadership.",
-      "Peer set is flagged HETEROGENEOUS (caps span $94M-$36.9B, 392x) so the peer-median multiples are a confidence-gated input, not a clean benchmark for reading the discount as earned vs residual."
+      "Whether the FY27 double-digit price increase holds without volume loss beyond the assumed ~1 elasticity — no post-implementation data yet; the new CEO defers FY27 guidance to the Q4 call.",
+      "No forward/adjusted EV/EBITDA on an as-reported basis in the revised guidance (ev_ebitda_adjusted_fwd UNKNOWN) and adjusted EPS UNKNOWN — the trailing 6.4x cannot distinguish a temporarily depressed level from a permanently impaired one.",
+      "EBITDA-basis reconciliation is UNRESOLVED: implied D&A of 23 (actuals) vs 41 (estimates) sits in the 1.5-2.0x band where a GAAP-vs-adjusted basis change has gone unflagged on this fleet — reconcile the estimate row to company guidance basis before comparing across the boundary.",
+      "Self-funding is MIXED: latest-quarter OCF is negative while LTM FCF is positive; FCF consensus for FY26 was slashed and a broker marked FQ4 FCF at -37.6 — near-term cash generation is in question.",
+      "Single-segment reporting (Protein-Based Consumer Goods) means no Premier-vs-Dymatize EBITDA split — the mix shift driving margin cannot be decomposed from disclosure.",
+      "Execution risk under a brand-new CEO (7 days in at Q3 call) and departed Chief Growth Officer — whether the stated pricing/productivity plan is delivered is unproven.",
+      "Peer set is HETEROGENEOUS (caps $228M–$33.9B, 149x span); every peer multiple must be treated as confidence-gated, not a clean benchmark for reading the discount as earned vs residual."
     ]
   },
   "caveats": [
@@ -8322,18 +8227,17 @@
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion and Adjusted EBITDA* outlook of $425-$440 million\" (8-K 0001628280-26-004789 EX-99.1)",
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between $2.41-$2.49 billion\" (8-K 0001628280-25-052773 EX-99.1)",
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Adjusted EBITDA as a percentage of net sales of 18% to 20%\" (8-K 0001628280-25-052773 EX-99.1)",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
-    "Net debt/EBITDA (4.3x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.3x as the covenant-basis leverage.",
-    "Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (7 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
+    "Net debt/EBITDA (3.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.4x as the covenant-basis leverage."
   ],
   "qa_flags": [],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-17T19:16:17.510752Z",
+  "assembled_at": "2026-09-22T09:48:20.562830Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/da9b3c6e-2496-46e5-9725-9830e8c1208f/scratchpad/wt-artifact/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/1228aa13-12cb-416a-a754-eb42dbf3b103/scratchpad/wt-0922/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-16"
+    "frontier": "2026-09-21"
   },
   "sector": "Consumer Staples",
   "industry": {
@@ -8354,7 +8258,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-17T19:18:26.719546Z",
+    "computed_at": "2026-09-22T09:50:16.635799Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],
