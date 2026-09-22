@@ -1,6 +1,6 @@
 # Dossier — Alphabet Inc. (Nasdaq: GOOGL)
 
-_September 17, 2026 · extraction 2026-08-16.1_
+_September 22, 2026 · extraction 2026-08-16.1_
 
 # Brief — first cut
 
@@ -24,10 +24,10 @@ The underwrite missed its asymmetry line at the 14 Aug spot of $345.90, where th
 Alphabet Inc. offers various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America.
 - **Segments:** Google Services 85%; Google Cloud 15%; Other Bets 0%; Unallocated Hedging Gains (Losses) -0% [1]
 - **Geography:** United States 48%; Europe, The Middle East, and Africa (EMEA) 29%; Asia-Pacific (APAC) 17%; Other Americas 6%; Unallocated -0% [2]
-- **Snapshot:** Nasdaq · CMP $342.87 (2026-09-16) · cap $4195.0B (2026-08-12) · 52-wk $205.28–$408.61 · shares 12.2B · book value/sh $50.90 [3]
+- **Snapshot:** Nasdaq · CMP $342.87 (2026-09-16) · cap $4318.6B (2026-09-22) ⚠ implies $353.12/sh vs CMP (+3.0%) · 52-wk $205.28–$408.61 · shares 12.2B · book value/sh $50.90 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Will the surging AI/cloud capex build convert into durable, high-return growth that beats the runway already embedded in a ceiling-level trailing multiple — or will FCF and returns on capital stay compressed long enough to make the priced expectations the ceiling?**
+**Does the AI/Cloud capex super-cycle convert into sustained high-return growth that beats the near-ceiling trailing multiple, or does the multiple derate as free cash flow and returns-on-capital compress under the spend before the runway pays off?**
 _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-10-20 `[cadence-estimate]` — calendar in Analysis
 
@@ -63,42 +63,46 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 26.3% | 9y history · firm |
-| Median multiple, own history | 17.4x | 37 closes · firm · EV/EBITDA |
+| Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
+| Screen value / share | $197.01 | spot-independent · EV/EBIT 21.3x |
 | Overall confidence | firm |  |
 
-_R1 inputs incomplete — see per-input source stamps_
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.1% (CIQ EBIT) sits 6.8 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
+
+**data_quality: vendor_bridge**
+- vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
 
 ## The case
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the runway outlasts the price:_
-- Revenue is accelerating, not maturing: Alphabet grew 24% YoY in Q2 2026, the fastest same-quarter growth in the disclosed series, against a rising absolute base. [11]
-- Cloud is the runway engine: Q2 2026 Cloud revenue grew 82% with backlog reaching $514 billion, up from over $460 billion a quarter earlier — a multi-year contracted demand pipeline. [11]
-- Absolute EBITDA is expanding rapidly — from $88,987M (FY21) to $173,164M LTM Jun-30-2026 — with EBITDA margin rising to 39%, so profitability is scaling with the top line. [12]
+- Cloud is accelerating into a durable long-duration runway — revenue grew 82% in Q2 2026 with backlog reaching $514 billion, a large forward-committed pipeline the price must service. [11]
+- The core ad franchise is not eroding under AI — Search and Other delivered 17% growth in Q2 2026 with AI Mode surpassing 1 billion monthly active users, evidence the AI transition is expansionary rather than cannibalizing. [11]
+- Consensus is still revising the runway upward — FY26 revenue consensus rose from $440,500M (12m ago) to $498,548M (latest, +13%) and EBITDA from $203,980M to $233,038M (+14%), with recent FY26 revenue breadth 6 up / 1 down. [12]
 _Bear case — the price already pays for it:_
-- Free cash flow is compressing even as EBITDA rises: LTM levered FCF is $22,665M, down from $47,009M (FY21) and $53,158M (FY24), as capex scales — CFO $185,675M minus capex $132,402M leaves $53,273M, and consensus FY26 FCF is only ~$8,719M. [13]
-- The headline P/E is flattered by non-operating gains: three of the trailing four quarters carry a large below-the-operating-line block (Q2 2026 +$97,983M = 82% of revenue), netting +$151,120M over four quarters — so a trailing EPS or P/E is NOT an operating anchor and the optically-cheap 17.2x is the MISREAD, not the signal. [14]
-- The forward multiple is not a cheap benchmark once the heterogeneous peer set is read: NTM TEV/EBITDA 15.72x vs a peer median 10.87x is a premium, and the peer set spans $6.3B–$3,656.6B (577x) so no single multiple is a clean read. [15]
+- Reported free cash flow is collapsing as capex scales — LTM levered FCF $22,665M (down from $38,088M FY25 and $53,158M FY24), and FY26 capex consensus of ~$201,846M against CFO ~$215,570M leaves the self-funding runway thin; several brokers now model negative FY26 FCF. [13]
+- The headline trailing P/E of 17.8x is an optical MISREAD, not a cheap signal — three of the trailing four quarters carry a material below-operating-line block (+$97,983M in Q2 2026 alone, 82% of revenue) netting +$151,120M, so trailing EPS is inflated by non-operating gains and the low P/E is not an operating anchor. [14]
+- Returns on capital are already fading at the margin as the capex cycle bites — RoCE slid from 21.0% (FY24) to 19.3% (FY25) to 15.8% (LTM), the load-bearing metric for whether the reinvestment is still high-returning. [15]
 
 ## Financial snapshot
 - **Financial snapshot** — [16]  <!-- ds-table -->
 
 |  | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Revenue ($M) | 282,836 | 307,394 | 350,018 | 402,836 | 445,866 | 497,688 | 606,647 |
-| Revenue growth | +10% | — (basis) | +14% | — (basis) | — (basis) | +24% (vs FY25) | +22% |
-| EBITDA ($M) | 88,317 | 96,239 | 127,701 | 150,175 | 173,164 | 231,455 | 294,833 |
-| EBITDA margin | 31% | 31% | 36% | 37% | 39% | 47% | 49% |
-| EBIT ($M) | 74,842 | 84,293 | 112,390 | 129,039 | 147,628 | 171,315 | 214,120 |
-| Net income ($M) | 59,972 | 73,795 | 100,118 | 132,170 | 244,205 | 251,783 | 184,633 |
-| EPS (GAAP, dil.) | 4.56 | 5.80 | 8.04 | 10.80 | 19.93 | 20.59 | 14.77 |
+| Revenue ($M) | 282,836 | 307,394 | 350,018 | 402,836 | 445,866 | 498,548 | 613,730 |
+| Revenue growth | +10% | — (basis) | +14% | — (basis) | — (basis) | +24% (vs FY25) | +23% |
+| EBITDA ($M) | 88,317 | 96,239 | 127,701 | 150,175 | 173,164 | 233,038 | 297,027 |
+| EBITDA margin | 31% | 31% | 36% | 37% | 39% | 47% | 48% |
+| EBIT ($M) | 74,842 | 84,293 | 112,390 | 129,039 | 147,628 | 171,734 | 216,725 |
+| Net income ($M) | 59,972 | 73,795 | 100,118 | 132,170 | 244,205 | 252,155 | 186,577 |
+| EPS (GAAP, dil.) | 4.56 | 5.80 | 8.04 | 10.80 | 19.93 | 20.62 | 14.91 |
 | FCF ($M) | 49,939 | 56,280 | 53,158 | 38,088 | 22,665 | — | — |
 
-_table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
+_table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
-> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 70,426 of D&A against 14,393 in the actuals (4.89x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 70,803 of D&A against 12,710 in the actuals (5.57x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 
 **Capital allocation — created or destroyed**
@@ -119,20 +123,20 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 
 |  | mcap $M | acquired $M | assets $M | % assets | % mcap | why |
 |---|---:|---:|---:|---:|---:|---|
-| **GOOGL** | **4,195,028** | **66,933** | **921,983** | **7%** | **2%** | **—** |
-| MSFT | 3,656,561 | 120,933 | 758,376 | 16% | 3% | — |
-| AMZN | 2,882,966 | 32,701 | 1,095,689 | 3% | 1% | — |
-| META | 1,474,624 | 27,098 | 449,956 | 6% | 2% | — |
-| NFLX | 309,006 | 33,838 | 58,450 | 58% | 11% | — |
-| DASH | 92,072 | 7,500 | 19,561 | 38% | 8% | — |
-| RDDT | 29,523 | 53 | 3,637 | 1% | 0% | — |
-| PINS | 12,969 | 558 | 4,759 | 12% | 4% | — |
-| SNAP | 8,794 | 1,874 | 7,470 | 25% | 21% | — |
-| MTCH | 8,397 | 2,488 | 4,034 | 62% | 30% | — |
-| TTD | 6,339 | — | 5,764 | — | — | no-tag |
+| **GOOGL** | **4,318,622** | **66,933** | **921,983** | **7%** | **2%** | **—** |
+| MSFT | 3,724,728 | 120,933 | 758,376 | 16% | 3% | — |
+| AMZN | 2,787,723 | 32,701 | 1,095,689 | 3% | 1% | — |
+| META | 1,888,326 | 27,098 | 449,956 | 6% | 1% | — |
+| NFLX | 305,467 | 33,838 | 58,450 | 58% | 11% | — |
+| DASH | 83,986 | 7,500 | 19,561 | 38% | 9% | — |
+| RDDT | 30,539 | 53 | 3,637 | 1% | 0% | — |
+| PINS | 10,964 | 558 | 4,759 | 12% | 5% | — |
+| MTCH | 9,907 | 2,488 | 4,034 | 62% | 25% | — |
+| SNAP | 9,640 | 1,874 | 7,470 | 25% | 19% | — |
+| TTD | 6,562 | — | 5,764 | — | — | no-tag |
 
-- **Median — all peers (n=9):** 16% of assets · 4% of market cap
-- **Median — peers ≥ $1,000M market cap (n=9):** 16% of assets · 4% of market cap
+- **Median — all peers (n=9):** 16% of assets · 5% of market cap
+- **Median — peers ≥ $1,000M market cap (n=9):** 16% of assets · 5% of market cap
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [24]  <!-- ds-table -->
 
@@ -146,18 +150,18 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 | DASH | reports nil | 0 of 5 | — | — | never | — |
 | RDDT | does not tag | — | — | — | never | — |
 | PINS | does not tag | — | — | — | never | 9 |
-| SNAP | reports nil | 0 of 5 | — | — | never | — |
 | MTCH | wrote down | 2 of 2 | 31 | 1% | 2025-12-31 ($0M) | 25 |
+| SNAP | reports nil | 0 of 5 | — | — | never | — |
 | TTD | does not tag | — | — | — | never | — |
 
 - **Base rate — 1 of 4 large peers ASSESSED over the window took a charge**, median 1% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
-- **vs own trading history:** EV/EBITDA (TEV/LTM) 25.8x as-of 2026-06-30 — trailing range 10.9–24.8x (median 17.4x) over 37 closes → 100%ile → near-ceiling; P/LTM EPS 27.3x [25]
-- **vs peers:** EV/EBITDA 22.9x vs peer median 18.0x (+27%); P/E 17.2x vs peer median 23.4x (-26%) [26]
-- **Comparability:** market caps span $6.3B–$3656.6B (577x); the name is $4195.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
-- **The street, for contrast (target · ratings):** Target price: mean $428.04, median $428.00, high/low 515.00/340.00, N 55/56; Ratings: Buy 45, Outperform 13, Hold 6, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 44, Outperform 13, Hold 6, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-10 · export date unverified] [28]
+- **vs own trading history:** EV/EBITDA (TEV/LTM) 23.6x as-of 2026-09-21 — trailing range 10.9–25.8x (median 17.5x) over 38 closes → 95%ile → near-ceiling; P/LTM EPS 17.8x [25]
+- **vs peers:** EV/EBITDA 23.6x vs peer median 18.3x (+29%); P/E 17.8x vs peer median 27.9x (-36%) [26]
+- **Comparability:** market caps span $6.6B–$3724.7B (568x); the name is $4318.6B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
+- **The street, for contrast (target · ratings):** Target price: mean $429.46, median $430.00, high/low 515.00/340.00, N 54/54; Ratings: Buy 43, Outperform 13, Hold 5, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 42, Outperform 13, Hold 5, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-09-17 · export date unverified] [28]
 
 # Analysis — full dossier
 
@@ -187,64 +191,68 @@ _Company-specific or market-wide?_
 ## Business quality
 - **Segments (revenue share):** Google Services 85%; Google Cloud 15%; Other Bets 0%; Unallocated Hedging Gains (Losses) -0% [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — reports 4 segments (Google Services; Google Cloud; Other Bets; Unallocated Hedging Gains (Losses)) but discloses no segment EBITDA — revenue is segmented in the filing and EBITDA is not
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [29]
+- **Segments (profit — the filer's own measure, 10-K):** FY2025 segment operating income (10-K XBRL): Google Services $139,404M (40.7% margin) · Google Cloud $13,910M (23.7% margin) · All Other −$7,515M (margin n.m.) — segments sum $145,799M vs consolidated $129,039M (−$16,760M not allocated to segments). [29]
+- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [30]
 - **Geographic:** United States 48%; Europe, The Middle East, and Africa (EMEA) 29%; Asia-Pacific (APAC) 17%; Other Americas 6%; Unallocated -0% [2]
 
 ## The argument
 
-**Evidence balance:** strongly-bullish — accelerating revenue, 82% cloud growth with a $514B backlog and rising absolute EBITDA outweigh a ceiling-level multiple and compressed FCF.
+**Evidence balance:** mixed — durable 24% growth and accelerating Cloud runway pull against a 95th-percentile trailing multiple, collapsing FCF and three-period falling RoCE during the capex build.
 
 ### Bull case — the runway outlasts the price
-- Revenue is accelerating, not maturing: Alphabet grew 24% YoY in Q2 2026, the fastest same-quarter growth in the disclosed series, against a rising absolute base. [11]
-- Cloud is the runway engine: Q2 2026 Cloud revenue grew 82% with backlog reaching $514 billion, up from over $460 billion a quarter earlier — a multi-year contracted demand pipeline. [11]
-- Absolute EBITDA is expanding rapidly — from $88,987M (FY21) to $173,164M LTM Jun-30-2026 — with EBITDA margin rising to 39%, so profitability is scaling with the top line. [12]
-- The core ad franchise remains healthy under the AI transition: Q2 2026 Search & Other grew 17% and YouTube ads 13%, so AI features are additive to, not cannibalising, monetisation. [11]
-- Estimate breadth is broadly upward: FY2026 GAAP EPS revisions ran 47 up / 0 down last month and revenue 45 up / 2 down, with a consensus Buy (1.00) rating. [30]
-- The balance sheet funds the reinvestment internally: net-debt/EBITDA is -0.7x (net cash) and interest coverage is 76.9x, so the AI capex build is self-funded not leverage-financed. [9]
-- Credit quality is best-in-class: S&P AA+ issuer rating and Overall/Operational/Solvency/Liquidity scores of 1/2/1/1 versus a peer-median 3/3/3/3. [31]
-- On earnings the name screens BELOW peers — P/E 17.2x vs a heterogeneous peer median of 23.4x — posing whether the discount is a residual overshoot rather than earned, given superior margins (39% vs 26%) and comparable EBITDA growth (24% vs 24%); the human must judge earned-vs-residual against the 577x cap-span peer set. [32]
+- Cloud is accelerating into a durable long-duration runway — revenue grew 82% in Q2 2026 with backlog reaching $514 billion, a large forward-committed pipeline the price must service. [11]
+- The core ad franchise is not eroding under AI — Search and Other delivered 17% growth in Q2 2026 with AI Mode surpassing 1 billion monthly active users, evidence the AI transition is expansionary rather than cannibalizing. [11]
+- Consensus is still revising the runway upward — FY26 revenue consensus rose from $440,500M (12m ago) to $498,548M (latest, +13%) and EBITDA from $203,980M to $233,038M (+14%), with recent FY26 revenue breadth 6 up / 1 down. [12]
+- The reinvestment engine is compounding — Q2 2026 Alphabet revenue grew 24% YoY with absolute EBITDA rising from $150,175M (FY25) to $173,164M (LTM Jun-30-2026) even as capital scaled. [31]
+- Returns on the reinvested capital remain high — RoE 48.7% and RoCE 15.8% LTM, and Google Services carries a 40.7% segment operating margin ($139,404M on $342,721M FY25), the mechanism behind the runway thesis. [29]
+- The balance sheet funds the reinvestment internally — net cash at net-debt/EBITDA -0.7x, interest coverage 76.9x and an S&P AA+ issuer rating, so the capex ramp need not be equity-diluted. [9]
+- Fundamentals that would justify a premium are present — EBITDA margin 39% vs peer-median 26% and rev growth 20% vs peer-median 16%, with lower leverage (Debt/EBITDA 0.7 vs 1.1); the human decides whether these earn the multiple gap given the heterogeneous roster. [32]
+- On a forward basis the peer 'premium' narrows sharply — NTM TEV/EBITDA is 16.13x for the name vs a heterogeneous peer median 12.06x, and the name's NTM P/E 26.52x sits near the peer median 22.12x; the human must judge whether the forward gap is earned by superior fundamentals or residual, since the peer set is flagged low-comparability. [33]
 
 ### Bear case — the price already pays for it
-- Free cash flow is compressing even as EBITDA rises: LTM levered FCF is $22,665M, down from $47,009M (FY21) and $53,158M (FY24), as capex scales — CFO $185,675M minus capex $132,402M leaves $53,273M, and consensus FY26 FCF is only ~$8,719M. [13]
-- The headline P/E is flattered by non-operating gains: three of the trailing four quarters carry a large below-the-operating-line block (Q2 2026 +$97,983M = 82% of revenue), netting +$151,120M over four quarters — so a trailing EPS or P/E is NOT an operating anchor and the optically-cheap 17.2x is the MISREAD, not the signal. [14]
-- The forward multiple is not a cheap benchmark once the heterogeneous peer set is read: NTM TEV/EBITDA 15.72x vs a peer median 10.87x is a premium, and the peer set spans $6.3B–$3,656.6B (577x) so no single multiple is a clean read. [15]
-- Returns on capital are declining while investment surges: RoCE fell from 21.0% (FY24) to 19.3% (FY25) to 15.8% LTM — the reinvestment is growing but its marginal return is slipping. [33]
-- The trailing valuation sits at its own-history ceiling: EV/EBITDA (TEV/LTM) 25.8x is at the 100th percentile of 37 closes over 9 years (range 10.9–24.8x, median 17.4x) — quality is real but the multiple already prices it richly. [34]
+- Reported free cash flow is collapsing as capex scales — LTM levered FCF $22,665M (down from $38,088M FY25 and $53,158M FY24), and FY26 capex consensus of ~$201,846M against CFO ~$215,570M leaves the self-funding runway thin; several brokers now model negative FY26 FCF. [13]
+- The headline trailing P/E of 17.8x is an optical MISREAD, not a cheap signal — three of the trailing four quarters carry a material below-operating-line block (+$97,983M in Q2 2026 alone, 82% of revenue) netting +$151,120M, so trailing EPS is inflated by non-operating gains and the low P/E is not an operating anchor. [14]
+- Returns on capital are already fading at the margin as the capex cycle bites — RoCE slid from 21.0% (FY24) to 19.3% (FY25) to 15.8% (LTM), the load-bearing metric for whether the reinvestment is still high-returning. [15]
+- The stated 39% EBITDA margin is a genuine strength but read alongside the definitional break: consensus estimate-basis EBITDA implies 5.57x more D&A add-back than the actuals, so a forward margin jump to 47%–48% is not the same basis and cannot be cleanly compared to the trailing 39%. [31]
+- The price already embeds a long, large runway — EV/EBITDA 23.6x sits at the 95th percentile of its own 9.2-year history (range 10.9–25.8x, median 17.5x), so on a trailing basis the quality is priced near its own ceiling; note this is trailing-only with no forward basis to distinguish depressed from richly-valued. [34]
 
 ### Decisive question
-**Will the surging AI/cloud capex build convert into durable, high-return growth that beats the runway already embedded in a ceiling-level trailing multiple — or will FCF and returns on capital stay compressed long enough to make the priced expectations the ceiling?**
+**Does the AI/Cloud capex super-cycle convert into sustained high-return growth that beats the near-ceiling trailing multiple, or does the multiple derate as free cash flow and returns-on-capital compress under the spend before the runway pays off?**
 
 ### …evidence for
-- Cloud revenue grew 82% in Q2 2026 with backlog at $514 billion — contracted demand that gives the capex a visible offtake path. [11]
-- Existing cloud customers are exceeding their commitments by more than 50%, an acceleration over the prior quarter, and acquisition velocity more than doubled year-over-year. [11]
-- Absolute EBITDA rose to $173,164M LTM with margin at 39%, showing the spend has not yet broken operating profitability. [12]
+- Cloud revenue grew 82% in Q2 2026 with backlog at $514 billion, a large forward-committed demand signal for the capacity being built. [11]
+- Existing Cloud customers are exceeding their commitments by more than 50% with acquisition velocity more than doubling YoY — the demand mechanism that would monetize the capex. [11]
+- Consensus continues to revise the forward path up (FY26 EBITDA +14% over 12 months to $233,038M), consistent with the market pricing a payoff. [12]
 
 ### …evidence against
-- Capex has scaled from -$24,640M (FY21) toward a consensus FY26 of ~-$201,617M, driving LTM levered FCF down to $22,665M. [13]
-- RoCE has fallen to 15.8% LTM from 21.0% in FY24, so the marginal return on the growing capital base is slipping as the build accelerates. [33]
-- The trailing EV/EBITDA sits at the 100th percentile of its own 9-year history, leaving little cushion if the reinvestment return disappoints. [34]
+- FY26 capex consensus of ~$201,846M against CFO ~$215,570M has already driven LTM levered FCF down to $22,665M from $53,158M two years prior — the spend is outrunning the cash return so far. [13]
+- RoCE has fallen three periods running — 21.0% (FY24) → 19.3% (FY25) → 15.8% (LTM) — the direct signal that returns on the reinvested capital are compressing during the build. [15]
+- The trailing EV/EBITDA already sits at the 95th percentile of its own 9.2-year history, leaving little room for multiple support if the payoff slips. [34]
 
 ### Key unknowns
-- The 5-year P/E percentile cannot be built because a stock split inside the window mismatches split-adjusted prices against as-filed older EPS — the trailing valuation range is not verifiable on earnings.
-- No segment EBITDA is disclosed — revenue is segmented (Services 85% / Cloud 15%) but segment profitability is not, so Cloud's true margin and whether it is earning its capex cannot be verified (a bearish disclosure gap).
-- No forward/adjusted EV/EBITDA or adjusted EPS in the revised guidance, so a temporarily-depressed vs permanently-impaired trailing multiple cannot be distinguished on the company's own numbers.
-- The consensus/actual EBITDA rows are NOT the same basis (estimate implies 4.89x the actual D&A add-back), so growth across the actual→estimate boundary is partly definitional and forward multiples are not comparable to the trailing one.
-- Company-defined FCF basis is ambiguous: CIQ levered FCF $22,665M vs CFO-minus-capex $53,273M (0.43x apart) — which basis to use for a self-funding or per-share read is unresolved.
-- Management guides only capex (FY26 $195–205B) and DPS; no revenue/EPS forward guide, and the maturity-wall/covenant terms are UNKNOWN (no agreement exhibit located).
-- Insider open-market activity is one-sided: 0 buys vs 92 sells over 182 days ($43.08M, 7 insiders) — direction of read left to the human.
+- Trailing P/E percentile cannot be built — a stock split inside the window means split-adjusted prices divide against as-filed older EPS on two bases; the current P/E stands but no historical range is available to judge it.
+- No segment-level EBITDA is disclosed — the filing segments revenue and operating income but not EBITDA, so Cloud's true standalone cash-margin (and the return on Cloud capex specifically) is not visible; this opacity is a bearish gap for a capex thesis that lives or dies on Cloud economics.
+- No adjusted/forward EBITDA or adjusted EPS in the revised guidance — forward EV/EBITDA on an adjusted basis and adjusted net-debt/EBITDA are UNKNOWN, so leverage-vs-forward-earnings cannot be struck.
+- Company-defined FCF basis is ambiguous — CIQ 'levered FCF' $22,665M vs CFO−capex $53,273M on the same period differ 0.43x; which basis a self-funding read uses materially changes the runway assessment.
+- Covenant terms are UNKNOWN — no agreement exhibit located across the filing history, so debt covenant headroom under the escalating capex/debt-issuance program cannot be checked (the peer set and roster is HETEROGENEOUS — caps span $6.6B–$3.7T — so every peer multiple is a confidence-gated input, not a clean benchmark).
+- FY26 revenue guide on file is stale (FY2007, 7,462d old) and management gives no numeric revenue outlook — the guidance-delivery track record cannot be tested against a current bar; only the fresh FY2026 capex guide ($195–205B) is current.
+- Insider open-market activity is one-sided — 0 buys vs 92 sells ($43.08M) over 182 days — read for what it signals about management's own view of the priced-in expectations.
 
 ### Twin reference cases
 - **Microsoft Corporation** — kept compounding
-  - distinguished by: Mega-cap platform funding a heavy AI-cloud capex build from internal cash while the core franchise held its margin — the runway-vs-priced question turned on whether cloud demand converted the spend into durable growth.
+  - distinguished by: In-roster mega-cap cloud peer that carried a persistent premium multiple through a heavy AI-datacenter capex build while both revenue and absolute profit kept rising.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Amazon.com** — kept compounding
-  - distinguished by: A period of surging capex and depressed reported FCF ahead of cloud/infrastructure monetisation, where the market had to decide if the spend was investment or a permanent cash drag.
+  - distinguished by: In-roster peer whose reported FCF was repeatedly compressed by successive capex super-cycles even as revenue and cloud scale expanded — the depressed-FCF-during-buildout pattern the bear case turns on.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Meta Platforms** — re-rated to fair value
-  - distinguished by: An ad-driven platform whose multiple swung hard as investors reassessed whether a large AI/infrastructure spend cycle would earn its return — the same reinvestment-return crux.
+- **Meta Platforms** — kept compounding
+  - distinguished by: In-roster ad-platform peer that re-rated sharply after a period of heavy AI/infrastructure spend once investors judged the reinvestment returns credible — an analogue for the capex-vs-return crux.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Netflix** — kept compounding (LLM-claimed — verify)
-  - distinguished by: A content/technology franchise that outspent peers for years before the reinvestment converted to widening margins and cash generation.
+- **Netflix** — kept compounding
+  - distinguished by: In-roster peer that traded at a persistently high own-history multiple justified by a long content-reinvestment runway, testing whether a rich trailing multiple is a ceiling or a reflection of durable growth.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Cisco Systems** — re-rated to fair value (LLM-claimed — verify)
+  - distinguished by: Dominant infrastructure franchise whose multiple compressed durably once a secular-growth narrative faded despite continued profitability — the cautionary case where a ceiling multiple did not hold.
   - source: [LLM-suggested, unverified]
 
 ## Catalyst calendar — what tests the thesis, and when
@@ -254,56 +262,56 @@ _Company-specific or market-wide?_
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 22.9x vs peer median 18.0x (+27%); P/E 17.2x vs peer median 23.4x (-26%) [26]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 23.6x vs peer median 18.3x (+29%); P/E 17.8x vs peer median 27.9x (-36%) [26]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-08-12 · multiples as-of 2026-08-10 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-09-22 · multiples as-of 2026-09-17 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [36]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
-| **name NTM TEV/EBITDA** | **15.72x** | **$259,118.6M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 10.87x | $374,732.7M EBITDA |
-| peer-median LTM TEV/EBITDA | 18x | $226,296.9M EBITDA |
-| **name NTM TEV/Rev** | **7.44x** | **$547,492.6M Revenue †** |
-| peer-median NTM TEV/Rev | 4.01x | $1,015,796.7M Revenue |
-| peer-median LTM TEV/Rev | 4.8x | $848,613.5M Revenue |
+| **name NTM TEV/EBITDA** | **16.13x** | **$260,194.6M EBITDA †** |
+| peer-median NTM TEV/EBITDA | 12.06x | $348,004.9M EBITDA |
+| peer-median LTM TEV/EBITDA | 18.3x | $229,341.0M EBITDA |
+| **name NTM TEV/Rev** | **7.63x** | **$550,057.6M Revenue †** |
+| peer-median NTM TEV/Rev | 3.94x | $1,065,213.0M Revenue |
+| peer-median LTM TEV/Rev | 4.5x | $932,653.2M Revenue |
 
-- **Consensus path anchors (EBITDA):** FY26E $231454.7M · FY27E $294832.6M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
-- **Consensus path anchors (Revenue):** FY26E $497687.6M · FY27E $606647.4M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
+- **Consensus path anchors (EBITDA):** FY26E $233038.5M · FY27E $297027.3M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
+- **Consensus path anchors (Revenue):** FY26E $498547.7M · FY27E $613730.2M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
 
 ### The EV gap — our base case vs the street
 
-_No gap is struck for this name: shares unavailable. The consensus side alone still routes to **two-ratio** at FY2026, so the form is known even though the comparison is not._
+_No gap is struck for this name: shares unavailable. The consensus side alone still routes to **three-ratio** at FY2026, so the form is known even though the comparison is not._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
-- **Own-history range position:** EV/EBITDA (TEV/LTM) 25.8x as-of 2026-06-30 — trailing range 10.9–24.8x (median 17.4x) over 37 closes → 100%ile → near-ceiling; P/LTM EPS 27.3x [25]
+- **Own-history range position:** EV/EBITDA (TEV/LTM) 23.6x as-of 2026-09-21 — trailing range 10.9–25.8x (median 17.5x) over 38 closes → 95%ile → near-ceiling; P/LTM EPS 17.8x [25]
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [37]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
-| Meta Platforms | $1474.6B | engages in the development of products that enable people to connect and share with friends and family through mobile devices, personal computers (United States) |
-| Amazon.com | $2883.0B | engages in the retail sale of consumer products, advertising, and subscriptions service through online and physical stores in North America and internationally. (United States) |
-| Microsoft Corporation | $3656.6B | develops and supports a portfolio of technology solutions for individuals and businesses worldwide. (United States) |
-| Reddit | $29.5B | operates a digital community in the United States and internationally. (United States) |
-| Pinterest | $13.0B | operates as a visual search and discovery platform in the United States, Canada, Europe, and internationally. (United States) |
-| Netflix | $309.0B | provides entertainment services worldwide. (United States) |
-| The Trade Desk | $6.3B | operates as a technology company in the United States and internationally. (United States) |
-| Snap Inc. | $8.8B | operates as a technology company in North America, Europe, and internationally. (United States) |
-| DoorDash | $92.1B | operates a commerce platform that connects merchants, consumers, and dashers in the United States and internationally. (United States) |
-| Match Group | $8.4B | provides digital technologies in the United States and internationally. (United States) |
+| Meta Platforms | $1888.3B | engages in the development of products that enable people to connect and share with friends and family through mobile devices, personal computers (United States) |
+| Amazon.com | $2787.7B | engages in the retail sale of consumer products, advertising, and subscriptions service through online and physical stores in North America and internationally. (United States) |
+| Microsoft Corporation | $3724.7B | develops and supports a portfolio of technology solutions for individuals and businesses worldwide. (United States) |
+| Reddit | $30.5B | operates a digital community in the United States and internationally. (United States) |
+| Pinterest | $11.0B | operates as a visual search and discovery platform in the United States, Canada, Europe, and internationally. (United States) |
+| Netflix | $305.5B | provides entertainment services worldwide. (United States) |
+| Snap Inc. | $9.6B | operates as a technology company in North America, Europe, and internationally. (United States) |
+| The Trade Desk | $6.6B | operates as a technology company in the United States and internationally. (United States) |
+| DoorDash | $84.0B | operates a commerce platform that connects merchants, consumers, and dashers in the United States and internationally. (United States) |
+| Match Group | $9.9B | provides digital technologies in the United States and internationally. (United States) |
 
-_the name: $4195.0B_
+_the name: $4318.6B_
 
-- **Comparability (confidence gate):** market caps span $6.3B–$3656.6B (577x); the name is $4195.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
-- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [15]  <!-- ds-table -->
+- **Comparability (confidence gate):** market caps span $6.6B–$3724.7B (568x); the name is $4318.6B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
+- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [33]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
-| NTM TEV/Rev | 7.44 | 1.45 | 4.01 | 4.49 | 9.48 |
-| NTM TEV/EBITDA | 15.72 | 7.1 | 10.87 | 12.33 | 21.07 |
-| NTM P/E | 25.86 | 7.4 | 19.75 | 19.7 | 33.11 |
+| NTM TEV/Rev | 7.63 | 1.56 | 3.94 | 4.65 | 9.66 |
+| NTM TEV/EBITDA | 16.13 | 7.05 | 12.06 | 12.47 | 19.14 |
+| NTM P/E | 26.52 | 7.94 | 22.12 | 20.02 | 30.21 |
 
 _NM = a real state (negative base), not missing_
 
@@ -311,26 +319,26 @@ _NM = a real state (negative base), not missing_
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
-| **Alphabet Inc. · the name** | **$4,195.0B** | **22.9** | **9.2** | **17.2** | **39%** | **20%** | **0.7** | **121,683 (net cash)** |
-| Microsoft Corporation | $3,656.6B | 18.0 | 11.2 | 27.4 | 59% | 18% | 0.6 | 51,970 |
-| Amazon.com | $2,883.0B | 16.1 | 3.9 | 21.5 | 22% | 16% | 1.3 | 128,647 |
-| Meta Platforms | $1,474.6B | 13.1 | 6.6 | 21.8 | 48% | 28% | 1.0 | 22,058 |
-| Netflix | $309.0B | 20.5 | 6.5 | 23.4 | 30% | 16% | 1.1 | 7,527 |
-| DoorDash | $92.1B | 57.3 | 5.7 | 111.6 | 9% | 34% | 2.1 | 2,042 (net cash) |
-| Reddit | $29.5B | 32.9 | 9.6 | 35.8 | 29% | 67% | 0.0 | 2,766 (net cash) |
-| Pinterest | $13.0B | 35.8 | 2.8 | 175.2 | 7% | 17% | 3.3 | 78 (net cash) |
-| Snap Inc. | $8.8B | NM | 1.6 | NM | -2% | 13% | NM | 1,566 |
-| Match Group | $8.4B | 9.4 | 3.3 | 12.9 | 34% | 2% | 3.0 | 3,084 |
-| The Trade Desk | $6.3B | 6.6 | 1.8 | 15.9 | 23% | 12% | 0.5 | 1,051 (net cash) |
-| Peer median (peers) | $60.8B | 18.0 | 4.8 | 23.4 | 26% | 16% | 1.1 | 2,325 |
+| **Alphabet Inc. · the name** | **$4,318.6B** | **23.6** | **9.5** | **17.8** | **39%** | **20%** | **0.7** | **121,683 (net cash)** |
+| Microsoft Corporation | $3,724.7B | 18.3 | 11.4 | 27.9 | 59% | 18% | 0.6 | 51,970 |
+| Amazon.com | $2,787.7B | 15.6 | 3.8 | 20.8 | 22% | 16% | 1.3 | 128,647 |
+| Meta Platforms | $1,888.3B | 16.8 | 8.4 | 27.9 | 48% | 28% | 1.0 | 22,058 |
+| Netflix | $305.5B | 20.2 | 6.5 | 23.1 | 30% | 16% | 1.1 | 7,527 |
+| DoorDash | $84.0B | 52.2 | 5.2 | 101.8 | 9% | 34% | 2.1 | 2,042 (net cash) |
+| Reddit | $30.5B | 34.2 | 10.0 | 37.0 | 29% | 67% | 0.0 | 2,766 (net cash) |
+| Pinterest | $11.0B | 30.2 | 2.4 | 148.1 | 7% | 17% | 3.3 | 78 (net cash) |
+| Match Group | $9.9B | 10.7 | 3.7 | 15.2 | 34% | 2% | 3.0 | 3,084 |
+| Snap Inc. | $9.6B | NM | 1.8 | NM | -2% | 13% | NM | 1,566 |
+| The Trade Desk | $6.6B | 6.8 | 1.8 | 16.3 | 23% | 12% | 0.5 | 1,051 (net cash) |
+| Peer median (peers) | $57.3B | 18.3 | 4.5 | 27.9 | 26% | 16% | 1.1 | 2,325 |
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [12]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [31]  <!-- ds-table -->
 
-|  | Dec-2021 | Dec-2022 | Dec-2023 (R) | Dec-2024 (R) | Dec-2025 | Jun-2026 (LTM) |
-|---|---|---|---|---|---|---|
-| Gross margin | 57% | 55% | 57% | 58% | 60% | 61% |
+|  | Dec-2017 (R) | Dec-2018 (R) | Dec-2019 (R) | Dec-2020 | Dec-2021 | Dec-2022 | Dec-2023 (R) | Dec-2024 (R) | Dec-2025 | Jun-2026 (LTM) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Gross margin | 59% | 56% | 56% | 54% | 57% | 55% | 57% | 58% | 60% | 61% |
 
 _Revenue YoY (latest same-quarter): +24.2% (Q2 Jun-30-2026 vs Q2 Jun-30-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
@@ -338,74 +346,74 @@ _Revenue YoY (latest same-quarter): +24.2% (Q2 Jun-30-2026 vs Q2 Jun-30-2025). R
 - **Non-operating earnings:** 3 of the trailing four quarters carry a material block from BELOW the operating line — 2025-09-30 +$12,759M (29% of pre-tax · 12% of revenue) · 2026-03-31 +$37,716M (49% of pre-tax · 34% of revenue) · 2026-06-30 +$97,983M (71% of pre-tax · 82% of revenue) — netting +$151,120M across the four. A trailing EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the SUM, not the largest of them. [14]
 - **Return ratios — per fiscal period** — [40]  <!-- ds-table -->
 
-|  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
-|---|---|---|---|---|---|---|
-| RoE % | 32.1% | 23.6% | 27.4% | 32.9% | 35.7% | 48.7% |
-| RoCE % | 18.5% | 16.5% | 17.6% | 21.0% | 19.3% | 15.8% |
-| RoA % | 14.5% | 12.9% | 13.7% | 16.5% | 15.4% | 13.0% |
-| Total debt/equity | 0.11x | 0.12x | 0.11x | 0.09x | 0.16x | 0.19x |
-| Current ratio | 2.93x | 2.38x | 2.10x | 1.84x | 2.01x | 2.72x |
-| Dividend/sh | none | none | none | none | 0.38 | 0.05 |
+|  | FY17 | FY18 | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
+|---|---|---|---|---|---|---|---|---|---|---|
+| RoE % | 8.7% | 18.6% | 18.1% | 19.0% | 32.1% | 23.6% | 27.4% | 32.9% | 35.7% | 48.7% |
+| RoCE % | 12.1% | 12.1% | 11.3% | 11.0% | 18.5% | 16.5% | 17.6% | 21.0% | 19.3% | 15.8% |
+| RoA % | 9.9% | 9.5% | 8.8% | 8.7% | 14.5% | 12.9% | 13.7% | 16.5% | 15.4% | 13.0% |
+| Total debt/equity | 0.03x | 0.02x | 0.08x | 0.13x | 0.11x | 0.12x | 0.11x | 0.09x | 0.16x | 0.19x |
+| Current ratio | 5.14x | 3.92x | 3.37x | 3.07x | 2.93x | 2.38x | 2.10x | 1.84x | 2.01x | 2.72x |
+| Dividend/sh | none | none | none | none | none | none | none | none | 0.38 | 0.05 |
 
 
 
 ## The street — estimates & guidance
-_export date unverified (data ≥ 2026-08-10)_
+_export date unverified (data ≥ 2026-09-17)_
 - **Horizon read (FQ — next-2Q revision breadth)** — [41]:
-  - EPS Normalized FQ3 2026: 1m 17↑/14↓, 2m 18↑/12↓, 3m 18↑/13↓
-  - EPS Normalized FQ4 2026: 1m 16↑/13↓, 2m 16↑/13↓, 3m 18↑/12↓
-  - EPS (GAAP) FQ3 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 0↑/1↓
-  - EPS (GAAP) FQ4 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 0↑/1↓
-  - Revenue FQ3 2026: 1m 32↑/1↓, 2m 31↑/1↓, 3m 32↑/1↓
-  - Revenue FQ4 2026: 1m 30↑/2↓, 2m 30↑/2↓, 3m 31↑/1↓
-  - EBITDA FQ3 2026: 1m 12↑/9↓, 2m 12↑/9↓, 3m 13↑/9↓
-  - EBITDA FQ4 2026: 1m 14↑/7↓, 2m 13↑/8↓, 3m 14↑/7↓
-  - EBIT FQ3 2026: 1m 17↑/14↓, 2m 17↑/13↓, 3m 21↑/10↓
-  - EBIT FQ4 2026: 1m 18↑/12↓, 2m 19↑/11↓, 3m 20↑/10↓
-  - _+7 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 10.6 (12m) → 11.1 (9m) → 11.5 (6m) → 14.2 (3m) → 14.2 (2m) → 14.2 (1m) → 20.6 (latest); net +93% (12m→latest) | FY 2026 EPS (GAAP): 10.6 (12m) → 11.1 (9m) → 11.5 (6m) → 14.2 (3m) → 14.2 (2m) → 14.2 (1m) → 20.6 (latest); net +95% (12m→latest) | FY 2026 Revenue: 439,588.0 (12m) → 453,197.4 (9m) → 470,308.0 (6m) → 486,659.9 (3m) → 487,719.9 (2m) → 488,501.5 (1m) → 497,687.6 (latest); net +13% (12m→latest) | FY 2026 EBITDA: 203,447.2 (12m) → 211,886.9 (9m) → 217,676.3 (6m) → 227,509.8 (3m) → 227,055.7 (2m) → 227,966.5 (1m) → 231,454.7 (latest); net +14% (12m→latest) | FY 2026 EBIT: 147,394.5 (12m) → 153,811.4 (9m) → 158,508.0 (6m) → 169,137.0 (3m) → 169,849.3 (2m) → 170,134.3 (1m) → 171,315.2 (latest); net +16% (12m→latest) | FY 2026 Interest Expense: -3,880.0 (12m) → -3,600.0 (9m) → -3,200.0 (6m) → -3,297.5 (3m) → -3,297.5 (2m) → -3,538.0 (1m) → -4,441.3 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 152,482.0 (12m) → 159,498.4 (9m) → 165,124.8 (6m) → 212,274.8 (3m) → 211,448.9 (2m) → 211,712.5 (1m) → 311,618.9 (latest); net +104% (12m→latest) | FY 2026 Net Income (Excl. Excep): 127,497.0 (12m) → 134,125.1 (9m) → 138,941.1 (6m) → 174,028.7 (3m) → 172,920.8 (2m) → 173,052.7 (1m) → 253,526.7 (latest); net +99% (12m→latest) | FY 2026 Net Income (GAAP): 126,745.4 (12m) → 133,846.6 (9m) → 139,189.7 (6m) → 174,050.4 (3m) → 173,596.0 (2m) → 173,827.4 (1m) → 251,783.5 (latest); net +99% (12m→latest)  [data ≥ 2026-08-10 · export date unverified] [42]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [43]:
-  - NTM: TEV/REV 7.44 · TEV/EBITDA 15.72 · TEV/EBIT 21.37 · Price/Earnings 25.86 · PEG 1.80 · P/BV –
-  - FY 2026: TEV/REV 8.22 · TEV/EBITDA 17.68 · TEV/EBIT 23.88 · Price/Earnings 16.69 · PEG 1.16 · P/BV 5.78
-  - FY 2027: TEV/REV 6.74 · TEV/EBITDA 13.88 · TEV/EBIT 19.11 · Price/Earnings 23.31 · PEG 1.63 · P/BV 4.63
-  - FY 2028: TEV/REV 5.67 · TEV/EBITDA 10.72 · TEV/EBIT 15.90 · Price/Earnings 19.87 · PEG 1.39 · P/BV 3.68
+  - EPS Normalized FQ3 2026: 1m 2↑/0↓, 2m 19↑/15↓, 3m 20↑/11↓
+  - EPS Normalized FQ4 2026: 1m 2↑/0↓, 2m 17↑/14↓, 3m 19↑/11↓
+  - EPS (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - EPS (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - Revenue FQ3 2026: 1m 1↑/0↓, 2m 33↑/1↓, 3m 31↑/1↓
+  - Revenue FQ4 2026: 1m 2↑/0↓, 2m 31↑/2↓, 3m 30↑/2↓
+  - EBITDA FQ3 2026: 1m 2↑/0↓, 2m 17↑/8↓, 3m 14↑/8↓
+  - EBITDA FQ4 2026: 1m 2↑/0↓, 2m 16↑/8↓, 3m 15↑/7↓
+  - EBIT FQ3 2026: 1m 2↑/0↓, 2m 17↑/16↓, 3m 18↑/12↓
+  - EBIT FQ4 2026: 1m 2↑/0↓, 2m 19↑/12↓, 3m 21↑/9↓
+  - _+8 non-headline metric rows in JSON_
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 10.6 (12m) → 11.2 (9m) → 11.6 (6m) → 14.2 (3m) → 14.3 (2m) → 20.6 (1m) → 20.6 (latest); net +94% (12m→latest) | FY 2026 EPS (GAAP): 10.6 (12m) → 11.2 (9m) → 11.5 (6m) → 14.2 (3m) → 14.3 (2m) → 20.6 (1m) → 20.6 (latest); net +94% (12m→latest) | FY 2026 Revenue: 440,500.3 (12m) → 455,329.2 (9m) → 472,202.6 (6m) → 487,719.9 (3m) → 489,251.2 (2m) → 497,864.3 (1m) → 498,547.7 (latest); net +13% (12m→latest) | FY 2026 EBITDA: 203,980.1 (12m) → 211,230.1 (9m) → 217,975.8 (6m) → 227,055.7 (3m) → 228,088.2 (2m) → 231,852.0 (1m) → 233,038.5 (latest); net +14% (12m→latest) | FY 2026 EBIT: 147,987.5 (12m) → 154,569.9 (9m) → 158,634.4 (6m) → 169,849.3 (3m) → 170,646.9 (2m) → 171,652.0 (1m) → 171,734.2 (latest); net +16% (12m→latest) | FY 2026 Interest Expense: -3,880.0 (12m) → -3,600.0 (9m) → -3,200.0 (6m) → -3,297.5 (3m) → -3,538.0 (2m) → -4,441.3 (1m) → -4,441.3 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 152,783.4 (12m) → 160,911.6 (9m) → 165,698.7 (6m) → 211,448.9 (3m) → 212,440.5 (2m) → 311,704.1 (1m) → 311,740.1 (latest); net +104% (12m→latest) | FY 2026 Net Income (Excl. Excep): 127,333.5 (12m) → 135,242.3 (9m) → 139,376.2 (6m) → 172,920.8 (3m) → 173,686.2 (2m) → 253,683.4 (1m) → 254,017.9 (latest); net +99% (12m→latest) | FY 2026 Net Income (GAAP): 127,162.3 (12m) → 135,167.8 (9m) → 139,676.0 (6m) → 173,596.0 (3m) → 174,447.4 (2m) → 251,976.0 (1m) → 252,154.9 (latest); net +98% (12m→latest)  [data ≥ 2026-09-17 · export date unverified] [12]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [42]:
+  - NTM: TEV/REV 7.63 · TEV/EBITDA 16.13 · TEV/EBIT 21.90 · Price/Earnings 26.52 · PEG 2.07 · P/BV –
+  - FY 2026: TEV/REV 8.45 · TEV/EBITDA 18.09 · TEV/EBIT 24.54 · Price/Earnings 17.21 · PEG 1.35 · P/BV 5.98
+  - FY 2027: TEV/REV 6.87 · TEV/EBITDA 14.19 · TEV/EBIT 19.45 · Price/Earnings 23.85 · PEG 1.87 · P/BV 4.71
+  - FY 2028: TEV/REV 5.73 · TEV/EBITDA 11.03 · TEV/EBIT 16.05 · Price/Earnings 20.16 · PEG 1.58 · P/BV 3.81
   - _+4 later fiscal years in JSON_
 - **Current guide (latest results filing):** _UNKNOWN_ — no guide in any of the 3 parsed release(s)
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [44]  <!-- ds-table -->
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [43]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | Capital Expenditure | '(195,000.00) - (205,000.00)' | FY 2026 | 2026-07-22 | fresh | spend ≤ ceiling 1/1 | FY 2025 MET |
-| DPS | 0.22 | FQ3 2026 | 2026-07-22 | fresh | actual ≥ floor 1/1 · 7 at-guide (±0.5% of a point, not adjudicated) | FQ1 2026 AT GUIDE (±0.5% of a point) |
+| DPS | 0.22 | FQ3 2026 | 2026-07-22 | fresh | actual ≥ floor 1/1 · 8 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 AT GUIDE (±0.5% of a point) |
 | Revenue | none current (last: 11,800.0) | FY 2007 | 2006-03-20 | 7462d (stale) | actual ≥ floor 3/3 | FY 2007 MET |
 | EPS Normalized | none current (last: 0.18) | FY 2006 | 2005-10-20 | 7613d (stale) | actual ≥ floor 1/1 | FY 2006 MET |
 | EPS (GAAP) | none current (last: 0.18) | FY 2006 | 2005-10-20 | 7613d (stale) | actual ≥ floor 1/1 | FY 2006 MET |
 
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
-- **Consensus stats (target + ratings):** Target price: mean $428.04, median $428.00, high/low 515.00/340.00, N 55/56; Ratings: Buy 45, Outperform 13, Hold 6, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 44, Outperform 13, Hold 6, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-10 · export date unverified] [28]
-- **Revision-event log (250 events · 18 broker-days)** — [45]  <!-- ds-table -->
+- **Consensus stats (target + ratings):** Target price: mean $429.46, median $430.00, high/low 515.00/340.00, N 54/54; Ratings: Buy 43, Outperform 13, Hold 5, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 42, Outperform 13, Hold 5, Underperform 0, Sell 0, No Opinion 1, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-09-17 · export date unverified] [28]
+- **Revision-event log (250 events · 23 broker-days)** — [44]  <!-- ds-table -->
 
 |  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
 |---|---|---:|---:|---:|---:|---|---:|---:|---:|
-| 2026-08-10 | Monness, Crespi, Hardt & Co., Inc. | 4 | 2 | — | 2 | EPS Normalized FY 2026 | 14.7 | 20.8 | +6.1 |
-| 2026-07-31 | China Merchants Securities (HK) Co., Ltd | 19 | 11 | 8 | — | EBITDA FY 2026 | 193457.0 | 97525.0 | −95932.0 |
-| 2026-07-30 | KGI Securities Co. Ltd. | 8 | 7 | 1 | — | EBITDA FY 2026 | 203272.0 | 204252.0 | +980.0 |
-| 2026-07-28 | Arete Research Services LLP | 4 | 1 | 3 | — | EBITDA FY 2026 | 218000.0 | 214000.0 | −4000.0 |
-| 2026-07-28 | Loop Capital Markets | 22 | 14 | 8 | — | Revenue FQ3 2026 | 119344.7 | 126644.6 | +7299.9 |
-| 2026-07-28 | Oppenheimer & Co. Inc. | 13 | 10 | 3 | — | EBITDA FQ3 2026 | 58892.0 | 60271.0 | +1379.0 |
+| 2026-09-17 | Tigress Financial Partners LLC | 31 | 22 | 9 | — | EBITDA FQ3 2026 | 55286.2 | 59132.4 | +3846.2 |
+| 2026-09-16 | broker undisclosed | 10 | 10 | — | — | EBITDA FY 2026 | 230000.0 | 235000.0 | +5000.0 |
+| 2026-09-10 | Oppenheimer & Co. Inc. | 23 | 16 | 2 | 5 | EBITDA FQ3 2026 | 60271.0 | 62861.0 | +2590.0 |
+| 2026-09-08 | broker undisclosed | 12 | 3 | 9 | — | EBITDA FY 2026 | 211777.8 | 211706.4 | −71.4 |
+| 2026-09-03 | Arete Research Services LLP | 2 | 2 | — | — | Revenue FY 2026 | 506000.0 | 509000.0 | +3000.0 |
+| 2026-09-03 | China International Capital Corporation Limited | 9 | 3 | 6 | — | EBITDA FY 2026 | 198836.0 | 198841.0 | +5.0 |
 
-_+12 more broker-days in JSON_
+_+17 more broker-days in JSON_
 
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2004 +33%, FY2005 +0%, FY2006 +9%, FY2007 -3%, FY2008 -20%, FY2009 +2%, FY2010 +3%, FY2011 -5%, FY2012 -1%, FY2013 -2%, FY2014 +6%, FY2015 -1%, FY2016 -1%, FY2017 -44%, FY2018 +5%, FY2019 +6%, FY2020 +14%, FY2021 +4%, FY2022 -4%, FY2023 +1%, FY2024 +0%, FY2025 +2%; Revenue surprise: FY2004 +2%, FY2005 +0%, FY2006 +1%, FY2007 +1%, FY2008 +0%, FY2009 +0%, FY2010 +1%, FY2011 -1%, FY2012 -4%, FY2013 +1%, FY2014 -1%, FY2015 +1%, FY2016 +2%, FY2017 +1%, FY2018 +0%, FY2019 -1%, FY2020 +2%, FY2021 +1%, FY2022 -0%, FY2023 +1%, FY2024 -0%, FY2025 +1% (GAAP-EPS basis; +beat / −miss) [46]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2004 +33%, FY2005 +0%, FY2006 +9%, FY2007 -3%, FY2008 -20%, FY2009 +2%, FY2010 +3%, FY2011 -5%, FY2012 -1%, FY2013 -2%, FY2014 +6%, FY2015 -1%, FY2016 -1%, FY2017 -44%, FY2018 +5%, FY2019 +6%, FY2020 +13%, FY2021 +4%, FY2022 -4%, FY2023 +1%, FY2024 +0%, FY2025 +2%; Revenue surprise: FY2004 +2%, FY2005 +0%, FY2006 +1%, FY2007 +1%, FY2008 +0%, FY2009 +0%, FY2010 +1%, FY2011 -1%, FY2012 -4%, FY2013 +1%, FY2014 -1%, FY2015 +1%, FY2016 +2%, FY2017 +1%, FY2018 +0%, FY2019 -1%, FY2020 +2%, FY2021 +1%, FY2022 -0%, FY2023 +1%, FY2024 -0%, FY2025 +1% (GAAP-EPS basis; +beat / −miss) [45]
 
 ## Leverage & survival
 - **Net debt / EBITDA [NET]:** -0.7x [9]
-- **Total debt / EBITDA vs peers:** name 0.7x vs peer median 1.1x (comps TOTAL-debt/EBITDA basis) [47]
-- **Net debt / OCF:** -0.7x [48]
-- **Interest coverage:** 76.9x [49]
-- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [50]
-- **Credit health** — [31]  <!-- ds-table -->
+- **Total debt / EBITDA vs peers:** name 0.7x vs peer median 1.1x (comps TOTAL-debt/EBITDA basis) [46]
+- **Net debt / OCF:** -0.7x [47]
+- **Interest coverage:** 76.9x [48]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [49]
+- **Credit health** — [50]  <!-- ds-table -->
 
 |  | Name | Peer median |
 |---|---:|---:|
@@ -459,10 +467,9 @@ _17 undated / later aggregate line item(s) in the appendix panel_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_2 to verify._
+_1 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Alphabet Class A, HELD — a $50,000 / 5.0% NAV starter entered 2026-08-14 at ~$345 under an external IC memo, recorded here so the machinery can see a live position it was previously blind to. Followed under the QUALITY book: the binding question is duration — whether Search and Cloud economics outlast what a ~26x normalized NTM multiple already pays for — not whether a de-rating is overdone, which is the overshoot twin's question and the wrong one here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. Class A specifically: the memo, the $345.90 verified close and the frozen legs are all Class A, and GOOG (Class C) is a distinct security. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
-- Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (8 bull vs 5 bear) and the minority bear points aren't qualified-as-outweighed — size the minority against the lean, or it launders a one-sided case
 
 # Appendix — data & audit
 
@@ -490,32 +497,33 @@ FUNDAMENTAL HORIZON (~Aug-2027) ONLY. Every leg is a DISPLACEMENT FROM THE VERIF
 _No reference points recorded — stated as judgment._
 
 
-## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-08-10)
+## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-09-17)
 ### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [16]  <!-- ds-table -->
 
-|  | FY21 | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
-|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 257,637 | 282,836 | 307,394 | 350,018 | 402,836 | 445,866 | 497,688 | 606,647 |
-| Revenue growth | — | +10% | — (basis) | +14% | — (basis) | — (basis) | +24% (vs FY25) | +22% |
-| EBITDA ($M) | 88,987 | 88,317 | 96,239 | 127,701 | 150,175 | 173,164 | 231,455 | 294,833 |
-| EBITDA margin | 35% | 31% | 31% | 36% | 37% | 39% | 47% | 49% |
-| EBIT ($M) | 78,714 | 74,842 | 84,293 | 112,390 | 129,039 | 147,628 | 171,315 | 214,120 |
-| Net income ($M) | 76,033 | 59,972 | 73,795 | 100,118 | 132,170 | 244,205 | 251,783 | 184,633 |
-| EPS (GAAP, dil.) | 5.61 | 4.56 | 5.80 | 8.04 | 10.80 | 19.93 | 20.59 | 14.77 |
-| EPS (Normalized) | 3.62 | 3.65 | 4.25 | 5.88 | 6.86 | 7.67 | 20.58 | 14.74 |
-| Gain (Loss) On Sale Of Invest. ($M) | 12,270 | -5,519 | -823 | 2,671 | 24,620 | 149,012 | — | — |
-| CFO ($M) | 91,652 | 91,495 | 101,746 | 125,299 | 164,713 | 185,675 | 219,079 | 265,345 |
-| Capex ($M) | -24,640 | -31,485 | -32,251 | -52,535 | -91,447 | -132,402 | -201,617 | -288,144 |
-| FCF (levered, CIQ) | 47,009 | 49,939 | 56,280 | 53,158 | 38,088 | 22,665 | — | — |
-| D&A ($M) | 10,273 | 13,475 | 11,946 | 15,311 | 21,136 | 25,536 | — | — |
-| FCF (consensus basis) ($M) | — | — | — | — | — | — | 8,719 | -18,433 |
-| D&A (consensus basis) ($M) | — | — | — | — | — | — | 32,338 | 49,951 |
+|  | FY17 (R) | FY18 (R) | FY19 (R) | FY20 | FY21 | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 110,855 | 136,819 | 161,857 | 182,527 | 257,637 | 282,836 | 307,394 | 350,018 | 402,836 | 445,866 | 498,548 | 613,730 |
+| Revenue growth | — | +23% | +18% | — (basis) | +41% | +10% | — (basis) | +14% | — (basis) | — (basis) | +24% (vs FY25) | +23% |
+| EBITDA ($M) | 35,813 | 41,624 | 47,579 | 54,903 | 88,987 | 88,317 | 96,239 | 127,701 | 150,175 | 173,164 | 233,038 | 297,027 |
+| EBITDA margin | 32% | 30% | 29% | 30% | 35% | 31% | 31% | 36% | 37% | 39% | 47% | 48% |
+| EBIT ($M) | 28,914 | 32,595 | 35,928 | 41,224 | 78,714 | 74,842 | 84,293 | 112,390 | 129,039 | 147,628 | 171,734 | 216,725 |
+| Net income ($M) | 12,662 | 30,736 | 34,343 | 40,269 | 76,033 | 59,972 | 73,795 | 100,118 | 132,170 | 244,205 | 252,155 | 186,577 |
+| EPS (GAAP, dil.) | 0.90 | 2.19 | 2.46 | 2.93 | 5.61 | 4.56 | 5.80 | 8.04 | 10.80 | 19.93 | 20.62 | 14.91 |
+| EPS (Normalized) | 1.34 | 1.49 | 1.71 | 1.90 | 3.62 | 3.65 | 4.25 | 5.88 | 6.86 | 7.67 | 20.62 | 14.88 |
+| Gain (Loss) On Sale Of Invest. ($M) | -193 | 6,530 | 3,188 | 6,317 | 12,270 | -5,519 | -823 | 2,671 | 24,620 | 149,012 | — | — |
+| Legal Settlements ($M) | -2,736 | -5,071 | -1,697 | — | — | — | — | — | — | — | — | — |
+| CFO ($M) | 37,091 | 47,971 | 54,520 | 65,124 | 91,652 | 91,495 | 101,746 | 125,299 | 164,713 | 185,675 | 215,570 | 268,208 |
+| Capex ($M) | -13,184 | -25,139 | -23,548 | -22,281 | -24,640 | -31,485 | -32,251 | -52,535 | -91,447 | -132,402 | -201,846 | -298,205 |
+| FCF (levered, CIQ) | 23,683 | 20,529 | 25,116 | 35,504 | 47,009 | 49,939 | 56,280 | 53,158 | 38,088 | 22,665 | — | — |
+| D&A ($M) | 6,899 | 9,029 | 11,651 | 13,679 | 10,273 | 13,475 | 11,946 | 15,311 | 21,136 | 25,536 | — | — |
+| FCF (consensus basis) ($M) | — | — | — | — | — | — | — | — | — | — | 7,783 | -32,380 |
+| D&A (consensus basis) ($M) | — | — | — | — | — | — | — | — | — | — | 32,382 | 50,391 |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-10; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-09-17; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 
-> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 70,426 of D&A against 14,393 in the actuals (4.89x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 70,803 of D&A against 12,710 in the actuals (5.57x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 ### Quarterly — every exported quarter
 - **Quarterly financials** — [56]  <!-- ds-table -->
@@ -568,15 +576,15 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 4195027.6 [61]
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 4318622.4 [61]
 - **Bridge (TEV → equity):** TEV→equity bridge: + cash $242,474.00M, − total debt $120,791.00M [62]
 - **Implied equity at peer-median ($M, CIQ)** — [63]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
-| LTM EBITDA | 3,222,163.8 |
-| NTM Revenue (Capital IQ) | 2,305,463.9 |
-| NTM EBITDA (Capital IQ) | 2,931,985.4 |
+| LTM EBITDA | 3,279,485.0 |
+| NTM Revenue (Capital IQ) | 2,276,310.9 |
+| NTM EBITDA (Capital IQ) | 3,255,295.8 |
 
 
 ### Management commentary
@@ -591,14 +599,14 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Guide verification — CIQ guide vs release:** revenue: CIQ 11800.0 vs release NO NUMERIC OUTLOOK → not cross-checked [68]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-08-24 · assembled 2026-09-17 19:23 UTC
+- **Data window:** screened as of 2026-08-24 · assembled 2026-09-22 09:00 UTC
 - **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
-- **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
-- **Panel age:** oldest panel 36d old — 2026-08-12 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
-- **Consensus age:** consensus 38d old (2026-08-10, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Price store:** `wt-0922 → mosaic-theory-ta` · reaching 2026-09-16
+- **Panel age:** oldest panel 6d old — 2026-09-16 (stock_info.as_of), against a 2026-09-22 build
+- **Consensus age:** consensus 5d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001652044` · Nasdaq : GOOGL
-- **Assembly log:** primary-source: 8-K 0001193125-26-342390 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-234488 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-216986 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.4s fetch)
+- **Assembly log:** primary-source: 8-K 0001193125-26-342390 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-234488 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-216986 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+3.9s fetch)
 - **Re-run:** `python -m vinci dossier --ticker GOOGL` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -610,16 +618,16 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [3] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [4] `EOD gap-down detector (screen events): none`
 [5] `EOD GOOGL 180d to 2026-08-24`
-[6] `EOD SPY 180d to 2026-08-24 (cap-band: $4195.0B @ 2026-08-24 → large (>$25B) → SPY)`
+[6] `EOD SPY 180d to 2026-08-24 (cap-band: $4318.6B @ 2026-08-24 → large (>$25B) → SPY)`
 [7] `EOD GOOGL−SPY 180d to 2026-08-24 (assembly, cap-band)`
 [8] `derived from 3 cohort names; face-validity`
 [9] `CIQ Net Debt $-121,683M [Q2 Jun-30-2026] ÷ CIQ EBITDA $173,164M [LTM 12 months Jun-30-2026]`
 [10] `EDGAR XBRL FCF sign (screen data-record)`
 [11] `CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf`
-[12] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[12] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [13] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
 [14] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
-[15] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[15] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
 [16] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [17] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
 [18] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)`
@@ -633,28 +641,28 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [26] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [27] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [28] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
-[29] `CIQ Customers&Suppliers Alphabet Inc NasdaqGS GOOGL Customers.rtf`
-[30] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-[31] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-08-12`
+[29] `EDGAR 10-K 0001652044-26-000018 XBRL instance goog-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31`
+[30] `CIQ Customers&Suppliers Alphabet Inc NasdaqGS GOOGL Customers.rtf`
+[31] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
 [32] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[33] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[34] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 37 quarters spanning 2017-03-31..2026-03-31 (9.0y) (partial last column excluded from the distribution)`
+[33] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[34] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)`
 [35] `cadence: EDGAR submissions (median 90d gap over 13 results 8-Ks; last print 2026-07-22)`
-[36] `TEV = mcap 4195027.6 + net debt -121683.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-12, exported 2026-08-13) — simple-TEV basis`
+[36] `TEV = mcap 4318622.4 + net debt -121683.0 (CIQ Comparable Analysis→Financial Data, Latest, export stamp 2026-09-22 — NOT date-corrected: the price store ends 2026-09-16, before the 2026-09-22 export stamp — the bar this panel names is absent, so any match would be coincidence) — simple-TEV basis`
 [37] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[38] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-12`
+[38] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-22`
 [39] `EDGAR XBRL shares, trailing 2024-09-30..2026-06-30`
 [40] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [41] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-[42] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[43] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[44] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
-[45] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-10 · export date unverified]`
-[46] `CIQ Estimates→Surprise (annual)`
-[47] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-12`
-[48] `CIQ Net Debt $-121,683M [Q2 Jun-30-2026] ÷ CIQ OCF $185,675M [LTM 12 months Jun-30-2026]`
-[49] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
-[50] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[42] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[43] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[44] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-17 · export date unverified]`
+[45] `CIQ Estimates→Surprise (annual)`
+[46] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-22`
+[47] `CIQ Net Debt $-121,683M [Q2 Jun-30-2026] ÷ CIQ OCF $185,675M [LTM 12 months Jun-30-2026]`
+[48] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
+[49] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[50] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-22`
 [51] `CIQ Capital Structure Details — A 2025 filed Feb-05-2026`
 [52] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)`
 [53] `CIQ Financials→Capital Structure Summary`
@@ -665,9 +673,9 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [58] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
 [59] `EDGAR 8-K submissions (±10d of instrument maturities)`
 [60] `fenced Tier-2 digest (P1)`
-[61] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-12`
-[62] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-12`
-[63] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-12`
+[61] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-22`
+[62] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-22`
+[63] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-22`
 [64] `CIQ transcript(s): Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf`
 [65] `EDGAR Form 4 (latest 0001193125-26-393517; 519 filings in the 1095d scanned; counts over 182d)`
 [66] `FINRA consolidated short interest (settle 2026-08-14); DTC = 72,705,550 short ÷ 32,052,043 screen 90d ADV`

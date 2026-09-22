@@ -12,6 +12,7 @@
     "MVST",
     "NCNO",
     "NFLX",
+    "NKE",
     "ORKA",
     "PARR",
     "SMPL",
@@ -84,6 +85,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "NKE": {
+      "industry": "Footwear",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "ORKA": {
       "industry": "Biotechnology",
       "source": "ciq-gics",
@@ -138,16 +144,17 @@
   "reads": {
     "AMZN": "strongly-bullish \u2014 accelerating AWS growth, $496B backlog and 35% segment margins drive a runway that the optically low trailing multiples understate; cash cost is the main offset.",
     "AORT": "mixed \u2014 compounding revenue and rising absolute EBITDA against a sharply cut forward-earnings base, worse leverage, dilution and an On-X recall.",
-    "BRBR": "strongly-bearish \u2014 margin AND absolute EBITDA both collapsed on structural promotional/input-cost pressure with consensus still cutting; recovery lever (FY27 pricing) unproven.",
+    "BRBR": "mixed \u2014 category still grows and pricing action is dated, but a real -43% forward-EBITDA reset, rising promo/inflation costs and CEO transition are load-bearing.",
     "CNXC": "mixed \u2014 flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.",
     "EPAM": "mixed \u2014 a still-growing, net-cash, FCF-positive grower de-rated to trough multiples, but facing a self-owned, unresolved North American structural growth gap.",
     "FUBO": "mixed \u2014 a raised adjusted-EBITDA guide and subscriber inflection sit against a \u221277% year, \u2212$107.8M FCF, and a \u221237% consensus EBITDA cut.",
-    "GOOGL": "strongly-bullish \u2014 accelerating revenue, 82% cloud growth with a $514B backlog and rising absolute EBITDA outweigh a ceiling-level multiple and compressed FCF.",
+    "GOOGL": "mixed \u2014 durable 24% growth and accelerating Cloud runway pull against a 95th-percentile trailing multiple, collapsing FCF and three-period falling RoCE during the capex build.",
     "IT": "mixed \u2014 franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.",
-    "LLY": "strongly-bullish \u2014 superior, mechanism-backed volume growth and rising absolute EBITDA/RoCE plausibly earn the premium; net-price erosion is the main genuine counterweight.",
+    "LLY": "strongly-bullish \u2014 growth vastly exceeds peers (EBITDA +73% vs 6%) on rising ROIC and volume, though a large premium and falling realized price temper it.",
     "MVST": "strongly-bearish \u2014 a filed going-concern doubt plus a ~$104M near-term maturity wall against shrinking volume outweighs peer-relative optical cheapness.",
     "NCNO": "strongly-bullish \u2014 positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
-    "NFLX": "mixed \u2014 a fundamentally growing, low-levered franchise sharply de-rated, but sharp downward revenue revisions and a still-premium forward multiple leave the growth thesis unresolved.",
+    "NFLX": "strongly-bullish \u2014 rising absolute EBITDA, intact volume/pricing and A-rated self-funding against a trailing-multiple at its own 5th-percentile floor; bear case is mostly optical/sentiment.",
+    "NKE": "mixed \u2014 fortress balance sheet and a real Running/wholesale mechanism offset by still-falling forward estimates, a shrinking half of revenue, and a forward multiple above peers.",
     "ORKA": "mixed \u2014 validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.",
     "PARR": "mixed \u2014 a genuine operating/EBITDA inflection and clean balance sheet collide with a modelled margin fade, insider selling, and a +287% run already banked.",
     "SMPL": "mixed \u2014 a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.",
@@ -172,6 +179,7 @@
     "MVST": "overshoot",
     "NCNO": "overshoot",
     "NFLX": "overshoot",
+    "NKE": "overshoot",
     "ORKA": "quality",
     "PARR": "ultra_short_term",
     "SMPL": "overshoot",
@@ -193,6 +201,7 @@
     "ORKA": "quality",
     "AMZN": "quality",
     "PARR": "ultra_short_term",
-    "WLK": "ultra_short_term"
+    "WLK": "ultra_short_term",
+    "NKE": "overshoot"
   }
 }
