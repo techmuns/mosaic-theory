@@ -84,6 +84,29 @@ def test_it_gross_profit_is_named_never_relabelled() -> None:
     assert sum(f.profit for f in r.figures) == r.consolidated
 
 
+def test_nikes_ebit_is_its_own_measure_and_outranks_its_gross_profit() -> None:
+    """Nike's CODM runs its segments on EBIT, tagged `nke:EarningsBeforeInterestAndTaxes` — and the
+    same filing tags `us-gaap:GrossProfit` on the SAME two segments. With only the ADJUSTED EBIT
+    spelling recognised, gross profit won by default and NKE's first page (2026-09-22) printed
+    NIKE Brand $19,300M / Converse $514M as "segment gross profit — the filer's measure".
+    ⊕ EBIT is read; ⊖ the SAME filing with its EBIT facts removed falls back to gross profit —
+    so the order, not the fixture, decides; ⊖ us-gaap's pre-tax income never reads as EBIT."""
+    r = _read("NKE")
+    assert r is not None and r.measure == "nke:EarningsBeforeInterestAndTaxes"
+    assert r.measure_kind == "filer-defined segment measure"
+    assert _m(r) == {"NIKE Brand": (5_855.0, 45_222.0), "Converse": (18.0, 1_174.0)}
+    text = next(_FIX.glob("NKE_*.xml")).read_text()
+    stripped = re.sub(r"<nke:EarningsBeforeInterestAndTaxes\b[^>]*>[^<]*"
+                      r"</nke:EarningsBeforeInterestAndTaxes>", "", text)
+    assert stripped.count("EarningsBeforeInterestAndTaxes") == 0 < text.count("<nke:Earnings")
+    g = sf.parse_instance(stripped)
+    assert g is not None and g.measure == sf.GROSS_PROFIT
+    assert _m(g) == {"NIKE Brand": (19_300.0, 45_222.0), "Converse": (514.0, 1_174.0)}
+    for us_gaap in ("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItems"
+                    "NoncontrollingInterest", "OperatingIncomeLoss", "GrossProfit"):
+        assert sf._FILER_MEASURE.search(us_gaap) is None, us_gaap
+
+
 def test_aort_members_that_carry_only_revenue_are_not_segments() -> None:
     """AORT tags four GEOGRAPHIC regions on the business-segments axis beside its two real segments.
     The regions carry revenue only, so the rule 'a segment is a member carrying the measure'
@@ -284,6 +307,14 @@ def test_the_page_sentence_names_the_measure_and_the_reconciliation() -> None:
     assert "All Other −$7,515M (margin n.m.)" in g        # −488.9% is arithmetic, not information
     assert "(−$16,760M not allocated to segments)" in g
     assert "gross profit — the filer's measure" in _segment_profit_line(it)
+    nke = _read("NKE")
+    assert nke is not None
+    n = _segment_profit_line(nke)
+    assert n == ("FY2026 segment profit on the filer's own measure, "
+                 "nke:EarningsBeforeInterestAndTaxes (10-K XBRL): "
+                 "NIKE Brand $5,855M (12.9% margin) · Converse $18M (1.5% margin) — "
+                 "segments sum $5,873M.")
+    assert "gross profit" not in n
 
 
 def test_committed_pages_round_trip_without_the_new_key() -> None:
@@ -352,3 +383,50 @@ console.log(JSON.stringify({ on: on.includes("Segment profit (the filer"),
                          capture_output=True, text=True, check=True)
     assert json.loads(out.stdout.strip().splitlines()[-1]) == {"on": True, "sentence": True,
                                                                "off": False}
+
+
+def test_nikes_ebit_line_reaches_both_renderers_and_the_gross_profit_label_does_not_e2e() -> None:
+    """TEST-LAYER RULE — the mislabel was OBSERVED on NKE's rendered page (its first assembly,
+    2026-09-22), so it is pinned through the renderers: the block Nike's own 10-K produces, carried
+    on a real committed page, prints the EBIT sentence in the Python AND the JS renderer, and
+    neither prints "gross profit — the filer's measure". A carrier page is used because NKE's own
+    page lands in the artifact pass that follows this change, never in a code commit."""
+    from vinci.dossier import render as dr
+    from vinci.dossier.mechanical import _segment_profit_line
+    from vinci.dossier.schemas import Dossier, SegmentEconomics, SegmentProfitRow, Sourced
+    r = _read("NKE")
+    assert r is not None
+    block = SegmentEconomics(
+        measure=r.measure, measure_kind=r.measure_kind, fiscal_year_end=r.period_end.isoformat(),
+        rows=[SegmentProfitRow(segment=f.segment, member=f.member, profit=f.profit / 1e6,
+                               revenue=(f.revenue / 1e6 if f.revenue else None))
+              for f in r.figures],
+        segments_sum=sum(f.profit for f in r.figures) / 1e6, line=_segment_profit_line(r))
+    page = json.loads((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    page["mechanical"]["concentration"]["segment_profit"] = json.loads(
+        Sourced.present(block, source_ref="EDGAR 10-K fixture").model_dump_json())
+    md = dr.render_markdown(Dossier.model_validate(page))
+    assert block.line in md and "nke:EarningsBeforeInterestAndTaxes" in md
+    assert "gross profit — the filer's measure" not in md
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
+const { renderDossier } = await import(dj);
+const on = renderDossier(JSON.parse(readFileSync(process.argv[1], "utf8")), null);
+console.log(JSON.stringify({ ebit: on.includes("nke:EarningsBeforeInterestAndTaxes"),
+  sentence: on.includes("NIKE Brand $5,855M (12.9% margin)"),
+  gp: on.includes("gross profit — the filer") }));
+"""
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        json.dump(page, fh)
+    out = subprocess.run(["node", "--input-type=module", "-e", driver, fh.name], cwd=_ROOT,
+                         capture_output=True, text=True, check=True)
+    assert json.loads(out.stdout.strip().splitlines()[-1]) == {"ebit": True, "sentence": True,
+                                                               "gp": False}

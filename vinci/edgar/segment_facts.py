@@ -66,9 +66,14 @@ OPERATING_SEGMENTS = "us-gaap:OperatingSegmentsMember"
 #: segment measure is the chief operating decision maker's own and outranks a gross profit.
 OPERATING_INCOME = "us-gaap:OperatingIncomeLoss"
 GROSS_PROFIT = "us-gaap:GrossProfit"
+#: A plain EBIT is a filer-defined measure too. Nike's CODM runs its segments on EBIT and tags it
+#: `nke:EarningsBeforeInterestAndTaxes` beside `us-gaap:GrossProfit` on the SAME two segments;
+#: with only the ADJUSTED spelling listed here, gross profit won by default and NKE's first page
+#: called it "the filer's measure" (2026-09-22). No us-gaap element carries this name, so it can
+#: only ever match a filer's own extension.
 _FILER_MEASURE = re.compile(
     r"Segment(?:Operating)?Profit|SegmentAdjusted|AdjustedEarningsBeforeInterest|AdjustedEBITDA|"
-    r"Segment(?:Gross)?Contribution", re.I)
+    r"Segment(?:Gross)?Contribution|EarningsBeforeInterestAndTaxes", re.I)
 _REVENUE = ("us-gaap:Revenues", "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
             "us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax")
 _XBRLI = "{http://www.xbrl.org/2003/instance}"

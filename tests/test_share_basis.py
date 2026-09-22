@@ -34,7 +34,12 @@ DOSSIERS = ROOT / "data" / "dossiers"
 #: went dual-class (10-Q of 2026-08-05: 30,204,277 Class A + 78,992,518 Class B), its `dei` tag
 #: stopped at 2025-07-31, and the stale single-class total of 342,433,118 was being divided into a
 #: Class-A-basis cap. Same shape as Visa, one year instead of sixteen.
-BRIDGED = {"V", "FUBO"}
+#:
+#: NKE JOINED KNOWINGLY (2026-09-22), on its first assembly. Nike is dual-class (Class A + Class B)
+#: and its undimensioned `dei` cover-page tag stopped at 2015-07-17 — 855,351,589 shares, 4,085 days
+#: old when it was onboarded; since then the filer tags each class separately, which companyfacts
+#: does not carry. The Visa shape with eleven years instead of sixteen.
+BRIDGED = {"V", "FUBO", "NKE"}
 
 #: Bridged in CODE but not yet in the committed ARTIFACT. EMPTY since 2026-08-13: FUBO's
 #: re-assembly landed and its page now reads the CIQ bridge directly
@@ -76,6 +81,20 @@ def test_visas_cover_page_count_is_from_another_era_and_is_refused() -> None:
         f"a share count from {pt.period_end} was accepted as current ({got:,.0f}). Visa split "
         f"4-for-1 in 2015, so this is a different share basis, not a stale number — every "
         f"per-share and EV figure built on it is wrong by ~4x.")
+
+
+def test_nikes_cover_page_count_stopped_in_2015_and_is_refused() -> None:
+    """NKE's entry in BRIDGED, earned on its REAL committed fixture like Visa's: the newest
+    undimensioned share fact is from 2015 (the filer has tagged Class A and Class B separately
+    since), so the EDGAR count is refused and the page takes the CIQ panel's own column."""
+    facts = _facts("NKE")
+    pt = latest_instant(extract_points(facts, "shares"))
+    assert pt is not None, "NKE's fixture carries no share points — re-point this pin"
+    assert pt.period_end == date(2015, 7, 17) and pt.value == pytest.approx(855_351_589), (
+        "Nike's last undimensioned count changed — re-read the filer before touching BRIDGED")
+    assert (date(2026, 9, 22) - pt.period_end).days > _SHARES_MAX_AGE_DAYS
+    assert _edgar_shares_outstanding(_stub_edgar(facts), "0000320187",
+                                     as_of=date(2026, 9, 22)) is None
 
 
 def test_fubos_pre_restructuring_count_is_refused_at_the_new_bound() -> None:

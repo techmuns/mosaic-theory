@@ -539,6 +539,8 @@ _AMZN = (0.053144, 10, 93_712.0, 775_680.0)
 _WLK = (0.097831, 10, 120.0, 11_294.0)
 _LLY = (0.298207, 10, 39_608.0, 79_666.0)
 _EPAM = (0.118997, 10, 627.861, 5_616.749)
+#: GOOGL on the day its R1 published NO value ("R1 inputs incomplete"), from main at f4b0264
+_GOOGL = (0.262717, 9, 147_628.0, 445_866.0)
 
 
 def _gap(v: tuple[float, int, float, float], **kw: object) -> anc.AnchorMidcycleGap | None:
@@ -712,13 +714,20 @@ def test_midcycle_flag_never_points_at_a_value_that_is_not_published() -> None:
     demonstrative."""
     for g in (_gap(_AMZN), _gap(_WLK)):
         assert g is not None and "this value" not in g.read and "an R1 value" in g.read
-    googl = Dossier.model_validate_json((_ROOT / "data/dossiers/GOOGL/dossier.json").read_text())
-    assert googl.anchor is not None and googl.anchor.anchor_base_value_per_share is None
-    m = googl.mechanical.model_dump(mode="json")
-    g = anc.midcycle_gap(googl.anchor.margin.value if googl.anchor.margin else None, 10,
-                         ltm_ebit=anc._ltm_ebit_from_fs(m), ltm_revenue=anc._ltm_revenue_from_fs(m))
-    assert g is not None, "GOOGL's own numbers no longer fire — the unvalued case is untested"
-    assert "this value" not in g.read
+    # THE UNVALUED CASE ON FROZEN NUMBERS. The first version read GOOGL's LIVING page and asserted
+    # it published no base — true until the 2026-09-22 backfill's CIQ bridge gave GOOGL a value,
+    # when the pin reddened for a reason that had nothing to do with the sentence. A value pin on a
+    # re-drawn artifact is what the TEST-LAYER RULE forbids; the unvalued anchor is built here from
+    # GOOGL's own numbers on the day it published none, and rendered through the screening block.
+    from vinci.dossier import render as dr
+    g = _gap(_GOOGL)
+    assert g is not None and g.ltm_side == "above"
+    unvalued = Anchor(recipe_hint=RECIPE_R1, applicable=False, computed_at=_now(),
+                      reason="R1 inputs incomplete — see per-input source stamps", midcycle_gap=g)
+    md = "\n".join(dr._screening_context_lines(unvalued))
+    assert "Mid-cycle assumption under strain." in md and g.read in md
+    assert "this value" not in md and "an R1 value" in md
+    assert "spot-independent" not in md          # no base row: nothing is published to point at
 
 
 # --- (2026-09-21, first artifact pass to carry the flag) which way the basis difference points ---
