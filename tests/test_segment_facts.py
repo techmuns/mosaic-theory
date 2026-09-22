@@ -107,6 +107,24 @@ def test_nikes_ebit_is_its_own_measure_and_outranks_its_gross_profit() -> None:
         assert sf._FILER_MEASURE.search(us_gaap) is None, us_gaap
 
 
+def test_a_plain_ebit_never_outranks_a_segment_specific_measure() -> None:
+    """REVIEW OF #640. Filer measures are tried in name order, and "E" sorts before "S": a filer
+    tagging a plain EBIT AND its CODM's `SegmentOperatingProfit` on the same segments would have
+    had the plain EBIT printed as "the filer's own measure". Built on Nike's REAL instance — every
+    EBIT fact kept, and a copy of each also tagged `nke:SegmentOperatingProfit` (EPAM's spelling).
+    ⊕ the segment-specific spelling wins; ⊖ with no such spelling the plain EBIT still does."""
+    text = next(_FIX.glob("NKE_*.xml")).read_text()
+    both = re.sub(r"(<nke:EarningsBeforeInterestAndTaxes\b([^>]*)>([^<]*)"
+                  r"</nke:EarningsBeforeInterestAndTaxes>)",
+                  r"\1<nke:SegmentOperatingProfit\2>\3</nke:SegmentOperatingProfit>", text)
+    assert both.count("<nke:SegmentOperatingProfit") == text.count("<nke:EarningsBefore") > 0
+    r = sf.parse_instance(both)
+    assert r is not None and r.measure == "nke:SegmentOperatingProfit"
+    assert r.measure_kind == "filer-defined segment measure"
+    n = _read("NKE")
+    assert n is not None and n.measure == "nke:EarningsBeforeInterestAndTaxes"
+
+
 def test_aort_members_that_carry_only_revenue_are_not_segments() -> None:
     """AORT tags four GEOGRAPHIC regions on the business-segments axis beside its two real segments.
     The regions carry revenue only, so the rule 'a segment is a member carrying the measure'

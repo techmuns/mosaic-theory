@@ -47,11 +47,17 @@ the extractor had chosen gross profit while the filing tags EBIT on 24 facts.
     pattern.
   - The page sentence is pinned exactly.
   - An end-to-end pin runs the block through both renderers.
+- **Review fix: a plain EBIT ranks below every segment-specific spelling.** Filer measures are
+  tried in name order, and "E" sorts before "S". So a filer that tags both a plain EBIT and its
+  CODM's `SegmentOperatingProfit` would have had the plain EBIT chosen. The pin is Nike's real
+  instance with a copy of each of its 24 EBIT facts also tagged `nke:SegmentOperatingProfit`.
+  Before the fix it read EBIT; after, `SegmentOperatingProfit`.
 - **No other page moves.** The other nine segment fixtures read unchanged; their existing pins
   are green.
 - **Nike's share-count pin** runs on its real companyfacts fixture.
-- **Suites.** This branch on main's pages: 3,943 passed, 44 skipped, 0 failed. This code plus
-  the pass's regenerated pages: 3,953 passed, 43 skipped, 0 failed.
+- **Suites.** This branch on main's pages, with the review fix: 3,944 passed, 44 skipped, 0
+  failed. This code plus the pass's regenerated pages, before the review fix (which changes
+  no committed reading): 3,953 passed, 43 skipped, 0 failed.
 
 **BOUNDARY.**
 - **Filings:** Nike 10-K accession 0000320187-26-000088, FYE 2026-05-31; companyfacts fetched
