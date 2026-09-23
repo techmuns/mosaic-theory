@@ -10,7 +10,9 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from vinci.config import load_local_env
+import pytest
+
+from vinci.config import PacingConfig, get_config, load_local_env
 
 
 def _write_env(folder: Path, body: str) -> Path:
@@ -152,3 +154,36 @@ def test_state_and_engineering_docs_have_no_orphan_bold() -> None:
     assert not bad, (
         "unbalanced `**` — everything after the orphan renders as literal asterisks:\n"
         + "\n".join(bad))
+
+
+# --- (2026-09-23) the Polygon pace is the plan's, and an override that cannot be read fails ----
+def test_the_polygon_pace_stays_under_the_plans_five_a_minute(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """MEASURED 2026-09-23: ten `/v3/reference/tickers/<T>` calls at ~2s spacing returned 200 six
+    times, then 429 on every call after — a ~5/min ceiling. The field said 100.0, with a comment
+    asserting a Starter plan the account does not have, and the weekly screen died on the rate
+    limit both locally and in CI.
+
+    This pins the PACE, not the constant: what matters is that the default leaves the client an
+    interval no faster than the plan serves. If the plan is upgraded, the override moves it."""
+    monkeypatch.delenv("POLYGON_REQUESTS_PER_MIN", raising=False)
+    rpm = PacingConfig().polygon_requests_per_min
+    assert rpm <= 5.0, f"pacing {rpm}/min is at or above the measured ceiling"
+    assert 60.0 / rpm >= 12.0, "the client would issue calls faster than one per 12s"
+
+
+def test_the_polygon_pace_is_overridable_without_a_code_edit(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A plan change must not require editing a constant — that is how the 100.0 outlived the plan
+    it was written for."""
+    monkeypatch.setenv("POLYGON_REQUESTS_PER_MIN", "100")
+    assert PacingConfig().polygon_requests_per_min == 100.0
+    assert get_config().pacing.polygon_requests_per_min == 100.0   # read per config build
+
+
+def test_an_unreadable_pace_override_fails_loud(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """NEVER a silent fallback to the default. The symptom of the wrong pace is a run that dies
+    twenty minutes in on somebody else's rate limit — precisely what an operator setting this is
+    trying to fix, so a typo must say so rather than restore the number being overridden."""
+    for bad in ("fast", "", "0", "-5"):
+        monkeypatch.setenv("POLYGON_REQUESTS_PER_MIN", bad)
+        with pytest.raises(RuntimeError, match="POLYGON_REQUESTS_PER_MIN"):
+            PacingConfig()

@@ -22,6 +22,12 @@ from typing import Any
 
 import httpx
 
+#: How long to wait after a 429 before retrying. Rate limits are enforced over a ROLLING
+#: WINDOW — Polygon's is per minute — so a sub-window retry is refused by the same window
+#: that refused the first call. 61s clears a 60s window with a second to spare. Only the
+#: 429 path uses it; a 5xx keeps the fast exponential, since a server error is not a clock.
+_RATE_LIMIT_WAIT_SEC = 61.0
+
 
 class HttpError(RuntimeError):
     """A non-retryable HTTP failure (auth, 4xx other than 429, or retries exhausted)."""
@@ -166,6 +172,7 @@ class CachedHttp:
         last_exc: Exception | None = None
         for attempt in range(self._max_retries + 1):
             self._throttle()
+            wait = backoff
             try:
                 resp = (
                     self._client.post(url, json=json_body)
@@ -174,17 +181,29 @@ class CachedHttp:
                 )
             except httpx.HTTPError as exc:  # transport-level (timeout, connection)
                 last_exc = exc
+                backoff = min(backoff * 2, 30.0)
             else:
                 if resp.status_code == 200:
                     return resp.text
-                if resp.status_code in (429, 500, 502, 503, 504):
+                if resp.status_code == 429:
+                    # A RATE LIMIT IS A CLOCK, NOT A QUEUE — WAIT THE WINDOW OUT (2026-09-23).
+                    # 429 shared the exponential path, whose whole ladder (1+2+4+8+16) is ~31s
+                    # against a limit measured PER MINUTE, so every retry landed inside the same
+                    # window that refused the first call and the run died with "Exhausted
+                    # retries". Polygon sends NO `Retry-After` and no rate-limit headers (checked
+                    # 2026-09-23; the body just says "wait or upgrade"), so there is nothing to
+                    # read and the only honest wait is the window itself.
+                    last_exc = HttpError(f"429 from {url}")
+                    wait = _RATE_LIMIT_WAIT_SEC
+                elif resp.status_code in (500, 502, 503, 504):
+                    # A server error is not a clock: retry FAST, the way this always has.
                     last_exc = HttpError(f"{resp.status_code} from {url}")
+                    backoff = min(backoff * 2, 30.0)
                 else:
                     # 401/403/404 etc. — permanent; fail loud immediately.
                     raise HttpError(
                         f"Non-retryable {resp.status_code} from {url}: {resp.text[:200]}"
                     )
             if attempt < self._max_retries:
-                time.sleep(backoff)
-                backoff = min(backoff * 2, 30.0)
+                time.sleep(wait)
         raise HttpError(f"Exhausted retries for {url}") from last_exc

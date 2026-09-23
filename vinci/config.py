@@ -65,17 +65,46 @@ class UniverseConfig(BaseModel, frozen=True):
     max_names: int | None = None
 
 
+def _env_float(name: str, default: float) -> float:
+    """A positive float from the environment, or ``default`` when unset — never a silent fallback.
+
+    A pacing override that is unreadable must FAIL rather than quietly restore the default: the
+    symptom of the wrong pace is a run that dies twenty minutes in on somebody else's rate limit,
+    which is exactly the failure an operator would be trying to fix by setting this.
+    """
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        value = float(raw)
+    except ValueError as exc:
+        raise RuntimeError(f"{name}={raw!r} is not a number — set it to a positive rate or "
+                           f"unset it to use the default ({default})") from exc
+    if value <= 0:
+        raise RuntimeError(f"{name}={raw!r} must be positive — a rate of zero or less would "
+                           f"either stall every request or disable pacing entirely")
+    return value
+
+
 class PacingConfig(BaseModel, frozen=True):
     """External-API politeness/pacing. Verified live: SEC fair-access ~10 req/s; Polygon free
-    tier ~5 req/min. Conservative defaults to stay well within limits."""
+    tier ~5 req/min (re-measured 2026-09-23). Conservative defaults to stay well within limits."""
 
     sec_requests_per_sec: float = 8.0
     # efts (full-text search) is a separate, more rate-sensitive service than data.sec.gov;
     # pace it conservatively (it throttles to an error response, not a 429, under load).
     efts_requests_per_sec: float = 1.0
-    # Polygon Starter lifts the free-tier 5/min cap and gives 5y history; this is latency-bound
-    # (~1s/call) anyway, so the throttle rarely engages. (Free tier was 5.0.)
-    polygon_requests_per_min: float = 100.0
+    # MEASURED, NOT ASSUMED (2026-09-23). This read 100.0 with a comment saying "Polygon Starter
+    # lifts the free-tier 5/min cap" — the account does not serve that. A live probe of ten
+    # `/v3/reference/tickers/<T>` calls at ~2s spacing returned 200 six times and then 429 on every
+    # call after: a ~5/min ceiling. Pacing 20x above what the plan serves is what made the weekly
+    # screen unrunnable — the client burst, the 429s exhausted `max_retries` (backoff tops out
+    # around 31s, short of the 60s window), and the run died, locally and in CI.
+    # 4.0 leaves headroom under a 5/min rolling window rather than sitting exactly on it.
+    # Override with `POLYGON_REQUESTS_PER_MIN` when the plan changes; it is read per config build,
+    # so no code edit is needed to go back up.
+    polygon_requests_per_min: float = Field(default_factory=lambda: _env_float(
+        "POLYGON_REQUESTS_PER_MIN", 4.0))
     # FINRA's public query API (api.finra.org, delayed data) publishes no hard limit; pace it
     # politely — the twice-monthly short-interest file is fetched once per name and cached.
     finra_requests_per_sec: float = 4.0
@@ -104,7 +133,11 @@ class Config(BaseModel, frozen=True):
     # re-open this knob, not vanish. Face-validity, never tuned on forward returns.
     theme_universe: UniverseConfig = UniverseConfig(
         market_cap_min_usd=10_000_000_000.0, market_cap_max_usd=1.0e13)
-    pacing: PacingConfig = PacingConfig()
+    # BUILT PER CONFIG, NOT ONCE AT IMPORT. A bare `PacingConfig()` default is evaluated
+    # when this class is defined, so an env-driven pace would be frozen to whatever the
+    # environment held at import time — and a pace set after that (a CLI that loads `.env`
+    # on entry, a test) would be silently ignored.
+    pacing: PacingConfig = Field(default_factory=PacingConfig)
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
     # LLM for graph extraction + dossier synthesis + the theme exposure classifier.
