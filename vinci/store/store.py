@@ -44,6 +44,10 @@ _NO_ROW_DROP_TABLES = NO_ROW_DROP_TABLES
 #: convention; `test_the_synthetic_prefix_matches_what_benchmark_identity_builds` ties the two.
 SYNTHETIC_ID_PREFIX = "IDX-"
 
+#: How many ids go into one ``IN (...)`` list. SQLite caps bound parameters per statement
+#: (999 on older builds) and the universe runs to ~5,000 names, so an id filter is chunked.
+_ID_CHUNK = 500
+
 #: Tables whose committed file must never be REPLACED BY AN EMPTY ONE. Distinct from the
 #: no-row-drop set: those may never shrink at all (an entity master, the ledger), while these are
 #: point-in-time populations that legitimately change membership every build — but never to zero.
@@ -396,6 +400,35 @@ class Store:
             )
             for r in rows
         ]
+
+    def session_bar_counts(self, start: date, end: date,
+                           internal_ids: Sequence[str]) -> dict[date, int]:
+        """Bars stored per session in ``[start, end]``, counting ONLY ``internal_ids``.
+
+        Read by :func:`vinci.eod.client.ingest_prices` to skip a session it already holds.
+
+        Two things this signature insists on, each from a way the naive query is wrong:
+
+        * **Counted, not merely present.** `vinci refresh NKE --aggs` writes a handful of rows into
+          the same sessions; reading that as "this day is ingested" would skip it for the entire
+          universe.
+        * **Restricted to the ids being ingested, never the whole table.** The screen ingests the
+          universe and then the benchmark separately. On a day whose 5,000 universe bars are stored
+          but whose IWM bar is not, a table-wide count answers 5,000 for the benchmark's own ingest
+          — and the benchmark would never be fetched at all.
+        """
+        ids = sorted(set(internal_ids))
+        out: dict[date, int] = {}
+        for i in range(0, len(ids), _ID_CHUNK):  # SQLite caps bound parameters; the universe is ~5k
+            chunk = ids[i:i + _ID_CHUNK]
+            rows = self._conn.execute(
+                "SELECT bar_date AS d, COUNT(*) AS n FROM prices WHERE bar_date BETWEEN ? AND ? "
+                f"AND internal_id IN ({','.join('?' * len(chunk))}) GROUP BY bar_date",
+                (_iso(start), _iso(end), *chunk)).fetchall()
+            for r in rows:
+                d = date.fromisoformat(r["d"])
+                out[d] = out.get(d, 0) + int(r["n"])
+        return out
 
     def price_frontier(self) -> date | None:
         """The newest bar date in the store, across every name — or None when there are no bars.

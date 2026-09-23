@@ -70,6 +70,25 @@ def _trading_days(start: date, end: date) -> Iterator[date]:
 #: a stacked holiday is the worst real case; 10 covers it without probing indefinitely on an outage.
 _SESSION_LOOKBACK_DAYS = 10
 
+#: How far back a refresh RE-PULLS sessions the store already holds. Bars are fetched
+#: ``adjusted=true``, i.e. restated to the CURRENT split factor, so a bar stored before a split
+#: keeps the old basis until it is pulled again; this window is the bounded restatement that
+#: catches a split while it is recent. BEYOND it, a session the store already holds is SKIPPED —
+#: re-pulling it buys only that restatement, and the store is where those bars already live.
+#:
+#: WHY IT EXISTS (2026-09-23). The weekly run re-pulled its whole 1,825-day window every time —
+#: 1,304 whole-market calls — because CI carries no store and builds one from scratch each run. On
+#: a data plan serving ~5 requests/min that finishes nowhere: the run died on the rate limit
+#: locally AND in CI. The bars beyond this window are already in the local store; acquiring them
+#: again was the waste. THE COST, stated: a split older than this window leaves the bars before it
+#: on the pre-split basis until something re-pulls them (`refresh --aggs` on the name does).
+RESTATE_WINDOW_DAYS = 30
+
+#: A session counts as already ingested only when the store holds bars for at least this share of
+#: the securities being ingested — never on presence alone. `refresh --aggs` on one name writes a
+#: handful of rows into a session, and reading that as "ingested" would skip the whole market's day.
+_SESSION_PRESENT_FRACTION = 0.5
+
 
 def last_completed_session(client: EodClient, *, today: date,
                            lookback_days: int = _SESSION_LOOKBACK_DAYS) -> date:
@@ -122,24 +141,42 @@ def ingest_prices(
     start: date,
     end: date,
     progress: ProgressFn | None = None,
+    restate_window_days: int = RESTATE_WINDOW_DAYS,
 ) -> dict[str, int]:
     """Backfill/refresh EOD bars for ``securities`` over [start, end] into the store.
 
     Fails loud: a degraded day raises inside ``grouped_daily`` and aborts the whole refresh, so the
     store never ends up with a silent gap. Non-trading days (0 rows) are skipped. Returns a summary.
     ``progress`` (opt-in) gets an ``EOD <done>/<total>`` line per step so a long pull is visible.
+
+    A session the store ALREADY HOLDS is skipped unless it falls inside the restatement window
+    (:data:`RESTATE_WINDOW_DAYS`) — see that constant for what the re-pull buys and what skipping
+    it costs. "Already holds" is a COUNT test (:data:`_SESSION_PRESENT_FRACTION`), so a single-name
+    refresh's handful of rows never passes for a whole-market day. A store that cannot report what
+    it holds is never trusted into a skip: it re-pulls everything, exactly as before.
     """
     sym_to_id = {s.eod_symbol: s.internal_id for s in securities}
     days = list(_trading_days(start, end))
+    restate_from = end - timedelta(days=restate_window_days)
+    counts = getattr(store, "session_bar_counts", None)
+    stored = dict(counts(start, end, list(sym_to_id.values()))) if callable(counts) else {}
+    present_floor = _SESSION_PRESENT_FRACTION * len(sym_to_id)
     reporter = ProgressReporter("EOD", len(days), emit=progress)
+    days_seen = 0
     days_fetched = 0
+    days_skipped = 0
     bars_written = 0
     trading_days = 0
     for day in days:
+        days_seen += 1
+        if day < restate_from and stored.get(day, 0) >= present_floor:
+            days_skipped += 1
+            reporter.tick(days_seen, suffix=f"{bars_written:,} bars · {days_skipped} held")
+            continue
         days_fetched += 1
         raw = client.grouped_daily(day)
         if not raw:
-            reporter.tick(days_fetched, suffix=f"{bars_written:,} bars")
+            reporter.tick(days_seen, suffix=f"{bars_written:,} bars")
             continue  # non-trading day (holiday/weekend)
         trading_days += 1
         rows = [
@@ -157,9 +194,10 @@ def ingest_prices(
             if t in sym_to_id
         ]
         bars_written += store.write_prices(rows)
-        reporter.tick(days_fetched, suffix=f"{bars_written:,} bars")
+        reporter.tick(days_seen, suffix=f"{bars_written:,} bars")
     return {
         "days_fetched": days_fetched,
+        "days_skipped": days_skipped,
         "trading_days": trading_days,
         "bars_written": bars_written,
         "universe_size": len(sym_to_id),
