@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Callable, Mapping
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -747,6 +748,34 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
         measured=measured, stale_tags=_stale_tags(mechanical),
         watch_note=watch_note,
     )
+
+
+# --- the session a snapshot is dated to ---------------------------------------------------------
+def session_on_or_before(fetch: Callable[[date], Mapping[str, Any]], day: date,
+                         cache: dict[date, dict[str, Any]], *,
+                         lookback: int = 8) -> tuple[date, dict[str, Any]]:
+    """The latest session ON OR BEFORE ``day`` — never a future bar (lookahead) — failing loud
+    after a week of empty days rather than silently reaching further back.
+
+    ONLY AN EMPTY DAY IS A HOLIDAY. ``grouped_daily`` returns ``{}`` for a non-trading day and
+    RAISES when the fetch itself fails: a 429 whose retries ran out, a 5xx, the network. The monitor
+    used to catch every exception and file it as a holiday, so a throttled run stepped back past two
+    real sessions and wrote ``2026-09-14.json`` for ``--ref 2026-09-16`` (observed 2026-09-22): a
+    book snapshot dated two sessions early, with nothing on screen to say so. A failed fetch now
+    stops the run, naming the date it failed on; it never moves the date."""
+    for back in range(lookback):
+        d = day - timedelta(days=back)
+        if d not in cache:
+            try:
+                cache[d] = dict(fetch(d))
+            except Exception as exc:  # noqa: BLE001 — re-raised with the date it failed on
+                raise RuntimeError(
+                    f"the price fetch for {d} failed ({type(exc).__name__}: {exc}) — a failed "
+                    f"fetch is not a holiday, so the snapshot is NOT dated to an earlier session. "
+                    f"Nothing was written; re-run when the source answers.") from exc
+        if cache[d]:
+            return d, cache[d]
+    raise RuntimeError(f"no EOD session found within {lookback - 1} days of {day}")
 
 
 # --- persistence -------------------------------------------------------------------------------

@@ -387,3 +387,65 @@ def test_an_absent_sic_is_reported_as_absent_never_as_a_resolved_sector() -> Non
     assert live is not None and "re-resolved to Industrials" in live and "ABSENT" not in live
     # agreement between frozen and live says nothing — no note
     assert mon.sector_note(ticker="IT", sic="8741", frozen_sector="Industrials") is None
+
+
+# --- (2026-09-22) a failed price fetch is not a holiday ------------------------------------------
+_GROUPED = "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{}"
+
+
+def _fetcher(bars: dict[date, dict[str, float]], failing: set[date]):  # type: ignore[no-untyped-def]
+    from vinci.netcache import HttpError
+
+    def fetch(d: date) -> dict[str, float]:
+        if d in failing:  # the observed shape: a 429 whose retries ran out
+            raise HttpError(f"Exhausted retries for {_GROUPED.format(d)}")
+        return bars.get(d, {})
+    return fetch
+
+
+def test_a_failed_price_fetch_stops_the_run_and_never_moves_the_date() -> None:
+    """OBSERVED 2026-09-22: a Polygon 429 exhausted its retries on 09-16 and 09-15; the monitor
+    filed both as holidays and wrote 2026-09-14.json for `--ref 2026-09-16`, two sessions early.
+    ⊖ a failed fetch raises, naming the date — it never steps back; ⊕ a real holiday (an EMPTY
+    day) still steps back to the session before it; ⊖ a week of empty days is still refused."""
+    bars = {date(2026, 9, 14): {"SPY": 1.0}, date(2026, 9, 15): {"SPY": 2.0}}
+    with pytest.raises(RuntimeError, match="2026-09-16.*not a holiday"):
+        mon.session_on_or_before(_fetcher(bars, {date(2026, 9, 16), date(2026, 9, 15)}),
+                                 date(2026, 9, 16), {})
+    assert mon.session_on_or_before(_fetcher(bars, set()), date(2026, 9, 16), {}) == (
+        date(2026, 9, 15), {"SPY": 2.0})
+    with pytest.raises(RuntimeError, match="no EOD session found within 7 days"):
+        mon.session_on_or_before(_fetcher({}, set()), date(2026, 9, 16), {})
+
+
+def test_the_monitor_command_writes_no_snapshot_when_the_price_source_fails(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """TEST-LAYER RULE — the failure was a WRITTEN ARTIFACT (a snapshot dated two sessions early),
+    so it is pinned through the real command over the real committed ledger: with the price source
+    throttled on the reference day, `vinci monitor` raises and the monitor directory gains nothing
+    — above all no earlier-dated day."""
+    import argparse
+    import shutil
+
+    from vinci import cli
+    from vinci.netcache import HttpError
+    for rel in ("data/snapshots/decision_ledger.jsonl", "data/snapshots/securities.jsonl",
+                "data/monitor/benchmark_assignments.json"):
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(ROOT / rel, tmp_path / rel)
+
+    class _Throttled:
+        @classmethod
+        def from_config(cls, _cfg: object) -> _Throttled:
+            return cls()
+
+        def grouped_daily(self, d: date) -> dict[str, object]:
+            raise HttpError(f"Exhausted retries for {_GROUPED.format(d)}")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(cli, "PolygonEodClient", _Throttled)
+    monitor = tmp_path / "data" / "monitor"
+    before = sorted(p.name for p in monitor.iterdir())
+    with pytest.raises(RuntimeError, match="2026-09-16.*not a holiday"):
+        cli._cmd_monitor(argparse.Namespace(ref="2026-09-16"))
+    assert sorted(p.name for p in monitor.iterdir()) == before == ["benchmark_assignments.json"]

@@ -2006,18 +2006,8 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     cache: dict[date, dict[str, Any]] = {}
 
     def bars_on_or_before(day: date) -> tuple[date, dict[str, Any]]:
-        """The latest session ON OR BEFORE ``day`` — never a future bar (lookahead), fail loud
-        after a week of misses rather than silently reaching further back."""
-        for back in range(8):
-            d = day - timedelta(days=back)
-            if d not in cache:
-                try:
-                    cache[d] = dict(eod.grouped_daily(d))
-                except Exception:  # noqa: BLE001 — a holiday/empty day just steps back
-                    cache[d] = {}
-            if cache[d]:
-                return d, cache[d]
-        raise RuntimeError(f"no EOD session found within 7 days of {day}")
+        # only an EMPTY day steps back; a failed fetch stops the run (`session_on_or_before`)
+        return mon.session_on_or_before(eod.grouped_daily, day, cache)
 
     now_date, now_bars = bars_on_or_before(ref)
     # THE BOOK'S CLOSURE STATE IS READ AS OF THE SNAPSHOT DATE, not as of "whatever the ledger holds
