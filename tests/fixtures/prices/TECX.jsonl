@@ -449,3 +449,4 @@
 {"bar_date": "2026-09-17", "close": 27.21, "high": 28.71, "internal_id": "SEC-0001681087-TECX", "low": 27.105, "open": 28.15, "source": "polygon-aggs", "volume": 186779.994085}
 {"bar_date": "2026-09-18", "close": 27.0, "high": 27.59, "internal_id": "SEC-0001681087-TECX", "low": 26.38, "open": 27.3, "source": "polygon-aggs", "volume": 330588.117436}
 {"bar_date": "2026-09-21", "close": 26.63, "high": 27.35, "internal_id": "SEC-0001681087-TECX", "low": 26.31, "open": 27.35, "source": "polygon-aggs", "volume": 131807.764351}
+{"bar_date": "2026-09-22", "close": 26.5, "high": 27.5799, "internal_id": "SEC-0001681087-TECX", "low": 26.21, "open": 26.83, "source": "polygon-aggs", "volume": 188603.77626}

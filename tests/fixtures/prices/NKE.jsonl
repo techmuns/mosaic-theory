@@ -449,3 +449,4 @@
 {"bar_date": "2026-09-17", "close": 36.36, "high": 36.8, "internal_id": "SEC-0000320187-NKE", "low": 35.72, "open": 36.5, "source": "polygon-aggs", "volume": 45453301.474077}
 {"bar_date": "2026-09-18", "close": 35.51, "high": 36.68, "internal_id": "SEC-0000320187-NKE", "low": 35.5, "open": 36.27, "source": "polygon-aggs", "volume": 52053584.764934}
 {"bar_date": "2026-09-21", "close": 36.1, "high": 36.355, "internal_id": "SEC-0000320187-NKE", "low": 35.35, "open": 35.524, "source": "polygon-aggs", "volume": 42128777.670265}
+{"bar_date": "2026-09-22", "close": 36.1, "high": 37.035, "internal_id": "SEC-0000320187-NKE", "low": 35.9401, "open": 36.95, "source": "polygon-aggs", "volume": 31524760.035877}

@@ -449,3 +449,4 @@
 {"bar_date": "2026-09-17", "close": 251.19, "high": 252.73, "internal_id": "SEC-0001018724-AMZN", "low": 249.24, "open": 251.065, "source": "polygon-aggs", "volume": 30438790.724408}
 {"bar_date": "2026-09-18", "close": 253.71, "high": 255.43, "internal_id": "SEC-0001018724-AMZN", "low": 251.88, "open": 252.92, "source": "polygon-aggs", "volume": 52274713.979046}
 {"bar_date": "2026-09-21", "close": 258.45, "high": 259.49, "internal_id": "SEC-0001018724-AMZN", "low": 253.6, "open": 256.4, "source": "polygon-aggs", "volume": 42979407.350433}
+{"bar_date": "2026-09-22", "close": 254.98, "high": 259.0, "internal_id": "SEC-0001018724-AMZN", "low": 253.78, "open": 255.11, "source": "polygon-aggs", "volume": 41982569.912589}

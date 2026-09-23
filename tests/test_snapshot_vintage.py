@@ -173,9 +173,20 @@ def test_a_mixed_vintage_candidate_file_gets_no_cohort_and_still_gets_a_queue(
     (snaps / "candidate_records.jsonl").unlink()
     # One row moved to a DIFFERENT run — and one that exists on disk, so nothing else can be
     # blamed for the refusal.
-    (snaps / "candidate_records.jsonl").write_text(
-        "\n".join([rows[0].replace("2026-08-24T00:00:00", "2026-07-29T00:00:00"), *rows[1:]])
-        + "\n")
+    # BOTH STAMPS ARE DERIVED, NEVER LITERAL (2026-09-23). This read
+    # `.replace("2026-08-24T00:00:00", "2026-07-29T00:00:00")`, so the moment the committed
+    # candidates advanced to the 2026-09-22 screen the replace matched NOTHING: the file stayed
+    # single-vintage, cohorts were produced exactly as they should be, and the test reddened
+    # claiming the mixed-vintage guard had failed. The guard was fine; the mutation had silently
+    # stopped happening. A pin whose SETUP is pinned to a moving artifact tests the artifact.
+    stamp = json.loads(rows[0])["screen_run_at"]
+    others = sorted(p.stem for p in (SNAP / "screen_runs").glob("*.jsonl")
+                    if not p.stem.startswith(stamp[:10]))
+    assert others, "no other committed screen run to move a row to"
+    other = f"{others[-1][:10]}T00:00:00"
+    moved = rows[0].replace(stamp, other)
+    assert moved != rows[0], f"the row's stamp {stamp!r} was not replaced — the file is unmixed"
+    (snaps / "candidate_records.jsonl").write_text("\n".join([moved, *rows[1:]]) + "\n")
 
     ranked = rank_from_snapshots(Config(data_dir=tmp_path))
     assert len(ranked) == len(rows), "the mixed-vintage refusal cost the queue its rows"
