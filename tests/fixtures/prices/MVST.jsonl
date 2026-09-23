@@ -449,3 +449,4 @@
 {"bar_date": "2026-09-17", "close": 0.6401, "high": 0.6635, "internal_id": "SEC-0001760689-MVST", "low": 0.6, "open": 0.6, "source": "polygon-aggs", "volume": 10239200.423472}
 {"bar_date": "2026-09-18", "close": 0.6373, "high": 0.66, "internal_id": "SEC-0001760689-MVST", "low": 0.6064, "open": 0.6451, "source": "polygon-aggs", "volume": 15084604.750351}
 {"bar_date": "2026-09-21", "close": 0.6522, "high": 0.6759, "internal_id": "SEC-0001760689-MVST", "low": 0.6428, "open": 0.6489, "source": "polygon-aggs", "volume": 5241597.707057}
+{"bar_date": "2026-09-22", "close": 0.7178, "high": 0.7204, "internal_id": "SEC-0001760689-MVST", "low": 0.6532, "open": 0.6715, "source": "polygon-aggs", "volume": 9362977.318557}

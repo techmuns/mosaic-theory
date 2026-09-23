@@ -449,3 +449,4 @@
 {"bar_date": "2026-09-17", "close": 285.43, "high": 288.29, "internal_id": "IDX-IWM", "low": 285.21, "open": 287.95, "source": "polygon-aggs", "volume": 22159645.656674}
 {"bar_date": "2026-09-18", "close": 284.1, "high": 285.27, "internal_id": "IDX-IWM", "low": 282.54, "open": 284.92, "source": "polygon-aggs", "volume": 31116039.32559}
 {"bar_date": "2026-09-21", "close": 285.58, "high": 286.45, "internal_id": "IDX-IWM", "low": 284.9, "open": 286.27, "source": "polygon-aggs", "volume": 18968202.31319}
+{"bar_date": "2026-09-22", "close": 287.21, "high": 288.94, "internal_id": "IDX-IWM", "low": 286.05, "open": 287.68, "source": "polygon-aggs", "volume": 25684272.181254}
