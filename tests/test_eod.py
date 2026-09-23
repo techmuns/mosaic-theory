@@ -22,6 +22,7 @@ from vinci.eod import (
     parse_tiingo_prices,
     relative_return,
 )
+from vinci.eod.client import RawBar
 from vinci.eod.features import _close_on_or_before
 from vinci.resolver import EntityResolver
 from vinci.schemas.data_record import Identity
@@ -287,3 +288,93 @@ def test_ingest_prices_to_store(tmp_path) -> None:
         assert summary["bars_written"] == 6  # 2 names x 3 days
         hist = store.get_price_history("SEC-0000320193-AAPL")
         assert len(hist) == 3 and all(b.close > 0 for b in hist)
+
+
+# --- (2026-09-23) a session the store already holds is not re-pulled ---------------------------
+def _ident_for(sym: str) -> Identity:
+    return Identity(internal_id=f"SEC-{sym}", issuer_id=f"ISS-{sym}", cik="0000000002", ticker=sym,
+                    mic="XNAS", exchange="Nasdaq", eod_symbol=sym, name=sym)
+
+
+class _CountingClient:
+    """Answers every day with one bar per name, and records which days were asked for."""
+
+    def __init__(self, syms: list[str]) -> None:
+        self.syms, self.calls = syms, []
+
+    def grouped_daily(self, day: date) -> dict[str, RawBar]:
+        self.calls.append(day)
+        return {s: RawBar(ticker=s, open=1.0, high=2.0, low=1.0, close=1.5, volume=100.0)
+                for s in self.syms}
+
+
+def _seed(store, syms, day: date) -> None:  # type: ignore[no-untyped-def]
+    store.write_prices([PriceBar(internal_id=f"SEC-{s}", bar_date=day, open=1.0, high=2.0, low=1.0,
+                                 close=1.5, volume=100.0, source="polygon-grouped") for s in syms])
+
+
+def test_a_session_the_store_already_holds_is_not_re_pulled(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """THE COST THAT BROKE THE RUN (2026-09-23): the refresh re-pulled its whole 1,825-day window
+    every time — 1,304 whole-market calls — because CI builds its store from scratch. On a plan
+    serving ~5 requests/min the weekly run could not finish, locally OR in CI.
+
+    ⊕ a fully-held session older than the restatement window is skipped;
+    ⊖ a held session INSIDE the window is re-pulled anyway (that is what restates a split);
+    ⊖ a session holding only a single-name refresh's rows is not "held" — it is re-pulled;
+    ⊖ a store that cannot report what it holds re-pulls everything, exactly as before."""
+    from vinci.eod.client import RESTATE_WINDOW_DAYS, ingest_prices
+
+    syms = [f"AA{i}" for i in range(10)]
+    secs = [_ident_for(s) for s in syms]
+    start, end = date(2026, 6, 1), date(2026, 9, 1)
+    held_old, partial_old = date(2026, 6, 10), date(2026, 6, 11)
+    held_recent = end - timedelta(days=RESTATE_WINDOW_DAYS - 5)          # inside the window
+    with Store(tmp_path / "skip.db") as store:
+        for s in secs:
+            store.upsert_security(s)
+        _seed(store, syms, held_old)                  # a whole-market day already ingested
+        _seed(store, syms[:1], partial_old)           # what `refresh --aggs` on ONE name leaves
+        _seed(store, syms, held_recent)
+        client = _CountingClient(syms)
+        summary = ingest_prices(client, store, secs, start=start, end=end)  # type: ignore[arg-type]
+    assert held_old not in client.calls, "a session the store already holds was re-pulled"
+    assert partial_old in client.calls, "a one-name refresh's rows passed for a whole-market day"
+    assert held_recent in client.calls, "the restatement window did not re-pull a held session"
+    assert summary["days_skipped"] == 1
+    assert summary["days_fetched"] == len(client.calls)
+
+    class _StoreWithoutCounts:                        # an older/foreign store: never trusted
+        def __init__(self) -> None:
+            self.written = 0
+
+        def write_prices(self, bars) -> int:  # type: ignore[no-untyped-def]
+            rows = list(bars)
+            self.written += len(rows)
+            return len(rows)
+
+    plain = _StoreWithoutCounts()
+    client2 = _CountingClient(syms)
+    s2 = ingest_prices(client2, plain, secs, start=start, end=end)  # type: ignore[arg-type]
+    assert s2["days_skipped"] == 0
+    assert held_old in client2.calls and len(client2.calls) == s2["days_fetched"]
+
+
+def test_a_day_the_universe_holds_is_still_fetched_for_the_benchmark(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """The screen ingests the UNIVERSE, then the BENCHMARK, as two calls against one store.
+
+    A day can hold every universe bar and no IWM bar — the universe pull writes only the universe's
+    symbols. Counting the whole `prices` table would answer thousands for the benchmark's own
+    ingest and skip it forever, so the count is restricted to the ids being ingested."""
+    syms = [f"BB{i}" for i in range(10)]
+    secs = [_ident_for(s) for s in syms]
+    bench = _ident_for("IWM")
+    start, end = date(2026, 6, 1), date(2026, 9, 1)
+    old = date(2026, 6, 10)
+    with Store(tmp_path / "bench.db") as store:
+        for s in [*secs, bench]:
+            store.upsert_security(s)
+        _seed(store, syms, old)                       # the universe's day — no IWM bar in it
+        client = _CountingClient(["IWM"])
+        summary = ingest_prices(client, store, [bench], start=start, end=end)  # type: ignore[arg-type]
+    assert old in client.calls, "the benchmark was skipped on a day only the universe holds"
+    assert summary["days_skipped"] == 0
