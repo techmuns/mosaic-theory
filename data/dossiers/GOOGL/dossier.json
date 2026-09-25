@@ -2,7 +2,7 @@
   "ticker": "GOOGL",
   "name": "Alphabet Inc.",
   "cik": "0001652044",
-  "reference_date": "2026-08-24",
+  "reference_date": "2026-09-22",
   "rank": null,
   "sleeve": "quality",
   "mechanical": {
@@ -14,10 +14,10 @@
         "note": null
       },
       "pe": {
-        "value": 31.717853839037925,
+        "value": 32.484736355226644,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-09-16 ÷ annual diluted EPS for the period ending 2025-12-31 (259d old, filed 2026-02-05)"
+        "note": "price 2026-09-22 ÷ annual diluted EPS for the period ending 2025-12-31 (265d old, filed 2026-02-05)"
       },
       "pe_percentile_5y": {
         "value": null,
@@ -479,7 +479,7 @@
         ],
         "tev": {
           "value": 4196939.4,
-          "source_ref": "TEV = mcap 4318622.4 + net debt -121683.0 (CIQ Comparable Analysis→Financial Data, Latest, export stamp 2026-09-22 — NOT date-corrected: the price store ends 2026-09-16, before the 2026-09-22 export stamp — the bar this panel names is absent, so any match would be coincidence) — simple-TEV basis",
+          "source_ref": "TEV = mcap 4318622.4 + net debt -121683.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-21, exported 2026-09-22) — simple-TEV basis",
           "status": "present",
           "note": null
         },
@@ -496,7 +496,7 @@
           "note": null
         },
         "heterogeneity_gate": "market caps span $6.6B–$3724.7B (568x); the name is $4318.6B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
-        "tev_as_of": "2026-09-22",
+        "tev_as_of": "2026-09-21",
         "multiples_as_of": "2026-09-17",
         "vintage_coherent": true,
         "coherence_note": "vintage-coherent: derived FY26 $232003.3M vs direct consensus $233038.5M (residual 0.004 ≤ 0.10 tolerance)",
@@ -686,7 +686,7 @@
     },
     "ev_gap": {
       "vintages": {
-        "tev_as_of": "2026-09-22",
+        "tev_as_of": "2026-09-21",
         "consensus_as_of": "≥2026-09-17"
       },
       "d_and_a_convention": null,
@@ -928,7 +928,7 @@
             "pe": "27.9"
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21",
         "status": "present",
         "note": null
       }
@@ -958,20 +958,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": 0.11236816874400768,
-        "source_ref": "EOD GOOGL 180d to 2026-08-24",
+        "value": 0.2500355973230812,
+        "source_ref": "EOD GOOGL 180d to 2026-09-22",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.10144990261848097,
-        "source_ref": "EOD SPY 180d to 2026-08-24 (cap-band: $4318.6B @ 2026-08-24 → large (>$25B) → SPY)",
+        "value": 0.16890666418639255,
+        "source_ref": "EOD SPY 180d to 2026-09-22 (cap-band: $4318.6B @ 2026-09-22 → large (>$25B) → SPY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": 0.01091826612552671,
-        "source_ref": "EOD GOOGL−SPY 180d to 2026-08-24 (assembly, cap-band)",
+        "value": 0.08112893313668867,
+        "source_ref": "EOD GOOGL−SPY 180d to 2026-09-22 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -980,13 +980,13 @@
           {
             "ticker": "EXTR",
             "hops": 1,
-            "ret_180d": 0.7071428571428571,
+            "ret_180d": 0.4301423027166882,
             "via": "EXTR —supplier→ Google Cloud Platform [\"Our cloud networking solution is available on all major cloud providers (Amazon \"]"
           },
           {
             "ticker": "NN",
             "hops": 1,
-            "ret_180d": 0.054405677114133466,
+            "ret_180d": -0.18544102019128583,
             "via": "NN —supplier→ Google [\"we and our customers must have access to barometric pressure measurements and 2D\"]"
           },
           {
@@ -998,7 +998,7 @@
           {
             "ticker": "AMZN",
             "hops": 2,
-            "ret_180d": 0.24416065324724645,
+            "ret_180d": 0.2285824419389033,
             "via": "EXTR —supplier→ Google Cloud Platform [\"Our cloud networking solution is available on all major cloud providers (Amazon \"] · EXTR —supplier→ Amazon Web Services [\"Our cloud networking solution is avai"
           },
           {
@@ -1055,13 +1055,13 @@
         "note": null
       },
       "read": {
-        "value": "mixed: name 11% vs cohort median 24% (cohort steady)",
+        "value": "mixed: name 25% vs cohort median 23% (cohort steady)",
         "source_ref": "derived from 3 cohort names; face-validity",
         "status": "present",
         "note": null
       },
       "benchmark_symbol": "SPY",
-      "benchmark_basis": "cap-band: $4318.6B @ 2026-08-24 → large (>$25B) → SPY"
+      "benchmark_basis": "cap-band: $4318.6B @ 2026-09-22 → large (>$25B) → SPY"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -1233,7 +1233,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Revenue: latest guide 11,800.0 for FY 2007 (dated 2006-03-20) (stale — 7462d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FY 2007 MET; Capital Expenditure: latest guide '(195,000.00) - (205,000.00)' for FY 2026 (dated 2026-07-22); spend ≤ guided ceiling 1/1 resolved; most recent guidance outcome: FY 2025 MET; EPS Normalized: latest guide 0.18 for FY 2006 (dated 2005-10-20) (stale — 7613d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2006 MET; EPS (GAAP): latest guide 0.18 for FY 2006 (dated 2005-10-20) (stale — 7613d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2006 MET; DPS: latest guide 0.22 for FQ3 2026 (dated 2026-07-22); actual ≥ guided floor 1/1 resolved · 8 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-09-17 · export date unverified]",
+        "value": "Revenue: latest guide 11,800.0 for FY 2007 (dated 2006-03-20) (stale — 7491d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FY 2007 MET; Capital Expenditure: latest guide '(195,000.00) - (205,000.00)' for FY 2026 (dated 2026-07-22) (stale — 62d old); spend ≤ guided ceiling 1/1 resolved; most recent guidance outcome: FY 2025 MET; EPS Normalized: latest guide 0.18 for FY 2006 (dated 2005-10-20) (stale — 7642d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2006 MET; EPS (GAAP): latest guide 0.18 for FY 2006 (dated 2005-10-20) (stale — 7642d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2006 MET; DPS: latest guide 0.22 for FQ3 2026 (dated 2026-07-22) (stale — 62d old); actual ≥ guided floor 1/1 resolved · 8 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-09-17 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1245,7 +1245,7 @@
             "latest_guide": "11,800.0",
             "period": "FY 2007",
             "dated": "2006-03-20",
-            "age": "7462d (stale)",
+            "age": "7491d (stale)",
             "record": "actual ≥ floor 3/3",
             "most_recent": "FY 2007 MET"
           },
@@ -1254,7 +1254,7 @@
             "latest_guide": "'(195,000.00) - (205,000.00)'",
             "period": "FY 2026",
             "dated": "2026-07-22",
-            "age": "fresh",
+            "age": "62d (stale)",
             "record": "spend ≤ ceiling 1/1",
             "most_recent": "FY 2025 MET"
           },
@@ -1263,7 +1263,7 @@
             "latest_guide": "0.18",
             "period": "FY 2006",
             "dated": "2005-10-20",
-            "age": "7613d (stale)",
+            "age": "7642d (stale)",
             "record": "actual ≥ floor 1/1",
             "most_recent": "FY 2006 MET"
           },
@@ -1272,7 +1272,7 @@
             "latest_guide": "0.18",
             "period": "FY 2006",
             "dated": "2005-10-20",
-            "age": "7613d (stale)",
+            "age": "7642d (stale)",
             "record": "actual ≥ floor 1/1",
             "most_recent": "FY 2006 MET"
           },
@@ -1281,7 +1281,7 @@
             "latest_guide": "0.22",
             "period": "FQ3 2026",
             "dated": "2026-07-22",
-            "age": "fresh",
+            "age": "62d (stale)",
             "record": "actual ≥ floor 1/1 · 8 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ2 2026 AT GUIDE (±0.5% of a point)"
           }
@@ -4054,14 +4054,14 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 92 (7 insiders, $43.08M) — in the last 182 days · last purchase $4.95M, 10% owner, 2025-08-01 (~13mo ago) · last sale $0.03M, director, 2026-08-28 (~0mo ago) · largest sale $33.36M, 10% owner, 2026-01-30 (~7mo ago) · grants 464 · last filing 2026-09-16 · other C×360/F×248/G×166/J×15/U×3",
-        "source_ref": "EDGAR Form 4 (latest 0001193125-26-393517; 519 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 72 (6 insiders, $22.58M) — in the last 182 days · last purchase $4.95M, 10% owner, 2025-08-01 (~14mo ago) · last sale $0.03M, director, 2026-08-28 (~1mo ago) · largest sale $33.36M, 10% owner, 2026-01-30 (~8mo ago) · grants 464 · last filing 2026-09-16 · other C×357/F×246/G×162/J×15/U×3",
+        "source_ref": "EDGAR Form 4 (latest 0001193125-26-393517; 513 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-08-14): 70.5M → 72.7M sh (+3.1%, rising) · 0.6% of shares out (EDGAR XBRL) · DTC 2.3d · recent: 2026-08-14 72.7M · 2026-07-31 70.5M · 2026-07-15 78.7M · 2026-06-30 85.9M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-08-14); DTC = 72,705,550 short ÷ 32,052,043 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-08-31): 72.7M → 77.7M sh (+6.9%, rising) · 0.6% of shares out (EDGAR XBRL) · DTC 2.7d · recent: 2026-08-31 77.7M · 2026-08-14 72.7M · 2026-07-31 70.5M · 2026-07-15 78.7M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-08-31); DTC = 77,698,668 short ÷ 29,306,528 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4087,7 +4087,7 @@
       },
       "total_debt_to_ebitda": {
         "value": "name 0.7x vs peer median 1.1x (comps TOTAL-debt/EBITDA basis)",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
@@ -4105,7 +4105,7 @@
       },
       "credit_health": {
         "value": "name Overall/Operational/Solvency/Liquidity 1/2/1/1 (S&P issuer rating AA+); peer-median O/Op/S/L 3/3/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
-        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-21",
         "status": "present",
         "note": null
       }
@@ -4170,13 +4170,13 @@
             "high": 101178642.52
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
       "bridge": {
         "value": "TEV→equity bridge: + cash $242,474.00M, − total debt $120,791.00M",
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
@@ -4184,7 +4184,7 @@
       "bridge_debt": 120791.0,
       "market_cap": {
         "value": 4318622.4,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
@@ -4470,7 +4470,7 @@
         "note": "(P3) 8-K body at 8-K 0001652044-26-000031 (2026-04-02) states no maturity-resolution event"
       },
       "panel_vintage": {
-        "value": "the debt schedule is 200d old (source filed 2026-02-05); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 229d old (source filed 2026-02-05); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-05-2026",
         "status": "present",
         "note": null
@@ -4691,8 +4691,8 @@
         }
       ],
       "line": {
-        "value": "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-08-24",
-        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264",
+        "value": "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-09-22",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-26-340264",
         "status": "present",
         "note": null
       },
@@ -4767,8 +4767,8 @@
         }
       ],
       "line": {
-        "value": "no 13D on file · Schedule 13G filings 13 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-04-29) — 3y window to 2026-08-24",
-        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-25→2026-08-24 · latest 0002100119-26-000161",
+        "value": "no 13D on file · Schedule 13G filings 13 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-04-29) — 3y window to 2026-09-22",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0002100119-26-000161",
         "status": "present",
         "note": null
       },
@@ -6248,7 +6248,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 342.87,
+        "value": 351.16,
         "source_ref": "EOD GOOGL last close",
         "status": "present",
         "note": null
@@ -6257,13 +6257,13 @@
         "value": 408.61,
         "source_ref": "EOD GOOGL 52-week high",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-16: spans 387d over 267 bars"
+        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
       },
       "low_52w": {
-        "value": 205.28,
+        "value": 235.84,
         "source_ref": "EOD GOOGL 52-week low",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-16: spans 387d over 267 bars"
+        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
       },
       "shares_out": {
         "value": 12230000000.0,
@@ -6279,1278 +6279,1278 @@
       },
       "market_cap": {
         "value": 4318622.4,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-22",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21",
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-16",
-      "market_cap_as_of": "2026-09-22"
+      "as_of": "2026-09-22",
+      "market_cap_as_of": "2026-09-21"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-08-25",
+          "date": "2025-09-23",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-08-26",
-          "name": 99.35,
-          "benchmark": 100.42
-        },
-        {
-          "date": "2025-08-27",
-          "name": 99.52,
-          "benchmark": 100.65
-        },
-        {
-          "date": "2025-08-28",
-          "name": 101.51,
-          "benchmark": 101.0
-        },
-        {
-          "date": "2025-08-29",
-          "name": 102.12,
-          "benchmark": 100.4
-        },
-        {
-          "date": "2025-09-02",
-          "name": 101.37,
-          "benchmark": 99.66
-        },
-        {
-          "date": "2025-09-03",
-          "name": 110.63,
-          "benchmark": 100.2
-        },
-        {
-          "date": "2025-09-04",
-          "name": 111.42,
-          "benchmark": 101.04
-        },
-        {
-          "date": "2025-09-05",
-          "name": 112.72,
-          "benchmark": 100.74
-        },
-        {
-          "date": "2025-09-08",
-          "name": 112.25,
-          "benchmark": 100.99
-        },
-        {
-          "date": "2025-09-09",
-          "name": 114.94,
-          "benchmark": 101.22
-        },
-        {
-          "date": "2025-09-10",
-          "name": 114.72,
-          "benchmark": 101.52
-        },
-        {
-          "date": "2025-09-11",
-          "name": 115.29,
-          "benchmark": 102.36
-        },
-        {
-          "date": "2025-09-12",
-          "name": 115.5,
-          "benchmark": 102.33
-        },
-        {
-          "date": "2025-09-15",
-          "name": 120.68,
-          "benchmark": 102.87
-        },
-        {
-          "date": "2025-09-16",
-          "name": 120.47,
-          "benchmark": 102.73
-        },
-        {
-          "date": "2025-09-17",
-          "name": 119.68,
-          "benchmark": 102.6
-        },
-        {
-          "date": "2025-09-18",
-          "name": 120.88,
-          "benchmark": 103.08
-        },
-        {
-          "date": "2025-09-19",
-          "name": 122.17,
-          "benchmark": 103.3
-        },
-        {
-          "date": "2025-09-22",
-          "name": 121.12,
-          "benchmark": 103.79
-        },
-        {
-          "date": "2025-09-23",
-          "name": 120.71,
-          "benchmark": 103.23
-        },
-        {
           "date": "2025-09-24",
-          "name": 118.54,
-          "benchmark": 102.9
+          "name": 98.2,
+          "benchmark": 99.68
         },
         {
           "date": "2025-09-25",
-          "name": 117.89,
-          "benchmark": 102.43
+          "name": 97.67,
+          "benchmark": 99.22
         },
         {
           "date": "2025-09-26",
-          "name": 118.25,
-          "benchmark": 103.01
+          "name": 97.97,
+          "benchmark": 99.79
         },
         {
           "date": "2025-09-29",
-          "name": 117.06,
-          "benchmark": 103.3
+          "name": 96.98,
+          "benchmark": 100.07
         },
         {
           "date": "2025-09-30",
-          "name": 116.6,
-          "benchmark": 103.69
+          "name": 96.6,
+          "benchmark": 100.45
         },
         {
           "date": "2025-10-01",
-          "name": 117.46,
-          "benchmark": 104.04
+          "name": 97.31,
+          "benchmark": 100.79
         },
         {
           "date": "2025-10-02",
-          "name": 117.84,
-          "benchmark": 104.16
+          "name": 97.63,
+          "benchmark": 100.91
         },
         {
           "date": "2025-10-03",
-          "name": 117.68,
-          "benchmark": 104.16
+          "name": 97.49,
+          "benchmark": 100.9
         },
         {
           "date": "2025-10-06",
-          "name": 120.12,
-          "benchmark": 104.54
+          "name": 99.51,
+          "benchmark": 101.27
         },
         {
           "date": "2025-10-07",
-          "name": 117.88,
-          "benchmark": 104.15
+          "name": 97.66,
+          "benchmark": 100.89
         },
         {
           "date": "2025-10-08",
-          "name": 117.33,
-          "benchmark": 104.77
+          "name": 97.2,
+          "benchmark": 101.49
         },
         {
           "date": "2025-10-09",
-          "name": 115.85,
-          "benchmark": 104.47
+          "name": 95.97,
+          "benchmark": 101.2
         },
         {
           "date": "2025-10-10",
-          "name": 113.47,
-          "benchmark": 101.64
+          "name": 94.0,
+          "benchmark": 98.46
         },
         {
           "date": "2025-10-13",
-          "name": 117.1,
-          "benchmark": 103.2
+          "name": 97.02,
+          "benchmark": 99.97
         },
         {
           "date": "2025-10-14",
-          "name": 117.73,
-          "benchmark": 103.08
+          "name": 97.53,
+          "benchmark": 99.85
         },
         {
           "date": "2025-10-15",
-          "name": 120.4,
-          "benchmark": 103.53
+          "name": 99.75,
+          "benchmark": 100.3
         },
         {
           "date": "2025-10-16",
-          "name": 120.61,
-          "benchmark": 102.83
+          "name": 99.92,
+          "benchmark": 99.61
         },
         {
           "date": "2025-10-17",
-          "name": 121.49,
-          "benchmark": 103.41
+          "name": 100.65,
+          "benchmark": 100.18
         },
         {
           "date": "2025-10-20",
-          "name": 123.05,
-          "benchmark": 104.49
-        },
-        {
-          "date": "2025-10-21",
-          "name": 120.13,
-          "benchmark": 104.49
-        },
-        {
-          "date": "2025-10-22",
-          "name": 120.72,
-          "benchmark": 103.94
-        },
-        {
-          "date": "2025-10-23",
-          "name": 121.39,
-          "benchmark": 104.56
-        },
-        {
-          "date": "2025-10-24",
-          "name": 124.67,
-          "benchmark": 105.41
-        },
-        {
-          "date": "2025-10-27",
-          "name": 129.15,
-          "benchmark": 106.66
-        },
-        {
-          "date": "2025-10-28",
-          "name": 128.29,
-          "benchmark": 106.94
-        },
-        {
-          "date": "2025-10-29",
-          "name": 131.69,
-          "benchmark": 106.99
-        },
-        {
-          "date": "2025-10-30",
-          "name": 135.01,
-          "benchmark": 105.82
-        },
-        {
-          "date": "2025-10-31",
-          "name": 134.87,
-          "benchmark": 106.16
-        },
-        {
-          "date": "2025-11-03",
-          "name": 136.08,
-          "benchmark": 106.36
-        },
-        {
-          "date": "2025-11-04",
-          "name": 133.12,
-          "benchmark": 105.1
-        },
-        {
-          "date": "2025-11-05",
-          "name": 136.37,
-          "benchmark": 105.46
-        },
-        {
-          "date": "2025-11-06",
-          "name": 136.58,
-          "benchmark": 104.33
-        },
-        {
-          "date": "2025-11-07",
-          "name": 133.74,
-          "benchmark": 104.44
-        },
-        {
-          "date": "2025-11-10",
-          "name": 139.14,
-          "benchmark": 106.07
-        },
-        {
-          "date": "2025-11-11",
-          "name": 139.72,
-          "benchmark": 106.31
-        },
-        {
-          "date": "2025-11-12",
-          "name": 137.52,
-          "benchmark": 106.37
-        },
-        {
-          "date": "2025-11-13",
-          "name": 133.61,
-          "benchmark": 104.6
-        },
-        {
-          "date": "2025-11-14",
-          "name": 132.58,
-          "benchmark": 104.59
-        },
-        {
-          "date": "2025-11-17",
-          "name": 136.71,
-          "benchmark": 103.61
-        },
-        {
-          "date": "2025-11-18",
-          "name": 136.35,
-          "benchmark": 102.74
-        },
-        {
-          "date": "2025-11-19",
-          "name": 140.44,
-          "benchmark": 103.14
-        },
-        {
-          "date": "2025-11-20",
-          "name": 138.83,
-          "benchmark": 101.57
-        },
-        {
-          "date": "2025-11-21",
-          "name": 143.73,
-          "benchmark": 102.58
-        },
-        {
-          "date": "2025-11-24",
-          "name": 152.8,
-          "benchmark": 104.09
-        },
-        {
-          "date": "2025-11-25",
-          "name": 155.13,
-          "benchmark": 105.07
-        },
-        {
-          "date": "2025-11-26",
-          "name": 153.46,
-          "benchmark": 105.79
-        },
-        {
-          "date": "2025-11-28",
-          "name": 153.57,
-          "benchmark": 106.37
-        },
-        {
-          "date": "2025-12-01",
-          "name": 151.03,
-          "benchmark": 105.88
-        },
-        {
-          "date": "2025-12-02",
-          "name": 151.47,
-          "benchmark": 106.08
-        },
-        {
-          "date": "2025-12-03",
-          "name": 153.31,
-          "benchmark": 106.45
-        },
-        {
-          "date": "2025-12-04",
-          "name": 152.34,
-          "benchmark": 106.52
-        },
-        {
-          "date": "2025-12-05",
-          "name": 154.09,
-          "benchmark": 106.73
-        },
-        {
-          "date": "2025-12-08",
-          "name": 150.47,
-          "benchmark": 106.41
-        },
-        {
-          "date": "2025-12-09",
-          "name": 152.08,
-          "benchmark": 106.31
-        },
-        {
-          "date": "2025-12-10",
-          "name": 153.59,
-          "benchmark": 107.02
-        },
-        {
-          "date": "2025-12-11",
-          "name": 149.85,
-          "benchmark": 107.27
-        },
-        {
-          "date": "2025-12-12",
-          "name": 148.35,
-          "benchmark": 106.12
-        },
-        {
-          "date": "2025-12-15",
-          "name": 147.83,
-          "benchmark": 105.96
-        },
-        {
-          "date": "2025-12-16",
-          "name": 147.04,
-          "benchmark": 105.67
-        },
-        {
-          "date": "2025-12-17",
-          "name": 142.32,
-          "benchmark": 104.5
-        },
-        {
-          "date": "2025-12-18",
-          "name": 145.07,
-          "benchmark": 105.29
-        },
-        {
-          "date": "2025-12-19",
-          "name": 147.33,
-          "benchmark": 105.93
-        },
-        {
-          "date": "2025-12-22",
-          "name": 148.58,
-          "benchmark": 106.59
-        },
-        {
-          "date": "2025-12-23",
-          "name": 150.77,
-          "benchmark": 107.08
-        },
-        {
-          "date": "2025-12-24",
-          "name": 150.65,
-          "benchmark": 107.46
-        },
-        {
-          "date": "2025-12-26",
-          "name": 150.37,
-          "benchmark": 107.45
-        },
-        {
-          "date": "2025-12-29",
-          "name": 150.4,
-          "benchmark": 107.06
-        },
-        {
-          "date": "2025-12-30",
-          "name": 150.53,
-          "benchmark": 106.93
-        },
-        {
-          "date": "2025-12-31",
-          "name": 150.13,
-          "benchmark": 106.14
-        },
-        {
-          "date": "2026-01-02",
-          "name": 151.16,
-          "benchmark": 106.33
-        },
-        {
-          "date": "2026-01-05",
-          "name": 151.83,
-          "benchmark": 107.04
-        },
-        {
-          "date": "2026-01-06",
-          "name": 150.77,
-          "benchmark": 107.68
-        },
-        {
-          "date": "2026-01-07",
-          "name": 154.43,
-          "benchmark": 107.33
-        },
-        {
-          "date": "2026-01-08",
-          "name": 156.09,
-          "benchmark": 107.32
-        },
-        {
-          "date": "2026-01-09",
-          "name": 157.6,
-          "benchmark": 108.03
-        },
-        {
-          "date": "2026-01-12",
-          "name": 159.17,
-          "benchmark": 108.2
-        },
-        {
-          "date": "2026-01-13",
-          "name": 161.14,
-          "benchmark": 107.98
-        },
-        {
-          "date": "2026-01-14",
-          "name": 161.08,
-          "benchmark": 107.45
-        },
-        {
-          "date": "2026-01-15",
-          "name": 159.61,
-          "benchmark": 107.75
-        },
-        {
-          "date": "2026-01-16",
-          "name": 158.28,
-          "benchmark": 107.66
-        },
-        {
-          "date": "2026-01-20",
-          "name": 154.44,
-          "benchmark": 105.46
-        },
-        {
-          "date": "2026-01-21",
-          "name": 157.5,
-          "benchmark": 106.68
-        },
-        {
-          "date": "2026-01-22",
-          "name": 158.54,
-          "benchmark": 107.24
-        },
-        {
-          "date": "2026-01-23",
-          "name": 157.29,
-          "benchmark": 107.28
-        },
-        {
-          "date": "2026-01-26",
-          "name": 159.84,
-          "benchmark": 107.82
-        },
-        {
-          "date": "2026-01-27",
-          "name": 160.46,
-          "benchmark": 108.25
-        },
-        {
-          "date": "2026-01-28",
-          "name": 161.16,
-          "benchmark": 108.24
-        },
-        {
-          "date": "2026-01-29",
-          "name": 162.24,
-          "benchmark": 108.03
-        },
-        {
-          "date": "2026-01-30",
-          "name": 162.12,
-          "benchmark": 107.7
-        },
-        {
-          "date": "2026-02-02",
-          "name": 164.85,
-          "benchmark": 108.24
-        },
-        {
-          "date": "2026-02-03",
-          "name": 162.94,
-          "benchmark": 107.32
-        },
-        {
-          "date": "2026-02-04",
-          "name": 159.74,
-          "benchmark": 106.8
-        },
-        {
-          "date": "2026-02-05",
-          "name": 158.88,
-          "benchmark": 105.47
-        },
-        {
-          "date": "2026-02-06",
-          "name": 154.86,
-          "benchmark": 107.49
-        },
-        {
-          "date": "2026-02-09",
-          "name": 155.56,
-          "benchmark": 108.01
-        },
-        {
-          "date": "2026-02-10",
-          "name": 152.8,
-          "benchmark": 107.73
-        },
-        {
-          "date": "2026-02-11",
-          "name": 149.15,
-          "benchmark": 107.7
-        },
-        {
-          "date": "2026-02-12",
-          "name": 148.21,
-          "benchmark": 106.04
-        },
-        {
-          "date": "2026-02-13",
-          "name": 146.64,
-          "benchmark": 106.11
-        },
-        {
-          "date": "2026-02-17",
-          "name": 144.86,
-          "benchmark": 106.29
-        },
-        {
-          "date": "2026-02-18",
-          "name": 145.49,
-          "benchmark": 106.82
-        },
-        {
-          "date": "2026-02-19",
-          "name": 145.26,
-          "benchmark": 106.54
-        },
-        {
-          "date": "2026-02-20",
-          "name": 151.08,
-          "benchmark": 107.31
-        },
-        {
-          "date": "2026-02-23",
-          "name": 149.4,
-          "benchmark": 106.21
-        },
-        {
-          "date": "2026-02-24",
-          "name": 149.12,
-          "benchmark": 106.99
-        },
-        {
-          "date": "2026-02-25",
-          "name": 150.08,
-          "benchmark": 107.89
-        },
-        {
-          "date": "2026-02-26",
-          "name": 147.43,
-          "benchmark": 107.29
-        },
-        {
-          "date": "2026-02-27",
-          "name": 149.53,
-          "benchmark": 106.77
-        },
-        {
-          "date": "2026-03-02",
-          "name": 147.02,
-          "benchmark": 106.83
-        },
-        {
-          "date": "2026-03-03",
-          "name": 145.61,
-          "benchmark": 105.89
-        },
-        {
-          "date": "2026-03-04",
-          "name": 145.39,
-          "benchmark": 106.64
-        },
-        {
-          "date": "2026-03-05",
-          "name": 144.31,
-          "benchmark": 106.05
-        },
-        {
-          "date": "2026-03-06",
-          "name": 143.18,
-          "benchmark": 104.66
-        },
-        {
-          "date": "2026-03-09",
-          "name": 146.94,
-          "benchmark": 105.57
-        },
-        {
-          "date": "2026-03-10",
-          "name": 147.27,
-          "benchmark": 105.4
-        },
-        {
-          "date": "2026-03-11",
-          "name": 148.06,
-          "benchmark": 105.27
-        },
-        {
-          "date": "2026-03-12",
-          "name": 145.59,
-          "benchmark": 103.67
-        },
-        {
-          "date": "2026-03-13",
-          "name": 144.99,
-          "benchmark": 103.08
-        },
-        {
-          "date": "2026-03-16",
-          "name": 146.56,
-          "benchmark": 104.13
-        },
-        {
-          "date": "2026-03-17",
-          "name": 149.13,
-          "benchmark": 104.41
-        },
-        {
-          "date": "2026-03-18",
-          "name": 147.58,
-          "benchmark": 102.95
-        },
-        {
-          "date": "2026-03-19",
-          "name": 147.31,
-          "benchmark": 102.7
-        },
-        {
-          "date": "2026-03-20",
-          "name": 144.37,
-          "benchmark": 100.95
-        },
-        {
-          "date": "2026-03-23",
-          "name": 144.88,
-          "benchmark": 102.01
-        },
-        {
-          "date": "2026-03-24",
-          "name": 139.31,
-          "benchmark": 101.67
-        },
-        {
-          "date": "2026-03-25",
-          "name": 139.54,
-          "benchmark": 102.23
-        },
-        {
-          "date": "2026-03-26",
-          "name": 134.74,
-          "benchmark": 100.41
-        },
-        {
-          "date": "2026-03-27",
-          "name": 131.58,
-          "benchmark": 98.7
-        },
-        {
-          "date": "2026-03-30",
-          "name": 131.18,
-          "benchmark": 98.37
-        },
-        {
-          "date": "2026-03-31",
-          "name": 137.93,
+          "name": 101.94,
           "benchmark": 101.22
         },
         {
+          "date": "2025-10-21",
+          "name": 99.52,
+          "benchmark": 101.22
+        },
+        {
+          "date": "2025-10-22",
+          "name": 100.01,
+          "benchmark": 100.69
+        },
+        {
+          "date": "2025-10-23",
+          "name": 100.56,
+          "benchmark": 101.29
+        },
+        {
+          "date": "2025-10-24",
+          "name": 103.28,
+          "benchmark": 102.12
+        },
+        {
+          "date": "2025-10-27",
+          "name": 107.0,
+          "benchmark": 103.32
+        },
+        {
+          "date": "2025-10-28",
+          "name": 106.28,
+          "benchmark": 103.6
+        },
+        {
+          "date": "2025-10-29",
+          "name": 109.1,
+          "benchmark": 103.65
+        },
+        {
+          "date": "2025-10-30",
+          "name": 111.85,
+          "benchmark": 102.51
+        },
+        {
+          "date": "2025-10-31",
+          "name": 111.73,
+          "benchmark": 102.84
+        },
+        {
+          "date": "2025-11-03",
+          "name": 112.74,
+          "benchmark": 103.04
+        },
+        {
+          "date": "2025-11-04",
+          "name": 110.28,
+          "benchmark": 101.81
+        },
+        {
+          "date": "2025-11-05",
+          "name": 112.97,
+          "benchmark": 102.17
+        },
+        {
+          "date": "2025-11-06",
+          "name": 113.15,
+          "benchmark": 101.07
+        },
+        {
+          "date": "2025-11-07",
+          "name": 110.8,
+          "benchmark": 101.17
+        },
+        {
+          "date": "2025-11-10",
+          "name": 115.27,
+          "benchmark": 102.75
+        },
+        {
+          "date": "2025-11-11",
+          "name": 115.76,
+          "benchmark": 102.98
+        },
+        {
+          "date": "2025-11-12",
+          "name": 113.93,
+          "benchmark": 103.04
+        },
+        {
+          "date": "2025-11-13",
+          "name": 110.69,
+          "benchmark": 101.33
+        },
+        {
+          "date": "2025-11-14",
+          "name": 109.83,
+          "benchmark": 101.31
+        },
+        {
+          "date": "2025-11-17",
+          "name": 113.26,
+          "benchmark": 100.37
+        },
+        {
+          "date": "2025-11-18",
+          "name": 112.96,
+          "benchmark": 99.53
+        },
+        {
+          "date": "2025-11-19",
+          "name": 116.35,
+          "benchmark": 99.91
+        },
+        {
+          "date": "2025-11-20",
+          "name": 115.02,
+          "benchmark": 98.39
+        },
+        {
+          "date": "2025-11-21",
+          "name": 119.07,
+          "benchmark": 99.37
+        },
+        {
+          "date": "2025-11-24",
+          "name": 126.59,
+          "benchmark": 100.83
+        },
+        {
+          "date": "2025-11-25",
+          "name": 128.52,
+          "benchmark": 101.78
+        },
+        {
+          "date": "2025-11-26",
+          "name": 127.14,
+          "benchmark": 102.48
+        },
+        {
+          "date": "2025-11-28",
+          "name": 127.23,
+          "benchmark": 103.04
+        },
+        {
+          "date": "2025-12-01",
+          "name": 125.13,
+          "benchmark": 102.57
+        },
+        {
+          "date": "2025-12-02",
+          "name": 125.49,
+          "benchmark": 102.76
+        },
+        {
+          "date": "2025-12-03",
+          "name": 127.01,
+          "benchmark": 103.12
+        },
+        {
+          "date": "2025-12-04",
+          "name": 126.21,
+          "benchmark": 103.19
+        },
+        {
+          "date": "2025-12-05",
+          "name": 127.66,
+          "benchmark": 103.39
+        },
+        {
+          "date": "2025-12-08",
+          "name": 124.66,
+          "benchmark": 103.08
+        },
+        {
+          "date": "2025-12-09",
+          "name": 126.0,
+          "benchmark": 102.99
+        },
+        {
+          "date": "2025-12-10",
+          "name": 127.24,
+          "benchmark": 103.67
+        },
+        {
+          "date": "2025-12-11",
+          "name": 124.15,
+          "benchmark": 103.91
+        },
+        {
+          "date": "2025-12-12",
+          "name": 122.9,
+          "benchmark": 102.8
+        },
+        {
+          "date": "2025-12-15",
+          "name": 122.47,
+          "benchmark": 102.64
+        },
+        {
+          "date": "2025-12-16",
+          "name": 121.82,
+          "benchmark": 102.36
+        },
+        {
+          "date": "2025-12-17",
+          "name": 117.91,
+          "benchmark": 101.23
+        },
+        {
+          "date": "2025-12-18",
+          "name": 120.19,
+          "benchmark": 102.0
+        },
+        {
+          "date": "2025-12-19",
+          "name": 122.05,
+          "benchmark": 102.62
+        },
+        {
+          "date": "2025-12-22",
+          "name": 123.09,
+          "benchmark": 103.26
+        },
+        {
+          "date": "2025-12-23",
+          "name": 124.91,
+          "benchmark": 103.73
+        },
+        {
+          "date": "2025-12-24",
+          "name": 124.81,
+          "benchmark": 104.1
+        },
+        {
+          "date": "2025-12-26",
+          "name": 124.58,
+          "benchmark": 104.09
+        },
+        {
+          "date": "2025-12-29",
+          "name": 124.6,
+          "benchmark": 103.72
+        },
+        {
+          "date": "2025-12-30",
+          "name": 124.71,
+          "benchmark": 103.59
+        },
+        {
+          "date": "2025-12-31",
+          "name": 124.37,
+          "benchmark": 102.82
+        },
+        {
+          "date": "2026-01-02",
+          "name": 125.23,
+          "benchmark": 103.01
+        },
+        {
+          "date": "2026-01-05",
+          "name": 125.78,
+          "benchmark": 103.7
+        },
+        {
+          "date": "2026-01-06",
+          "name": 124.91,
+          "benchmark": 104.31
+        },
+        {
+          "date": "2026-01-07",
+          "name": 127.94,
+          "benchmark": 103.98
+        },
+        {
+          "date": "2026-01-08",
+          "name": 129.32,
+          "benchmark": 103.97
+        },
+        {
+          "date": "2026-01-09",
+          "name": 130.56,
+          "benchmark": 104.65
+        },
+        {
+          "date": "2026-01-12",
+          "name": 131.87,
+          "benchmark": 104.82
+        },
+        {
+          "date": "2026-01-13",
+          "name": 133.5,
+          "benchmark": 104.61
+        },
+        {
+          "date": "2026-01-14",
+          "name": 133.45,
+          "benchmark": 104.09
+        },
+        {
+          "date": "2026-01-15",
+          "name": 132.23,
+          "benchmark": 104.38
+        },
+        {
+          "date": "2026-01-16",
+          "name": 131.13,
+          "benchmark": 104.29
+        },
+        {
+          "date": "2026-01-20",
+          "name": 127.95,
+          "benchmark": 102.17
+        },
+        {
+          "date": "2026-01-21",
+          "name": 130.49,
+          "benchmark": 103.35
+        },
+        {
+          "date": "2026-01-22",
+          "name": 131.34,
+          "benchmark": 103.89
+        },
+        {
+          "date": "2026-01-23",
+          "name": 130.31,
+          "benchmark": 103.92
+        },
+        {
+          "date": "2026-01-26",
+          "name": 132.42,
+          "benchmark": 104.45
+        },
+        {
+          "date": "2026-01-27",
+          "name": 132.94,
+          "benchmark": 104.87
+        },
+        {
+          "date": "2026-01-28",
+          "name": 133.52,
+          "benchmark": 104.86
+        },
+        {
+          "date": "2026-01-29",
+          "name": 134.41,
+          "benchmark": 104.65
+        },
+        {
+          "date": "2026-01-30",
+          "name": 134.31,
+          "benchmark": 104.34
+        },
+        {
+          "date": "2026-02-02",
+          "name": 136.57,
+          "benchmark": 104.86
+        },
+        {
+          "date": "2026-02-03",
+          "name": 134.99,
+          "benchmark": 103.97
+        },
+        {
+          "date": "2026-02-04",
+          "name": 132.34,
+          "benchmark": 103.46
+        },
+        {
+          "date": "2026-02-05",
+          "name": 131.63,
+          "benchmark": 102.17
+        },
+        {
+          "date": "2026-02-06",
+          "name": 128.29,
+          "benchmark": 104.13
+        },
+        {
+          "date": "2026-02-09",
+          "name": 128.87,
+          "benchmark": 104.64
+        },
+        {
+          "date": "2026-02-10",
+          "name": 126.59,
+          "benchmark": 104.36
+        },
+        {
+          "date": "2026-02-11",
+          "name": 123.56,
+          "benchmark": 104.33
+        },
+        {
+          "date": "2026-02-12",
+          "name": 122.78,
+          "benchmark": 102.72
+        },
+        {
+          "date": "2026-02-13",
+          "name": 121.48,
+          "benchmark": 102.8
+        },
+        {
+          "date": "2026-02-17",
+          "name": 120.01,
+          "benchmark": 102.96
+        },
+        {
+          "date": "2026-02-18",
+          "name": 120.53,
+          "benchmark": 103.48
+        },
+        {
+          "date": "2026-02-19",
+          "name": 120.34,
+          "benchmark": 103.21
+        },
+        {
+          "date": "2026-02-20",
+          "name": 125.16,
+          "benchmark": 103.95
+        },
+        {
+          "date": "2026-02-23",
+          "name": 123.77,
+          "benchmark": 102.89
+        },
+        {
+          "date": "2026-02-24",
+          "name": 123.54,
+          "benchmark": 103.64
+        },
+        {
+          "date": "2026-02-25",
+          "name": 124.33,
+          "benchmark": 104.51
+        },
+        {
+          "date": "2026-02-26",
+          "name": 122.14,
+          "benchmark": 103.93
+        },
+        {
+          "date": "2026-02-27",
+          "name": 123.88,
+          "benchmark": 103.43
+        },
+        {
+          "date": "2026-03-02",
+          "name": 121.8,
+          "benchmark": 103.49
+        },
+        {
+          "date": "2026-03-03",
+          "name": 120.63,
+          "benchmark": 102.58
+        },
+        {
+          "date": "2026-03-04",
+          "name": 120.45,
+          "benchmark": 103.31
+        },
+        {
+          "date": "2026-03-05",
+          "name": 119.56,
+          "benchmark": 102.73
+        },
+        {
+          "date": "2026-03-06",
+          "name": 118.62,
+          "benchmark": 101.38
+        },
+        {
+          "date": "2026-03-09",
+          "name": 121.74,
+          "benchmark": 102.27
+        },
+        {
+          "date": "2026-03-10",
+          "name": 122.01,
+          "benchmark": 102.11
+        },
+        {
+          "date": "2026-03-11",
+          "name": 122.67,
+          "benchmark": 101.98
+        },
+        {
+          "date": "2026-03-12",
+          "name": 120.62,
+          "benchmark": 100.43
+        },
+        {
+          "date": "2026-03-13",
+          "name": 120.11,
+          "benchmark": 99.86
+        },
+        {
+          "date": "2026-03-16",
+          "name": 121.42,
+          "benchmark": 100.88
+        },
+        {
+          "date": "2026-03-17",
+          "name": 123.55,
+          "benchmark": 101.14
+        },
+        {
+          "date": "2026-03-18",
+          "name": 122.26,
+          "benchmark": 99.73
+        },
+        {
+          "date": "2026-03-19",
+          "name": 122.04,
+          "benchmark": 99.49
+        },
+        {
+          "date": "2026-03-20",
+          "name": 119.61,
+          "benchmark": 97.79
+        },
+        {
+          "date": "2026-03-23",
+          "name": 120.03,
+          "benchmark": 98.82
+        },
+        {
+          "date": "2026-03-24",
+          "name": 115.41,
+          "benchmark": 98.49
+        },
+        {
+          "date": "2026-03-25",
+          "name": 115.6,
+          "benchmark": 99.04
+        },
+        {
+          "date": "2026-03-26",
+          "name": 111.63,
+          "benchmark": 97.27
+        },
+        {
+          "date": "2026-03-27",
+          "name": 109.01,
+          "benchmark": 95.61
+        },
+        {
+          "date": "2026-03-30",
+          "name": 108.68,
+          "benchmark": 95.29
+        },
+        {
+          "date": "2026-03-31",
+          "name": 114.27,
+          "benchmark": 98.06
+        },
+        {
           "date": "2026-04-01",
-          "name": 142.64,
-          "benchmark": 101.99
+          "name": 118.17,
+          "benchmark": 98.8
         },
         {
           "date": "2026-04-02",
-          "name": 141.86,
-          "benchmark": 102.08
+          "name": 117.53,
+          "benchmark": 98.89
         },
         {
           "date": "2026-04-06",
-          "name": 143.89,
-          "benchmark": 102.56
+          "name": 119.2,
+          "benchmark": 99.35
         },
         {
           "date": "2026-04-07",
-          "name": 146.51,
-          "benchmark": 102.61
+          "name": 121.38,
+          "benchmark": 99.4
         },
         {
           "date": "2026-04-08",
-          "name": 152.2,
-          "benchmark": 105.22
+          "name": 126.09,
+          "benchmark": 101.93
         },
         {
           "date": "2026-04-09",
-          "name": 152.76,
-          "benchmark": 105.83
+          "name": 126.56,
+          "benchmark": 102.52
         },
         {
           "date": "2026-04-10",
-          "name": 152.16,
-          "benchmark": 105.76
+          "name": 126.06,
+          "benchmark": 102.45
         },
         {
           "date": "2026-04-13",
-          "name": 154.11,
-          "benchmark": 106.79
+          "name": 127.68,
+          "benchmark": 103.45
         },
         {
           "date": "2026-04-14",
-          "name": 159.68,
-          "benchmark": 108.09
+          "name": 132.29,
+          "benchmark": 104.71
         },
         {
           "date": "2026-04-15",
-          "name": 161.7,
-          "benchmark": 108.95
+          "name": 133.96,
+          "benchmark": 105.54
         },
         {
           "date": "2026-04-16",
-          "name": 161.17,
-          "benchmark": 109.21
+          "name": 133.52,
+          "benchmark": 105.8
         },
         {
           "date": "2026-04-17",
-          "name": 163.88,
-          "benchmark": 110.53
+          "name": 135.77,
+          "benchmark": 107.08
         },
         {
           "date": "2026-04-20",
-          "name": 161.84,
-          "benchmark": 110.31
+          "name": 134.08,
+          "benchmark": 106.86
         },
         {
           "date": "2026-04-21",
-          "name": 159.38,
-          "benchmark": 109.59
+          "name": 132.04,
+          "benchmark": 106.16
         },
         {
           "date": "2026-04-22",
-          "name": 162.75,
-          "benchmark": 110.7
+          "name": 134.83,
+          "benchmark": 107.24
         },
         {
           "date": "2026-04-23",
-          "name": 162.54,
-          "benchmark": 110.27
+          "name": 134.66,
+          "benchmark": 106.82
         },
         {
           "date": "2026-04-24",
-          "name": 165.19,
-          "benchmark": 111.12
+          "name": 136.85,
+          "benchmark": 107.65
         },
         {
           "date": "2026-04-27",
-          "name": 168.04,
-          "benchmark": 111.32
+          "name": 139.21,
+          "benchmark": 107.83
         },
         {
           "date": "2026-04-28",
-          "name": 167.77,
-          "benchmark": 110.77
+          "name": 138.99,
+          "benchmark": 107.31
         },
         {
           "date": "2026-04-29",
-          "name": 167.84,
-          "benchmark": 110.76
+          "name": 139.05,
+          "benchmark": 107.29
         },
         {
           "date": "2026-04-30",
-          "name": 184.57,
-          "benchmark": 111.86
+          "name": 152.9,
+          "benchmark": 108.36
         },
         {
           "date": "2026-05-01",
-          "name": 184.99,
-          "benchmark": 112.17
+          "name": 153.26,
+          "benchmark": 108.66
         },
         {
           "date": "2026-05-04",
-          "name": 183.82,
-          "benchmark": 111.76
+          "name": 152.29,
+          "benchmark": 108.26
         },
         {
           "date": "2026-05-05",
-          "name": 186.31,
-          "benchmark": 112.65
+          "name": 154.35,
+          "benchmark": 109.13
         },
         {
           "date": "2026-05-06",
-          "name": 190.92,
-          "benchmark": 114.22
+          "name": 158.17,
+          "benchmark": 110.65
         },
         {
           "date": "2026-05-07",
-          "name": 190.89,
-          "benchmark": 113.87
+          "name": 158.15,
+          "benchmark": 110.31
         },
         {
           "date": "2026-05-08",
-          "name": 192.24,
-          "benchmark": 114.81
+          "name": 159.26,
+          "benchmark": 111.22
         },
         {
           "date": "2026-05-11",
-          "name": 186.41,
-          "benchmark": 115.07
+          "name": 154.43,
+          "benchmark": 111.47
         },
         {
           "date": "2026-05-12",
-          "name": 185.79,
-          "benchmark": 114.9
+          "name": 153.92,
+          "benchmark": 111.3
         },
         {
           "date": "2026-05-13",
-          "name": 193.11,
-          "benchmark": 115.54
+          "name": 159.99,
+          "benchmark": 111.93
         },
         {
           "date": "2026-05-14",
-          "name": 192.37,
-          "benchmark": 116.45
+          "name": 159.37,
+          "benchmark": 112.81
         },
         {
           "date": "2026-05-15",
-          "name": 190.31,
-          "benchmark": 115.05
+          "name": 157.67,
+          "benchmark": 111.45
         },
         {
           "date": "2026-05-18",
-          "name": 190.39,
-          "benchmark": 114.97
+          "name": 157.73,
+          "benchmark": 111.37
         },
         {
           "date": "2026-05-19",
-          "name": 185.94,
-          "benchmark": 114.2
+          "name": 154.04,
+          "benchmark": 110.63
         },
         {
           "date": "2026-05-20",
-          "name": 186.54,
-          "benchmark": 115.38
+          "name": 154.54,
+          "benchmark": 111.77
         },
         {
           "date": "2026-05-21",
-          "name": 185.94,
-          "benchmark": 115.6
+          "name": 154.04,
+          "benchmark": 111.99
         },
         {
           "date": "2026-05-22",
-          "name": 183.69,
-          "benchmark": 116.06
+          "name": 152.18,
+          "benchmark": 112.43
         },
         {
           "date": "2026-05-26",
-          "name": 186.52,
-          "benchmark": 116.83
+          "name": 154.53,
+          "benchmark": 113.18
         },
         {
           "date": "2026-05-27",
-          "name": 186.5,
-          "benchmark": 116.81
+          "name": 154.51,
+          "benchmark": 113.16
         },
         {
           "date": "2026-05-28",
-          "name": 187.12,
-          "benchmark": 117.45
+          "name": 155.02,
+          "benchmark": 113.78
         },
         {
           "date": "2026-05-29",
-          "name": 182.43,
-          "benchmark": 117.75
+          "name": 151.13,
+          "benchmark": 114.06
         },
         {
           "date": "2026-06-01",
-          "name": 180.52,
-          "benchmark": 118.07
+          "name": 149.55,
+          "benchmark": 114.37
         },
         {
           "date": "2026-06-02",
-          "name": 173.56,
-          "benchmark": 118.23
+          "name": 143.79,
+          "benchmark": 114.53
         },
         {
           "date": "2026-06-03",
-          "name": 172.19,
-          "benchmark": 117.4
+          "name": 142.65,
+          "benchmark": 113.73
         },
         {
           "date": "2026-06-04",
-          "name": 178.52,
-          "benchmark": 117.84
+          "name": 147.89,
+          "benchmark": 114.16
         },
         {
           "date": "2026-06-05",
-          "name": 176.76,
-          "benchmark": 114.8
+          "name": 146.44,
+          "benchmark": 111.21
         },
         {
           "date": "2026-06-08",
-          "name": 174.26,
-          "benchmark": 115.06
+          "name": 144.37,
+          "benchmark": 111.46
         },
         {
           "date": "2026-06-09",
-          "name": 174.71,
-          "benchmark": 114.72
+          "name": 144.74,
+          "benchmark": 111.13
         },
         {
           "date": "2026-06-10",
-          "name": 170.93,
-          "benchmark": 112.91
+          "name": 141.61,
+          "benchmark": 109.38
         },
         {
           "date": "2026-06-11",
-          "name": 171.6,
-          "benchmark": 114.83
+          "name": 142.16,
+          "benchmark": 111.24
         },
         {
           "date": "2026-06-12",
-          "name": 172.52,
-          "benchmark": 115.45
+          "name": 142.92,
+          "benchmark": 111.84
         },
         {
           "date": "2026-06-15",
-          "name": 177.15,
-          "benchmark": 117.49
+          "name": 146.77,
+          "benchmark": 113.81
         },
         {
           "date": "2026-06-16",
-          "name": 179.03,
-          "benchmark": 116.79
+          "name": 148.32,
+          "benchmark": 113.14
         },
         {
           "date": "2026-06-17",
-          "name": 174.49,
-          "benchmark": 115.33
+          "name": 144.56,
+          "benchmark": 111.72
         },
         {
           "date": "2026-06-18",
-          "name": 176.52,
-          "benchmark": 116.23
+          "name": 146.24,
+          "benchmark": 112.59
         },
         {
           "date": "2026-06-22",
-          "name": 167.72,
-          "benchmark": 115.86
+          "name": 138.95,
+          "benchmark": 112.24
         },
         {
           "date": "2026-06-23",
-          "name": 166.02,
-          "benchmark": 114.18
+          "name": 137.54,
+          "benchmark": 110.61
         },
         {
           "date": "2026-06-24",
-          "name": 165.61,
-          "benchmark": 114.13
+          "name": 137.2,
+          "benchmark": 110.56
         },
         {
           "date": "2026-06-25",
-          "name": 164.86,
-          "benchmark": 114.29
+          "name": 136.58,
+          "benchmark": 110.72
         },
         {
           "date": "2026-06-26",
-          "name": 161.83,
-          "benchmark": 113.47
+          "name": 134.07,
+          "benchmark": 109.92
         },
         {
           "date": "2026-06-29",
-          "name": 169.62,
-          "benchmark": 115.34
+          "name": 140.53,
+          "benchmark": 111.73
         },
         {
           "date": "2026-06-30",
-          "name": 171.41,
-          "benchmark": 116.23
+          "name": 142.01,
+          "benchmark": 112.6
         },
         {
           "date": "2026-07-01",
-          "name": 173.25,
-          "benchmark": 116.08
+          "name": 143.53,
+          "benchmark": 112.45
         },
         {
           "date": "2026-07-02",
-          "name": 172.63,
-          "benchmark": 115.92
+          "name": 143.01,
+          "benchmark": 112.3
         },
         {
           "date": "2026-07-06",
-          "name": 175.77,
-          "benchmark": 116.94
+          "name": 145.62,
+          "benchmark": 113.28
         },
         {
           "date": "2026-07-07",
-          "name": 176.04,
-          "benchmark": 116.38
+          "name": 145.84,
+          "benchmark": 112.74
         },
         {
           "date": "2026-07-08",
-          "name": 173.59,
-          "benchmark": 116.02
+          "name": 143.81,
+          "benchmark": 112.39
         },
         {
           "date": "2026-07-09",
-          "name": 172.14,
-          "benchmark": 117.0
+          "name": 142.61,
+          "benchmark": 113.34
         },
         {
           "date": "2026-07-10",
-          "name": 171.32,
-          "benchmark": 117.51
+          "name": 141.93,
+          "benchmark": 113.83
         },
         {
           "date": "2026-07-13",
-          "name": 169.08,
-          "benchmark": 116.61
+          "name": 140.07,
+          "benchmark": 112.96
         },
         {
           "date": "2026-07-14",
-          "name": 172.44,
-          "benchmark": 117.02
+          "name": 142.86,
+          "benchmark": 113.36
         },
         {
           "date": "2026-07-15",
-          "name": 177.91,
-          "benchmark": 117.49
+          "name": 147.39,
+          "benchmark": 113.81
         },
         {
           "date": "2026-07-16",
-          "name": 170.01,
-          "benchmark": 116.85
+          "name": 140.85,
+          "benchmark": 113.19
         },
         {
           "date": "2026-07-17",
-          "name": 166.32,
-          "benchmark": 115.69
+          "name": 137.79,
+          "benchmark": 112.07
         },
         {
           "date": "2026-07-20",
-          "name": 168.83,
-          "benchmark": 115.51
+          "name": 139.87,
+          "benchmark": 111.89
         },
         {
           "date": "2026-07-21",
-          "name": 166.51,
-          "benchmark": 116.47
+          "name": 137.94,
+          "benchmark": 112.83
         },
         {
           "date": "2026-07-22",
-          "name": 164.08,
-          "benchmark": 116.33
+          "name": 135.93,
+          "benchmark": 112.7
         },
         {
           "date": "2026-07-23",
-          "name": 152.38,
-          "benchmark": 114.9
+          "name": 126.24,
+          "benchmark": 111.3
         },
         {
           "date": "2026-07-24",
-          "name": 153.36,
-          "benchmark": 115.01
+          "name": 127.05,
+          "benchmark": 111.42
         },
         {
           "date": "2026-07-27",
-          "name": 156.63,
-          "benchmark": 115.04
+          "name": 129.76,
+          "benchmark": 111.44
         },
         {
           "date": "2026-07-28",
-          "name": 160.06,
-          "benchmark": 115.31
+          "name": 132.6,
+          "benchmark": 111.71
         },
         {
           "date": "2026-07-29",
-          "name": 161.5,
-          "benchmark": 113.54
+          "name": 133.8,
+          "benchmark": 109.99
         },
         {
           "date": "2026-07-30",
-          "name": 160.04,
-          "benchmark": 115.44
+          "name": 132.58,
+          "benchmark": 111.83
         },
         {
           "date": "2026-07-31",
-          "name": 170.81,
-          "benchmark": 116.27
+          "name": 141.51,
+          "benchmark": 112.64
         },
         {
           "date": "2026-08-03",
-          "name": 179.15,
-          "benchmark": 117.93
+          "name": 148.42,
+          "benchmark": 114.24
         },
         {
           "date": "2026-08-04",
-          "name": 181.14,
-          "benchmark": 120.06
+          "name": 150.06,
+          "benchmark": 116.3
         },
         {
           "date": "2026-08-05",
-          "name": 173.84,
-          "benchmark": 119.82
+          "name": 144.02,
+          "benchmark": 116.07
         },
         {
           "date": "2026-08-06",
-          "name": 171.59,
-          "benchmark": 119.63
+          "name": 142.16,
+          "benchmark": 115.88
         },
         {
           "date": "2026-08-07",
-          "name": 169.94,
-          "benchmark": 120.36
+          "name": 140.79,
+          "benchmark": 116.59
         },
         {
           "date": "2026-08-10",
-          "name": 171.48,
-          "benchmark": 120.32
+          "name": 142.06,
+          "benchmark": 116.56
         },
         {
           "date": "2026-08-11",
-          "name": 164.9,
-          "benchmark": 119.94
+          "name": 136.61,
+          "benchmark": 116.19
         },
         {
           "date": "2026-08-12",
-          "name": 164.78,
-          "benchmark": 120.24
+          "name": 136.51,
+          "benchmark": 116.48
         },
         {
           "date": "2026-08-13",
-          "name": 166.13,
-          "benchmark": 121.08
+          "name": 137.63,
+          "benchmark": 117.29
         },
         {
           "date": "2026-08-14",
-          "name": 165.91,
-          "benchmark": 120.84
+          "name": 137.45,
+          "benchmark": 117.06
         },
         {
           "date": "2026-08-17",
-          "name": 165.0,
-          "benchmark": 120.27
+          "name": 136.69,
+          "benchmark": 116.5
         },
         {
           "date": "2026-08-18",
-          "name": 165.09,
-          "benchmark": 119.45
+          "name": 136.77,
+          "benchmark": 115.72
         },
         {
           "date": "2026-08-19",
-          "name": 165.34,
-          "benchmark": 119.7
+          "name": 136.98,
+          "benchmark": 115.96
         },
         {
           "date": "2026-08-20",
-          "name": 163.4,
-          "benchmark": 118.7
+          "name": 135.37,
+          "benchmark": 114.99
         },
         {
           "date": "2026-08-21",
-          "name": 165.39,
-          "benchmark": 119.18
+          "name": 137.02,
+          "benchmark": 115.46
         },
         {
           "date": "2026-08-24",
-          "name": 166.94,
-          "benchmark": 118.83
+          "name": 138.31,
+          "benchmark": 115.12
+        },
+        {
+          "date": "2026-08-25",
+          "name": 137.87,
+          "benchmark": 115.49
+        },
+        {
+          "date": "2026-08-26",
+          "name": 135.9,
+          "benchmark": 115.51
+        },
+        {
+          "date": "2026-08-27",
+          "name": 135.36,
+          "benchmark": 116.27
+        },
+        {
+          "date": "2026-08-28",
+          "name": 137.72,
+          "benchmark": 116.0
+        },
+        {
+          "date": "2026-08-31",
+          "name": 134.84,
+          "benchmark": 115.66
+        },
+        {
+          "date": "2026-09-01",
+          "name": 133.12,
+          "benchmark": 114.86
+        },
+        {
+          "date": "2026-09-02",
+          "name": 133.96,
+          "benchmark": 115.37
+        },
+        {
+          "date": "2026-09-03",
+          "name": 136.09,
+          "benchmark": 116.58
+        },
+        {
+          "date": "2026-09-04",
+          "name": 134.49,
+          "benchmark": 116.13
+        },
+        {
+          "date": "2026-09-08",
+          "name": 134.45,
+          "benchmark": 115.49
+        },
+        {
+          "date": "2026-09-09",
+          "name": 131.39,
+          "benchmark": 114.96
+        },
+        {
+          "date": "2026-09-10",
+          "name": 132.16,
+          "benchmark": 114.27
+        },
+        {
+          "date": "2026-09-11",
+          "name": 134.51,
+          "benchmark": 115.24
+        },
+        {
+          "date": "2026-09-14",
+          "name": 138.83,
+          "benchmark": 114.73
+        },
+        {
+          "date": "2026-09-15",
+          "name": 137.08,
+          "benchmark": 114.2
+        },
+        {
+          "date": "2026-09-16",
+          "name": 136.24,
+          "benchmark": 113.7
+        },
+        {
+          "date": "2026-09-17",
+          "name": 138.02,
+          "benchmark": 113.7
+        },
+        {
+          "date": "2026-09-18",
+          "name": 138.89,
+          "benchmark": 113.7
+        },
+        {
+          "date": "2026-09-21",
+          "name": 141.05,
+          "benchmark": 113.7
+        },
+        {
+          "date": "2026-09-22",
+          "name": 139.54,
+          "benchmark": 113.7
         }
       ],
       "name_symbol": "GOOGL",
       "benchmark_symbol": "SPY",
-      "as_of": "2026-08-24",
+      "as_of": "2026-09-22",
       "window_days": 364,
-      "name_return": 0.6694325866948054,
-      "benchmark_return": 0.18833564213115017,
-      "source_ref": "EOD GOOGL vs SPY rebased to 100, 2025-08-25..2026-08-24"
+      "name_return": 0.3953747119128985,
+      "benchmark_return": 0.13697019043741787,
+      "source_ref": "EOD GOOGL vs SPY rebased to 100, 2025-09-23..2026-09-22"
     },
     "operating_drivers": {
       "rows": [
@@ -9056,36 +9056,12 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "first-party model token processing via direct API",
+          "metric": "first-party model token processing rate",
           "period": "Q1 2026",
           "value": "more than 16 billion tokens per minute, up from 10 billion last quarter",
           "value_num": null,
           "unit": null,
           "verbatim": "Our first-party models now process more than 16 billion tokens per minute via direct API use by our customers, up from 10 billion last quarter.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "TPU 8t processing power vs Ironwood",
-          "period": null,
-          "value": "3x the processing power of Ironwood and 2x the performance",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "TPU 8t provides high-performance model training with 3x the processing power of Ironwood and 2x the performance.",
-          "following_context": "TPU 8i delivers cost-effective, low-latency inference with 80% better performance per dollar than the prior generation.",
-          "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "TPU 8i performance per dollar vs prior generation",
-          "period": null,
-          "value": "80% better performance per dollar than the prior generation",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "TPU 8i delivers cost-effective, low-latency inference with 80% better performance per dollar than the prior generation.",
           "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
@@ -9104,7 +9080,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Nano Banana 2 images",
+          "metric": "Nano Banana 2 images generated",
           "period": null,
           "value": "1 billion images in nearly half the time of Nano Banana 1",
           "value_num": null,
@@ -9128,7 +9104,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "open model downloads (cumulative)",
+          "metric": "open model downloads",
           "period": null,
           "value": "over 500 million times",
           "value_num": null,
@@ -9164,7 +9140,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "revenue from products built on GenAI models growth",
+          "metric": "revenue from GenAI-model products growth",
           "period": "Q1 2026",
           "value": "grew nearly 800% year-over-year",
           "value_num": null,
@@ -9175,10 +9151,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "new customer acquisition (Cloud)",
+          "kind": "competitive_position",
+          "metric": "new customer acquisition",
           "period": "Q1 2026",
-          "value": "new customer acquisition doubling compared to the same period last year",
+          "value": "doubling compared to the same period last year",
           "value_num": null,
           "unit": null,
           "verbatim": "We are winning new customers faster with new customer acquisition doubling compared to the same period last year.",
@@ -9188,7 +9164,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "$100 million to $1 billion Cloud deals",
+          "metric": "$100 million to $1 billion deals",
           "period": "Q1 2026",
           "value": "doubling the number of $100 million to $1 billion deals year-on-year",
           "value_num": null,
@@ -9200,7 +9176,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "customer commitment outperformance",
+          "metric": "customer consumption vs. initial commitments",
           "period": "Q1 2026",
           "value": "Customers outpaced their initial commitments by 45%",
           "value_num": null,
@@ -9224,7 +9200,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "partner ecosystem growth (seats sold / partners)",
+          "metric": "partner ecosystem growth (seats sold and partners)",
           "period": "Q1 2026",
           "value": "9x year-over-year growth",
           "value_num": null,
@@ -9236,24 +9212,12 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "customers processing over 1 trillion tokens",
+          "metric": "Google Cloud customers processing over 1 trillion tokens",
           "period": "past 12 months",
-          "value": "330 Google Cloud customers each processed over 1 trillion tokens",
+          "value": "330 Google Cloud customers each processed over 1 trillion tokens; 35 reached the 10 trillion token milestone",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the past 12 months, 330 Google Cloud customers each processed over 1 trillion tokens.",
-          "following_context": "35 reached the 10 trillion token milestone. To give agents business context from enterprise data to help them reason intelligently, we introduced a new Agentic Data Cloud. It includes a Cross-Cloud Lakehouse, Knowledge Catalog and Deep Research agents, which combine research and analytical skills. As an example, using our data cloud, American Express is enabling agentic commerce at scale by moving an enterprise data platform along with hundreds of production applications to BigQuery. Vodafone is proactively resolving outages, automating network planning and precisely targeting capacity. Enterprise data has become critical for agents to reason. Our strength with BigQuery and Gemini Enterprise has led Gemini-powered workflows in BigQuery to grow over 30x year-over-year.",
-          "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "customers reaching 10 trillion token milestone",
-          "period": null,
-          "value": "35 reached the 10 trillion token milestone",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "35 reached the 10 trillion token milestone.",
+          "verbatim": "Over the past 12 months, 330 Google Cloud customers each processed over 1 trillion tokens. 35 reached the 10 trillion token milestone.",
           "following_context": "To give agents business context from enterprise data to help them reason intelligently, we introduced a new Agentic Data Cloud. It includes a Cross-Cloud Lakehouse, Knowledge Catalog and Deep Research agents, which combine research and analytical skills. As an example, using our data cloud, American Express is enabling agentic commerce at scale by moving an enterprise data platform along with hundreds of production applications to BigQuery. Vodafone is proactively resolving outages, automating network planning and precisely targeting capacity. Enterprise data has become critical for agents to reason. Our strength with BigQuery and Gemini Enterprise has led Gemini-powered workflows in BigQuery to grow over 30x year-over-year.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
@@ -9272,8 +9236,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "YouTube living room daily watch time (U.S.)",
-          "period": null,
+          "metric": "YouTube living room viewing (U.S.)",
+          "period": "Q1 2026",
           "value": "over 200 million hours of YouTube content daily",
           "value_num": null,
           "unit": null,
@@ -9322,7 +9286,7 @@
           "kind": "leading_indicator",
           "metric": "Search & other revenue growth",
           "period": "Q1 2026",
-          "value": "delivered 19% growth",
+          "value": "19% growth",
           "value_num": null,
           "unit": null,
           "verbatim": "Search & other delivered 19% growth, primarily driven by retail and finance.",
@@ -9344,7 +9308,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Network advertising revenue growth",
+          "metric": "network advertising revenue growth",
           "period": "Q1 2026",
           "value": "down 4% year-on-year",
           "value_num": null,
@@ -9428,7 +9392,7 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Fortune 100 using Gemini Enterprise",
+          "metric": "Gemini Enterprise adoption among Fortune 100",
           "period": null,
           "value": "nearly 90% of Fortune 100 using it",
           "value_num": null,
@@ -9441,7 +9405,7 @@
         {
           "kind": "leading_indicator",
           "metric": "monthly developers building with models",
-          "period": null,
+          "period": "Q2 2026",
           "value": "More than 9 million developers",
           "value_num": null,
           "unit": null,
@@ -9452,7 +9416,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "model API token processing",
+          "metric": "model API token processing rate",
           "period": "Q2 2026",
           "value": "approximately 22 billion tokens per minute. That's up from 16 billion just a quarter ago",
           "value_num": null,
@@ -9464,9 +9428,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Omni daily active users creating videos",
+          "metric": "daily active users creating videos on Gemini app",
           "period": null,
-          "value": "a 40% increase in daily active users",
+          "value": "40% increase in daily active users",
           "value_num": null,
           "unit": null,
           "verbatim": "Since launching at I/O in May, there's been a 40% increase in daily active users, creating videos on the Gemini app.",
@@ -9476,7 +9440,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Gemma open model downloads (cumulative)",
+          "metric": "Gemma open model downloads",
           "period": null,
           "value": "over 900 million times",
           "value_num": null,
@@ -9501,7 +9465,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Antigravity weekly active users",
-          "period": null,
+          "period": "Q2 2026",
           "value": "more than 2.4 million weekly active users",
           "value_num": null,
           "unit": null,
@@ -9512,20 +9476,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Chrome team delivery acceleration",
-          "period": null,
-          "value": "accelerate delivery by 8 times compressing a 2-year time line into 3 months",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "As just one example, a team in Chrome is now on track to accelerate delivery by 8 times compressing a 2-year time line into 3 months through model-driven refactoring.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "AI Mode monthly active users",
-          "period": "since expanding AI Mode globally last October",
+          "period": null,
           "value": "surpassed 1 billion monthly active users",
           "value_num": null,
           "unit": null,
@@ -9572,7 +9524,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Ask YouTube users engaged on watch page",
+          "metric": "users engaged with Ask YouTube",
           "period": "June 2026",
           "value": "More than 140 million users",
           "value_num": null,
@@ -9583,26 +9535,26 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "Cloud customer commitment outperformance",
-          "period": "Q2 2026",
-          "value": "exceeding their commitments by more than 50%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We are deepening our relationships with existing customers who are expanding their usage and exceeding their commitments by more than 50%, also an acceleration over last quarter.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Cloud customer acquisition velocity",
+          "kind": "competitive_position",
+          "metric": "new customer acquisition velocity",
           "period": "Q2 2026",
           "value": "more than doubling our acquisition velocity year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "We are winning new customers, more than doubling our acquisition velocity year-over-year.",
           "following_context": "We are deepening our relationships with existing customers who are expanding their usage and exceeding their commitments by more than 50%, also an acceleration over last quarter.",
+          "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "customer usage vs. commitments",
+          "period": "Q2 2026",
+          "value": "exceeding their commitments by more than 50%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We are deepening our relationships with existing customers who are expanding their usage and exceeding their commitments by more than 50%, also an acceleration over last quarter.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -9620,7 +9572,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "agent development kit total downloads",
+          "metric": "agent development kit downloads",
           "period": "Q2 2026",
           "value": "nearly 70 million total downloads",
           "value_num": null,
@@ -9646,7 +9598,7 @@
           "kind": "leading_indicator",
           "metric": "enterprises consuming over 100 billion tokens",
           "period": "last 12 months",
-          "value": "more than 2,000 enterprises consumed over 100 billion tokens",
+          "value": "more than 2,000 enterprises",
           "value_num": null,
           "unit": null,
           "verbatim": "Over the last 12 months, more than 2,000 enterprises consumed over 100 billion tokens.",
@@ -9658,7 +9610,7 @@
           "kind": "competitive_position",
           "metric": "Fortune 100 Google Cloud security users",
           "period": null,
-          "value": "90% of Fortune 100 are Google Cloud security users",
+          "value": "90% of Fortune 100",
           "value_num": null,
           "unit": null,
           "verbatim": "Today, 90% of Fortune 100 are Google Cloud security users.",
@@ -9667,7 +9619,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
+          "kind": "competitive_position",
           "metric": "Wiz customers using AI-powered security features",
           "period": null,
           "value": "Nearly 90% of Wiz customers",
@@ -9680,7 +9632,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "AI workloads scanned and protected growth",
+          "metric": "AI workloads scanned and protected",
           "period": "Q2 2026",
           "value": "more than 45% quarter-over-quarter increase",
           "value_num": null,
@@ -9692,25 +9644,13 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Axion CPU performance per dollar vs peers",
+          "metric": "Axion CPU performance per dollar",
           "period": null,
           "value": "30% better performance per dollar compared to peer offerings",
           "value_num": null,
           "unit": null,
           "verbatim": "And third, our new agent-optimized Axion CPU, provides 30% better performance per dollar compared to peer offerings.",
           "following_context": "We are seeing strong growth in demand for our AI infrastructure offerings from leading labs such as Ineffable Intelligence, next-generation AI builders, including Kakao, financial services like Deutsche Börse Group, pharmaceutical companies such as Pfizer and Roche and robotics and spatial intelligence companies such as World Labs.",
-          "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "Virgo Network AI accelerator connectivity",
-          "period": null,
-          "value": "connect 1 million AI accelerators across multiple data center sites into a unified supercomputer",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "First, our Virgo Network, which is designed to meet the needs of modern large-scale AI workloads. It allows customers to connect 1 million AI accelerators across multiple data center sites into a unified supercomputer.",
-          "following_context": "Second, our software stack has native support for JAX, PyTorch, vLLM and SGLang, enabling workload portability across GPUs and TPUs. And third, our new agent-optimized Axion CPU, provides 30% better performance per dollar compared to peer offerings. We are seeing strong growth in demand for our AI infrastructure offerings from leading labs such as Ineffable Intelligence, next-generation AI builders, including Kakao, financial services like Deutsche Börse Group, pharmaceutical companies such as Pfizer and Roche and robotics and spatial intelligence companies such as World Labs.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -9730,7 +9670,7 @@
           "kind": "leading_indicator",
           "metric": "Isomorphic Labs capital raised",
           "period": null,
-          "value": "raised over $2 billion",
+          "value": "over $2 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "In health and drug discovery, Isomorphic Labs raised over $2 billion to power its AI drug design engine, scale globally and advance its drug candidate pipeline.",
@@ -9754,7 +9694,7 @@
           "kind": "leading_indicator",
           "metric": "Search and Other revenue growth",
           "period": "Q2 2026",
-          "value": "delivered 17% growth",
+          "value": "17% growth",
           "value_num": null,
           "unit": null,
           "verbatim": "Search and Other delivered 17% growth with retail and finance driving the largest contributions.",
@@ -9776,7 +9716,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Network advertising revenue growth",
+          "metric": "network advertising revenue growth",
           "period": "Q2 2026",
           "value": "down 1% year-on-year",
           "value_num": null,
@@ -9806,72 +9746,77 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — durable 24% growth and accelerating Cloud runway pull against a 95th-percentile trailing multiple, collapsing FCF and three-period falling RoCE during the capex build.",
+    "evidence_balance": "mixed — genuine, accelerating cloud/ad runway offset by a near-ceiling trailing multiple, ROIC erosion, and a P/E flattered by one-off gains.",
     "bull_points": [
       {
-        "claim": "The reinvestment engine is compounding — Q2 2026 Alphabet revenue grew 24% YoY with absolute EBITDA rising from $150,175M (FY25) to $173,164M (LTM Jun-30-2026) even as capital scaled.",
+        "claim": "Cloud is accelerating as the durable second engine: revenue grew 82% in Q2 2026 with the AI-solution mix now the primary driver, evidencing a longer, larger reinvestment runway than a mature ad business alone implies.",
+        "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Cloud backlog grew to $514 billion by Q2 2026 (from over $460 billion the prior quarter), a booked-but-unrecognised pipeline that lengthens the visible runway well beyond the trailing multiple.",
+        "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The core ad engine is still compounding at scale: Search & Other grew 17% and YouTube ads 13% in Q2 2026, with management attributing accelerating usage to AI Overviews/AI Mode rather than cannibalisation.",
+        "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Absolute EBITDA has compounded from $35,813M (FY17) to $173,164M (LTM Jun-30-2026) with the margin rising to 39%, so the business is earning MORE, not optically shrinking — the runway rests on genuine operating leverage.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Cloud is accelerating into a durable long-duration runway — revenue grew 82% in Q2 2026 with backlog reaching $514 billion, a large forward-committed pipeline the price must service.",
-        "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+        "claim": "Consensus revenue is modelled to grow from $498.5B (FY26E) toward $844B (FY29E) and past $1.1T (FY31E), an unusually long multi-year growth path that the market must price against.",
+        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "The core ad franchise is not eroding under AI — Search and Other delivered 17% growth in Q2 2026 with AI Mode surpassing 1 billion monthly active users, evidence the AI transition is expansionary rather than cannibalizing.",
-        "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+        "claim": "The balance sheet funds the runway internally: net cash at -0.7x net-debt/EBITDA, FCF-positive and self-funding, with S&P AA+ issuer credit — reinvestment need not dilute or lever up.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "Returns on the reinvested capital remain high — RoE 48.7% and RoCE 15.8% LTM, and Google Services carries a 40.7% segment operating margin ($139,404M on $342,721M FY25), the mechanism behind the runway thesis.",
-        "source_ref": "EDGAR 10-K 0001652044-26-000018 XBRL instance goog-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
-        "cited": true
-      },
-      {
-        "claim": "The balance sheet funds the reinvestment internally — net cash at net-debt/EBITDA -0.7x, interest coverage 76.9x and an S&P AA+ issuer rating, so the capex ramp need not be equity-diluted.",
-        "source_ref": "CIQ Net Debt $-121,683M [Q2 Jun-30-2026] ÷ CIQ EBITDA $173,164M [LTM 12 months Jun-30-2026]",
-        "cited": true
-      },
-      {
-        "claim": "Consensus is still revising the runway upward — FY26 revenue consensus rose from $440,500M (12m ago) to $498,548M (latest, +13%) and EBITDA from $203,980M to $233,038M (+14%), with recent FY26 revenue breadth 6 up / 1 down.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
-        "cited": true
-      },
-      {
-        "claim": "On a forward basis the peer 'premium' narrows sharply — NTM TEV/EBITDA is 16.13x for the name vs a heterogeneous peer median 12.06x, and the name's NTM P/E 26.52x sits near the peer median 22.12x; the human must judge whether the forward gap is earned by superior fundamentals or residual, since the peer set is flagged low-comparability.",
+        "claim": "On a forward basis the name is NOT expensive versus this heterogeneous peer set — NTM TEV/EBITDA 16.13 vs peer median 12.06 and NTM P/E 26.52 vs peer median 22.12 — but with EBITDA margin 39% vs peer-median 26%, the human must judge whether that premium is EARNED by superior economics rather than assumed.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Fundamentals that would justify a premium are present — EBITDA margin 39% vs peer-median 26% and rev growth 20% vs peer-median 16%, with lower leverage (Debt/EBITDA 0.7 vs 1.1); the human decides whether these earn the multiple gap given the heterogeneous roster.",
+        "claim": "Fundamentals sit above the peer median on the levers that justify a premium — EBITDA margin 39% vs 26%, revenue growth 20% vs 16%, Debt/EBITDA 0.7 vs 1.1 — posing whether any headline discount is RESIDUAL rather than a value trap, for the human to decide.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Segment operating economics confirm the two-engine quality: Google Services $139,404M operating income (40.7% margin) and Google Cloud now profitable at $13,910M (23.7% margin) in FY2025.",
+        "source_ref": "EDGAR 10-K 0001652044-26-000018 XBRL instance goog-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The price already embeds a long, large runway — EV/EBITDA 23.6x sits at the 95th percentile of its own 9.2-year history (range 10.9–25.8x, median 17.5x), so on a trailing basis the quality is priced near its own ceiling; note this is trailing-only with no forward basis to distinguish depressed from richly-valued.",
+        "claim": "The trailing EV/EBITDA of 23.6x sits at the 95th percentile of its own 9-year range (10.9–25.8x, median 17.5x) — this is the REAL signal that the quality is already richly paid for on the trailing basis, though it is trailing-only with no forward reconciler beside it, so overshoot-vs-terminal cannot be settled from this figure alone.",
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
         "cited": true
       },
       {
-        "claim": "The headline trailing P/E of 17.8x is an optical MISREAD, not a cheap signal — three of the trailing four quarters carry a material below-operating-line block (+$97,983M in Q2 2026 alone, 82% of revenue) netting +$151,120M, so trailing EPS is inflated by non-operating gains and the low P/E is not an operating anchor.",
+        "claim": "The optically cheap headline P/E of 17.8x is a consensus MISREAD, not a signal of value: three of the trailing four quarters carry a below-the-line block netting +$151,120M (Q2 alone +$97,983M, 82% of revenue), so the trailing EPS anchoring that multiple is inflated by non-operating gains, not operating earnings.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       },
       {
-        "claim": "Reported free cash flow is collapsing as capex scales — LTM levered FCF $22,665M (down from $38,088M FY25 and $53,158M FY24), and FY26 capex consensus of ~$201,846M against CFO ~$215,570M leaves the self-funding runway thin; several brokers now model negative FY26 FCF.",
+        "claim": "Capex has escalated sharply — from $52,535M (FY24) to $91,447M (FY25) to $132,402M (LTM) with FY26E consensus at ~$201,846M — and company-defined levered FCF has fallen to $22,665M, so the reinvestment the bull case celebrates is compressing free cash today.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "The stated 39% EBITDA margin is a genuine strength but read alongside the definitional break: consensus estimate-basis EBITDA implies 5.57x more D&A add-back than the actuals, so a forward margin jump to 47%–48% is not the same basis and cannot be cleanly compared to the trailing 39%.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "The cash-drain from that capex is now visible in forward estimates: multiple brokers cut FY26 free cash flow deeply negative (consensus FCF revised toward -$5,456M and a broker to -$107,315M), signalling the spend outpaces operating cash on a forward view.",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-17 · export date unverified]",
         "cited": true
       },
       {
-        "claim": "Returns on capital are already fading at the margin as the capex cycle bites — RoCE slid from 21.0% (FY24) to 19.3% (FY25) to 15.8% (LTM), the load-bearing metric for whether the reinvestment is still high-returning.",
+        "claim": "ROIC has slipped from 21.0% (FY24) to 15.8% (LTM) as the invested-capital base swells faster than returns, a genuine counter to the compounding thesis that the incremental AI/cloud capital is earning the historic rate.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       }
@@ -9880,79 +9825,63 @@
       {
         "name": "Microsoft Corporation",
         "outcome": "kept compounding",
-        "distinguishing_fact": "In-roster mega-cap cloud peer that carried a persistent premium multiple through a heavy AI-datacenter capex build while both revenue and absolute profit kept rising.",
+        "distinguishing_fact": "A mega-cap platform that layered a fast-growing enterprise cloud engine onto a dominant legacy franchise and sustained a premium multiple as cloud scaled — the pattern the runway case leans on.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Amazon.com",
         "outcome": "kept compounding",
-        "distinguishing_fact": "In-roster peer whose reported FCF was repeatedly compressed by successive capex super-cycles even as revenue and cloud scale expanded — the depressed-FCF-during-buildout pattern the bear case turns on.",
+        "distinguishing_fact": "A dominant franchise that ran heavy, front-loaded capex and depressed near-term free cash flow to build cloud/logistics capacity, testing investor patience on the reinvestment-vs-FCF trade-off.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Meta Platforms",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "In-roster ad-platform peer that re-rated sharply after a period of heavy AI/infrastructure spend once investors judged the reinvestment returns credible — an analogue for the capex-vs-return crux.",
+        "outcome": "re-rated to fair value",
+        "distinguishing_fact": "An ad-driven mega-cap whose multiple de-rated hard when a capex/AI-investment cycle outran visible returns, then re-rated once monetisation caught up — the capex-cycle risk the bear case flags.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Netflix",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "In-roster peer that traded at a persistently high own-history multiple justified by a long content-reinvestment runway, testing whether a rich trailing multiple is a ceiling or a reflection of durable growth.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Cisco Systems",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Dominant infrastructure franchise whose multiple compressed durably once a secular-growth narrative faded despite continued profitability — the cautionary case where a ceiling multiple did not hold.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "A high-multiple growth platform that saw its trailing valuation compress sharply when growth-and-spend expectations were reset, illustrating how a near-ceiling multiple can unwind.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Does the AI/Cloud capex super-cycle convert into sustained high-return growth that beats the near-ceiling trailing multiple, or does the multiple derate as free cash flow and returns-on-capital compress under the spend before the runway pays off?",
+      "question": "Will the escalating AI/cloud capex convert into durable incremental returns that justify a near-record trailing multiple, or is the spend outrunning the returns while the headline P/E is flattered by one-off non-operating gains?",
       "evidence_for": [
         {
-          "claim": "Cloud revenue grew 82% in Q2 2026 with backlog at $514 billion, a large forward-committed demand signal for the capacity being built.",
+          "claim": "Cloud revenue grew 82% and backlog reached $514 billion in Q2 2026, with customers exceeding commitments by more than 50% — demand signals that the capacity being built is being absorbed.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Existing Cloud customers are exceeding their commitments by more than 50% with acquisition velocity more than doubling YoY — the demand mechanism that would monetize the capex.",
-          "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "Consensus continues to revise the forward path up (FY26 EBITDA +14% over 12 months to $233,038M), consistent with the market pricing a payoff.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "claim": "Absolute EBITDA rose to $173,164M (LTM) at a 39% margin and Cloud reached segment profitability ($13,910M, 23.7% margin FY2025), evidence the reinvestment is already flowing through to reported operating economics.",
+          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "FY26 capex consensus of ~$201,846M against CFO ~$215,570M has already driven LTM levered FCF down to $22,665M from $53,158M two years prior — the spend is outrunning the cash return so far.",
-          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
-          "cited": true
-        },
-        {
-          "claim": "RoCE has fallen three periods running — 21.0% (FY24) → 19.3% (FY25) → 15.8% (LTM) — the direct signal that returns on the reinvested capital are compressing during the build.",
+          "claim": "Capex climbed to $132,402M (LTM) toward ~$201,846M (FY26E) while levered FCF fell to $22,665M, and ROIC dropped from 21.0% (FY24) to 15.8% (LTM) — the invested base is growing faster than returns so far.",
           "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
           "cited": true
         },
         {
-          "claim": "The trailing EV/EBITDA already sits at the 95th percentile of its own 9.2-year history, leaving little room for multiple support if the payoff slips.",
-          "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
+          "claim": "The trailing P/E that makes the name look cheap is distorted by +$151,120M of below-the-line gains across the trailing four quarters, so headline earnings overstate the operating base against which the capex must earn.",
+          "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Trailing P/E percentile cannot be built — a stock split inside the window means split-adjusted prices divide against as-filed older EPS on two bases; the current P/E stands but no historical range is available to judge it.",
-      "No segment-level EBITDA is disclosed — the filing segments revenue and operating income but not EBITDA, so Cloud's true standalone cash-margin (and the return on Cloud capex specifically) is not visible; this opacity is a bearish gap for a capex thesis that lives or dies on Cloud economics.",
-      "No adjusted/forward EBITDA or adjusted EPS in the revised guidance — forward EV/EBITDA on an adjusted basis and adjusted net-debt/EBITDA are UNKNOWN, so leverage-vs-forward-earnings cannot be struck.",
-      "Company-defined FCF basis is ambiguous — CIQ 'levered FCF' $22,665M vs CFO−capex $53,273M on the same period differ 0.43x; which basis a self-funding read uses materially changes the runway assessment.",
-      "Covenant terms are UNKNOWN — no agreement exhibit located across the filing history, so debt covenant headroom under the escalating capex/debt-issuance program cannot be checked (the peer set and roster is HETEROGENEOUS — caps span $6.6B–$3.7T — so every peer multiple is a confidence-gated input, not a clean benchmark).",
-      "FY26 revenue guide on file is stale (FY2007, 7,462d old) and management gives no numeric revenue outlook — the guidance-delivery track record cannot be tested against a current bar; only the fresh FY2026 capex guide ($195–205B) is current.",
-      "Insider open-market activity is one-sided — 0 buys vs 92 sells ($43.08M) over 182 days — read for what it signals about management's own view of the priced-in expectations."
+      "Cannot distinguish overshoot from a permanently sustainable level on the headline EV/EBITDA: it is trailing-only with no forward basis, and the trailing-vs-forward EBITDA rows are on divergent D&A bases (estimate D&A ~5.57x actual), so a trailing multiple must not be compared like-for-like against a forward one.",
+      "The 5-year P/E percentile cannot be built because a stock split inside the window pits split-adjusted prices against as-filed EPS — own-history P/E context is unavailable.",
+      "No segment EBITDA disclosure: revenue is segmented but EBITDA is not, so Cloud vs Services margin trajectory (the core of the runway thesis) cannot be tracked at the EBITDA level — an opacity that limits verifying where returns accrue.",
+      "Company-defined FCF basis is ambiguous: CIQ 'Levered FCF' $22,665M vs CFO−capex $53,273M differ 0.43x on the same period; which basis a self-funding read uses is unresolved.",
+      "Adjusted/forward EBITDA, adjusted EPS and adjusted net-debt/EBITDA are all absent from the 99.1 revised guidance — no company-adjusted anchor to test the leverage/valuation on management's own basis.",
+      "Peer set is HETEROGENEOUS (market caps span $6.6B–$3,724.7B, 568x; name $4,318.6B): every peer multiple is a confidence-gated input, not a clean benchmark, and the earned-vs-residual read on any discount/premium must be gated accordingly.",
+      "Covenant terms are UNKNOWN — no agreement exhibit located; the debt schedule is 229 days old — so covenant headroom cannot be verified from the record."
     ]
   },
   "caveats": [
@@ -9960,7 +9889,7 @@
     "primary-source: 8-K 0001193125-26-342390 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-26-234488 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-26-216986 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+3.9s fetch)"
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -9968,12 +9897,12 @@
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-22T09:00:49.454763Z",
+  "assembled_at": "2026-09-23T14:45:26.226424Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/1228aa13-12cb-416a-a754-eb42dbf3b103/scratchpad/wt-0922/data/vinci.db",
+    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-16"
+    "frontier": "2026-09-22"
   },
   "sector": "Technology",
   "industry": {
@@ -9994,7 +9923,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-22T09:16:51.001156Z",
+    "computed_at": "2026-09-23T15:05:56.108857Z",
     "reason": null,
     "data_quality": "vendor_bridge",
     "data_quality_detail": [

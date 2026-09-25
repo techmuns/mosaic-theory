@@ -272,9 +272,9 @@
   "spotSource": "EOD BRBR close 2026-08-07. NOTE: only the -sl worktree's store carries a bar that far; this worktree's frontier is 2026-08-04. All three stores agree at 2026-07-29 ($13.29), so the difference is refresh depth, not value.",
   "underwriteDate": "2026-08-07",
   "nextEvidence": {
-   "date": "2026-09",
-   "what": "and departed the Company effective as of September 1, 2026.",
-   "source": "catalyst calendar (stated)"
+   "date": "2026-11-03",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
   },
   "ceiling2to1": 4.5,
   "limitDeferred": true
