@@ -64,6 +64,35 @@ Reproducibility observations are n=2 per name: AMZN (2026-09-23) `strongly-bulli
 `mixed`/none on identical inputs; NFLX (2026-09-23) `mixed` twice; PARR (2026-09-23/24) `mixed`
 twice.
 
+**THIS IS THE THIRD LOGGED INSTANCE, NOT A DISCOVERY — corrected 2026-09-25 after the operator
+asked whether it was already on file.** It is, in two subsystems, and the repo had already settled
+both the vocabulary and the method:
+
+* **`docs/records/2026-09-01-opus5-synthesis-regression.md` (#574)** ran the same-inputs test on
+  THIS path — the same verbatim prompt replayed: TECX 9 runs (5 FAIL / 4 PASS), SMPL 3 (2/1), V 4
+  (4 PASS). Its conclusion is the general one: *"It is stochastic, so a single green run proves
+  nothing — any future claim about this knob must measure a RATE"*, and it set the bar at
+  **≥5 runs on ≥3 names**. What it measured was COMPLETION (does the tool call come back whole),
+  not which LABEL it lands on.
+* **`STATE.md` (theme-exposure refactor, 2026-09-02)** logged the label form of it one subsystem
+  over: a 4-name live re-run where CORZ graded differently on identical inputs — *"a within-REAL
+  sub-grade shift, documented LLM stochasticity, NOT a refactor change; the deterministic
+  prompt-equivalence test proves the LLM INPUT is preserved, so run-to-run variance is the LLM's"*.
+  The mechanism is `tests/test_themes_exposure.py`'s prompt-equivalence regression: **pin the
+  input, then attribute the drift to the model** — the repo's answer to this class is attribution,
+  not elimination.
+* **`docs/RUNBOOKS.md:612`** already rules on the response: *"Do NOT re-roll a synthesis to get
+  cleaner flags — that is selecting prose on outcome."* Keeping draw 2 over draw 3 for AMZN
+  followed that rule; it was reasoned to independently here rather than cited, which is its own
+  small failure of reading.
+
+**So what is actually new is narrower than the first draft of this record claimed:** that the
+variance lands on the machine PROPOSAL — the decision surface — rather than on a caveat or a
+sub-grade, and that the obvious repair is not merely unset but UNAVAILABLE (the 400 above).
+**And the evidence here is n=2 per name, BELOW the bar #574 set for exactly this kind of claim.**
+By that standard "AMZN's label is unstable" stands (one disagreement is sufficient) and nothing
+about the other names does.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
 1. **Artifacts are NOT reproducible from their inputs, and no parameter can change that.** Where a
