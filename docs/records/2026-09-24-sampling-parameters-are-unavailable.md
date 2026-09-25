@@ -135,10 +135,35 @@ shapes the evidence the model assembles from identical facts**, and therefore th
 book makes its page read measurably more bearish than the same facts in the overshoot book. That is
 the same operator decision taken for TECX on 2026-09-23, now with a measured consequence.
 
-**What these do NOT establish:** that the frame changes STABILITY. The single `mixed` in 18
-frame-swap draws fell under quality, which is one draw of difference — below the bar, by this
-record's own argument. Separating "the name's evidence is balanced" from "the quality frame is
-harder" needs several names INSIDE one book, which has not been run.
+**(4) WITHIN ONE BOOK — the test that separates name from method.** Three quality-book names, the
+SAME frame, 5 draws each:
+
+| name | book | labels | proposals | agreement |
+|---|---|---|---|---|
+| AMZN | quality | strongly-bullish 4, mixed 1 | BUY 4/5 | 4/5 |
+| GOOGL | quality | strongly-bullish 3, mixed 2 | BUY 3/5 | 3/5 |
+| LLY | quality | strongly-bullish 5 | BUY 5/5 | **5/5** |
+
+**Holding the method fixed, stability still ranges 5/5 to 3/5.** So the quality frame is not
+"harder" in itself: it produced both the most stable name measured and one of the least. Across all
+five names measured, the two that never wavered are LLY (quality) and PARR (ultra_short_term) — and
+the three that did span two books. **Stability does not sort by book in either direction.**
+
+**THE SETTLED READING — both effects are real and neither subsumes the other.** The METHOD shapes
+the read (3): identical facts under a different frame assemble measurably different bear evidence.
+The residual INSTABILITY tracks the NAME (4): with the frame held constant it spans 5/5 to 3/5.
+The first draft of this record asserted the second WITHOUT holding the frame constant, which the
+operator challenged; it was unsupported as stated and is re-established here only on (4).
+
+**n=5 separates 5/5 from 3/5; it cannot rank 4/5 against 3/5** — those are one draw apart.
+
+**WHERE THIS TOUCHES A POSITION OF RECORD.** GOOGL is the least stable name measured (3/5) and the
+only one of the five carrying a LEDGERED verdict — BUY, entry $345.90, 2026-08-14. The human's
+verdict of record is unaffected by a machine proposal; but the ledger seals the PROPOSAL beside it
+so the spread can decompose into machine baseline vs human delta, and on a name like this the
+sealed proposal is close to a coin. **The machine-baseline curve therefore carries measurement noise
+that the human-final curve does not** — stated here so nobody reads a machine-vs-human gap on such
+names as signal.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
@@ -147,10 +172,17 @@ harder" needs several names INSIDE one book, which has not been run.
    moves with the draw. AMZN is a demonstrated case; two draws prove instability where they
    disagree and prove nothing where they agree, so the other names are *consistent with* stable, not
    shown to be.
-2. **The remedy is a DESIGN choice and belongs to the operator** — draw N times and refuse a
+2. **NOTHING ON THE PAGE STATES ITS OWN REPRODUCIBILITY — accepted here, not fixed.** A reader
+   meets `mixed`/no-proposal on AMZN and BUY on LLY with identical confidence, though one is a
+   1-in-5 outcome and the other held 5 for 5. **Falsifier:** any human verdict that overrides a
+   proposal on a name whose label later measures ≤3/5, where the operator says they would have read
+   the page differently had its reproducibility been shown. **Cheap fix genuinely unavailable?** No —
+   this one IS available (record the per-name rate and print it), so this is a deliberate deferral
+   pending the operator's design ruling, NOT an unavoidable cost.
+3. **The remedy is a DESIGN choice and belongs to the operator** — draw N times and refuse a
    proposal the draws disagree on (N× the LLM cost, and the page then states its own
    reproducibility), or accept that a two-sided name's proposal carries less information than it
    appears to and must not be read as a signal. **Not decided here.**
-3. **§5.0 OPEN NOW is at its 60-line cap**, so item (2) could not take a row without evicting
+4. **§5.0 OPEN NOW is at its 60-line cap**, so item (2) could not take a row without evicting
    another. It is recorded here and in §2 instead, and the capacity conflict is raised to the
    operator rather than resolved by quietly compressing someone else's entry.
