@@ -126,11 +126,20 @@ def _ref_of(row: dict[str, Any], *, fallback: Callable[[], date]) -> date:
 def _fleet_reference_date(cfg: Config) -> date:
     """The as-of a name with no queue row is assembled at — the FLEET's, never the clock.
 
-    A DATE STAMPED ON AN ARTIFACT MUST NAME A MOMENT THE DATA REACHES. Wall-clock fails that three
-    ways at once: it is irreproducible (identical inputs, a different artifact tomorrow — the
-    property temperature-0 protects, broken without a test that would notice), it silently moves
-    every relative-return window the page quotes, and it can land BEYOND the store frontier and
-    still pass a five-day staleness check because the check compares against the same clock.
+    A DATE STAMPED ON AN ARTIFACT MUST NAME A MOMENT THE DATA REACHES. Wall-clock fails that two
+    ways: it silently moves every relative-return window the page quotes, and it can land BEYOND
+    the store frontier and still pass a five-day staleness check because the check compares against
+    the same clock.
+
+    IT USED TO CLAIM A THIRD, AND THE CLAIM WAS FALSE (corrected 2026-09-24). This read "it is
+    irreproducible (identical inputs, a different artifact tomorrow — the property temperature-0
+    protects, broken without a test that would notice)". Nothing protected it: no temperature was
+    ever passed to the model, and the API has since REMOVED sampling parameters on this model
+    family, so the property cannot be bought at the request layer at all (see
+    `vinci/graph/llm.py` `_REJECTED_SAMPLING_PARAMS`). Identical inputs DO produce different
+    artifacts — AMZN, 2026-09-23, returned `strongly-bullish` and `mixed` from the same inputs,
+    moving the machine's proposal between BUY and none. The as-of rule stands on the two reasons
+    above, which are real; the reproducibility it invoked is an open problem, not a property.
 
     Order: the newest screen run's own reference_date — so a maintained name sits on the SAME as-of
     as every candidate name and the two routes agree by construction rather than by luck — then the

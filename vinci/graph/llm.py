@@ -30,6 +30,29 @@ class LlmClient(ABC):
     def model(self) -> str: ...
 
 
+#: SAMPLING PARAMETERS ARE NOT AVAILABLE ON THIS MODEL FAMILY — DO NOT ADD THEM BACK.
+#: `messages.create` here passes NO `temperature`, `top_p` or `top_k`, and that is deliberate:
+#: the API REMOVED them on Opus 4.7/4.8 (and the Fable/Sonnet-5 tier). Sending one is not ignored,
+#: it is a hard failure — measured 2026-09-24 against `claude-opus-4-8`:
+#:
+#:     BadRequestError: 400 — {'type': 'invalid_request_error',
+#:                             'message': '`temperature` is deprecated for this model.'}
+#:
+#: Every LLM phase in the package runs through this one call site, so a single added parameter
+#: takes down dossier synthesis, the graph extractions and the theme phases together. It did:
+#: five names failed assembly this way before the parameter was removed again.
+#:
+#: WHY ANYONE WOULD TRY. Artifacts here are supposed to be reproducible from their inputs, and
+#: `vinci/dossier/assemble.py` used to reason about that as "the property temperature-0 protects".
+#: It never did — no temperature was ever passed — and it now CANNOT: there is no sampling knob and
+#: no seed on this model. Identical inputs may produce different syntheses, and where a lean label
+#: sits near a boundary that `derive_proposal` maps deterministically, the machine's PROPOSAL moves
+#: with it (AMZN, 2026-09-23: `strongly-bullish`/BUY and `mixed`/none from the same inputs).
+#: Reproducibility, if the fund wants it, has to be bought at the DESIGN layer — e.g. drawing more
+#: than once and refusing a proposal the draws disagree on — never by a request parameter.
+_REJECTED_SAMPLING_PARAMS = ("temperature", "top_p", "top_k")
+
+
 class AnthropicLlmClient(LlmClient):
     """Anthropic adapter — forces a single tool call and returns its structured input."""
 
