@@ -128,12 +128,25 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
 
 
 def test_synthesis_is_the_only_llm_output_and_carries_no_conclusion() -> None:
-    """The synthesis model's fields are exactly the spec'd six — no place for a conclusion.
-    evidence_balance is a committed balance read, NOT a verdict/score/direction."""
+    """The synthesis model's fields are exactly the spec'd six PLUS the draw tally — no place for a
+    conclusion. evidence_balance is a committed balance read, NOT a verdict/score/direction.
+
+    `draw_agreement` joined the set on 2026-09-26 and is NOT a seventh way to smuggle one in: it
+    counts how many independent draws this build took and whether they agreed
+    (`docs/records/2026-09-24-sampling-parameters-are-unavailable.md`). The second half of this test
+    holds that line — every field of the tally is a count or a boolean about the DRAWS, so nothing
+    in it can carry a direction, and a future field named like a verdict still fails the first."""
     assert set(ds.Synthesis.model_fields) == {
         "evidence_balance", "bull_points", "bear_points", "twin_reference_cases",
-        "decisive_question", "key_unknowns",
+        "decisive_question", "key_unknowns", "draw_agreement",
     }
+    assert set(ds.DrawAgreement.model_fields) == {"attempted", "completed", "labels", "unanimous"}
+    banned = ("verdict", "action", "recommendation", "direction", "score", "rating", "probability",
+              "target", "conviction")
+    for model in (ds.Synthesis, ds.DrawAgreement):
+        assert not [f for f in model.model_fields for b in banned if b in f], (
+            f"{model.__name__} gained a conclusion-shaped field — the assemble-not-conclude line "
+            f"is structural, and this is where it is held")
 
 
 def test_synthesis_surfaces_operating_drivers_digest_and_rule() -> None:

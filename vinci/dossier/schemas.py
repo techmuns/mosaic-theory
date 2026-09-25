@@ -15,10 +15,11 @@ source so the human verifies the datum, not the summary. A field that could not 
 from __future__ import annotations
 
 import enum
+from collections.abc import Callable
 from datetime import date, datetime
 from typing import Any, Generic, TypeVar
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
 
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.midcycle import MidCycle
@@ -1547,6 +1548,28 @@ class DecisiveQuestion(BaseModel):
     model_config = {"frozen": True}
 
 
+class DrawAgreement(BaseModel):
+    """How many independent synthesis draws this build took, and whether they landed on one label.
+
+    WHY IT EXISTS (measured 2026-09-23/26). The synthesis is sampled, and no request parameter can
+    make it reproducible — `temperature`/`top_p`/`top_k` are REMOVED on this model family and answer
+    a 400 (`vinci/graph/llm.py`). Asked five times on identical inputs, LLY returned one label 5/5,
+    AMZN 4/5 and GOOGL 3/5, so a page could publish a machine proposal that a re-run would not
+    reproduce — and nothing on the page said which kind of name the reader was looking at.
+
+    THIS IS A TALLY, NOT A RATE. Five draws cannot support a percentage: 3-of-5 carries a 95%
+    confidence interval of roughly [23%, 88%]. It records what happened on THIS build, and consumers
+    must render it as a count with its boundary, never as "60% stable".
+    """
+
+    attempted: int  # draws asked for
+    completed: int  # draws that returned a usable tool call (a 4.8-era incomplete call is a MISS)
+    labels: dict[str, int]  # lean label -> how many completed draws produced it
+    unanimous: bool  # every COMPLETED draw agreed; the publish gate for the machine proposal
+
+    model_config = {"frozen": True}
+
+
 class Synthesis(BaseModel):
     """The fenced LLM output. NO verdict / recommendation / direction / score / rating / probability
     field exists — the assemble-not-conclude line, structural. The two cases are framing for the
@@ -1560,8 +1583,35 @@ class Synthesis(BaseModel):
     twin_reference_cases: list[TwinCase]
     decisive_question: DecisiveQuestion
     key_unknowns: list[str]
+    # Reproducibility of THIS build's read. None = the single-draw path (every pre-2026-09-26
+    # artifact, and any caller that asks for one draw) — absence means "not measured", never
+    # "agreed". It is a measurement of the draws, NOT a verdict: the no-verdict line is unmoved.
+    draw_agreement: DrawAgreement | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _omit_unmeasured_draw_agreement(
+        self, handler: Callable[[Synthesis], dict[str, Any]]
+    ) -> dict[str, Any]:
+        """Drop ``draw_agreement`` from the JSON when it is None, rather than writing a null.
+
+        TWO REASONS, and the first is a hard invariant. `refresh_dossier` decides whether to rewrite
+        by comparing SERIALIZED TEXT (`new_json != path.read_text()`), so a new key — even a null —
+        makes a no-op refresh rewrite every committed dossier and
+        `test_a_noop_refresh_is_byte_identical` fails. Omitting the unmeasured case keeps all 23
+        committed artifacts byte-identical through this change; only a build that actually took
+        multiple draws gains the key.
+
+        The second reason is meaning: ABSENT and "agreed" must not look alike. A reader (or a
+        consumer) meeting no key learns the read was never re-drawn, which is exactly the state the
+        single-draw path is in — writing `null` would invite `.get("unanimous")` to read falsey and
+        be mistaken for a measurement.
+        """
+        data = handler(self)
+        if data.get("draw_agreement") is None:
+            data.pop("draw_agreement", None)
+        return data
 
 
 class PriceStoreStamp(BaseModel):

@@ -18,10 +18,12 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any
+from collections import Counter
+from typing import Any, cast
 
 from vinci.dossier.schemas import (
     DecisiveQuestion,
+    DrawAgreement,
     MechanicalLayer,
     OperatingDriversExtract,
     PrimarySource,
@@ -1154,13 +1156,46 @@ def _primary_source_digest(ps: PrimarySource) -> str:
     return "\n".join(out)
 
 
+#: How many independent synthesis draws an assembly takes. FIVE, chosen on the error rates of the
+#: unanimity gate below and NOT on cost (operator ruling 2026-09-26).
+#:
+#: The gate is a test with two failure directions. Writing p for a name's chance of returning its
+#: modal label on one draw, a strict unanimity gate publishes with probability p^N + (1-p)^N:
+#:
+#:      p      N=3     N=5      what that name looks like
+#:      0.95   85.8%   77.4%    solid — the 23% at N=5 is a FALSE withhold, the price paid
+#:      0.80   52.0%   32.8%    AMZN, measured 4/5 — N=3 misses it half the time
+#:      0.60   28.0%    8.8%    GOOGL and NFLX, measured 3/5 — N=3 publishes 1 in 4
+#:
+#: N=3 barely gates: it lets an AMZN-like name through on a coin-flip, which is the exact case the
+#: gate exists for. N=5 takes that to 33% and a GOOGL-like name to 9%. The asymmetry justifying the
+#: strict side: withholding is already a NORMAL state (`mixed` withholds by design, and the human
+#: decides either way), so a withheld proposal costs a hint — while a published noisy one feeds the
+#: anchoring risk STATE.md already records.
+#:
+#: THE CEILING, stated so nobody raises N expecting it to help: unanimity is a weak detector of
+#: mildly-wobbly names at ANY practical N (even N=7 passes a p=0.8 name 21% of the time), because
+#: such a name usually IS unanimous by luck. Catching those needs a different RULE, not a bigger N.
+#:
+#: N IS FIXED FOR EVERY NAME, DECIDED IN ADVANCE. Drawing again because the first answer is
+#: unwelcome is outcome-dependent sampling — the line this fund does not cross, and the same one
+#: `docs/RUNBOOKS.md` draws at re-rolling a synthesis for cleaner flags.
+SYNTHESIS_DRAWS = 5
+
+
 def synthesize(
     mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str,
-    transcript: str | None = None, sleeve: str = DEFAULT_SLEEVE,
+    transcript: str | None = None, sleeve: str = DEFAULT_SLEEVE, draws: int = 1,
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
     ``transcript`` (a mechanically-bounded slice — NOT embedded in the dossier) is QUALITATIVE
-    context only; no numbers are derived from it and points still bind to the mechanical facts."""
+    context only; no numbers are derived from it and points still bind to the mechanical facts.
+
+    ``draws`` (default ONE, so every existing caller and artifact is unmoved) asks the model that
+    many times on the IDENTICAL prompt and keeps the FIRST draw carrying the modal lean label —
+    first, never best-sounding, because choosing a draw on its content is selecting on outcome. The
+    tally rides on the returned synthesis as :class:`DrawAgreement`, and a build whose draws
+    disagree is what withholds the machine proposal downstream (`verdict.derive_proposal`)."""
     # (RC-1 C) the raw primary_source (releases/filing) carries VERBATIMS — provenance, not input.
     # Exclude it from the dump and feed the curated term→value→source_ref digest instead. Its
     # source_refs still live in `mech`, so a cited primary-source ref traces through validation.
@@ -1199,28 +1234,77 @@ def synthesize(
     system, tool = system_for(sleeve), tool_for(sleeve)
     log_parts = [f"model: {llm.model}", "", f"=== SLEEVE === {sleeve}",
                  "", "=== SYSTEM ===", system, "", "=== USER ===", user]
-    try:
-        raw = llm.extract(system=system, user=user, tool=tool)
-    except LlmError as exc:
-        log_parts += ["", "=== ERROR ===", str(exc)]
-        return None, [f"LLM synthesis failed (no usable output): {exc}"], "\n".join(log_parts)
-    # USAGE IN THE LOG, so "(likely truncated)" below can be CHECKED instead of believed. On
-    # SMPL 2026-08-04 that message was emitted about a response using a fifth of its budget.
-    _u = getattr(llm, "last_usage", None)
-    if _u:
-        log_parts += ["", "=== USAGE ===", json.dumps(_u)]
-    log_parts += ["", "=== RAW OUTPUT ===", json.dumps(raw, indent=2, default=str)]
     # a missing STRUCTURAL field means a truncated response — mark the synthesis UNAVAILABLE rather
     # than silently defaulting to a blank. evidence_balance is excluded: its absence is a contract
     # REGRESSION the guardrail FLAGS (G.2), not a truncation that blocks — flag, don't drop.
     structural = [k for k in SYNTHESIS_TOOL["input_schema"]["required"] if k != "evidence_balance"]
-    missing = [k for k in structural if k not in raw]
-    if missing:
-        note = f"synthesis tool returned incomplete output — missing required field(s) {missing}"
-        log_parts += ["", "=== INCOMPLETE ===", note]
-        flag = f"LLM synthesis UNAVAILABLE — {note} (likely truncated)"
+    attempted = max(1, draws)
+    usable: list[tuple[str, dict[str, Any]]] = []  # (lean label, raw) per COMPLETED draw, in order
+    last_fail: str | None = None
+    for n in range(1, attempted + 1):
+        head = f"=== DRAW {n}/{attempted} ===" if attempted > 1 else "==="
+        try:
+            raw = llm.extract(system=system, user=user, tool=tool)
+        except LlmError as exc:
+            # ONE BAD DRAW IS NOT A FAILED SYNTHESIS when others remain. The 2026-09-01 Opus 5
+            # regression is exactly this shape — a tool call that comes back unusable perhaps half
+            # the time — so a draw that raises is counted and the loop continues; only an EMPTY
+            # tally fails the synthesis, which keeps the single-draw behaviour identical.
+            last_fail = str(exc)
+            log_parts += ["", f"{head} ERROR", str(exc)]
+            continue
+        # USAGE IN THE LOG, so "(likely truncated)" below can be CHECKED instead of believed. On
+        # SMPL 2026-08-04 that message was emitted about a response using a fifth of its budget.
+        _u = getattr(llm, "last_usage", None)
+        if _u:
+            log_parts += ["", f"{head} USAGE", json.dumps(_u)]
+        log_parts += ["", f"{head} RAW OUTPUT", json.dumps(raw, indent=2, default=str)]
+        missing = [k for k in structural if k not in raw]
+        if missing:
+            note = ("synthesis tool returned incomplete output — missing required "
+                    f"field(s) {missing}")
+            log_parts += ["", f"{head} INCOMPLETE", note]
+            last_fail = note
+            continue
+        decoded = cast(dict[str, Any], _decode_escapes(raw))
+        parts = split_lean(str(decoded.get("evidence_balance") or ""))
+        usable.append(((parts[0].strip().lower() if parts else ""), decoded))
+    if not usable:
+        # THE WORDING IS LOAD-BEARING, per failure kind. A RAISED call has always flagged "synthesis
+        # failed (no usable output)" and `test_synthesis_fails_loud_when_llm_errors` reads that
+        # phrase; an INCOMPLETE tool call has always flagged "UNAVAILABLE … (likely truncated)".
+        # Collapsing the two into one message silently retired a pin, so each keeps its own.
+        note = last_fail or "no draw returned usable output"
+        flag = (f"LLM synthesis UNAVAILABLE — {note} (likely truncated)"
+                if "missing required field" in note
+                else f"LLM synthesis failed (no usable output): {note}")
         return None, [flag], "\n".join(log_parts)
-    synth, flags = _validate(_parse(_decode_escapes(raw)), mech, ticker=ticker, name=name)
+    # THE FIRST DRAW CARRYING THE MODAL LABEL — first, never best-sounding. Ties break on the
+    # earliest draw for the same reason: any rule that inspects the PROSE to choose is selecting on
+    # outcome. An unparseable label ("" here) is its own bucket, so a draw whose lean did not parse
+    # cannot silently join the majority.
+    tally = Counter(label for label, _ in usable)
+    modal = max(tally.items(), key=lambda kv: (kv[1], -[lab for lab, _ in usable].index(kv[0])))[0]
+    chosen = next(raw for label, raw in usable if label == modal)
+    # ONE DRAW IS NOT AGREEMENT — it agrees with itself. Attaching `unanimous=True` to a
+    # single-draw build would hand the gate a measured-looking pass that was never measured, which
+    # is the exact false reassurance this whole mechanism exists to remove. Below two draws the
+    # field stays None and the page prints nothing.
+    agreement = (DrawAgreement(attempted=attempted, completed=len(usable), labels=dict(tally),
+                               unanimous=len(tally) == 1) if attempted > 1 else None)
+    if agreement is not None:
+        log_parts += ["", "=== DRAW AGREEMENT ===",
+                      json.dumps(agreement.model_dump(), indent=2, sort_keys=True)]
+    synth, flags = _validate(_parse(chosen), mech, ticker=ticker, name=name)
+    if synth is not None and agreement is not None:
+        synth = synth.model_copy(update={"draw_agreement": agreement})
+        if not agreement.unanimous:
+            # SAID OUT LOUD ON THE PAGE, not only in the log: the reader is entitled to know the
+            # read was not reproduced, because the proposal it would have carried is withheld.
+            flags.append(
+                f"synthesis draws DISAGREED — {agreement.completed} draw(s) of {attempted} gave "
+                f"{dict(tally)}; the machine proposal is withheld and the kept read is the first "
+                f"draw carrying the modal label (a tally of this build, never a rate)")
     return synth, flags, "\n".join(log_parts)
 
 

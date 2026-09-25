@@ -42,6 +42,7 @@ from vinci.dossier.schemas import (
     dossier_json,
 )
 from vinci.dossier.synthesis import (
+    SYNTHESIS_DRAWS,
     contradiction_flags,
     synthesize,
     uncited_material_figures,
@@ -937,6 +938,9 @@ def assemble_one(
             # THE FRAMING FOLLOWS THE BOOK. A screen candidate is overshoot by construction, so
             # this is byte-identical to the prompt every committed dossier was built with.
             sleeve=fin.sleeve,
+            # FIVE DRAWS, and the proposal is withheld unless they agree. The prompt is identical
+            # across them; see `SYNTHESIS_DRAWS` for why five and not three.
+            draws=SYNTHESIS_DRAWS,
         )
         flags += synth_flags
         logs.append(synth_log)

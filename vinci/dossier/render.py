@@ -32,6 +32,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
     StockInfo,
+    Synthesis,
 )
 from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
 from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, require_sleeve
@@ -2166,6 +2167,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     out = ["## The argument", ""]  # discipline language lives ONCE, in How to read this dossier
     if s.evidence_balance:
         out += [f"**Evidence balance:** {s.evidence_balance}", ""]
+        out += _draw_agreement_md(s)
 
     def cite(p: Any, tag: str = "") -> str:
         warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
@@ -2301,6 +2303,27 @@ def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
         if len(out) >= limit:
             break
     return out
+
+
+def _draw_agreement_md(s: Synthesis) -> list[str]:
+    """The reproducibility of THIS build's read, as a COUNT with its boundary — never a rate.
+
+    Five draws cannot support a percentage (3-of-5 carries a 95% CI of roughly [23%, 88%]), so this
+    prints what happened and refuses to imply more. A single-draw artifact prints nothing at all:
+    "not measured" must not read as "agreed", which is why the absent case is silent rather than
+    reassuring.
+    """
+    a = s.draw_agreement
+    if a is None or a.attempted < 2:
+        return []
+    if a.unanimous:
+        return [f"_Reproducibility: all {a.completed} of {a.attempted} draws on this build "
+                f"returned the same lean._", ""]
+    split = ", ".join(f"{n}x {lab or 'unparsed'}" for lab, n in sorted(a.labels.items(),
+                                                                      key=lambda kv: -kv[1]))
+    return [f"**Reproducibility: the draws DISAGREED** — {a.completed} of {a.attempted} draws "
+            f"gave {split}. The read below is the first draw carrying the majority lean, and the "
+            f"machine proposal is withheld. A tally of this build, not a rate.", ""]
 
 
 def _brief_case_lines(s: Any, mech: Any, *, sleeve: str = DEFAULT_SLEEVE) -> list[str]:
@@ -3256,7 +3279,10 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
         if show_proposal:
             out += [_machine_proposal_md(
                 derive_proposal(s.evidence_balance if s is not None else None,
-                                sleeve=d.sleeve)), ""]
+                                sleeve=d.sleeve,
+                                draws_unanimous=(s.draw_agreement.unanimous
+                                                 if s is not None and s.draw_agreement else None))),
+                ""]
         out += screen
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
