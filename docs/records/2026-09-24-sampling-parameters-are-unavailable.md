@@ -93,6 +93,53 @@ sub-grade, and that the obvious repair is not merely unset but UNAVAILABLE (the 
 By that standard "AMZN's label is unstable" stands (one disagreement is sufficient) and nothing
 about the other names does.
 
+**MEASURED AT THE #574 BAR, 2026-09-25 — three experiments, and the third overturned this
+record's own first conclusion.**
+
+**(1) END-TO-END** — re-assemble a name on the same data, 5 draws each (the artifact-pass case):
+
+| name | book | labels | proposals | agreement | committed page |
+|---|---|---|---|---|---|
+| AMZN | quality | strongly-bullish 4, mixed 1 | **BUY 4, none 1** | 4/5 | `mixed`/none — the 1-in-5 outcome |
+| NFLX | overshoot | strongly-bullish 2, mixed 3 | BUY 2, none 3 | 3/5 | `mixed`/none |
+| PARR | ultra_short_term | mixed 5 | none 5 | **5/5** | `mixed`/none |
+
+**This corrects an earlier claim in `docs/records/2026-09-23-pages-onto-the-2026-09-22-as-of.md`**:
+on n=2 NFLX's withdrawal "reproduced" and was called data-driven. At n=5 it is **3–2** — roughly
+two in five re-assemblies would publish BUY. The n=2 conclusion was under-powered by exactly the
+standard #574 set, cited in this record before being met.
+
+**(2) MODEL-ONLY** — ONE byte-identical synthesis prompt (`064761bb4f6a6a1a`), 8 replays, AMZN:
+**strongly-bullish 7, mixed 1 → BUY 7/8.** Holding the prompt fixed did NOT stabilise the label:
+~1-in-8 against ~1-in-5 end-to-end. So the variance is the SYNTHESIS CALL's own sampling; the
+upstream chain's prompt drift adds nothing detectable at this size. (Every end-to-end draw sends a
+DIFFERENT synthesis prompt — five LLM extractions run before synthesis and feed it — which is why
+(1) alone cannot attribute anything, and why the prompt hash was recorded per draw.)
+
+**(3) FRAME SWAP — the one that matters, and it refutes "stability is name-specific".** The three
+names in (1) sat in three different books, so name and METHOD varied together. The per-book system
+prompts are **98.6–98.9% character-identical**; the difference is the ~60 characters naming the two
+competing cases. Holding AMZN's fact set byte-identical (519,850 chars, verified to contain NO
+book-specific wording) and swapping only the frame, 6 draws each:
+
+| frame | BUY | none | bull mean | bear mean | bull:bear |
+|---|---|---|---|---|---|
+| quality (AMZN's own) | 5 | 1 | 7.0 | **4.7** | 1.50 |
+| overshoot | 6 | 0 | 8.3 | **3.7** | 2.27 |
+| ultra_short_term | 6 | 0 | 7.7 | 3.8 | 2.00 |
+
+Bear counts are nearly DISJOINT — quality `[5,5,4,4,5,5]`, overshoot `[4,3,4,4,3,4]`. **The method
+shapes the evidence the model assembles from identical facts**, and therefore the read.
+
+**SO: BOOK ASSIGNMENT IS A DECISION-SURFACE INPUT, NOT A LABEL.** Putting a name in the quality
+book makes its page read measurably more bearish than the same facts in the overshoot book. That is
+the same operator decision taken for TECX on 2026-09-23, now with a measured consequence.
+
+**What these do NOT establish:** that the frame changes STABILITY. The single `mixed` in 18
+frame-swap draws fell under quality, which is one draw of difference — below the bar, by this
+record's own argument. Separating "the name's evidence is balanced" from "the quality frame is
+harder" needs several names INSIDE one book, which has not been run.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
 1. **Artifacts are NOT reproducible from their inputs, and no parameter can change that.** Where a
