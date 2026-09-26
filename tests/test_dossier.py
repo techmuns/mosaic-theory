@@ -2692,7 +2692,14 @@ def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> No
     for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
         d = ds.Dossier.model_validate_json(jp.read_text())
         s = d.synthesis
-        p = derive_proposal(s.evidence_balance if s is not None else None)
+        # DERIVED THE WAY THE RENDERER DERIVES IT, including the draw gate (2026-09-26). A build
+        # whose five draws disagreed WITHHOLDS the proposal, so a bare `derive_proposal` here would
+        # expect the ungated line and this pin would red on every split page — reporting a
+        # divergence between two things that never diverged. The point of the pin is that the
+        # reveal shows exactly what the dossier's own data derives; the gate is part of that data.
+        _a = s.draw_agreement if s is not None else None
+        p = derive_proposal(s.evidence_balance if s is not None else None, sleeve=d.sleeve,
+                            draws_unanimous=_a.unanimous if _a is not None else None)
         hidden = dr.render_markdown(d)  # default: NO proposal surface at all (2026-07-21 round)
         revealed = dr.render_markdown(d, show_proposal=True)  # the operator's explicit peek
         # DEFAULT carries no proposal surface — no line, no sealed-note, no section header. The

@@ -1035,11 +1035,33 @@ function briefTier(d, verdict, m, card, mark) {
 // The machine's read + its DERIVED proposal in ONE row (the proposal is a deterministic mapping of
 // this same lean — vinci/dossier/verdict.py — so a second standing row was the same fact twice).
 // Sealed until the human's verdict is logged; revealed after (mirrors the md brief + ledger CLI).
+// REPRODUCIBILITY RIDES WITH THE READ (2026-09-26). The synthesis is sampled and cannot be made
+// deterministic by a request parameter, so a build takes five draws and keeps the first carrying the
+// modal lean; `draw_agreement` is the tally. A SPLIT build withholds the machine proposal, and the
+// reader is told here rather than only in the markdown twin.
+// A COUNT, NEVER A RATE: five draws cannot support a percentage (3-of-5 is a 95% CI of roughly
+// [23%, 88%]), so this prints what happened. An ABSENT tally prints nothing at all — a page built
+// before the gate was never measured, and silence must not read as agreement.
+function drawAgreementHtml(s) {
+  const a = s && s.draw_agreement;
+  if (!a || !a.attempted || a.attempted < 2) return "";
+  if (a.unanimous) {
+    return `<div style="margin-top:4px; font-size:12px; opacity:.72;">Reproducibility: all
+      ${a.completed} of ${a.attempted} draws on this build returned the same lean.</div>`;
+  }
+  const split = Object.entries(a.labels || {}).sort((x, y) => y[1] - x[1])
+    .map(([lab, n]) => `${n}x ${lab || "unparsed"}`).join(", ");
+  return `<div style="margin-top:4px; font-size:12px; font-weight:600;">Reproducibility: the draws
+    DISAGREED — ${a.completed} of ${a.attempted} draws gave ${escapeHtml(split)}. The read is the first
+    draw carrying the majority lean, and the machine proposal is withheld. A tally of this build,
+    not a rate.</div>`;
+}
+
 function assessmentRow(d) {
   const s = d.synthesis;
   if (!s || !s.evidence_balance) return "";
   return `<div class="fact"><div class="fact-label">Assessment</div>
-    <div class="fact-val">${machineReadHtml(s.evidence_balance)}</div></div>`;
+    <div class="fact-val">${machineReadHtml(s.evidence_balance)}${drawAgreementHtml(s)}</div></div>`;
 }
 
 // The opener's NARRATIVE slot (user decisions, 2026-07-21 + buy-side cover 2026-07-22): a logged

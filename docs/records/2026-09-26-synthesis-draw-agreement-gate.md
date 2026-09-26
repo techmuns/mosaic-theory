@@ -112,3 +112,12 @@ from the branch with the local store, CIQ and `.env` symlinked in.
 4. **Committed artifacts do not gain the tally until they are re-assembled.** Every page currently in
    the repo carries no `draw_agreement`, which reads as "not measured" — correctly. The next artifact
    pass is what populates it, and until then no page states its reproducibility.
+## Amendments
+**2026-09-26 — the tally shipped to the MARKDOWN twin only, and the parity pin caught it.** The
+first artifact pass under this gate reddened `test_every_assembled_field_reaches_both_dossier_
+renderers`: `draw_agreement (md=Y web=-)`. `vinci/dossier/render.py` and
+`frontend/views/shared/dossier.js` are twins over one artifact, so a reproducibility stamp on the
+printed page and not the web page is exactly the one-sided surface that pin exists to refuse — and
+the web page is what a reader actually opens. `drawAgreementHtml` now renders the same count beside
+the Assessment row, with the same refusal to print a percentage. The gate's behaviour is unchanged;
+only its second surface was missing.
