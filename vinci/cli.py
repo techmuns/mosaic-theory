@@ -1056,8 +1056,13 @@ def _sealed_proposal(
         synth = doc.get("synthesis") or {}
         # THE BOOK COMES FROM THE ARTIFACT, never from a flag: the proposal must be derived under
         # the same framing the synthesis was written under, and the dossier is what records it.
+        # THE GATE TRAVELS WITH THE ARTIFACT. A dossier whose draws disagreed must not seal a
+        # proposal into the ledger that a re-assembly would not reproduce; `None` (a single-draw
+        # artifact) means not measured and keeps the pre-2026-09-26 behaviour.
+        _agree = (synth.get("draw_agreement") or {}).get("unanimous")
         prop = derive_proposal(synth.get("evidence_balance"),
-                               sleeve=str(doc.get("sleeve") or DEFAULT_SLEEVE))
+                               sleeve=str(doc.get("sleeve") or DEFAULT_SLEEVE),
+                               draws_unanimous=_agree if isinstance(_agree, bool) else None)
         stamp = doc.get("assembled_at")
         assembled = datetime.fromisoformat(stamp) if stamp else None
     except (ValueError, OSError) as exc:  # corrupt/unreadable artifact → loud, actionable

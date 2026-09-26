@@ -113,11 +113,24 @@ class MachineProposal:
 
 
 def derive_proposal(
-    evidence_balance: str | None, *, sleeve: str = DEFAULT_SLEEVE
+    evidence_balance: str | None, *, sleeve: str = DEFAULT_SLEEVE,
+    draws_unanimous: bool | None = None,
 ) -> MachineProposal:
     """The deterministic proposal — the lean LABEL against the sleeve's own legs, nothing more.
 
-    ``sleeve`` defaults to overshoot so every pre-registry caller keeps the identical mapping."""
+    ``sleeve`` defaults to overshoot so every pre-registry caller keeps the identical mapping.
+
+    ``draws_unanimous`` is the REPRODUCIBILITY GATE, and it is deliberately OUTSIDE the mapping.
+    The 3-row lean→action table is face-validity-frozen and stays untouched; this withholds a
+    proposal the mapping would otherwise make, when the build's independent draws did not agree on
+    the label it was derived from (`synthesis.SYNTHESIS_DRAWS`). ``None`` means NOT MEASURED — the
+    single-draw path and every artifact written before 2026-09-26 — and behaves exactly as before,
+    so absence is never read as agreement.
+
+    WHY A GATE RATHER THAN A BETTER MAPPING: the mapping is not what is unreliable. Measured on
+    identical inputs, one name returned its label 5/5, another 4/5 and another 3/5, so the LABEL the
+    mapping consumes is itself a draw. Withholding is the honest response — and it is already a
+    normal state here, since `mixed` withholds by design."""
     if not evidence_balance or not evidence_balance.strip():
         return MachineProposal(None, None, None, "no machine read on this dossier")
     parts = split_lean(evidence_balance)
@@ -135,4 +148,9 @@ def derive_proposal(
     if isinstance(legs, str):                      # the reason there are no legs, stated verbatim
         return MachineProposal(None, label, reason, legs)
     action = legs[0] if key == _LEAN_BULLISH else legs[1]
+    if draws_unanimous is False:
+        return MachineProposal(
+            None, label, reason,
+            f"the build's synthesis draws DISAGREED on the lean — {label!r} would have proposed "
+            f"{action.value}, withheld because a re-run would not reproduce it (tally on the page)")
     return MachineProposal(action, label, reason, f"derived from the committed lean {label!r}")
