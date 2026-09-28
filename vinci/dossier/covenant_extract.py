@@ -262,11 +262,19 @@ _BASE_REF = re.compile(
     r"(?:to|amends?|amending)\s+th(?:at|e)\s+certain\s+([^,;\.]{6,90}?)\s*,?\s*dated|"
     r"\bthe\s+[\u201c\"]?((?:[A-Z][\w\-]*\s+){0,5}(?:Credit|Loan|Indenture|Note)\s*"
     r"[\w\s]{0,24}?Agreement)", re.I)
+#: A one-word self-declared title, anchored at the START of the cleaned head
+#: (see `agreement_title`).
+_BARE_NOUN = re.compile(r"^(INDENTURE|DEBENTURE)\b", re.I)
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
+#: WARRANT and SECURITIES PURCHASE are here because ``_CORE_AGREEMENT`` deliberately TARGETS
+#: those filenames (``securitiespurchase``, ``warrant``) — a convertible is issued under a
+#: securities purchase agreement and its warrant, and without these two the gate refuses the
+#: very documents the exhibit selector was written to fetch.
 _DEBT = re.compile(r"\b(CREDIT|LOAN|INDENTURE|NOTES?|DEBENTURE|FACILIT\w*|REVOLV\w*|SECURITY|"
-                   r"PLEDGE|GUARANTY|GUARANTEE|FINANCING|RECEIVABLES|BOND)\b", re.I)
+                   r"PLEDGE|GUARANTY|GUARANTEE|FINANCING|RECEIVABLES|BOND|WARRANT|"
+                   r"SECURITIES\s+PURCHASE)\b", re.I)
 #: Documents that reach a covenant pointer and are NOT debt: equity awards, offer and transition
 #: letters, purchase and merger agreements, SPAC-era support/escrow papers, capped-call confirms.
 _NOT_DEBT = re.compile(
@@ -274,7 +282,10 @@ _NOT_DEBT = re.compile(
     r"SEVERANCE|RETENTION|AWARD|INCENTIVE|OPTION|PUT-CALL|LEASE|SETTLEMENT|LICENSE|SUPPLY|"
     r"CONSULTING|SEPARATION|TRANSITION|REGISTRATION\s+RIGHTS|INVESTOR\s+RIGHTS|"
     r"TAX\s+RECEIVABLES?|LIMITED\s+LIABILITY\s+COMPANY|EMPLOYEE\s+MATTERS|ESCROW|INDEMNI\w*|"
-    r"SUPPORT|FRAMEWORK|TRUST|STOCKHOLDER|RECEIVABLES?\s+AGREEMENT)\b", re.I)
+    r"SUPPORT|FRAMEWORK|TRUST\s+AGREEMENT|VOTING\s+TRUST|STOCKHOLDER|"
+    # TRUST appears ONLY as TRUST AGREEMENT / VOTING TRUST: a bond's own contract is routinely
+    # titled "TRUST INDENTURE", and a bare \bTRUST\b refused every one of them.
+    r"RECEIVABLES?\s+AGREEMENT)\b", re.I)
 
 
 def _clean_title(t: str) -> str:
@@ -293,7 +304,13 @@ def agreement_title(text: str) -> str | None:
     h = re.sub(r"\s+", " ", _BOILER.sub(" ", _DOC_HDR.sub("", h))).strip()
     m = _TITLE.search(h[:1500])
     if m is None:
-        return None
+        # A bare one-word title. "INDENTURE dated as of ..." is the CANONICAL head of a note
+        # indenture — the convertible document this extractor exists for — and `_TITLE` needs
+        # at least one word BEFORE the noun, so it matched nothing and the indenture was
+        # refused as "no agreement at all". Anchored at the head, so it cannot pick up a noun
+        # from the body.
+        b0 = _BARE_NOUN.match(h)
+        return b0.group(1).upper() if b0 else None
     t = _LEAD_NOISE.sub("", _AMEND_PREFIX.sub("", _clean_title(m.group(1)))).strip(" .,-")
     t = _LEAD_CODE.sub("", t).strip(" .,-")
     if t and not _DEBT.search(t) and re.search(r"AMENDMENT", h[:900], re.I):

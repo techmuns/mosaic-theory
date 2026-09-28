@@ -116,9 +116,26 @@ and only the corpus run caught it; the reader took five measured iterations afte
 - **The refusal list is a keyword list, and keyword lists rot.** A new non-debt contract type with
   a debt word in its name would pass. *Falsifier:* the corpus sweep re-run at the next pass showing
   a kept title that is not a debt contract.
-- **Grouping by title merges two genuinely distinct contracts that share a name.** Two unrelated
-  "CREDIT AGREEMENT" documents for one issuer would collapse into one group. Not observed on this
-  corpus; accepted because the alternative in force today is worse and arbitrary.
+- **BLOCKING FOR THE FLEET PASS — grouping by title MERGES two genuinely distinct contracts that
+  share a base name. DEMONSTRATED, not hypothetical.** An earlier draft of this record called it
+  "not observed on this corpus"; review of PR #652 then ran it: two convertible SERIES whose
+  indentures both normalise to `BASE INDENTURE` collapse into ONE group, the 2025 series'
+  conversion price DISAPPEARS, and the 2027 indenture is published as an *amendment* to it
+  (`amended_by`) — the false supersession the (X-4) guard exists to prevent. `governing_terms`
+  still promises in its docstring that "a facility's terms never merge with another's"; with this
+  change that promise holds for the pointer's guess and fails for a shared title. **Silent data
+  loss plus a fabricated amendment relationship — strictly worse than the mislabelling it replaces,
+  for this case.** It cannot reach a page before a re-assembly, which is why the code may land
+  while THE FLEET ARTIFACT PASS IS BLOCKED until it is fixed. Likely repair: qualify the title with
+  the base agreement's stated date. Diagnosis and fix owe their own PR.
+- **Three gate defects found in review and fixed here** (`_BARE_NOUN`, the `TRUST` narrowing, and
+  `WARRANT|SECURITIES PURCHASE` in `_DEBT`): a bare "INDENTURE" head — the canonical opening of a
+  note indenture, the document this extractor exists for — returned None because `_TITLE` requires
+  a word BEFORE the noun; `\bTRUST\b` in the refusal list rejected every "TRUST INDENTURE"; and the
+  gate refused `SECURITIES PURCHASE` / `WARRANT` documents that `_CORE_AGREEMENT` (line 64)
+  deliberately TARGETS by filename. All three are cases where the gate contradicted the selector.
+  They leave the 144-head sweep unchanged at 68/76 with the same refusal list — none of those
+  document shapes is in that sample, which is the sample's limit, not their absence.
 - **NOT FIXED, reported not silently repaired:** `render.py:1245` composes `f"{lead} · {raw}"`, so a
   term whose extracted lead equals its raw clause prints twice — BURL's maturity still renders
   "July 25, 2030 · July 25, 2030". Cosmetic, on a decision value, and outside this brief.

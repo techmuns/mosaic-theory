@@ -221,3 +221,54 @@ def test_a_non_debt_document_never_reaches_the_extractor(monkeypatch) -> None:  
     assert rows is None, "a refused document must yield no covenant rows"
     assert any("not a debt agreement" in f for f in flags), flags
     assert any("no agreement at all" in f for f in flags), "the refusal states what it found"
+
+
+# --- REVIEW FIXES (2026-09-28) — three document classes the first gate refused wrongly ----------
+# Each pin below is a document the gate MUST see. All three were REFUSED by the shipped gate:
+# a bare "INDENTURE" head yielded no title at all, "TRUST INDENTURE" tripped a bare \bTRUST\b,
+# and a securities purchase agreement / warrant carried no word in the debt list — although
+# `_CORE_AGREEMENT` names ``securitiespurchase`` and ``warrant`` as exhibits to FETCH.
+
+# UBER 0001552781-21-000027 shape — the canonical note-indenture head: the title is ONE word, and
+# `_TITLE` needs a word BEFORE the noun, so it matched nothing.
+BARE_INDENTURE = (
+    "EX-4.1 2 e21027_ex4-1.htm EX-4.1 Exhibit 4.1 EXECUTION VERSION INDENTURE Dated as of "
+    "March 5, 2021 UBER TECHNOLOGIES, INC., as Issuer and U.S. BANK NATIONAL ASSOCIATION, as "
+    "Trustee 0.00% Convertible Senior Notes due 2025")
+
+
+def test_a_bare_indenture_head_is_still_an_agreement() -> None:
+    """(+) An indenture is THE convertible document this extractor exists for, and its head is
+    routinely the single word 'INDENTURE'. Refusing it loses the conversion terms outright."""
+    got = agreement_title(BARE_INDENTURE)
+    assert got == "INDENTURE", got
+    assert is_debt_agreement(got)
+
+
+def test_the_bare_noun_is_anchored_at_the_head() -> None:
+    """(-) The fallback must not scavenge a noun from the BODY — an offer letter that happens to
+    mention an indenture downstream is still not an agreement."""
+    assert agreement_title(NKE_OFFER_LETTER) is None
+    assert agreement_title(
+        "Dear David, This letter confirms your offer. See the Indenture for details.") is None
+
+
+def test_a_trust_indenture_is_a_debt_agreement() -> None:
+    """(-) OVERLAP, the other way round. 'TRUST' is a non-debt word (voting trust, trust agreement)
+    but a bond's own contract is titled 'TRUST INDENTURE'. The refusal list must not eat it."""
+    assert is_debt_agreement("TRUST INDENTURE")
+    assert is_debt_agreement("INDENTURE OF TRUST")
+    assert not is_debt_agreement("VOTING TRUST AGREEMENT"), "a voting trust is still refused"
+    assert not is_debt_agreement("TRUST AGREEMENT")
+
+
+def test_the_convertible_issuance_documents_reach_the_extractor() -> None:
+    """(+) `_CORE_AGREEMENT` deliberately FETCHES ``securitiespurchase``/``notepurchase``/
+    ``warrant``
+    exhibits — MVST's convertible original is a securities purchase agreement. A gate that then
+    refuses them makes the selector fetch documents it can never extract from."""
+    for fetched in ("SECURITIES PURCHASE AGREEMENT", "NOTE PURCHASE AGREEMENT",
+                    "WARRANT AGREEMENT"):
+        assert is_debt_agreement(fetched), f"{fetched} is a targeted core exhibit"
+    assert not is_debt_agreement("STOCK PURCHASE AGREEMENT"), "an equity SPA is still refused"
+    assert not is_debt_agreement("SUBSCRIPTION AGREEMENT")
