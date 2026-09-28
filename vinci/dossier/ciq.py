@@ -16,6 +16,7 @@ from __future__ import annotations
 import enum
 import html as _html
 import quopri
+import re
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -23,7 +24,37 @@ from typing import Any
 
 _OLE_MAGIC = b"\xd0\xcf\x11\xe0"
 _ZIP_MAGIC = b"PK\x03\x04"
-_MIN_RTF_WORDS = 50  # below this from a multi-KB file ⇒ striprtf hit an OLE-disguised doc (garbage)
+_MIN_RTF_WORDS = 50  # below this from a multi-KB file ⇒ striprtf hit an OLE-disguised doc
+
+#: CIQ's OWN WORDS FOR "NOTHING TO LIST" — the difference between a parser that failed and a view
+#: that is genuinely empty. A relationships export for a company with no disclosed counterparties is
+#: a large RTF carrying a couple of sentences, which trips the thin-file guard above; before this,
+#: BURL's customers view raised CiqParseError and the page reported customer concentration UNKNOWN,
+#: blaming "an OLE-disguised Word doc" it had never checked for. The file was real RTF, parsed
+#: perfectly, and said: "There are no recently disclosed customers listed".
+#:
+#: SCOPE, MEASURED (2026-09-28, the 26 ticker folders under data/manual/ciq/): BURL is the only
+#: name whose customers view is empty; the other 25 parse rows, ROST and TGT among them. So this
+#: is NOT "every retailer" — a company sells to disclosed businesses or it does not, and BURL
+#: happens not to (0 customer rows beside 33 supplier rows in the same bundle). What makes the
+#: case worth handling is not its frequency but its silence: the export is well-formed, the
+#: reader worked, and the only thing wrong was our account of why the answer was empty.
+#:
+#: The sentinel is CIQ's phrasing, matched loosely enough to survive a wording change and tightly
+#: enough that an OLE-disguise (which yields punctuation and fragments, not sentences) cannot fake
+#: it. A thin file WITHOUT it still raises, which is the case the guard was written for.
+_EMPTY_VIEW_SENTINEL = re.compile(r"there (?:are|were) no\b[^.\n]{0,80}\b(?:listed|disclosed)",
+                                  re.IGNORECASE)
+
+
+def is_empty_view(text: str) -> bool:
+    """True when a CIQ view says IN ITS OWN WORDS that it has nothing to list.
+
+    THE ONE READER OF ``_EMPTY_VIEW_SENTINEL``. Two callers need this question answered — the
+    thin-RTF guard below (is a short file broken, or just empty?) and ``ciq_sheets.customers``
+    (did the table parser fail, or was there no table?) — and two regexes over one phrasing is the
+    divergent-parser bug class the house rule names. They read the same sentence through here."""
+    return _EMPTY_VIEW_SENTINEL.search(text) is not None
 
 
 class CiqFormat(enum.StrEnum):
@@ -73,7 +104,8 @@ def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
 
         raw_text = path.read_text(encoding="utf-8", errors="replace")
         text = rtf_to_text(raw_text)  # type: ignore[no-untyped-call]
-        if path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS:
+        if (path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS
+                and not is_empty_view(text)):
             raise CiqParseError(
                 f"{path.name}: striprtf yielded {len(text.split())} words from a "
                 f"{path.stat().st_size}B file — this is an OLE-disguised Word doc, not real RTF; "

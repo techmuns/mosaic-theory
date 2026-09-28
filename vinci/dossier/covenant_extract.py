@@ -37,9 +37,23 @@ from vinci.resolver.index import pad_cik
 
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 # An exhibit larger than this is not sent in a single pass — extract by hand rather than silently
-# truncate (a term past the cut would read as a false UNKNOWN). ~600K chars ≈ 150K tokens, fits
-# model's window with room for a long legal agreement's definitions section.
-_MAX_EXHIBIT_CHARS = 600_000
+# truncate (a term past the cut would read as a false UNKNOWN). THAT REFUSAL IS UNCHANGED; only the
+# threshold moved, because the old one was set against a window the configured model does not have.
+#
+# RAISED 600_000 → 1_200_000 ON MEASUREMENT (2026-09-28). BURL alone refused FOUR exhibits at
+# 645,693 / 648,641 / 662,704 / 744,759 chars — 7–24% over the old cap — so its page reported the
+# whole capital structure UNKNOWN and told the reader to extract by hand. Sent in full through this
+# module's own extractor, the largest of them (744,759 chars) returned six of seven target terms,
+# each verbatim-quoted: maturity extended to July 25 2030 from December 22 2026, $1.0bn commitments,
+# Term SOFR + 1.125%/1.375%, and a SPRINGING fixed-charge covenant of 1.00:1.00 tested only during a
+# Covenant Compliance Event. Material facts about a name at 3.8x net debt/EBITDA, withheld by a
+# constant rather than by a limit.
+#
+# THE ARITHMETIC: `claude-opus-4-8` has a 1M-TOKEN window. English legal prose runs ~3.5–4 chars per
+# token, so 1.2M chars ≈ 300–340K tokens — under a third of the window, leaving room for the system
+# prompt, the tool schema and a 16K-token answer. The largest exhibit seen is 745K chars, so
+# this clears it by 60% and stays far from the wall. Exceeding it still FLAGS, never truncates.
+_MAX_EXHIBIT_CHARS = 1_200_000
 # (P4) at most this many exhibits extracted per capital structure (depth-stage cost bound). Raised
 # 2→4 so every DISTINCT live-wall instrument family's primary exhibit extracts (round-robin), room
 # for one amendment — MVST needs the convertible original + the syndicated facility + the amendment.

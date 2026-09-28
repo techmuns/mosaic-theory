@@ -65,8 +65,12 @@ class Sourced(BaseModel, Generic[T]):
         return cls(value=value, source_ref=source_ref, status=SourceStatus.PRESENT, note=note)
 
     @classmethod
-    def unknown(cls, *, note: str) -> Sourced[T]:
-        return cls(value=None, source_ref=None, status=SourceStatus.UNKNOWN, note=note)
+    def unknown(cls, *, note: str, source_ref: str | None = None) -> Sourced[T]:
+        """``source_ref`` is OPTIONAL and means "we looked HERE and it held nothing" — reserved for
+        an unknown whose note makes a CLAIM about the source (a view that states its own emptiness),
+        so the human can open the file and check it rather than trust the note. An unknown that is
+        merely a failure leaves it None: there is no cell to point at."""
+        return cls(value=None, source_ref=source_ref, status=SourceStatus.UNKNOWN, note=note)
 
     @classmethod
     def missing(cls, *, note: str) -> Sourced[T]:
