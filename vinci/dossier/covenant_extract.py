@@ -217,8 +217,108 @@ def _opt_float(v: Any) -> float | None:
     return f if math.isfinite(f) else None
 
 
+
+# --- WHAT IS THIS DOCUMENT? (identify-or-refuse) ----------------------------------------------
+#
+# THE POINTER'S ``family`` IS A GUESS, AND IT WAS BEING PRINTED AS A FACT. `_covenant_pointers`
+# finds execution filings with a CLASS-GENERIC efts phrase ("Indenture", "Credit Agreement"), so
+# two instrument families sharing a phrase partition ONE hit list under a global `seen` set — the
+# second family is handed whatever the first did not take. Measured 2026-09-28 over the 26 committed
+# dossiers: 11 of them have >=2 agreement-class families on one phrase. BURL's ABL amendment sat at
+# position 14 of its "Indenture" list and was labelled a 2.25% convertible note; VRRM's revolving
+# credit agreement was labelled a term loan; WERN's pointer labelled a STOCK PURCHASE AGREEMENT as
+# an unsecured credit agreement, and NKE's and TGT's labelled EXECUTIVE OFFER LETTERS as material
+# contracts — all four were being fed to a covenant-term extractor.
+#
+# The document is the only thing that knows what it is, so ask it. These read the exhibit's head
+# deterministically (no LLM): `agreement_title` returns the contract's SELF-DECLARED name normalised
+# to its BASE (so an amendment groups with what it amends), and `is_debt_agreement` decides whether
+# a covenant extractor should see it at all. A document we cannot identify is REFUSED and flagged —
+# never extracted under a guessed label.
+_DOC_HDR = re.compile(r"^\s*EX-[\w\.\-]+\s+\d+\s+\S+\s+", re.I)
+_BOILER = re.compile(
+    r"\b(?:EX-[\w\.\-]+|Document|Exhibit\s+No\.?\s*[\d\.\-]+|Exhibit\s+[\d\.\-]+|"
+    r"EXECUTION\s+(?:VERSION|COPY)|CONFORMED\s+COPY|Published\s+CUSIP\S*|"
+    r"\d{4}-\d{2}-\d{2}|[\d]{4}-[\d\-]{4,})\b", re.I)
+_W = r"[A-Z][A-Z0-9&'\.\-]*"
+_NOUN = r"(?:AGREEMENT|INDENTURE|NOTES?|GUARANTY|GUARANTEE|DEBENTURE)"
+_TITLE = re.compile(
+    rf"\b((?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}{_NOUN})\b")
+_ORD = (r"FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH|"
+        r"THIRTEENTH|FOURTEENTH|FIFTEENTH|NO\.\s*\d+|\d+(?:ST|ND|RD|TH)?")
+#: "SIXTH AMENDMENT TO ..." / "AMENDMENT NO. 3 TO ..." — the instance, stripped to reach the base.
+_AMEND_PREFIX = re.compile(
+    rf"^(?:(?:{_ORD})\s+)?(?:AMENDMENT|AMENDED)\s*(?:NO\.\s*\d+\s*)?(?:AND\s+RESTATEMENT\s+)?"
+    rf"(?:TO|OF)\s+(?:THE\s+)?", re.I)
+_LEAD_NOISE = re.compile(r"^(?:EXISTING\s+|THAT\s+CERTAIN\s+|THE\s+|TO\s+|A\s+)+", re.I)
+#: A CUSIP or an amount fragment in front of the title ("65410VAW81 364-DAY CREDIT AGREEMENT";
+#: "000 CREDIT AGREEMENT" from "$1,000"). The token must CONTAIN A DIGIT — without that guard
+#: ``[A-Z0-9]{6,}`` also eats the first real word, turning "AMENDED AND RESTATED CREDIT AGREEMENT"
+#: into "AND RESTATED CREDIT AGREEMENT". A hyphenated token is kept: "364-DAY" is part of the name.
+_LEAD_CODE = re.compile(r"^(?:(?:[\d,\.]+|(?=[A-Z0-9]*\d)[A-Z0-9]{6,})\s+)+")
+#: An amendment whose own title does not name its contract ("AMENDMENT AND RESTATEMENT AGREEMENT")
+#: says so in the next clause — "to that certain Credit Agreement dated ...".
+_BASE_REF = re.compile(
+    r"(?:to|amends?|amending)\s+th(?:at|e)\s+certain\s+([^,;\.]{6,90}?)\s*,?\s*dated|"
+    r"\bthe\s+[\u201c\"]?((?:[A-Z][\w\-]*\s+){0,5}(?:Credit|Loan|Indenture|Note)\s*"
+    r"[\w\s]{0,24}?Agreement)", re.I)
+#: The capture ran past the heading into the body — a title, not a sentence.
+_PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
+                    r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
+_DEBT = re.compile(r"\b(CREDIT|LOAN|INDENTURE|NOTES?|DEBENTURE|FACILIT\w*|REVOLV\w*|SECURITY|"
+                   r"PLEDGE|GUARANTY|GUARANTEE|FINANCING|RECEIVABLES|BOND)\b", re.I)
+#: Documents that reach a covenant pointer and are NOT debt: equity awards, offer and transition
+#: letters, purchase and merger agreements, SPAC-era support/escrow papers, capped-call confirms.
+_NOT_DEBT = re.compile(
+    r"\b(STOCK\s+PURCHASE|SHARE\s+PURCHASE|ASSET\s+PURCHASE|SUBSCRIPTION|MERGER|EMPLOYMENT|"
+    r"SEVERANCE|RETENTION|AWARD|INCENTIVE|OPTION|PUT-CALL|LEASE|SETTLEMENT|LICENSE|SUPPLY|"
+    r"CONSULTING|SEPARATION|TRANSITION|REGISTRATION\s+RIGHTS|INVESTOR\s+RIGHTS|"
+    r"TAX\s+RECEIVABLES?|LIMITED\s+LIABILITY\s+COMPANY|EMPLOYEE\s+MATTERS|ESCROW|INDEMNI\w*|"
+    r"SUPPORT|FRAMEWORK|TRUST|STOCKHOLDER|RECEIVABLES?\s+AGREEMENT)\b", re.I)
+
+
+def _clean_title(t: str) -> str:
+    t = re.sub(r"\s+", " ", t).strip(" .,-")
+    t = re.sub(r"\bTHIS\b.*$", "", t).strip(" .,-")  # the body sentence ran into the heading
+    half = len(t) // 2  # filers emit the title twice: HTML <title> then the body heading
+    if half and t[:half].strip() == t[half:].strip():
+        t = t[:half].strip()
+    return t
+
+
+def agreement_title(text: str) -> str | None:
+    """The agreement's SELF-DECLARED name, normalised to the BASE contract — or None when the head
+    declares no agreement at all (an offer letter, a dealer confirmation). Deterministic."""
+    h = re.sub(r"\s+", " ", text[:3000])
+    h = re.sub(r"\s+", " ", _BOILER.sub(" ", _DOC_HDR.sub("", h))).strip()
+    m = _TITLE.search(h[:1500])
+    if m is None:
+        return None
+    t = _LEAD_NOISE.sub("", _AMEND_PREFIX.sub("", _clean_title(m.group(1)))).strip(" .,-")
+    t = _LEAD_CODE.sub("", t).strip(" .,-")
+    if t and not _DEBT.search(t) and re.search(r"AMENDMENT", h[:900], re.I):
+        b = _BASE_REF.search(h)
+        if b:
+            cand = _LEAD_NOISE.sub("", _clean_title(b.group(1) or b.group(2))).strip(" .,-")
+            if cand and _DEBT.search(cand):
+                t = cand
+    t = t.upper()
+    if _PROSE.search(t):
+        return None
+    return t if len(t.split()) >= 2 and len(t) >= 8 else None
+
+
+def is_debt_agreement(title: str | None) -> bool:
+    """Should a COVENANT extractor see this document? Only a debt contract — never an equity award,
+    an offer letter or a purchase agreement, whatever instrument the pointer guessed."""
+    if not title:
+        return False
+    return bool(_DEBT.search(title)) and not _NOT_DEBT.search(title)
+
+
 def _extract_from_exhibit(
-    llm: LlmClient, text: str, *, name: str, ticker: str, source_ref: str
+    llm: LlmClient, text: str, *, name: str, ticker: str, source_ref: str,
+    title: str | None = None,
 ) -> tuple[list[CovenantTerm], str]:
     """Run the fenced tool against one exhibit → (rows, raw-log). source_ref is machine-set here, so
     the model cannot invent a citation — it only fills value + a verbatim quote."""
@@ -250,7 +350,9 @@ def _extract_from_exhibit(
             }
         else:
             val = Sourced.unknown(note=f"not stated in {source_ref}")
-        rows.append(CovenantTerm(name=term_name, value=val, **components))
+        rows.append(
+            CovenantTerm(name=term_name, value=val, agreement_title=title, **components)
+        )
     return rows, str(raw)
 
 
@@ -289,6 +391,18 @@ def extract_covenant_terms(
         if text is None:
             flags.append(f"(E5) covenant exhibit fetch failed — UNKNOWN: {src}")
             continue
+        title = agreement_title(text)
+        if not is_debt_agreement(title):
+            # IDENTIFY OR REFUSE. The pointer's family is a guess; the document's own heading is
+            # evidence. Without this, an executive offer letter (NKE, TGT), a stock purchase
+            # agreement (WERN) and a capped-call confirmation (UBER) were each handed to a covenant
+            # extractor and whatever it returned was labelled as that instrument's terms.
+            flags.append(
+                f"(E5) not a debt agreement — refused rather than extracted under the pointer's "
+                f"guess ({row.family}): {src} declares itself "
+                f"{('“' + title + '”') if title else 'no agreement at all'}"
+            )
+            continue
         if len(text) > _MAX_EXHIBIT_CHARS:
             flags.append(
                 f"(E5) covenant exhibit too large for single-pass extraction ({len(text)} chars) — "
@@ -296,7 +410,8 @@ def extract_covenant_terms(
             )
             continue
         try:
-            got, log = _extract_from_exhibit(llm, text, name=name, ticker=ticker, source_ref=src)
+            got, log = _extract_from_exhibit(
+                llm, text, name=name, ticker=ticker, source_ref=src, title=title)
         except LlmError as exc:
             flags.append(f"(E5) covenant extraction LLM error — UNKNOWN: {src}: {exc}")
             continue
@@ -362,6 +477,12 @@ def governing_terms(
     for row in term_rows:
         acc = _acc_of(row.value.source_ref) or _acc_of(row.value.note)
         fam, dt = meta.get(acc, ("(unmapped)", ""))
+        # THE DOCUMENT OUTRANKS THE POINTER. ``agreement_title`` is what the exhibit calls itself,
+        # normalised to the base contract so an amendment groups with what it amends; ``family`` is
+        # the instrument the class-generic efts phrase guessed, and on 11 of 26 committed names that
+        # guess is decided by which family reached the shared hit list first. Fall back only for a
+        # row assembled before the title was read.
+        fam = row.agreement_title or fam
         key = (fam, row.name)
         if key not in grouped:
             grouped[key] = []

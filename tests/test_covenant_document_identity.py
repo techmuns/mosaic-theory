@@ -1,0 +1,223 @@
+"""A covenant exhibit is identified by the DOCUMENT, not by the search that found it.
+
+`_covenant_pointers` locates execution filings with a CLASS-GENERIC efts phrase ("Indenture",
+"Credit Agreement"). Two instrument families sharing a phrase therefore partition ONE hit list
+under a global `seen` set, and the second family is handed whatever the first did not take — the
+label comes from arrival order, not evidence. Measured 2026-09-28 over the 26 committed dossiers,
+11 have >=2 agreement-class families on one phrase, and the consequence reached the pages:
+
+    BURL  ABL amendment (position 14 of "Indenture")  ->  labelled "Convertible Senior Notes 2.25%"
+    VRRM  Amended & Restated Revolving Credit Agmt    ->  labelled "2021 Term Loan Due 2028"
+    WERN  STOCK PURCHASE AGREEMENT                    ->  labelled "22 Unsecured Credit Agreement"
+    NKE   a CFO OFFER LETTER                          ->  fed to the covenant extractor
+    TGT   a CEO TRANSITION LETTER                     ->  fed to the covenant extractor
+
+Every head below is the real first ~600 chars of the named EDGAR exhibit (public filings, not
+licensed data). The corpus measurement behind these pins: 144 located exhibit heads across 24
+names -> 68 kept, 76 refused, 0 non-debt titles wrongly kept.
+"""
+
+from __future__ import annotations
+
+from vinci.dossier import covenant_extract
+from vinci.dossier.covenant_extract import (
+    agreement_title,
+    governing_terms,
+    is_debt_agreement,
+)
+from vinci.dossier.mechanical import _COVENANT_CLASS_RE
+from vinci.dossier.schemas import (
+    CapitalStructure,
+    CovenantPointer,
+    CovenantTerm,
+    Sourced,
+)
+
+# BURL 0001193125-25-168007 — the ABL amendment that was published as a convertible note.
+BURL_SIXTH = (
+    "EX-10.1 2 d946952dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 EXECUTION VERSION SIXTH AMENDMENT "
+    "TO SECOND AMENDED AND RESTATED CREDIT AGREEMENT SIXTH AMENDMENT TO SECOND AMENDED AND "
+    "RESTATED CREDIT AGREEMENT (this “ Amendment ”) dated as of July 25, 2025 by and amo")
+# BURL 0001193125-22-200058 — an EARLIER amendment to the SAME contract.
+BURL_FOURTH = (
+    "EX-10.1 2 d393601dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 FOURTH AMENDMENT TO SECOND AMENDED "
+    "AND RESTATED CREDIT AGREEMENT FOURTH AMENDMENT TO SECOND AMENDED AND RESTATED CREDIT "
+    "AGREEMENT (this “ Amendment ”) dated as of July 20, 2022 by and among BURLINGTON")
+# WERN 0000793074-26-000090 — a real agreement, but not a debt one.
+WERN_SPA = (
+    "EX-10.1 2 wern-20260127ex101.htm EX-10.1 wern-20260127ex101 Execution Version 4907-7785-"
+    "9703.29 ____________________________ STOCK PURCHASE AGREEMENT ______________________ by "
+    "and among WERNER ENTERPRISES, INC., MARY B. WILSON, GARY L. WILSON FAMILY TRUS")
+# NKE 0000320187-26-000088 — not an agreement at all.
+NKE_OFFER_LETTER = (
+    "EX-10.29 2 nke-5312026exhibit1029.htm EX-10.29 Document June 16, 2026 Dear David, This "
+    "letter and your signature below confirm your acceptance of the offer for the position of "
+    "Executive Vice President and Chief Financial Officer (“ CFO ”) of NIKE, Inc.")
+# NFLX 0001193125-09-194962 — a plain credit agreement, no "(this ...)" anchor.
+NFLX_CREDIT = (
+    "EX-10.1 2 dex101.htm CREDIT AGREEMENT Credit Agreement Exhibit 10.1 CREDIT AGREEMENT among "
+    "NETFLIX, INC., THE LENDERS NAMED HEREIN, and WELLS FARGO BANK, NATIONAL ASSOCIATION, as "
+    "Administrative Agent and L/C Issuer, and WELLS FARGO SECURITIES, LLC, as Lead Arr")
+# CNXC 0000200107 — an amendment whose own title never names its contract.
+CNXC_AR = (
+    "EX-10.1 2 form8-k04x26x23exhibit101.htm EX-10.1 Document Exhibit 10.1 EXECUTION VERSION "
+    "AMENDMENT AND RESTATEMENT AGREEMENT dated as of April 21, 2023 (this “ Agreement ”), "
+    "among CONCENTRIX CORPORATION, a Delaware corporation (the “ Borrower ”), the LENDERS "
+    "party hereto, the L/C ISSUERS party hereto, JPMORGAN CHASE BANK, N.A., as successor "
+    "administrative agent, and BANK OF AMERICA, N.A., as the Existing Administrative Agent. "
+    "WHEREAS, reference is made to that certain Credit Agreement dated as of October 16, 2020")
+
+
+def test_an_amendment_groups_with_the_contract_it_amends() -> None:
+    """(+) The governing collapse keys on the family, so an amendment MUST normalise to its base or
+    it stops superseding: BURL's Fourth and Sixth Amendments would both read as governing."""
+    sixth, fourth = agreement_title(BURL_SIXTH), agreement_title(BURL_FOURTH)
+    assert sixth == "SECOND AMENDED AND RESTATED CREDIT AGREEMENT", sixth
+    assert sixth == fourth, f"the amendment chain breaks: {sixth!r} vs {fourth!r}"
+    assert "SIXTH" not in sixth and "FOURTH" not in (fourth or ""), "the INSTANCE must be stripped"
+
+
+def test_the_title_is_read_without_a_this_anchor() -> None:
+    """(+) NFLX's credit agreement has no '(this "Agreement")' clause. An earlier draft anchored on
+    that and matched 15 of 94 exhibits — a rule generalised from three BURL documents."""
+    assert agreement_title(NFLX_CREDIT) == "CREDIT AGREEMENT"
+
+
+def test_an_amendment_that_never_names_its_contract_recovers_the_base() -> None:
+    """(+) 'AMENDMENT AND RESTATEMENT AGREEMENT' carries no debt word; the contract is named in the
+    recital that follows. Without the recovery this real credit amendment is refused."""
+    got = agreement_title(CNXC_AR)
+    assert got == "CREDIT AGREEMENT", got
+    assert is_debt_agreement(got)
+
+
+def test_a_non_debt_agreement_is_refused() -> None:
+    """(-) WERN's pointer called this an unsecured credit agreement. It is a stock purchase
+    agreement, and a covenant extractor must never see it."""
+    got = agreement_title(WERN_SPA)
+    assert got == "STOCK PURCHASE AGREEMENT", got
+    assert not is_debt_agreement(got), "a purchase agreement is not a debt contract"
+
+
+def test_a_document_that_is_not_an_agreement_is_refused() -> None:
+    """(-) An executive offer letter declares no agreement. It must yield no title at all, rather
+    than a nearest-match one that would then be published as an instrument's covenant terms."""
+    assert agreement_title(NKE_OFFER_LETTER) is None
+    assert not is_debt_agreement(agreement_title(NKE_OFFER_LETTER))
+
+
+def test_a_real_word_is_not_eaten_as_a_leading_code() -> None:
+    """(-) OVER-STRIPPING REGRESSION. The CUSIP strip is '6+ alphanumerics', which also matches
+    'AMENDED' (7 caps) and silently returned 'AND RESTATED CREDIT AGREEMENT'. The token must
+    contain a DIGIT; a hyphenated one ('364-DAY') is part of the contract's real name."""
+    amzn = ("Deal CUSIP Number: 02313HAE0 Revolving Credit Facility CUSIP Number: 02313HAF7 "
+            "AMENDED AND RESTATED CREDIT AGREEMENT Dated as of")
+    assert agreement_title(amzn) == "AMENDED AND RESTATED CREDIT AGREEMENT"
+    day = "Exhibit 10.1 65410VAW81 364-DAY CREDIT AGREEMENT among"
+    assert agreement_title(day) == "364-DAY CREDIT AGREEMENT"
+
+
+def test_a_revolving_facility_is_agreement_class() -> None:
+    """(+/-) The stem fix. `\\bfacilit\\b` never matched 'Facility', so three real revolvers were
+    published as aggregate line items with 'no contract-level filing expected'. The genuine
+    aggregates must STAY generic — that is what the note is for."""
+    for real in ("ABL Senior Secured Revolving Facility", "Securitization Facility",
+                 "Senior Unsecured Revolving Loans", "Convertible Bonds"):
+        assert _COVENANT_CLASS_RE.search(real), f"{real} must reach a contract search"
+    for aggregate in ("Finance Lease Obligations", "Operating Lease Liabilities",
+                      "Short-term Promissory Note"):
+        assert not _COVENANT_CLASS_RE.search(aggregate), f"{aggregate} has no contract to find"
+
+
+def _term(name: str, value: str, acc: str, title: str | None) -> CovenantTerm:
+    return CovenantTerm(
+        name=name,
+        value=Sourced.present(value, source_ref=f"8-K {acc} · ex.htm"),
+        agreement_title=title,
+    )
+
+
+def test_the_document_outranks_the_pointers_guess_when_grouping() -> None:
+    """(+) END-TO-END through the collapse that feeds the render's headings. Two pointers claim two
+    DIFFERENT instruments; both documents are the same contract. The terms must land in ONE group
+    named by the document, and the later amendment must govern — which is exactly what the pointer
+    labels prevented: BURL's two amendments sat under a convertible note and a term loan."""
+    base = "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+    rows = [
+        _term("Maturity date", "December 22, 2026", "0001193125-22-200058", base),
+        _term("Maturity date", "July 25, 2030", "0001193125-25-168007", base),
+    ]
+    pointers = [
+        CovenantPointer(family="Convertible Senior Notes 2.25%", filing="8-K",
+                        filing_date="2022-07-22", accession="0001193125-22-200058",
+                        exhibits=["ex.htm"]),
+        CovenantPointer(family="Senior Secured Term Loan Facility", filing="8-K",
+                        filing_date="2025-07-29", accession="0001193125-25-168007",
+                        exhibits=["ex.htm"]),
+    ]
+    got = governing_terms(rows, pointers)
+    assert len(got) == 1, f"one contract must collapse to one group, got {[g.family for g in got]}"
+    assert got[0].family == base, got[0].family
+    assert "Convertible" not in got[0].family and "Term Loan" not in got[0].family
+    assert got[0].value.value == "July 25, 2030", "the LATER amendment governs"
+
+
+def test_a_row_without_a_read_title_still_groups_by_the_pointer() -> None:
+    """(-) BACKWARD COMPATIBILITY. A dossier assembled before the title was read carries None, and
+    must keep grouping as it did — the fallback is not allowed to collapse those into one bucket."""
+    rows = [_term("Maturity date", "2027", "0001193125-20-109457", None)]
+    pointers = [CovenantPointer(family="Convertible Senior Notes 1.25%", filing="8-K",
+                                filing_date="2020-04-16", accession="0001193125-20-109457",
+                                exhibits=["ex.htm"])]
+    assert governing_terms(rows, pointers)[0].family == "Convertible Senior Notes 1.25%"
+
+
+def test_an_unread_title_is_omitted_from_the_serialized_artifact() -> None:
+    """(-) ARTIFACT STABILITY. `refresh_dossier` compares serialized text, so a new optional field
+    that always serializes would rewrite every committed dossier on the next pass and bury the real
+    diff. Absent when unread; present the moment it is read."""
+    assert "agreement_title" not in _term("Maturity date", "2027", "acc", None).model_dump()
+    assert _term("Maturity date", "2027", "acc", "CREDIT AGREEMENT").model_dump()[
+        "agreement_title"] == "CREDIT AGREEMENT"
+
+
+def test_a_debt_word_inside_a_non_debt_contract_is_still_refused() -> None:
+    """(-) THE OVERLAP CASE, and the one that makes the refusal list load-bearing. A tax receivables
+    agreement (FUBO, VRRM) contains 'RECEIVABLES', which IS a debt word — so a gate that only asked
+    'does a debt word appear?' would admit it. Testing a title with NO debt word (a stock purchase
+    agreement) cannot catch that: it is refused either way."""
+    assert not is_debt_agreement("TAX RECEIVABLES AGREEMENT")
+    assert not is_debt_agreement("RESTRICTED STOCK UNIT AWARD AGREEMENT")
+    assert is_debt_agreement("ASSET-BASED REVOLVING CREDIT AGREEMENT"), "a real one must pass"
+
+
+def test_a_non_debt_document_never_reaches_the_extractor(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """(-) END-TO-END through `extract_covenant_terms`, which is where the refusal actually lives.
+    The unit pins above all passed while the gate itself was deleted — they exercise the two
+    predicates, never the branch. NKE's pointer really does aim at a CFO offer letter; the extractor
+    must not be called on it, and the refusal must be FLAGGED rather than silent."""
+    seen: list[dict[str, object]] = []
+
+    class _Llm:
+        def extract(self, **kw: object) -> dict[str, object]:
+            seen.append(kw)
+            return {"terms": [{"name": "Maturity date", "present": True, "value": "2030"}]}
+
+    monkeypatch.setattr(covenant_extract, "_fetch_exhibit", lambda *a, **k: NKE_OFFER_LETTER)
+    ptr = CovenantPointer(family="material contracts (10-K exhibit index)", filing="latest 10-K",
+                          filing_date="2026-07-24", accession="0000320187-26-000088",
+                          exhibits=["nke-5312026exhibit1029.htm"])
+    cs = CapitalStructure(
+        instruments=Sourced.unknown(note="n/a"), summary=Sourced.unknown(note="n/a"),
+        detail_as_of="n/a", maturity_filings=Sourced.unknown(note="n/a"),
+        covenant_pointers=Sourced.present("1 pointer", source_ref="EDGAR"),
+        covenant_pointer_rows=Sourced.present([ptr], source_ref="EDGAR"),
+        covenant_terms=Sourced.unknown(note="n/a"),
+    )
+    rows, summary, flags, _log = covenant_extract.extract_covenant_terms(
+        cs, llm=_Llm(), http=None, cik="0000320187", ticker="NKE", name="NIKE, Inc.")
+
+    assert not seen, "an executive offer letter was sent to the covenant extractor"
+    assert rows is None, "a refused document must yield no covenant rows"
+    assert any("not a debt agreement" in f for f in flags), flags
+    assert any("no agreement at all" in f for f in flags), "the refusal states what it found"
