@@ -23,6 +23,7 @@ from vinci.dossier import covenant_extract
 from vinci.dossier.covenant_extract import (
     agreement_title,
     governing_terms,
+    is_amendment,
     is_debt_agreement,
 )
 from vinci.dossier.mechanical import _COVENANT_CLASS_RE
@@ -129,11 +130,13 @@ def test_a_revolving_facility_is_agreement_class() -> None:
         assert not _COVENANT_CLASS_RE.search(aggregate), f"{aggregate} has no contract to find"
 
 
-def _term(name: str, value: str, acc: str, title: str | None) -> CovenantTerm:
+def _term(name: str, value: str, acc: str, title: str | None,
+          amend: bool | None = None) -> CovenantTerm:
     return CovenantTerm(
         name=name,
         value=Sourced.present(value, source_ref=f"8-K {acc} · ex.htm"),
         agreement_title=title,
+        agreement_is_amendment=amend,
     )
 
 
@@ -144,8 +147,11 @@ def test_the_document_outranks_the_pointers_guess_when_grouping() -> None:
     labels prevented: BURL's two amendments sat under a convertible note and a term loan."""
     base = "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
     rows = [
-        _term("Maturity date", "December 22, 2026", "0001193125-22-200058", base),
-        _term("Maturity date", "July 25, 2030", "0001193125-25-168007", base),
+        # BOTH ARE AMENDMENTS to the one contract — that is why a title may merge them across two
+        # different guessed instruments. Two BASE documents sharing a title must NOT merge; see
+        # test_two_base_contracts_sharing_a_title_do_not_merge.
+        _term("Maturity date", "December 22, 2026", "0001193125-22-200058", base, True),
+        _term("Maturity date", "July 25, 2030", "0001193125-25-168007", base, True),
     ]
     pointers = [
         CovenantPointer(family="Convertible Senior Notes 2.25%", filing="8-K",
@@ -272,3 +278,96 @@ def test_the_convertible_issuance_documents_reach_the_extractor() -> None:
         assert is_debt_agreement(fetched), f"{fetched} is a targeted core exhibit"
     assert not is_debt_agreement("STOCK PURCHASE AGREEMENT"), "an equity SPA is still refused"
     assert not is_debt_agreement("SUBSCRIPTION AGREEMENT")
+
+
+# --- a title may RELABEL a group, never MERGE two contracts ------------------------------------
+# #652 grouped on the title alone. Review demonstrated the cost: two convertible series whose
+# indentures are both titled "INDENTURE" collapsed into one group, the earlier series' conversion
+# price vanished, and the later indenture was published as an `amended_by` of it. Silent data loss
+# plus a fabricated supersession — worse, for that case, than the mislabelling it replaced.
+
+def _row(name: str, val: str, acc: str, title: str | None, amend: bool | None) -> CovenantTerm:
+    return CovenantTerm(name=name, value=Sourced.present(val, source_ref=f"8-K {acc} · ex.htm"),
+                        agreement_title=title, agreement_is_amendment=amend)
+
+
+def _ptr(family: str, acc: str, when: str) -> CovenantPointer:
+    return CovenantPointer(family=family, filing="8-K", filing_date=when, accession=acc,
+                           exhibits=["ex.htm"])
+
+
+def test_two_base_contracts_sharing_a_title_do_not_merge() -> None:
+    """(+) THE DEMONSTRATED BUG. Two convertible SERIES, each with its own indenture, both heads
+    titled "INDENTURE". They must stay two groups with both values intact and no amendment
+    relationship invented between them."""
+    rows = [_row("Conversion price", "$12.34", "0001000000-21-100000", "INDENTURE", False),
+            _row("Conversion price", "$56.78", "0001000000-22-200000", "INDENTURE", False)]
+    ptrs = [_ptr("2025 Convertible Notes", "0001000000-21-100000", "2021-03-01"),
+            _ptr("2027 Convertible Notes", "0001000000-22-200000", "2022-05-01")]
+    got = governing_terms(rows, ptrs)
+    assert len(got) == 2, f"two contracts collapsed into {len(got)}"
+    assert {g.value.value for g in got} == {"$12.34", "$56.78"}, "a conversion price was deleted"
+    for g in got:
+        assert not getattr(g, "amended_by", ()), "an amendment relationship was fabricated"
+
+
+def test_amendments_to_one_contract_still_merge_across_guessed_instruments() -> None:
+    """(+) THE CASE THE TITLE EXISTS FOR, and the one the fix must not break. BURL's amendments
+    arrive under different guessed instruments; they are one facility and must collapse, with the
+    later amendment governing."""
+    base = "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+    rows = [_row("Maturity date", "December 22, 2026", "0001193125-22-200058", base, True),
+            _row("Maturity date", "July 25, 2030", "0001193125-25-168007", base, True)]
+    ptrs = [_ptr("Convertible Senior Notes 2.25%", "0001193125-22-200058", "2022-07-22"),
+            _ptr("Senior Secured Term Loan Facility", "0001193125-25-168007", "2025-07-29")]
+    got = governing_terms(rows, ptrs)
+    assert len(got) == 1 and got[0].family == base, [g.family for g in got]
+    assert got[0].value.value == "July 25, 2030", "the later amendment must govern"
+
+
+def test_two_bases_under_one_pointer_family_are_left_alone() -> None:
+    """(-) THE RULE MUST NOT OVER-FIRE. Nike's two successive 364-day agreements share a pointer
+    family, so they were ALREADY one group before titles existed — a renewal collapsing onto its
+    predecessor is pre-existing behaviour, not something to change here. Withholding the title must
+    key on bases from DIFFERENT families, not on 'more than one base'."""
+    title = "364-DAY CREDIT AGREEMENT"
+    rows = [_row("Maturity date", "2025", "0000320187-25-000008", title, False),
+            _row("Maturity date", "2026", "0000320187-26-000020", title, False)]
+    fam = "364-day Committed Credit Facility"
+    got = governing_terms(rows, [_ptr(fam, "0000320187-25-000008", "2025-01-01"),
+                                 _ptr(fam, "0000320187-26-000020", "2026-01-01")])
+    assert len(got) == 1, "a same-family renewal pair must stay one group"
+    # AND IT MUST STILL BE NAMED BY THE DOCUMENT. Asserting only the COUNT cannot see an
+    # over-firing withhold: falling back to the pointer family here also yields one group, just
+    # under the guessed name — which is the whole thing this change exists to stop publishing.
+    assert got[0].family == title, (
+        f"the title was withheld although both bases share one family — got {got[0].family!r}")
+
+
+def test_an_amendment_is_read_from_the_head_not_the_body() -> None:
+    """(-) A base agreement's BODY is full of the word 'amendment' — amendment clauses, defined
+    terms, 'no amendment shall be effective unless'. Searching the document would call almost
+    everything an amendment and re-open the merge from the other side."""
+    assert is_amendment(BURL_SIXTH)
+    assert not is_amendment(NFLX_CREDIT)
+    body = ("Exhibit 10.1 CREDIT AGREEMENT dated as of May 1, 2024 among ACME, INC. "
+            + "Section 9.1 Amendments. No amendment to this Agreement shall be effective. " * 12)
+    assert not is_amendment(body), "an amendment CLAUSE is not an amendment DOCUMENT"
+
+
+def test_a_leading_year_survives_because_it_distinguishes_facilities() -> None:
+    """(-) '2021 CREDIT AGREEMENT' and '2024 CREDIT AGREEMENT' are different facilities; stripping
+    the year manufactures the collision the collapse then has to resolve. A CUSIP and an amount
+    fragment are still stripped."""
+    assert agreement_title("Exhibit 10.1 2021 CREDIT AGREEMENT among X") == "2021 CREDIT AGREEMENT"
+    assert agreement_title("Exhibit 10.1 000 CREDIT AGREEMENT among X") == "CREDIT AGREEMENT"
+    assert agreement_title(
+        "Exhibit 10.1 65410VAW81 364-DAY CREDIT AGREEMENT among X") == "364-DAY CREDIT AGREEMENT"
+
+
+def test_an_unread_amendment_flag_is_omitted_from_the_artifact() -> None:
+    """(-) Same artifact-stability contract as the title: absent until read, so a committed dossier
+    does not churn on the next pass."""
+    unread = _row("m", "v", "a", "CREDIT AGREEMENT", None).model_dump()
+    assert "agreement_is_amendment" not in unread
+    assert _row("m", "v", "a", "CREDIT AGREEMENT", True).model_dump()["agreement_is_amendment"]

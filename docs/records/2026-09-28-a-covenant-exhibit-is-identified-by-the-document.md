@@ -143,3 +143,18 @@ and only the corpus run caught it; the reader took five measured iterations afte
   being *published* as the document's identity, but `_covenant_pointers` still searches with a
   class-generic phrase and still apportions hits by arrival order. A pointer layer that queries
   per-instrument is the real repair and is not attempted here.
+## Amendments
+
+**2026-09-28 — the blocker's LIVE exposure is zero; the block was precautionary.** This record
+states that grouping by title merges two contracts sharing a base name, and blocks the fleet
+artifact pass on it. The defect is real and was reproduced at the function level. Its LIVE
+exposure was not measured at the time, and has since been: over the 24 names carrying covenant
+pointers, simulating the actual selection (`_core_agreement_exhibits`, capped at `_MAX_EXHIBITS`
+= 4, round-robin by family), **no name would have merged two distinct contracts** — all five
+title collisions among extracted exhibits are legitimate amendment chains (BURL, NKE, PARR, UBER,
+WLK). The "5 of 11 title groups carry >=2 base documents" figure in the parent record was measured
+over ALL LOCATED exhibits (up to 3 per pointer row), a wider population than the <=4 that reach
+extraction; AMZN's two colliding 364-day agreements, for instance, never land in one extracted set.
+The demonstrated case was constructed, not drawn from the corpus. Fixed in PR #653 regardless —
+the failure mode is silent deletion plus a fabricated `amended_by`, which is worth a guard whether
+or not it fires today — and the fleet pass is unblocked there.
