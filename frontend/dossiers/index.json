@@ -3,6 +3,7 @@
     "AMZN",
     "AORT",
     "BRBR",
+    "BURL",
     "CNXC",
     "EPAM",
     "FUBO",
@@ -15,8 +16,10 @@
     "NKE",
     "ORKA",
     "PARR",
+    "ROST",
     "SMPL",
     "TECX",
+    "TGT",
     "UBER",
     "V",
     "VITL",
@@ -37,6 +40,11 @@
     },
     "BRBR": {
       "industry": "Personal Care Products",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "BURL": {
+      "industry": "Apparel Retail",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
@@ -100,6 +108,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "ROST": {
+      "industry": "Apparel Retail",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "SMPL": {
       "industry": "Packaged Foods and Meats",
       "source": "ciq-gics",
@@ -107,6 +120,11 @@
     },
     "TECX": {
       "industry": "Biotechnology",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "TGT": {
+      "industry": "Consumer Staples Merchandise Retail",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
@@ -145,6 +163,7 @@
     "AMZN": "strongly-bullish \u2014 AWS growth accelerating to 36.7% with a $496B contracted backlog and rising absolute EBITDA, though heavy negative FCF is the live counter.",
     "AORT": "mixed \u2014 compounding revenue and rising absolute EBITDA against a sharply cut forward-earnings base, worse leverage, dilution and an On-X recall.",
     "BRBR": "mixed \u2014 a discrete margin collapse with real demand-side deterioration, set against an intact category, committed FY27 pricing, and cash generation.",
+    "BURL": "Strongly-bullish \u2014 EBITDA compounding via unit growth and margin expansion while the trailing multiple sits near its own-history floor; decelerating comps and cash-hungry capex are the real caveats.",
     "CNXC": "mixed \u2014 flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.",
     "EPAM": "mixed \u2014 a still-growing, net-cash, FCF-positive grower de-rated to trough multiples, but facing a self-owned, unresolved North American structural growth gap.",
     "FUBO": "mixed \u2014 a raised adjusted-EBITDA guide and subscriber inflection sit against a \u221277% year, \u2212$107.8M FCF, and a \u221237% consensus EBITDA cut.",
@@ -157,8 +176,10 @@
     "NKE": "mixed \u2014 an all-time-low trailing multiple and fortress balance sheet against still-falling forward estimates and a declining half-of-revenue core.",
     "ORKA": "mixed \u2014 validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.",
     "PARR": "mixed \u2014 a fully-revised near-term print and low leverage sit against a +112% run and a consensus forward curve that de-rates the peak.",
+    "ROST": "strongly-bullish \u2014 durable transaction-led double-digit comps, rising unit runway, fortress balance sheet and upward revisions, but the premium is fully priced.",
     "SMPL": "mixed \u2014 a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.",
     "TECX": "mixed \u2014 a cash-rich, analyst-favored single-asset clinical bet whose entire value hinges on one undated, unproven TX45 readout against an accelerating burn.",
+    "TGT": "mixed \u2014 a real traffic-led recovery and sharp upward revisions, but an above-peer EBITDA multiple, an 82% run, and margins/returns still below prior peak.",
     "UBER": "strongly-bullish \u2014 absolute EBITDA, ROIC and $10B+ FCF compound while the multiple sits at its own-history floor; near-term estimate cuts and growth-spend are the genuine counterweights.",
     "V": "mixed \u2014 a genuinely lengthening volume/VAS runway and rising ROIC against a fully-earned but growth-matched premium and a year of market underperformance.",
     "VITL": "mixed \u2014 an identifiable, arguably reversible egg-pricing shock with an intact loyal base and near-zero leverage set against a ~97% FY26 EBITDA collapse and cash burn, with recovery still only modelled.",
@@ -170,6 +191,7 @@
     "AMZN": "quality",
     "AORT": "overshoot",
     "BRBR": "overshoot",
+    "BURL": "overshoot",
     "CNXC": "overshoot",
     "EPAM": "overshoot",
     "FUBO": "overshoot",
@@ -182,8 +204,10 @@
     "NKE": "overshoot",
     "ORKA": "quality",
     "PARR": "ultra_short_term",
+    "ROST": "quality",
     "SMPL": "overshoot",
     "TECX": "quality",
+    "TGT": "quality",
     "UBER": "quality",
     "V": "quality",
     "VITL": "overshoot",
@@ -202,6 +226,9 @@
     "AMZN": "quality",
     "PARR": "ultra_short_term",
     "WLK": "ultra_short_term",
-    "NKE": "overshoot"
+    "NKE": "overshoot",
+    "ROST": "quality",
+    "BURL": "overshoot",
+    "TGT": "quality"
   }
 }

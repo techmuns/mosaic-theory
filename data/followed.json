@@ -97,5 +97,20 @@
   "followed_since": "2026-09-22",
   "sleeve": "overshoot",
   "reason": "NIKE, the athletic footwear and apparel company (NIKE, Jordan, Converse), followed as an OVERSHOOT candidate by operator decision 2026-09-22: at $36.10 on 2026-09-21 it is down 51.6% from its 52-week closing high of $74.57 (2025-10-02) and 1.7% above its 52-week low ($35.51, 2026-09-18) — a ~$53.6bn market cap on $46.4bn of FY2026 (May) revenue. The question is whether the de-rating overshoots the business. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
+ },
+ "ROST": {
+  "followed_since": "2026-09-28",
+  "sleeve": "quality",
+  "reason": "Ross Stores, the off-price apparel and home retailer (Ross Dress for Less, dd's DISCOUNTS), followed under the QUALITY book by operator decision 2026-09-28. At $232.51 on 2026-09-22 it is 8.9% below its 52-week closing high of $255.23 (2026-08-07) and 60.7% above the low of $144.67 (2025-09-22) \u2014 ahead of IWM by 43.2 points over the same window, so this is a compounder being underwritten on durability, not a de-rating. The binding question is what the current 15.7x EV/EBITDA assumes against a 12.7x own-history median (38 closes, 9.5 years): the multiple is richer than its own history while the business is executing. CAUTION ON THE ANCHOR: EDGAR tags OperatingIncomeLoss for only four fiscal years (FY2023-FY2026), so R1's margin median is drawn entirely from the post-COVID phase and the leg reads WEAK \u2014 a four-year window is not a cycle for an off-price retailer. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
+ },
+ "BURL": {
+  "followed_since": "2026-09-28",
+  "sleeve": "overshoot",
+  "reason": "Burlington Stores, the off-price apparel and home retailer, followed as an OVERSHOOT candidate by operator decision 2026-09-28. At $256.85 on 2026-09-22 it is 31.0% below its 52-week closing high of $372.19 (2026-07-30) and 13.0% above the low of $227.28 (2026-09-15), trailing IWM by 18.2 points over the window \u2014 the only one of the three retail follows that is genuinely de-rated. Its EV/EBITDA of 9.0x sits BELOW a 12.8x own-history median (38 closes, 9.5 years), so the multiple says overshoot. The question the underwrite has to answer is whether the margin does: on an 11-year reported median operating margin of 7.5% the R1 anchor is $183, which is BELOW spot \u2014 cheap on multiple is not the same as cheap on mid-cycle earnings, and the two disagree here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
+ },
+ "TGT": {
+  "followed_since": "2026-09-28",
+  "sleeve": "quality",
+  "reason": "Target, the US general-merchandise retailer, followed under the QUALITY book by operator decision 2026-09-28. At $159.02 on 2026-09-22 it is 6.4% below its 52-week closing high of $169.89 (2026-08-24) and 90.0% above the low of $83.68 (2025-11-20), ahead of IWM by 66.2 points over the window \u2014 the strongest of the three, and NOT a de-rated name whatever the earlier framing assumed. It is booked as quality because the question is durability of the recovery, not whether a fall overshot. EV/EBITDA 9.2x against an 8.4x own-history median (38 closes, 9.5 years), and R1 anchors at $138 on a 10-year median operating margin of 5.6% \u2014 the only one of the three whose margin leg reads FIRM. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
  }
 }
