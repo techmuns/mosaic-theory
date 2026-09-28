@@ -637,16 +637,24 @@ class CovenantTerm(BaseModel):
     #: EVIDENCE-BOUND identity of the document; the pointer's ``family`` is the instrument the
     #: SEARCH guessed, which nothing verified. None on pre-2026-09-28 JSON.
     agreement_title: str | None = None
+    #: Does the document AMEND something, or is it a contract in its own right? Two AMENDMENTS
+    #: sharing a base title are the same contract and must collapse together; two BASE contracts
+    #: sharing one are DIFFERENT and must not. Without this the collapse cannot tell BURL's four
+    #: amendments (one facility) from Amazon's two 364-day revolvers (two facilities, one name).
+    #: None on pre-2026-09-28 JSON.
+    agreement_is_amendment: bool | None = None
 
     model_config = {"frozen": True}
 
     @model_serializer(mode="wrap")
     def _omit_unread_title(self, nxt: Any) -> Any:
-        """Drop ``agreement_title`` when unset so a committed artifact stays byte-identical until
-        the name is re-assembled (``refresh_dossier`` compares serialized text)."""
+        """Drop the read-from-document fields when unset so a committed artifact stays
+        byte-identical until the name is re-assembled (``refresh_dossier`` compares text)."""
         d = nxt(self)
         if self.agreement_title is None:
             d.pop("agreement_title", None)
+        if self.agreement_is_amendment is None:
+            d.pop("agreement_is_amendment", None)
         return d
 
 

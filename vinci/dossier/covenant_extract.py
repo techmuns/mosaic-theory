@@ -255,7 +255,13 @@ _LEAD_NOISE = re.compile(r"^(?:EXISTING\s+|THAT\s+CERTAIN\s+|THE\s+|TO\s+|A\s+)+
 #: "000 CREDIT AGREEMENT" from "$1,000"). The token must CONTAIN A DIGIT — without that guard
 #: ``[A-Z0-9]{6,}`` also eats the first real word, turning "AMENDED AND RESTATED CREDIT AGREEMENT"
 #: into "AND RESTATED CREDIT AGREEMENT". A hyphenated token is kept: "364-DAY" is part of the name.
-_LEAD_CODE = re.compile(r"^(?:(?:[\d,\.]+|(?=[A-Z0-9]*\d)[A-Z0-9]{6,})\s+)+")
+#: A YEAR IS NOT A CODE. "2021 CREDIT AGREEMENT" and "2024 CREDIT AGREEMENT" are different
+#: facilities, and stripping the year makes them one title — manufacturing exactly the
+#: collision the collapse below has to resolve. 19xx/20xx is kept; "000" (from "$1,000")
+#: and a CUSIP are still stripped. Measured 2026-09-28: NO title in the 144-head corpus
+#: carries a leading year, so this changes nothing observable today — it is a latent case
+#: closed at the same time as the collision it would cause.
+_LEAD_CODE = re.compile(r"^(?:(?!(?:19|20)\d{2}\b)(?:[\d,\.]+|(?=[A-Z0-9]*\d)[A-Z0-9]{6,})\s+)+")
 #: An amendment whose own title does not name its contract ("AMENDMENT AND RESTATEMENT AGREEMENT")
 #: says so in the next clause — "to that certain Credit Agreement dated ...".
 _BASE_REF = re.compile(
@@ -286,6 +292,31 @@ _NOT_DEBT = re.compile(
     # TRUST appears ONLY as TRUST AGREEMENT / VOTING TRUST: a bond's own contract is routinely
     # titled "TRUST INDENTURE", and a bare \bTRUST\b refused every one of them.
     r"RECEIVABLES?\s+AGREEMENT)\b", re.I)
+
+
+#: "SIXTH AMENDMENT TO ...", "AMENDMENT NO. 3 TO ..." — the document presents itself as amending
+#: another contract, so it shares that contract's identity. Read from the HEAD only: a base
+#: agreement mentions the word "amendment" throughout its own body (amendment clauses, defined
+#: terms), so a whole-document search would call almost everything an amendment.
+#: CASE-SENSITIVE ON PURPOSE — an agreement HEADING is set in capitals, and a base contract's body
+#: is full of the same words in prose: "No amendment to this Agreement shall be effective without
+#: ...". Matching case-insensitively called such a contract an amendment and re-opened the merge
+#: from the other side. A title-cased heading is still caught by ``_AMEND_PREFIX`` on the parsed
+#: title, which is case-insensitive; this fallback exists only for headings like CNXC's "AMENDMENT
+#: AND RESTATEMENT AGREEMENT", which names no contract and so never reaches that prefix.
+_IS_AMENDMENT = re.compile(
+    rf"\b(?:AMENDMENT\s+(?:NO\.\s*\d+\s+)?TO|(?:{_ORD.upper()})\s+AMENDMENT|"
+    rf"AMENDMENT\s+AND\s+RESTATEMENT\s+AGREEMENT)\b")
+
+
+def is_amendment(text: str) -> bool:
+    """Does the exhibit present itself as an amendment TO another contract?"""
+    h = re.sub(r"\s+", " ", text[:1500])
+    h = re.sub(r"\s+", " ", _BOILER.sub(" ", _DOC_HDR.sub("", h))).strip()
+    m = _TITLE.search(h[:1500])
+    if m is not None and _AMEND_PREFIX.search(_clean_title(m.group(1))):
+        return True
+    return bool(_IS_AMENDMENT.search(h[:900]))
 
 
 def _clean_title(t: str) -> str:
@@ -335,7 +366,7 @@ def is_debt_agreement(title: str | None) -> bool:
 
 def _extract_from_exhibit(
     llm: LlmClient, text: str, *, name: str, ticker: str, source_ref: str,
-    title: str | None = None,
+    title: str | None = None, amendment: bool | None = None,
 ) -> tuple[list[CovenantTerm], str]:
     """Run the fenced tool against one exhibit → (rows, raw-log). source_ref is machine-set here, so
     the model cannot invent a citation — it only fills value + a verbatim quote."""
@@ -368,7 +399,8 @@ def _extract_from_exhibit(
         else:
             val = Sourced.unknown(note=f"not stated in {source_ref}")
         rows.append(
-            CovenantTerm(name=term_name, value=val, agreement_title=title, **components)
+            CovenantTerm(name=term_name, value=val, agreement_title=title,
+                         agreement_is_amendment=amendment, **components)
         )
     return rows, str(raw)
 
@@ -428,7 +460,8 @@ def extract_covenant_terms(
             continue
         try:
             got, log = _extract_from_exhibit(
-                llm, text, name=name, ticker=ticker, source_ref=src, title=title)
+                llm, text, name=name, ticker=ticker, source_ref=src, title=title,
+                amendment=is_amendment(text))
         except LlmError as exc:
             flags.append(f"(E5) covenant extraction LLM error — UNKNOWN: {src}: {exc}")
             continue
@@ -479,6 +512,44 @@ class GoverningTerm(NamedTuple):
     pik_pct: float | None = None
 
 
+def _ambiguous_titles(
+    term_rows: list[CovenantTerm], meta: dict[str, tuple[str, str]]
+) -> set[str]:
+    """Titles that CANNOT identify one contract, so the collapse must not group by them.
+
+    A title merges rows across pointer families — that is the point: BURL's four amendments to one
+    credit agreement arrive under four different guessed instruments and must end up in ONE group.
+    But two BASE contracts can share a name without being the same contract, and then the same
+    merge DELETES one of them: two convertible series whose indentures are both titled "INDENTURE"
+    collapse to one group, the earlier series' conversion price disappears, and the later indenture
+    is published as an ``amended_by`` of it — a supersession that never happened, which is exactly
+    what (X-4) below refuses to fabricate from dates.
+
+    So a title is ambiguous when it covers MORE THAN ONE BASE DOCUMENT from DIFFERENT pointer
+    families. Both halves matter. Amendments are excluded because an amendment shares its base's
+    identity. Same-family bases are excluded because they were already one group before the title
+    existed — Nike's two successive 364-day agreements share a pointer family, and collapsing a
+    renewal onto its predecessor is the pre-existing behaviour here, not something this introduces.
+
+    Measured 2026-09-28 over the 144-head corpus: 11 titles span >1 accession; 5 carry >=2 base
+    documents. Withholding those 5 restores the pointer grouping exactly where the document cannot
+    identify itself, and leaves all 6 genuine chains (BURL 5 accessions / 0 base, NFLX, UBER, MVST,
+    PARR, WLK) merging as they should."""
+    bases: dict[str, set[str]] = {}
+    for row in term_rows:
+        title = row.agreement_title
+        if not title or row.agreement_is_amendment:
+            continue
+        acc = _acc_of(row.value.source_ref) or _acc_of(row.value.note) or ""
+        fam = meta.get(acc, ("", ""))[0]
+        bases.setdefault(title, set()).add(f"{fam}\x00{acc}")
+    out: set[str] = set()
+    for title, keys in bases.items():
+        if len({k.split("\x00")[0] for k in keys}) > 1:
+            out.add(title)
+    return out
+
+
 def governing_terms(
     term_rows: list[CovenantTerm], pointers: list[CovenantPointer]
 ) -> list[GoverningTerm]:
@@ -489,17 +560,21 @@ def governing_terms(
     UNKNOWN — but the collapse guarantees a PRESENT answer is never ordered below an UNKNOWN.
     The winning row's interest components ride along so the render composes from structure."""
     meta = {p.accession: (p.family, p.filing_date) for p in pointers if p.accession}
+    ambiguous = _ambiguous_titles(term_rows, meta)
     grouped: dict[tuple[str, str], list[tuple[str, CovenantTerm]]] = {}
     order: list[tuple[str, str]] = []
     for row in term_rows:
         acc = _acc_of(row.value.source_ref) or _acc_of(row.value.note)
         fam, dt = meta.get(acc, ("(unmapped)", ""))
-        # THE DOCUMENT OUTRANKS THE POINTER. ``agreement_title`` is what the exhibit calls itself,
-        # normalised to the base contract so an amendment groups with what it amends; ``family`` is
-        # the instrument the class-generic efts phrase guessed, and on 11 of 26 committed names that
-        # guess is decided by which family reached the shared hit list first. Fall back only for a
-        # row assembled before the title was read.
-        fam = row.agreement_title or fam
+        # THE DOCUMENT OUTRANKS THE POINTER, BUT A TITLE MAY RELABEL A GROUP — NEVER MERGE TWO.
+        # ``agreement_title`` is what the exhibit calls itself, normalised to the base contract so
+        # an amendment groups with what it amends; ``family`` is the instrument the class-generic
+        # efts phrase guessed, and on 11 of 26 committed names that guess is decided by which
+        # family reached the shared hit list first. ``_ambiguous`` below withholds the title
+        # wherever it cannot tell two contracts apart. Fall back for a row assembled before the
+        # title was read.
+        fam = (row.agreement_title
+               if row.agreement_title and row.agreement_title not in ambiguous else fam)
         key = (fam, row.name)
         if key not in grouped:
             grouped[key] = []
