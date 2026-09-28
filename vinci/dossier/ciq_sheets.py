@@ -25,6 +25,7 @@ from vinci.dossier.ciq import (
     CiqUnavailableError,
     clean_num,
     excel_date,
+    is_empty_view,
     read_sheets,
     read_text,
 )
@@ -3022,6 +3023,19 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
         except CiqParseError as exc:
             return Sourced.unknown(note=str(exc))
         parsed = _parse_business_relationships(raw)
+        if not parsed and is_empty_view(raw):
+            # NOT a parse failure — CIQ affirmatively states it has nothing to list, and saying
+            # "could not parse" below would blame our reader for the source's own answer. The
+            # status stays UNKNOWN (no rows ⇒ no value ⇒ nothing to impute); only the NOTE changes,
+            # from a false claim about this code to what the export actually says. BURL is the
+            # case: 0 customer rows beside 33 supplier rows in the same bundle. Swept 2026-09-28
+            # over the 26 ticker folders in data/manual/ciq/, it is the ONLY empty view — ROST and
+            # TGT parse rows — so this is one name's economics, not a retail-sector rule.
+            return Sourced.unknown(
+                note=(f"CIQ discloses no customers for {bundle.ticker} — the export is empty by "
+                      f"CIQ's own statement, not unparsed"),
+                source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
+            )
     if not parsed:
         return Sourced.unknown(
             note=f"could not parse the Business-Relationships table in {wb.path.name}"
