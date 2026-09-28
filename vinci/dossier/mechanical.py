@@ -3184,8 +3184,16 @@ def _maturity_8ks(
 # (H1) agreement-class whitelist — only an instrument backed by a DISCRETE contract gets a filing
 # lookup; a generic balance-sheet aggregate (Notes Payable, a lease) has no single agreement to
 # point at and renders an honest "no contract-level filing expected" note.
+# STEMS, NOT WHOLE WORDS. This was `\b(...)\b`, and the shared TRAILING `\b` made every entry an
+# exact word: "facilit" is not a word, so it never matched "Facility"/"Facilities" at all, and the
+# plurals fell out too — `\bloan\b` misses "Loans", `\bbond\b` misses "Bonds". Measured 2026-09-28
+# across the 26 committed dossiers, that sent three real revolvers (BURL's ABL Senior Secured
+# Revolving Facility, CNXC's Securitization Facility, UBER's Senior Unsecured Revolving Loans) into
+# the generic bucket, where each was published with the note "no contract-level filing expected
+# (aggregate line item)" — a flatly false statement about a facility that files its credit
+# agreement. Trailing `\w*` restores the prefix match the alternation was written for.
 _COVENANT_CLASS_RE = re.compile(
-    r"\b(loan|credit|facilit|indenture|convertible|agreement|bond)\b", re.IGNORECASE)
+    r"\b(loan|credit|facilit|indenture|convertible|agreement|bond)\w*", re.IGNORECASE)
 # an EXECUTION filing carries the agreement as an EXHIBIT — a material-contract ex-10.x or a
 # filename naming the contract; a primary 8-K body ('mvst-20240603.htm') matches none of these.
 #: A MATERIAL-CONTRACT EXHIBIT FILENAME, across the conventions filers actually use.

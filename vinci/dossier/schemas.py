@@ -631,8 +631,23 @@ class CovenantTerm(BaseModel):
     margin_bps: float | None = None  # spread over base, in bps (e.g. 115) — alternate to margin_pct
     floor_pct: float | None = None  # rate floor, in percent (e.g. 3.00)
     pik_pct: float | None = None  # PIK component, in percent (e.g. 3.75)
+    #: The AGREEMENT'S OWN NAME, read from the exhibit's head and normalised to the BASE contract
+    #: ("Sixth Amendment to Second Amended and Restated Credit Agreement" → "SECOND AMENDED AND
+    #: RESTATED CREDIT AGREEMENT"), so an amendment groups with the contract it amends. This is the
+    #: EVIDENCE-BOUND identity of the document; the pointer's ``family`` is the instrument the
+    #: SEARCH guessed, which nothing verified. None on pre-2026-09-28 JSON.
+    agreement_title: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _omit_unread_title(self, nxt: Any) -> Any:
+        """Drop ``agreement_title`` when unset so a committed artifact stays byte-identical until
+        the name is re-assembled (``refresh_dossier`` compares serialized text)."""
+        d = nxt(self)
+        if self.agreement_title is None:
+            d.pop("agreement_title", None)
+        return d
 
 
 class CapitalStructure(BaseModel):
