@@ -261,7 +261,15 @@ _LEAD_NOISE = re.compile(r"^(?:EXISTING\s+|THAT\s+CERTAIN\s+|THE\s+|TO\s+|A\s+)+
 #: and a CUSIP are still stripped. Measured 2026-09-28: NO title in the 144-head corpus
 #: carries a leading year, so this changes nothing observable today — it is a latent case
 #: closed at the same time as the collision it would cause.
-_LEAD_CODE = re.compile(r"^(?:(?!(?:19|20)\d{2}\b)(?:[\d,\.]+|(?=[A-Z0-9]*\d)[A-Z0-9]{6,})\s+)+")
+#: CASE-INSENSITIVE ON THE CODE BRANCH. Filers emit the id in the document's own case, and
+#: WERN's is LOWERCASE — "wern-20260605ex101 1758963679 24780046 AMENDMENT NO. 3 TO LOAN AND
+#: SECURITY AGREEMENT". An `[A-Z0-9]` class never matched it, the id survived into the title,
+#: and the trailing `.upper()` made the published heading LOOK uppercase, which is why a
+#: hand-typed uppercase fixture passed while the real document still failed (#655). The DIGIT
+#: requirement is what keeps this safe: a real word carries no digit, so "AMENDED" and
+#: "amended" are both left alone, and a hyphen still protects "364-DAY" / "FIVE-YEAR".
+_LEAD_CODE = re.compile(
+    r"^(?:(?!(?:19|20)\d{2}\b)(?:[\d,\.]+|(?=[A-Za-z0-9]*\d)[A-Za-z0-9]{6,})\s+)+")
 #: An amendment whose own title does not name its contract ("AMENDMENT AND RESTATEMENT AGREEMENT")
 #: says so in the next clause — "to that certain Credit Agreement dated ...".
 _BASE_REF = re.compile(
