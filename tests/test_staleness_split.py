@@ -228,7 +228,15 @@ def test_the_split_changes_exactly_one_name_and_loosens_nothing_else() -> None:
     # a human to re-measure, not an invariant. The invariant — an export panel must never be
     # classified as consensus — is the per-name `exp.days <= merged` assert inside the loop
     # above, and it holds unconditionally.
-    assert set(moved) <= {"MVST", "AORT"}, (
-        f"the split moves {sorted(moved)}; measured it moves MVST (2026-07-30) and AORT\n"
-        "(2026-08-18). A name not on that list means the classification widened — re-measure\n"
-        "its merged vs export age before adding it, as both of those were.")
+    # TECX ADMITTED 2026-09-29, RE-MEASURED AS THIS ASSERTION DEMANDS — and it crossed for the
+    # SAME mechanism recorded for AORT above, not a reclassification. Its panel dates did not
+    # move: merged 50d and export 28d are both driven by the 2026-08-09 ESTIMATES export
+    # (`multiples_as_of` / `financial_summary.as_of` / `consensus_as_of` / `catalyst_path.as_of`),
+    # and the export panel sits comfortably inside the 45d ceiling. What moved was
+    # `assembled_at` — 2026-09-02 to 2026-09-28 in the covenant-identity fleet pass — taking the
+    # merged age from 24d to 50d while the export age went 2d to 28d. A consensus panel aged past
+    # the ceiling while the export panel stayed fresh: the distinction the split draws.
+    assert set(moved) <= {"MVST", "AORT", "TECX"}, (
+        f"the split moves {sorted(moved)}; measured it moves MVST (2026-07-30), AORT\n"
+        "(2026-08-18) and TECX (2026-09-29). A name not on that list means the classification\n"
+        "widened — re-measure its merged vs export age before adding it, as all three were.")

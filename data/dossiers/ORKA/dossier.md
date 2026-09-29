@@ -1,6 +1,6 @@
 # Dossier — Oruka Therapeutics, Inc. (Nasdaq: ORKA)
 
-_September 10, 2026 · extraction 2026-08-16.1_
+_September 28, 2026 · extraction 2026-08-16.1_
 
 # Brief — first cut
 
@@ -8,21 +8,21 @@ _September 10, 2026 · extraction 2026-08-16.1_
 > ⚠ **Verify before the verdict:** NOT A CURRENT SCREEN CANDIDATE — full caveats in Analysis.
 
 Oruka Therapeutics, Inc., a clinical-stage biopharmaceutical company, focuses on developing novel monoclonal antibody therapeutics for psoriasis (PsO), and other inflammatory and immunology (I&I) indications.
-**Mixed** — validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.
+**Mixed** — genuinely positive clinical de-risking and a large cash pile offset by zero revenue, accelerating burn, heavy dilution and insider selling.
 - **Segments · Segments (revenue share):** _UNKNOWN_ — Segments sheet has no 'Revenues' section, and its revenue roster could not be read either — the reason for the absence is undetermined
 - **Geography · Geographic:** _UNKNOWN_ — Segments sheet has a 'Geographic Segment' section but no 'Revenues' block under it — the geographic segment breakdown is absent from this export
-- **Snapshot:** Nasdaq · CMP $91.50 (2026-09-09) · cap $6.1B (2026-08-31) · 52-wk $14.34–$115.52 · shares 66.2M · book value/sh $18.20 [1]
+- **Snapshot:** Nasdaq · CMP $94.55 (2026-09-22) · cap $6.1B (2026-08-31) ⚠ implies $92.62/sh vs CMP (-2.0%) · 52-wk $14.89–$115.52 · shares 66.2M · book value/sh $18.20 [1]
 
 **The crux — what decides this, and what would change our mind**
-**Will the ORKA-001 / ORKA-002 clinical program convert its early-phase read-outs into confirmatory efficacy and a marketed product before the ~$1.1B cash cushion is exhausted by an accelerating burn — i.e. is the priced-in optimism earned by the data?**
-_7 key unknowns + the evidence for/against — in Analysis_
-**Next catalyst:** effective August 24, 2026 ~2026-08 `[stated]` — calendar in Analysis
+**Will the IL-23p19 franchise (ORKA-001/ORKA-002) convert positive early-phase data into approved, revenue-generating products before the cash cushion is exhausted and dilution resets the per-share case?**
+_8 key unknowns + the evidence for/against — in Analysis_
+**Next catalyst:** Next results print ~2026-11-06 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and does it change the runway?
 - **Shape:** gradual bleed — no discrete gap-down detected [2]
-- **Price (180d):** 190.3% [3]
-- **Market (MDY) 180d:** 5.9% [4]
-- **vs market (180d):** 184.4% [5]
+- **Price (180d):** 108.0% [3]
+- **Market (MDY) 180d:** 8.5% [4]
+- **vs market (180d):** 99.5% [5]
 - **Net debt / EBITDA · Net debt / EBITDA [NET]:** _UNKNOWN_ — CIQ EBITDA $-155M <= 0 — ratio meaningless
 - **Free cash flow:** negative [6]
 
@@ -38,19 +38,22 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | unknown | NOT applicable |
 | Overall confidence | — |  |
 
+**data_quality: vendor_bridge**
+- vendor bridge: net_debt supplied by the CIQ workbook because EDGAR had no usable tag
+
 _own-history multiple missing (valuation.own_history.median absent)_
 
 ## The case
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the runway outlasts the price:_
-- The company holds roughly $1,123M net cash against only $2.5M total debt, a large runway-funding cushion for a clinical-stage program (survival is a cash-burn question, not a solvency one). [7]
-- ORKA-001 delivered positive Week-16 data in the EVERLAST-A Phase 2a plaque-psoriasis trial in April 2026 — clinical validation of the lead half-life-extended IL-23p19 asset that underpins the runway thesis. [8]
-- The second asset ORKA-002 posted positive interim Phase 1 data and the EVERLONG-B trial of ORKA-001 was initiated in January 2026, broadening the pipeline beyond a single molecule. [9]
+- The company holds net cash of ~$1,123M against essentially no debt (total debt $2.5M), funding a multi-year clinical runway before any dilution is forced by maturities. [7]
+- The lead asset ORKA-001 delivered positive Week 16 data from the EVERLAST-A Phase 2a trial in moderate-to-severe plaque psoriasis, validating the half-life-extended IL-23p19 mechanism that underpins the entire runway case. [8]
+- A second program, ORKA-002, reported positive interim Phase 1 data alongside initiation of the Everlong-B trial of ORKA-001, broadening the clinical pipeline beyond a single-asset bet. [9]
 _Bear case — the price already pays for it:_
-- Losses are deepening, not narrowing: EBITDA worsened Dec-31-2024 -95 → Dec-31-2025 -122 → Jun-30-2026 LTM -155, with FY26E -194 and FY27E -241 consensus ahead — the cash burn is accelerating. [10]
-- The name is FCF-negative and burning cash — LTM levered FCF is $-65.0M and CFO is $-100.9M — so the $1.1B cushion is a depleting asset, not a durable moat. [11]
-- This is a pre-revenue clinical-stage business: consensus revenue is $0.0M in both FY26E and FY27E, so the entire $6.1B market cap rests on trial outcomes years from any product cash flow. [12]
+- The company is burning cash — LTM levered FCF -$65M, CFO -$100.9M — and is FCF-negative, so the $1.1B cash is a depleting, not self-funding, asset. [10]
+- There is no revenue in any period — consensus FY26E and FY27E revenue are both $0.0M — so the entire $6.1B market cap rests on unapproved, pre-commercial clinical assets. [11]
+- FY26 consensus has deteriorated materially and recently — EPS (GAAP) breadth 1↑/6↓ last month, and the consensus EBITDA path worsened from -$156.9M to -$194.3M at the latest snapshot. [12]
 
 ## Financial snapshot
 - **Financial snapshot** — [13]  <!-- ds-table -->
@@ -79,8 +82,8 @@ _Bear case — the price already pays for it:_
 - **Buyback — shares repurchased:** _UNKNOWN_ — no annual repurchased-share count under TreasuryStockSharesAcquired — EDGAR XBRL companyfacts
 - **Buyback — average cost/share:** _UNKNOWN_ — no TreasuryStockAcquiredAverageCostPerShare, and the cash leg is absent — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price
 - **Acquisition consideration:** _UNKNOWN_ — no acquisition consideration under any of BusinessCombinationConsiderationTransferred1, BusinessCombinationConsiderationTransferred, PaymentsToAcquireBusinessesNetOfCashAcquired — EDGAR XBRL companyfacts
-- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 6 (S-3/S-3/A, last 2026-08-21); prospectus supplements 10 (424B3/424B5/424B7, last 2026-04-29); fresh registrations 1 (S-1, last 2024-11-14); merger registrations 4 (S-4/S-4/A, last 2024-07-22) · employee-plan (S-8) 3 (S-8, last 2026-03-12) — routine — 3y window to 2026-08-24 [15]
-- **Schedule 13D/G filing activity:** Schedule 13D filings 9 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2026-07-01) · Schedule 13G filings 30 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-14) — 3y window to 2026-08-24 [16]
+- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 6 (S-3/S-3/A, last 2026-08-21); prospectus supplements 11 (424B3/424B5/424B7, last 2026-08-28); fresh registrations 1 (S-1, last 2024-11-14); merger registrations 4 (S-4/S-4/A, last 2024-07-22) · employee-plan (S-8) 3 (S-8, last 2026-03-12) — routine — 3y window to 2026-09-22 [15]
+- **Schedule 13D/G filing activity:** Schedule 13D filings 9 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2026-07-01) · Schedule 13G filings 29 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-14) — 3y window to 2026-09-22 [16]
 - **Stock-based compensation:** stock-based compensation $24.2M (FY to 2025-12-31) · % of revenue UNKNOWN [17]
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
 - **Peer acquired-asset intensity — goodwill + intangibles** — [18]  <!-- ds-table -->
@@ -88,12 +91,12 @@ _Bear case — the price already pays for it:_
 |  | mcap $M | acquired $M | assets $M | % assets | % mcap | why |
 |---|---:|---:|---:|---:|---:|---|
 | **ORKA** | **6,132** | **—** | **1,139** | **—** | **—** | **no-tag** |
-| APGE | 10,187 | — | 1,336 | — | — | no-tag |
+| APGE | 10,187 | — | — | — | — | unresolved |
 | IMVT | 8,432 | — | 852 | — | — | no-tag |
 | SYRE | 7,877 | — | 1,173 | — | — | no-tag |
 | CLDX | 3,112 | 118 | 782 | 15% | 4% | — |
 | ZBIO | 2,106 | — | 702 | — | — | no-tag |
-| ANAB | 1,689 | — | 330 | — | — | no-tag |
+| ANAB | 1,689 | — | 317 | — | — | no-tag |
 | TRAX | 1,495 | — | 183 | — | — | no-tag |
 | JBIO | 1,358 | — | 472 | — | — | no-tag |
 | AVTX | 1,037 | 11 | 491 | 2% | 1% | — |
@@ -107,7 +110,6 @@ _Bear case — the price already pays for it:_
 |  | state | yrs charged | window $M | % acquired | last charge (any date) | live YTD $M |
 |---|---|---|---|---:|---:|---|
 | **ORKA** | **does not tag** | **—** | **—** | **—** | **never** | **6** |
-| APGE | does not tag | — | — | — | never | — |
 | IMVT | does not tag | — | — | — | never | — |
 | SYRE | does not tag | — | — | — | never | — |
 | CLDX | wrote down | 1 of 1 | 13 | 11% | 2021-12-31 ($4M) | — |
@@ -134,9 +136,9 @@ _Bear case — the price already pays for it:_
 - **Gap-down dates:** _UNKNOWN_ — no gap-down events on the data-record
 
 _Company-specific or market-wide?_
-- **Name 180d return:** 190.3% [3]
-- **Market (MDY) 180d return:** 5.9% [4]
-- **Relative vs market:** 184.4% [5]
+- **Name 180d return:** 108.0% [3]
+- **Market (MDY) 180d return:** 8.5% [4]
+- **Relative vs market:** 99.5% [5]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 
 ## Business quality
@@ -145,68 +147,70 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ## The argument
 
-**Evidence balance:** mixed — validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.
+**Evidence balance:** mixed — genuinely positive clinical de-risking and a large cash pile offset by zero revenue, accelerating burn, heavy dilution and insider selling.
+
+_Reproducibility: all 5 of 5 draws on this build returned the same lean._
 
 ### Bull case — the runway outlasts the price
-- The company holds roughly $1,123M net cash against only $2.5M total debt, a large runway-funding cushion for a clinical-stage program (survival is a cash-burn question, not a solvency one). [7]
-- ORKA-001 delivered positive Week-16 data in the EVERLAST-A Phase 2a plaque-psoriasis trial in April 2026 — clinical validation of the lead half-life-extended IL-23p19 asset that underpins the runway thesis. [8]
-- The second asset ORKA-002 posted positive interim Phase 1 data and the EVERLONG-B trial of ORKA-001 was initiated in January 2026, broadening the pipeline beyond a single molecule. [9]
-- The company is building commercial infrastructure ahead of launch, appointing Todd Edwards (ex-Arcutis CCO) as Chief Commercial Officer effective Aug 24 2026 — a dated action signalling progression toward a marketed product. [24]
-- The IL-23 license agreement with Paragon was amended in June 2026 to expand the definition of Field, enlarging the addressable indication set for the platform. [25]
-- Sell-side is unanimously constructive: mean target $155.00 / median $155.50 (high/low 200/117, N=12) with 11 Buy ratings and a consensus recommendation of Buy (1.00). [26]
+- The company holds net cash of ~$1,123M against essentially no debt (total debt $2.5M), funding a multi-year clinical runway before any dilution is forced by maturities. [7]
+- The lead asset ORKA-001 delivered positive Week 16 data from the EVERLAST-A Phase 2a trial in moderate-to-severe plaque psoriasis, validating the half-life-extended IL-23p19 mechanism that underpins the entire runway case. [8]
+- A second program, ORKA-002, reported positive interim Phase 1 data alongside initiation of the Everlong-B trial of ORKA-001, broadening the clinical pipeline beyond a single-asset bet. [9]
+- The company recruited a commercial leader as Chief Commercial Officer (ex-Arcutis EVP/CCO), signaling a build toward eventual commercialization of the psoriasis franchise. [24]
+- The amended IL-23 License Agreement with Paragon expanded the definition of Field, widening the addressable indication scope for the licensed program. [25]
+- Sell-side conviction is uniformly positive — mean target $155.00 with a Buy consensus (1.00) and 11 Buy / 2 Outperform ratings, no Holds or Sells. [26]
+- The stock rose ~508% over the trailing year vs the benchmark's ~11%, an idiosyncratic re-rating driven by name-specific clinical readouts rather than market beta. [27]
 
 ### Bear case — the price already pays for it
-- Losses are deepening, not narrowing: EBITDA worsened Dec-31-2024 -95 → Dec-31-2025 -122 → Jun-30-2026 LTM -155, with FY26E -194 and FY27E -241 consensus ahead — the cash burn is accelerating. [10]
-- The name is FCF-negative and burning cash — LTM levered FCF is $-65.0M and CFO is $-100.9M — so the $1.1B cushion is a depleting asset, not a durable moat. [11]
-- This is a pre-revenue clinical-stage business: consensus revenue is $0.0M in both FY26E and FY27E, so the entire $6.1B market cap rests on trial outcomes years from any product cash flow. [12]
-- The peer 'discount' framing is unreliable: the peer set spans $585M–$10.2B caps (17x), flagged HETEROGENEOUS/low-comparability, and ORKA's own multiples are NM (negative base), so no clean peer benchmark exists. [21]
-- Shareholders have been heavily diluted — share count rose from 34.99M (2024-10-31) to 66.21M (2026-07-31), +89.2% in ~1.7 years — and a fresh S-3 shelf was filed Aug-21-2026, signalling more issuance to fund the burn. [27]
-- Near-term consensus is being cut: FY26 EPS (GAAP) shows 1 up / 6 down revisions last month, and FQ3/FQ4 2026 EBIT and EBT breadth are uniformly downward (0 up / 5-6 down). [28]
-- Insiders sold heavily with zero open-market buys: 76 sells by 7 insiders totalling $329.45M in 182 days, including a $300.01M director sale, with the last purchase ~18 months ago. [29]
-- The stock has run enormously (rebased 100 → ~706 over the 52-week window; 52-week range $14.34–$115.52), so a great deal of clinical optimism is already embedded in the price ahead of confirmatory data. [30]
+- The company is burning cash — LTM levered FCF -$65M, CFO -$100.9M — and is FCF-negative, so the $1.1B cash is a depleting, not self-funding, asset. [10]
+- There is no revenue in any period — consensus FY26E and FY27E revenue are both $0.0M — so the entire $6.1B market cap rests on unapproved, pre-commercial clinical assets. [11]
+- FY26 consensus has deteriorated materially and recently — EPS (GAAP) breadth 1↑/6↓ last month, and the consensus EBITDA path worsened from -$156.9M to -$194.3M at the latest snapshot. [12]
+- The trailing EV/EBITDA is NM against a peer median of 38.3x, but that is the REAL signal not an optical misread: EBITDA is deeply negative (LTM -$155M) and consensus deepens the loss to FY26E -$194.3M and FY27E -$241.5M — a rising, not narrowing, burn. [28]
+- Shares diluted +89.2% in ~1.7 years (35.0M to 66.2M), and an active shelf/prospectus pipeline (S-3 filed 2026-08-21, 424B5 filed 2026-08-28) sits ready to raise more against the ongoing burn. [29]
+- Insiders sold heavily — 84 open-market sells vs 0 buys over 182 days across 7 insiders ($331.89M), including a $300.01M director sale on 2026-07-01, with the last purchase ~19 months ago. [30]
+- The stock trades at ~$94.55 after a peak of ~$726 rebased in mid-August, meaning much of the runway optimism has already been paid for and then partly re-rated down without any de-risking catalyst. [27]
 
 ### Decisive question
-**Will the ORKA-001 / ORKA-002 clinical program convert its early-phase read-outs into confirmatory efficacy and a marketed product before the ~$1.1B cash cushion is exhausted by an accelerating burn — i.e. is the priced-in optimism earned by the data?**
+**Will the IL-23p19 franchise (ORKA-001/ORKA-002) convert positive early-phase data into approved, revenue-generating products before the cash cushion is exhausted and dilution resets the per-share case?**
 
 ### …evidence for
-- ORKA-001 posted positive Week-16 EVERLAST-A Phase 2a data, the load-bearing clinical proof point for the lead asset. [8]
-- ORKA-002 showed positive interim Phase 1 data and EVERLONG-B was initiated, giving a second shot on goal. [9]
-- A $1,123M net-cash position funds continued trials without immediate solvency risk. [7]
+- ORKA-001 posted positive Week 16 EVERLAST-A Phase 2a data in plaque psoriasis, the key de-risking readout for the lead program. [8]
+- ORKA-002 delivered positive interim Phase 1 data with the Everlong-B trial initiated, evidencing pipeline progression on a second asset. [9]
+- ~$1,123M net cash with negligible debt provides runway to fund trials toward those readouts. [7]
 
 ### …evidence against
-- Cash burn is accelerating (EBITDA -95 → -122 → -155 LTM; FY26E -194, FY27E -241), shortening the runway against which any read-out must arrive. [10]
-- 89.2% share-count growth in ~1.7 years plus a fresh Aug-2026 S-3 shelf show the program is already funded by continual dilution. [27]
-- Zero revenue in FY26E and FY27E means there is no operating cash to offset the burn before the next read-outs. [12]
+- Cash is being consumed — LTM levered FCF -$65M and CFO -$100.9M — and consensus FY26E/FY27E EBITDA at -$194.3M/-$241.5M implies the burn accelerates before any approval. [28]
+- The financing machinery is active — shares already +89.2% in ~1.7y and a fresh S-3/424B5 shelf filed late August 2026 — pointing to further dilution ahead of commercialization. [29]
+- No revenue exists in any consensus year (FY26E/FY27E $0.0M), so nothing bridges the gap between clinical data and self-funding economics. [11]
 
 ### Key unknowns
-- No earnings-call transcript is available for ORKA — management's own commentary on runway, trial timing and launch plans is missing (an opaque gap, bearish until resolved).
-- No segment or geographic revenue breakout exists, and there is no forward revenue guide beyond $0.0M consensus — no visibility on when or how much product revenue could materialise.
-- Exact months-of-runway is not derivable: the $1.1B cash is stated but a dated cash-runway/self-funding read is UNKNOWN (self-funding flagged MIXED; both OCF and FCF negative).
-- Whether ORKA's premium is EARNED (clinical superiority) or RESIDUAL (overshoot) cannot be judged from the comps — the peer set is HETEROGENEOUS and ORKA's multiples are NM, so no clean peer decomposition is possible.
-- TEV net-debt is unreconciled ($-1,123.0M simple-TEV vs $-871.1M bridge), and the actual-vs-estimate EBITDA basis is definitionally divergent (~-19.9x) — growth across the boundary is part-definitional.
-- Covenant terms are UNKNOWN (extraction failed) and the debt schedule is 165 days old — though total debt is only $2.5M, so leverage risk is low regardless.
-- Timing/outcome of the next results print (cadence-estimated 2026-11-06) and any subsequent confirmatory read-out is unresolved — the pivotal near-term catalyst.
+- No earnings-call transcript is available — management's own commentary on trial timelines, cash runway in months, and financing intentions is absent (pull it).
+- Segment, geographic, and revenue-roster disclosures are all absent from the export — the reason is undetermined; a bearish opacity given the pre-revenue posture.
+- No forward NTM TEV/EBITDA or TEV/Rev multiple for the name is in the assembled comps — the name's own forward valuation vs peers cannot be read; the FY30→FY33 forward-multiple ladder (e.g. FY32 P/E 7.07) implies distant modeled revenue but no basis or assumptions are shown.
+- Net-debt figures do not reconcile (CIQ -$1,123M vs bridge -$871.1M) — the true net-cash cushion, and thus runway, is uncertain until reconciled.
+- Covenant terms could not be extracted from located exhibits (extraction failed) — any financing constraints are UNKNOWN.
+- The peer set is HETEROGENEOUS (caps span $585M–$10.2B, ~17x) with near-universal NM multiples, so no clean peer benchmark exists; the peer 'median' 38.3x rests on a single peer (ANAB) with positive EBITDA and cannot anchor the name.
+- Exact cash runway in months and the size/timing of the next raise are not disclosed — central to the decisive question and unquantified here.
+- Export date is unverified (a floor ≥ 2026-08-28) while the last stock close is 2026-09-22 — the estimate snapshot may lag the tape.
 
 ### Twin reference cases
-- **Arcutis Biotherapeutics** — re-rated to fair value
-  - distinguished by: Clinical-stage dermatology/immunology developer that carried launch optimism into a commercial transition; ORKA's newly appointed CCO came directly from its commercial organisation.
-  - source: CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Aug-24-2026
 - **Apogee Therapeutics** — kept compounding
-  - distinguished by: Largest-cap peer in the roster, a pre-revenue immunology biologics developer whose valuation rests entirely on trial progression rather than earnings.
+  - distinguished by: Peer-set clinical-stage immunology/dermatology biologics developer carrying the largest cap in the roster while pre-revenue — the same 'value is entirely in the pipeline' pattern the subject must justify.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Immunovant** — kept compounding
-  - distinguished by: Large-cap autoimmune-therapy developer, pre-revenue with NM multiples, whose equity value tracks clinical read-outs and cash runway like the name.
+  - distinguished by: Peer autoimmune-therapy developer, pre-revenue with a large net-cash cushion and NM multiples — same structure of a big cap resting on unapproved targeted therapies.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **AnaptysBio** — re-rated to fair value
-  - distinguished by: Only peer in the set with a positive EBITDA margin and a struck LTM multiple, illustrating the transition from a pure clinical-runway story to a comparable earnings basis.
-  - source: CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)
-- **Arena Pharmaceuticals** — re-rated to fair value (LLM-claimed — verify)
-  - distinguished by: Immunology/inflammation developer whose value hinged on late-stage read-outs and was ultimately resolved by a strategic outcome rather than organic earnings.
+- **Spyre Therapeutics** — kept compounding
+  - distinguished by: Peer inflammatory/rheumatic-disease developer, similar scale and net-cash profile, whose valuation likewise rides on clinical readouts rather than earnings.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Arcutis Biotherapeutics** — re-rated to fair value (LLM-claimed — verify)
+  - distinguished by: Commercial-stage dermatology company the subject's new CCO came from — an analogue of the transition from clinical promise to the harder economics of commercialization.
   - source: [LLM-suggested, unverified]
+- **Celldex Therapeutics** — re-rated to fair value
+  - distinguished by: Peer antibody developer for inflammatory/autoimmune disease that has previously taken goodwill/intangible write-downs — an analogue of pipeline value proving impairable when programs disappoint.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **effective August 24, 2026** — ~2026-08 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [24]
 - **Next results print** — ~2026-11-06 `[cadence-estimate]` — the next reported quarter against the committed trajectory [31]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
@@ -285,7 +289,7 @@ _NM = a real state (negative base), not missing_
 
 ## Operating trajectory
 - _R reclassified; per-period values, never YoY'd across a basis_
-- **Share-count trend:** diluting (trailing ~1.7y): 34,998,550 (2024-10-31) → 66,209,699 (2026-07-31), +89.2% [27]
+- **Share-count trend:** diluting (trailing ~1.7y): 34,998,550 (2024-10-31) → 66,209,699 (2026-07-31), +89.2% [29]
 - **Non-operating earnings:** no material non-operating item in the four quarters to 2020-03-31 — in the latest, $0M against $-1M pre-tax [36]
 - **Return ratios — per fiscal period** — [37]  <!-- ds-table -->
 
@@ -308,8 +312,8 @@ _export date unverified (data ≥ 2026-08-28)_
   - EBIT FQ4 2026: 1m 0↑/5↓, 2m 0↑/5↓, 3m 0↑/5↓
   - _no revisions in any window: Revenue FQ3 2026, Revenue FQ4 2026_
   - _+5 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: -2.27 (12m) → -2.39 (9m) → -2.39 (6m) → -2.04 (3m) → -2.04 (2m) → -2.04 (1m) → -2.32 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EPS (GAAP): -2.56 (12m) → -2.64 (9m) → -2.58 (6m) → -2.19 (3m) → -2.19 (2m) → -2.20 (1m) → -2.40 (latest); improving (magnitude toward zero) (12m→latest) | FY 2026 Revenue: 0.00 (12m) → 0.00 (9m) → 0.00 (6m) → 0.00 (3m) → 0.00 (2m) → 0.00 (1m) → 0.00 (latest); flat (12m→latest) | FY 2026 EBITDA: -162.1 (6m) → -156.9 (3m) → -156.9 (2m) → -156.9 (1m) → -194.3 (latest); worsening (magnitude away from zero) (6m→latest) | FY 2026 EBIT: -148.7 (12m) → -156.9 (9m) → -158.1 (6m) → -161.8 (3m) → -161.8 (2m) → -161.8 (1m) → -193.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): -148.5 (12m) → -153.2 (9m) → -150.4 (6m) → -145.4 (3m) → -145.4 (2m) → -145.4 (1m) → -171.0 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): -143.4 (12m) → -154.0 (9m) → -150.4 (6m) → -140.6 (3m) → -140.6 (2m) → -140.6 (1m) → -162.1 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 Net Income (GAAP): -139.7 (12m) → -149.2 (9m) → -148.1 (6m) → -143.2 (3m) → -143.2 (2m) → -143.2 (1m) → -165.7 (latest); worsening (magnitude away from zero) (12m→latest)  [data ≥ 2026-08-28 · export date unverified] [39]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [40]:
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: -2.27 (12m) → -2.39 (9m) → -2.39 (6m) → -2.04 (3m) → -2.04 (2m) → -2.04 (1m) → -2.32 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EPS (GAAP): -2.56 (12m) → -2.64 (9m) → -2.58 (6m) → -2.19 (3m) → -2.19 (2m) → -2.20 (1m) → -2.40 (latest); improving (magnitude toward zero) (12m→latest) | FY 2026 Revenue: 0.00 (12m) → 0.00 (9m) → 0.00 (6m) → 0.00 (3m) → 0.00 (2m) → 0.00 (1m) → 0.00 (latest); flat (12m→latest) | FY 2026 EBITDA: -162.1 (6m) → -156.9 (3m) → -156.9 (2m) → -156.9 (1m) → -194.3 (latest); worsening (magnitude away from zero) (6m→latest) | FY 2026 EBIT: -148.7 (12m) → -156.9 (9m) → -158.1 (6m) → -161.8 (3m) → -161.8 (2m) → -161.8 (1m) → -193.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): -148.5 (12m) → -153.2 (9m) → -150.4 (6m) → -145.4 (3m) → -145.4 (2m) → -145.4 (1m) → -171.0 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): -143.4 (12m) → -154.0 (9m) → -150.4 (6m) → -140.6 (3m) → -140.6 (2m) → -140.6 (1m) → -162.1 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 Net Income (GAAP): -139.7 (12m) → -149.2 (9m) → -148.1 (6m) → -143.2 (3m) → -143.2 (2m) → -143.2 (1m) → -165.7 (latest); worsening (magnitude away from zero) (12m→latest)  [data ≥ 2026-08-28 · export date unverified] [12]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [39]:
   - FY 2026: TEV/REV – · TEV/EBITDA – · TEV/EBIT – · Price/Earnings – · PEG – · P/BV 6.50
   - FY 2027: TEV/REV – · TEV/EBITDA – · TEV/EBIT – · Price/Earnings – · PEG – · P/BV 7.78
   - FY 2028: TEV/REV – · TEV/EBITDA – · TEV/EBIT – · Price/Earnings – · PEG – · P/BV 9.94
@@ -317,7 +321,7 @@ _export date unverified (data ≥ 2026-08-28)_
 - **Current guide (latest results filing):** _UNKNOWN_ — no guide in any of the 3 parsed release(s)
 - **Guidance bridge (latest guide + track-record):** _UNKNOWN_ — estimates workbook OrukaTherapeutics,IncNasdaqGMORKAEstimatesReport.xls has no 'Guidance' sheet
 - **Consensus stats (target + ratings):** Target price: mean $155.00, median $155.50, high/low 200.00/117.00, N 12/12; Ratings: Buy 11, Outperform 2, Hold 0, Underperform 0, Sell 0, No Opinion 0, Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-28 · export date unverified] [22]
-- **Revision-event log (250 events · 17 broker-days)** — [41]  <!-- ds-table -->
+- **Revision-event log (250 events · 17 broker-days)** — [40]  <!-- ds-table -->
 
 |  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
 |---|---|---:|---:|---:|---:|---|---:|---:|---:|
@@ -333,25 +337,25 @@ _+11 more broker-days in JSON_
 - **Surprise history (annual beat/miss):** _UNKNOWN_ — Surprise sheet has no fiscal-year header row
 
 ## Leverage & survival
-- **Total debt / EBITDA vs peers:** name NM vs peer median 6.3x (comps TOTAL-debt/EBITDA basis) [42]
+- **Total debt / EBITDA vs peers:** name NM vs peer median 6.3x (comps TOTAL-debt/EBITDA basis) [41]
 - **Net debt / OCF:** _UNKNOWN_ — CIQ OCF $-101M <= 0 — ratio meaningless
-- **Interest coverage:** -59.5x [43]
-- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [44]
+- **Interest coverage:** -59.5x [42]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [43]
 - **Credit health:** _UNKNOWN_ — comps workbook Company Comparable Analysis Oruka Therapeutics Inc.xls has no 'Credit Health Panel' sheet
 
 - **FCF sign:** negative [6]
-- **Free cash flow ($M):** -65.0 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $-100.9M − capex $0.2M = $-101.2M — 0.64x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [11]
-- **Debt schedule vintage:** the debt schedule is 165d old (source filed 2026-03-12); no Item 1.02 (termination of a material agreement) has been filed since [45]
-- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 1 undated / later aggregate line item(s) in the appendix panel [46]
-- **Maturity wall** · vs the 2026-08-24 reference:
+- **Free cash flow ($M):** -65.0 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $-100.9M − capex $0.2M = $-101.2M — 0.64x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [10]
+- **Debt schedule vintage:** the debt schedule is 194d old (source filed 2026-03-12); no Item 1.02 (termination of a material agreement) has been filed since [44]
+- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 1 undated / later aggregate line item(s) in the appendix panel [45]
+- **Maturity wall** · vs the 2026-09-22 reference:
   - undated (floor — no panel maturity): $1.9M — Operating Lease Liability $1.9M
   - _reconciliation: itemized $1.9M (panel A 2025 filed Mar-12-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** leases 2.5; total principal 2.5; total debt 2.5 (3 months Q2 Jun-30-2026) ($M) [47]
+- **Capital-structure aggregates:** leases 2.5; total principal 2.5; total debt 2.5 (3 months Q2 Jun-30-2026) ($M) [46]
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [48]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [49]
+- **Going-concern language:** none in latest 10-Q — checked, absent [47]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [48]
   - net debt / EBITDA (CIQ, GAAP basis): UNKNOWN
   - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -361,7 +365,7 @@ _+11 more broker-days in JSON_
 
 _2 to verify._
 
-- NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Plaque-psoriasis biotech followed under the QUALITY book, accepted by the operator 2026-09-10. One drug leads: ORKA-001, an IL-23p19 antibody engineered for a long half-life. In the EVERLAST-A Phase 2a (announced 2026-04-27), 63.5% of patients (40 of 63) had COMPLETELY clear skin at week 16 against 1 of 21 on placebo, with PASI 90 at 83%; Phase 1 PK after a single 600mg dose kept drug levels above the effective trough for a full year, which is the once-yearly dosing case against today's every-8-to-12-week injections. Longer-term EVERLAST-A data are guided to 2H 2026, so the next readout is near-dated. Liquidity at 2026-06-30 is $1,125.6M — $268.5M cash and equivalents PLUS $857.1M of marketable securities — against no debt at all, so the company funds itself a long way without the market; a $500M at-the-market facility was registered 2026-08-27 (sales agreement amended 2026-08-21), which is CAPACITY, not a completed raise, and no sales under it are yet disclosed. The binding question is therefore what a ~$6.8B price already pays for a drug that has worked, not whether a de-rating is overdone — the overshoot twin's question does not apply to a name up 190% in six months. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (at the 2026-08-24 reference date it was down 9% from its 52w high against a 30% floor and 178 points AHEAD of IWM over 180d; it has fallen further since — $91.50 on 2026-09-09 is 21% below the $115.52 high, so the SNAPSHOT price on this page and the GATE figures are deliberately different as-ofs, and the name is drifting toward, but has not reached, the screen's own entry), which is the screen behaving correctly rather than a gap to route around. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-24-01: FAIL (g1_drawdown FAIL).
+- NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Plaque-psoriasis biotech followed under the QUALITY book, accepted by the operator 2026-09-10. One drug leads: ORKA-001, an IL-23p19 antibody engineered for a long half-life. In the EVERLAST-A Phase 2a (announced 2026-04-27), 63.5% of patients (40 of 63) had COMPLETELY clear skin at week 16 against 1 of 21 on placebo, with PASI 90 at 83%; Phase 1 PK after a single 600mg dose kept drug levels above the effective trough for a full year, which is the once-yearly dosing case against today's every-8-to-12-week injections. Longer-term EVERLAST-A data are guided to 2H 2026, so the next readout is near-dated. Liquidity at 2026-06-30 is $1,125.6M — $268.5M cash and equivalents PLUS $857.1M of marketable securities — against no debt at all, so the company funds itself a long way without the market; a $500M at-the-market facility was registered 2026-08-27 (sales agreement amended 2026-08-21), which is CAPACITY, not a completed raise, and no sales under it are yet disclosed. The binding question is therefore what a ~$6.8B price already pays for a drug that has worked, not whether a de-rating is overdone — the overshoot twin's question does not apply to a name up 190% in six months. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (at the 2026-08-24 reference date it was down 9% from its 52w high against a 30% floor and 178 points AHEAD of IWM over 180d; it has fallen further since — $91.50 on 2026-09-09 is 21% below the $115.52 high, so the SNAPSHOT price on this page and the GATE figures are deliberately different as-ofs, and the name is drifting toward, but has not reached, the screen's own entry), which is the screen behaving correctly rather than a gap to route around. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-09-22-01: FAIL (g1_drawdown FAIL).
 - former registrant name: this CIK filed as "ARCA biopharma, Inc." (2009-01-28 → 2024-08-30) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0000907654)
 
 # Appendix — data & audit
@@ -404,46 +408,33 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-28; (R) = Reclas
 ### Quarterly — every exported quarter
 - **Quarterly financials:** _UNKNOWN_ — Income Statement (quarterly): no Total Revenue
 ### Balance-sheet posture
-- **Posture:** as of Q2-26 ($M): cash & ST inv 874; total debt 3; net debt -1,123; equity 1,112; net working capital 862; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [50]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $874M / bridge $874M; debt BS $2M / bridge $2M — reconcile with the implied-valuation bridge. [51]
+- **Posture:** as of Q2-26 ($M): cash & ST inv 874; total debt 3; net debt -1,123; equity 1,112; net working capital 862; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [49]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $874M / bridge $874M; debt BS $2M / bridge $2M — reconcile with the implied-valuation bridge. [50]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Mar-12-2026** — [46]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Mar-12-2026** — [45]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
 | Operating Lease Liability | Capital Lease | $1.9M | 13.070% | NA | undated | Y | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [52]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [51]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
 | material contracts (10-K exhibit index) | latest 10-K | 2026-03-12 | 0001213900-26-026929 — ea027330001ex10-9_oruka.htm |
 | Operating Lease Liability | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — material contracts (10-K exhibit index) (governing agreement)** — [53]  <!-- ds-table -->
-
-|  | Governing value (lead · clause ≤200c) | Source § |
-|---|---|---|
-| Conversion price / mechanics | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-| Principal / commitment amount | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-| Interest / coupon rate | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-| Maturity date | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-| Financial-maintenance covenants | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-| Security / collateral / guarantors | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-| Mandatory prepayment / events of default | UNKNOWN | not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm |
-
-_Source §: fenced Tier-2 extraction (verbatim, source-bound)_
-
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [52]
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 6132.3 [54]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $873.60M, − total debt $2.50M [55]
-- **Implied equity at peer-median ($M, CIQ)** — [56]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 6132.3 [53]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $873.60M, − total debt $2.50M [54]
+- **Implied equity at peer-median ($M, CIQ)** — [55]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -454,22 +445,22 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 - **Earnings call (transcript pointer — read the file):** _MISSING_ — no earnings-call transcript for ORKA — pull it
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 76 (7 insiders, $329.45M) — in the last 182 days · last purchase $1.02M, 10% owner, 2025-02-14 (~18mo ago) · last sale $0.09M, Chief Operating Officer, 2026-09-01 (~0mo ago) · largest sale $300.01M, director, 2026-07-01 (~2mo ago) · grants 8 · last filing 2026-09-01 · other filings 40 [29]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-08-14): 8.1M → 8.3M sh (+3.1%, rising) · 12.5% of shares out (EDGAR XBRL) · DTC 6.8d · recent: 2026-08-14 8.3M · 2026-07-31 8.1M · 2026-07-15 8.8M · 2026-06-30 9.2M [57]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 84 (7 insiders, $331.89M) — in the last 182 days · last purchase $1.02M, 10% owner, 2025-02-14 (~19mo ago) · last sale $0.05M, Senior Vice President, Finance, 2026-09-21 (~0mo ago) · largest sale $300.01M, director, 2026-07-01 (~3mo ago) · grants 8 · last filing 2026-09-21 · other filings 45 [30]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-15): 7.8M → 7.6M sh (-2.2%, falling) · 11.5% of shares out (EDGAR XBRL) · DTC 7.1d · recent: 2026-09-15 7.6M · 2026-08-31 7.8M · 2026-08-14 8.3M · 2026-07-31 8.1M [56]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [58]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ guide UNKNOWN — not cross-checked [59]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [57]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ guide UNKNOWN — not cross-checked [58]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-08-24 · assembled 2026-09-10 11:44 UTC
+- **Data window:** screened as of 2026-09-22 · assembled 2026-09-28 16:12 UTC
 - **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
-- **Price store:** `mosaic-theory-ta` · reaching 2026-09-09
-- **Panel age:** oldest panel 10d old — 2026-08-31 (valuation.implied_expectations.tev_as_of), against a 2026-09-10 build
-- **Consensus age:** consensus 13d old (2026-08-28, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
+- **Panel age:** oldest panel 28d old — 2026-08-31 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
+- **Consensus age:** consensus 31d old (2026-08-28, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000907654` · Nasdaq : ORKA
-- **Assembly log:** primary-source: 8-K 0001213900-26-063481 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.4s fetch)
+- **Assembly log:** primary-source: 8-K 0001213900-26-063481 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.5s fetch)
 - **Re-run:** `python -m vinci dossier --ticker ORKA` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -478,20 +469,20 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 
 [1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD gap-down detector (screen events): none`
-[3] `EOD ORKA 180d to 2026-08-24`
-[4] `EOD MDY 180d to 2026-08-24 (cap-band: $6.1B @ 2026-08-24 → mid ($4–25B) → MDY)`
-[5] `EOD ORKA−MDY 180d to 2026-08-24 (assembly, cap-band)`
+[3] `EOD ORKA 180d to 2026-09-22`
+[4] `EOD MDY 180d to 2026-09-22 (cap-band: $6.1B @ 2026-09-22 → mid ($4–25B) → MDY)`
+[5] `EOD ORKA−MDY 180d to 2026-09-22 (assembly, cap-band)`
 [6] `EDGAR XBRL FCF sign (screen data-record)`
 [7] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
 [8] `CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Apr-27-2026`
 [9] `CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Jan-12-2026`
-[10] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-[11] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
-[12] `CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)`
+[10] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
+[11] `CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)`
+[12] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [14] `EDGAR companyfacts ImpairmentOfIntangibleAssetsExcludingGoodwill (2001-12-18→2014-03-31, 4486d)`
-[15] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001213900-26-092612`
-[16] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-25→2026-08-24 · latest 0001231919-26-000934`
+[15] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001213900-26-095041`
+[16] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0001231919-26-000934`
 [17] `EDGAR XBRL ShareBasedCompensation (10-K, 2025-01-01→2025-12-31)`
 [18] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [19] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
@@ -502,10 +493,10 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [24] `CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Aug-24-2026`
 [25] `CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Jun-01-2026`
 [26] `CIQ Estimates→Consensus`
-[27] `EDGAR XBRL shares, trailing 2024-10-31..2026-07-31`
-[28] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-[29] `EDGAR Form 4 (latest 0000907654-26-000088; 69 filings in the 1095d scanned; counts over 182d)`
-[30] `EOD ORKA vs MDY rebased to 100, 2025-08-25..2026-08-24`
+[27] `EOD ORKA vs MDY rebased to 100, 2025-09-23..2026-09-22`
+[28] `CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)`
+[29] `EDGAR XBRL shares, trailing 2024-10-31..2026-07-31`
+[30] `EDGAR Form 4 (latest 0000907654-26-000102; 76 filings in the 1095d scanned; counts over 182d)`
 [31] `cadence: EDGAR submissions (median 88d gap over 47 results 8-Ks; last print 2026-08-10)`
 [32] `TEV = mcap 6132.3 + net debt -1123.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-31, exported 2026-09-01) — simple-TEV basis; ⚠ net-debt -1123.0 vs bridge -871.1 — reconcile`
 [33] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
@@ -514,24 +505,23 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [36] `EDGAR XBRL pre-tax − operating, quarters 2018-03-31..2020-03-31`
 [37] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [38] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-[39] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[40] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[41] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-28 · export date unverified]`
-[42] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-31`
-[43] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [12 months Dec-31-2024]`
-[44] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[45] `CIQ Capital Structure Details — A 2025 filed Mar-12-2026`
-[46] `CIQ Financials→Capital Structure Details (A 2025 filed Mar-12-2026)`
-[47] `CIQ Financials→Capital Structure Summary`
-[48] `10-Q 0001213900-26-087231`
-[49] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[50] `CIQ Financials→Balance Sheet (quarterly, Q2-26)`
-[51] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[52] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[53] `fenced Tier-2 extraction (verbatim, source-bound)`
-[54] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-31`
-[55] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-31`
-[56] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-31`
-[57] `FINRA consolidated short interest (settle 2026-08-14); DTC = 8,303,245 short ÷ 1,220,082 screen 90d ADV`
-[58] `10-Q maturity wall vs CIQ capital panel (same window)`
-[59] `CIQ revenue guide vs release actual/outlook`
+[39] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[40] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-28 · export date unverified]`
+[41] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-31`
+[42] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [12 months Dec-31-2024]`
+[43] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[44] `CIQ Capital Structure Details — A 2025 filed Mar-12-2026`
+[45] `CIQ Financials→Capital Structure Details (A 2025 filed Mar-12-2026)`
+[46] `CIQ Financials→Capital Structure Summary`
+[47] `10-Q 0001213900-26-087231`
+[48] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[49] `CIQ Financials→Balance Sheet (quarterly, Q2-26)`
+[50] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[51] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[52] `fenced Tier-2 digest (P1)`
+[53] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-31`
+[54] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-31`
+[55] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-31`
+[56] `FINRA consolidated short interest (settle 2026-09-15); DTC = 7,623,327 short ÷ 1,072,284 screen 90d ADV`
+[57] `10-Q maturity wall vs CIQ capital panel (same window)`
+[58] `CIQ revenue guide vs release actual/outlook`

@@ -2,8 +2,8 @@
   "ticker": "TECX",
   "name": "Tectonic Therapeutic, Inc.",
   "cik": "0001681087",
-  "reference_date": "2026-08-24",
-  "rank": null,
+  "reference_date": "2026-09-22",
+  "rank": 174,
   "sleeve": "quality",
   "mechanical": {
     "valuation": {
@@ -495,16 +495,18 @@
     },
     "drawdown_cause": {
       "shape": {
-        "value": "gradual bleed — no discrete gap-down detected",
-        "source_ref": "EOD gap-down detector (screen events): none",
+        "value": "discrete gap-downs — 2026-08-31 no company filing",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "status": "present",
         "note": null
       },
       "gap_down_dates": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no gap-down events on the data-record"
+        "value": [
+          "2026-08-31"
+        ],
+        "source_ref": "EOD gap-down detector (screen events)",
+        "status": "present",
+        "note": null
       },
       "filings": [],
       "revised_guidance": {
@@ -518,20 +520,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": 0.5781047165729121,
-        "source_ref": "EOD TECX 180d to 2026-08-24",
+        "value": -0.1384915474642393,
+        "source_ref": "EOD TECX 180d to 2026-09-22",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.12620001511830092,
-        "source_ref": "EOD IWM 180d to 2026-08-24 (cap-band: $0.6B @ 2026-08-24 → small (<$4B) → IWM)",
+        "value": 0.16072583252505646,
+        "source_ref": "EOD IWM 180d to 2026-09-22 (cap-band: $0.6B @ 2026-09-22 → small (<$4B) → IWM)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": 0.45190470145461115,
-        "source_ref": "EOD TECX−IWM 180d to 2026-08-24 (assembly, cap-band)",
+        "value": -0.29921737998929576,
+        "source_ref": "EOD TECX−IWM 180d to 2026-09-22 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -548,7 +550,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "IWM",
-      "benchmark_basis": "cap-band: $0.6B @ 2026-08-24 → small (<$4B) → IWM"
+      "benchmark_basis": "cap-band: $0.6B @ 2026-09-22 → small (<$4B) → IWM"
     },
     "consensus_context": {
       "eps_trend": {
@@ -3047,14 +3049,14 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 10 (2 insiders, $0.64M) — in the last 182 days · last purchase $0.05M, Chief Executive Officer, 2026-02-11 (~6mo ago) · largest purchase $33.00M, director, 2025-02-05 (~19mo ago) · last sale $0.00M, Chief Scientific Officer, 2026-08-25 (~0mo ago) · largest sale $8.55M, director, 2025-04-07 (~17mo ago) · grants 29 · last filing 2026-08-26 · other F×11/J×5/M×15",
-        "source_ref": "EDGAR Form 4 (latest 0002023255-26-000009; 74 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 5 (2 insiders, $0.07M) — in the last 182 days · last purchase $0.05M, Chief Executive Officer, 2026-02-11 (~7mo ago) · largest purchase $33.00M, director, 2025-02-05 (~20mo ago) · last sale $0.00M, Chief Scientific Officer, 2026-08-25 (~1mo ago) · largest sale $8.55M, director, 2025-04-07 (~18mo ago) · grants 29 · last filing 2026-09-08 · other F×11/J×5/M×15",
+        "source_ref": "EDGAR Form 4 (latest 0002023175-26-000007; 79 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-08-14): 1.8M → 1.7M sh (-2.1%, falling) · 8.8% of shares out (EDGAR XBRL) · DTC 9.1d · recent: 2026-08-14 1.7M · 2026-07-31 1.8M · 2026-07-15 1.9M · 2026-06-30 2.1M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-08-14); DTC = 1,726,909 short ÷ 190,576 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-15): 1.9M → 2.2M sh (+14.2%, rising) · 11.3% of shares out (EDGAR XBRL) · DTC 10.6d · recent: 2026-09-15 2.2M · 2026-08-31 1.9M · 2026-08-14 1.7M · 2026-07-31 1.8M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 2,218,549 short ÷ 209,108 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -3067,20 +3069,6 @@
           "date_basis": "cadence-estimate",
           "tests_what": "the next reported quarter against the committed trajectory",
           "source_ref": "cadence: EDGAR submissions (median 91d gap over 32 results 8-Ks; last print 2026-08-06)"
-        },
-        {
-          "event": "effective April 1, 2026, at which time he will also assume the role of Chair of the",
-          "expected_date": "2027-04",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: Tectonic Therapeutic Inc NasdaqGM TECX Key Developments.rtf · Feb-23-2026"
-        },
-        {
-          "event": "effective June 8, 2026",
-          "expected_date": "2027-06",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: Tectonic Therapeutic Inc NasdaqGM TECX Key Developments.rtf · Apr-23-2026"
         }
       ],
       "qa_flags": []
@@ -3250,114 +3238,10 @@
         "status": "present",
         "note": null
       },
-      "covenant_term_rows": {
-        "value": [
-          {
-            "name": "Conversion price / mechanics",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Principal / commitment amount",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Interest / coupon rate",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Maturity date",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Financial-maintenance covenants",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Security / collateral / guarantors",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Mandatory prepayment / events of default",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          }
-        ],
-        "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
-        "status": "present",
-        "note": null
-      },
+      "covenant_term_rows": null,
       "maturity_event": null,
       "panel_vintage": {
-        "value": "the debt schedule is 179d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 208d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
         "status": "present",
         "note": null
@@ -3553,8 +3437,8 @@
         }
       ],
       "line": {
-        "value": "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24",
-        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838",
+        "value": "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-09-22",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-26-098838",
         "status": "present",
         "note": null
       },
@@ -3724,8 +3608,8 @@
         }
       ],
       "line": {
-        "value": "Schedule 13D filings 12 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2025-04-07) · Schedule 13G filings 20 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-02-27) — 3y window to 2026-08-24",
-        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-25→2026-08-24 · latest 0001193125-26-083202",
+        "value": "Schedule 13D filings 12 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2025-04-07) · Schedule 13G filings 20 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-02-27) — 3y window to 2026-09-22",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0001193125-26-083202",
         "status": "present",
         "note": null
       },
@@ -3838,26 +3722,11 @@
           "is_subject": false,
           "market_cap": 9010.2,
           "acquired": null,
-          "total_assets": 1321.883,
+          "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)",
-          "impairment": {
-            "state": "untagged",
-            "state_label": "does not tag",
-            "window_start": "2021-06-30",
-            "window_end": "2026-06-30",
-            "observations": 0,
-            "charged_years": 0,
-            "total": null,
-            "pct_acquired": null,
-            "last_charge_end": null,
-            "last_charge_amount": null,
-            "pending": null,
-            "pending_span": null,
-            "tags": null,
-            "note": "no annual impairment point under any of GoodwillImpairmentLoss, GoodwillAndIntangibleAssetImpairment, ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — the filer does not tag the concept, which is NOT the same as reporting zero"
-          }
+          "note": "unresolved — no CIK for 'CRNX'",
+          "impairment": null
         },
         {
           "ticker": "IMVT",
@@ -4756,7 +4625,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 31.22,
+        "value": 26.5,
         "source_ref": "EOD TECX last close",
         "status": "present",
         "note": null
@@ -4765,13 +4634,13 @@
         "value": 39.5278,
         "source_ref": "EOD TECX 52-week high",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-01: spans 372d over 257 bars"
+        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
       },
       "low_52w": {
         "value": 14.385,
         "source_ref": "EOD TECX 52-week low",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-01: spans 372d over 257 bars"
+        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
       },
       "shares_out": {
         "value": 19549366.0,
@@ -4791,1274 +4660,1274 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-01",
+      "as_of": "2026-09-22",
       "market_cap_as_of": "2026-08-31"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-08-25",
+          "date": "2025-09-23",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-08-26",
-          "name": 104.56,
-          "benchmark": 100.83
-        },
-        {
-          "date": "2025-08-27",
-          "name": 108.1,
-          "benchmark": 101.54
-        },
-        {
-          "date": "2025-08-28",
-          "name": 104.07,
-          "benchmark": 101.66
-        },
-        {
-          "date": "2025-08-29",
-          "name": 103.95,
-          "benchmark": 101.21
-        },
-        {
-          "date": "2025-09-02",
-          "name": 67.77,
-          "benchmark": 100.66
-        },
-        {
-          "date": "2025-09-03",
-          "name": 66.44,
-          "benchmark": 100.56
-        },
-        {
-          "date": "2025-09-04",
-          "name": 70.29,
-          "benchmark": 101.82
-        },
-        {
-          "date": "2025-09-05",
-          "name": 68.38,
-          "benchmark": 102.33
-        },
-        {
-          "date": "2025-09-08",
-          "name": 66.38,
-          "benchmark": 102.53
-        },
-        {
-          "date": "2025-09-09",
-          "name": 70.09,
-          "benchmark": 101.93
-        },
-        {
-          "date": "2025-09-10",
-          "name": 70.45,
-          "benchmark": 101.75
-        },
-        {
-          "date": "2025-09-11",
-          "name": 73.38,
-          "benchmark": 103.63
-        },
-        {
-          "date": "2025-09-12",
-          "name": 72.12,
-          "benchmark": 102.57
-        },
-        {
-          "date": "2025-09-15",
-          "name": 67.52,
-          "benchmark": 103.01
-        },
-        {
-          "date": "2025-09-16",
-          "name": 65.16,
-          "benchmark": 102.55
-        },
-        {
-          "date": "2025-09-17",
-          "name": 61.29,
-          "benchmark": 102.81
-        },
-        {
-          "date": "2025-09-18",
-          "name": 63.65,
-          "benchmark": 105.37
-        },
-        {
-          "date": "2025-09-19",
-          "name": 60.97,
-          "benchmark": 104.57
-        },
-        {
-          "date": "2025-09-22",
-          "name": 64.22,
-          "benchmark": 105.18
-        },
-        {
-          "date": "2025-09-23",
-          "name": 61.5,
-          "benchmark": 104.94
-        },
-        {
           "date": "2025-09-24",
-          "name": 61.01,
-          "benchmark": 103.98
+          "name": 99.21,
+          "benchmark": 99.08
         },
         {
           "date": "2025-09-25",
-          "name": 59.87,
-          "benchmark": 102.98
+          "name": 97.35,
+          "benchmark": 98.13
         },
         {
           "date": "2025-09-26",
-          "name": 61.86,
-          "benchmark": 103.86
+          "name": 100.6,
+          "benchmark": 98.97
         },
         {
           "date": "2025-09-29",
-          "name": 64.79,
-          "benchmark": 103.99
+          "name": 105.36,
+          "benchmark": 99.09
         },
         {
           "date": "2025-09-30",
-          "name": 63.86,
-          "benchmark": 104.13
+          "name": 103.84,
+          "benchmark": 99.23
         },
         {
           "date": "2025-10-01",
-          "name": 63.74,
-          "benchmark": 104.36
+          "name": 103.64,
+          "benchmark": 99.45
         },
         {
           "date": "2025-10-02",
-          "name": 62.07,
-          "benchmark": 105.02
+          "name": 100.93,
+          "benchmark": 100.07
         },
         {
           "date": "2025-10-03",
-          "name": 62.03,
-          "benchmark": 105.8
+          "name": 100.86,
+          "benchmark": 100.82
         },
         {
           "date": "2025-10-06",
-          "name": 61.86,
-          "benchmark": 106.22
+          "name": 100.6,
+          "benchmark": 101.22
         },
         {
           "date": "2025-10-07",
-          "name": 60.68,
-          "benchmark": 105.08
+          "name": 98.68,
+          "benchmark": 100.13
         },
         {
           "date": "2025-10-08",
-          "name": 62.52,
-          "benchmark": 106.18
+          "name": 101.65,
+          "benchmark": 101.18
         },
         {
           "date": "2025-10-09",
-          "name": 69.52,
-          "benchmark": 105.5
+          "name": 113.04,
+          "benchmark": 100.53
         },
         {
           "date": "2025-10-10",
-          "name": 65.2,
-          "benchmark": 102.34
+          "name": 106.02,
+          "benchmark": 97.52
         },
         {
           "date": "2025-10-13",
-          "name": 65.49,
-          "benchmark": 105.19
+          "name": 106.49,
+          "benchmark": 100.23
         },
         {
           "date": "2025-10-14",
-          "name": 65.49,
-          "benchmark": 106.69
+          "name": 106.49,
+          "benchmark": 101.67
         },
         {
           "date": "2025-10-15",
-          "name": 70.57,
-          "benchmark": 107.73
+          "name": 114.76,
+          "benchmark": 102.66
         },
         {
           "date": "2025-10-16",
-          "name": 71.84,
-          "benchmark": 105.47
+          "name": 116.81,
+          "benchmark": 100.5
         },
         {
           "date": "2025-10-17",
-          "name": 70.25,
-          "benchmark": 104.76
+          "name": 114.23,
+          "benchmark": 99.82
         },
         {
           "date": "2025-10-20",
-          "name": 77.53,
-          "benchmark": 106.8
+          "name": 126.08,
+          "benchmark": 101.77
         },
         {
           "date": "2025-10-21",
-          "name": 77.29,
-          "benchmark": 106.3
+          "name": 125.68,
+          "benchmark": 101.29
         },
         {
           "date": "2025-10-22",
-          "name": 72.04,
-          "benchmark": 104.73
+          "name": 117.14,
+          "benchmark": 99.79
         },
         {
           "date": "2025-10-23",
-          "name": 70.78,
-          "benchmark": 106.05
+          "name": 115.09,
+          "benchmark": 101.06
         },
         {
           "date": "2025-10-24",
-          "name": 69.8,
-          "benchmark": 107.35
+          "name": 113.5,
+          "benchmark": 102.29
         },
         {
           "date": "2025-10-27",
-          "name": 75.78,
-          "benchmark": 107.72
+          "name": 123.23,
+          "benchmark": 102.65
         },
         {
           "date": "2025-10-28",
-          "name": 72.77,
-          "benchmark": 107.14
+          "name": 118.33,
+          "benchmark": 102.1
         },
         {
           "date": "2025-10-29",
-          "name": 75.78,
-          "benchmark": 106.23
+          "name": 123.23,
+          "benchmark": 101.23
         },
         {
           "date": "2025-10-30",
-          "name": 71.63,
-          "benchmark": 105.38
+          "name": 116.48,
+          "benchmark": 100.41
         },
         {
           "date": "2025-10-31",
-          "name": 74.28,
-          "benchmark": 105.97
+          "name": 120.78,
+          "benchmark": 100.98
         },
         {
           "date": "2025-11-03",
-          "name": 71.27,
-          "benchmark": 105.63
+          "name": 115.88,
+          "benchmark": 100.66
         },
         {
           "date": "2025-11-04",
-          "name": 68.13,
-          "benchmark": 103.8
+          "name": 110.79,
+          "benchmark": 98.92
         },
         {
           "date": "2025-11-05",
-          "name": 66.91,
-          "benchmark": 105.3
+          "name": 108.8,
+          "benchmark": 100.34
         },
         {
           "date": "2025-11-06",
-          "name": 77.29,
-          "benchmark": 103.44
+          "name": 125.68,
+          "benchmark": 98.57
         },
         {
           "date": "2025-11-07",
-          "name": 78.63,
-          "benchmark": 103.98
+          "name": 127.86,
+          "benchmark": 99.09
         },
         {
           "date": "2025-11-10",
-          "name": 76.84,
-          "benchmark": 105.02
+          "name": 124.95,
+          "benchmark": 100.08
         },
         {
           "date": "2025-11-11",
-          "name": 77.25,
-          "benchmark": 105.11
+          "name": 125.61,
+          "benchmark": 100.16
         },
         {
           "date": "2025-11-12",
-          "name": 76.76,
-          "benchmark": 104.85
+          "name": 124.82,
+          "benchmark": 99.92
         },
         {
           "date": "2025-11-13",
-          "name": 71.55,
-          "benchmark": 101.91
+          "name": 116.35,
+          "benchmark": 97.11
         },
         {
           "date": "2025-11-14",
-          "name": 75.46,
-          "benchmark": 102.2
+          "name": 122.7,
+          "benchmark": 97.39
         },
         {
           "date": "2025-11-17",
-          "name": 74.81,
-          "benchmark": 100.17
+          "name": 121.64,
+          "benchmark": 95.46
         },
         {
           "date": "2025-11-18",
-          "name": 74.4,
-          "benchmark": 100.48
+          "name": 120.98,
+          "benchmark": 95.75
         },
         {
           "date": "2025-11-19",
-          "name": 76.35,
-          "benchmark": 100.46
+          "name": 124.16,
+          "benchmark": 95.73
         },
         {
           "date": "2025-11-20",
-          "name": 73.5,
-          "benchmark": 98.6
+          "name": 119.52,
+          "benchmark": 93.96
         },
         {
           "date": "2025-11-21",
-          "name": 78.06,
-          "benchmark": 101.39
+          "name": 126.94,
+          "benchmark": 96.62
         },
         {
           "date": "2025-11-24",
-          "name": 80.02,
-          "benchmark": 103.24
+          "name": 130.11,
+          "benchmark": 98.38
         },
         {
           "date": "2025-11-25",
-          "name": 86.49,
-          "benchmark": 105.5
+          "name": 140.64,
+          "benchmark": 100.53
         },
         {
           "date": "2025-11-26",
-          "name": 87.06,
-          "benchmark": 106.43
+          "name": 141.56,
+          "benchmark": 101.42
         },
         {
           "date": "2025-11-28",
-          "name": 87.26,
-          "benchmark": 107.05
+          "name": 141.89,
+          "benchmark": 102.01
         },
         {
           "date": "2025-12-01",
-          "name": 83.31,
-          "benchmark": 105.71
+          "name": 135.47,
+          "benchmark": 100.73
         },
         {
           "date": "2025-12-02",
-          "name": 77.41,
-          "benchmark": 105.51
+          "name": 125.88,
+          "benchmark": 100.55
         },
         {
           "date": "2025-12-03",
-          "name": 82.3,
-          "benchmark": 107.43
+          "name": 133.82,
+          "benchmark": 102.37
         },
         {
           "date": "2025-12-04",
-          "name": 85.39,
-          "benchmark": 108.37
+          "name": 138.85,
+          "benchmark": 103.27
         },
         {
           "date": "2025-12-05",
-          "name": 81.07,
-          "benchmark": 107.92
+          "name": 131.83,
+          "benchmark": 102.84
         },
         {
           "date": "2025-12-08",
-          "name": 81.44,
-          "benchmark": 107.97
+          "name": 132.43,
+          "benchmark": 102.88
         },
         {
           "date": "2025-12-09",
-          "name": 80.18,
-          "benchmark": 108.19
+          "name": 130.38,
+          "benchmark": 103.1
         },
         {
           "date": "2025-12-10",
-          "name": 82.03,
-          "benchmark": 109.66
+          "name": 133.39,
+          "benchmark": 104.5
         },
         {
           "date": "2025-12-11",
-          "name": 79.24,
-          "benchmark": 110.95
+          "name": 128.86,
+          "benchmark": 105.73
         },
         {
           "date": "2025-12-12",
-          "name": 80.42,
-          "benchmark": 109.25
+          "name": 130.77,
+          "benchmark": 104.11
         },
         {
           "date": "2025-12-15",
-          "name": 74.85,
-          "benchmark": 108.42
+          "name": 121.71,
+          "benchmark": 103.32
         },
         {
           "date": "2025-12-16",
-          "name": 76.07,
-          "benchmark": 107.55
+          "name": 123.69,
+          "benchmark": 102.49
         },
         {
           "date": "2025-12-17",
-          "name": 72.98,
-          "benchmark": 106.4
+          "name": 118.66,
+          "benchmark": 101.39
         },
         {
           "date": "2025-12-18",
-          "name": 74.77,
-          "benchmark": 107.04
+          "name": 121.58,
+          "benchmark": 102.0
         },
         {
           "date": "2025-12-19",
-          "name": 79.61,
-          "benchmark": 107.93
+          "name": 129.45,
+          "benchmark": 102.85
         },
         {
           "date": "2025-12-22",
-          "name": 87.14,
-          "benchmark": 109.13
+          "name": 141.69,
+          "benchmark": 103.99
         },
         {
           "date": "2025-12-23",
-          "name": 86.73,
-          "benchmark": 108.49
+          "name": 141.03,
+          "benchmark": 103.38
         },
         {
           "date": "2025-12-24",
-          "name": 88.73,
-          "benchmark": 108.76
+          "name": 144.28,
+          "benchmark": 103.64
         },
         {
           "date": "2025-12-26",
-          "name": 84.98,
-          "benchmark": 108.2
+          "name": 138.19,
+          "benchmark": 103.11
         },
         {
           "date": "2025-12-29",
-          "name": 84.53,
-          "benchmark": 107.54
+          "name": 137.46,
+          "benchmark": 102.48
         },
         {
           "date": "2025-12-30",
-          "name": 85.43,
-          "benchmark": 106.74
+          "name": 138.91,
+          "benchmark": 101.72
         },
         {
           "date": "2025-12-31",
-          "name": 84.9,
-          "benchmark": 105.94
+          "name": 138.05,
+          "benchmark": 100.95
         },
         {
           "date": "2026-01-02",
-          "name": 85.1,
-          "benchmark": 107.07
+          "name": 138.39,
+          "benchmark": 102.03
         },
         {
           "date": "2026-01-05",
-          "name": 80.22,
-          "benchmark": 108.77
+          "name": 130.44,
+          "benchmark": 103.65
         },
         {
           "date": "2026-01-06",
-          "name": 83.76,
-          "benchmark": 110.21
+          "name": 136.2,
+          "benchmark": 105.02
         },
         {
           "date": "2026-01-07",
-          "name": 88.48,
-          "benchmark": 109.95
+          "name": 143.88,
+          "benchmark": 104.77
         },
         {
           "date": "2026-01-08",
-          "name": 87.34,
-          "benchmark": 111.15
+          "name": 142.03,
+          "benchmark": 105.92
         },
         {
           "date": "2026-01-09",
-          "name": 83.68,
-          "benchmark": 111.99
+          "name": 136.07,
+          "benchmark": 106.72
         },
         {
           "date": "2026-01-12",
-          "name": 79.77,
-          "benchmark": 112.54
+          "name": 129.72,
+          "benchmark": 107.24
         },
         {
           "date": "2026-01-13",
-          "name": 80.38,
-          "benchmark": 112.48
+          "name": 130.71,
+          "benchmark": 107.18
         },
         {
           "date": "2026-01-14",
-          "name": 80.06,
-          "benchmark": 113.27
+          "name": 130.18,
+          "benchmark": 107.94
         },
         {
           "date": "2026-01-15",
-          "name": 79.41,
-          "benchmark": 114.27
+          "name": 129.12,
+          "benchmark": 108.89
         },
         {
           "date": "2026-01-16",
-          "name": 76.52,
-          "benchmark": 114.37
+          "name": 124.42,
+          "benchmark": 108.99
         },
         {
           "date": "2026-01-20",
-          "name": 77.74,
-          "benchmark": 113.01
+          "name": 126.41,
+          "benchmark": 107.69
         },
         {
           "date": "2026-01-21",
-          "name": 76.68,
-          "benchmark": 115.25
+          "name": 124.69,
+          "benchmark": 109.82
         },
         {
           "date": "2026-01-22",
-          "name": 77.53,
-          "benchmark": 116.11
+          "name": 126.08,
+          "benchmark": 110.64
         },
         {
           "date": "2026-01-23",
-          "name": 82.05,
-          "benchmark": 113.97
+          "name": 133.42,
+          "benchmark": 108.6
         },
         {
           "date": "2026-01-26",
-          "name": 78.47,
-          "benchmark": 113.61
+          "name": 127.6,
+          "benchmark": 108.26
         },
         {
           "date": "2026-01-27",
-          "name": 82.91,
-          "benchmark": 113.93
+          "name": 134.81,
+          "benchmark": 108.57
         },
         {
           "date": "2026-01-28",
-          "name": 80.55,
-          "benchmark": 113.32
+          "name": 130.97,
+          "benchmark": 107.98
         },
         {
           "date": "2026-01-29",
-          "name": 84.21,
-          "benchmark": 113.35
+          "name": 136.93,
+          "benchmark": 108.01
         },
         {
           "date": "2026-01-30",
-          "name": 81.36,
-          "benchmark": 111.74
-        },
-        {
-          "date": "2026-02-02",
-          "name": 91.66,
-          "benchmark": 112.83
-        },
-        {
-          "date": "2026-02-03",
-          "name": 93.37,
-          "benchmark": 113.09
-        },
-        {
-          "date": "2026-02-04",
-          "name": 94.51,
-          "benchmark": 112.12
-        },
-        {
-          "date": "2026-02-05",
-          "name": 93.04,
-          "benchmark": 110.1
-        },
-        {
-          "date": "2026-02-06",
-          "name": 99.19,
-          "benchmark": 114.06
-        },
-        {
-          "date": "2026-02-09",
-          "name": 101.06,
-          "benchmark": 114.86
-        },
-        {
-          "date": "2026-02-10",
-          "name": 85.67,
-          "benchmark": 114.55
-        },
-        {
-          "date": "2026-02-11",
-          "name": 89.58,
-          "benchmark": 114.03
-        },
-        {
-          "date": "2026-02-12",
-          "name": 92.43,
-          "benchmark": 111.7
-        },
-        {
-          "date": "2026-02-13",
-          "name": 90.68,
-          "benchmark": 113.17
-        },
-        {
-          "date": "2026-02-17",
-          "name": 85.84,
-          "benchmark": 113.2
-        },
-        {
-          "date": "2026-02-18",
-          "name": 85.96,
-          "benchmark": 113.61
-        },
-        {
-          "date": "2026-02-19",
-          "name": 85.47,
-          "benchmark": 113.88
-        },
-        {
-          "date": "2026-02-20",
-          "name": 86.98,
-          "benchmark": 113.88
-        },
-        {
-          "date": "2026-02-23",
-          "name": 86.24,
-          "benchmark": 112.11
-        },
-        {
-          "date": "2026-02-24",
-          "name": 86.89,
-          "benchmark": 113.33
-        },
-        {
-          "date": "2026-02-25",
-          "name": 94.06,
-          "benchmark": 113.87
-        },
-        {
-          "date": "2026-02-26",
-          "name": 97.4,
-          "benchmark": 114.47
-        },
-        {
-          "date": "2026-02-27",
-          "name": 95.44,
-          "benchmark": 112.5
-        },
-        {
-          "date": "2026-03-02",
-          "name": 93.61,
-          "benchmark": 113.54
-        },
-        {
-          "date": "2026-03-03",
-          "name": 99.29,
-          "benchmark": 111.57
-        },
-        {
-          "date": "2026-03-04",
-          "name": 111.56,
-          "benchmark": 112.65
-        },
-        {
-          "date": "2026-03-05",
-          "name": 113.35,
-          "benchmark": 110.5
-        },
-        {
-          "date": "2026-03-06",
-          "name": 145.99,
-          "benchmark": 107.97
-        },
-        {
-          "date": "2026-03-09",
-          "name": 138.38,
-          "benchmark": 109.15
-        },
-        {
-          "date": "2026-03-10",
-          "name": 135.29,
-          "benchmark": 109.04
-        },
-        {
-          "date": "2026-03-11",
-          "name": 141.6,
-          "benchmark": 108.82
-        },
-        {
-          "date": "2026-03-12",
-          "name": 138.87,
+          "name": 132.3,
           "benchmark": 106.48
         },
         {
+          "date": "2026-02-02",
+          "name": 149.04,
+          "benchmark": 107.52
+        },
+        {
+          "date": "2026-02-03",
+          "name": 151.82,
+          "benchmark": 107.77
+        },
+        {
+          "date": "2026-02-04",
+          "name": 153.67,
+          "benchmark": 106.84
+        },
+        {
+          "date": "2026-02-05",
+          "name": 151.29,
+          "benchmark": 104.92
+        },
+        {
+          "date": "2026-02-06",
+          "name": 161.28,
+          "benchmark": 108.69
+        },
+        {
+          "date": "2026-02-09",
+          "name": 164.33,
+          "benchmark": 109.45
+        },
+        {
+          "date": "2026-02-10",
+          "name": 139.31,
+          "benchmark": 109.15
+        },
+        {
+          "date": "2026-02-11",
+          "name": 145.67,
+          "benchmark": 108.66
+        },
+        {
+          "date": "2026-02-12",
+          "name": 150.3,
+          "benchmark": 106.44
+        },
+        {
+          "date": "2026-02-13",
+          "name": 147.45,
+          "benchmark": 107.84
+        },
+        {
+          "date": "2026-02-17",
+          "name": 139.58,
+          "benchmark": 107.87
+        },
+        {
+          "date": "2026-02-18",
+          "name": 139.77,
+          "benchmark": 108.26
+        },
+        {
+          "date": "2026-02-19",
+          "name": 138.98,
+          "benchmark": 108.51
+        },
+        {
+          "date": "2026-02-20",
+          "name": 141.43,
+          "benchmark": 108.52
+        },
+        {
+          "date": "2026-02-23",
+          "name": 140.24,
+          "benchmark": 106.83
+        },
+        {
+          "date": "2026-02-24",
+          "name": 141.3,
+          "benchmark": 107.99
+        },
+        {
+          "date": "2026-02-25",
+          "name": 152.95,
+          "benchmark": 108.51
+        },
+        {
+          "date": "2026-02-26",
+          "name": 158.37,
+          "benchmark": 109.08
+        },
+        {
+          "date": "2026-02-27",
+          "name": 155.2,
+          "benchmark": 107.21
+        },
+        {
+          "date": "2026-03-02",
+          "name": 152.22,
+          "benchmark": 108.19
+        },
+        {
+          "date": "2026-03-03",
+          "name": 161.45,
+          "benchmark": 106.32
+        },
+        {
+          "date": "2026-03-04",
+          "name": 181.4,
+          "benchmark": 107.35
+        },
+        {
+          "date": "2026-03-05",
+          "name": 184.32,
+          "benchmark": 105.3
+        },
+        {
+          "date": "2026-03-06",
+          "name": 237.39,
+          "benchmark": 102.89
+        },
+        {
+          "date": "2026-03-09",
+          "name": 225.02,
+          "benchmark": 104.01
+        },
+        {
+          "date": "2026-03-10",
+          "name": 219.99,
+          "benchmark": 103.9
+        },
+        {
+          "date": "2026-03-11",
+          "name": 230.24,
+          "benchmark": 103.7
+        },
+        {
+          "date": "2026-03-12",
+          "name": 225.81,
+          "benchmark": 101.46
+        },
+        {
           "date": "2026-03-13",
-          "name": 135.57,
-          "benchmark": 106.12
+          "name": 220.45,
+          "benchmark": 101.13
         },
         {
           "date": "2026-03-16",
-          "name": 131.87,
-          "benchmark": 107.13
+          "name": 214.43,
+          "benchmark": 102.08
         },
         {
           "date": "2026-03-17",
-          "name": 128.12,
-          "benchmark": 107.61
+          "name": 208.34,
+          "benchmark": 102.55
         },
         {
           "date": "2026-03-18",
-          "name": 130.85,
-          "benchmark": 105.88
+          "name": 212.77,
+          "benchmark": 100.89
         },
         {
           "date": "2026-03-19",
-          "name": 125.48,
-          "benchmark": 106.57
+          "name": 204.04,
+          "benchmark": 101.55
         },
         {
           "date": "2026-03-20",
-          "name": 121.61,
-          "benchmark": 104.24
+          "name": 197.75,
+          "benchmark": 99.34
         },
         {
           "date": "2026-03-23",
-          "name": 119.82,
-          "benchmark": 106.49
+          "name": 194.84,
+          "benchmark": 101.48
         },
         {
           "date": "2026-03-24",
-          "name": 122.39,
-          "benchmark": 107.07
+          "name": 199.01,
+          "benchmark": 102.03
         },
         {
           "date": "2026-03-25",
-          "name": 126.41,
-          "benchmark": 108.37
+          "name": 205.56,
+          "benchmark": 103.27
         },
         {
           "date": "2026-03-26",
-          "name": 125.19,
-          "benchmark": 106.49
+          "name": 203.57,
+          "benchmark": 101.48
         },
         {
           "date": "2026-03-27",
-          "name": 119.45,
-          "benchmark": 104.62
+          "name": 194.24,
+          "benchmark": 99.7
         },
         {
           "date": "2026-03-30",
-          "name": 117.5,
-          "benchmark": 103.12
+          "name": 191.07,
+          "benchmark": 98.27
         },
         {
           "date": "2026-03-31",
-          "name": 125.8,
-          "benchmark": 106.73
+          "name": 204.57,
+          "benchmark": 101.71
         },
         {
           "date": "2026-04-01",
-          "name": 125.27,
-          "benchmark": 107.4
+          "name": 203.71,
+          "benchmark": 102.35
         },
         {
           "date": "2026-04-02",
-          "name": 124.22,
-          "benchmark": 108.15
+          "name": 201.99,
+          "benchmark": 103.06
         },
         {
           "date": "2026-04-06",
-          "name": 122.02,
-          "benchmark": 108.61
+          "name": 198.41,
+          "benchmark": 103.49
         },
         {
           "date": "2026-04-07",
-          "name": 118.19,
-          "benchmark": 108.84
+          "name": 192.19,
+          "benchmark": 103.72
         },
         {
           "date": "2026-04-08",
-          "name": 122.34,
-          "benchmark": 112.1
+          "name": 198.94,
+          "benchmark": 106.82
         },
         {
           "date": "2026-04-09",
-          "name": 126.54,
-          "benchmark": 112.74
+          "name": 205.76,
+          "benchmark": 107.43
         },
         {
           "date": "2026-04-10",
-          "name": 125.03,
-          "benchmark": 112.45
+          "name": 203.31,
+          "benchmark": 107.16
         },
         {
           "date": "2026-04-13",
-          "name": 121.94,
-          "benchmark": 114.08
+          "name": 198.28,
+          "benchmark": 108.71
         },
         {
           "date": "2026-04-14",
-          "name": 121.9,
-          "benchmark": 115.65
+          "name": 198.21,
+          "benchmark": 110.2
         },
         {
           "date": "2026-04-15",
-          "name": 120.84,
-          "benchmark": 115.94
+          "name": 196.49,
+          "benchmark": 110.48
         },
         {
           "date": "2026-04-16",
-          "name": 120.8,
-          "benchmark": 116.18
+          "name": 196.43,
+          "benchmark": 110.71
         },
         {
           "date": "2026-04-17",
-          "name": 120.11,
-          "benchmark": 118.69
+          "name": 195.3,
+          "benchmark": 113.1
         },
         {
           "date": "2026-04-20",
-          "name": 117.05,
-          "benchmark": 119.36
+          "name": 190.34,
+          "benchmark": 113.74
         },
         {
           "date": "2026-04-21",
-          "name": 112.49,
-          "benchmark": 118.14
+          "name": 182.93,
+          "benchmark": 112.58
         },
         {
           "date": "2026-04-22",
-          "name": 116.0,
-          "benchmark": 118.99
+          "name": 188.62,
+          "benchmark": 113.39
         },
         {
           "date": "2026-04-23",
-          "name": 115.75,
-          "benchmark": 118.57
+          "name": 188.22,
+          "benchmark": 112.99
         },
         {
           "date": "2026-04-24",
-          "name": 116.16,
-          "benchmark": 119.06
+          "name": 188.88,
+          "benchmark": 113.46
         },
         {
           "date": "2026-04-27",
-          "name": 117.01,
-          "benchmark": 119.27
+          "name": 190.27,
+          "benchmark": 113.66
         },
         {
           "date": "2026-04-28",
-          "name": 110.7,
-          "benchmark": 117.88
+          "name": 180.01,
+          "benchmark": 112.33
         },
         {
           "date": "2026-04-29",
-          "name": 110.18,
-          "benchmark": 117.09
+          "name": 179.15,
+          "benchmark": 111.58
         },
         {
           "date": "2026-04-30",
-          "name": 113.84,
-          "benchmark": 119.63
+          "name": 185.11,
+          "benchmark": 114.0
         },
         {
           "date": "2026-05-01",
-          "name": 118.27,
-          "benchmark": 120.19
+          "name": 192.32,
+          "benchmark": 114.53
         },
         {
           "date": "2026-05-04",
-          "name": 120.68,
-          "benchmark": 119.59
+          "name": 196.23,
+          "benchmark": 113.96
         },
         {
           "date": "2026-05-05",
-          "name": 119.5,
-          "benchmark": 121.6
+          "name": 194.31,
+          "benchmark": 115.88
         },
         {
           "date": "2026-05-06",
-          "name": 118.11,
-          "benchmark": 123.43
+          "name": 192.06,
+          "benchmark": 117.62
         },
         {
           "date": "2026-05-07",
-          "name": 109.36,
-          "benchmark": 121.48
+          "name": 177.83,
+          "benchmark": 115.76
         },
         {
           "date": "2026-05-08",
-          "name": 118.03,
-          "benchmark": 122.3
+          "name": 191.93,
+          "benchmark": 116.54
         },
         {
           "date": "2026-05-11",
-          "name": 112.01,
-          "benchmark": 122.8
+          "name": 182.13,
+          "benchmark": 117.02
         },
         {
           "date": "2026-05-12",
-          "name": 113.8,
-          "benchmark": 121.61
+          "name": 185.04,
+          "benchmark": 115.88
         },
         {
           "date": "2026-05-13",
-          "name": 117.26,
-          "benchmark": 121.65
+          "name": 190.67,
+          "benchmark": 115.92
         },
         {
           "date": "2026-05-14",
-          "name": 121.29,
-          "benchmark": 122.42
+          "name": 197.22,
+          "benchmark": 116.65
         },
         {
           "date": "2026-05-15",
-          "name": 113.51,
-          "benchmark": 119.47
+          "name": 184.58,
+          "benchmark": 113.85
         },
         {
           "date": "2026-05-18",
-          "name": 112.74,
-          "benchmark": 118.77
+          "name": 183.32,
+          "benchmark": 113.18
         },
         {
           "date": "2026-05-19",
-          "name": 111.07,
-          "benchmark": 117.49
+          "name": 180.61,
+          "benchmark": 111.96
         },
         {
           "date": "2026-05-20",
-          "name": 117.38,
-          "benchmark": 120.45
+          "name": 190.87,
+          "benchmark": 114.78
         },
         {
           "date": "2026-05-21",
-          "name": 116.08,
-          "benchmark": 121.57
+          "name": 188.75,
+          "benchmark": 115.85
         },
         {
           "date": "2026-05-22",
-          "name": 118.52,
-          "benchmark": 122.71
+          "name": 192.72,
+          "benchmark": 116.93
         },
         {
           "date": "2026-05-26",
-          "name": 122.06,
-          "benchmark": 125.03
+          "name": 198.48,
+          "benchmark": 119.14
         },
         {
           "date": "2026-05-27",
-          "name": 123.85,
-          "benchmark": 124.97
+          "name": 201.39,
+          "benchmark": 119.08
         },
         {
           "date": "2026-05-28",
-          "name": 121.2,
-          "benchmark": 125.68
+          "name": 197.09,
+          "benchmark": 119.76
         },
         {
           "date": "2026-05-29",
-          "name": 126.84,
-          "benchmark": 124.99
+          "name": 206.25,
+          "benchmark": 119.11
         },
         {
           "date": "2026-06-01",
-          "name": 117.58,
-          "benchmark": 124.37
+          "name": 191.2,
+          "benchmark": 118.51
         },
         {
           "date": "2026-06-02",
-          "name": 111.64,
-          "benchmark": 125.52
+          "name": 181.54,
+          "benchmark": 119.61
         },
         {
           "date": "2026-06-03",
-          "name": 115.67,
-          "benchmark": 123.8
+          "name": 188.09,
+          "benchmark": 117.97
         },
         {
           "date": "2026-06-04",
-          "name": 118.56,
-          "benchmark": 125.67
+          "name": 192.79,
+          "benchmark": 119.75
         },
         {
           "date": "2026-06-05",
-          "name": 118.03,
-          "benchmark": 121.21
+          "name": 191.93,
+          "benchmark": 115.51
         },
         {
           "date": "2026-06-08",
-          "name": 118.44,
-          "benchmark": 122.27
+          "name": 192.59,
+          "benchmark": 116.51
         },
         {
           "date": "2026-06-09",
-          "name": 116.24,
-          "benchmark": 122.66
+          "name": 189.01,
+          "benchmark": 116.89
         },
         {
           "date": "2026-06-10",
-          "name": 114.16,
-          "benchmark": 121.38
+          "name": 185.64,
+          "benchmark": 115.67
         },
         {
           "date": "2026-06-11",
-          "name": 119.41,
-          "benchmark": 124.98
+          "name": 194.18,
+          "benchmark": 119.1
         },
         {
           "date": "2026-06-12",
-          "name": 123.24,
-          "benchmark": 126.08
+          "name": 200.4,
+          "benchmark": 120.14
         },
         {
           "date": "2026-06-15",
-          "name": 119.62,
-          "benchmark": 126.8
+          "name": 194.51,
+          "benchmark": 120.83
         },
         {
           "date": "2026-06-16",
-          "name": 122.14,
-          "benchmark": 125.7
+          "name": 198.61,
+          "benchmark": 119.78
         },
         {
           "date": "2026-06-17",
-          "name": 122.34,
-          "benchmark": 124.75
+          "name": 198.94,
+          "benchmark": 118.88
         },
         {
           "date": "2026-06-18",
-          "name": 122.18,
-          "benchmark": 127.21
+          "name": 198.68,
+          "benchmark": 121.22
         },
         {
           "date": "2026-06-22",
-          "name": 123.48,
-          "benchmark": 128.33
+          "name": 200.79,
+          "benchmark": 122.29
         },
         {
           "date": "2026-06-23",
-          "name": 124.5,
-          "benchmark": 127.1
+          "name": 202.45,
+          "benchmark": 121.11
         },
         {
           "date": "2026-06-24",
-          "name": 125.03,
-          "benchmark": 127.69
+          "name": 203.31,
+          "benchmark": 121.67
         },
         {
           "date": "2026-06-25",
-          "name": 126.29,
-          "benchmark": 128.64
+          "name": 205.36,
+          "benchmark": 122.58
         },
         {
           "date": "2026-06-26",
-          "name": 130.2,
-          "benchmark": 129.04
+          "name": 211.71,
+          "benchmark": 122.96
         },
         {
           "date": "2026-06-29",
-          "name": 134.68,
-          "benchmark": 128.67
+          "name": 218.99,
+          "benchmark": 122.61
         },
         {
           "date": "2026-06-30",
-          "name": 139.91,
-          "benchmark": 129.3
+          "name": 227.5,
+          "benchmark": 123.22
         },
         {
           "date": "2026-07-01",
-          "name": 133.25,
-          "benchmark": 128.82
+          "name": 216.68,
+          "benchmark": 122.75
         },
         {
           "date": "2026-07-02",
-          "name": 154.38,
-          "benchmark": 128.07
+          "name": 251.03,
+          "benchmark": 122.04
         },
         {
           "date": "2026-07-06",
-          "name": 143.35,
-          "benchmark": 128.64
+          "name": 233.09,
+          "benchmark": 122.58
         },
         {
           "date": "2026-07-07",
-          "name": 148.7,
-          "benchmark": 127.47
+          "name": 241.79,
+          "benchmark": 121.47
         },
         {
           "date": "2026-07-08",
-          "name": 144.4,
-          "benchmark": 126.3
+          "name": 234.81,
+          "benchmark": 120.36
         },
         {
           "date": "2026-07-09",
-          "name": 143.55,
-          "benchmark": 127.92
+          "name": 233.42,
+          "benchmark": 121.9
         },
         {
           "date": "2026-07-10",
-          "name": 139.89,
-          "benchmark": 127.38
+          "name": 227.47,
+          "benchmark": 121.39
         },
         {
           "date": "2026-07-13",
-          "name": 139.76,
-          "benchmark": 126.3
+          "name": 227.27,
+          "benchmark": 120.36
         },
         {
           "date": "2026-07-14",
-          "name": 141.68,
-          "benchmark": 126.75
+          "name": 230.38,
+          "benchmark": 120.78
         },
         {
           "date": "2026-07-15",
-          "name": 132.28,
-          "benchmark": 127.29
+          "name": 215.09,
+          "benchmark": 121.3
         },
         {
           "date": "2026-07-16",
-          "name": 124.75,
-          "benchmark": 127.21
+          "name": 202.85,
+          "benchmark": 121.22
         },
         {
           "date": "2026-07-17",
-          "name": 132.68,
-          "benchmark": 126.55
+          "name": 215.75,
+          "benchmark": 120.59
         },
         {
           "date": "2026-07-20",
-          "name": 130.53,
-          "benchmark": 125.8
+          "name": 212.24,
+          "benchmark": 119.88
         },
         {
           "date": "2026-07-21",
-          "name": 133.5,
-          "benchmark": 127.62
+          "name": 217.07,
+          "benchmark": 121.61
         },
         {
           "date": "2026-07-22",
-          "name": 128.57,
-          "benchmark": 126.44
+          "name": 209.07,
+          "benchmark": 120.48
         },
         {
           "date": "2026-07-23",
-          "name": 128.65,
-          "benchmark": 125.71
+          "name": 209.2,
+          "benchmark": 119.79
         },
         {
           "date": "2026-07-24",
-          "name": 123.61,
-          "benchmark": 125.31
+          "name": 200.99,
+          "benchmark": 119.41
         },
         {
           "date": "2026-07-27",
-          "name": 124.58,
-          "benchmark": 126.06
+          "name": 202.58,
+          "benchmark": 120.12
         },
         {
           "date": "2026-07-28",
-          "name": 121.29,
-          "benchmark": 126.26
+          "name": 197.22,
+          "benchmark": 120.31
         },
         {
           "date": "2026-07-29",
-          "name": 115.71,
-          "benchmark": 124.19
+          "name": 188.15,
+          "benchmark": 118.34
         },
         {
           "date": "2026-07-30",
-          "name": 116.04,
-          "benchmark": 125.92
+          "name": 188.68,
+          "benchmark": 119.99
         },
         {
           "date": "2026-07-31",
-          "name": 114.08,
-          "benchmark": 125.32
+          "name": 185.51,
+          "benchmark": 119.42
         },
         {
           "date": "2026-08-03",
-          "name": 113.63,
-          "benchmark": 127.48
+          "name": 184.78,
+          "benchmark": 121.48
         },
         {
           "date": "2026-08-04",
-          "name": 118.72,
-          "benchmark": 129.85
+          "name": 193.05,
+          "benchmark": 123.73
         },
         {
           "date": "2026-08-05",
-          "name": 120.31,
-          "benchmark": 129.01
+          "name": 195.63,
+          "benchmark": 122.94
         },
         {
           "date": "2026-08-06",
-          "name": 123.0,
-          "benchmark": 128.36
+          "name": 200.0,
+          "benchmark": 122.31
         },
         {
           "date": "2026-08-07",
-          "name": 126.09,
-          "benchmark": 129.78
+          "name": 205.03,
+          "benchmark": 123.67
         },
         {
           "date": "2026-08-10",
-          "name": 133.13,
-          "benchmark": 129.1
+          "name": 216.48,
+          "benchmark": 123.02
         },
         {
           "date": "2026-08-11",
-          "name": 129.71,
-          "benchmark": 129.54
+          "name": 210.92,
+          "benchmark": 123.44
         },
         {
           "date": "2026-08-12",
-          "name": 149.9,
-          "benchmark": 130.28
+          "name": 243.75,
+          "benchmark": 124.14
         },
         {
           "date": "2026-08-13",
-          "name": 138.3,
-          "benchmark": 130.62
+          "name": 224.88,
+          "benchmark": 124.47
         },
         {
           "date": "2026-08-14",
-          "name": 142.08,
-          "benchmark": 131.3
+          "name": 231.04,
+          "benchmark": 125.12
         },
         {
           "date": "2026-08-17",
-          "name": 137.77,
-          "benchmark": 130.86
+          "name": 224.02,
+          "benchmark": 124.7
         },
         {
           "date": "2026-08-18",
-          "name": 149.0,
-          "benchmark": 129.21
+          "name": 242.29,
+          "benchmark": 123.13
         },
         {
           "date": "2026-08-19",
-          "name": 150.75,
-          "benchmark": 129.85
+          "name": 245.14,
+          "benchmark": 123.74
         },
         {
           "date": "2026-08-20",
-          "name": 146.72,
-          "benchmark": 128.11
+          "name": 238.58,
+          "benchmark": 122.08
         },
         {
           "date": "2026-08-21",
-          "name": 153.15,
-          "benchmark": 129.09
+          "name": 249.04,
+          "benchmark": 123.02
         },
         {
           "date": "2026-08-24",
-          "name": 148.43,
-          "benchmark": 128.24
+          "name": 241.36,
+          "benchmark": 122.2
+        },
+        {
+          "date": "2026-08-25",
+          "name": 249.57,
+          "benchmark": 122.72
+        },
+        {
+          "date": "2026-08-26",
+          "name": 238.05,
+          "benchmark": 122.59
+        },
+        {
+          "date": "2026-08-27",
+          "name": 242.89,
+          "benchmark": 122.95
+        },
+        {
+          "date": "2026-08-28",
+          "name": 235.74,
+          "benchmark": 121.29
+        },
+        {
+          "date": "2026-08-31",
+          "name": 198.15,
+          "benchmark": 120.54
+        },
+        {
+          "date": "2026-09-01",
+          "name": 206.62,
+          "benchmark": 119.16
+        },
+        {
+          "date": "2026-09-02",
+          "name": 201.06,
+          "benchmark": 120.57
+        },
+        {
+          "date": "2026-09-03",
+          "name": 198.01,
+          "benchmark": 121.06
+        },
+        {
+          "date": "2026-09-04",
+          "name": 203.51,
+          "benchmark": 121.4
+        },
+        {
+          "date": "2026-09-08",
+          "name": 201.19,
+          "benchmark": 120.85
+        },
+        {
+          "date": "2026-09-09",
+          "name": 201.72,
+          "benchmark": 119.19
+        },
+        {
+          "date": "2026-09-10",
+          "name": 189.34,
+          "benchmark": 117.99
+        },
+        {
+          "date": "2026-09-11",
+          "name": 192.26,
+          "benchmark": 118.48
+        },
+        {
+          "date": "2026-09-14",
+          "name": 196.62,
+          "benchmark": 118.07
+        },
+        {
+          "date": "2026-09-15",
+          "name": 188.68,
+          "benchmark": 116.94
+        },
+        {
+          "date": "2026-09-16",
+          "name": 184.71,
+          "benchmark": 116.44
+        },
+        {
+          "date": "2026-09-17",
+          "name": 180.08,
+          "benchmark": 117.06
+        },
+        {
+          "date": "2026-09-18",
+          "name": 178.69,
+          "benchmark": 116.51
+        },
+        {
+          "date": "2026-09-21",
+          "name": 176.24,
+          "benchmark": 117.12
+        },
+        {
+          "date": "2026-09-22",
+          "name": 175.38,
+          "benchmark": 117.79
         }
       ],
       "name_symbol": "TECX",
       "benchmark_symbol": "IWM",
-      "as_of": "2026-08-24",
+      "as_of": "2026-09-22",
       "window_days": 364,
-      "name_return": 0.4843304843304843,
-      "benchmark_return": 0.2823635737648478,
-      "source_ref": "EOD TECX vs IWM rebased to 100, 2025-08-25..2026-08-24"
+      "name_return": 0.7538054268696228,
+      "benchmark_return": 0.17786253280839892,
+      "source_ref": "EOD TECX vs IWM rebased to 100, 2025-09-23..2026-09-22"
     },
     "operating_drivers": {
       "rows": [
@@ -6118,73 +5987,63 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a cash-rich, analyst-favored single-asset clinical bet whose entire value hinges on one undated, unproven TX45 readout against an accelerating burn.",
+    "evidence_balance": "mixed — a binary single-asset clinical bet: uniformly bullish sell-side and funded runway offset by deepening burn, dilution and an unexplained gap-down.",
     "bull_points": [
       {
-        "claim": "TX45 completed enrollment in the 24-week APEX Phase 2 trial in PH-HFpEF, a dated pipeline mechanism whose readout is the value driver a pre-revenue clinical-stage name is priced on.",
+        "claim": "This is a pre-revenue clinical-stage biotech whose value rests on a single lead asset, TX45, which just completed enrollment in its APEX Phase 2 trial in PH-HFpEF — a dated, de-risking milestone that moves the program toward its readout.",
         "source_ref": "CIQ Key Developments: Tectonic Therapeutic Inc NasdaqGM TECX Key Developments.rtf · Jun-10-2026",
         "cited": true
       },
       {
-        "claim": "TX45 posted positive topline Phase 1b Part B acute hemodynamic data in Group 2 PH-HFrEF, an earlier de-risking event supporting the program the price discounts.",
+        "claim": "TX45 already produced positive topline Phase 1b Part B acute-hemodynamic data in Group 2 PH-HFrEF, the clinical signal underpinning the runway thesis for the later-stage program.",
         "source_ref": "CIQ Key Developments: Tectonic Therapeutic Inc NasdaqGM TECX Key Developments.rtf · Oct-30-2025",
         "cited": true
       },
       {
-        "claim": "The balance sheet is net cash $223M against total debt of only ~$4M in leases, giving a genuine runway leg with no meaningful debt burden.",
+        "claim": "The balance sheet carries net cash of ~$223M against only ~$4.4M of total debt (leases), giving the program funding runway to reach its Phase 2 readout without imminent leverage risk.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "Consensus loss estimates have been revised UP across the recent cluster — FY26 GAAP EPS 8 up / 0 down last month — indicating brokers are marking the burn less severe, not worse.",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
-        "cited": true
-      },
-      {
-        "claim": "All nine covering analysts rate the name Buy (plus one Outperform) with a mean target of $77.56 versus a ~$31 close, a strongly constructive sell-side stance.",
+        "claim": "Sell-side coverage is uniformly constructive — 9 Buy / 1 Outperform ratings with a mean target of $77.56 versus a $26.50 close — i.e. consensus prices a large clinical-success runway well above the current level.",
         "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
         "cited": true
       },
       {
-        "claim": "The stock has outrun its small-cap benchmark by ~45 points over 180 days (TECX +57.8% vs IWM +12.6%), a genuinely idiosyncratic positive move rather than a beta drift.",
-        "source_ref": "EOD TECX−IWM 180d to 2026-08-24 (assembly, cap-band)",
+        "claim": "Recent GAAP-EPS revision breadth for FY2026 is entirely upward (8 up / 0 down last month), and loss estimates narrowed on 2026-08-09 broker moves — the near-term consensus path is being marked less negative, not more.",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The company is pre-revenue — consensus revenue is $0.0M for both FY26E and FY27E — so every peer revenue multiple below is struck on a base the name does not yet have; the entire thesis rests on unproven clinical readouts.",
-        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
+        "claim": "The peer discount is the wrong lens here: the comp set is flagged HETEROGENEOUS with market caps spanning $105M–$15.0B (142x) around a $585M name, so the peer TEV/Rev median (149.5x LTM / 47.46x NTM) is anchored by differently-scaled businesses and is not a clean benchmark for TX45's value.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
         "cited": true
       },
       {
-        "claim": "The optical 'losses being revised up' signal is a MISREAD of a business still deepening its cash burn: EBITDA has worsened every year, Dec-2021 -15 → LTM -94 → FY26E -108 → FY27E -138 — the absolute burn is accelerating, not narrowing.",
+        "claim": "TEV/EBITDA and P/E are NM as a REAL state, not missing: EBITDA is genuinely negative (LTM $-94M) and deepening — this is not an optical-margin misread but a true absence of earnings to multiply.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "cited": true
+      },
+      {
+        "claim": "The cash burn is real and worsening: LTM levered FCF is $-46.7M and the absolute EBITDA loss has deepened every year (Dec-2021 -15 → LTM -94), and consensus expects the loss to widen further (FY26E EBITDA $-89M → FY27E $-105M) — the trajectory is away from, not toward, profitability.",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "TEV/LTM EBITDA is NM and EBITDA is $-94M — a genuinely negative base, not a missing figure — so there is no current earnings multiple to lean on and net-debt/EBITDA is meaningless.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-        "cited": false
-      },
-      {
-        "claim": "The share count diluted +32.5% in ~1.7 years (14.75M → 19.55M shares), and an active shelf/ATM stack means the runway is partly funded by ongoing equity issuance that erodes per-share value.",
+        "claim": "Shareholders have been diluted ~32.5% in ~1.7 years (14.75M → 19.55M shares) against a dense shelf/prospectus-supplement history, so equity funding of the burn is an ongoing dilution cost, not a one-off.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-11-01..2026-07-31",
         "cited": true
       },
       {
-        "claim": "FCF is negative (-$46.7M LTM) with CFO $-72.1M — the self-funding read is MIXED/negative on both legs, so the cash pile is being consumed and depends on further raises or a successful readout.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
+        "claim": "The stock already gapped down ~-40% intraday on 2026-08-31 with no company filing to explain it, and has lagged its small-cap benchmark by ~30 points over 180 days — idiosyncratic weakness the sources leave unexplained.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       },
       {
-        "claim": "Insiders were net sellers over the last 182 days (0 open-market buys, 10 sells across 2 insiders), the last sale dated 2026-08-25 — no insider is adding at these levels.",
-        "source_ref": "EDGAR Form 4 (latest 0002023255-26-000009; 74 filings in the 1095d scanned; counts over 182d)",
-        "cited": true
-      },
-      {
-        "claim": "Return on capital remains deeply negative (RoCE -23.1% LTM) with no revenue and no profitable line of business, so the entire equity value is an option on future approval.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "claim": "Value is single-asset and binary: with $0 revenue consensus for FY26/FY27 and no segment or geographic breakout available, the entire thesis rides on TX45 clinical outcomes with no diversifying business beneath it.",
+        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
         "cited": true
       }
     ],
@@ -6192,100 +6051,109 @@
       {
         "name": "Cytokinetics",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Cardiovascular clinical-stage developer that carried years of losses through pivotal trials before commercialization — the same 'value is a binary readout, not current earnings' pattern; sits in this peer roster.",
+        "distinguishing_fact": "single-mechanism cardiovascular-therapeutics developer that carried years of losses on clinical promise before a lead asset matured — a within-roster analogue for a cardiopulmonary program valued on the pipeline, not current earnings.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "BridgeBio Pharma",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Rare/genetic-disease developer that sustained a large market value on pipeline optionality and heavy losses ahead of approvals — the pre-revenue, cash-burning, multiple-NM archetype; a roster peer.",
+        "distinguishing_fact": "genetic-disease developer that sustained a very large enterprise value on late-stage pipeline optionality despite deep losses — the roster's example of a clinical-stage name re-rating on program success.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Crinetics Pharmaceuticals",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Endocrine clinical-stage name that re-rated on a lead-asset thesis while still loss-making — mirrors a single-program clinical bet carried on cash runway; a roster peer.",
+        "distinguishing_fact": "rare-endocrine developer whose valuation ran ahead of revenue on a maturing lead asset — an in-set pattern of expectations pricing clinical runway well before cash generation.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Avalo Therapeutics",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Small-cap immunology developer whose value swung sharply on program outcomes — the downside analogue for a single-asset clinical name where a miss compresses the equity; a roster peer.",
+        "distinguishing_fact": "small-cap immunology developer whose narrow asset base left the equity exposed to sharp de-rating on a single program's fortunes — the roster's cautionary single-asset analogue.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Tenax Therapeutics",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Micro-cap cardiopulmonary developer showing how a single-indication clinical bet can de-rate to cash-shell levels when a program disappoints; the smallest roster peer.",
+        "distinguishing_fact": "micro-cap cardiopulmonary developer showing how a thinly-funded, single-program clinical name can compress hard when the runway or readout disappoints — the low end of the same therapeutic bucket.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Does the TX45 APEX Phase 2 readout succeed and convert clinical optionality into an approvable, revenue-generating asset before the cash runway forces further dilutive raises?",
+      "question": "Does TX45 deliver a positive APEX Phase 2 readout large enough to justify the clinical-success runway consensus already prices ($77.56 mean target vs $26.50), before the ongoing cash burn forces further dilution?",
       "evidence_for": [
         {
-          "claim": "APEX Phase 2 enrollment is complete, putting a dated 24-week PH-HFpEF readout on the clock as the concrete next value event.",
+          "claim": "APEX Phase 2 enrollment is complete, advancing the pivotal-value catalyst toward a dated readout.",
           "source_ref": "CIQ Key Developments: Tectonic Therapeutic Inc NasdaqGM TECX Key Developments.rtf · Jun-10-2026",
           "cited": true
         },
         {
-          "claim": "Positive Phase 1b Part B topline hemodynamic data in PH-HFrEF has already partially de-risked the TX45 mechanism.",
+          "claim": "Prior Phase 1b Part B topline data were positive, supplying the clinical signal the runway case rests on.",
           "source_ref": "CIQ Key Developments: Tectonic Therapeutic Inc NasdaqGM TECX Key Developments.rtf · Oct-30-2025",
           "cited": true
         },
         {
-          "claim": "Net cash of $223M with only ~$4M debt provides runway to reach the readout.",
+          "claim": "~$223M net cash provides funding to reach the readout without imminent debt pressure.",
           "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Revenue consensus is $0.0M through FY27E — there is no commercial base yet, so a failed readout leaves little intrinsic value.",
-          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
-          "cited": true
-        },
-        {
-          "claim": "The burn is accelerating (EBITDA FY26E -108 → FY27E -138) and FCF is negative, so runway erodes and the raise/dilution clock keeps running against the readout.",
+          "claim": "The loss deepens every year (EBITDA Dec-2021 -15 → LTM -94) and consensus widens it further, so time and dilution work against the equity if the readout slips or disappoints.",
           "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         },
         {
-          "claim": "Shares have already diluted +32.5% in ~1.7 years, showing the funding of that runway comes at ongoing per-share cost.",
+          "claim": "The share count is already up ~32.5% in ~1.7 years, evidencing that funding the burn dilutes existing holders.",
           "source_ref": "EDGAR XBRL shares, trailing 2024-11-01..2026-07-31",
+          "cited": true
+        },
+        {
+          "claim": "An unexplained ~-40% gap-down on 2026-08-31 with no company filing shows how violently a single-asset name can re-price on program-related news.",
+          "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Actual cash runway in months/quarters is NOT derived from the data (survival note flags 'cash not derived — a risk') — an expected disclosure whose absence is a bearish gap given the accelerating burn.",
-      "No earnings-call transcript / management commentary is available for TECX — no operator narrative on trial timing, funding plans, or partnering.",
-      "Segment, geographic and customer-revenue breakouts are all UNKNOWN/absent — no visibility beyond the single TX45 program; opacity is a risk, not neutral.",
-      "No forward EV/EBITDA or EV/Revenue multiple is present for the name (multiples absent from assembled comps), so no forward-multiple anchor exists to test the price.",
-      "Peer set is explicitly HETEROGENEOUS (market caps span $105M–$15.0B, 142x); every peer multiple is a confidence-gated input, not a clean benchmark — whether the pre-revenue discount is EARNED or RESIDUAL cannot be read cleanly here.",
-      "The exact expected date and probability of the APEX Phase 2 readout are not in the data — the single decisive catalyst is undated beyond enrollment completion.",
-      "Covenant terms and any ≤12m maturity wall are UNKNOWN (extraction failed / filing states no figure); low debt limits the stakes but the leg is unresolved.",
-      "EBITDA-basis divergence: consensus 'EBITDA' adds back ~0 D&A vs the actual row's basis — trailing-vs-forward comparisons across the boundary are part-definitional and should not be leaned on."
-    ]
+      "APEX Phase 2 readout timing and result for TX45 — the single decisive variable, undisclosed in the sources.",
+      "No earnings-call transcript / management commentary is available (flagged missing) — an expected disclosure gap that removes qualitative color on trial progress and cash-runway framing; treat as a risk, not neutral.",
+      "No segment or geographic revenue breakout could be read from the Segments sheet — an opacity that leaves the single-asset concentration unquantified.",
+      "Exact cash-runway horizon in quarters is not derived; self-funding read is MIXED (both latest-Q OCF and LTM FCF negative), so the number of readouts fundable before a raise is unknown.",
+      "The 2026-08-31 ~-40% gap-down has no source-bound cause — the disconfirming price event is unexplained and unresolved.",
+      "No current or forward EBITDA/EBITDA-adjusted multiple exists (all NM / absent), and no own-history multiple band (<4 quarterly closes) — the name cannot be anchored on any earnings multiple; the peer TEV/Rev discount is uninterpretable as earned-vs-residual given the heterogeneous set.",
+      "Covenant terms UNKNOWN (extraction failed) and the debt schedule is 208 days old — minor given ~$4.4M debt, but the terms are unverified."
+    ],
+    "draw_agreement": {
+      "attempted": 5,
+      "completed": 5,
+      "labels": {
+        "mixed": 5
+      },
+      "unanimous": true
+    }
   },
   "caveats": [
-    "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Clinical-stage heart-and-lung biotech followed under the QUALITY book, accepted by the operator 2026-09-01. One drug matters: TX45, for pulmonary hypertension caused by heart failure. Phase 1b was positive in both heart-failure types (HFpEF, and HFrEF topline 2025-10-29); the Phase 2 that decides it (APEX, PH-HFpEF) completed enrolment 2026-06-10, its independent data monitoring committee recommended continuation without modification in July 2026, and topline is guided to early Q1 2027. Cash of $227.1M at 2026-06-30 is guided to fund operations into Q1 2029 — the company reaches its own answer without needing to raise. The binding question is therefore what the price already assumes about that one readout, not whether a de-rating is overdone: nothing broke here, so the overshoot twin's question does not apply. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (down 22% from its 52w high against a 30% floor, and AHEAD of IWM over 180d), which is the screen behaving correctly rather than a gap to route around. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-24-01: FAIL (g1_drawdown FAIL).",
-    "primary-source: 7 EX-99.1 release(s) + 1 10-Q parsed (+3.0s fetch)",
+    "ALSO A CURRENT SCREEN CANDIDATE at rank 174 — judged under the 'quality' book, not 'overshoot', by operator ruling: Operator ruling 2026-09-23: the QUALITY book owns this name, not the screen. The 2026-09-22 screen admitted TECX at rank 174 of 289 - it fell 32.2 points further than its industry cohort (Biological Products, 55 peers) over the screen's window - so the follow reason's premise, that the name fails the screen's entry gates on their own terms, no longer holds. The follow stands regardless: the binding question is still what the price assumes about the APEX (PH-HFpEF) topline guided to early Q1 2027, and a de-rating does not convert a single-readout underwrite into an overshoot. The gate sentence in the follow reason is STALE as of this date and is superseded by this ruling. Follow reason: Clinical-stage heart-and-lung biotech followed under the QUALITY book, accepted by the operator 2026-09-01. One drug matters: TX45, for pulmonary hypertension caused by heart failure. Phase 1b was positive in both heart-failure types (HFpEF, and HFrEF topline 2025-10-29); the Phase 2 that decides it (APEX, PH-HFpEF) completed enrolment 2026-06-10, its independent data monitoring committee recommended continuation without modification in July 2026, and topline is guided to early Q1 2027. Cash of $227.1M at 2026-06-30 is guided to fund operations into Q1 2029 — the company reaches its own answer without needing to raise. The binding question is therefore what the price already assumes about that one readout, not whether a de-rating is overdone: nothing broke here, so the overshoot twin's question does not apply. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (down 22% from its 52w high against a 30% floor, and AHEAD of IWM over 180d), which is the screen behaving correctly rather than a gap to route around.",
+    "primary-source: 7 EX-99.1 release(s) + 1 10-Q parsed (+3.1s fetch)",
     "former registrant name: this CIK filed as \"AvroBio, Inc.\" (2018-02-02 → 2024-06-18) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0001681087)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "MISMATCH bear_point: 'TEV/LTM EBITDA is NM and EBITDA is $-94M — a genuinely…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it",
-    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
+    "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm declares itself no agreement at all",
+    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-02T16:10:51.495373Z",
+  "assembled_at": "2026-09-28T18:26:40.588750Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-01"
+    "frontier": "2026-09-22"
   },
   "sector": "Health Care",
   "industry": {
@@ -6306,7 +6174,7 @@
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-02T16:13:49.575059Z",
+    "computed_at": "2026-09-28T18:31:35.788177Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
     "data_quality": null,
     "data_quality_detail": [],

@@ -2,7 +2,7 @@
   "ticker": "ORKA",
   "name": "Oruka Therapeutics, Inc.",
   "cik": "0000907654",
-  "reference_date": "2026-08-24",
+  "reference_date": "2026-09-22",
   "rank": null,
   "sleeve": "quality",
   "mechanical": {
@@ -506,20 +506,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": 1.9030612244897958,
-        "source_ref": "EOD ORKA 180d to 2026-08-24",
+        "value": 1.0798504179498458,
+        "source_ref": "EOD ORKA 180d to 2026-09-22",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.059194069916417735,
-        "source_ref": "EOD MDY 180d to 2026-08-24 (cap-band: $6.1B @ 2026-08-24 → mid ($4–25B) → MDY)",
+        "value": 0.08490151033774862,
+        "source_ref": "EOD MDY 180d to 2026-09-22 (cap-band: $6.1B @ 2026-09-22 → mid ($4–25B) → MDY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": 1.843867154573378,
-        "source_ref": "EOD ORKA−MDY 180d to 2026-08-24 (assembly, cap-band)",
+        "value": 0.9949489076120972,
+        "source_ref": "EOD ORKA−MDY 180d to 2026-09-22 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -536,7 +536,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "MDY",
-      "benchmark_basis": "cap-band: $6.1B @ 2026-08-24 → mid ($4–25B) → MDY"
+      "benchmark_basis": "cap-band: $6.1B @ 2026-09-22 → mid ($4–25B) → MDY"
     },
     "consensus_context": {
       "eps_trend": {
@@ -3365,27 +3365,20 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 76 (7 insiders, $329.45M) — in the last 182 days · last purchase $1.02M, 10% owner, 2025-02-14 (~18mo ago) · last sale $0.09M, Chief Operating Officer, 2026-09-01 (~0mo ago) · largest sale $300.01M, director, 2026-07-01 (~2mo ago) · grants 8 · last filing 2026-09-01 · other C×1/J×1/M×38",
-        "source_ref": "EDGAR Form 4 (latest 0000907654-26-000088; 69 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 84 (7 insiders, $331.89M) — in the last 182 days · last purchase $1.02M, 10% owner, 2025-02-14 (~19mo ago) · last sale $0.05M, Senior Vice President, Finance, 2026-09-21 (~0mo ago) · largest sale $300.01M, director, 2026-07-01 (~3mo ago) · grants 8 · last filing 2026-09-21 · other C×1/J×1/M×43",
+        "source_ref": "EDGAR Form 4 (latest 0000907654-26-000102; 76 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-08-14): 8.1M → 8.3M sh (+3.1%, rising) · 12.5% of shares out (EDGAR XBRL) · DTC 6.8d · recent: 2026-08-14 8.3M · 2026-07-31 8.1M · 2026-07-15 8.8M · 2026-06-30 9.2M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-08-14); DTC = 8,303,245 short ÷ 1,220,082 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-15): 7.8M → 7.6M sh (-2.2%, falling) · 11.5% of shares out (EDGAR XBRL) · DTC 7.1d · recent: 2026-09-15 7.6M · 2026-08-31 7.8M · 2026-08-14 8.3M · 2026-07-31 8.1M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 7,623,327 short ÷ 1,072,284 screen 90d ADV",
         "status": "present",
         "note": null
       }
     },
     "catalyst_calendar": {
       "rows": [
-        {
-          "event": "effective August 24, 2026",
-          "expected_date": "2026-08",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Aug-24-2026"
-        },
         {
           "event": "Next results print",
           "expected_date": "2026-11-06",
@@ -3541,114 +3534,10 @@
         "status": "present",
         "note": null
       },
-      "covenant_term_rows": {
-        "value": [
-          {
-            "name": "Conversion price / mechanics",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Principal / commitment amount",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Interest / coupon rate",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Maturity date",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Financial-maintenance covenants",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Security / collateral / guarantors",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Mandatory prepayment / events of default",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          }
-        ],
-        "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
-        "status": "present",
-        "note": null
-      },
+      "covenant_term_rows": null,
       "maturity_event": null,
       "panel_vintage": {
-        "value": "the debt schedule is 165d old (source filed 2026-03-12); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 194d old (source filed 2026-03-12); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Mar-12-2026",
         "status": "present",
         "note": null
@@ -3712,6 +3601,11 @@
     },
     "dilution_pipeline": {
       "filings": [
+        {
+          "form": "424B5",
+          "filing_date": "2026-08-28",
+          "accession": "0001213900-26-095041"
+        },
         {
           "form": "S-3",
           "filing_date": "2026-08-21",
@@ -3834,8 +3728,8 @@
         }
       ],
       "line": {
-        "value": "shelf registrations 6 (S-3/S-3/A, last 2026-08-21); prospectus supplements 10 (424B3/424B5/424B7, last 2026-04-29); fresh registrations 1 (S-1, last 2024-11-14); merger registrations 4 (S-4/S-4/A, last 2024-07-22) · employee-plan (S-8) 3 (S-8, last 2026-03-12) — routine — 3y window to 2026-08-24",
-        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001213900-26-092612",
+        "value": "shelf registrations 6 (S-3/S-3/A, last 2026-08-21); prospectus supplements 11 (424B3/424B5/424B7, last 2026-08-28); fresh registrations 1 (S-1, last 2024-11-14); merger registrations 4 (S-4/S-4/A, last 2024-07-22) · employee-plan (S-8) 3 (S-8, last 2026-03-12) — routine — 3y window to 2026-09-22",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001213900-26-095041",
         "status": "present",
         "note": null
       },
@@ -4032,16 +3926,11 @@
           "form": "SC 13G/A",
           "filing_date": "2024-02-07",
           "accession": "0001616824-24-000034"
-        },
-        {
-          "form": "SC 13G",
-          "filing_date": "2023-09-11",
-          "accession": "0001193125-23-232441"
         }
       ],
       "line": {
-        "value": "Schedule 13D filings 9 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2026-07-01) · Schedule 13G filings 30 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-14) — 3y window to 2026-08-24",
-        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-25→2026-08-24 · latest 0001231919-26-000934",
+        "value": "Schedule 13D filings 9 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2026-07-01) · Schedule 13G filings 29 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-14) — 3y window to 2026-09-22",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0001231919-26-000934",
         "status": "present",
         "note": null
       },
@@ -4102,26 +3991,11 @@
           "is_subject": false,
           "market_cap": 10187.1,
           "acquired": null,
-          "total_assets": 1335.813,
+          "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)",
-          "impairment": {
-            "state": "untagged",
-            "state_label": "does not tag",
-            "window_start": "2021-06-30",
-            "window_end": "2026-06-30",
-            "observations": 0,
-            "charged_years": 0,
-            "total": null,
-            "pct_acquired": null,
-            "last_charge_end": null,
-            "last_charge_amount": null,
-            "pending": null,
-            "pending_span": null,
-            "tags": null,
-            "note": "no annual impairment point under any of GoodwillImpairmentLoss, GoodwillAndIntangibleAssetImpairment, ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — the filer does not tag the concept, which is NOT the same as reporting zero"
-          }
+          "note": "unresolved — no CIK for 'APGE'",
+          "impairment": null
         },
         {
           "ticker": "IMVT",
@@ -4232,15 +4106,15 @@
           "is_subject": false,
           "market_cap": 1688.6,
           "acquired": null,
-          "total_assets": 329.684,
+          "total_assets": 316.984,
           "pct_assets": null,
           "pct_market_cap": null,
           "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)",
           "impairment": {
             "state": "untagged",
             "state_label": "does not tag",
-            "window_start": "2021-03-31",
-            "window_end": "2026-03-31",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
             "observations": 0,
             "charged_years": 0,
             "total": null,
@@ -4885,7 +4759,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 91.5,
+        "value": 94.55,
         "source_ref": "EOD ORKA last close",
         "status": "present",
         "note": null
@@ -4894,13 +4768,13 @@
         "value": 115.515,
         "source_ref": "EOD ORKA 52-week high",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-09: spans 380d over 262 bars"
+        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
       },
       "low_52w": {
-        "value": 14.34,
+        "value": 14.89,
         "source_ref": "EOD ORKA 52-week low",
         "status": "present",
-        "note": "52-week window 2025-08-24→2026-09-09: spans 380d over 262 bars"
+        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
       },
       "shares_out": {
         "value": 66209699.0,
@@ -4920,1274 +4794,1274 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-09",
+      "as_of": "2026-09-22",
       "market_cap_as_of": "2026-08-31"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-08-25",
+          "date": "2025-09-23",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-08-26",
-          "name": 102.07,
-          "benchmark": 100.47
-        },
-        {
-          "date": "2025-08-27",
-          "name": 104.62,
-          "benchmark": 101.11
-        },
-        {
-          "date": "2025-08-28",
-          "name": 105.24,
-          "benchmark": 101.24
-        },
-        {
-          "date": "2025-08-29",
-          "name": 102.0,
-          "benchmark": 100.76
-        },
-        {
-          "date": "2025-09-02",
-          "name": 107.24,
-          "benchmark": 100.31
-        },
-        {
-          "date": "2025-09-03",
-          "name": 106.41,
-          "benchmark": 100.14
-        },
-        {
-          "date": "2025-09-04",
-          "name": 103.17,
-          "benchmark": 101.59
-        },
-        {
-          "date": "2025-09-05",
-          "name": 112.68,
-          "benchmark": 102.07
-        },
-        {
-          "date": "2025-09-08",
-          "name": 108.89,
-          "benchmark": 102.09
-        },
-        {
-          "date": "2025-09-09",
-          "name": 110.61,
-          "benchmark": 101.16
-        },
-        {
-          "date": "2025-09-10",
-          "name": 108.68,
-          "benchmark": 101.12
-        },
-        {
-          "date": "2025-09-11",
-          "name": 111.3,
-          "benchmark": 102.82
-        },
-        {
-          "date": "2025-09-12",
-          "name": 106.13,
-          "benchmark": 101.68
-        },
-        {
-          "date": "2025-09-15",
-          "name": 105.17,
-          "benchmark": 101.65
-        },
-        {
-          "date": "2025-09-16",
-          "name": 102.69,
-          "benchmark": 101.37
-        },
-        {
-          "date": "2025-09-17",
-          "name": 111.72,
-          "benchmark": 101.29
-        },
-        {
-          "date": "2025-09-18",
-          "name": 114.27,
-          "benchmark": 102.53
-        },
-        {
-          "date": "2025-09-19",
-          "name": 107.17,
-          "benchmark": 101.48
-        },
-        {
-          "date": "2025-09-22",
-          "name": 118.19,
-          "benchmark": 101.39
-        },
-        {
-          "date": "2025-09-23",
-          "name": 107.24,
-          "benchmark": 101.34
-        },
-        {
           "date": "2025-09-24",
-          "name": 105.24,
-          "benchmark": 100.57
-        },
-        {
-          "date": "2025-09-25",
-          "name": 103.72,
-          "benchmark": 100.0
-        },
-        {
-          "date": "2025-09-26",
-          "name": 104.76,
-          "benchmark": 101.01
-        },
-        {
-          "date": "2025-09-29",
-          "name": 132.94,
-          "benchmark": 100.79
-        },
-        {
-          "date": "2025-09-30",
-          "name": 132.53,
-          "benchmark": 100.9
-        },
-        {
-          "date": "2025-10-01",
-          "name": 128.33,
-          "benchmark": 101.23
-        },
-        {
-          "date": "2025-10-02",
-          "name": 132.18,
-          "benchmark": 101.36
-        },
-        {
-          "date": "2025-10-03",
-          "name": 136.39,
-          "benchmark": 101.69
-        },
-        {
-          "date": "2025-10-06",
-          "name": 140.11,
-          "benchmark": 101.84
-        },
-        {
-          "date": "2025-10-07",
-          "name": 141.76,
-          "benchmark": 100.74
-        },
-        {
-          "date": "2025-10-08",
-          "name": 155.86,
-          "benchmark": 101.74
-        },
-        {
-          "date": "2025-10-09",
-          "name": 176.09,
-          "benchmark": 100.63
-        },
-        {
-          "date": "2025-10-10",
-          "name": 168.78,
-          "benchmark": 97.81
-        },
-        {
-          "date": "2025-10-13",
-          "name": 175.78,
-          "benchmark": 99.7
-        },
-        {
-          "date": "2025-10-14",
-          "name": 189.39,
-          "benchmark": 100.62
-        },
-        {
-          "date": "2025-10-15",
-          "name": 192.35,
-          "benchmark": 100.72
-        },
-        {
-          "date": "2025-10-16",
-          "name": 183.05,
-          "benchmark": 99.48
-        },
-        {
-          "date": "2025-10-17",
-          "name": 189.39,
-          "benchmark": 99.69
-        },
-        {
-          "date": "2025-10-20",
-          "name": 189.39,
-          "benchmark": 100.89
-        },
-        {
-          "date": "2025-10-21",
-          "name": 188.56,
-          "benchmark": 101.25
-        },
-        {
-          "date": "2025-10-22",
-          "name": 183.67,
-          "benchmark": 100.1
-        },
-        {
-          "date": "2025-10-23",
-          "name": 186.97,
-          "benchmark": 101.46
-        },
-        {
-          "date": "2025-10-24",
-          "name": 187.8,
-          "benchmark": 101.99
-        },
-        {
-          "date": "2025-10-27",
-          "name": 190.9,
-          "benchmark": 102.39
-        },
-        {
-          "date": "2025-10-28",
-          "name": 189.11,
-          "benchmark": 101.49
-        },
-        {
-          "date": "2025-10-29",
-          "name": 190.28,
-          "benchmark": 100.84
-        },
-        {
-          "date": "2025-10-30",
-          "name": 193.73,
-          "benchmark": 99.78
-        },
-        {
-          "date": "2025-10-31",
-          "name": 194.14,
-          "benchmark": 100.39
-        },
-        {
-          "date": "2025-11-03",
-          "name": 180.5,
-          "benchmark": 100.34
-        },
-        {
-          "date": "2025-11-04",
-          "name": 189.04,
-          "benchmark": 99.48
-        },
-        {
-          "date": "2025-11-05",
-          "name": 188.22,
-          "benchmark": 100.13
-        },
-        {
-          "date": "2025-11-06",
-          "name": 194.9,
-          "benchmark": 99.21
-        },
-        {
-          "date": "2025-11-07",
-          "name": 191.25,
-          "benchmark": 100.35
-        },
-        {
-          "date": "2025-11-10",
-          "name": 192.69,
-          "benchmark": 100.99
-        },
-        {
-          "date": "2025-11-11",
-          "name": 194.35,
-          "benchmark": 100.99
-        },
-        {
-          "date": "2025-11-12",
-          "name": 195.04,
-          "benchmark": 101.34
-        },
-        {
-          "date": "2025-11-13",
-          "name": 181.81,
-          "benchmark": 99.44
-        },
-        {
-          "date": "2025-11-14",
-          "name": 186.63,
+          "name": 98.14,
           "benchmark": 99.23
         },
         {
-          "date": "2025-11-17",
-          "name": 194.56,
-          "benchmark": 97.39
+          "date": "2025-09-25",
+          "name": 96.72,
+          "benchmark": 98.68
         },
         {
-          "date": "2025-11-18",
-          "name": 189.18,
-          "benchmark": 97.71
+          "date": "2025-09-26",
+          "name": 97.69,
+          "benchmark": 99.68
         },
         {
-          "date": "2025-11-19",
-          "name": 194.76,
-          "benchmark": 97.83
+          "date": "2025-09-29",
+          "name": 123.97,
+          "benchmark": 99.45
         },
         {
-          "date": "2025-11-20",
-          "name": 186.01,
-          "benchmark": 96.27
+          "date": "2025-09-30",
+          "name": 123.59,
+          "benchmark": 99.57
         },
         {
-          "date": "2025-11-21",
-          "name": 201.86,
-          "benchmark": 98.58
+          "date": "2025-10-01",
+          "name": 119.67,
+          "benchmark": 99.89
         },
         {
-          "date": "2025-11-24",
-          "name": 205.86,
+          "date": "2025-10-02",
+          "name": 123.26,
+          "benchmark": 100.02
+        },
+        {
+          "date": "2025-10-03",
+          "name": 127.19,
+          "benchmark": 100.34
+        },
+        {
+          "date": "2025-10-06",
+          "name": 130.66,
+          "benchmark": 100.49
+        },
+        {
+          "date": "2025-10-07",
+          "name": 132.2,
+          "benchmark": 99.41
+        },
+        {
+          "date": "2025-10-08",
+          "name": 145.34,
+          "benchmark": 100.39
+        },
+        {
+          "date": "2025-10-09",
+          "name": 164.2,
+          "benchmark": 99.3
+        },
+        {
+          "date": "2025-10-10",
+          "name": 157.39,
+          "benchmark": 96.52
+        },
+        {
+          "date": "2025-10-13",
+          "name": 163.91,
+          "benchmark": 98.38
+        },
+        {
+          "date": "2025-10-14",
+          "name": 176.61,
+          "benchmark": 99.29
+        },
+        {
+          "date": "2025-10-15",
+          "name": 179.37,
+          "benchmark": 99.38
+        },
+        {
+          "date": "2025-10-16",
+          "name": 170.69,
+          "benchmark": 98.16
+        },
+        {
+          "date": "2025-10-17",
+          "name": 176.61,
+          "benchmark": 98.37
+        },
+        {
+          "date": "2025-10-20",
+          "name": 176.61,
+          "benchmark": 99.55
+        },
+        {
+          "date": "2025-10-21",
+          "name": 175.84,
+          "benchmark": 99.9
+        },
+        {
+          "date": "2025-10-22",
+          "name": 171.27,
+          "benchmark": 98.77
+        },
+        {
+          "date": "2025-10-23",
+          "name": 174.36,
+          "benchmark": 100.11
+        },
+        {
+          "date": "2025-10-24",
+          "name": 175.13,
+          "benchmark": 100.64
+        },
+        {
+          "date": "2025-10-27",
+          "name": 178.02,
+          "benchmark": 101.03
+        },
+        {
+          "date": "2025-10-28",
+          "name": 176.35,
+          "benchmark": 100.14
+        },
+        {
+          "date": "2025-10-29",
+          "name": 177.44,
           "benchmark": 99.51
         },
         {
+          "date": "2025-10-30",
+          "name": 180.66,
+          "benchmark": 98.46
+        },
+        {
+          "date": "2025-10-31",
+          "name": 181.04,
+          "benchmark": 99.06
+        },
+        {
+          "date": "2025-11-03",
+          "name": 168.32,
+          "benchmark": 99.01
+        },
+        {
+          "date": "2025-11-04",
+          "name": 176.29,
+          "benchmark": 98.16
+        },
+        {
+          "date": "2025-11-05",
+          "name": 175.51,
+          "benchmark": 98.8
+        },
+        {
+          "date": "2025-11-06",
+          "name": 181.75,
+          "benchmark": 97.89
+        },
+        {
+          "date": "2025-11-07",
+          "name": 178.34,
+          "benchmark": 99.02
+        },
+        {
+          "date": "2025-11-10",
+          "name": 179.69,
+          "benchmark": 99.66
+        },
+        {
+          "date": "2025-11-11",
+          "name": 181.23,
+          "benchmark": 99.65
+        },
+        {
+          "date": "2025-11-12",
+          "name": 181.88,
+          "benchmark": 100.0
+        },
+        {
+          "date": "2025-11-13",
+          "name": 169.54,
+          "benchmark": 98.12
+        },
+        {
+          "date": "2025-11-14",
+          "name": 174.04,
+          "benchmark": 97.92
+        },
+        {
+          "date": "2025-11-17",
+          "name": 181.43,
+          "benchmark": 96.1
+        },
+        {
+          "date": "2025-11-18",
+          "name": 176.41,
+          "benchmark": 96.42
+        },
+        {
+          "date": "2025-11-19",
+          "name": 181.62,
+          "benchmark": 96.54
+        },
+        {
+          "date": "2025-11-20",
+          "name": 173.46,
+          "benchmark": 94.99
+        },
+        {
+          "date": "2025-11-21",
+          "name": 188.24,
+          "benchmark": 97.28
+        },
+        {
+          "date": "2025-11-24",
+          "name": 191.97,
+          "benchmark": 98.19
+        },
+        {
           "date": "2025-11-25",
-          "name": 210.34,
-          "benchmark": 101.39
+          "name": 196.14,
+          "benchmark": 100.04
         },
         {
           "date": "2025-11-26",
-          "name": 209.92,
-          "benchmark": 102.0
+          "name": 195.76,
+          "benchmark": 100.65
         },
         {
           "date": "2025-11-28",
-          "name": 207.44,
-          "benchmark": 102.5
+          "name": 193.44,
+          "benchmark": 101.15
         },
         {
           "date": "2025-12-01",
-          "name": 190.7,
-          "benchmark": 101.95
+          "name": 177.83,
+          "benchmark": 100.6
         },
         {
           "date": "2025-12-02",
-          "name": 191.8,
-          "benchmark": 101.58
+          "name": 178.86,
+          "benchmark": 100.23
         },
         {
           "date": "2025-12-03",
-          "name": 204.0,
-          "benchmark": 102.29
+          "name": 190.23,
+          "benchmark": 100.93
         },
         {
           "date": "2025-12-04",
-          "name": 213.16,
-          "benchmark": 102.79
+          "name": 198.78,
+          "benchmark": 101.42
         },
         {
           "date": "2025-12-05",
-          "name": 212.54,
-          "benchmark": 102.83
+          "name": 198.2,
+          "benchmark": 101.46
         },
         {
           "date": "2025-12-08",
-          "name": 216.71,
-          "benchmark": 102.31
+          "name": 202.09,
+          "benchmark": 100.96
         },
         {
           "date": "2025-12-09",
-          "name": 212.2,
-          "benchmark": 102.24
+          "name": 197.88,
+          "benchmark": 100.88
         },
         {
           "date": "2025-12-10",
-          "name": 216.4,
-          "benchmark": 104.18
+          "name": 201.8,
+          "benchmark": 102.8
         },
         {
           "date": "2025-12-11",
-          "name": 208.2,
-          "benchmark": 105.17
+          "name": 194.15,
+          "benchmark": 103.78
         },
         {
           "date": "2025-12-12",
-          "name": 207.99,
-          "benchmark": 103.8
+          "name": 193.96,
+          "benchmark": 102.42
         },
         {
           "date": "2025-12-15",
-          "name": 207.44,
-          "benchmark": 103.6
+          "name": 193.44,
+          "benchmark": 102.23
         },
         {
           "date": "2025-12-16",
-          "name": 199.45,
-          "benchmark": 102.96
+          "name": 185.99,
+          "benchmark": 101.59
         },
         {
           "date": "2025-12-17",
-          "name": 195.59,
-          "benchmark": 102.49
+          "name": 182.39,
+          "benchmark": 101.13
         },
         {
           "date": "2025-12-18",
-          "name": 194.0,
-          "benchmark": 102.94
+          "name": 180.91,
+          "benchmark": 101.58
         },
         {
           "date": "2025-12-19",
-          "name": 219.43,
-          "benchmark": 103.53
+          "name": 204.63,
+          "benchmark": 102.16
         },
         {
           "date": "2025-12-22",
-          "name": 220.33,
-          "benchmark": 104.3
+          "name": 205.46,
+          "benchmark": 102.92
         },
         {
           "date": "2025-12-23",
-          "name": 218.54,
-          "benchmark": 104.0
+          "name": 203.79,
+          "benchmark": 102.62
         },
         {
           "date": "2025-12-24",
-          "name": 221.36,
-          "benchmark": 104.15
+          "name": 206.43,
+          "benchmark": 102.77
         },
         {
           "date": "2025-12-26",
-          "name": 218.47,
-          "benchmark": 104.17
+          "name": 203.73,
+          "benchmark": 102.79
         },
         {
           "date": "2025-12-29",
-          "name": 212.96,
-          "benchmark": 103.53
+          "name": 198.59,
+          "benchmark": 102.16
         },
         {
           "date": "2025-12-30",
-          "name": 200.69,
-          "benchmark": 103.18
+          "name": 187.15,
+          "benchmark": 101.81
         },
         {
           "date": "2025-12-31",
-          "name": 208.89,
-          "benchmark": 102.13
+          "name": 194.79,
+          "benchmark": 100.78
         },
         {
           "date": "2026-01-02",
-          "name": 194.83,
-          "benchmark": 103.49
+          "name": 181.68,
+          "benchmark": 102.12
         },
         {
           "date": "2026-01-05",
-          "name": 185.25,
-          "benchmark": 104.85
+          "name": 172.75,
+          "benchmark": 103.46
         },
         {
           "date": "2026-01-06",
-          "name": 183.46,
-          "benchmark": 106.36
+          "name": 171.08,
+          "benchmark": 104.95
         },
         {
           "date": "2026-01-07",
-          "name": 191.66,
-          "benchmark": 105.59
+          "name": 178.73,
+          "benchmark": 104.19
         },
         {
           "date": "2026-01-08",
-          "name": 181.94,
-          "benchmark": 105.98
+          "name": 169.67,
+          "benchmark": 104.58
         },
         {
           "date": "2026-01-09",
-          "name": 192.01,
-          "benchmark": 106.89
-        },
-        {
-          "date": "2026-01-12",
-          "name": 211.51,
-          "benchmark": 107.05
-        },
-        {
-          "date": "2026-01-13",
-          "name": 215.99,
-          "benchmark": 107.28
-        },
-        {
-          "date": "2026-01-14",
-          "name": 220.54,
-          "benchmark": 107.38
-        },
-        {
-          "date": "2026-01-15",
-          "name": 223.98,
-          "benchmark": 108.65
-        },
-        {
-          "date": "2026-01-16",
-          "name": 230.19,
-          "benchmark": 108.32
-        },
-        {
-          "date": "2026-01-20",
-          "name": 229.01,
-          "benchmark": 106.85
-        },
-        {
-          "date": "2026-01-21",
-          "name": 237.49,
-          "benchmark": 108.76
-        },
-        {
-          "date": "2026-01-22",
-          "name": 244.87,
-          "benchmark": 108.79
-        },
-        {
-          "date": "2026-01-23",
-          "name": 237.01,
-          "benchmark": 107.7
-        },
-        {
-          "date": "2026-01-26",
-          "name": 235.15,
-          "benchmark": 107.64
-        },
-        {
-          "date": "2026-01-27",
-          "name": 240.52,
-          "benchmark": 107.63
-        },
-        {
-          "date": "2026-01-28",
-          "name": 242.32,
-          "benchmark": 107.39
-        },
-        {
-          "date": "2026-01-29",
-          "name": 243.0,
-          "benchmark": 107.19
-        },
-        {
-          "date": "2026-01-30",
-          "name": 235.91,
-          "benchmark": 106.24
-        },
-        {
-          "date": "2026-02-02",
-          "name": 236.39,
-          "benchmark": 107.11
-        },
-        {
-          "date": "2026-02-03",
-          "name": 238.11,
-          "benchmark": 107.31
-        },
-        {
-          "date": "2026-02-04",
-          "name": 227.43,
-          "benchmark": 108.06
-        },
-        {
-          "date": "2026-02-05",
-          "name": 216.54,
-          "benchmark": 107.49
-        },
-        {
-          "date": "2026-02-06",
-          "name": 227.77,
-          "benchmark": 110.94
-        },
-        {
-          "date": "2026-02-09",
-          "name": 229.22,
-          "benchmark": 111.0
-        },
-        {
-          "date": "2026-02-10",
-          "name": 226.6,
-          "benchmark": 110.95
-        },
-        {
-          "date": "2026-02-11",
-          "name": 221.98,
-          "benchmark": 110.67
-        },
-        {
-          "date": "2026-02-12",
-          "name": 224.95,
-          "benchmark": 109.11
-        },
-        {
-          "date": "2026-02-13",
-          "name": 221.98,
-          "benchmark": 110.15
-        },
-        {
-          "date": "2026-02-17",
-          "name": 225.22,
-          "benchmark": 110.34
-        },
-        {
-          "date": "2026-02-18",
-          "name": 222.4,
-          "benchmark": 110.82
-        },
-        {
-          "date": "2026-02-19",
-          "name": 223.43,
-          "benchmark": 110.8
-        },
-        {
-          "date": "2026-02-20",
-          "name": 222.88,
-          "benchmark": 111.5
-        },
-        {
-          "date": "2026-02-23",
-          "name": 229.63,
-          "benchmark": 109.55
-        },
-        {
-          "date": "2026-02-24",
-          "name": 245.07,
-          "benchmark": 110.59
-        },
-        {
-          "date": "2026-02-25",
-          "name": 243.14,
-          "benchmark": 111.0
-        },
-        {
-          "date": "2026-02-26",
-          "name": 236.53,
-          "benchmark": 111.42
-        },
-        {
-          "date": "2026-02-27",
-          "name": 237.15,
-          "benchmark": 110.52
-        },
-        {
-          "date": "2026-03-02",
-          "name": 232.18,
-          "benchmark": 111.46
-        },
-        {
-          "date": "2026-03-03",
-          "name": 226.33,
-          "benchmark": 109.53
-        },
-        {
-          "date": "2026-03-04",
-          "name": 241.14,
-          "benchmark": 109.52
-        },
-        {
-          "date": "2026-03-05",
-          "name": 228.6,
-          "benchmark": 108.01
-        },
-        {
-          "date": "2026-03-06",
-          "name": 227.22,
-          "benchmark": 105.48
-        },
-        {
-          "date": "2026-03-09",
-          "name": 231.91,
-          "benchmark": 106.53
-        },
-        {
-          "date": "2026-03-10",
-          "name": 232.18,
-          "benchmark": 106.05
-        },
-        {
-          "date": "2026-03-11",
-          "name": 237.15,
-          "benchmark": 105.73
-        },
-        {
-          "date": "2026-03-12",
-          "name": 220.47,
-          "benchmark": 103.57
-        },
-        {
-          "date": "2026-03-13",
-          "name": 275.67,
-          "benchmark": 103.44
-        },
-        {
-          "date": "2026-03-16",
-          "name": 287.73,
-          "benchmark": 104.18
-        },
-        {
-          "date": "2026-03-17",
-          "name": 284.7,
-          "benchmark": 105.13
-        },
-        {
-          "date": "2026-03-18",
-          "name": 281.19,
-          "benchmark": 104.15
-        },
-        {
-          "date": "2026-03-19",
-          "name": 267.54,
-          "benchmark": 104.41
-        },
-        {
-          "date": "2026-03-20",
-          "name": 268.16,
-          "benchmark": 101.82
-        },
-        {
-          "date": "2026-03-23",
-          "name": 286.42,
-          "benchmark": 103.72
-        },
-        {
-          "date": "2026-03-24",
-          "name": 274.98,
-          "benchmark": 104.59
-        },
-        {
-          "date": "2026-03-25",
-          "name": 301.93,
+          "name": 179.05,
           "benchmark": 105.47
         },
         {
-          "date": "2026-03-26",
-          "name": 313.3,
-          "benchmark": 103.91
+          "date": "2026-01-12",
+          "name": 197.24,
+          "benchmark": 105.63
         },
         {
-          "date": "2026-03-27",
-          "name": 306.55,
-          "benchmark": 102.22
+          "date": "2026-01-13",
+          "name": 201.41,
+          "benchmark": 105.86
         },
         {
-          "date": "2026-03-30",
-          "name": 313.71,
-          "benchmark": 101.41
-        },
-        {
-          "date": "2026-03-31",
-          "name": 338.04,
-          "benchmark": 104.41
-        },
-        {
-          "date": "2026-04-01",
-          "name": 347.55,
-          "benchmark": 105.27
-        },
-        {
-          "date": "2026-04-02",
-          "name": 367.4,
-          "benchmark": 105.37
-        },
-        {
-          "date": "2026-04-06",
-          "name": 388.49,
-          "benchmark": 105.84
-        },
-        {
-          "date": "2026-04-07",
-          "name": 417.64,
+          "date": "2026-01-14",
+          "name": 205.66,
           "benchmark": 105.96
         },
         {
+          "date": "2026-01-15",
+          "name": 208.87,
+          "benchmark": 107.21
+        },
+        {
+          "date": "2026-01-16",
+          "name": 214.65,
+          "benchmark": 106.89
+        },
+        {
+          "date": "2026-01-20",
+          "name": 213.56,
+          "benchmark": 105.44
+        },
+        {
+          "date": "2026-01-21",
+          "name": 221.47,
+          "benchmark": 107.32
+        },
+        {
+          "date": "2026-01-22",
+          "name": 228.34,
+          "benchmark": 107.35
+        },
+        {
+          "date": "2026-01-23",
+          "name": 221.02,
+          "benchmark": 106.27
+        },
+        {
+          "date": "2026-01-26",
+          "name": 219.28,
+          "benchmark": 106.22
+        },
+        {
+          "date": "2026-01-27",
+          "name": 224.29,
+          "benchmark": 106.21
+        },
+        {
+          "date": "2026-01-28",
+          "name": 225.96,
+          "benchmark": 105.96
+        },
+        {
+          "date": "2026-01-29",
+          "name": 226.61,
+          "benchmark": 105.77
+        },
+        {
+          "date": "2026-01-30",
+          "name": 219.99,
+          "benchmark": 104.84
+        },
+        {
+          "date": "2026-02-02",
+          "name": 220.44,
+          "benchmark": 105.69
+        },
+        {
+          "date": "2026-02-03",
+          "name": 222.04,
+          "benchmark": 105.89
+        },
+        {
+          "date": "2026-02-04",
+          "name": 212.08,
+          "benchmark": 106.63
+        },
+        {
+          "date": "2026-02-05",
+          "name": 201.93,
+          "benchmark": 106.07
+        },
+        {
+          "date": "2026-02-06",
+          "name": 212.4,
+          "benchmark": 109.47
+        },
+        {
+          "date": "2026-02-09",
+          "name": 213.75,
+          "benchmark": 109.53
+        },
+        {
+          "date": "2026-02-10",
+          "name": 211.31,
+          "benchmark": 109.48
+        },
+        {
+          "date": "2026-02-11",
+          "name": 207.01,
+          "benchmark": 109.2
+        },
+        {
+          "date": "2026-02-12",
+          "name": 209.77,
+          "benchmark": 107.66
+        },
+        {
+          "date": "2026-02-13",
+          "name": 207.01,
+          "benchmark": 108.69
+        },
+        {
+          "date": "2026-02-17",
+          "name": 210.03,
+          "benchmark": 108.88
+        },
+        {
+          "date": "2026-02-18",
+          "name": 207.39,
+          "benchmark": 109.36
+        },
+        {
+          "date": "2026-02-19",
+          "name": 208.35,
+          "benchmark": 109.33
+        },
+        {
+          "date": "2026-02-20",
+          "name": 207.84,
+          "benchmark": 110.02
+        },
+        {
+          "date": "2026-02-23",
+          "name": 214.14,
+          "benchmark": 108.1
+        },
+        {
+          "date": "2026-02-24",
+          "name": 228.53,
+          "benchmark": 109.12
+        },
+        {
+          "date": "2026-02-25",
+          "name": 226.74,
+          "benchmark": 109.53
+        },
+        {
+          "date": "2026-02-26",
+          "name": 220.57,
+          "benchmark": 109.94
+        },
+        {
+          "date": "2026-02-27",
+          "name": 221.14,
+          "benchmark": 109.05
+        },
+        {
+          "date": "2026-03-02",
+          "name": 216.52,
+          "benchmark": 109.98
+        },
+        {
+          "date": "2026-03-03",
+          "name": 211.05,
+          "benchmark": 108.08
+        },
+        {
+          "date": "2026-03-04",
+          "name": 224.87,
+          "benchmark": 108.07
+        },
+        {
+          "date": "2026-03-05",
+          "name": 213.17,
+          "benchmark": 106.58
+        },
+        {
+          "date": "2026-03-06",
+          "name": 211.89,
+          "benchmark": 104.09
+        },
+        {
+          "date": "2026-03-09",
+          "name": 216.26,
+          "benchmark": 105.12
+        },
+        {
+          "date": "2026-03-10",
+          "name": 216.52,
+          "benchmark": 104.65
+        },
+        {
+          "date": "2026-03-11",
+          "name": 221.14,
+          "benchmark": 104.33
+        },
+        {
+          "date": "2026-03-12",
+          "name": 205.59,
+          "benchmark": 102.2
+        },
+        {
+          "date": "2026-03-13",
+          "name": 257.07,
+          "benchmark": 102.07
+        },
+        {
+          "date": "2026-03-16",
+          "name": 268.32,
+          "benchmark": 102.8
+        },
+        {
+          "date": "2026-03-17",
+          "name": 265.49,
+          "benchmark": 103.74
+        },
+        {
+          "date": "2026-03-18",
+          "name": 262.21,
+          "benchmark": 102.77
+        },
+        {
+          "date": "2026-03-19",
+          "name": 249.49,
+          "benchmark": 103.03
+        },
+        {
+          "date": "2026-03-20",
+          "name": 250.06,
+          "benchmark": 100.48
+        },
+        {
+          "date": "2026-03-23",
+          "name": 267.1,
+          "benchmark": 102.35
+        },
+        {
+          "date": "2026-03-24",
+          "name": 256.43,
+          "benchmark": 103.2
+        },
+        {
+          "date": "2026-03-25",
+          "name": 281.56,
+          "benchmark": 104.07
+        },
+        {
+          "date": "2026-03-26",
+          "name": 292.16,
+          "benchmark": 102.53
+        },
+        {
+          "date": "2026-03-27",
+          "name": 285.86,
+          "benchmark": 100.87
+        },
+        {
+          "date": "2026-03-30",
+          "name": 292.54,
+          "benchmark": 100.07
+        },
+        {
+          "date": "2026-03-31",
+          "name": 315.23,
+          "benchmark": 103.03
+        },
+        {
+          "date": "2026-04-01",
+          "name": 324.1,
+          "benchmark": 103.87
+        },
+        {
+          "date": "2026-04-02",
+          "name": 342.61,
+          "benchmark": 103.97
+        },
+        {
+          "date": "2026-04-06",
+          "name": 362.28,
+          "benchmark": 104.44
+        },
+        {
+          "date": "2026-04-07",
+          "name": 389.46,
+          "benchmark": 104.56
+        },
+        {
           "date": "2026-04-08",
-          "name": 427.36,
-          "benchmark": 108.97
+          "name": 398.52,
+          "benchmark": 107.53
         },
         {
           "date": "2026-04-09",
-          "name": 438.32,
-          "benchmark": 109.22
+          "name": 408.74,
+          "benchmark": 107.77
         },
         {
           "date": "2026-04-10",
-          "name": 410.61,
-          "benchmark": 108.87
+          "name": 382.9,
+          "benchmark": 107.43
         },
         {
           "date": "2026-04-13",
-          "name": 423.02,
-          "benchmark": 110.06
+          "name": 394.47,
+          "benchmark": 108.6
         },
         {
           "date": "2026-04-14",
-          "name": 462.16,
-          "benchmark": 110.61
+          "name": 430.98,
+          "benchmark": 109.15
         },
         {
           "date": "2026-04-15",
-          "name": 451.76,
-          "benchmark": 110.28
+          "name": 421.27,
+          "benchmark": 108.82
         },
         {
           "date": "2026-04-16",
-          "name": 462.23,
-          "benchmark": 110.5
+          "name": 431.04,
+          "benchmark": 109.04
         },
         {
           "date": "2026-04-17",
-          "name": 474.98,
-          "benchmark": 112.65
+          "name": 442.93,
+          "benchmark": 111.16
         },
         {
           "date": "2026-04-20",
-          "name": 474.64,
-          "benchmark": 113.36
+          "name": 442.61,
+          "benchmark": 111.85
         },
         {
           "date": "2026-04-21",
-          "name": 475.53,
-          "benchmark": 112.69
+          "name": 443.44,
+          "benchmark": 111.19
         },
         {
           "date": "2026-04-22",
-          "name": 480.22,
-          "benchmark": 112.26
+          "name": 447.81,
+          "benchmark": 110.77
         },
         {
           "date": "2026-04-23",
-          "name": 466.85,
-          "benchmark": 112.24
+          "name": 435.35,
+          "benchmark": 110.76
         },
         {
           "date": "2026-04-24",
-          "name": 475.74,
-          "benchmark": 112.49
+          "name": 443.64,
+          "benchmark": 111.0
         },
         {
           "date": "2026-04-27",
-          "name": 526.46,
-          "benchmark": 112.55
+          "name": 490.94,
+          "benchmark": 111.06
         },
         {
           "date": "2026-04-28",
-          "name": 509.92,
-          "benchmark": 111.42
+          "name": 475.51,
+          "benchmark": 109.94
         },
         {
           "date": "2026-04-29",
-          "name": 469.33,
-          "benchmark": 110.6
+          "name": 437.66,
+          "benchmark": 109.14
         },
         {
           "date": "2026-04-30",
-          "name": 471.47,
-          "benchmark": 112.44
+          "name": 439.65,
+          "benchmark": 110.95
         },
         {
           "date": "2026-05-01",
-          "name": 431.29,
-          "benchmark": 112.47
+          "name": 402.19,
+          "benchmark": 110.98
         },
         {
           "date": "2026-05-04",
-          "name": 458.03,
-          "benchmark": 111.79
+          "name": 427.12,
+          "benchmark": 110.31
         },
         {
           "date": "2026-05-05",
-          "name": 475.19,
-          "benchmark": 113.23
+          "name": 443.12,
+          "benchmark": 111.73
         },
         {
           "date": "2026-05-06",
-          "name": 480.98,
-          "benchmark": 115.27
-        },
-        {
-          "date": "2026-05-07",
-          "name": 441.56,
-          "benchmark": 113.83
-        },
-        {
-          "date": "2026-05-08",
-          "name": 445.14,
-          "benchmark": 114.31
-        },
-        {
-          "date": "2026-05-11",
-          "name": 452.65,
-          "benchmark": 114.04
-        },
-        {
-          "date": "2026-05-12",
-          "name": 445.55,
-          "benchmark": 113.27
-        },
-        {
-          "date": "2026-05-13",
-          "name": 435.42,
-          "benchmark": 112.99
-        },
-        {
-          "date": "2026-05-14",
-          "name": 440.39,
-          "benchmark": 113.46
-        },
-        {
-          "date": "2026-05-15",
-          "name": 426.81,
-          "benchmark": 111.61
-        },
-        {
-          "date": "2026-05-18",
-          "name": 402.07,
-          "benchmark": 111.46
-        },
-        {
-          "date": "2026-05-19",
-          "name": 396.28,
-          "benchmark": 110.4
-        },
-        {
-          "date": "2026-05-20",
-          "name": 418.13,
-          "benchmark": 112.48
-        },
-        {
-          "date": "2026-05-21",
-          "name": 404.48,
-          "benchmark": 112.62
-        },
-        {
-          "date": "2026-05-22",
-          "name": 417.71,
-          "benchmark": 113.54
-        },
-        {
-          "date": "2026-05-26",
-          "name": 407.03,
-          "benchmark": 115.3
-        },
-        {
-          "date": "2026-05-27",
-          "name": 399.66,
-          "benchmark": 114.88
-        },
-        {
-          "date": "2026-05-28",
-          "name": 399.59,
-          "benchmark": 114.99
-        },
-        {
-          "date": "2026-05-29",
-          "name": 403.38,
-          "benchmark": 115.22
-        },
-        {
-          "date": "2026-06-01",
-          "name": 379.12,
-          "benchmark": 115.12
-        },
-        {
-          "date": "2026-06-02",
-          "name": 380.63,
-          "benchmark": 116.16
-        },
-        {
-          "date": "2026-06-03",
-          "name": 394.21,
-          "benchmark": 116.05
-        },
-        {
-          "date": "2026-06-04",
-          "name": 429.22,
-          "benchmark": 116.47
-        },
-        {
-          "date": "2026-06-05",
-          "name": 414.47,
-          "benchmark": 114.2
-        },
-        {
-          "date": "2026-06-08",
-          "name": 441.49,
-          "benchmark": 114.48
-        },
-        {
-          "date": "2026-06-09",
-          "name": 461.27,
-          "benchmark": 115.4
-        },
-        {
-          "date": "2026-06-10",
-          "name": 441.28,
+          "name": 448.52,
           "benchmark": 113.74
         },
         {
+          "date": "2026-05-07",
+          "name": 411.76,
+          "benchmark": 112.32
+        },
+        {
+          "date": "2026-05-08",
+          "name": 415.1,
+          "benchmark": 112.8
+        },
+        {
+          "date": "2026-05-11",
+          "name": 422.11,
+          "benchmark": 112.53
+        },
+        {
+          "date": "2026-05-12",
+          "name": 415.49,
+          "benchmark": 111.77
+        },
+        {
+          "date": "2026-05-13",
+          "name": 406.04,
+          "benchmark": 111.49
+        },
+        {
+          "date": "2026-05-14",
+          "name": 410.67,
+          "benchmark": 111.96
+        },
+        {
+          "date": "2026-05-15",
+          "name": 398.01,
+          "benchmark": 110.13
+        },
+        {
+          "date": "2026-05-18",
+          "name": 374.94,
+          "benchmark": 109.98
+        },
+        {
+          "date": "2026-05-19",
+          "name": 369.54,
+          "benchmark": 108.94
+        },
+        {
+          "date": "2026-05-20",
+          "name": 389.91,
+          "benchmark": 110.99
+        },
+        {
+          "date": "2026-05-21",
+          "name": 377.19,
+          "benchmark": 111.13
+        },
+        {
+          "date": "2026-05-22",
+          "name": 389.52,
+          "benchmark": 112.03
+        },
+        {
+          "date": "2026-05-26",
+          "name": 379.56,
+          "benchmark": 113.77
+        },
+        {
+          "date": "2026-05-27",
+          "name": 372.69,
+          "benchmark": 113.35
+        },
+        {
+          "date": "2026-05-28",
+          "name": 372.62,
+          "benchmark": 113.47
+        },
+        {
+          "date": "2026-05-29",
+          "name": 376.16,
+          "benchmark": 113.7
+        },
+        {
+          "date": "2026-06-01",
+          "name": 353.53,
+          "benchmark": 113.6
+        },
+        {
+          "date": "2026-06-02",
+          "name": 354.95,
+          "benchmark": 114.62
+        },
+        {
+          "date": "2026-06-03",
+          "name": 367.61,
+          "benchmark": 114.51
+        },
+        {
+          "date": "2026-06-04",
+          "name": 400.26,
+          "benchmark": 114.93
+        },
+        {
+          "date": "2026-06-05",
+          "name": 386.5,
+          "benchmark": 112.69
+        },
+        {
+          "date": "2026-06-08",
+          "name": 411.7,
+          "benchmark": 112.97
+        },
+        {
+          "date": "2026-06-09",
+          "name": 430.14,
+          "benchmark": 113.88
+        },
+        {
+          "date": "2026-06-10",
+          "name": 411.5,
+          "benchmark": 112.23
+        },
+        {
           "date": "2026-06-11",
-          "name": 471.88,
-          "benchmark": 116.62
+          "name": 440.04,
+          "benchmark": 115.07
         },
         {
           "date": "2026-06-12",
-          "name": 481.67,
-          "benchmark": 117.45
+          "name": 449.16,
+          "benchmark": 115.89
         },
         {
           "date": "2026-06-15",
-          "name": 474.57,
-          "benchmark": 117.9
-        },
-        {
-          "date": "2026-06-16",
-          "name": 466.64,
-          "benchmark": 117.54
-        },
-        {
-          "date": "2026-06-17",
-          "name": 488.49,
-          "benchmark": 116.11
-        },
-        {
-          "date": "2026-06-18",
-          "name": 498.55,
-          "benchmark": 116.98
-        },
-        {
-          "date": "2026-06-22",
-          "name": 588.42,
-          "benchmark": 117.46
-        },
-        {
-          "date": "2026-06-23",
-          "name": 574.78,
-          "benchmark": 116.27
-        },
-        {
-          "date": "2026-06-24",
-          "name": 565.75,
-          "benchmark": 116.99
-        },
-        {
-          "date": "2026-06-25",
-          "name": 597.04,
-          "benchmark": 118.06
-        },
-        {
-          "date": "2026-06-26",
-          "name": 624.4,
-          "benchmark": 117.71
-        },
-        {
-          "date": "2026-06-29",
-          "name": 637.42,
-          "benchmark": 118.15
-        },
-        {
-          "date": "2026-06-30",
-          "name": 655.89,
-          "benchmark": 119.07
-        },
-        {
-          "date": "2026-07-01",
-          "name": 642.94,
-          "benchmark": 118.01
-        },
-        {
-          "date": "2026-07-02",
-          "name": 587.25,
-          "benchmark": 117.44
-        },
-        {
-          "date": "2026-07-06",
-          "name": 572.92,
-          "benchmark": 117.94
-        },
-        {
-          "date": "2026-07-07",
-          "name": 582.36,
-          "benchmark": 116.49
-        },
-        {
-          "date": "2026-07-08",
-          "name": 581.67,
-          "benchmark": 115.37
-        },
-        {
-          "date": "2026-07-09",
-          "name": 608.34,
-          "benchmark": 116.85
-        },
-        {
-          "date": "2026-07-10",
-          "name": 598.14,
-          "benchmark": 116.78
-        },
-        {
-          "date": "2026-07-13",
-          "name": 582.77,
-          "benchmark": 116.13
-        },
-        {
-          "date": "2026-07-14",
-          "name": 602.83,
-          "benchmark": 116.68
-        },
-        {
-          "date": "2026-07-15",
-          "name": 597.17,
-          "benchmark": 116.73
-        },
-        {
-          "date": "2026-07-16",
-          "name": 572.29,
-          "benchmark": 117.32
-        },
-        {
-          "date": "2026-07-17",
-          "name": 638.87,
-          "benchmark": 116.6
-        },
-        {
-          "date": "2026-07-20",
-          "name": 632.05,
-          "benchmark": 115.69
-        },
-        {
-          "date": "2026-07-21",
-          "name": 650.03,
-          "benchmark": 116.89
-        },
-        {
-          "date": "2026-07-22",
-          "name": 637.7,
-          "benchmark": 116.83
-        },
-        {
-          "date": "2026-07-23",
-          "name": 633.7,
-          "benchmark": 116.46
-        },
-        {
-          "date": "2026-07-24",
-          "name": 635.15,
-          "benchmark": 116.93
-        },
-        {
-          "date": "2026-07-27",
-          "name": 621.64,
-          "benchmark": 117.3
-        },
-        {
-          "date": "2026-07-28",
-          "name": 623.36,
-          "benchmark": 117.32
-        },
-        {
-          "date": "2026-07-29",
-          "name": 606.96,
-          "benchmark": 115.32
-        },
-        {
-          "date": "2026-07-30",
-          "name": 674.43,
+          "name": 442.54,
           "benchmark": 116.34
         },
         {
+          "date": "2026-06-16",
+          "name": 435.15,
+          "benchmark": 115.99
+        },
+        {
+          "date": "2026-06-17",
+          "name": 455.53,
+          "benchmark": 114.58
+        },
+        {
+          "date": "2026-06-18",
+          "name": 464.91,
+          "benchmark": 115.43
+        },
+        {
+          "date": "2026-06-22",
+          "name": 548.71,
+          "benchmark": 115.9
+        },
+        {
+          "date": "2026-06-23",
+          "name": 535.99,
+          "benchmark": 114.73
+        },
+        {
+          "date": "2026-06-24",
+          "name": 527.57,
+          "benchmark": 115.44
+        },
+        {
+          "date": "2026-06-25",
+          "name": 556.75,
+          "benchmark": 116.5
+        },
+        {
+          "date": "2026-06-26",
+          "name": 582.26,
+          "benchmark": 116.15
+        },
+        {
+          "date": "2026-06-29",
+          "name": 594.41,
+          "benchmark": 116.59
+        },
+        {
+          "date": "2026-06-30",
+          "name": 611.63,
+          "benchmark": 117.49
+        },
+        {
+          "date": "2026-07-01",
+          "name": 599.55,
+          "benchmark": 116.45
+        },
+        {
+          "date": "2026-07-02",
+          "name": 547.62,
+          "benchmark": 115.88
+        },
+        {
+          "date": "2026-07-06",
+          "name": 534.25,
+          "benchmark": 116.38
+        },
+        {
+          "date": "2026-07-07",
+          "name": 543.06,
+          "benchmark": 114.95
+        },
+        {
+          "date": "2026-07-08",
+          "name": 542.42,
+          "benchmark": 113.84
+        },
+        {
+          "date": "2026-07-09",
+          "name": 567.29,
+          "benchmark": 115.3
+        },
+        {
+          "date": "2026-07-10",
+          "name": 557.78,
+          "benchmark": 115.24
+        },
+        {
+          "date": "2026-07-13",
+          "name": 543.44,
+          "benchmark": 114.59
+        },
+        {
+          "date": "2026-07-14",
+          "name": 562.15,
+          "benchmark": 115.13
+        },
+        {
+          "date": "2026-07-15",
+          "name": 556.88,
+          "benchmark": 115.18
+        },
+        {
+          "date": "2026-07-16",
+          "name": 533.68,
+          "benchmark": 115.76
+        },
+        {
+          "date": "2026-07-17",
+          "name": 595.76,
+          "benchmark": 115.06
+        },
+        {
+          "date": "2026-07-20",
+          "name": 589.4,
+          "benchmark": 114.15
+        },
+        {
+          "date": "2026-07-21",
+          "name": 606.17,
+          "benchmark": 115.34
+        },
+        {
+          "date": "2026-07-22",
+          "name": 594.67,
+          "benchmark": 115.29
+        },
+        {
+          "date": "2026-07-23",
+          "name": 590.94,
+          "benchmark": 114.92
+        },
+        {
+          "date": "2026-07-24",
+          "name": 592.29,
+          "benchmark": 115.38
+        },
+        {
+          "date": "2026-07-27",
+          "name": 579.69,
+          "benchmark": 115.74
+        },
+        {
+          "date": "2026-07-28",
+          "name": 581.3,
+          "benchmark": 115.76
+        },
+        {
+          "date": "2026-07-29",
+          "name": 566.0,
+          "benchmark": 113.79
+        },
+        {
+          "date": "2026-07-30",
+          "name": 628.92,
+          "benchmark": 114.8
+        },
+        {
           "date": "2026-07-31",
-          "name": 665.13,
-          "benchmark": 116.19
+          "name": 620.24,
+          "benchmark": 114.65
         },
         {
           "date": "2026-08-03",
-          "name": 653.27,
-          "benchmark": 117.5
+          "name": 609.19,
+          "benchmark": 115.95
         },
         {
           "date": "2026-08-04",
-          "name": 676.29,
-          "benchmark": 119.6
+          "name": 630.66,
+          "benchmark": 118.02
         },
         {
           "date": "2026-08-05",
-          "name": 669.81,
-          "benchmark": 118.84
+          "name": 624.61,
+          "benchmark": 117.27
         },
         {
           "date": "2026-08-06",
-          "name": 678.29,
-          "benchmark": 118.43
+          "name": 632.52,
+          "benchmark": 116.86
         },
         {
           "date": "2026-08-07",
-          "name": 681.05,
-          "benchmark": 120.06
+          "name": 635.09,
+          "benchmark": 118.47
         },
         {
           "date": "2026-08-10",
-          "name": 724.6,
-          "benchmark": 119.69
+          "name": 675.71,
+          "benchmark": 118.1
         },
         {
           "date": "2026-08-11",
-          "name": 721.4,
-          "benchmark": 120.04
+          "name": 672.72,
+          "benchmark": 118.45
         },
         {
           "date": "2026-08-12",
-          "name": 740.18,
-          "benchmark": 120.49
+          "name": 690.23,
+          "benchmark": 118.89
         },
         {
           "date": "2026-08-13",
-          "name": 745.14,
-          "benchmark": 120.98
+          "name": 694.86,
+          "benchmark": 119.37
         },
         {
           "date": "2026-08-14",
-          "name": 765.27,
-          "benchmark": 121.37
+          "name": 713.62,
+          "benchmark": 119.76
         },
         {
           "date": "2026-08-17",
-          "name": 776.43,
-          "benchmark": 121.1
+          "name": 724.04,
+          "benchmark": 119.5
         },
         {
           "date": "2026-08-18",
-          "name": 779.32,
-          "benchmark": 119.21
+          "name": 726.74,
+          "benchmark": 117.63
         },
         {
           "date": "2026-08-19",
-          "name": 755.96,
-          "benchmark": 118.93
+          "name": 704.95,
+          "benchmark": 117.35
         },
         {
           "date": "2026-08-20",
-          "name": 722.67,
-          "benchmark": 117.87
+          "name": 673.91,
+          "benchmark": 116.31
         },
         {
           "date": "2026-08-21",
-          "name": 744.04,
-          "benchmark": 118.44
+          "name": 693.83,
+          "benchmark": 116.87
         },
         {
           "date": "2026-08-24",
-          "name": 705.86,
-          "benchmark": 117.57
+          "name": 658.23,
+          "benchmark": 116.01
+        },
+        {
+          "date": "2026-08-25",
+          "name": 654.37,
+          "benchmark": 115.93
+        },
+        {
+          "date": "2026-08-26",
+          "name": 639.07,
+          "benchmark": 116.67
+        },
+        {
+          "date": "2026-08-27",
+          "name": 620.44,
+          "benchmark": 116.7
+        },
+        {
+          "date": "2026-08-28",
+          "name": 585.76,
+          "benchmark": 115.36
+        },
+        {
+          "date": "2026-08-31",
+          "name": 595.24,
+          "benchmark": 114.79
+        },
+        {
+          "date": "2026-09-01",
+          "name": 591.97,
+          "benchmark": 113.59
+        },
+        {
+          "date": "2026-09-02",
+          "name": 588.88,
+          "benchmark": 114.42
+        },
+        {
+          "date": "2026-09-03",
+          "name": 584.77,
+          "benchmark": 115.37
+        },
+        {
+          "date": "2026-09-04",
+          "name": 594.54,
+          "benchmark": 115.52
+        },
+        {
+          "date": "2026-09-08",
+          "name": 606.11,
+          "benchmark": 114.76
+        },
+        {
+          "date": "2026-09-09",
+          "name": 588.05,
+          "benchmark": 113.54
+        },
+        {
+          "date": "2026-09-10",
+          "name": 589.01,
+          "benchmark": 112.47
+        },
+        {
+          "date": "2026-09-11",
+          "name": 593.7,
+          "benchmark": 113.37
+        },
+        {
+          "date": "2026-09-14",
+          "name": 616.52,
+          "benchmark": 112.36
+        },
+        {
+          "date": "2026-09-15",
+          "name": 592.54,
+          "benchmark": 111.9
+        },
+        {
+          "date": "2026-09-16",
+          "name": 601.22,
+          "benchmark": 111.24
+        },
+        {
+          "date": "2026-09-17",
+          "name": 628.08,
+          "benchmark": 111.24
+        },
+        {
+          "date": "2026-09-18",
+          "name": 610.28,
+          "benchmark": 111.24
+        },
+        {
+          "date": "2026-09-21",
+          "name": 600.13,
+          "benchmark": 111.24
+        },
+        {
+          "date": "2026-09-22",
+          "name": 607.65,
+          "benchmark": 111.24
         }
       ],
       "name_symbol": "ORKA",
       "benchmark_symbol": "MDY",
-      "as_of": "2026-08-24",
+      "as_of": "2026-09-22",
       "window_days": 364,
-      "name_return": 6.0585802894555485,
-      "benchmark_return": 0.1756589750969204,
-      "source_ref": "EOD ORKA vs MDY rebased to 100, 2025-08-25..2026-08-24"
+      "name_return": 5.076478149100256,
+      "benchmark_return": 0.11235842437606491,
+      "source_ref": "EOD ORKA vs MDY rebased to 100, 2025-09-23..2026-09-22"
     },
     "operating_drivers": {
       "rows": [
@@ -6307,178 +6181,191 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.",
+    "evidence_balance": "mixed — genuinely positive clinical de-risking and a large cash pile offset by zero revenue, accelerating burn, heavy dilution and insider selling.",
     "bull_points": [
       {
-        "claim": "ORKA-001 delivered positive Week-16 data in the EVERLAST-A Phase 2a plaque-psoriasis trial in April 2026 — clinical validation of the lead half-life-extended IL-23p19 asset that underpins the runway thesis.",
+        "claim": "The lead asset ORKA-001 delivered positive Week 16 data from the EVERLAST-A Phase 2a trial in moderate-to-severe plaque psoriasis, validating the half-life-extended IL-23p19 mechanism that underpins the entire runway case.",
         "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Apr-27-2026",
         "cited": true
       },
       {
-        "claim": "The second asset ORKA-002 posted positive interim Phase 1 data and the EVERLONG-B trial of ORKA-001 was initiated in January 2026, broadening the pipeline beyond a single molecule.",
+        "claim": "A second program, ORKA-002, reported positive interim Phase 1 data alongside initiation of the Everlong-B trial of ORKA-001, broadening the clinical pipeline beyond a single-asset bet.",
         "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Jan-12-2026",
         "cited": true
       },
       {
-        "claim": "The company holds roughly $1,123M net cash against only $2.5M total debt, a large runway-funding cushion for a clinical-stage program (survival is a cash-burn question, not a solvency one).",
+        "claim": "The company holds net cash of ~$1,123M against essentially no debt (total debt $2.5M), funding a multi-year clinical runway before any dilution is forced by maturities.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "Sell-side is unanimously constructive: mean target $155.00 / median $155.50 (high/low 200/117, N=12) with 11 Buy ratings and a consensus recommendation of Buy (1.00).",
+        "claim": "Sell-side conviction is uniformly positive — mean target $155.00 with a Buy consensus (1.00) and 11 Buy / 2 Outperform ratings, no Holds or Sells.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       },
       {
-        "claim": "The company is building commercial infrastructure ahead of launch, appointing Todd Edwards (ex-Arcutis CCO) as Chief Commercial Officer effective Aug 24 2026 — a dated action signalling progression toward a marketed product.",
+        "claim": "The company recruited a commercial leader as Chief Commercial Officer (ex-Arcutis EVP/CCO), signaling a build toward eventual commercialization of the psoriasis franchise.",
         "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Aug-24-2026",
         "cited": true
       },
       {
-        "claim": "The IL-23 license agreement with Paragon was amended in June 2026 to expand the definition of Field, enlarging the addressable indication set for the platform.",
+        "claim": "The amended IL-23 License Agreement with Paragon expanded the definition of Field, widening the addressable indication scope for the licensed program.",
         "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Jun-01-2026",
+        "cited": true
+      },
+      {
+        "claim": "The stock rose ~508% over the trailing year vs the benchmark's ~11%, an idiosyncratic re-rating driven by name-specific clinical readouts rather than market beta.",
+        "source_ref": "EOD ORKA vs MDY rebased to 100, 2025-09-23..2026-09-22",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "This is a pre-revenue clinical-stage business: consensus revenue is $0.0M in both FY26E and FY27E, so the entire $6.1B market cap rests on trial outcomes years from any product cash flow.",
+        "claim": "There is no revenue in any period — consensus FY26E and FY27E revenue are both $0.0M — so the entire $6.1B market cap rests on unapproved, pre-commercial clinical assets.",
         "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "The name is FCF-negative and burning cash — LTM levered FCF is $-65.0M and CFO is $-100.9M — so the $1.1B cushion is a depleting asset, not a durable moat.",
+        "claim": "The trailing EV/EBITDA is NM against a peer median of 38.3x, but that is the REAL signal not an optical misread: EBITDA is deeply negative (LTM -$155M) and consensus deepens the loss to FY26E -$194.3M and FY27E -$241.5M — a rising, not narrowing, burn.",
+        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
+        "cited": true
+      },
+      {
+        "claim": "The company is burning cash — LTM levered FCF -$65M, CFO -$100.9M — and is FCF-negative, so the $1.1B cash is a depleting, not self-funding, asset.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "Losses are deepening, not narrowing: EBITDA worsened Dec-31-2024 -95 → Dec-31-2025 -122 → Jun-30-2026 LTM -155, with FY26E -194 and FY27E -241 consensus ahead — the cash burn is accelerating.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "Shareholders have been heavily diluted — share count rose from 34.99M (2024-10-31) to 66.21M (2026-07-31), +89.2% in ~1.7 years — and a fresh S-3 shelf was filed Aug-21-2026, signalling more issuance to fund the burn.",
+        "claim": "Shares diluted +89.2% in ~1.7 years (35.0M to 66.2M), and an active shelf/prospectus pipeline (S-3 filed 2026-08-21, 424B5 filed 2026-08-28) sits ready to raise more against the ongoing burn.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-10-31..2026-07-31",
         "cited": true
       },
       {
-        "claim": "Near-term consensus is being cut: FY26 EPS (GAAP) shows 1 up / 6 down revisions last month, and FQ3/FQ4 2026 EBIT and EBT breadth are uniformly downward (0 up / 5-6 down).",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "claim": "Insiders sold heavily — 84 open-market sells vs 0 buys over 182 days across 7 insiders ($331.89M), including a $300.01M director sale on 2026-07-01, with the last purchase ~19 months ago.",
+        "source_ref": "EDGAR Form 4 (latest 0000907654-26-000102; 76 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       },
       {
-        "claim": "Insiders sold heavily with zero open-market buys: 76 sells by 7 insiders totalling $329.45M in 182 days, including a $300.01M director sale, with the last purchase ~18 months ago.",
-        "source_ref": "EDGAR Form 4 (latest 0000907654-26-000088; 69 filings in the 1095d scanned; counts over 182d)",
+        "claim": "FY26 consensus has deteriorated materially and recently — EPS (GAAP) breadth 1↑/6↓ last month, and the consensus EBITDA path worsened from -$156.9M to -$194.3M at the latest snapshot.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The peer 'discount' framing is unreliable: the peer set spans $585M–$10.2B caps (17x), flagged HETEROGENEOUS/low-comparability, and ORKA's own multiples are NM (negative base), so no clean peer benchmark exists.",
-        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
-        "cited": true
-      },
-      {
-        "claim": "The stock has run enormously (rebased 100 → ~706 over the 52-week window; 52-week range $14.34–$115.52), so a great deal of clinical optimism is already embedded in the price ahead of confirmatory data.",
-        "source_ref": "EOD ORKA vs MDY rebased to 100, 2025-08-25..2026-08-24",
+        "claim": "The stock trades at ~$94.55 after a peak of ~$726 rebased in mid-August, meaning much of the runway optimism has already been paid for and then partly re-rated down without any de-risking catalyst.",
+        "source_ref": "EOD ORKA vs MDY rebased to 100, 2025-09-23..2026-09-22",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Arcutis Biotherapeutics",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Clinical-stage dermatology/immunology developer that carried launch optimism into a commercial transition; ORKA's newly appointed CCO came directly from its commercial organisation.",
-        "source": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Aug-24-2026"
-      },
-      {
         "name": "Apogee Therapeutics",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Largest-cap peer in the roster, a pre-revenue immunology biologics developer whose valuation rests entirely on trial progression rather than earnings.",
+        "distinguishing_fact": "Peer-set clinical-stage immunology/dermatology biologics developer carrying the largest cap in the roster while pre-revenue — the same 'value is entirely in the pipeline' pattern the subject must justify.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Immunovant",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Large-cap autoimmune-therapy developer, pre-revenue with NM multiples, whose equity value tracks clinical read-outs and cash runway like the name.",
+        "distinguishing_fact": "Peer autoimmune-therapy developer, pre-revenue with a large net-cash cushion and NM multiples — same structure of a big cap resting on unapproved targeted therapies.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "AnaptysBio",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Only peer in the set with a positive EBITDA margin and a struck LTM multiple, illustrating the transition from a pure clinical-runway story to a comparable earnings basis.",
-        "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+        "name": "Spyre Therapeutics",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "Peer inflammatory/rheumatic-disease developer, similar scale and net-cash profile, whose valuation likewise rides on clinical readouts rather than earnings.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Arena Pharmaceuticals",
+        "name": "Arcutis Biotherapeutics",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Immunology/inflammation developer whose value hinged on late-stage read-outs and was ultimately resolved by a strategic outcome rather than organic earnings.",
+        "distinguishing_fact": "Commercial-stage dermatology company the subject's new CCO came from — an analogue of the transition from clinical promise to the harder economics of commercialization.",
         "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Celldex Therapeutics",
+        "outcome": "re-rated to fair value",
+        "distinguishing_fact": "Peer antibody developer for inflammatory/autoimmune disease that has previously taken goodwill/intangible write-downs — an analogue of pipeline value proving impairable when programs disappoint.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Will the ORKA-001 / ORKA-002 clinical program convert its early-phase read-outs into confirmatory efficacy and a marketed product before the ~$1.1B cash cushion is exhausted by an accelerating burn — i.e. is the priced-in optimism earned by the data?",
+      "question": "Will the IL-23p19 franchise (ORKA-001/ORKA-002) convert positive early-phase data into approved, revenue-generating products before the cash cushion is exhausted and dilution resets the per-share case?",
       "evidence_for": [
         {
-          "claim": "ORKA-001 posted positive Week-16 EVERLAST-A Phase 2a data, the load-bearing clinical proof point for the lead asset.",
+          "claim": "ORKA-001 posted positive Week 16 EVERLAST-A Phase 2a data in plaque psoriasis, the key de-risking readout for the lead program.",
           "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Apr-27-2026",
           "cited": true
         },
         {
-          "claim": "ORKA-002 showed positive interim Phase 1 data and EVERLONG-B was initiated, giving a second shot on goal.",
+          "claim": "ORKA-002 delivered positive interim Phase 1 data with the Everlong-B trial initiated, evidencing pipeline progression on a second asset.",
           "source_ref": "CIQ Key Developments: Oruka Therapeutics Inc NasdaqGM ORKA Key Developments.rtf · Jan-12-2026",
           "cited": true
         },
         {
-          "claim": "A $1,123M net-cash position funds continued trials without immediate solvency risk.",
+          "claim": "~$1,123M net cash with negligible debt provides runway to fund trials toward those readouts.",
           "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Cash burn is accelerating (EBITDA -95 → -122 → -155 LTM; FY26E -194, FY27E -241), shortening the runway against which any read-out must arrive.",
-          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "claim": "Cash is being consumed — LTM levered FCF -$65M and CFO -$100.9M — and consensus FY26E/FY27E EBITDA at -$194.3M/-$241.5M implies the burn accelerates before any approval.",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
           "cited": true
         },
         {
-          "claim": "89.2% share-count growth in ~1.7 years plus a fresh Aug-2026 S-3 shelf show the program is already funded by continual dilution.",
+          "claim": "The financing machinery is active — shares already +89.2% in ~1.7y and a fresh S-3/424B5 shelf filed late August 2026 — pointing to further dilution ahead of commercialization.",
           "source_ref": "EDGAR XBRL shares, trailing 2024-10-31..2026-07-31",
           "cited": true
         },
         {
-          "claim": "Zero revenue in FY26E and FY27E means there is no operating cash to offset the burn before the next read-outs.",
+          "claim": "No revenue exists in any consensus year (FY26E/FY27E $0.0M), so nothing bridges the gap between clinical data and self-funding economics.",
           "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No earnings-call transcript is available for ORKA — management's own commentary on runway, trial timing and launch plans is missing (an opaque gap, bearish until resolved).",
-      "No segment or geographic revenue breakout exists, and there is no forward revenue guide beyond $0.0M consensus — no visibility on when or how much product revenue could materialise.",
-      "Exact months-of-runway is not derivable: the $1.1B cash is stated but a dated cash-runway/self-funding read is UNKNOWN (self-funding flagged MIXED; both OCF and FCF negative).",
-      "Whether ORKA's premium is EARNED (clinical superiority) or RESIDUAL (overshoot) cannot be judged from the comps — the peer set is HETEROGENEOUS and ORKA's multiples are NM, so no clean peer decomposition is possible.",
-      "TEV net-debt is unreconciled ($-1,123.0M simple-TEV vs $-871.1M bridge), and the actual-vs-estimate EBITDA basis is definitionally divergent (~-19.9x) — growth across the boundary is part-definitional.",
-      "Covenant terms are UNKNOWN (extraction failed) and the debt schedule is 165 days old — though total debt is only $2.5M, so leverage risk is low regardless.",
-      "Timing/outcome of the next results print (cadence-estimated 2026-11-06) and any subsequent confirmatory read-out is unresolved — the pivotal near-term catalyst."
-    ]
+      "No earnings-call transcript is available — management's own commentary on trial timelines, cash runway in months, and financing intentions is absent (pull it).",
+      "Segment, geographic, and revenue-roster disclosures are all absent from the export — the reason is undetermined; a bearish opacity given the pre-revenue posture.",
+      "No forward NTM TEV/EBITDA or TEV/Rev multiple for the name is in the assembled comps — the name's own forward valuation vs peers cannot be read; the FY30→FY33 forward-multiple ladder (e.g. FY32 P/E 7.07) implies distant modeled revenue but no basis or assumptions are shown.",
+      "Net-debt figures do not reconcile (CIQ -$1,123M vs bridge -$871.1M) — the true net-cash cushion, and thus runway, is uncertain until reconciled.",
+      "Covenant terms could not be extracted from located exhibits (extraction failed) — any financing constraints are UNKNOWN.",
+      "The peer set is HETEROGENEOUS (caps span $585M–$10.2B, ~17x) with near-universal NM multiples, so no clean peer benchmark exists; the peer 'median' 38.3x rests on a single peer (ANAB) with positive EBITDA and cannot anchor the name.",
+      "Exact cash runway in months and the size/timing of the next raise are not disclosed — central to the decisive question and unquantified here.",
+      "Export date is unverified (a floor ≥ 2026-08-28) while the last stock close is 2026-09-22 — the estimate snapshot may lag the tape."
+    ],
+    "draw_agreement": {
+      "attempted": 5,
+      "completed": 5,
+      "labels": {
+        "mixed": 5
+      },
+      "unanimous": true
+    }
   },
   "caveats": [
-    "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Plaque-psoriasis biotech followed under the QUALITY book, accepted by the operator 2026-09-10. One drug leads: ORKA-001, an IL-23p19 antibody engineered for a long half-life. In the EVERLAST-A Phase 2a (announced 2026-04-27), 63.5% of patients (40 of 63) had COMPLETELY clear skin at week 16 against 1 of 21 on placebo, with PASI 90 at 83%; Phase 1 PK after a single 600mg dose kept drug levels above the effective trough for a full year, which is the once-yearly dosing case against today's every-8-to-12-week injections. Longer-term EVERLAST-A data are guided to 2H 2026, so the next readout is near-dated. Liquidity at 2026-06-30 is $1,125.6M — $268.5M cash and equivalents PLUS $857.1M of marketable securities — against no debt at all, so the company funds itself a long way without the market; a $500M at-the-market facility was registered 2026-08-27 (sales agreement amended 2026-08-21), which is CAPACITY, not a completed raise, and no sales under it are yet disclosed. The binding question is therefore what a ~$6.8B price already pays for a drug that has worked, not whether a de-rating is overdone — the overshoot twin's question does not apply to a name up 190% in six months. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (at the 2026-08-24 reference date it was down 9% from its 52w high against a 30% floor and 178 points AHEAD of IWM over 180d; it has fallen further since — $91.50 on 2026-09-09 is 21% below the $115.52 high, so the SNAPSHOT price on this page and the GATE figures are deliberately different as-ofs, and the name is drifting toward, but has not reached, the screen's own entry), which is the screen behaving correctly rather than a gap to route around. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-24-01: FAIL (g1_drawdown FAIL).",
+    "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Plaque-psoriasis biotech followed under the QUALITY book, accepted by the operator 2026-09-10. One drug leads: ORKA-001, an IL-23p19 antibody engineered for a long half-life. In the EVERLAST-A Phase 2a (announced 2026-04-27), 63.5% of patients (40 of 63) had COMPLETELY clear skin at week 16 against 1 of 21 on placebo, with PASI 90 at 83%; Phase 1 PK after a single 600mg dose kept drug levels above the effective trough for a full year, which is the once-yearly dosing case against today's every-8-to-12-week injections. Longer-term EVERLAST-A data are guided to 2H 2026, so the next readout is near-dated. Liquidity at 2026-06-30 is $1,125.6M — $268.5M cash and equivalents PLUS $857.1M of marketable securities — against no debt at all, so the company funds itself a long way without the market; a $500M at-the-market facility was registered 2026-08-27 (sales agreement amended 2026-08-21), which is CAPACITY, not a completed raise, and no sales under it are yet disclosed. The binding question is therefore what a ~$6.8B price already pays for a drug that has worked, not whether a de-rating is overdone — the overshoot twin's question does not apply to a name up 190% in six months. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (at the 2026-08-24 reference date it was down 9% from its 52w high against a 30% floor and 178 points AHEAD of IWM over 180d; it has fallen further since — $91.50 on 2026-09-09 is 21% below the $115.52 high, so the SNAPSHOT price on this page and the GATE figures are deliberately different as-ofs, and the name is drifting toward, but has not reached, the screen's own entry), which is the screen behaving correctly rather than a gap to route around. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-09-22-01: FAIL (g1_drawdown FAIL).",
     "primary-source: 8-K 0001213900-26-063481 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.4s fetch)",
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.5s fetch)",
     "former registrant name: this CIK filed as \"ARCA biopharma, Inc.\" (2009-01-28 → 2024-08-30) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0000907654)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001213900-26-026929 · ea027330001ex10-9_oruka.htm declares itself no agreement at all",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-10T11:44:56.906648Z",
+  "assembled_at": "2026-09-28T16:12:39.636684Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-09"
+    "frontier": "2026-09-22"
   },
   "sector": "Health Care",
   "industry": {
@@ -6499,10 +6386,12 @@
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-10T11:45:57.566649Z",
+    "computed_at": "2026-09-28T16:47:14.404398Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
-    "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality": "vendor_bridge",
+    "data_quality_detail": [
+      "vendor bridge: net_debt supplied by the CIQ workbook because EDGAR had no usable tag"
+    ],
     "margin": null,
     "multiple": null,
     "d_and_a": {
@@ -6512,10 +6401,10 @@
       "source": "EDGAR companyfacts DepreciationAndAmortization (combined, FY2023) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2013 (10y behind)"
     },
     "net_debt": {
-      "value": null,
+      "value": -871.1,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "UNKNOWN — no debt/cash tag"
+      "source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls sha add437d7e3]"
     },
     "diluted_shares": {
       "value": 42095951.0,

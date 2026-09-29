@@ -3894,8 +3894,8 @@
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-08-31): 11.6M → 11.6M sh (-0.3%, falling) · 10.0% of shares out (EDGAR XBRL) · DTC 2.8d · recent: 2026-08-31 11.6M · 2026-08-14 11.6M · 2026-07-31 14.3M · 2026-07-15 14.7M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-08-31); DTC = 11,595,856 short ÷ 4,144,944 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-15): 11.6M → 13.0M sh (+11.7%, rising) · 11.1% of shares out (EDGAR XBRL) · DTC 3.1d · recent: 2026-09-15 13.0M · 2026-08-31 11.6M · 2026-08-14 11.6M · 2026-07-31 14.3M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 12,956,703 short ÷ 4,144,944 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4145,7 +4145,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG,…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…\n  Interest rate floor: Eurodollar Rate floor: Revolving Credit Loans less than 1.00% per annum; Term Loans…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[CREDIT AGREEMENT · 0001772016-21-000029]\n  Principal / commitment amount: $636,200,000\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4164,21 +4164,25 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000",
+              "value": "$636,200,000",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “ 2021 Refinancing Term Loans ”)”"
+              "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “2021 Refinancing Term Loans”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Interest / coupon rate",
@@ -4191,22 +4195,10 @@
             "base_rate_label": "Eurodollar Rate",
             "margin_pct": 4.0,
             "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Interest rate floor",
-            "value": {
-              "value": "Eurodollar Rate floor: Revolving Credit Loans less than 1.00% per annum; Term Loans less than 0.75% per annum",
-              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
-              "status": "present",
-              "note": "verbatim: ““ provided, however , notwithstanding the foregoing, at no time will the Eurodollar Rate be deemed to be (i) in the case of Revolving Credit Loans, less than 1.00% per annum and (ii) in the case of Term Loans, less than 0.75% per annum.””"
-            },
-            "base_rate_label": "Eurodollar Rate",
-            "margin_pct": null,
-            "margin_bps": null,
             "floor_pct": 0.75,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Maturity date",
@@ -4220,7 +4212,9 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Financial-maintenance covenants",
@@ -4234,12 +4228,14 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; each Loan Party reaffirms each Lien granted to the Administrative Agent for the benefit of the Secured Parties and the guaranties made pursuant to the Collateral Agreement. Guarantors/Loan Parties per signature pages: Bellring Brands, LLC (Borrower); Dymatize Enterprises, LLC; Premier Nutrition Company, LLC; Supreme Protein, LLC; TA/DEI-A Acquisition Corp.",
+              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; Guarantors include Dymatize Enterprises, LLC, Premier Nutrition Company, LLC, Supreme Protein, LLC, TA/DEI-A Acquisition Corp.",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
               "note": "verbatim: “Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
@@ -4248,63 +4244,57 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Prepayment notice of Existing Term Loans in amount equal to aggregate principal of 2021 Refinancing Term Loans; proceeds applied 100% to repay outstanding Existing Term Loans (incl. accrued and unpaid interest). Repricing Event premium (Section 2.05(b)(ix)): if on or before 6 months after Amendment No. 2 Effective Date a Repricing Event occurs, Borrower pays 1.00% of the aggregate principal amount of Term B Loans so repriced/refinanced or subject to such amendment. Amendment conditioned on no Default or Event of Default existing on the Amendment No. 2 Effective Date.",
+              "value": "Repricing Event premium of 1.00% if a repricing occurs on or before the date that is 6 months after the Amendment No. 2 Effective Date; 100% of proceeds applied to repay outstanding Existing Term Loans",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “This Amendment constitutes notice by the Borrower to the Administrative Agent of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date”"
+              "note": "verbatim: “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any (i) prepayment or repayment of Term B Loans ... (any such transaction or event described in clauses (i) or (ii) above, a “Repricing Event”), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
-            "name": "Repricing / prepayment premium",
+            "name": "Revolving Credit Loans Eurodollar Rate floor",
             "value": {
-              "value": "1.00% of the aggregate principal amount of the Term B Loans repriced/refinanced or subject to amendment, if a Repricing Event occurs on or before the date that is 6 months after the Amendment No. 2 Effective Date",
+              "value": "less than 1.00% per annum (Revolving Credit Loans); less than 0.75% per annum (Term Loans)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay to the Administrative Agent, for the ratable account of each of the applicable Term B Lenders, (I) in the case of clause (i) above, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced in such Repricing Event and (II) in the case of clause (ii) above, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans that are the subject of such Repricing Event”"
+              "note": "verbatim: “at no time will the Eurodollar Rate be deemed to be (i) in the case of Revolving Credit Loans, less than 1.00% per annum and (ii) in the case of Term Loans, less than 0.75% per annum.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
-            "name": "Effective date",
+            "name": "Amendment No. 2 Effective Date",
             "value": {
               "value": "February 26, 2021",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: ““ Amendment No. 2 Effective Date ” means the date on which all of the conditions precedent in Section 5 of Amendment No. 2 are satisfied or waived, which date is February 26, 2021.”"
+              "note": "verbatim: ““Amendment No. 2 Effective Date” means the date on which all of the conditions precedent in Section 5 of Amendment No. 2 are satisfied or waived, which date is February 26, 2021.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Administrative Agent",
-            "value": {
-              "value": "Credit Suisse AG, Cayman Islands Branch",
-              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
-              "status": "present",
-              "note": "verbatim: “Credit Suisse AG, Cayman Islands Branch, as Administrative Agent (in such capacity, the “ Administrative Agent ”)”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           },
           {
             "name": "Governing law",
@@ -4312,223 +4302,15 @@
               "value": "State of New York",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “THIS AMENDMENT AND ALL CLAIMS OR CAUSES OF ACTION ... SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+              "note": "verbatim: “THIS AMENDMENT ... SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Conversion price / mechanics",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Principal / commitment amount",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Interest / coupon rate",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Maturity date",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Financial-maintenance covenants",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Security / collateral / guarantors",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Mandatory prepayment / events of default",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Redemption Right of a Member (Nonvoting Common Units)",
-            "value": {
-              "value": "Redemption of Nonvoting Common Units for Share Settlement or Cash Settlement, at Company's option (as determined by the Board)",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “each Member (other than Pubco) shall be entitled to cause the Company to redeem (a “ Redemption ”) its Nonvoting Common Units (the “ Redemption Right ”) at any time (subject to any applicable lock-up agreements).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Share Settlement definition",
-            "value": {
-              "value": "a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e)",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Share Settlement ” means a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Cash Settlement definition",
-            "value": {
-              "value": "immediately available funds in U.S. dollars in an amount equal to the Redeemed Units Equivalent",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Cash Settlement ” means immediately available funds in U.S. dollars in an amount equal to the Redeemed Units Equivalent.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Common Unit Redemption Price",
-            "value": {
-              "value": "arithmetic average of the volume weighted average prices for a share of Class A Common Stock ... for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Common Unit Redemption Price ” means the arithmetic average of the volume weighted average prices for a share of Class A Common Stock on the principal U.S. securities exchange or automated or electronic quotation system on which the Class A Common Stock is traded or quoted, as reported by Bloomberg, L.P. or its successor, for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date, subject to appropriate and equitable adjustment for any stock splits, reverse splits, stock dividends or similar events affecting the Class A Common Stock.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Units issued / reclassified (capitalization)",
-            "value": {
-              "value": "97,474,180 Nonvoting Common Units reclassified to Holdings; 39,428,571 Nonvoting Common Units issued to Pubco; one Voting Common Unit issued to Pubco",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “All limited liability company interests in the Company outstanding as of immediately prior to the Effective Time, all of which are held by Holdings, shall be reclassified into 97,474,180 Nonvoting Common Units, and the Company hereby issues 39,428,571 Nonvoting Common Units to Pubco, in each case, as set forth on the Member Schedule.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Company term / existence",
-            "value": {
-              "value": "perpetual existence unless sooner dissolved",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Company shall have perpetual existence unless sooner dissolved and its affairs wound up as provided in Article XI.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of Delaware",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to the conflicts of law rules of such State that would result in the application of the laws of any other State.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Tax distributions",
-            "value": {
-              "value": "quarterly cash tax distributions pro rata by Economic Percentage Interest up to each Member's Assumed Tax Liability",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “the Company, subject to availability of sufficient cash, shall make quarterly cash distributions ... to each Economic Member pro rata, in accordance with the Member’s Economic Percentage Interest, at least two Business Days prior to the date on which any U.S. federal corporate estimated tax payments are due, until each Member has received an amount at least equal to its Assumed Tax Liability”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": true
           }
         ],
         "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
@@ -7919,7 +7701,7 @@
           "kind": "leading_indicator",
           "metric": "RTD shake category volumes sold on price promotion",
           "period": "Q2 2026",
-          "value": "27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year",
+          "value": "27%, up 8 percentage points versus last year",
           "value_num": null,
           "unit": null,
           "verbatim": "As a result, 27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year and a meaningful step-up from Q1.",
@@ -7941,7 +7723,67 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Total BellRing net sales",
+          "metric": "total net sales growth",
+          "period": "Q2 2026",
+          "value": "increased 2%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Net sales increased 2% in the second quarter with Premier Protein net sales in line and Dymatize sales down 2%.",
+          "following_context": "Premier RTD shake net sales increased 2.3% with double-digit volume growth mostly offset by price/mix declines.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier RTD shake net sales growth",
+          "period": "Q2 2026",
+          "value": "increased 2.3%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Premier RTD shake net sales increased 2.3% with double-digit volume growth mostly offset by price/mix declines.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier shake dollar consumption",
+          "period": "Q2 2026",
+          "value": "up 3%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Premier shake dollar consumption was up 3%.",
+          "following_context": "Consumption outside of club continues to be strong, up 15%, with the mass channel up high teens, driven by distribution and incremental promotion. We are pleased with the performance of our key promotions this quarter with a club retailer and a large mass retailer, driving a record quarter for both sales and consumption.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "consumption outside of club",
+          "period": "Q2 2026",
+          "value": "up 15%, with the mass channel up high teens",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Consumption outside of club continues to be strong, up 15%, with the mass channel up high teens, driven by distribution and incremental promotion.",
+          "following_context": "We are pleased with the performance of our key promotions this quarter with a club retailer and a large mass retailer, driving a record quarter for both sales and consumption.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "club channel share of BellRing sales",
+          "period": null,
+          "value": "just over 40%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Retailers also expanded space, particularly in the club channel, which represents just over 40% of BellRing sales.",
+          "following_context": "As a result, we expected some higher levels of promotional investment. As the year progressed, the most meaningful change has been the rising cost required to maintain our leadership position.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total BellRing net sales",
           "period": "Q2 2026",
           "value": "$599 million, up 2% year-over-year",
           "value_num": null,
@@ -7953,7 +7795,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier Protein net sales",
+          "metric": "Premier Protein net sales growth",
           "period": "Q2 2026",
           "value": "grew 1.7%",
           "value_num": null,
@@ -7965,19 +7807,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier RTD shake net sales",
-          "period": "Q2 2026",
-          "value": "up 2.3%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Premier Protein net sales grew 1.7% with RTD shake net sales up 2.3%.",
-          "following_context": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Premier Shake volumes / price mix",
+          "metric": "Premier shake volume growth and price mix",
           "period": "Q2 2026",
           "value": "volumes increased 12% with unfavorable price mix of 9%",
           "value_num": null,
@@ -8001,54 +7831,6 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier shake dollar consumption",
-          "period": "Q2 2026",
-          "value": "up 3%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Premier shake dollar consumption was up 3%.",
-          "following_context": "Consumption outside of club continues to be strong, up 15%, with the mass channel up high teens, driven by distribution and incremental promotion. We are pleased with the performance of our key promotions this quarter with a club retailer and a large mass retailer, driving a record quarter for both sales and consumption.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Premier consumption outside of club",
-          "period": "Q2 2026",
-          "value": "up 15%, with the mass channel up high teens",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Consumption outside of club continues to be strong, up 15%, with the mass channel up high teens, driven by distribution and incremental promotion.",
-          "following_context": "We are pleased with the performance of our key promotions this quarter with a club retailer and a large mass retailer, driving a record quarter for both sales and consumption.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "RTD shake spend per household / buy rate",
-          "period": "recent months",
-          "value": "contraction in RTD shake spend per household, marking the first decline in buy rate in 5 years",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "However, in recent months, we have seen a contraction in RTD shake spend per household, marking the first decline in buy rate in 5 years.",
-          "following_context": "This reflects an increasingly value-focused consumer with greater reliance on promotions, low-priced brands and value-priced pack sizes.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "club channel share of BellRing sales",
-          "period": null,
-          "value": "just over 40% of BellRing sales",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Retailers also expanded space, particularly in the club channel, which represents just over 40% of BellRing sales.",
-          "following_context": "As a result, we expected some higher levels of promotional investment. As the year progressed, the most meaningful change has been the rising cost required to maintain our leadership position.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "adjusted gross margin",
           "period": "Q2 2026",
           "value": "22.7% compared to 34.5% a year ago",
@@ -8060,21 +7842,33 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
-          "metric": "double-digit price increase on Premier shakes and additional pricing on powders",
-          "period": "effective Q1 fiscal 2027",
-          "value": "double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027",
+          "kind": "competitive_position",
+          "metric": "advertising investment as percent of sales",
+          "period": "fiscal 2026",
+          "value": "approximately 4% of sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, we have announced a double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027.",
-          "following_context": "We believe these actions are necessary to offset sustained inflationary pressure in key input costs and support a healthier margin profile over time. With this price increase, we expect volume-related elasticity to be slightly greater than 1.",
+          "verbatim": "we expect to maintain our investment this year at approximately 4% of sales with more tempered near-term returns given the more competitive promotional environment.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "RTD shake category volumes sold on price promotion",
+          "period": "Q3 2026",
+          "value": "70%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In the third quarter, 70% of RTD shake category volumes were sold on price promotion.",
+          "following_context": "This is relatively in line with historical norms for this period after adjusting for the shift of a major e-commerce promotion, while down sequentially from the heavier promoted second quarter. While category fundamentals remain strong, our outlook assumes fourth quarter promotional levels will be more similar to the second quarter trends, reflecting continued value-seeking behavior and elevated promotional activity during the key Q2 and Q4 seasons. Over time, we continue to expect category-based price increases as a result of meaningful input cost inflation.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "Premier household penetration and repeat rate",
-          "period": null,
+          "metric": "Premier household penetration",
+          "period": "Q3 2026",
           "value": "almost 23%, with shake repeat rate consistently the highest in the category",
           "value_num": null,
           "unit": null,
@@ -8084,20 +7878,44 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "RTD shake category volumes sold on price promotion",
-          "period": "Q3 2026",
-          "value": "70% of RTD shake category volumes were sold on price promotion",
+          "kind": "pricing_action",
+          "metric": "price increase on Premier shakes and powders",
+          "period": "effective first quarter of fiscal 2027",
+          "value": "double-digit price increase on Premier shakes and additional pricing on powders",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the third quarter, 70% of RTD shake category volumes were sold on price promotion.",
-          "following_context": "This is relatively in line with historical norms for this period after adjusting for the shift of a major e-commerce promotion, while down sequentially from the heavier promoted second quarter. While category fundamentals remain strong, our outlook assumes fourth quarter promotional levels will be more similar to the second quarter trends, reflecting continued value-seeking behavior and elevated promotional activity during the key Q2 and Q4 seasons. Over time, we continue to expect category-based price increases as a result of meaningful input cost inflation.",
+          "verbatim": "First, we have announced a double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027.",
+          "following_context": "We believe these actions are necessary to offset sustained inflationary pressure in key input costs and support a healthier margin profile over time. With this price increase, we expect volume-related elasticity to be slightly greater than 1.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Net sales",
+          "metric": "expected volume-related elasticity from price increase",
+          "period": null,
+          "value": "slightly greater than 1",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "With this price increase, we expect volume-related elasticity to be slightly greater than 1.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "advertising investment as percent of sales",
+          "period": "fiscal 2026",
+          "value": "approximately 4% of sales",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Campaign ROI is stronger than last year, and our full year outlook continues to reflect advertising investment at approximately 4% of sales.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total net sales growth",
           "period": "Q3 2026",
           "value": "increased 4%",
           "value_num": null,
@@ -8112,153 +7930,163 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a discrete margin collapse with real demand-side deterioration, set against an intact category, committed FY27 pricing, and cash generation.",
+    "evidence_balance": "mixed — a genuine near-floor multiple and intact category demand sit against a real, cause-identified margin collapse and steep forward-estimate cuts.",
     "bull_points": [
       {
-        "claim": "The de-rate is a discrete single-event repricing off one earnings miss (2026-05-05, Q2), not a slow structural bleed, so the overshoot question is whether one bad print was extrapolated permanently.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "claim": "The stock has fallen 75% over the trailing year and now trades at the very floor of its own history — EV/EBITDA 6.4x sits at the 4th percentile of a 27-quarter range (median 19.8x), a de-rate steep enough to demand the value-trap-vs-overshoot question be posed.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "cited": true
       },
       {
-        "claim": "Absolute revenue continued to rise into the LTM ($2,317M FY25 → $2,355M LTM) even as EBITDA margin compressed, so the top line is not in structural decline — the collapse is a margin event, not a demand event.",
+        "claim": "The consensus P/E discount to peers (6.3x vs median 21.9x, -71%) sits against a HETEROGENEOUS peer set spanning $228M–$33.9B caps (149x) anchored by far larger, higher-margin names, so the gap is a confidence-gated input, not a clean benchmark — the human must judge whether it is EARNED or RESIDUAL.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "cited": true
+      },
+      {
+        "claim": "The underlying category driver remains intact: management states the RTD shake category was up 8% and remains among the fastest-growing in CPG, well ahead of the broader food/beverage industry, framing the collapse as competitive/margin pressure rather than a category-demand failure.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Premier volume demand is genuinely strong beneath the price/mix hit — Q2 Premier shake volumes rose 12% (with an unfavourable 9% price/mix) and household penetration reached ~23% with the highest shake repeat rate in the category, a demand base the margin damage has not eroded.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Management has committed a specific margin-repair mechanism on a timetable: a double-digit price increase on Premier shakes plus additional powder pricing, both effective Q1 fiscal 2027, with expected elasticity only slightly greater than 1 — the direct lever against the input-cost/margin cause of the drawdown.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Absolute EBITDA history shows a scaling franchise not a structurally broken one — EBITDA rose $117M (FY17) → $445M (FY25) even as the margin % fell, so the trailing margin compression is not the whole story and must be read against the absolute line.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Management attributes the margin hit to transitory drivers — an $11.3M inventory-related charge plus freight and input-cost inflation — rather than to a permanent loss of pricing power.",
-        "source_ref": "8-K 0001628280-26-030115 EX-99.1",
-        "cited": true
-      },
-      {
-        "claim": "A committed double-digit price increase on Premier shakes and additional powder pricing takes effect in fiscal Q1 2027, the direct mechanism intended to rebuild the compressed margin, with management modelling elasticity only slightly above 1.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Category demand remains intact — RTD shakes grew ~8% and Premier household penetration reached almost 23% with the highest repeat rate in the category — arguing the pressure is competitive/promotional, not a demand-destruction of the franchise.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Q3 net sales increased 4% with both brands ahead of expectations, an early sign the top line re-accelerated after the Q2 miss.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The business remains cash-generative on an LTM basis (levered FCF $201.1M) and interest coverage is 4.2x, so leverage is being serviced from operating cash while the margin recovery is attempted.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
-        "cited": true
-      },
-      {
-        "claim": "Management is buying back stock through the drawdown (-9.7% share count over ~1.7y under a $600M authorization), and a director made a $65.82M open-market purchase, signalling insider conviction rather than distress-selling.",
+        "claim": "The business is self-funding on an LTM basis with FCF positive at $201.1M and it is actively returning capital — shares out fell 9.7% over ~1.7y under a $600M buyback authorization.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-11-12..2026-07-28",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The EBITDA margin collapse is severe and multi-quarter, not a one-off: LTM EBITDA margin fell to 14% (from 21% in FY24 / 19% FY25) with the reconciler confirming absolute LTM EBITDA also FELL to $332M from $445M FY25 — this is the REAL signal, not an optical %-only artifact.",
+        "claim": "The drawdown is idiosyncratic and severe, not a market move — BRBR returned -40.6% over 180d against IWM +16.1% (-56.7% relative), a discrete gap-down on the 2026-05-05 earnings print, signalling a company-specific re-rating.",
+        "source_ref": "EOD BRBR−IWM 180d to 2026-09-22 (assembly, cap-band)",
+        "cited": true
+      },
+      {
+        "claim": "The margin collapse is the REAL signal, not an optical %: EBITDA margin fell to 14% LTM (from 19–21% prior) AND absolute EBITDA fell in tandem to $332M LTM from $445M FY25 — the % and the absolute line moved down together, confirming genuine profit destruction.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The demand-side deterioration is structural per management's own words: the first decline in RTD-shake buy rate in 5 years, reflecting an increasingly value-focused consumer relying on promotion and lower-priced brands — a mechanism that can outlast one quarter.",
+        "claim": "Management identifies the cause as structural competitive intensity: 27% of RTD category volumes sold on promotion in Q2 (up 8pts YoY) and the first decline in RTD shake buy-rate per household in 5 years — rising cost to defend share, not a one-quarter blip.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Promotional dependence is escalating sharply: RTD category volumes sold on price promotion rose to 27% in Q2 (up 8pts YoY) with 40% of BellRing sales concentrated in an increasingly competitive club channel, so the cost to hold share is rising — a genuine margin drag, not optics.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Adjusted gross margin nearly halved to 22.7% from 34.5% a year ago on input-cost inflation, tariffs, freight and adverse price mix — protein-commodity inflation management flagged as running above expectations into the back half.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Consensus forward estimates have been slashed across the board — FY26 EBITDA cut ~43% (505→288) and EPS ~56% over 12 months — confirming the impairment is being written into the forward, not just the trailing print.",
+        "claim": "The forward earnings path has been gutted, not stabilised — FY26 consensus EBITDA was cut -43% (505.3→288.1) and EPS Normalized -56% over 12m→latest, with FQ4 2026 EBITDA revisions running 0 up / 11 down, a broad and one-directional downgrade.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Leverage is elevated versus peers and self-funding is not clean: net-debt/EBITDA 3.4x vs peer-median 2.4x, and the two-input read shows latest-quarter OCF turned negative even though LTM FCF is still positive — so both legs of self-funding are not satisfied.",
+        "claim": "Leverage is elevated versus the peer set and rising in relative terms — net-debt/EBITDA 3.4x (total-debt/EBITDA 3.5x vs peer median 2.4x) with interest coverage only 4.2x, on a falling EBITDA base and negative book equity (-$467M).",
         "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $332M [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "A CEO/President retirement, a new CEO on his seventh day, and a departed Chief Growth Officer stack execution risk onto the margin-repair task at the worst possible moment.",
-        "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026",
+        "claim": "The fundamental deltas show the discount is at least partly EARNED, not pure overshoot — EBITDA growth -27% vs peer median +1%, LT EPS growth -12% vs peer median +12%, and higher leverage (3.5x vs 2.4x), materially worse fundamentals than the median peer.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Insider conviction and the Street both lean cautious — consensus is Hold (3.00) with LT growth pegged at -12.4%, and short interest is rising (+11.7% to 13.0M sh, 11.1% of float), against a token $0.06M of insider buys.",
+        "source_ref": "CIQ Estimates→Consensus",
+        "cited": true
+      },
+      {
+        "claim": "Guidance itself has been serially cut through the year — FY26 net-sales guide walked from $2.41–$2.49B (Nov) to $2.325–$2.365B (May) to $2.335–$2.375B (Aug), i.e. from +4–8% growth to ~1–3%, confirming a deteriorating rather than stabilising trajectory.",
+        "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Aug-04-2026",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
         "name": "The Simply Good Foods Company",
-        "outcome": "recovered",
-        "distinguishing_fact": "In-roster protein-snack/meal-replacement peer of similar small-cap scale facing the same value-seeking-consumer and promotional-intensity pressure on the same category dynamics.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Closest in-roster analogue: a similarly-sized nutrition/protein-snack single-category CPG name in the same peer set, facing the same value-seeking-consumer and promotional-intensity pressure with declining EBITDA growth — the pattern of a small focused wellness brand hit by category competition.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Conagra Brands",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster packaged-food peer where input-cost inflation and negative volume drove multi-year impairments and declining EBITDA — the value-trap pattern of a levered CPG name fighting cost inflation.",
+        "distinguishing_fact": "In-roster analogue of a levered packaged-food name (highest peer leverage) carrying repeated goodwill/intangible write-downs — the pattern of a debt-laden CPG whose earnings power kept re-rating down rather than mean-reverting.",
         "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
       },
       {
         "name": "e.l.f. Beauty",
         "outcome": "recovered",
-        "distinguishing_fact": "In-roster small-cap consumer name that sustained a premium multiple by pairing rapid volume growth with brand momentum — the counter-example where a fast-growing niche brand defended pricing.",
+        "distinguishing_fact": "In-roster analogue of a high-growth small/mid consumer brand that sustained a premium multiple through category leadership and volume momentum — the pattern where a brand's demand strength kept the franchise re-rating up rather than trapping it.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Celsius Holdings",
-        "outcome": "recovered",
-        "distinguishing_fact": "Single-brand, category-leading functional-beverage name that saw a sharp de-rate when a fast-growing wellness category attracted competition and promotion, then re-rated as pricing and distribution stabilized.",
-        "source": "[LLM-suggested, unverified]"
+        "name": "Herbalife Ltd.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "In-roster analogue of a levered wellness/nutrition name trading at a rock-bottom multiple where the low multiple reflected earned skepticism about durable earnings, not a temporary overshoot — the value-trap pattern.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Freshpet",
+        "name": "Central Garden & Pet",
         "outcome": "recovered",
-        "distinguishing_fact": "Fast-growing single-category consumer brand whose margins collapsed on input-cost inflation and freight before pricing actions and cost programs restored the margin trajectory.",
+        "distinguishing_fact": "[Analogue pattern] a single-category consumer brand that absorbed a sharp input-cost/margin shock, pushed through list-price increases the following year, and saw margins normalise without the category demand ever breaking.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the FY27 double-digit Premier price increase (plus cost/productivity actions) sufficient to rebuild EBITDA margin toward historical levels, or will elasticity and escalating promotional intensity in a value-seeking, more-competitive category cap margin recovery permanently?",
+      "question": "Will the announced double-digit Premier price increase (effective Q1 FY27) restore the pre-shock margin structure at acceptable volume elasticity, or is the promotional/competitive intensity now a permanent feature of the category that keeps EBITDA structurally depressed?",
       "evidence_for": [
         {
-          "claim": "Management has a committed, dated mechanism — a double-digit shake price increase and powder pricing effective Q1 FY27 — with modeled elasticity only slightly above 1, and consensus already models FY27 EBITDA recovering to $323M.",
+          "claim": "Management has committed a concrete double-digit shake price increase plus powder pricing effective Q1 FY27 with expected elasticity only slightly greater than 1, the direct lever to rebuild margin.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The category and brand base remain strong — RTD shakes up ~8%, Premier penetration ~23% with the highest repeat rate — giving the price increase a demand cushion, and Q3 sales already grew 4% ahead of expectations.",
+          "claim": "Underlying demand is intact — Premier household penetration ~23% with the highest shake repeat rate in the category, supporting the ability to take price without losing the franchise.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "The guide-delivery track record is credible — EBITDA actual ≥ guided floor 7/7 resolved and FY2025 MET, so the committed FY27 margin-repair path has a delivery precedent.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The first decline in RTD-shake buy rate in 5 years and a step-up to 27% (Q2) of category volume sold on promotion signal a value-focused consumer who may respond to a double-digit list increase with elasticity worse than management assumes.",
+          "claim": "The promotional intensity looks structural, not transient — 27% of category volume on promotion in Q2 (up 8pts YoY) and the first buy-rate decline in 5 years, driven by aggressive insurgent competitors.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Protein-commodity inflation running above initial assumptions, plus tariffs and freight, took adjusted gross margin to 22.7% from 34.5% — the price increase must first offset a cost curve that is still rising.",
+          "claim": "Prior inflation-driven price increases already produced volume declines — Dymatize sales fell 2% on elasticities from earlier pricing, evidence that price does cost volume in this category.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "Protein-driven commodity inflation is running above management's own initial assumptions and worsening into Q4, a moving cost target the price increase must chase.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the FY27 double-digit price increase holds at slightly-above-1 elasticity in an increasingly value-seeking category, or triggers volume loss that re-compresses margin — unresolved until the Q4 print / FY27 guide (next results ~2026-11-03).",
-      "Company-defined adjusted EBITDA and adjusted leverage on an LTM basis are UNKNOWN (not in the 99.1 revised guidance), so net-debt/adjusted-EBITDA and covenant headroom cannot be triangulated — a disclosure gap that should be treated as a risk, not a neutral blank.",
-      "Self-funding is MIXED: latest-quarter OCF turned negative while LTM FCF is still positive; whether operating cash re-turns positive is unresolved and material to the leverage read.",
-      "No forward EV/EBITDA adjusted basis is available; the trailing 6.4x sits at its own ~4th percentile but cannot be classified as overshoot-vs-terminal without a clean forward basis — a genuinely neutral fact, not directional.",
-      "Execution risk from a brand-new CEO (seventh day), retiring President and departed Chief Growth Officer is unquantified against the margin-repair timetable.",
-      "The EBITDA-basis check flags GAAP-actual vs possibly-adjusted-estimate divergence in the 1.5–2.0x unresolved band; the estimate rows must be reconciled to the company's guidance basis before comparing forward multiples across the boundary.",
-      "The peer set is HETEROGENEOUS (caps $228M–$33.9B, 149x span), so whether the discount to peer P/E (6.3x vs 21.9x) is EARNED (negative EBITDA growth -27%, higher leverage, negative LT EPS growth) or RESIDUAL is a judgment the human must make — not a clean benchmark."
+      "Adjusted / forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance) — so the 6.4x trailing multiple cannot be distinguished from a temporarily depressed vs permanently impaired level; the forward basis needed to judge overshoot-vs-terminal is missing.",
+      "Whether the Q1 FY27 double-digit price increase holds at the assumed ~1 elasticity is unresolved — the 2026-11-03 print and FY27 guide (promised on the Q4 call) are the checkpoints and post-date this data.",
+      "Segment-level EBITDA is UNKNOWN — single-segment reporting (Protein-Based Consumer Goods) means no breakout to isolate whether Premier vs Dymatize margin damage is concentrated or broad; the opacity is a bearish gap, not neutral.",
+      "The EBITDA-basis boundary is UNRESOLVED — implied D&A is 23 in actuals vs 41 in estimates (1.82x, inside the band where GAAP-vs-adjusted basis changes have gone unflagged on this fleet); the estimate row must be reconciled to the company's own guidance basis before any cross-boundary multiple comparison.",
+      "Self-funding is MIXED, not clean — latest-quarter OCF is negative while LTM FCF is positive; the two-input read does not confirm quarter-level self-funding, and FY26 consensus FCF was cut hard (one broker to $19.3M).",
+      "New CEO (Michael Axelrod, effective July 29 2026, seventh day at the Q3 call) plus CGO departure and CEO retirement — execution/strategy under a brand-new leadership team is unproven; FY27 strategic priorities are not yet disclosed.",
+      "Covenant headroom / credit health is UNKNOWN (Credit Health Panel not rendered; debt schedule 308d old) against negative book equity and 3.4x leverage on a falling EBITDA base."
     ],
     "draw_agreement": {
       "attempted": 5,
@@ -8277,18 +8105,19 @@
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion and Adjusted EBITDA* outlook of $425-$440 million\" (8-K 0001628280-26-004789 EX-99.1)",
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between $2.41-$2.49 billion\" (8-K 0001628280-25-052773 EX-99.1)",
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Adjusted EBITDA as a percentage of net sales of 18% to 20%\" (8-K 0001628280-25-052773 EX-99.1)",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+2.3s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.0s fetch)",
     "Net debt/EBITDA (3.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.4x as the covenant-basis leverage.",
     "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 4, 'strongly-bearish': 1}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
   ],
   "qa_flags": [
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
+    "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (Revolving Credit Facility): 8-K 0001193125-19-270862 · d812149dex101.htm declares itself “AMENDED AND RESTATED LIMITED LIABILITY COMPANY AGREEMENT”",
+    "TWIN ampersand-name 'Central Garden & Pet' — verify it is a single entity (kept)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-26T06:33:56.784473Z",
+  "assembled_at": "2026-09-28T15:02:08.724620Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-22"
   },
@@ -8311,7 +8140,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-26T17:52:12.782231Z",
+    "computed_at": "2026-09-28T15:09:09.468272Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

@@ -4060,8 +4060,8 @@
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-08-31): 72.7M → 77.7M sh (+6.9%, rising) · 0.6% of shares out (EDGAR XBRL) · DTC 2.7d · recent: 2026-08-31 77.7M · 2026-08-14 72.7M · 2026-07-31 70.5M · 2026-07-15 78.7M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-08-31); DTC = 77,698,668 short ÷ 29,306,528 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-15): 77.7M → 87.4M sh (+12.5%, rising) · 0.7% of shares out (EDGAR XBRL) · DTC 3.0d · recent: 2026-09-15 87.4M · 2026-08-31 77.7M · 2026-08-14 72.7M · 2026-07-31 70.5M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 87,393,404 short ÷ 29,306,528 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -9010,7 +9010,7 @@
           "kind": "leading_indicator",
           "metric": "Cloud revenue growth",
           "period": "Q1 2026",
-          "value": "Revenue grew 63%, exceeding $20 billion for the first time",
+          "value": "grew 63%, exceeding $20 billion for the first time",
           "value_num": null,
           "unit": null,
           "verbatim": "Cloud accelerated again this quarter due to strong demand for our AI products and infrastructure. Revenue grew 63%, exceeding $20 billion for the first time and our backlog nearly doubled quarter-on-quarter to over $460 billion.",
@@ -9032,7 +9032,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Gemini Enterprise paid monthly active users growth",
+          "metric": "Gemini Enterprise paid monthly active user growth",
           "period": "Q1 2026",
           "value": "40% growth quarter-over-quarter",
           "value_num": null,
@@ -9056,7 +9056,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "first-party model token processing rate",
+          "metric": "first-party model token processing via direct API",
           "period": "Q1 2026",
           "value": "more than 16 billion tokens per minute, up from 10 billion last quarter",
           "value_num": null,
@@ -9067,10 +9067,34 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "TPU 8t processing power vs Ironwood",
+          "period": "Q1 2026",
+          "value": "3x the processing power of Ironwood and 2x the performance",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "TPU 8t provides high-performance model training with 3x the processing power of Ironwood and 2x the performance.",
+          "following_context": "TPU 8i delivers cost-effective, low-latency inference with 80% better performance per dollar than the prior generation.",
+          "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "TPU 8i performance per dollar vs prior generation",
+          "period": "Q1 2026",
+          "value": "80% better performance per dollar than the prior generation",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "TPU 8i delivers cost-effective, low-latency inference with 80% better performance per dollar than the prior generation.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "Lyria 3 songs generated",
-          "period": null,
-          "value": "over 150 million songs",
+          "period": "since launching on the Gemini app",
+          "value": "over 150 million songs since launching",
           "value_num": null,
           "unit": null,
           "verbatim": "Lyria 3 has generated over 150 million songs since launching on the Gemini app.",
@@ -9080,8 +9104,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Nano Banana 2 images generated",
-          "period": null,
+          "metric": "Nano Banana 2 images",
+          "period": "Q1 2026",
           "value": "1 billion images in nearly half the time of Nano Banana 1",
           "value_num": null,
           "unit": null,
@@ -9093,11 +9117,11 @@
         {
           "kind": "leading_indicator",
           "metric": "Gemma 4 downloads",
-          "period": null,
+          "period": "in just a few weeks",
           "value": "over 50 million times in just a few weeks",
           "value_num": null,
           "unit": null,
-          "verbatim": "On top of this, we launched Gemma 4, our most intelligent open model. It's been downloaded over 50 million times in just a few weeks.",
+          "verbatim": "It's been downloaded over 50 million times in just a few weeks.",
           "following_context": "In fact, our open models have now been downloaded over 500 million times.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
@@ -9105,7 +9129,7 @@
         {
           "kind": "leading_indicator",
           "metric": "open model downloads",
-          "period": null,
+          "period": "Q1 2026",
           "value": "over 500 million times",
           "value_num": null,
           "unit": null,
@@ -9115,9 +9139,9 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
+          "kind": "competitive_position",
           "metric": "search latency reduction",
-          "period": "past 5 years",
+          "period": "over the past 5 years",
           "value": "reduced search latency by more than 35% over the past 5 years",
           "value_num": null,
           "unit": null,
@@ -9127,9 +9151,9 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
+          "kind": "competitive_position",
           "metric": "cost of core AI responses reduction",
-          "period": null,
+          "period": "since upgrading AI Overviews and AI Mode to Gemini 3",
           "value": "reduced the cost of core AI responses by more than 30%",
           "value_num": null,
           "unit": null,
@@ -9140,7 +9164,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "revenue from GenAI-model products growth",
+          "metric": "revenue from products built on GenAI models growth",
           "period": "Q1 2026",
           "value": "grew nearly 800% year-over-year",
           "value_num": null,
@@ -9151,7 +9175,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "new customer acquisition",
           "period": "Q1 2026",
           "value": "doubling compared to the same period last year",
@@ -9176,9 +9200,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "customer consumption vs. initial commitments",
+          "metric": "customers outpacing initial commitments",
           "period": "Q1 2026",
-          "value": "Customers outpaced their initial commitments by 45%",
+          "value": "outpaced their initial commitments by 45%",
           "value_num": null,
           "unit": null,
           "verbatim": "Customers outpaced their initial commitments by 45%, accelerating over last quarter.",
@@ -9188,7 +9212,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Gemini Enterprise paid monthly active users growth",
+          "metric": "Gemini Enterprise paid monthly active user growth",
           "period": "Q1 2026",
           "value": "grew 40% quarter-over-quarter",
           "value_num": null,
@@ -9200,7 +9224,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "partner ecosystem growth (seats sold and partners)",
+          "metric": "partner seats sold and partners adopting for internal use",
           "period": "Q1 2026",
           "value": "9x year-over-year growth",
           "value_num": null,
@@ -9213,11 +9237,23 @@
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud customers processing over 1 trillion tokens",
-          "period": "past 12 months",
-          "value": "330 Google Cloud customers each processed over 1 trillion tokens; 35 reached the 10 trillion token milestone",
+          "period": "Over the past 12 months",
+          "value": "330 customers each processed over 1 trillion tokens",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the past 12 months, 330 Google Cloud customers each processed over 1 trillion tokens. 35 reached the 10 trillion token milestone.",
+          "verbatim": "Over the past 12 months, 330 Google Cloud customers each processed over 1 trillion tokens.",
+          "following_context": "35 reached the 10 trillion token milestone. To give agents business context from enterprise data to help them reason intelligently, we introduced a new Agentic Data Cloud. It includes a Cross-Cloud Lakehouse, Knowledge Catalog and Deep Research agents, which combine research and analytical skills. As an example, using our data cloud, American Express is enabling agentic commerce at scale by moving an enterprise data platform along with hundreds of production applications to BigQuery. Vodafone is proactively resolving outages, automating network planning and precisely targeting capacity. Enterprise data has become critical for agents to reason. Our strength with BigQuery and Gemini Enterprise has led Gemini-powered workflows in BigQuery to grow over 30x year-over-year.",
+          "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "customers reaching 10 trillion token milestone",
+          "period": "Over the past 12 months",
+          "value": "35 reached the 10 trillion token milestone",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "35 reached the 10 trillion token milestone.",
           "following_context": "To give agents business context from enterprise data to help them reason intelligently, we introduced a new Agentic Data Cloud. It includes a Cross-Cloud Lakehouse, Knowledge Catalog and Deep Research agents, which combine research and analytical skills. As an example, using our data cloud, American Express is enabling agentic commerce at scale by moving an enterprise data platform along with hundreds of production applications to BigQuery. Vodafone is proactively resolving outages, automating network planning and precisely targeting capacity. Enterprise data has become critical for agents to reason. Our strength with BigQuery and Gemini Enterprise has led Gemini-powered workflows in BigQuery to grow over 30x year-over-year.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
@@ -9225,7 +9261,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Gemini-powered workflows in BigQuery growth",
-          "period": null,
+          "period": "Q1 2026",
           "value": "grow over 30x year-over-year",
           "value_num": null,
           "unit": null,
@@ -9260,8 +9296,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Waymo fully autonomous rides per week",
-          "period": null,
+          "metric": "Waymo fully autonomous rides",
+          "period": "Q1 2026",
           "value": "surpassed 500,000 fully autonomous rides per week, doubling in less than a year",
           "value_num": null,
           "unit": null,
@@ -9308,7 +9344,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "network advertising revenue growth",
+          "metric": "network advertising revenue",
           "period": "Q1 2026",
           "value": "down 4% year-on-year",
           "value_num": null,
@@ -9382,7 +9418,7 @@
           "kind": "leading_indicator",
           "metric": "Cloud backlog",
           "period": "Q2 2026",
-          "value": "$514 billion",
+          "value": "grew to $514 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Cloud revenue grew 82% powered by strong demand for AI infrastructure and AI solutions and Cloud backlog grew to $514 billion.",
@@ -9392,8 +9428,8 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Gemini Enterprise adoption among Fortune 100",
-          "period": null,
+          "metric": "Fortune 100 using Gemini Enterprise",
+          "period": "Q2 2026",
           "value": "nearly 90% of Fortune 100 using it",
           "value_num": null,
           "unit": null,
@@ -9404,7 +9440,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "monthly developers building with models",
+          "metric": "developers building with models monthly",
           "period": "Q2 2026",
           "value": "More than 9 million developers",
           "value_num": null,
@@ -9416,7 +9452,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "model API token processing rate",
+          "metric": "model API token processing",
           "period": "Q2 2026",
           "value": "approximately 22 billion tokens per minute. That's up from 16 billion just a quarter ago",
           "value_num": null,
@@ -9429,7 +9465,7 @@
         {
           "kind": "leading_indicator",
           "metric": "daily active users creating videos on Gemini app",
-          "period": null,
+          "period": "Since launching at I/O in May",
           "value": "40% increase in daily active users",
           "value_num": null,
           "unit": null,
@@ -9441,7 +9477,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Gemma open model downloads",
-          "period": null,
+          "period": "Q2 2026",
           "value": "over 900 million times",
           "value_num": null,
           "unit": null,
@@ -9453,7 +9489,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Gemma 4 downloads",
-          "period": null,
+          "period": "since launching in April",
           "value": "over 300 million times since launching in April",
           "value_num": null,
           "unit": null,
@@ -9477,7 +9513,7 @@
         {
           "kind": "leading_indicator",
           "metric": "AI Mode monthly active users",
-          "period": null,
+          "period": "since expanding AI Mode globally last October",
           "value": "surpassed 1 billion monthly active users",
           "value_num": null,
           "unit": null,
@@ -9487,7 +9523,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
+          "kind": "competitive_position",
           "metric": "cost of AI mode responses",
           "period": "Q2 2026",
           "value": "reduced the cost of AI mode responses to its lowest level since launch",
@@ -9501,7 +9537,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Gemini app monthly active users",
-          "period": null,
+          "period": "Q2 2026",
           "value": "950 million monthly active users with daily active users tripling in the last year",
           "value_num": null,
           "unit": null,
@@ -9512,8 +9548,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "World Cup unique viewers on YouTube",
-          "period": null,
+          "metric": "unique viewers of World Cup videos on YouTube",
+          "period": "during the FIFA World Cup 2026",
           "value": "over 1.7 billion unique viewers globally",
           "value_num": null,
           "unit": null,
@@ -9524,7 +9560,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "users engaged with Ask YouTube",
+          "metric": "users engaged with Ask YouTube on watch page",
           "period": "June 2026",
           "value": "More than 140 million users",
           "value_num": null,
@@ -9535,8 +9571,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "new customer acquisition velocity",
+          "kind": "leading_indicator",
+          "metric": "customer acquisition velocity",
           "period": "Q2 2026",
           "value": "more than doubling our acquisition velocity year-over-year",
           "value_num": null,
@@ -9548,7 +9584,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "customer usage vs. commitments",
+          "metric": "existing customers exceeding commitments",
           "period": "Q2 2026",
           "value": "exceeding their commitments by more than 50%",
           "value_num": null,
@@ -9561,7 +9597,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud Marketplace transactions growth",
-          "period": null,
+          "period": "Q2 2026",
           "value": "growing over 7x year-over-year",
           "value_num": null,
           "unit": null,
@@ -9585,7 +9621,7 @@
         {
           "kind": "leading_indicator",
           "metric": "cloud customers processing over 1 trillion tokens",
-          "period": "last year",
+          "period": "in the last year",
           "value": "Nearly 500 cloud customers",
           "value_num": null,
           "unit": null,
@@ -9597,7 +9633,7 @@
         {
           "kind": "leading_indicator",
           "metric": "enterprises consuming over 100 billion tokens",
-          "period": "last 12 months",
+          "period": "Over the last 12 months",
           "value": "more than 2,000 enterprises",
           "value_num": null,
           "unit": null,
@@ -9608,8 +9644,8 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Fortune 100 Google Cloud security users",
-          "period": null,
+          "metric": "Fortune 100 as Google Cloud security users",
+          "period": "Q2 2026",
           "value": "90% of Fortune 100",
           "value_num": null,
           "unit": null,
@@ -9619,9 +9655,9 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "Wiz customers using AI-powered security features",
-          "period": null,
+          "period": "Q2 2026",
           "value": "Nearly 90% of Wiz customers",
           "value_num": null,
           "unit": null,
@@ -9644,8 +9680,8 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Axion CPU performance per dollar",
-          "period": null,
+          "metric": "Axion CPU performance per dollar vs peers",
+          "period": "Q2 2026",
           "value": "30% better performance per dollar compared to peer offerings",
           "value_num": null,
           "unit": null,
@@ -9655,9 +9691,21 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "Virgo Network AI accelerator connectivity",
+          "period": "Q2 2026",
+          "value": "connect 1 million AI accelerators across multiple data center sites",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "It allows customers to connect 1 million AI accelerators across multiple data center sites into a unified supercomputer.",
+          "following_context": "Second, our software stack has native support for JAX, PyTorch, vLLM and SGLang, enabling workload portability across GPUs and TPUs. And third, our new agent-optimized Axion CPU, provides 30% better performance per dollar compared to peer offerings. We are seeing strong growth in demand for our AI infrastructure offerings from leading labs such as Ineffable Intelligence, next-generation AI builders, including Kakao, financial services like Deutsche Börse Group, pharmaceutical companies such as Pfizer and Roche and robotics and spatial intelligence companies such as World Labs.",
+          "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "Wing home deliveries",
-          "period": null,
+          "period": "Q2 2026",
           "value": "more than 1 million home deliveries",
           "value_num": null,
           "unit": null,
@@ -9668,8 +9716,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Isomorphic Labs capital raised",
-          "period": null,
+          "metric": "Isomorphic Labs funds raised",
+          "period": "Q2 2026",
           "value": "over $2 billion",
           "value_num": null,
           "unit": null,
@@ -9716,7 +9764,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "network advertising revenue growth",
+          "metric": "network advertising revenue",
           "period": "Q2 2026",
           "value": "down 1% year-on-year",
           "value_num": null,
@@ -9746,78 +9794,63 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — genuine, accelerating cloud/ad runway offset by a near-ceiling trailing multiple, ROIC erosion, and a P/E flattered by one-off gains.",
+    "evidence_balance": "strongly-bullish — accelerating Cloud growth and rising EBITDA/estimates outweigh a rich trailing multiple and compressing FCF.",
     "bull_points": [
       {
-        "claim": "Cloud is accelerating as the durable second engine: revenue grew 82% in Q2 2026 with the AI-solution mix now the primary driver, evidencing a longer, larger reinvestment runway than a mature ad business alone implies.",
+        "claim": "Cloud revenue accelerated to 82% year-over-year growth in Q2 2026, up from 63% in Q1, evidencing a reinvestment engine that is speeding up rather than maturing.",
         "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Cloud backlog grew to $514 billion by Q2 2026 (from over $460 billion the prior quarter), a booked-but-unrecognised pipeline that lengthens the visible runway well beyond the trailing multiple.",
+        "claim": "Cloud backlog grew to $514 billion in Q2 2026 (from over $460 billion in Q1), a committed-revenue runway that supports the long-duration expectations embedded in the price.",
         "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The core ad engine is still compounding at scale: Search & Other grew 17% and YouTube ads 13% in Q2 2026, with management attributing accelerating usage to AI Overviews/AI Mode rather than cannibalisation.",
+        "claim": "The core Search franchise remains a durable compounder: Search & Other grew 17% in Q2 2026 with AI Mode surpassing 1 billion monthly active users since global expansion, so AI is expanding rather than cannibalising the ad engine.",
         "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA has compounded from $35,813M (FY17) to $173,164M (LTM Jun-30-2026) with the margin rising to 39%, so the business is earning MORE, not optically shrinking — the runway rests on genuine operating leverage.",
+        "claim": "Absolute EBITDA has compounded from $35,813M (FY17) to $173,164M (LTM Jun-30-2026) with margin rising to 39%, so scale is deepening returns, not diluting them.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Consensus revenue is modelled to grow from $498.5B (FY26E) toward $844B (FY29E) and past $1.1T (FY31E), an unusually long multi-year growth path that the market must price against.",
-        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
+        "claim": "Consensus EBITDA revisions have moved sharply up over 12 months (FY26 EBITDA +14%, FY26 EBT +104%), a rising-estimate backdrop rather than a fading one.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The balance sheet funds the runway internally: net cash at -0.7x net-debt/EBITDA, FCF-positive and self-funding, with S&P AA+ issuer credit — reinvestment need not dilute or lever up.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "claim": "The balance sheet is net cash at -0.7x net-debt/EBITDA with 76.9x interest coverage and an S&P AA+ issuer rating, so the heavy reinvestment is self-funded and carries no survival risk.",
+        "source_ref": "CIQ Net Debt $-121,683M [Q2 Jun-30-2026] ÷ CIQ EBITDA $173,164M [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "On a forward basis the name is NOT expensive versus this heterogeneous peer set — NTM TEV/EBITDA 16.13 vs peer median 12.06 and NTM P/E 26.52 vs peer median 22.12 — but with EBITDA margin 39% vs peer-median 26%, the human must judge whether that premium is EARNED by superior economics rather than assumed.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-        "cited": true
-      },
-      {
-        "claim": "Fundamentals sit above the peer median on the levers that justify a premium — EBITDA margin 39% vs 26%, revenue growth 20% vs 16%, Debt/EBITDA 0.7 vs 1.1 — posing whether any headline discount is RESIDUAL rather than a value trap, for the human to decide.",
+        "claim": "On a forward basis the name trades at NTM TEV/EBITDA 16.13x vs a heterogeneous peer median 12.06x while carrying a superior EBITDA margin (39% vs peer-median 26%) and faster revenue growth (20% vs 16%) — posing whether the forward premium is EARNED by fundamentals rather than a residual overshoot; the human judges against the heterogeneous peer set.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Segment operating economics confirm the two-engine quality: Google Services $139,404M operating income (40.7% margin) and Google Cloud now profitable at $13,910M (23.7% margin) in FY2025.",
-        "source_ref": "EDGAR 10-K 0001652044-26-000018 XBRL instance goog-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The trailing EV/EBITDA of 23.6x sits at the 95th percentile of its own 9-year range (10.9–25.8x, median 17.5x) — this is the REAL signal that the quality is already richly paid for on the trailing basis, though it is trailing-only with no forward reconciler beside it, so overshoot-vs-terminal cannot be settled from this figure alone.",
+        "claim": "The trailing EV/EBITDA of 23.6x sits at the 95th percentile of its own ~9.5-year history (range 10.9–25.8x, median 17.5x) — the reinvestment quality is being paid for near a self-history ceiling, so future returns must be beaten from a rich starting point; note this multiple is trailing-only with no forward basis, so a depressed-vs-terminal read cannot be distinguished here.",
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
         "cited": true
       },
       {
-        "claim": "The optically cheap headline P/E of 17.8x is a consensus MISREAD, not a signal of value: three of the trailing four quarters carry a below-the-line block netting +$151,120M (Q2 alone +$97,983M, 82% of revenue), so the trailing EPS anchoring that multiple is inflated by non-operating gains, not operating earnings.",
+        "claim": "The 17.8x trailing P/E is the OPTICAL MISREAD, not the real signal: three of the last four quarters carry large below-operating-line gains netting +$151,120M, so the low P/E reflects one-off investment gains inflating net income — the NTM P/E of 26.52x is the operating anchor and sits at a premium to the peer-median NTM P/E of 22.12x.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       },
       {
-        "claim": "Capex has escalated sharply — from $52,535M (FY24) to $91,447M (FY25) to $132,402M (LTM) with FY26E consensus at ~$201,846M — and company-defined levered FCF has fallen to $22,665M, so the reinvestment the bull case celebrates is compressing free cash today.",
+        "claim": "Reinvestment intensity is escalating hard: capex rose to $132,402M (LTM) and consensus models FY26 capex near -$201,846M, driving reported FCF down to $22,665M (LTM) from $56,280M (FY23) — the runway is real but its cash cost is rising faster than reported free cash flow.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "The cash-drain from that capex is now visible in forward estimates: multiple brokers cut FY26 free cash flow deeply negative (consensus FCF revised toward -$5,456M and a broker to -$107,315M), signalling the spend outpaces operating cash on a forward view.",
-        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-17 · export date unverified]",
-        "cited": true
-      },
-      {
-        "claim": "ROIC has slipped from 21.0% (FY24) to 15.8% (LTM) as the invested-capital base swells faster than returns, a genuine counter to the compounding thesis that the incremental AI/cloud capital is earning the historic rate.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "claim": "Consensus long-term EPS growth of 13% trails the peer median of 21%, a genuine counter to the runway thesis — OUTWEIGHED for now by the near-term acceleration in Cloud (82% Q2 growth) and rising 12-month EBITDA/EBT revisions, but a real drag on the very long-duration expectations the price embeds.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
@@ -9825,71 +9858,93 @@
       {
         "name": "Microsoft Corporation",
         "outcome": "kept compounding",
-        "distinguishing_fact": "A mega-cap platform that layered a fast-growing enterprise cloud engine onto a dominant legacy franchise and sustained a premium multiple as cloud scaled — the pattern the runway case leans on.",
+        "distinguishing_fact": "Mega-cap platform that funded a step-change in cloud/AI capex out of a net-cash balance sheet while the core franchise kept compounding — the analogue for reinvestment that the market ultimately paid up for.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Amazon.com",
         "outcome": "kept compounding",
-        "distinguishing_fact": "A dominant franchise that ran heavy, front-loaded capex and depressed near-term free cash flow to build cloud/logistics capacity, testing investor patience on the reinvestment-vs-FCF trade-off.",
+        "distinguishing_fact": "Heavy multi-year capex build depressed reported free cash flow while a high-growth cloud segment carried the runway — the analogue for a rising-capex, falling-FCF profile that later re-accelerated.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Meta Platforms",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "An ad-driven mega-cap whose multiple de-rated hard when a capex/AI-investment cycle outran visible returns, then re-rated once monetisation caught up — the capex-cycle risk the bear case flags.",
+        "distinguishing_fact": "Advertising-led compounder whose AI-capex ramp compressed near-term free cash flow and triggered a valuation swing before the ad engine reasserted — the analogue for capex-anxiety on a dominant ad platform.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Netflix",
+        "name": "Cisco Systems",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A high-multiple growth platform that saw its trailing valuation compress sharply when growth-and-spend expectations were reset, illustrating how a near-ceiling multiple can unwind.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A dominant franchise that traded at a peak multiple on a durable-growth narrative and then de-rated when growth normalised — the analogue for paying a top-of-history multiple for quality already recognised.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Will the escalating AI/cloud capex convert into durable incremental returns that justify a near-record trailing multiple, or is the spend outrunning the returns while the headline P/E is flattered by one-off non-operating gains?",
+      "question": "Will the escalating capex/AI reinvestment (rising cash cost, FCF compression) convert into durable operating-EBITDA growth long enough to beat expectations already priced near a self-history ceiling — or is the quality fully paid for?",
       "evidence_for": [
         {
-          "claim": "Cloud revenue grew 82% and backlog reached $514 billion in Q2 2026, with customers exceeding commitments by more than 50% — demand signals that the capacity being built is being absorbed.",
+          "claim": "Cloud revenue grew 82% in Q2 2026 with backlog at $514 billion, the load-bearing driver that the runway case turns on.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA rose to $173,164M (LTM) at a 39% margin and Cloud reached segment profitability ($13,910M, 23.7% margin FY2025), evidence the reinvestment is already flowing through to reported operating economics.",
+          "claim": "Operating EBITDA compounded to $173,164M (LTM) at a 39% margin, showing the reinvestment is translating into rising absolute profit, not just revenue.",
           "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "cited": true
+        },
+        {
+          "claim": "12-month consensus EBITDA and EBT revisions rose (+14% and +104% for FY26), evidence the estimate path is still moving up.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Capex climbed to $132,402M (LTM) toward ~$201,846M (FY26E) while levered FCF fell to $22,665M, and ROIC dropped from 21.0% (FY24) to 15.8% (LTM) — the invested base is growing faster than returns so far.",
-          "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+          "claim": "Trailing EV/EBITDA of 23.6x sits at the 95th percentile of its own ~9.5-year history — much of the quality is already in the price.",
+          "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
           "cited": true
         },
         {
-          "claim": "The trailing P/E that makes the name look cheap is distorted by +$151,120M of below-the-line gains across the trailing four quarters, so headline earnings overstate the operating base against which the capex must earn.",
-          "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+          "claim": "LTM reported FCF fell to $22,665M as capex climbed to $132,402M, so the reinvestment's cash cost is currently outrunning free-cash generation.",
+          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
+          "cited": true
+        },
+        {
+          "claim": "Consensus long-term EPS growth of 13% lags the peer median of 21%, tempering the durability the priced runway assumes.",
+          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cannot distinguish overshoot from a permanently sustainable level on the headline EV/EBITDA: it is trailing-only with no forward basis, and the trailing-vs-forward EBITDA rows are on divergent D&A bases (estimate D&A ~5.57x actual), so a trailing multiple must not be compared like-for-like against a forward one.",
-      "The 5-year P/E percentile cannot be built because a stock split inside the window pits split-adjusted prices against as-filed EPS — own-history P/E context is unavailable.",
-      "No segment EBITDA disclosure: revenue is segmented but EBITDA is not, so Cloud vs Services margin trajectory (the core of the runway thesis) cannot be tracked at the EBITDA level — an opacity that limits verifying where returns accrue.",
-      "Company-defined FCF basis is ambiguous: CIQ 'Levered FCF' $22,665M vs CFO−capex $53,273M differ 0.43x on the same period; which basis a self-funding read uses is unresolved.",
-      "Adjusted/forward EBITDA, adjusted EPS and adjusted net-debt/EBITDA are all absent from the 99.1 revised guidance — no company-adjusted anchor to test the leverage/valuation on management's own basis.",
-      "Peer set is HETEROGENEOUS (market caps span $6.6B–$3,724.7B, 568x; name $4,318.6B): every peer multiple is a confidence-gated input, not a clean benchmark, and the earned-vs-residual read on any discount/premium must be gated accordingly.",
-      "Covenant terms are UNKNOWN — no agreement exhibit located; the debt schedule is 229 days old — so covenant headroom cannot be verified from the record."
-    ]
+      "Segment EBITDA is not disclosed — revenue is segmented but EBITDA is not, so Cloud's true profitability (and whether the 82% growth carries margin) cannot be verified from the filing (opacity: bearish gap on the load-bearing growth driver).",
+      "Trailing EV/EBITDA is trailing-only with no forward basis in the revised guidance; a depressed-vs-permanently-impaired / overshoot-vs-terminal read is unresolved and belongs to the human, not a directional read.",
+      "5-year P/E percentile cannot be built because a share-basis change (split) sits inside the window and older EPS is as-filed — the trailing P/E range is not comparable.",
+      "Forward adjusted EBITDA and adjusted EPS are not in the revised guidance, so an adjusted leverage/multiple cross-check is unavailable.",
+      "The estimate-basis EBITDA implies ~5.57x the D&A of the actuals, so trailing-vs-forward EBITDA multiples are on non-identical bases — growth across the boundary is partly definitional.",
+      "Covenant terms are UNKNOWN (no agreement exhibit located) — a gap in the pointer search, not confirmed absence.",
+      "Whether the FY26E FCF (consensus basis) of $7,783M and FY27E -$32,380M reflect a sustained capex peak or a durable cash-flow impairment is unresolved."
+    ],
+    "draw_agreement": {
+      "attempted": 5,
+      "completed": 5,
+      "labels": {
+        "mixed": 2,
+        "strongly-bullish": 3
+      },
+      "unanimous": false
+    }
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Alphabet Class A, HELD — a $50,000 / 5.0% NAV starter entered 2026-08-14 at ~$345 under an external IC memo, recorded here so the machinery can see a live position it was previously blind to. Followed under the QUALITY book: the binding question is duration — whether Search and Cloud economics outlast what a ~26x normalized NTM multiple already pays for — not whether a de-rating is overdone, which is the overshoot twin's question and the wrong one here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. Class A specifically: the memo, the $345.90 verified close and the frozen legs are all Class A, and GOOG (Class C) is a distinct security. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 8-K 0001193125-26-342390 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-26-234488 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-26-216986 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)"
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+3.8s fetch)",
+    "Bare peer-comparison (a bear point): 'The 17.8x trailing P/E is the OPTICAL MISREAD, not the real signal: three of the last four quarters carry large below-operating-line gains netting +$151,120M, so the low P/E reflects one-off investment gains inflating net income — the NTM P/E of 26.52x is the operating anchor and sits at a premium to the peer-median NTM P/E of 22.12x.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The 17.8x trailing P/E is the OPTICAL MISREAD, not the real signal: three of the last four quarters carry large below-operating-line gains netting +$151,120M, so the low P/E reflects one-off investment gains inflating net income — the NTM P/E of 26.52x is the operating anchor and sits at a premium to the peer-median NTM P/E of 22.12x.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat",
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 2, 'strongly-bullish': 3}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -9897,10 +9952,10 @@
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-23T14:45:26.226424Z",
+  "assembled_at": "2026-09-28T15:29:03.735156Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-22"
   },
@@ -9923,7 +9978,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-23T15:05:56.108857Z",
+    "computed_at": "2026-09-28T16:47:14.006666Z",
     "reason": null,
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
