@@ -4152,7 +4152,7 @@
       "missing": [],
       "reason": "",
       "value": {
-        "line": "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24",
+        "line": "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-09-22",
         "forms": [
           [
             "424B3",
@@ -4190,7 +4190,7 @@
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-26-098838"
       ],
       "render_config": {}
     },

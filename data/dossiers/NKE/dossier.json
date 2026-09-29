@@ -4070,8 +4070,8 @@
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-08-31): 68.8M → 75.6M sh (+9.8%, rising) · DTC 2.8d · recent: 2026-08-31 75.6M · 2026-08-14 68.8M · 2026-07-31 57.4M · 2026-07-15 63.9M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-08-31); DTC = 75,594,334 short ÷ 27,375,178 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-15): 75.6M → 85.7M sh (+13.4%, rising) · DTC 3.1d · recent: 2026-09-15 85.7M · 2026-08-31 75.6M · 2026-08-14 68.8M · 2026-07-31 57.4M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 85,698,150 short ÷ 27,375,178 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4509,7 +4509,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[364-day Committed Credit Facility · 0000320187-25-000008 · amended by 0000320187-26-000020]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date)\n  Interest / coupon rate: Term SOFR Loan or Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis…\n  Maturity date: Termination Date: first to occur of (a) later of (i) March 5, 2027 and (ii) any…\n[Committed Credit Facilities · 0000320187-24-000009]\n  Principal / commitment amount: $1,000,000,000 (Aggregate Commitments on the Effective Date); increase option up to…\n  Interest / coupon rate: Advances bear interest at the selected Rate Option (Base Rate, Term SOFR,…\n  Maturity date: Termination Date: the later of (i) March 7, 2025 and (ii) if extended pursuant to…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[364-DAY CREDIT AGREEMENT · 0000320187-25-000008 · amended by 0000320187-26-000020]\n  Principal / commitment amount: $1,000,000,000\n  Interest / coupon rate: Term SOFR Loan or Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis…\n  Maturity date: the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section…\n  Default interest rate: otherwise applicable rate plus 2% per annum\n[CREDIT AGREEMENT · 0000320187-23-000006 · amended by 0000320187-24-000009]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date)\n  Interest / coupon rate: Term SOFR plus Applicable Margin (35.75 to 69.0 basis points depending on Applicable…\n  Maturity date: Termination Date: the later of (i) March 7, 2025 and (ii) any extended maturity per…\n  Default interest rate: Base Rate plus Applicable Margin plus 2% per annum (or otherwise-applicable rate…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4528,12 +4528,14 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date)",
+              "value": "$1,000,000,000 (Aggregate Commitments on the Effective Date); increase option not exceeding $500,000,000 (minimum $50,000,000 per request) under Section 2.7.1",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
@@ -4542,35 +4544,41 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR plus Applicable Margin (35.75 / 48.0 / 58.5 / 69.0 basis points by Applicable Rating Level), plus Term SOFR Adjustment of 0.10% (10 basis points); Base Rate is highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) Bank of America prime rate, (c) Term SOFR plus 1.00%; if any rate less than zero it shall be deemed zero",
+              "value": "Term SOFR plus Applicable Margin (35.75 / 48.0 / 58.5 / 69.0 basis points by Applicable Rating Level Levels I-IV), plus Term SOFR Adjustment of 0.10% (10 bps). Base Rate Advances bear interest at the Base Rate (highest of Federal Funds Rate + 1/2 of 1%, BofA prime rate, and Term SOFR + 1.00%). Alternative Currency Loans bear interest at Alternative Currency Daily Rate or Alternative Currency Term Rate plus Applicable Margin. Term SOFR/Successor Rate floored at zero.",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Term SOFR Advance\" means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... \"Applicable Margin\" means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0 ... \"Term SOFR Adjustment\" means with respect to Term SOFR 0.10% (10 basis points) for an Interest Period of one, three or six-month's duration.”"
+              "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... “ Applicable Margin ” means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0 ... “ Term SOFR Adjustment ” means with respect to Term SOFR 0.10% (10 basis points) for an Interest Period of one, three or six-month’s duration.”"
             },
             "base_rate_label": "Term SOFR",
             "margin_pct": null,
             "margin_bps": 35.75,
             "floor_pct": 0.0,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: the later of (i) March 6, 2026 and (ii) any extended maturity date under Section 2.6 (extension for an additional 364 days); subject to Term Out Option under Section 2.10 (due on first anniversary of Termination Date)",
+              "value": "March 6, 2026 (Termination Date), subject to 364-day extension under Section 2.6 and Term Out Option under Section 2.10 (converted loans due first anniversary of Termination Date)",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 6, 2026 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
+              "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 6, 2026 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Financial-maintenance covenants",
@@ -4584,35 +4592,41 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty Agreement (Exhibit M): the Company guarantees the obligations of each Designated Borrower. No security/collateral pledge stated (unsecured facility; ratings measured on \"long-term, senior unsecured, non-credit-enhanced debt\")",
+              "value": "No collateral/security stated (unsecured facility; obligations described as 'unsecured' in Section 10.19). Guarantor: the Company (NIKE, Inc.) guarantees the obligations of each Designated Borrower pursuant to the Company Guaranty Agreement (Exhibit M).",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+              "note": "verbatim: ““ Company Guaranty Agreement ” means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within 2 Business Days down to not more than 100% of aggregate Commitments. Events of Default (Article VII): 7.1 materially false representation/warranty; 7.2 nonpayment (principal when due; interest/fees within 5 Business Days); 7.3 breach of specified covenants (30-day cure for others); 7.4 cross-default on Indebtedness in excess of $200,000,000; 7.5/7.6 bankruptcy/insolvency; 7.8 unpaid judgments in excess of $200,000,000; 7.9 ERISA Reportable Event/Unfunded Liabilities; 7.10 Change in Control",
+              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to reduce to not more than 100% of aggregate Commitments. Events of Default (Article VII): 7.1 material false representation/warranty; 7.2 nonpayment of principal when due, or interest/fees within 5 Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14, 6.15 or other covenant not cured within 30 days; 7.4 cross-default on Indebtedness in excess of $200,000,000 (30-day cure); 7.5-7.6 bankruptcy/insolvency events (60-day period for involuntary); 7.8 unsatisfied judgments in excess of $200,000,000 (60 days); 7.9 ERISA Reportable Event/material Unfunded Liabilities; 7.10 any Change in Control.",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect. ... ARTICLE VII DEFAULTS The occurrence of any one or more of the following events shall constitute a Default: 7.1 Any representation or warranty ... shall be materially false ... 7.2 Nonpayment of principal ... 7.4 Failure of the Company or any Subsidiary to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ... 7.5 ... order for relief ... under any Debtor Relief Law ... 7.8 ... judgments or orders for the payment of money in excess of $200,000,000 ... 7.10 Any Change in Control shall occur.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect ... The occurrence of any one or more of the following events shall constitute a Default: 7.1 ... 7.2 Nonpayment of principal of any Loan (in the Agreed Currency) when due, or nonpayment of interest ... within five (5) Business Days after the same becomes due ... 7.10 Any Change in Control shall occur.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Conversion price / mechanics",
@@ -4626,12 +4640,14 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (Aggregate Commitments on the Effective Date); increase option up to an additional $500,000,000 pursuant to Section 2.7.1",
+              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date)",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
@@ -4640,35 +4656,41 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Advances bear interest at the selected Rate Option (Base Rate, Term SOFR, Alternative Currency Daily Rate, or Alternative Currency Term Rate) plus the Applicable Margin. Applicable Margin (in basis points): Level I 35.75; Level II 48.0; Level III 58.5; Level IV 69.0. Term SOFR Adjustment 0.10% (10 basis points).",
+              "value": "Term SOFR plus Applicable Margin (35.75 to 69.0 basis points depending on Applicable Rating Level), plus Term SOFR Adjustment of 0.10% (10 basis points); Base Rate option = highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) BofA prime rate, (c) Term SOFR plus 1.00%; Alternative Currency Daily Rate / Alternative Currency Term Rate plus Applicable Margin",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Term SOFR Advance\" means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... \"Applicable Margin\" means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: ... Level I 35.75 ... Level II 48.0 ... Level III 58.5 ... Level IV 69.0”"
+              "note": "verbatim: “\"Term SOFR Advance\" means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... \"Applicable Margin\" means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Level I 35.75 / Level II 48.0 / Level III 58.5 / Level IV 69.0 (in basis points). \"Term SOFR Adjustment\" means with respect to Term SOFR 0.10% (10 basis points) for an Interest Period of one, three or six-month's duration.”"
             },
             "base_rate_label": "Term SOFR",
             "margin_pct": null,
             "margin_bps": 35.75,
-            "floor_pct": null,
-            "pik_pct": null
+            "floor_pct": 0.0,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: the later of (i) March 7, 2025 and (ii) if extended pursuant to Section 2.6, such extended maturity date (extensions of an additional 364 days). Term Out Option (Section 2.10): Loans may be converted into term loans due on the first anniversary of the Termination Date.",
+              "value": "Termination Date: the later of (i) March 7, 2025 and (ii) any extended maturity per Section 2.6; subject to 364-day extension option (Section 2.6.1) and Term Out Option extending to first anniversary of Termination Date (Section 2.10)",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 7, 2025 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
+              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 7, 2025 and (ii) if maturity is extended pursuant to Section 2.6, such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided, however, if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Financial-maintenance covenants",
@@ -4682,133 +4704,121 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty Agreement: the Company guarantees the obligations of each Designated Borrower (Exhibit M). No security interest/collateral pledge granted; the facility is unsecured (Obligations described as unsecured; see Change in Control referencing 'long-term, senior unsecured, non-credit-enhanced debt').",
+              "value": "Company Guaranty Agreement (Company guarantees obligations of each Designated Borrower) per Exhibit M and Section 2.9.2; no security/collateral stated (unsecured facility — see 'Applicable Rating Level' referencing 'the Company's long-term, senior unsecured, non-credit-enhanced debt')",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... 2.9.2 The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+              "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M. ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within two Business Days to not exceed 100% of Aggregate Commitments. Events of Default (Article VII) include: 7.1 materially false representation/warranty; 7.2 nonpayment of principal when due / interest, facility fee or other Obligations within 5 Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14 or 6.15, or other covenant breach not remedied within 30 days; 7.4 cross-default on Indebtedness in excess of $200,000,000 within 30 days; 7.5/7.6 bankruptcy/insolvency events; 7.8 unpaid judgments in excess of $200,000,000 not discharged within 60 days; 7.9 ERISA Reportable Event / material Unfunded Liabilities; 7.10 Change in Control. Acceleration per Section 8.1.",
+              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to no more than 100% of aggregate Commitments. Events of Default (Article VII 7.1-7.10): false representation; nonpayment of principal when due / interest or fees within 5 Business Days; breach of specified covenants (Sections 6.10, 6.11, 6.12, 6.14, 6.15) or other covenants uncured within 30 days; cross-default on Indebtedness > $200,000,000; insolvency/bankruptcy; unpaid judgments > $200,000,000; ERISA Reportable Event/material Unfunded Liabilities; Change in Control",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect. ... ARTICLE VII DEFAULTS The occurrence of any one or more of the following events shall constitute a Default: 7.1 Any representation or warranty ... shall be materially false ... 7.2 Nonpayment of principal ... 7.4 Failure ... to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ... 7.5 [bankruptcy] ... 7.10 Any Change in Control shall occur.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect. ... Article VII Defaults: 7.1 Any representation or warranty ... materially false; 7.2 Nonpayment of principal ... or nonpayment of interest ... within five (5) Business Days; 7.3 breach of Section 6.10, 6.11, 6.12, 6.14 or 6.15 ... other breaches not remedied within thirty (30) days; 7.4 Failure ... to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ...; 7.5 / 7.6 bankruptcy / insolvency events; 7.8 judgments in excess of $200,000,000; 7.9 ERISA Reportable Event; 7.10 Any Change in Control shall occur.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Conversion price / mechanics",
+            "name": "Facility Fee",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
+              "value": "1.75 to 6.0 basis points on each Commitment (used or unused) based on Applicable Rating Level, payable quarterly in arrears",
+              "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “\"Applicable Facility Fee Rate\" means, on any date and with respect to each Commitment whether used or unused, the applicable fee (in basis points) set forth below based on the Applicable Rating Level on such date: Level I 1.75 / Level II 2.0 / Level III 4.0 / Level IV 6.0”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Principal / commitment amount",
+            "name": "Default interest rate",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
+              "value": "Base Rate plus Applicable Margin plus 2% per annum (or otherwise-applicable rate plus 2% for Term SOFR/Alternative Currency Advances)",
+              "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Interest / coupon rate",
+            "name": "Increase in Commitments (accordion)",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
+              "value": "Up to $500,000,000 aggregate increase; minimum $50,000,000 per request",
+              "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “the Company may from time to time, request an increase in the Commitments by an amount (for all such requests) not exceeding $500,000,000; provided that any such request for an increase shall be in a minimum amount of $50,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Maturity date",
+            "name": "Term Out Option fee",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
+              "value": "0.50% of aggregate outstanding principal of Loans converted to term loans; term loans due on first anniversary of Termination Date",
+              "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “the Borrower shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Financial-maintenance covenants",
+            "name": "Governing law",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
+              "value": "State of New York",
+              "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “THE LOAN DOCUMENTS ... SHALL BE CONSTRUED IN ACCORDANCE WITH THE INTERNAL LAWS (AND NOT THE LAW OF CONFLICTS) OF THE STATE OF NEW YORK BUT GIVING EFFECT TO FEDERAL LAWS APPLICABLE TO NATIONAL BANKS.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Security / collateral / guarantors",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Mandatory prepayment / events of default",
-            "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Conversion price / mechanics",
@@ -4822,26 +4832,30 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date)",
+              "value": "$1,000,000,000",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+              "note": "verbatim: “The aggregate amount of the Banks’ Commitments on the Effective Date is $1,000,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR Loan or Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basis points). Term SOFR: rate per annum equal to the Term SOFR Screen Rate; provided that if Term SOFR would otherwise be less than zero, Term SOFR shall be deemed zero.",
+              "value": "Term SOFR Loan or Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basis points). Term SOFR floor: if Term SOFR would be less than zero, deemed zero.",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
               "note": "verbatim: ““Applicable Margin” means, on any date and (i) with respect to a Term SOFR Loan or Alternative Currency Loan, 0.595% (59.5 basis points) or (ii) with respect to a Base Rate Loan, 0.00% (0 basis points).”"
@@ -4850,54 +4864,14 @@
             "margin_pct": 0.595,
             "margin_bps": null,
             "floor_pct": 0.0,
-            "pik_pct": null
-          },
-          {
-            "name": "Base Rate",
-            "value": {
-              "value": "highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) Bank of America “prime rate,” and (c) Term SOFR plus 1.00%; if less than zero, deemed zero",
-              "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
-              "status": "present",
-              "note": "verbatim: ““Base Rate” means for any day a fluctuating rate per annum equal to the highest of (a) the Federal Funds Rate plus 1/2 of 1%, (b) the rate of interest in effect for such day as publicly announced from time to time by Bank of America as its “prime rate,” and (c) Term SOFR plus 1.00%; and if the Base Rate shall be less than zero, such rate shall be deemed zero for purposes of this Agreement.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Facility Fee",
-            "value": {
-              "value": "0.03% (3 basis points) per annum on each Commitment, whether used or unused",
-              "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
-              "status": "present",
-              "note": "verbatim: ““Applicable Facility Fee Rate” means, on any date and with respect to each Commitment whether used or unused, 0.03% (3 basis points) per annum.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Default rate",
-            "value": {
-              "value": "applicable rate (including Applicable Margin) plus 2% per annum",
-              "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
-              "status": "present",
-              "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum to the fullest extent permitted by applicable Laws.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: first to occur of (a) later of (i) March 5, 2027 and (ii) any extended maturity date under Section 2.6, and (b) earlier cancellation/termination. Plus Term Out Option: Loans may be converted into term loans due on the first anniversary of the Termination Date.",
+              "value": "the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section 2.6, such extended maturity date; subject to Term Out Option extending to first anniversary of the Termination Date",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
               "note": "verbatim: ““Termination Date” means the first to occur of (a) the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
@@ -4906,7 +4880,9 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Financial-maintenance covenants",
@@ -4920,26 +4896,30 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty Agreement (Exhibit M): Company guarantees obligations of each Designated Borrower. No collateral/security package stated (unsecured facility).",
+              "value": "Company guarantees obligations of each Designated Borrower (Company Guaranty Agreement, Exhibit M). No collateral/security interest granted; unsecured (negative pledge in Section 6.12).",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+              "note": "verbatim: ““Company Guaranty Agreement” means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within 2 Business Days to reduce to not more than 100% of Commitments. Defaults (Article VII) include: material false representation (7.1); nonpayment of principal when due, or interest/fees within 5 Business Days (7.2); breach of covenants (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency events (7.5, 7.6); unpaid judgments in excess of $200,000,000 within 60 days (7.8); ERISA Reportable Event/Unfunded Liabilities (7.9); Change in Control (7.10).",
+              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to no more than 100% of Commitments. Defaults (Article VII): 7.1 material false representation; 7.2 nonpayment of principal when due, or interest/facility fee/other Obligations within 5 Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14 or 6.15, and other covenant breach not remedied within 30 days; 7.4 cross-default on Indebtedness in excess of $200,000,000 not paid within 30 days or accelerated; 7.5/7.6 insolvency/bankruptcy events; 7.8 unpaid judgments in excess of $200,000,000 within 60 days; 7.9 Reportable Event/material Unfunded Liabilities; 7.10 any Change in Control. Acceleration per Section 8.1.",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
               "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect”"
@@ -4948,26 +4928,62 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Term Out Option",
+            "name": "Facility Fee",
             "value": {
-              "value": "Term out fee: 0.50% of aggregate outstanding principal of Loans converted; extends maturity to first anniversary of Termination Date",
+              "value": "0.03% (3 basis points) per annum",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “The Company may, upon notice to the Administrative Agent not later than the Termination Date, elect to convert all of the Loans outstanding on the Termination Date in effect at such time into “term loans” ... and shall instead be due and payable on the first anniversary of the Termination Date ... the Company shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
+              "note": "verbatim: ““Applicable Facility Fee Rate” means, on any date and with respect to each Commitment whether used or unused, 0.03% (3 basis points) per annum.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": 3.0,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Default interest rate",
+            "value": {
+              "value": "otherwise applicable rate plus 2% per annum",
+              "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+              "status": "present",
+              "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum to the fullest extent permitted by applicable Laws.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Base Rate",
+            "value": {
+              "value": "highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) Bank of America prime rate, and (c) Term SOFR plus 1.00%",
+              "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+              "status": "present",
+              "note": "verbatim: ““Base Rate” means for any day a fluctuating rate per annum equal to the highest of (a) the Federal Funds Rate plus 1/2 of 1%, (b) the rate of interest in effect for such day as publicly announced from time to time by Bank of America as its “prime rate,” and (c) Term SOFR plus 1.00 %; and if the Base Rate shall be less than zero, such rate shall be deemed zero for purposes of this Agreement.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
             "name": "Increase in Commitments (accordion)",
             "value": {
-              "value": "Up to $500,000,000 in aggregate increases; minimum $50,000,000 per request",
+              "value": "up to $500,000,000 aggregate; minimum $50,000,000 per request",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
               "note": "verbatim: “the Company may from time to time, request an increase in the Commitments by an amount (for all such requests) not exceeding $500,000,000; provided that any such request for an increase shall be in a minimum amount of $50,000,000.”"
@@ -4976,21 +4992,137 @@
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           },
           {
-            "name": "Extension of Termination Date",
+            "name": "Term Out Option fee",
             "value": {
-              "value": "Extension for an additional 364 days upon request",
+              "value": "0.50% of aggregate outstanding principal of Loans converted to term loans",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “The Company may, by notice to the Administrative Agent (who shall promptly notify the Banks) signed by a Responsible Officer not later than thirty (30) days prior to any Termination Date, request that each Bank extend such Bank's Termination Date for an additional 364 days from the Termination Date then in effect hereunder”"
+              "note": "verbatim: “the Company shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
-            "pik_pct": null
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Conversion price / mechanics",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Principal / commitment amount",
+            "value": {
+              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option not exceeding $500,000,000 (minimum request $50,000,000)",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Interest / coupon rate",
+            "value": {
+              "value": "Term SOFR (or Base Rate / Alternative Currency Daily Rate / Alternative Currency Term Rate) plus the Applicable Margin (in basis points): Level I 35.75; Level II 48.0; Level III 58.5; Level IV 69.0. Term SOFR Adjustment 0.10% (10 basis points). Term SOFR floor: deemed zero if less than zero.",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: ““ Applicable Margin ” means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0”"
+            },
+            "base_rate_label": "Term SOFR",
+            "margin_pct": null,
+            "margin_bps": 35.75,
+            "floor_pct": 0.0,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "Termination Date: the first to occur of (a) the later of (i) March 8, 2024 and (ii) any extended maturity date under Section 2.6, and (b) earlier cancellation/termination. Term Out Option: Loans outstanding on Termination Date may be converted to term loans due on the first anniversary of the Termination Date.",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 8, 2024 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Financial-maintenance covenants",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Security / collateral / guarantors",
+            "value": {
+              "value": "Company Guaranty Agreement (Exhibit M): the Company guarantees the obligations of each Designated Borrower. No collateral/security stated (unsecured facility; ratings based on Company's long-term senior unsecured non-credit-enhanced debt).",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “2.9.2 The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to not exceed 100% of Commitments. Defaults (Article VII) include: materially false representations (7.1); nonpayment of principal when due, or interest/fees within 5 Business Days (7.2); breach of Sections 6.10, 6.11, 6.12, 6.14 or 6.15, and other covenant breaches not cured within 30 days (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency (7.5, 7.6); unpaid judgments in excess of $200,000,000 (7.8); ERISA (7.9); Change in Control (7.10). Acceleration per Section 8.1.",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
           }
         ],
         "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
@@ -8059,8 +8191,8 @@
         {
           "kind": "leading_indicator",
           "metric": "NIKE Running revenue growth",
-          "period": "Q3 FY2026",
-          "value": "up over 20% for the quarter",
+          "period": "Q3 fiscal 2026",
+          "value": "up over 20%",
           "value_num": null,
           "unit": null,
           "verbatim": "The consumer is feeling the impact of the full offense with NIKE Running up over 20% for the quarter.",
@@ -8070,45 +8202,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "classic footwear franchise revenue reduction (headwind to reported results)",
-          "period": "Q3 FY2026",
-          "value": "roughly a 5-point headwind to our reported results",
+          "metric": "classic footwear inventory removal headwind to reported results",
+          "period": "Q3 fiscal 2026",
+          "value": "roughly a 5-point headwind",
           "value_num": null,
           "unit": null,
-          "verbatim": "That created roughly a 5-point headwind to our reported results.",
+          "verbatim": "One of the most important actions we took this quarter was further removing unhealthy inventory of our classic footwear franchises from the marketplace. That created roughly a 5-point headwind to our reported results.",
           "following_context": "It was intentional. It was necessary. And while it weighed on the quarter, it is improving the health of the marketplace, the quality of our revenue and the foundation for more sustainable growth ahead.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Nike Mind notify-me signups",
-          "period": "Q3 FY2026",
-          "value": "more than 2 million consumers who signed up for notify me on nike.com",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We responded by doubling production of Nike Mind over the next 2 seasons to meet demand from more than 2 million consumers who signed up for notify me on nike.com.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Aero-FIT airflow improvement over Dri-FIT",
-          "period": "Q3 FY2026",
-          "value": "increases airflow by 200% over regular Dri-FIT",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "And we delivered Aero-FIT for football, our new elite apparel cooling platform that increases airflow by 200% over regular Dri-FIT.",
-          "following_context": "It will expand into multiple sports, including NIKE Running in the fall. These platforms are scalable foundations for growth that we can extend into multiple sports and price points over time.",
-          "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "football door elevation footprint",
-          "period": "Q3 FY2026",
-          "value": "more than 5,000 football doors around the world",
+          "metric": "football doors with elevated presentation",
+          "period": "by the end of the tournament (World Cup '26)",
+          "value": "more than 5,000 football doors",
           "value_num": null,
           "unit": null,
           "verbatim": "By the end of the tournament, we will have elevated our presentation in more than 5,000 football doors around the world with wholesale partners and NIKE Direct because winning in football goes beyond winning the World Cup.",
@@ -8118,9 +8226,45 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "ACG retail door presence",
-          "period": "Q3 FY2026",
-          "value": "more than 600 retail doors around the world",
+          "metric": "Nike Mind patents filed globally",
+          "period": null,
+          "value": "over 150 patents",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Our new Nike Mind platform with over 150 patents filed globally was the highlight of the quarter, designed to help athletes clear away distractions pre and post competition.",
+          "following_context": "The Mind 001 sold out in all geographies. We responded by doubling production of Nike Mind over the next 2 seasons to meet demand from more than 2 million consumers who signed up for notify me on nike.com.",
+          "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "consumers signed up for notify me on nike.com for Nike Mind",
+          "period": null,
+          "value": "more than 2 million consumers",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We responded by doubling production of Nike Mind over the next 2 seasons to meet demand from more than 2 million consumers who signed up for notify me on nike.com.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Aero-FIT airflow increase over regular Dri-FIT",
+          "period": null,
+          "value": "increases airflow by 200%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "And we delivered Aero-FIT for football, our new elite apparel cooling platform that increases airflow by 200% over regular Dri-FIT.",
+          "following_context": "It will expand into multiple sports, including NIKE Running in the fall. These platforms are scalable foundations for growth that we can extend into multiple sports and price points over time.",
+          "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "ACG retail doors with elevated presentation",
+          "period": "Q3 fiscal 2026",
+          "value": "more than 600 retail doors",
           "value_num": null,
           "unit": null,
           "verbatim": "We executed creative brand marketing including an experiential chain from Milan to the Alps called the All Conditions Express, and we elevated our presentation in more than 600 retail doors around the world, including a stand-alone ACG door in Beijing.",
@@ -8130,9 +8274,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "classic footwear franchise revenue reduction from peak",
-          "period": "by end of fiscal year",
-          "value": "over $4 billion of revenue from the peak levels",
+          "metric": "revenue reduced from peak levels of classic footwear franchises",
+          "period": "by the end of this fiscal year",
+          "value": "over $4 billion of revenue",
           "value_num": null,
           "unit": null,
           "verbatim": "Matt shared last quarter that by the end of this fiscal year, we will have intentionally reduced over $4 billion of revenue from the peak levels of classic footwear franchises.",
@@ -8143,8 +8287,8 @@
         {
           "kind": "leading_indicator",
           "metric": "performance business growth",
-          "period": "FY2026",
-          "value": "grew mid-single digits this fiscal year",
+          "period": "fiscal year 2026",
+          "value": "grew mid-single digits",
           "value_num": null,
           "unit": null,
           "verbatim": "Our renewed obsession with sport and the success of our athletes is fueling energy for our brands and building momentum in our performance business, which grew mid-single digits this fiscal year.",
@@ -8154,8 +8298,20 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "consecutive quarters of double-digit NIKE Running growth",
-          "period": "FY2026",
+          "metric": "teammates moved into vertical sport teams",
+          "period": null,
+          "value": "about 8,000 teammates",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "And importantly, it's what's enabled us to move about 8,000 teammates into vertical sport teams under our new operating model, the Sport Offense, while also taking meaningful steps to simplify and accelerate our supply chain and technology.",
+          "following_context": "As our foundation improves, the Sport Offense is starting to create impact. Our renewed obsession with sport and the success of our athletes is fueling energy for our brands and building momentum in our performance business, which grew mid-single digits this fiscal year.",
+          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "consecutive quarters of double-digit growth in NIKE Running",
+          "period": null,
           "value": "5 consecutive quarters of double-digit growth",
           "value_num": null,
           "unit": null,
@@ -8167,7 +8323,7 @@
         {
           "kind": "leading_indicator",
           "metric": "revenue added to Running business",
-          "period": "over that period",
+          "period": null,
           "value": "roughly $1 billion",
           "value_num": null,
           "unit": null,
@@ -8178,9 +8334,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "running market share in statement footwear (Western Europe and North America)",
-          "period": "FY2026",
-          "value": "gained 5 points of running market share in statement footwear, more than any other top 5 brand",
+          "metric": "running market share in statement footwear",
+          "period": "FY '26, across Western Europe and North America",
+          "value": "gained 5 points of running market share, more than any other top 5 brand",
           "value_num": null,
           "unit": null,
           "verbatim": "In FY '26, across Western Europe and North America, we gained 5 points of running market share in statement footwear, more than any other top 5 brand.",
@@ -8191,8 +8347,8 @@
         {
           "kind": "leading_indicator",
           "metric": "wholesale revenue growth",
-          "period": "FY2026",
-          "value": "wholesale revenue grew 4%, led by double-digit growth in North America",
+          "period": "fiscal year 2026",
+          "value": "grew 4%, led by double-digit growth in North America",
           "value_num": null,
           "unit": null,
           "verbatim": "For the fiscal year, wholesale revenue grew 4%, led by double-digit growth in North America.",
@@ -8203,8 +8359,8 @@
         {
           "kind": "leading_indicator",
           "metric": "wholesale spaces refreshed",
-          "period": "FY2026",
-          "value": "more than 15,000 spaces in wholesale doors around the world",
+          "period": null,
+          "value": "more than 15,000 spaces in wholesale doors",
           "value_num": null,
           "unit": null,
           "verbatim": "And we've also made significant investments in physical marketplace, refreshing more than 15,000 spaces in wholesale doors around the world.",
@@ -8214,8 +8370,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "NIKE Direct stores elevated with sport-led experiences",
-          "period": "FY2026",
+          "metric": "stores elevated with sport-led experiences",
+          "period": "FY '26",
           "value": "more than 150 stores",
           "value_num": null,
           "unit": null,
@@ -8226,19 +8382,43 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Greater China sales lift in invested doors",
-          "period": "near term",
-          "value": "sales increase high single digits",
+          "metric": "Greater China sales increase in must-win doors when invested",
+          "period": null,
+          "value": "increase high single digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "And when we invest, we're seeing sales increase high single digits.",
+          "verbatim": "In the near term, we're executing, cleaning up inventory, investing in must-win doors. And when we invest, we're seeing sales increase high single digits.",
           "following_context": "I'm confident in our leaders and our plans to restore long-term marketplace health in Greater China.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "World Cup story views",
+          "metric": "World Cup kits sold vs. same period World Cup '22",
+          "period": "by the start of the tournament",
+          "value": "2.5x the number of kits",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "By the start of the tournament, we had already sold 2.5x the number of kits compared to the same period in World Cup '22.",
+          "following_context": "Earlier in the year, we redesigned our Tiempo and Phantom franchises. And before the tournament, we launched our new Mercurial in two expressions of speed. At launch, the Mercurial became the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct.",
+          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "Mercurial launch speed",
+          "period": null,
+          "value": "fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "At launch, the Mercurial became the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "views of football stories",
           "period": "by the first week of the World Cup",
           "value": "1.5 billion views",
           "value_num": null,
@@ -8250,37 +8430,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "national team kits sold vs. World Cup '22",
-          "period": "by the start of the tournament",
-          "value": "2.5x the number of kits compared to the same period in World Cup '22",
+          "metric": "Sportswear and Jordan Streetwear share of revenue",
+          "period": null,
+          "value": "approximately half of our revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "By the start of the tournament, we had already sold 2.5x the number of kits compared to the same period in World Cup '22.",
-          "following_context": "Earlier in the year, we redesigned our Tiempo and Phantom franchises. And before the tournament, we launched our new Mercurial in two expressions of speed. At launch, the Mercurial became the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct.",
-          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "Mercurial launch speed record",
-          "period": "at launch",
-          "value": "the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "At launch, the Mercurial became the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Toma grassroots tournament reach",
-          "period": "to date",
-          "value": "more than 10,000 kids across 25 cities to date",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "In Global Football, our grassroots tournament, Toma has reached more than 10,000 kids across 25 cities to date.",
-          "following_context": "In basketball, we continue to invest globally from our partnerships with the Chinese High School Basketball League and its 600 teams to Jordan's The One tournament in 20 cities around the world.",
+          "verbatim": "We know changing their trajectory is critical to restoring sustainable top-line growth because together, they represent approximately half of our revenue.",
+          "following_context": "We are moving quickly to reposition both businesses.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -8292,83 +8448,68 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — an all-time-low trailing multiple and fortress balance sheet against still-falling forward estimates and a declining half-of-revenue core.",
+    "evidence_balance": "mixed — a genuine self-inflicted reset with real Running re-acceleration, but forward multiples show a premium and consensus is still cutting hard on the ~half of revenue still declining.",
     "bull_points": [
       {
-        "claim": "Trailing EV/EBITDA of 9.1x sits at the 0th percentile of its own ~9.5-year range (low 11.2x, median 21.1x), so on a trailing basis the multiple is at an all-time floor.",
+        "claim": "The trailing EV/EBITDA of 9.1x sits at the 0th percentile of its own 38-quarter history (range 11.2–37.4x, median 21.1x), a maximally-depressed level for a franchise whose absolute EBITDA rose FY25→FY26 ($4,477M→$4,929M) rather than fell.",
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA rose from $4,477M (FY25) to $4,929M (FY26) even as the margin % sat near 11%, so the depressed multiple is priced off a base that is turning up, not still contracting.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "The drawdown is idiosyncratic and severe — NKE returned -30.7% over 180d while SPY returned +16.9%, a -47.6pt relative gap — consistent with a self-inflicted, potentially temporary reset rather than a market-wide de-rating.",
+        "source_ref": "EOD NKE−SPY 180d to 2026-09-22 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "The balance sheet is investment-grade robust — net-debt/EBITDA 0.4x, interest coverage 21.6x, S&P issuer rating A+ vs peer-median credit-health 3/3/3/3 — so this is not a distressed capital structure with survival risk.",
-        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-21",
-        "cited": true
-      },
-      {
-        "claim": "The business is self-funding: FCF positive at $1,889M LTM with OCF>0 and LTM FCF>0.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [12 months May-31-2026]",
-        "cited": true
-      },
-      {
-        "claim": "The core NIKE Running franchise delivered five consecutive quarters of double-digit growth, adding roughly $1B to the Running business — a mechanism suggesting the turnaround is landing in the largest performance category.",
-        "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "A material part of the FY26 revenue weakness was self-inflicted: management intentionally reduced over $4B of revenue from peak classic-footwear franchise levels to clean the marketplace, an action that weighs on the print but is not lost demand.",
+        "claim": "Management frames the revenue weakness as a deliberate, finite inventory cleanup — intentionally removing over $4B of classic-footwear franchise revenue from peak levels, expected to finish 'by the end of the calendar year,' which if true means the reported trailing weakness is self-imposed and mean-reverting.",
         "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Wholesale revenue grew 4% for FY26 led by double-digit North America growth, evidence the channel-reset is reaccelerating the majority-of-consumers channel.",
+        "claim": "The performance engine is genuinely inflecting: NIKE Running delivered 5 consecutive quarters of double-digit growth, adding roughly $1B to the Running business and gaining 5 points of statement-footwear share in Western Europe and North America — more than any top-5 brand.",
         "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Wholesale revenue grew 4% for the fiscal year led by double-digit North America growth, evidence the channel reset is producing real re-acceleration in the largest geography (North America is 44% of revenue).",
+        "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The balance sheet gives ample runway to fund a multi-year turnaround: net-debt/EBITDA 0.4x, interest coverage 21.6x, FCF-positive/self-funding, and an S&P A+ issuer rating (credit health 2/2/2/2 vs peer-median 3/3/3/3).",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-21",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The forward multiple tells the opposite story to the trailing floor: NTM TEV/EBITDA is 14.64x vs peer median 8.37x, so on a forward basis the name is expensive because consensus forward EBITDA has been cut hard — the trailing '0th percentile' is the optical MISREAD, the forward premium is the real signal.",
+        "claim": "The peer discount is not a clean 'cheap' signal but a CONSENSUS framing over a HETEROGENEOUS set — caps span $2.0B–$28.6B (14x) against NKE's $53.6B — so the peer median is anchored by differently-scaled businesses and cannot be read as a benchmark; the discount must be decomposed into earned-vs-residual before any overshoot claim.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "cited": true
+      },
+      {
+        "claim": "On forward multiples NKE is EXPENSIVE, not cheap: NTM TEV/EBITDA 14.64x vs peer median 8.37x and NTM P/E 21.24x vs peer median 12.25x — the trailing 'discount' inverts to a large premium once collapsing forward EBITDA is priced in, so the trailing multiple is the MISREAD, not the real signal.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "FY27 consensus EBITDA has been cut ~25% (from $5,056M twelve months ago to $3,796M latest) and FY27 EPS ~31-32%, so estimates are still falling, not stabilising.",
+        "claim": "Consensus FY27 estimates are in secular free-fall: FY27 EBITDA cut -25% (12m→latest) and FY27 EPS cut ~-32%, with fresh breadth overwhelmingly downward (Revenue FQ1 2027 3m 1↑/17↓) — the estimate trajectory is deteriorating, not stabilising.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Near-term revision breadth is overwhelmingly negative — Revenue FQ1 2027 3m 1↑/17↓ and FQ2 2027 0↑/18↓ — pointing to the print reading worse, not better.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
-        "cited": true
-      },
-      {
-        "claim": "ROIC has structurally halved from the 19-22% band (FY17-19) to 10.4% (FY26), and the EBITDA margin % fell to 11% from a high-teens peak — with absolute EBITDA ($4,929M) still far below the FY24 $7,550M, this is a genuine profitability deterioration, not just a % optical.",
+        "claim": "Structural profitability has degraded, not just optically: EBITDA margin fell to 10–11% (FY25 10%, FY26 11%) from mid-teens, ROCE dropped to 10.4% (FY25 9.1%) from ~19–22% historically — an earned deterioration in returns on capital, so part of the de-rating is a value-trap signal not an overshoot.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "Sportswear and Jordan Streetwear — together roughly half of revenue — are expected to remain negative this fiscal year with sell-through still challenged, so the largest revenue block is still declining.",
+        "claim": "Sell-side is capitulating on the fundamentals, not just price: LT growth cut to 5–6% at multiple brokers (mean 10.5% but a broker moved 14%→5%), a rating cut to Sell (5.00) with a $30 target, recommendation drifting to Hold, and short interest rising +13.4% to 85.7M shares.",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-20 · export date unverified]",
+        "cited": true
+      },
+      {
+        "claim": "Roughly half of revenue — Sportswear and Jordan Streetwear — is management-acknowledged to be negative this fiscal year with sell-through still challenged, and China business is being actively terminated (Pou Sheng online sales end Jan-1-2027), so the largest revenue pools remain in decline with no dated bottom.",
         "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "China distribution is shrinking on a dated timetable: Pou Sheng was notified that existing online sales of Nike products in mainland China will terminate completely effective January 1, 2027.",
-        "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Jul-22-2026",
-        "cited": true
-      },
-      {
-        "claim": "The stock is a genuine idiosyncratic laggard — down ~30.7% over 180d while SPY rose ~16.9% (-47.6pt relative) — and short interest is rising (+9.8% to 75.6M shares), so the market is actively pressing the bear case.",
-        "source_ref": "EOD NKE−SPY 180d to 2026-09-22 (assembly, cap-band)",
-        "cited": true
-      },
-      {
-        "claim": "Sell-side conviction is collapsing: consensus rating drifted to Hold (2.73), mean target $48.07 with a broker cutting to $30 and another initiating at Sell, and LT growth marked down toward mid-single digits.",
-        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
@@ -8376,99 +8517,111 @@
       {
         "name": "adidas AG",
         "outcome": "recovered",
-        "distinguishing_fact": "Same-category global athletic brand that endured a multi-year brand/inventory reset and demand slump before growth and margin re-accelerated — the closest live analogue for a self-inflicted marketplace clean-up followed by recovery.",
+        "distinguishing_fact": "Same-category global athletic brand that suffered a demand/inventory and brand-heat trough, cleaned the marketplace and returned to growth as innovation and wholesale re-energised — the direct roster analogue for a self-inflicted reset that reverted.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "lululemon athletica inc.",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster athletic-apparel peer that de-rated sharply (trades 4x EV/EBITDA, 8.3x P/E with EBITDA growth -19.9%) as a premium brand lost momentum — the pattern of a formerly-premium name re-rating down on decelerating demand.",
+        "distinguishing_fact": "Roster peer that took a large impairment and now trades at the lowest peer EV/EBITDA (4x) on collapsing EBITDA growth — the analogue for a premium athletic name whose de-rating proved earned rather than an overshoot.",
         "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
       },
       {
         "name": "Under Armour",
         "outcome": "went terminal",
-        "distinguishing_fact": "Athletic peer whose brand-heat and revenue faded (rev growth -3.6%, EBITDA growth -50.6%, P/E NM) and never re-scaled to former profitability — the value-trap template for an athletic brand that de-rated and stayed down.",
+        "distinguishing_fact": "Athletic-apparel peer with declining revenue and steeply negative EBITDA growth and NM earnings — the analogue for a brand-reset that never re-accelerated and structurally lost scale.",
         "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
       },
       {
         "name": "Starbucks",
         "outcome": "recovered",
-        "distinguishing_fact": "Dominant global consumer brand that saw traffic soften and returned a prior CEO / re-focused on core experience during a turnaround, resembling Nike's founder-culture 'Win Now' comeback under a returning leader.",
+        "distinguishing_fact": "Dominant consumer brand that de-rated on a self-diagnosed execution slump, brought back a turnaround-oriented leadership posture and reset the marketplace before demand returned — an analogue for founder-DNA brands whose troughs proved cyclical.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "The Gap",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster apparel retailer with low growth (EBITDA growth -13.5%) trading at a deep 4x EV/EBITDA — illustrating that a cheap trailing multiple in this cohort can persist as an earned discount rather than an overshoot.",
+        "distinguishing_fact": "Roster apparel peer stuck at low multiple with flat revenue and negative EBITDA growth — the analogue for a legacy brand whose cleanup produced stabilisation but not durable re-acceleration.",
         "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
       }
     ],
     "decisive_question": {
-      "question": "Is the FY26 revenue/EBITDA trough the bottom of a self-inflicted marketplace clean-up that inflects up as the Sport Offense scales, or the early leg of a structural demand/profitability decline that keeps consensus falling?",
+      "question": "Is the reported revenue/margin weakness a finite, self-inflicted inventory-and-channel reset that reverts (overshoot), or a structural loss of brand pricing power and scale in the ~half of revenue that is Sportswear/Jordan Streetwear and China (value trap)?",
       "evidence_for": [
         {
-          "claim": "NIKE Running delivered five consecutive quarters of double-digit growth adding ~$1B, and the ~$4B classic-footwear cut is explicitly management-driven, not lost demand — the mechanism of a deliberate reset nearing completion.",
+          "claim": "Management explicitly frames the drag as a deliberate, dated cleanup — removing over $4B of classic-footwear revenue from peak levels, expected finished by end of calendar year — which if completed removes a self-imposed headwind.",
+          "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "The performance engine is demonstrably re-accelerating: 5 consecutive quarters of double-digit NIKE Running growth, ~$1B added, and 5 points of statement-footwear share gained — a real, mechanism-level offset that the reset is designed to scale into other sports.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA already turned up FY25→FY26 ($4,477M→$4,929M) while FY27E/FY28E consensus EBITDA rebuilds to $3,796M then $4,549M, consistent with a trough.",
-          "source_ref": "CIQ Estimates→Trends (FY27E/FY28E consensus EBITDA, latest snapshot)",
+          "claim": "Absolute EBITDA rose FY25→FY26 ($4,477M→$4,929M) even as margin % stayed ~11%, so the earnings base was already inflecting up rather than compounding down.",
+          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Sportswear and Jordan Streetwear — ~half of revenue — are still expected to be negative this fiscal year with challenged sell-through, and China online distribution terminates Jan-1-2027, so the largest blocks are still contracting.",
+          "claim": "The ~half of revenue in Sportswear and Jordan Streetwear is management-acknowledged to be negative this fiscal year with sell-through still challenged — the segments that must turn to restore top-line growth have no dated bottom.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "FY27 consensus EBITDA/EPS are still being cut (~25%/~31% over 12 months) with revenue revision breadth deeply negative (FQ2 2027 3m 0↑/18↓), so estimates have not found a floor.",
+          "claim": "Consensus is still cutting hard — FY27 EBITDA -25% and EPS ~-32% over 12m with lopsided downward breadth — so the analyst community does not yet see the reset bottoming.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "cited": true
+        },
+        {
+          "claim": "China distribution is being actively wound down — Pou Sheng notified that online sales of Nike products in mainland China terminate completely from Jan-1-2027 — a structural channel loss, not an inventory timing item.",
+          "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Jul-22-2026",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward/adjusted EV/EBITDA or adjusted EPS in the revised guidance, so a temporarily-depressed vs permanently-impaired trailing multiple cannot be distinguished from the given data.",
-      "No segment EBITDA disclosure — only segment revenue and a two-segment EBIT split (NIKE Brand vs Converse); the profitability of the still-declining Sportswear/Jordan block and of Greater China is not visible (an opacity risk).",
-      "Whether the peer discount is EARNED or RESIDUAL cannot be cleanly judged: the peer set is HETEROGENEOUS (caps $2.0B–$28.6B vs the name's $53.6B), so no peer multiple is a clean benchmark.",
-      "No revised numeric revenue/margin outlook in the release (release states NO NUMERIC OUTLOOK), so the guide could not be cross-checked against consensus.",
-      "Whether the fall Investor Day and the new CFO (David Denton, effective Aug-16-2026) reset the long-term margin/growth framework — an unresolved catalyst.",
-      "The share-count trend is UNKNOWN (fewer than 2 XBRL share points in ~2y), so per-share dilution/accretion direction is not established.",
-      "The next results print (~2026-09-24) will read the FQ1 result against the committed trajectory; its outcome is unresolved."
+      "The trailing EV/EBITDA at 0th percentile is a neutral floor fact — the input flags it 'cannot distinguish a temporarily depressed level from a permanently impaired one'; overshoot-vs-terminal is unresolved and hinges on whether forward EBITDA recovers.",
+      "No adjusted/forward EBITDA or adjusted EPS is in the revised 99.1 guidance, and the release carries NO NUMERIC OUTLOOK — the forward earnings power that the whole thesis turns on is undisclosed by the company (a bearish disclosure gap).",
+      "No segment EBITDA is disclosed — only NIKE Brand vs Converse EBIT — so profitability of the declining Sportswear/Jordan and China pools versus the growing Running/performance pools cannot be separated (an opacity risk).",
+      "Guidance track record is stale — latest EPS guide dates to FQ2 2015 (4,380d old) — so there is no recent management-guide-vs-actual delivery signal to lean on.",
+      "CFO transition mid-turnaround (Matthew Friend stepping down, David Denton joining Aug-16-2026) plus a Chief Accounting Officer resignation — execution-continuity risk through the reset with no resolved outcome yet.",
+      "The scale of the deliberate revenue cut ($4B+ of classic footwear) vs the pace at which new Sportswear styles scale (>a dozen new footwear styles in H2, 'takes time') is unquantified — the net revenue trajectory bottom is undated.",
+      "Insider signal is mixed — CEO bought $1.0M in Apr-2026 but net open-market activity is modest — not a clear conviction tell.",
+      "Export date on the estimates/consensus pull is unverified (a floor, ~2026-09-20); the true snapshot may be weeks newer."
     ],
     "draw_agreement": {
       "attempted": 5,
-      "completed": 5,
+      "completed": 4,
       "labels": {
-        "mixed": 5
+        "mixed": 4
       },
       "unanimous": true
     }
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — NIKE, the athletic footwear and apparel company (NIKE, Jordan, Converse), followed as an OVERSHOOT candidate by operator decision 2026-09-22: at $36.10 on 2026-09-21 it is down 51.6% from its 52-week closing high of $74.57 (2025-10-02) and 1.7% above its 52-week low ($35.51, 2026-09-18) — a ~$53.6bn market cap on $46.4bn of FY2026 (May) revenue. The question is whether the de-rating overshoots the business. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+1.9s fetch)",
-    "Bare peer-comparison (a bear point): 'The forward multiple tells the opposite story to the trailing floor: NTM TEV/EBITDA is 14.64x vs peer median 8.37x, so on a forward basis the name is expensive because consensus forward EBITDA has been cut hard — the trailing '0th percentile' is the optical MISREAD, the forward premium is the real signal.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'The forward multiple tells the opposite story to the trailing floor: NTM TEV/EBITDA is 14.64x vs peer median 8.37x, so on a forward basis the name is expensive because consensus forward EBITDA has been cut hard — the trailing '0th percentile' is the optical MISREAD, the forward premium is the real signal.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+2.7s fetch)",
+    "Bare peer-comparison (a bear point): 'On forward multiples NKE is EXPENSIVE, not cheap: NTM TEV/EBITDA 14.64x vs peer median 8.37x and NTM P/E 21.24x vs peer median 12.25x — the trailing 'discount' inverts to a large premium once collapsing forward EBITDA is priced in, so the trailing multiple is the MISREAD, not the real signal.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'On forward multiples NKE is EXPENSIVE, not cheap: NTM TEV/EBITDA 14.64x vs peer median 8.37x and NTM P/E 21.24x vs peer median 12.25x — the trailing 'discount' inverts to a large premium once collapsing forward EBITDA is priced in, so the trailing multiple is the MISREAD, not the real signal.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "(E5) exhibit not extracted (cost bound): Committed Credit Facilities·nike-364xdaycreditagreemen.htm",
-    "TWIN 'lululemon athletica inc.' has numbers ['19.9', '4', '8.3'] — must be non-numeric",
-    "TWIN 'Under Armour' has numbers ['3.6', '50.6'] — must be non-numeric",
-    "TWIN 'The Gap' has numbers ['13.5', '4'] — must be non-numeric",
-    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)"
+    "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm declares itself no agreement at all",
+    "TWIN 'lululemon athletica inc.' has numbers ['4'] — must be non-numeric",
+    "DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)",
+    "VERIFICATION-CLAIM decisive.for: 'The performance engine is demonstrably re-accelerating: 5 consecutive…' — the dossier cites, it does not verify; confirm against the source (cited ≠ verified)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-26T06:21:18.079784Z",
+  "assembled_at": "2026-09-28T15:55:07.069583Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-22"
   },
@@ -8491,7 +8644,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-26T06:28:08.035170Z",
+    "computed_at": "2026-09-28T16:12:36.360734Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],
