@@ -371,3 +371,30 @@ def test_an_unread_amendment_flag_is_omitted_from_the_artifact() -> None:
     unread = _row("m", "v", "a", "CREDIT AGREEMENT", None).model_dump()
     assert "agreement_is_amendment" not in unread
     assert _row("m", "v", "a", "CREDIT AGREEMENT", True).model_dump()["agreement_is_amendment"]
+
+
+# WERN 0000793074-26-000120 — the real head, whose filing ids precede the title.
+WERN_AMENDMENT = (
+    "EX-10.1 2 wern-20260605ex101.htm EX-10.1 20260605EX101 1758963679 24780046 AMENDMENT NO. 3 "
+    "TO LOAN AND SECURITY AGREEMENT dated as of June 5, 2026, by and among WERNER ENTERPRISES")
+
+
+def test_a_filing_id_in_front_does_not_hide_the_amendment_prefix() -> None:
+    """(-) ORDER, NOT PATTERNS. `_AMEND_PREFIX` is anchored at ^, so while a filing id still sits
+    in front of the title it cannot match and the amendment INSTANCE survives normalisation. WERN
+    published under the literal string "20260605EX101 1758963679 24780046 AMENDMENT NO. 3 TO LOAN
+    AND SECURITY AGREEMENT" — a filing id rendered as a contract name — and its Amendment No. 3
+    split from the base it amends into a second group, which is the merge failure the
+    normalisation exists to prevent. Codes must be stripped BEFORE the amendment prefix."""
+    got = agreement_title(WERN_AMENDMENT)
+    assert got == "LOAN AND SECURITY AGREEMENT", got
+    assert not got[0].isdigit(), "a filing id is not part of the contract's name"
+    assert "AMENDMENT" not in got, "the amendment instance must normalise to its base"
+
+
+def test_the_order_swap_does_not_eat_a_real_leading_word() -> None:
+    """(-) THE CASE THE OLD ORDER PROTECTED. Running `_LEAD_CODE` first must not strip 'AMENDED',
+    and an ordinal amendment with no id in front must still normalise."""
+    amzn = "Deal CUSIP Number: 02313HAF7 AMENDED AND RESTATED CREDIT AGREEMENT Dated as of"
+    assert agreement_title(amzn) == "AMENDED AND RESTATED CREDIT AGREEMENT"
+    assert agreement_title(BURL_SIXTH) == "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"

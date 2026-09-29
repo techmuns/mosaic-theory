@@ -342,8 +342,15 @@ def agreement_title(text: str) -> str | None:
         # from the body.
         b0 = _BARE_NOUN.match(h)
         return b0.group(1).upper() if b0 else None
-    t = _LEAD_NOISE.sub("", _AMEND_PREFIX.sub("", _clean_title(m.group(1)))).strip(" .,-")
-    t = _LEAD_CODE.sub("", t).strip(" .,-")
+    # CODES FIRST, THEN THE AMENDMENT PREFIX. `_AMEND_PREFIX` is anchored at ^, so while a filing
+    # id still sits in front of the title it cannot match and the amendment INSTANCE survives
+    # normalisation. WERN's Amendment No. 3 is the real case: its head begins
+    # "20260605EX101 1758963679 24780046 AMENDMENT NO. 3 TO LOAN AND SECURITY AGREEMENT", and with
+    # the strips in the other order it published under exactly that string — a filing id rendered
+    # as a contract name, and the amendment split from the base it amends into a SECOND group,
+    # which is the merge failure the normalisation exists to prevent.
+    t = _LEAD_CODE.sub("", _clean_title(m.group(1))).strip(" .,-")
+    t = _LEAD_NOISE.sub("", _AMEND_PREFIX.sub("", t)).strip(" .,-")
     if t and not _DEBT.search(t) and re.search(r"AMENDMENT", h[:900], re.I):
         b = _BASE_REF.search(h)
         if b:
