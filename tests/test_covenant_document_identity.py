@@ -398,3 +398,61 @@ def test_the_order_swap_does_not_eat_a_real_leading_word() -> None:
     amzn = "Deal CUSIP Number: 02313HAF7 AMENDED AND RESTATED CREDIT AGREEMENT Dated as of"
     assert agreement_title(amzn) == "AMENDED AND RESTATED CREDIT AGREEMENT"
     assert agreement_title(BURL_SIXTH) == "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+
+
+# THE REAL HEADS, byte-for-byte as EDGAR serves them. #655 fixed the strip ORDER against a
+# hand-typed UPPERCASE approximation of this text; the real id is LOWERCASE, `_LEAD_CODE` was
+# `[A-Z0-9]`, and the trailing `.upper()` made the published heading look uppercase — so the pin
+# passed and the page stayed broken. These two strings are copied from the fetched exhibits.
+WERN_AMENDMENT_REAL = (
+    "EX-10.1 2 wern-20260605ex101.htm EX-10.1 wern-20260605ex101 EXECUTION VERSION 1758963679 "
+    "24780046 AMENDMENT NO. 3 TO LOAN AND SECURITY AGREEMENT This AMENDMENT NO. 3 TO LOAN AND "
+    "SECURITY AGREEMENT, dated as of June 5, 2026 (this “Amendment”), is amon")
+WERN_GUARANTY_REAL = (
+    "EX-10.2 3 wern-20260605ex102.htm EX-10.2 wern-20260605ex102 EXECUTION VERSION 1759078368 "
+    "24780046 PERFORMANCE GUARANTY This PERFORMANCE GUARANTY (this “Agreement”), dated as of "
+    "June 5, 2026, is between WERNER ENTERPRISES, INC., a Nebraska corporation")
+
+
+def test_a_lowercase_filing_id_is_stripped_like_an_uppercase_one() -> None:
+    """(+) THE REAL DOCUMENT, not a transcription of it. The id arrives lowercase; an `[A-Z0-9]`
+    class never matched it and the title kept it, while the trailing `.upper()` disguised why."""
+    assert agreement_title(WERN_AMENDMENT_REAL) == "LOAN AND SECURITY AGREEMENT"
+    assert agreement_title(WERN_GUARANTY_REAL) == "PERFORMANCE GUARANTY"
+
+
+def test_case_insensitivity_does_not_eat_a_digitless_word() -> None:
+    """(-) THE GUARD THAT MAKES IT SAFE. Case-insensitivity widens the code branch onto ordinary
+    words, and only the DIGIT requirement keeps it off them. A hyphen still protects a real name."""
+    amzn = "Deal CUSIP Number: 02313HAF7 AMENDED AND RESTATED CREDIT AGREEMENT Dated as of"
+    assert agreement_title(amzn) == "AMENDED AND RESTATED CREDIT AGREEMENT"
+    assert agreement_title("Exhibit 10.1 65410VAW81 364-DAY CREDIT AGREEMENT among") == (
+        "364-DAY CREDIT AGREEMENT")
+    assert agreement_title(BURL_SIXTH) == "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+
+
+def test_no_published_covenant_heading_is_a_filing_id() -> None:
+    """(-) END-TO-END, ON THE COMMITTED PAGES — the layer the defect was actually visible at.
+
+    Both unit pins above passed on their fixtures while WERN's page published
+    "20260605EX101 1758963679 24780046 AMENDMENT NO. 3 TO LOAN AND SECURITY AGREEMENT" as a
+    contract name. A pin on the reader cannot see that; this reads the rendered headings.
+
+    A leading token is a filing id when it runs >=6 alphanumerics AND carries a digit AND has no
+    hyphen. That admits the real names — "364-DAY" and "FIVE-YEAR" are hyphenated, "2025" and "24"
+    are short — and rejects "20260605EX101"."""
+    import pathlib
+    import re as _re
+    code = _re.compile(r"^(?=[A-Za-z0-9]*\d)[A-Za-z0-9]{6,}$")
+    root = pathlib.Path(__file__).resolve().parents[1] / "frontend" / "dossiers"
+    bad, checked = [], 0
+    for page in sorted(root.glob("*.md")):
+        for line in page.read_text().splitlines():
+            m = _re.match(r"^- \*\*Covenants — (.+?)\*\*", line)
+            if not m:
+                continue
+            checked += 1
+            if code.match(m.group(1).split()[0]):
+                bad.append(f"{page.name}: {m.group(1)[:70]}")
+    assert checked, "no covenant headings found — the pin would pass vacuously"
+    assert not bad, "a filing id is published as a contract name:\n" + "\n".join(bad)
