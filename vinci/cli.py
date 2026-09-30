@@ -1410,7 +1410,8 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         problems = problems + sc.leg_fy_problems(sc.ScenarioInput(
             revenue=float(_base["revenue"]), margin=_base.get("margin"),
             multiple=float(_base["multiple"]), reason=str(_base.get("reason") or ""),
-            leg_fy=(str(_base["leg_fy"]) if _base.get("leg_fy") else None)), _anchor_fy)
+            leg_fy=(str(_base["leg_fy"]) if _base.get("leg_fy") else None)), _anchor_fy,
+            require_stated=True)
     if problems:
         print(f"=== scenario-create {t}: REFUSED ({len(problems)}) ===")
         for p in problems:
@@ -1827,7 +1828,9 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     # anchor as nothing-to-check rather than a refusal — same non-forcing rule as the anchors above.
     _anchor_fy = ((doc or {}).get("mechanical") or {}).get("ev_gap") or {}
     problems += sc.leg_fy_problems(
-        (incoming.scenarios or {}).get("base"), _anchor_fy.get("anchor_fy"))
+        (incoming.scenarios or {}).get("base"), _anchor_fy.get("anchor_fy"), require_stated=True)
+    # ...and the entry window must be stated and period-equivalent to the leg it is compared with.
+    problems += sc.basis_problems(incoming, require_stated=True)
     if problems:
         print(f"=== scenario-supersede {t_up}: REFUSED ({len(problems)}) ===")
         for p in problems:

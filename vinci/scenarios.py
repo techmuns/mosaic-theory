@@ -972,6 +972,22 @@ class ScenarioRecord(BaseModel):
     # unvalidated: all eight committed spots are real EOD closes, exact to the stored bar — just
     # not ones that every store can see.
     spot_as_of: date | None = None
+    #: THE PERIOD THE ENTRY MULTIPLE'S DENOMINATOR COVERS — "NTM", "LTM", or a fiscal year
+    #: ("FY2026"). NOT `multiple_basis`, which names the METRIC (P/E, EV/EBITDA); this names the
+    #: WINDOW. The pair is what makes an entry-to-exit comparison checkable at all.
+    #:
+    #: WHY IT IS NEEDED. A record stores `spot` (a price) and each leg stores its exit multiple and
+    #: denominator, so an entry multiple is never written down — it lives in the leg's `reason`
+    #: prose, where nothing checks it. GOOGL's bear leg reads "Bear EPS EXCEEDS today's NTM $13.29,
+    #: so the downside is multiple compression from ~26x": an NTM entry denominator against an exit
+    #: leg whose own year is unstated, and 339.35 ÷ 13.29 = 25.5x confirms the ~26x is NTM-struck.
+    #: A return described as multiple compression when the two multiples sit on different windows
+    #: is not measuring compression, and no guard could say so while the entry window was unwritten.
+    #:
+    #: Default None and DROPPED WHEN NONE, the same absent-vs-null rule `leg_fy` follows: unstated
+    #: and null say one thing here — *this record never stated its entry window* — so every
+    #: committed record round-trips byte-identical and no schema bump is owed.
+    entry_basis: str | None = None
     facts: dict[str, Fact]                 # d_and_a, net_debt, diluted_shares (+ any recipe extras)
     scenarios: dict[str, ScenarioInput]    # bear | base | bull
     # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
@@ -1223,7 +1239,8 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
 # making R1 refuse would reject records that should only carry a caveat, and making R2 flag would
 # have it emit a margin ratio it correctly declines to compute — a view difference and a horizon
 # difference mixed in unknown proportion, which is the number the refusal exists to withhold.
-def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None) -> list[str]:
+def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None, *,
+                    require_stated: bool = False) -> list[str]:
     """The stated-basis requirement at the WRITE boundary — empty when satisfied.
 
     REFUSES ONLY A STATED DISAGREEMENT, and only an unexplained one. Three states, three answers:
@@ -1247,7 +1264,24 @@ def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None) -> list[s
     record unrecomputable — see the note in `run_recipe` for why that placement blinds the drift
     invariant on the only open position.
     """
-    if base is None or base.leg_fy is None or anchor_fy is None:
+    if base is None:
+        return []
+    # REQUIRE_STATED IS THE WRITE BOUNDARY'S CALL, NEVER THIS FUNCTION'S DEFAULT. The permissive
+    # default is the adoption argument above and it still holds for every READ path: a guard added
+    # after a record was written must not make that record unrecomputable, which is why
+    # `run_recipe` does not call this at all. What changed is that adoption is no longer
+    # hypothetical — EPAM states FY2027 and GOOGL FY2026 — so a record being WRITTEN today can be
+    # asked for the year without stranding the nine already on disk. `scenario-create` and
+    # `scenario-supersede` pass True; nothing else does.
+    if base.leg_fy is None:
+        if require_stated:
+            return ["base.leg_fy is unstated. A record being written today states the fiscal year "
+                    "its base leg strikes at — the EV-gap decomposition, the shape label drawn "
+                    "from it, and any entry-to-exit comparison are all struck on a year, and an "
+                    "unstated one cannot be checked against the entry window. State it, or state "
+                    "in `reason` why the leg sits where it does."]
+        return []
+    if anchor_fy is None:
         return []
     if str(base.leg_fy) == str(anchor_fy):
         return []
@@ -1258,6 +1292,68 @@ def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None) -> list[s
             "split across revenue/margin/multiple, and the shape label drawn from it, are struck "
             f"on FY{anchor_fy}. State in `reason` why the leg sits at FY{base.leg_fy}, the same "
             "way any other deviation from an anchor is stated."]
+
+
+#: The shapes an entry window may take. A rolling window ("NTM"/"LTM") or a fiscal year
+#: ("FY2026"). Anything else is refused rather than guessed at: the whole value of the field is
+#: that a machine can compare it with a leg year, and a free-text window compares with nothing.
+_ENTRY_BASIS_RE = re.compile(r"^(NTM|LTM|FY\s?(\d{4}))$", re.IGNORECASE)
+
+
+def basis_problems(rec: ScenarioRecord, *, require_stated: bool = False) -> list[str]:
+    """Entry and exit denominators must cover the SAME period, or the leg must bridge them.
+
+    THE RULE THIS ENFORCES: a return described as multiple compression or expansion is only
+    measuring that when both multiples are struck on period-equivalent denominators. Compare an
+    NTM entry multiple with an exit multiple applied to a fiscal-year leg and the difference
+    between them is part window-roll and part re-rating, in unknown proportion — the arithmetic
+    does not decompose, so the sentence describing it cannot be true by construction.
+
+    THE ESCAPE HATCH IS DELIBERATELY NOT "ANY NON-BLANK REASON", and that is the whole design.
+    `leg_fy_problems` above takes that route, and it is UNREACHABLE: `ScenarioInput` validates
+    `reason` as required and non-blank, so its final refusal fires only in a state the constructor
+    forbids — its own pin reaches it through `model_copy`, which skips validators. A guard whose
+    escape hatch is satisfied by every legal input is not a guard. So a MISMATCH here is excused
+    only by a reason that NAMES BOTH PERIODS: the entry window and the leg's year. That is the
+    bridge the mismatch requires anyway, it cannot be satisfied by boilerplate, and it is
+    deterministic — no judgment about whether prose "explains" anything.
+
+    Returns empty when satisfied. ``require_stated`` is the write boundary's call, exactly as in
+    `leg_fy_problems`: reading or recomputing a record never demands a field it predates.
+    """
+    out: list[str] = []
+    stated = (rec.entry_basis or "").strip()
+    if not stated:
+        if require_stated:
+            out.append(
+                "entry_basis is unstated. A record being written today states the PERIOD its "
+                "entry multiple's denominator covers (NTM, LTM, or FY####), because without it "
+                "no entry-to-exit comparison in any leg's reason can be checked — and the legs "
+                "make those comparisons in prose.")
+        return out
+    m = _ENTRY_BASIS_RE.match(stated)
+    if m is None:
+        out.append(f"entry_basis {stated!r} is not a window a machine can compare. Use NTM, LTM "
+                   "or FY#### — a free-text window compares with nothing, which is the state the "
+                   "field exists to end.")
+        return out
+    base = (rec.scenarios or {}).get("base")
+    if base is None or base.leg_fy is None:
+        return out          # `leg_fy_problems` owns the unstated-year refusal; not restated here
+    entry_fy, leg_fy = m.group(2), str(base.leg_fy).strip()
+    if entry_fy is not None and entry_fy == leg_fy:
+        return out          # both name the same fiscal year — period-equivalent by identity
+    reason = (base.reason or "")
+    if stated.upper().replace(" ", "") in reason.upper().replace(" ", "") and leg_fy in reason:
+        return out          # the leg bridges both periods explicitly
+    out.append(
+        f"entry_basis is {stated} but the base leg strikes at FY{leg_fy}, and the leg's reason "
+        f"names only one of them. These are different windows, so the move from the entry "
+        f"multiple to the exit multiple is part denominator roll and part re-rating in unknown "
+        f"proportion — it is not 'no multiple expansion' and it is not pure compression. Either "
+        f"strike the leg at {stated}, or say in `reason` how {stated} bridges to FY{leg_fy}, "
+        f"naming both.")
+    return out
 
 
 def limit_notes(rec: ScenarioRecord) -> list[str]:
@@ -1857,6 +1953,11 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     for _fact in (out.get("facts") or {}).values():
         if isinstance(_fact, dict) and not _fact.get("quantity_kind"):
             _fact.pop("quantity_kind", None)
+    # the RECORD level: a record that states no entry window carries no key for one — same
+    # absent-vs-null rule as `leg_fy` one level down, and the reason all nine committed records
+    # round-trip unchanged through the PR that introduces the field.
+    if out.get("entry_basis") is None:
+        out.pop("entry_basis", None)
     # the leg level: a leg that states no fiscal year carries no key for one
     for _leg in (out.get("scenarios") or {}).values():
         for field in LEG_FIELDS_DROPPED_WHEN_NONE:
