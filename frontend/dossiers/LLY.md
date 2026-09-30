@@ -1,19 +1,19 @@
 # Dossier — ELI LILLY & Co (NYSE: LLY)
 
-_September 28, 2026 · extraction 2026-08-16.1_
+_September 30, 2026 · extraction 2026-08-16.1_
 
 # Brief — first cut
 
 ## At a glance
 Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products in the United States, Europe, China, Japan, and internationally.
-**Strongly-bullish** — mechanism-anchored 48% volume-led revenue growth and rising absolute EBITDA/ROIC, though the premium multiple is fully priced and price declines persist.
+**Strongly-bullish** — volume-led 48% revenue and 73% EBITDA growth with rising RoCE plausibly justify the premium; falling price and concentration are real but currently outweighed.
 - **Segments:** Discovery, Dev., Manufacturing, Marketing, and Sales of Pharmaceutical Products — single segment [1]
 - **Geography:** United States (U.S.) 67%; Europe 18%; Rest of world 9%; Japan 3%; China 3% [2]
-- **Snapshot:** NYSE · CMP $1,170.14 (2026-09-22) · cap $1038.3B (2026-09-21) ⚠ implies $1,103.02/sh vs CMP (-5.7%) · 52-wk $712.05–$1,292.65 · shares 941.4M · book value/sh $38.00 [3]
+- **Snapshot:** NYSE · CMP $1,170.14 (2026-09-22) ⚠ PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling · cap $1038.3B (2026-09-21) ⚠ implies $1,103.02/sh vs CMP (-5.7%) · 52-wk $712.05–$1,292.65 · shares 941.4M · book value/sh $38.00 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Will incretin (Zepbound/Mounjaro/Foundayo) volume keep expanding fast enough to grow into the long-duration EBITDA embedded in a 25.8x trailing / 21.5x NTM multiple, despite persistent U.S. price declines?**
-_9 key unknowns + the evidence for/against — in Analysis_
+**Is the incretin-led volume runway (plus a broadening oncology/immunology/neuro portfolio and the Foundayo oral launch) long and large enough to grow into a trailing 25.8x EV/EBITDA — or is the premium already discounting a durability that falling U.S. price and franchise concentration will erode?**
+_7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-10-28 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and does it change the runway?
@@ -41,20 +41,17 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 49.7% (CIQ EBIT) sits 19.9 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount.
 
-**data_quality: vendor_bridge**
-- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
-
 ## The case
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the runway outlasts the price:_
-- Q2 2026 revenue grew 48% YoY driven by Zepbound and Mounjaro volume, with Key Products up almost $6.8 billion — a mechanism-anchored volume runway, not a paper multiple. [9]
-- Mounjaro and Zepbound combined for $14.9B revenue in Q2, contributing $6.3B of growth, and the U.S. incretin obesity market's total prescriptions grew 78% — the demand pool the reinvestment case rests on is still expanding. [9]
-- Foundayo (oral GLP-1) launched in the U.S. in April 2026 with 40+ markets under review and a scalable small-molecule profile, opening a second incretin modality beyond injectables. [10]
+- The engine is validated by mechanism: Q2 2026 revenue grew 48% YoY with Mounjaro+Zepbound combining for $14.9B and contributing $6.3B of growth, driven by volume not price. [9]
+- Growth is broadening beyond incretins — Oncology, Immunology and Neuroscience key products collectively grew 121% YoY in Q2 2026, reducing reliance on a single franchise. [9]
+- The oral GLP-1 Foundayo launch adds an at-scale future leg: FDA-approved Apr 2026, now under review in 40+ countries with a full global rollout expected in 2027. [10]
 _Bear case — the price already pays for it:_
-- U.S. price declined 3% in Q2 (9% excluding rebate/discount adjustments), so the entire growth story rests on volume while price is a persistent headwind — a genuine load-bearing risk to the margin trajectory the multiple assumes. [9]
-- There is a live guidance-basis mismatch — CIQ carries a $85,000–87,000M FY26 revenue guide while the primary-source release states $80,000–83,000M — meaning the anchor the premium is judged against is itself contested, an OUTWEIGHED-but-genuine counter to the raised-guidance bull read. [11]
-- The multiple embeds a long-duration runway: peer-median NTM TEV/EBITDA of 12.27x on the name's TEV implies EBITDA of $88,304M vs consensus FY26E of only $43,514M — a large gap the business must GROW into to justify today's price. [12]
+- U.S. price is falling — down 3% in Q2 2026 (down 9% excluding rebate/discount adjustments) on Zepbound and Mounjaro — a real headwind if volume growth ever normalises, though currently more than offset by 33% U.S. volume-led revenue growth. [9]
+- The quality is already richly paid for: EV/EBITDA 25.8x is +83% over peer median 14.1x and P/E 39.1x is +57% over peer median 24.9x — but this is the trailing-only read (no forward basis), so the human must weigh it against the forward P/E of 24.7x on FY27E that closes much of the gap. [11]
+- Expectations are demanding: at the name's own NTM TEV/EBITDA of 21.52x the market implies an EBITDA level far above where peers trade, so the runway must be delivered, not merely hoped — a genuine counter-point, though outweighed by the 73% EBITDA growth and twice-raised guidance behind the number. [12]
 
 ## Financial snapshot
 - **Financial snapshot** — [13]  <!-- ds-table -->
@@ -125,7 +122,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 25.8x as-of 2026-09-21 — trailing range 13.3–61.9x (median 26.1x) over 38 closes → 50%ile → below-center; P/LTM EPS 39.1x [24]
-- **vs peers:** EV/EBITDA 25.8x vs peer median 14.1x (+83%); P/E 39.1x vs peer median 24.9x (+57%) [25]
+- **vs peers:** EV/EBITDA 25.8x vs peer median 14.1x (+83%); P/E 39.1x vs peer median 24.9x (+57%) [11]
+- **Forward multiples:** P/FY26E (normalized) 31.9x (EPS $36.73); P/FY26E (GAAP) 33.3x (EPS $35.17); P/FY27E (normalized) 24.7x (EPS $47.34); P/FY27E (GAAP) 26.3x (EPS $44.49) — at $1,170.14 as-of 2026-09-22 [25]
 - **Comparability:** market caps span $102.4B–$649.4B (6x); the name is $1038.3B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [26]
 - **The street, for contrast (target · ratings):** Target price: mean $1,325.39, median $1,385.00, high/low 1,600.00/930.00, N 29/29; Ratings: Buy 19, Outperform 6, Hold 3, Underperform 1, Sell 1, No Opinion 2, Buy 1, Outperform 0, Hold 3, Underperform 0, Sell 0  [data ≥ 2026-09-17 · export date unverified] [27]
 
@@ -149,67 +147,59 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ## The argument
 
-**Evidence balance:** strongly-bullish — mechanism-anchored 48% volume-led revenue growth and rising absolute EBITDA/ROIC, though the premium multiple is fully priced and price declines persist.
+**Evidence balance:** strongly-bullish — volume-led 48% revenue and 73% EBITDA growth with rising RoCE plausibly justify the premium; falling price and concentration are real but currently outweighed.
 
 _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 
 ### Bull case — the runway outlasts the price
-- Q2 2026 revenue grew 48% YoY driven by Zepbound and Mounjaro volume, with Key Products up almost $6.8 billion — a mechanism-anchored volume runway, not a paper multiple. [9]
-- Mounjaro and Zepbound combined for $14.9B revenue in Q2, contributing $6.3B of growth, and the U.S. incretin obesity market's total prescriptions grew 78% — the demand pool the reinvestment case rests on is still expanding. [9]
-- Foundayo (oral GLP-1) launched in the U.S. in April 2026 with 40+ markets under review and a scalable small-molecule profile, opening a second incretin modality beyond injectables. [10]
-- The forward multiple ladder shows the premium compressing as consensus EBITDA compounds (NTM TEV/EBITDA 21.52x stepping to FY30 14.18x), so the runway is partly self-amortising if estimates are met. [12]
-- Management raised FY26 revenue guidance twice, to $85–87B, on strong H1 Key Products — the committed trajectory is being lifted, not defended. [29]
-- On peer fundamentals the name posts EBITDA growth 73% vs peer-median 6%, revenue growth 50% vs 5%, and LT EPS growth 22% vs 7% — the human should weigh whether the premium multiple is EARNED by these deltas rather than a residual overshoot, noting the peer set is moderately dispersed ($102.4B–$649.4B caps vs the name's $1,038.3B). [30]
-- Absolute EBITDA has compounded from $18,807M (FY24) to $31,693M (FY25) to $41,707M LTM, with EBITDA margin climbing to 52% — the runway is expanding, not just re-rating. [31]
-- Leverage is conservative at net-debt/EBITDA 1.1x with interest coverage 226.7x, giving balance-sheet room to fund the manufacturing and BD build-out. [8]
-- ROIC rose to 33.7% LTM from 20.0% in FY23, and RoCE from 20.0% to 33.7%, evidencing genuinely high-return reinvestment rather than dilutive scale. [32]
+- The engine is validated by mechanism: Q2 2026 revenue grew 48% YoY with Mounjaro+Zepbound combining for $14.9B and contributing $6.3B of growth, driven by volume not price. [9]
+- Growth is broadening beyond incretins — Oncology, Immunology and Neuroscience key products collectively grew 121% YoY in Q2 2026, reducing reliance on a single franchise. [9]
+- The oral GLP-1 Foundayo launch adds an at-scale future leg: FDA-approved Apr 2026, now under review in 40+ countries with a full global rollout expected in 2027. [10]
+- Management raised FY2026 guidance twice, lifting the revenue range to $85–87B in August after an April raise, corroborating the demand trajectory. [29]
+- Absolute EBITDA has compounded from $11,852M (FY23) to $41,707M (LTM Jun-30-2026) while revenue rose from $34,124M to $79,666M, a runway of durable operating scale-up rather than a one-off. [30]
+- Fundamental deltas beside the peer multiple show the premium rests on far superior operating characteristics: EBITDA margin 52% vs peer-median 39%, revenue growth 50% vs 5%, EBITDA growth 73% vs 6%, LT EPS growth 22% vs 7% — the human must judge whether the premium is earned by these or residual. [31]
+- Returns on capital are rising into the scale-up: RoCE moved from 20.0% (FY23) to 33.7% (LTM), evidence the reinvestment is high-returning rather than dilutive. [32]
+- Consensus embeds a long runway with rising forward earnings — FY27E EBITDA $54,009M and FY27E normalized EPS $47.34 pulling the forward P/E to 24.7x, materially below the 39.1x trailing multiple. [25]
 
 ### Bear case — the price already pays for it
-- U.S. price declined 3% in Q2 (9% excluding rebate/discount adjustments), so the entire growth story rests on volume while price is a persistent headwind — a genuine load-bearing risk to the margin trajectory the multiple assumes. [9]
-- There is a live guidance-basis mismatch — CIQ carries a $85,000–87,000M FY26 revenue guide while the primary-source release states $80,000–83,000M — meaning the anchor the premium is judged against is itself contested, an OUTWEIGHED-but-genuine counter to the raised-guidance bull read. [11]
-- The multiple embeds a long-duration runway: peer-median NTM TEV/EBITDA of 12.27x on the name's TEV implies EBITDA of $88,304M vs consensus FY26E of only $43,514M — a large gap the business must GROW into to justify today's price. [12]
-- The premium is fully priced: EV/EBITDA 25.8x is +83% over the peer median 14.1x and P/E 39.1x is +57% over 24.9x — but the peer set is moderately dispersed ($102.4B–$649.4B vs the name's $1,038.3B), so the gap must be judged EARNED-vs-RESIDUAL against the fundamental deltas, not read as a clean benchmark discount/premium. [25]
-- FY26 EPS revision breadth is only 1↑/1↓ last month and the surprise history is a run of small GAAP-EPS misses (FY21 -5%, FY23 -4%, FY24 -5%), so beating the embedded expectations is not assured. [33]
+- U.S. price is falling — down 3% in Q2 2026 (down 9% excluding rebate/discount adjustments) on Zepbound and Mounjaro — a real headwind if volume growth ever normalises, though currently more than offset by 33% U.S. volume-led revenue growth. [9]
+- The quality is already richly paid for: EV/EBITDA 25.8x is +83% over peer median 14.1x and P/E 39.1x is +57% over peer median 24.9x — but this is the trailing-only read (no forward basis), so the human must weigh it against the forward P/E of 24.7x on FY27E that closes much of the gap. [11]
+- Expectations are demanding: at the name's own NTM TEV/EBITDA of 21.52x the market implies an EBITDA level far above where peers trade, so the runway must be delivered, not merely hoped — a genuine counter-point, though outweighed by the 73% EBITDA growth and twice-raised guidance behind the number. [12]
+- The premium multiple sits against a HETEROGENEOUS peer set (caps $102.4B–$649.4B vs the name's $1,038.3B), so the peer median is not a clean benchmark and any 'expensive vs peers' read is confidence-gated — a caution, outweighed by the fundamental deltas that plausibly justify a premium. [26]
 
 ### Decisive question
-**Will incretin (Zepbound/Mounjaro/Foundayo) volume keep expanding fast enough to grow into the long-duration EBITDA embedded in a 25.8x trailing / 21.5x NTM multiple, despite persistent U.S. price declines?**
+**Is the incretin-led volume runway (plus a broadening oncology/immunology/neuro portfolio and the Foundayo oral launch) long and large enough to grow into a trailing 25.8x EV/EBITDA — or is the premium already discounting a durability that falling U.S. price and franchise concentration will erode?**
 
 ### …evidence for
-- Q2 2026 revenue grew 48% YoY on Zepbound/Mounjaro volume with Key Products up ~$6.8B, and U.S. obesity-market prescriptions grew 78% — the volume engine is still accelerating the base the premium discounts. [9]
-- Foundayo's April 2026 U.S. approval plus 40+ markets under review adds a scalable oral modality that could extend the runway beyond the injectable franchise. [10]
-- Consensus EBITDA is modeled to compound from FY26E $43,514M toward FY33 $103,731M, which the forward ladder shows compressing the multiple to the low-teens if delivered. [12]
+- Q2 2026 U.S. revenue rose 33% on volume, and total U.S. incretin obesity-market prescriptions grew 78%, with Lilly holding ~6 of 10 total and ~7 of 10 injectable scripts — the volume engine is intact and share-leading. [9]
+- Consensus revenue is modeled climbing to $132,888M by FY2030 and $162,650M by FY2033, an explicit multi-year runway many analysts underwrite. [33]
+- The Foundayo oral GLP-1 opens a scalable non-injectable leg under review in 40+ countries with a 2027 global rollout planned. [10]
 
 ### …evidence against
-- U.S. price fell 3% in Q2 (9% ex-adjustments), a structural headwind that erodes the margin uplift the multiple assumes even as volume grows. [9]
-- The gap to grow into is large — peer-median NTM TEV/EBITDA implies ~$88,304M EBITDA vs consensus FY26E $43,514M — so any deceleration leaves the price exposed. [12]
-- FY26 EPS revision breadth is flat (1↑/1↓) and the multi-year surprise record is a string of small GAAP-EPS misses, tempering confidence that embedded expectations are beatable. [33]
+- U.S. price fell 9% ex-adjustments in Q2 2026 on the two lead products — the growth is volume that must keep outrunning erosion in price. [9]
+- The business is a single reported segment concentrated in cardiometabolic products, so a demand-curve or competitive shock has no offsetting segment to cushion it. [1]
 
 ### Key unknowns
-- Adjusted forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance), so the forward multiple cannot be reconciled to a company-adjusted basis — the trailing 25.8x cannot be cleanly distinguished from a temporarily depressed or permanently impaired level.
-- FCF sign is UNKNOWN in the survival block ('runway not assessable — a risk'); LTM levered FCF of $11,065.9M and CFO−capex of $18,190M differ 0.61x, so the self-funding basis is ambiguous — an opacity risk despite a strong balance sheet.
-- Guidance-basis conflict: CIQ carries FY26 revenue guide $85,000–87,000M but the primary-source release states $80,000–83,000M (MISMATCH flag) — the human must resolve which anchor is current.
-- EBITDA-basis coherence is UNRESOLVED: implied D&A 1.78x between actuals and estimates sits in the band where GAAP-actual-vs-adjusted-estimate basis changes have gone unflagged — reconcile the estimate row to the company's guidance basis before comparing across the boundary.
-- Covenant terms are UNKNOWN (extraction failed) and covenant/adjusted-leverage basis is not disclosed — cannot verify headroom against any covenant.
-- Segment- and brand-level profitability is not broken out (single-segment reporting; brand split not in XBRL) — concentration in the incretin franchise cannot be sized from disclosure, a bearish opacity gap.
-- Heavy 2026 BD/M&A cadence (Kelonia $7B, Centessa $5.9B, AtaiBeckley $2.6B, Merida $2.9B, and others) — integration and acquired-IPR&D charge impact on future margins is not quantified in the supplied facts.
-- Non-operating earnings share cannot be derived (no single-period operating income in XBRL) — quality of the earnings underpinning the multiple is partly unverifiable.
-- Export/as-of date is a FLOOR (≥2026-09-17, unverified) — some consensus and multiple vintages may be stale relative to the true export.
+- Trailing EV/EBITDA of 25.8x sits at its own 5y 50th percentile and P/LTM EPS 39.1x near its own-history low-end (30.6 pctile) — a neutral fact whose overshoot-vs-terminal read is unresolved; the adjusted/company-defined forward EBITDA multiple is not in the revised guidance and must be reconciled.
+- FCF sign is flagged UNKNOWN in survival_capacity and two competing FCF bases exist (CIQ Levered FCF $11,066M vs CFO$28,083M−capex$9,893M=$18,190M) — the self-funding/per-share read depends on which basis; a missing clean cash-runway disclosure is a risk.
+- The EBITDA-basis triangulation is UNRESOLVED (implied D&A 1.78x in the 1.5–2.0x band where GAAP-actuals-vs-adjusted-estimates basis changes have gone unflagged) — reconcile the estimate row against the company's guidance basis before comparing forward multiples.
+- A guide-verification MISMATCH flag: CIQ revenue guide $85,000–87,000M vs a release actual/outlook $80,000–83,000M — the human must confirm which guidance vintage governs.
+- No segment or per-product EBITDA breakout (single-segment reporting) — franchise-level profitability and the true concentration in Mounjaro/Zepbound cannot be sized from the filings; an opacity risk.
+- Price is STALE at assembly (last close 2026-09-22, 8 days before assembly) and the CIQ export date is unverified (a floor ≥ 2026-09-17) — all price-derived multiples should be refreshed.
+- Insider signal is one-directional (0 buys, 6 sells / $34.59M over 182d; last buy ~13mo ago) — read against the twice-raised guidance.
 
 ### Twin reference cases
 - **Novo Nordisk** — kept compounding (LLM-claimed — verify)
-  - distinguished by: A single-therapeutic-franchise incretin leader that sustained a durable premium as GLP-1 volume expanded — the analogue for a category-defining metabolic runway.
+  - distinguished by: A pure-play incretin/obesity franchise leader that sustained a large premium multiple while volume-led revenue and margins compounded — the closest analogue to the same demand wave.
   - source: [LLM-suggested, unverified]
-- **NVIDIA** — kept compounding (LLM-claimed — verify)
-  - distinguished by: A name where a very high trailing multiple was repeatedly justified by absolute-earnings compounding outrunning the premium as demand scaled.
+- **AbbVie Inc.** — re-rated to fair value
+  - distinguished by: A pharma whose valuation and earnings pivoted on the durability of a dominant franchise as pricing and competitive dynamics evolved — the pattern of a franchise-concentration re-rating.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Regeneron Pharmaceuticals** — kept compounding (LLM-claimed — verify)
+  - distinguished by: A high-return drug developer that broadened beyond a single blockbuster into oncology/immunology to extend its reinvestment runway — the diversification-of-a-hit pattern.
   - source: [LLM-suggested, unverified]
 - **Gilead Sciences** — re-rated to fair value
-  - distinguished by: A blockbuster-driven pharma whose premium faded once the flagship franchise's growth plateaued and pricing pressure set in — the cautionary path for a single-category compounder; appears in the roster.
-  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Bristol-Myers Squibb** — re-rated to fair value
-  - distinguished by: A large-cap pharma that de-rated to a low-teens P/E as patent-cliff and pricing concerns dominated — the value-trap comparator within the same peer roster.
-  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **AbbVie** — kept compounding
-  - distinguished by: A pharma that navigated a flagship-drug concentration and heavy BD/acquisition cadence while sustaining a premium — the analogue for concentration-plus-M&A execution risk resolving favourably.
+  - distinguished by: A drugmaker whose premium compressed when a dominant therapeutic wave matured and pricing/volume tailwinds faded — the cautionary path if incretin growth normalises.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 
 ## Catalyst calendar — what tests the thesis, and when
@@ -225,7 +215,7 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 25.8x vs peer median 14.1x (+83%); P/E 39.1x vs peer median 24.9x (+57%) [25]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 25.8x vs peer median 14.1x (+83%); P/E 39.1x vs peer median 24.9x (+57%) [11]
 - **What the current price implies (at stated multiples)** — market caps span $102.4B–$649.4B (6x); the name is $1038.3B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.
   - _TEV as-of 2026-09-21 · multiples as-of 2026-09-17 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [36]  <!-- ds-table -->
@@ -297,7 +287,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [31]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [30]  <!-- ds-table -->
 
 |  | Dec-2017 (R) | Dec-2018 (R) | Dec-2019 | Dec-2020 (R) | Dec-2021 (R) | Dec-2022 | Dec-2023 | Dec-2024 (R) | Dec-2025 | Jun-2026 (LTM) |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -342,7 +332,7 @@ _export date unverified (data ≥ 2026-09-17)_
   - FY 2028: TEV/REV 9.51 · TEV/EBITDA 17.45 · TEV/EBIT 18.59 · Price/Earnings 21.46 · PEG 0.99 · P/BV 9.02
   - _+5 later fiscal years in JSON_
 - **Current guide (latest results filing):** revenue 2026: 80,000.0–83,000.0 $M [44]
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [11]  <!-- ds-table -->
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [45]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
@@ -361,7 +351,7 @@ _export date unverified (data ≥ 2026-09-17)_
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
 - **Consensus stats (target + ratings):** Target price: mean $1,325.39, median $1,385.00, high/low 1,600.00/930.00, N 29/29; Ratings: Buy 19, Outperform 6, Hold 3, Underperform 1, Sell 1, No Opinion 2, Buy 1, Outperform 0, Hold 3, Underperform 0, Sell 0  [data ≥ 2026-09-17 · export date unverified] [27]
-- **Revision-event log (250 events · 18 broker-days)** — [45]  <!-- ds-table -->
+- **Revision-event log (250 events · 18 broker-days)** — [46]  <!-- ds-table -->
 
 |  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
 |---|---|---:|---:|---:|---:|---|---:|---:|---:|
@@ -374,19 +364,19 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
 
 _+12 more broker-days in JSON_
 
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2004 -35%, FY2005 -17%, FY2006 -18%, FY2007 -12%, FY2008 +0%, FY2009 -6%, FY2010 -1%, FY2011 -5%, FY2012 -1%, FY2013 -0%, FY2014 -2%, FY2015 -7%, FY2016 -2%, FY2017 +0%, FY2018 -0%, FY2019 +3%, FY2020 +7%, FY2021 -5%, FY2022 +5%, FY2023 -4%, FY2024 -5%, FY2025 +2%; Revenue surprise: FY2000 -1%, FY2001 -0%, FY2002 -1%, FY2003 +1%, FY2004 +0%, FY2005 -0%, FY2006 +1%, FY2007 +2%, FY2008 -1%, FY2009 +1%, FY2010 +1%, FY2011 +1%, FY2012 +1%, FY2013 +2%, FY2014 -0%, FY2015 +0%, FY2016 +1%, FY2017 +1%, FY2018 +1%, FY2019 +1%, FY2020 +1%, FY2021 +0%, FY2022 -0%, FY2023 +2%, FY2024 -0%, FY2025 +2% (GAAP-EPS basis; +beat / −miss) [46]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2004 -35%, FY2005 -17%, FY2006 -18%, FY2007 -12%, FY2008 +0%, FY2009 -6%, FY2010 -1%, FY2011 -5%, FY2012 -1%, FY2013 -0%, FY2014 -2%, FY2015 -7%, FY2016 -2%, FY2017 +0%, FY2018 -0%, FY2019 +3%, FY2020 +7%, FY2021 -5%, FY2022 +5%, FY2023 -4%, FY2024 -5%, FY2025 +2%; Revenue surprise: FY2000 -1%, FY2001 -0%, FY2002 -1%, FY2003 +1%, FY2004 +0%, FY2005 -0%, FY2006 +1%, FY2007 +2%, FY2008 -1%, FY2009 +1%, FY2010 +1%, FY2011 +1%, FY2012 +1%, FY2013 +2%, FY2014 -0%, FY2015 +0%, FY2016 +1%, FY2017 +1%, FY2018 +1%, FY2019 +1%, FY2020 +1%, FY2021 +0%, FY2022 -0%, FY2023 +2%, FY2024 -0%, FY2025 +2% (GAAP-EPS basis; +beat / −miss) [47]
 
 ## Leverage & survival
 - **Net debt / EBITDA [NET]:** 1.1x [8]
-- **Total debt / EBITDA vs peers:** name 1.3x vs peer median 1.8x (comps TOTAL-debt/EBITDA basis) [47]
-- **Net debt / OCF:** 1.6x [48]
-- **Interest coverage:** 226.7x [49]
-- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [50]
+- **Total debt / EBITDA vs peers:** name 1.3x vs peer median 1.8x (comps TOTAL-debt/EBITDA basis) [48]
+- **Net debt / OCF:** 1.6x [49]
+- **Interest coverage:** 226.7x [50]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [51]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
 
-- **Free cash flow ($M):** 11065.9 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $28,083.0M − capex $9,893.0M = $18,190.0M — 0.61x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [51]
-- **Debt schedule vintage:** the debt schedule is 222d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since [52]
-- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-12-2026** — [53]  <!-- ds-table -->
+- **Free cash flow ($M):** 11065.9 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $28,083.0M − capex $9,893.0M = $18,190.0M — 0.61x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [52]
+- **Debt schedule vintage:** the debt schedule is 222d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since [53]
+- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-12-2026** — [54]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -435,13 +425,13 @@ _49 undated / later aggregate line item(s) in the appendix panel_
   - due 2065: $1,750.0M
   - undated (floor — no panel maturity): $1,362.0M — Commercial Paper –, Operating Lease $1,362.0M
   - _reconciliation: itemized $43,379.7M (panel A 2025 filed Feb-12-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** senior bonds 49,488.9; total principal 54,772.9; total debt 54,908.0 (3 months Jun-30-2026) ($M) [54]
+- **Capital-structure aggregates:** senior bonds 49,488.9; total principal 54,772.9; total debt 54,908.0 (3 months Jun-30-2026) ($M) [55]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0000059478-26-000077 (2026-08-05) states no maturity-resolution event
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [55]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [56]
+- **Going-concern language:** none in latest 10-Q — checked, absent [56]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [57]
   - net debt / EBITDA (CIQ, GAAP basis): 1.1x
   - total debt / EBITDA (CIQ comps, GAAP basis): 1.3x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -452,10 +442,8 @@ _49 undated / later aggregate line item(s) in the appendix panel_
 _3 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Incretin/GLP-1 franchise followed under the QUALITY book: the question is whether durable demand and manufacturing scale outlast what the price already pays, not whether a de-rating is overdone — the name is near its highs and has never broken, which is the shape the overshoot twin cannot ask about. Also the natural first ticker for the GLP-1 demand-shift driver registered with zero names (#484). The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
+- stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling
 - P/E may be distorted by non-recurring EPS — latest annual EPS 22.95 vs recent median 8.76; verify against normalized/forward EPS (CIQ)
-- **Unreconciled margin-compression** — U.S. price fell 3% in Q2 (9% ex-adjustments), a structural headwind that erodes the margin uplift the multiple assumes even as volume grows.
-  - _where:_ a decisive-against point
-  - _why it matters:_ cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
 
 # Appendix — data & audit
 
@@ -498,7 +486,7 @@ _3 to verify._
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-09-17; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [57]  <!-- ds-table -->
+- **Quarterly financials** — [58]  <!-- ds-table -->
 
 |  | FY17 (R) | FY18 (R) | FY19 | FY20 (R) | FY21 (R) | FY22 | FY23 | FY24 (R) | FY25 | LTM |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -512,12 +500,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-09-17; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Jun-26 ($M): cash & ST inv 8,950; total debt 54,908; net debt 45,162; equity 33,879; net working capital 16,931; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [58]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $8,950M / bridge $8,950M; debt BS $54,908M / bridge $54,908M — reconcile with the implied-valuation bridge. [59]
+- **Posture:** as of Jun-26 ($M): cash & ST inv 8,950; total debt 54,908; net debt 45,162; equity 33,879; net working capital 16,931; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [59]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $8,950M / bridge $8,950M; debt BS $54,908M / bridge $54,908M — reconcile with the implied-valuation bridge. [60]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Feb-12-2026** — [53]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Feb-12-2026** — [54]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -578,8 +566,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Notes Due 2030 * | Bonds and Notes | $779.1M | 2.125% | NA | 2030-06-03 | N | N | EUR |
 | Operating Lease | Capital Lease | $1,362.0M | 4.700% | NA | undated | Y | N | USD |
 
-- **8-Ks at instrument maturities:** 8-K at maturity 2026-08-01: filed 2026-08-05 [0000059478-26-000077] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits — read for resolution [60]
-- **Covenant / contract pointers (CIK-verified execution filings)** — [61]  <!-- ds-table -->
+- **8-Ks at instrument maturities:** 8-K at maturity 2026-08-01: filed 2026-08-05 [0000059478-26-000077] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits — read for resolution [61]
+- **Covenant / contract pointers (CIK-verified execution filings)** — [62]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -589,14 +577,14 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 0.625% EURO Denominated Notes Due 2031 * | — | — | no contract-level filing expected (aggregate line item) |
 | 0.97% Japanese Yen Denominated Notes Due 2049 * | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [62]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [63]
 
 ### Implied equity at peer multiples
 > **Comparability gate:** market caps span $102.4B–$649.4B (6x); the name is $1038.3B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 1038332.9 [63]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $8,950.00M, − total debt $54,908.00M [64]
-- **Implied equity at peer-median ($M, CIQ)** — [65]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 1038332.9 [64]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $8,950.00M, − total debt $54,908.00M [65]
+- **Implied equity at peer-median ($M, CIQ)** — [66]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -606,25 +594,25 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf; Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [66]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf; Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [67]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~13mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~13mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~1mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~10mo ago) · grants 243 · last filing 2026-09-22 · other filings 97 [67]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-15): 7.9M → 7.5M sh (-4.7%, falling) · 0.8% of shares out (EDGAR XBRL) · DTC 2.8d · recent: 2026-09-15 7.5M · 2026-08-31 7.9M · 2026-08-14 6.6M · 2026-07-31 9.1M [68]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~13mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~13mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~1mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~10mo ago) · grants 243 · last filing 2026-09-22 · other filings 97 [68]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-15): 7.9M → 7.5M sh (-4.7%, falling) · 0.8% of shares out (EDGAR XBRL) · DTC 2.8d · recent: 2026-09-15 7.5M · 2026-08-31 7.9M · 2026-08-14 6.6M · 2026-07-31 9.1M [69]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [69]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 85000.0–87000.0 vs release 80000.0–83000.0 → MISMATCH flag [70]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [70]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 85000.0–87000.0 vs release 80000.0–83000.0 → MISMATCH flag [71]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-09-22 · assembled 2026-09-28 15:41 UTC
+- **Data window:** screened as of 2026-09-22 · assembled 2026-09-30 13:33 UTC
 - **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
-- **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
-- **Panel age:** oldest panel 7d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
-- **Consensus age:** consensus 11d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
+- **Panel age:** oldest panel 9d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-30 build
+- **Consensus age:** consensus 13d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000059478` · NYSE : LLY
-- **Assembly log:** primary-source: 8-K 0001193125-26-232707 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-25-184093 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+4.7s fetch)
+- **Assembly log:** primary-source: 8-K 0001193125-26-232707 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-25-184093 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+6.7s fetch)
 - **Re-run:** `python -m vinci dossier --ticker LLY` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -641,7 +629,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [8] `CIQ Net Debt $45,162M [46203.0] ÷ CIQ EBITDA $41,707M [LTM 12 months Jun-30-2026]`
 [9] `CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf`
 [10] `CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026`
-[11] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[11] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [12] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
 [13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [14] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
@@ -655,15 +643,15 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [22] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [23] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
 [24] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
-[25] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
+[25] `price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary`
 [26] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [27] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
 [28] `CIQ Customers&Suppliers Eli Lilly and Company NYSE LLY Customers.rtf`
 [29] `CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Aug-05-2026`
-[30] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[31] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[30] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[31] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 [32] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[33] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
+[33] `CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)`
 [34] `cadence: EDGAR submissions (median 84d gap over 23 results 8-Ks; last print 2026-08-05)`
 [35] `CIQ capital-structure panel (maturity_date)`
 [36] `TEV = mcap 1038332.9 + net debt 45162.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-21, exported 2026-09-22) — simple-TEV basis`
@@ -675,29 +663,30 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [42] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
 [43] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [44] `8-K 0000059478-26-000008 EX-99.1 (filed 2026-02-04)`
-[45] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-17 · export date unverified]`
-[46] `CIQ Estimates→Surprise (annual)`
-[47] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-21`
-[48] `CIQ Net Debt $45,162M [46203.0] ÷ CIQ OCF $28,083M [LTM 12 months Jun-30-2026]`
-[49] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
-[50] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[51] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
-[52] `CIQ Capital Structure Details — A 2025 filed Feb-12-2026`
-[53] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)`
-[54] `CIQ Financials→Capital Structure Summary`
-[55] `10-Q 0000059478-26-000081`
-[56] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[57] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[58] `CIQ Financials→Balance Sheet (quarterly, Jun-26)`
-[59] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[60] `EDGAR 8-K submissions (±10d of instrument maturities)`
-[61] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[62] `fenced Tier-2 digest (P1)`
-[63] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21`
-[64] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21`
-[65] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21`
-[66] `CIQ transcript(s): Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf; Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf`
-[67] `EDGAR Form 4 (latest 0001262388-26-000018; 393 filings in the 1095d scanned; counts over 182d)`
-[68] `FINRA consolidated short interest (settle 2026-09-15); DTC = 7,519,918 short ÷ 2,680,748 screen 90d ADV`
-[69] `10-Q maturity wall vs CIQ capital panel (same window)`
-[70] `CIQ revenue guide vs release actual/outlook`
+[45] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[46] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-17 · export date unverified]`
+[47] `CIQ Estimates→Surprise (annual)`
+[48] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-21`
+[49] `CIQ Net Debt $45,162M [46203.0] ÷ CIQ OCF $28,083M [LTM 12 months Jun-30-2026]`
+[50] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
+[51] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[52] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
+[53] `CIQ Capital Structure Details — A 2025 filed Feb-12-2026`
+[54] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)`
+[55] `CIQ Financials→Capital Structure Summary`
+[56] `10-Q 0000059478-26-000081`
+[57] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[58] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[59] `CIQ Financials→Balance Sheet (quarterly, Jun-26)`
+[60] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[61] `EDGAR 8-K submissions (±10d of instrument maturities)`
+[62] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[63] `fenced Tier-2 digest (P1)`
+[64] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21`
+[65] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21`
+[66] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21`
+[67] `CIQ transcript(s): Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf; Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf`
+[68] `EDGAR Form 4 (latest 0001262388-26-000018; 393 filings in the 1095d scanned; counts over 182d)`
+[69] `FINRA consolidated short interest (settle 2026-09-15); DTC = 7,519,918 short ÷ 2,680,748 screen 90d ADV`
+[70] `10-Q maturity wall vs CIQ capital panel (same window)`
+[71] `CIQ revenue guide vs release actual/outlook`
