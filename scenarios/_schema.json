@@ -1424,6 +1424,18 @@
       "default": null,
       "title": "Entry Basis"
     },
+    "entry_denominator": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry Denominator"
+    },
     "facts": {
       "additionalProperties": {
         "$ref": "#/$defs/Fact"

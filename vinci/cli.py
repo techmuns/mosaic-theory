@@ -1422,6 +1422,8 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         # create path produced would be refused by the very next supersede.
         problems = problems + sc.entry_basis_problems(
             (str(tpl.get("entry_basis")) if tpl.get("entry_basis") else None), _base_leg,
+            entry_denominator=(float(tpl["entry_denominator"])
+                               if tpl.get("entry_denominator") else None),
             require_stated=True)
     if problems:
         print(f"=== scenario-create {t}: REFUSED ({len(problems)}) ===")
@@ -1440,6 +1442,8 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             # field exists to end.
             entry_basis=(str(tpl["entry_basis"]).strip().upper().replace(" ", "")
                          if tpl.get("entry_basis") else None),
+            entry_denominator=(float(tpl["entry_denominator"])
+                               if tpl.get("entry_denominator") else None),
             underwrite_date=str(tpl["underwrite_date"]), analyst=str(tpl["analyst"]),
             spot=float(tpl["spot"]), spot_source=str(tpl["spot_source"]),
         # (PR-7) carried through from the template; `write_record` refuses without it from
