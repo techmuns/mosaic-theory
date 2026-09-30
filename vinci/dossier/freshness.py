@@ -71,8 +71,18 @@ _INTEGER_TOLERANCE = 0.03
 #: own-history band's observation date, a per-point series date) is a different object, and mixing
 #: them inverts the ranking: SMPL reads 115 days stale on the mixed measure and 8 days — the
 #: TIGHTEST in the fleet — on panel dates alone. Excluded by name for that reason.
+#:
+#: ``price_as_of`` joined the list 2026-09-30, when the forward-multiple rows first carried one.
+#: It is the same object as the rest: each row stamps the close ITS OWN multiple divides by, so
+#: four rows produced four copies of one date. And it is a copy of a date that STILL GATES —
+#: ``forward_multiples``' price and ``stock_info.as_of`` are both ``max(bars).bar_date`` from the
+#: same ``store.get_price_history`` call (``_refresh_price_and_pe`` takes the max directly;
+#: ``compute_price_features`` reads ``bars[-1]`` and uses its ``reference_date`` only to flag
+#: staleness), so the ceiling, which reads the OLDEST panel, cannot move. Counting them would
+#: have added N duplicates of an already-gating date to the inventory and nothing else.
 _NOT_A_PANEL = re.compile(
-    r"own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points")
+    r"own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points"
+    r"|price_as_of")
 _PANEL_KEY = re.compile(r"as_of|asof|detail_as_of", re.I)
 _ISO = re.compile(r"(20\d\d-\d\d-\d\d)")
 
