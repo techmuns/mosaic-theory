@@ -132,6 +132,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 1.5x as-of 2026-07-17 — trailing range 1.3–172.5x (median 4.2x) over 24 closes → 8%ile → near-floor; P/LTM EPS 12.9x [25]
 - **vs peers:** EV/EBITDA 1.5x vs peer median 7.7x (-81%); P/E 13x vs peer median 16.7x (-22%) [26]
+- **Multiple basis — read before the level:** the EV/EBITDA (TEV/LTM) series implies a 50.1% EBITDA margin, against 10.1% reported. Its denominator is NOT the reported EBITDA; the same TEV over REPORTED EBITDA is nearer 7.3x. The level and percentile above are internally consistent on the series' own basis; they are not comparable to a multiple struck on reported EBITDA.
 - **Comparability:** market caps span $67M–$82.9B (1231x); the name is $586M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
 - **The street, for contrast (target · ratings):** Target price: mean $12.00, median $12.00, high/low 16.00/10.00, N 8/8; Ratings: Buy 2, Outperform 1, Hold 7, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-21 · export date unverified] [28]
 

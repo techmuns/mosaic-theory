@@ -35,6 +35,7 @@ from vinci.dossier.schemas import (
     DriverKind,
     FinRow,
     FinTable,
+    ForwardMultiple,
     GuidanceRow,
     ImpliedRow,
     ImpliedValuation,
@@ -4375,6 +4376,59 @@ _C1_CF_CONSENSUS_ONLY: tuple[tuple[str, str], ...] = (
     ("FCF (consensus basis)", "Free Cash Flow"),
     ("D&A (consensus basis)", "Depreciation & Amortization"),
 )
+
+
+#: The EPS rows a forward P/E may be struck on, most-preferred first. BOTH are published when both
+#: exist: GAAP and normalized differ materially — BURL's LTM pair is $11.13 vs $8.95, a 24% gap —
+#: and a reader who is shown one multiple cannot tell which denominator produced it.
+_FORWARD_EPS_ROWS: tuple[str, ...] = ("EPS (Normalized)", "EPS (GAAP, dil.)")
+
+
+def forward_multiples(
+    table: FinTable | None, *, price: float | None, price_as_of: str | None = None,
+) -> Sourced[list[ForwardMultiple]]:
+    """Price ÷ each ESTIMATE column's EPS, with the column and row that produced it NAMED.
+
+    THE DOSSIER PUBLISHED ONLY TRAILING MULTIPLES while every underwrite runs on forward earnings,
+    so a forward P/E had to come from outside — and an outside multiple arrives with no stated
+    denominator. Measured on a real BURL underwrite: an external "~22.1x forward" (FY+1) was set
+    against an exit multiple on FY+2 and the gap reported as ZERO multiple change; on one basis the
+    same return is about half re-rating. This publishes the number the analyst went looking for,
+    with the cell it came from attached.
+
+    ESTIMATE COLUMNS COME FROM `is_estimate`, NEVER FROM THE "E" SUFFIX — display formatting is not
+    load-bearing here, the same rule that put the flag on the table in the first place.
+
+    UNKNOWN rather than guessed when the price is absent, no column is an estimate, or no EPS row
+    parses: a forward multiple with an unverifiable denominator is the defect, not the fix."""
+    if table is None or not price or price <= 0:
+        return Sourced.unknown(note="no price — a multiple with an unstated numerator is not one")
+    flags = list(table.is_estimate or [])
+    if not any(flags):
+        return Sourced.unknown(
+            note="the CIQ financial summary carries no estimate column — nothing forward to strike")
+    by_label = {str(r.label): r for r in table.rows}
+    out: list[ForwardMultiple] = []
+    for i, col in enumerate(table.columns):
+        if i >= len(flags) or not flags[i]:
+            continue
+        for row_label in _FORWARD_EPS_ROWS:
+            row = by_label.get(row_label)
+            if row is None or i >= len(row.values or []):
+                continue
+            eps = (row.values or [])[i]
+            if eps is None or eps <= 0:
+                continue          # a negative or absent EPS makes a P/E meaningless, never a guess
+            short = "normalized" if "Normal" in row_label else "GAAP"
+            out.append(ForwardMultiple(
+                label=f"P/{col} ({short})", column=str(col), eps_basis=row_label,
+                eps=round(float(eps), 4), multiple=round(price / float(eps), 4),
+                price=round(float(price), 4), price_as_of=price_as_of))
+    if not out:
+        return Sourced.unknown(
+            note="estimate columns carry no positive EPS row — no forward multiple is derivable")
+    return Sourced.present(out, source_ref=(
+        "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary"))
 
 
 def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[FinTable]:

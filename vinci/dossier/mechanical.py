@@ -1617,6 +1617,18 @@ def _valuation(
     ev = ciq_sheets.ev_ebitda_current(bundle)
     if ev.status is SourceStatus.PRESENT and adj_ev.status is not SourceStatus.PRESENT:
         ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
+    # The forward-multiple inputs: the annual summary's estimate columns and the latest stored
+    # close. The price is read ONLY as a numerator to divide by a consensus denominator — no anchor
+    # or screen value derives from it, so the anchor stays the spot-independent figure it claims.
+    _fwd_annual = ciq_sheets.financial_summary_annual(bundle)
+    _fwd_table = _fwd_annual.value if _fwd_annual.status is SourceStatus.PRESENT else None
+    _fwd_price = record.prices.last.value if record.prices.last.is_known else None
+    # `DataField.as_of` is a `date`; `ForwardMultiple.price_as_of` is a STRING, and pydantic does
+    # not coerce one into the other — passing the date raised `string_type` on every fresh
+    # assembly with a known price. Read the attribute DIRECTLY (a `getattr` with a default types
+    # as `Any` and hid the mismatch from `mypy --strict`) and stringify here, at the boundary.
+    _last_as_of = record.prices.last.as_of
+    _fwd_as_of = _last_as_of.isoformat() if _last_as_of is not None else None
     return Valuation(
         cross_sectional=ciq_sheets.cross_sectional_valuation(bundle),
         pe=pe,
@@ -1637,6 +1649,10 @@ def _valuation(
         adjusted_eps=adj_eps,
         range_position=ciq_sheets.range_position(bundle),
         own_history=ciq_sheets.own_history_bands(bundle),  # (P3) structured bands for the chart
+        # FORWARD multiples, each naming the column and EPS row behind it. The price is read only
+        # to DIVIDE by a consensus denominator — no anchor or screen value derives from it.
+        forward_multiples=ciq_sheets.forward_multiples(
+            _fwd_table, price=_fwd_price, price_as_of=_fwd_as_of),
     )
 
 

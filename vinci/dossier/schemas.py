@@ -210,6 +210,35 @@ class OwnHistoryBand(BaseModel):
     model_config = {"frozen": True}
 
 
+class ForwardMultiple(BaseModel):
+    """ONE forward multiple THAT NAMES ITS OWN DENOMINATOR.
+
+    WHY THIS EXISTS. Every multiple the dossier published was TRAILING — `P/LTM EPS`,
+    `EV/EBITDA (TEV/LTM)` — while every underwrite runs on forward earnings. An analyst asked for
+    a forward P/E therefore had to source one outside the dossier, and outside numbers arrive
+    without a stated denominator. Measured on a real BURL underwrite: an external "~22.1x forward
+    P/E" (struck on FY+1) was compared with an exit multiple applied to FY+2 and the difference
+    reported as ZERO multiple change. Rebuilt on one basis the same return is roughly half
+    denominator roll and half re-rating — the Base price is unchanged, its explanation is not.
+
+    THE FIELDS ARE THE POINT. `column` and `eps_basis` name the exact cell the denominator came
+    from, so two of these can never be silently compared across different periods. A multiple
+    without them is the state this class exists to end.
+
+    NOT an opinion about the right multiple — assembly and citation only, like every other
+    mechanical field."""
+
+    label: str        # "P/FY27E (normalized)" — how it renders
+    column: str       # "FY27E" — the financial_summary column the denominator is read from
+    eps_basis: str    # "EPS (Normalized)" — the ROW, because GAAP and normalized differ materially
+    eps: float        # the denominator itself, so the arithmetic is re-derivable
+    multiple: float   # price / eps
+    price: float      # the numerator, named — a multiple whose price is unstated is not auditable
+    price_as_of: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class Valuation(BaseModel):
     """Multiples: the CROSS-SECTIONAL read (vs peers) LEADS; own-history range/percentile is
     secondary — near-tautological post-drawdown, so it barely discriminates. CIQ multiples + G3."""
@@ -232,11 +261,30 @@ class Valuation(BaseModel):
     # range_position's string, for the band chart. Optional → pre-P3 round-trips; a fresh assembly
     # builds it (shares range_position's computation, so the two can't drift).
     own_history: Sourced[list[OwnHistoryBand]] | None = None
+    #: FORWARD multiples, each naming the column and EPS row its denominator came from. Optional →
+    #: pre-field JSON round-trips unchanged; a fresh assembly builds it when the CIQ financial
+    #: summary carries estimate columns and a price is known.
+    forward_multiples: Sourced[list[ForwardMultiple]] | None = None
     # (G) price-inverted expectations in multiples-space — renders AFTER cross_sectional, BEFORE the
     # own-history range. Optional so a pre-G dossier.json validates; a fresh assembly builds it.
     implied_expectations: ImpliedExpectations | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _omit_unbuilt_forward_multiples(self, nxt: Any) -> Any:
+        """Drop ``forward_multiples`` when unbuilt so a dossier that predates the field round-trips
+        BYTE-IDENTICAL.
+
+        Without this the field serialises as ``"forward_multiples": null`` on all 26 committed
+        dossiers, and `refresh_dossier` — which compares serialized text — rewrites every one of
+        them on a no-op. That is the #302 "119 null keys" defect exactly, one module over, and it
+        buries any real change in default noise. Absent-key and None say the same thing here:
+        *this dossier was assembled before forward multiples were published.*"""
+        d = nxt(self)
+        if self.forward_multiples is None:
+            d.pop("forward_multiples", None)
+        return d
 
 
 class TrendPoint(BaseModel):
