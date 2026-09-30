@@ -74,6 +74,20 @@ index and seal; unit = records. *25.5x*: GOOGL's `spot` 339.35 ÷ the NTM 13.29 
 - **Nothing computes an entry multiple.** This makes the basis STATABLE and CHECKABLE; it does not
   decompose a return into denominator roll versus re-rating. That is the piece a reviewer actually
   asked for and it is not built.
+- **THE BRIDGE ESCAPE IS A BARE SUBSTRING TEST, AND IT IS THE SAME DEFECT THIS RECORD CRITICISES
+  ONE PARAGRAPH ABOVE.** The guard excuses a mismatch when the reason contains the window token
+  AND the leg year — but base reasons routinely name their own year, so in practice it collapses
+  to "does the reason mention NTM". Review of #658 verified it: *"Base leg strikes FY2027 revenue
+  at the street median; entry is quoted on NTM terms."* passes with no bridge stated. So the
+  escape hatch is satisfied by ordinary input, which is precisely the charge laid against
+  `leg_fy_problems` above. It is narrower than that one — an unrelated sentence does NOT pass —
+  but the distinction is thinner than the docstring implies. *Falsifier:* a record whose reason
+  names both periods and bridges nothing, which is now known to be constructible.
+- **THE GUARD READS ONLY THE `base` LEG, SO IT CANNOT SEE THE PROSE THAT MOTIVATED IT.** GOOGL's
+  "compression from ~26x" sits in the BEAR leg, whose `leg_fy` is None. No configuration of this
+  guard reaches it. `entry_basis` exists, unstated years are refused, and the corpus round-trips —
+  but the specific sentence this work was built to catch is still uncaught, and calling the case
+  closed would be wrong.
 - **`basis_problems` compares WINDOWS, not values.** "NTM" against "FY2027" is refused as
   unbridged even where the two genuinely coincide at the exit date; the bridge sentence is how the
   analyst says so.
