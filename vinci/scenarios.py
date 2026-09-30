@@ -1301,7 +1301,21 @@ _ENTRY_BASIS_RE = re.compile(r"^(NTM|LTM|FY\s?(\d{4}))$", re.IGNORECASE)
 
 
 def basis_problems(rec: ScenarioRecord, *, require_stated: bool = False) -> list[str]:
+    """The record-level entry point — see :func:`entry_basis_problems` for the rule itself."""
+    return entry_basis_problems(rec.entry_basis, (rec.scenarios or {}).get("base"),
+                                require_stated=require_stated)
+
+
+def entry_basis_problems(entry_basis: str | None, base: ScenarioInput | None, *,
+                         require_stated: bool = False) -> list[str]:
     """Entry and exit denominators must cover the SAME period, or the leg must bridge them.
+
+    TAKES THE TWO VALUES, NOT THE RECORD, so `scenario-create` can run it too. It ran on
+    `scenario-supersede` only, which meant the create path never asked for `entry_basis` and
+    never carried one — so every record the tool created was refused by the very next supersede,
+    on a field its own writer could not set. That is the same "declared and readable but not
+    writable from its own writer" shape the leg-year guard had already been fixed for one
+    function up.
 
     THE RULE THIS ENFORCES: a return described as multiple compression or expansion is only
     measuring that when both multiples are struck on period-equivalent denominators. Compare an
@@ -1322,7 +1336,7 @@ def basis_problems(rec: ScenarioRecord, *, require_stated: bool = False) -> list
     `leg_fy_problems`: reading or recomputing a record never demands a field it predates.
     """
     out: list[str] = []
-    stated = (rec.entry_basis or "").strip()
+    stated = (entry_basis or "").strip()
     if not stated:
         if require_stated:
             out.append(
@@ -1337,14 +1351,20 @@ def basis_problems(rec: ScenarioRecord, *, require_stated: bool = False) -> list
                    "or FY#### — a free-text window compares with nothing, which is the state the "
                    "field exists to end.")
         return out
-    base = (rec.scenarios or {}).get("base")
+    # NORMALISED BEFORE ANYTHING IS COMPARED OR PRINTED. The regex is case-insensitive and admits
+    # a space, and `leg_fy` has no format validator at all — so `entry_basis="FY2028"` against
+    # `leg_fy="FY2028"` failed the identity test (one side had already lost its prefix) and
+    # refused a period-EQUIVALENT record with the message "strikes at FYFY2028". Canonicalise
+    # both sides to one shape, and echo the canonical form back.
+    stated = stated.upper().replace(" ", "")
     if base is None or base.leg_fy is None:
         return out          # `leg_fy_problems` owns the unstated-year refusal; not restated here
-    entry_fy, leg_fy = m.group(2), str(base.leg_fy).strip()
+    entry_fy = m.group(2)
+    leg_fy = str(base.leg_fy).strip().upper().removeprefix("FY").strip()
     if entry_fy is not None and entry_fy == leg_fy:
         return out          # both name the same fiscal year — period-equivalent by identity
     reason = (base.reason or "")
-    if stated.upper().replace(" ", "") in reason.upper().replace(" ", "") and leg_fy in reason:
+    if stated in reason.upper().replace(" ", "") and leg_fy in reason:
         return out          # the leg bridges both periods explicitly
     out.append(
         f"entry_basis is {stated} but the base leg strikes at FY{leg_fy}, and the leg's reason "
