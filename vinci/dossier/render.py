@@ -186,24 +186,34 @@ _MARGIN_BASIS_GAP = 0.25
 
 
 def _reported_ltm_ebitda_margin(m: MechanicalLayer) -> float | None:
-    """The EBITDA margin the company REPORTS, from the annual summary's LTM column."""
+    """The EBITDA margin the company REPORTS, from the annual summary's LTM column.
+
+    STRUCTURED VALUES, NEVER THE RENDERED CELL. The first cut read the display string `"11%"` and
+    divided by 100. That is the parsers rule inverted — and it was not free: the `EBITDA margin`
+    row is rendered to a WHOLE percent, so BURL's 11.146% arrived as 11.0% and the restated
+    multiple published as 15.8x where the underwrite had derived 15.6x by hand. The `EBITDA ($M)`
+    and `Revenue ($M)` rows both carry `values`, so the margin is computed from them; the display
+    row is never consulted.
+    """
     fs = getattr(m, "financial_summary", None)
     ann = getattr(fs, "annual", None) if fs is not None else None
     tbl = ann.value if ann is not None and ann.status is SourceStatus.PRESENT else None
     if tbl is None or "LTM" not in (tbl.columns or []):
         return None
     i = tbl.columns.index("LTM")
-    for row in tbl.rows or []:
-        if str(row.label).strip() != "EBITDA margin":
-            continue
-        cell = (row.cells or [])[i] if i < len(row.cells or []) else None
-        if not cell or "%" not in str(cell):
-            return None
-        try:
-            return float(str(cell).replace("%", "").strip()) / 100
-        except ValueError:
-            return None
-    return None
+
+    def _at(label: str) -> float | None:
+        for row in tbl.rows or []:
+            if str(row.label).strip() != label:
+                continue
+            vals = row.values or []
+            return vals[i] if i < len(vals) else None
+        return None
+
+    ebitda, revenue = _at("EBITDA ($M)"), _at("Revenue ($M)")
+    if ebitda is None or revenue is None or revenue <= 0:
+        return None
+    return float(ebitda) / float(revenue)
 
 
 def _multiple_basis_md(m: MechanicalLayer) -> str:
@@ -227,7 +237,7 @@ def _multiple_basis_md(m: MechanicalLayer) -> str:
     tail = (f"; the same TEV over REPORTED EBITDA is nearer {restated:,.1f}x"
             if restated else "")
     return (f"- **Multiple basis — read before the level:** the {band.metric} series implies a "
-            f"{implied * 100:,.1f}% EBITDA margin, against {reported * 100:,.0f}% reported. Its "
+            f"{implied * 100:,.1f}% EBITDA margin, against {reported * 100:,.1f}% reported. Its "
             f"denominator is NOT the reported EBITDA{tail}. The level and percentile above are "
             f"internally consistent on the series' own basis; they are not comparable to a "
             f"multiple struck on reported EBITDA.")

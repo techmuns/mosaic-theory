@@ -1623,7 +1623,12 @@ def _valuation(
     _fwd_annual = ciq_sheets.financial_summary_annual(bundle)
     _fwd_table = _fwd_annual.value if _fwd_annual.status is SourceStatus.PRESENT else None
     _fwd_price = record.prices.last.value if record.prices.last.is_known else None
-    _fwd_as_of = getattr(record.prices.last, "as_of", None)
+    # `DataField.as_of` is a `date`; `ForwardMultiple.price_as_of` is a STRING, and pydantic does
+    # not coerce one into the other — passing the date raised `string_type` on every fresh
+    # assembly with a known price. Read the attribute DIRECTLY (a `getattr` with a default types
+    # as `Any` and hid the mismatch from `mypy --strict`) and stringify here, at the boundary.
+    _last_as_of = record.prices.last.as_of
+    _fwd_as_of = _last_as_of.isoformat() if _last_as_of is not None else None
     return Valuation(
         cross_sectional=ciq_sheets.cross_sectional_valuation(bundle),
         pe=pe,

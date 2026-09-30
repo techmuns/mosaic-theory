@@ -27,7 +27,11 @@ from vinci.dossier.ciq_sheets import forward_multiples
 from vinci.dossier.schemas import Dossier, FinRow, FinTable, SourceStatus
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-CORPUS = pathlib.Path("/Users/work/Documents/GitHub/mosaic-theory-ta/data/dossiers")
+#: THE COMMITTED CORPUS IN *THIS* REPO. The first cut pointed at an absolute path inside a
+#: sibling worktree on one machine, guarded by `if not (CORPUS / T).is_dir(): return` — so on CI
+#: and in every other checkout the three corpus pins passed while asserting nothing, and they
+#: were measuring data this PR does not commit. The names below are all tracked here.
+CORPUS = ROOT / "data" / "dossiers"
 
 
 def _table(**over: object) -> FinTable:
@@ -111,21 +115,20 @@ def _dossier(t: str) -> Dossier:
 def test_burl_states_that_its_ev_ebitda_is_not_reported_ebitda() -> None:
     """(+) CORPUS, the name the failure was measured on. The line must give BOTH margins and the
     restated level, because "9.0x, 8th percentile, near-floor" is unreadable without them."""
-    if not (CORPUS / "BURL").is_dir():
-        return
     line = rend._multiple_basis_md(_dossier("BURL").mechanical)
     assert line, "BURL's series implies 19.3% against 11% reported — it must say so"
-    assert "19.3%" in line and "11%" in line
+    assert "19.3%" in line and "11.1%" in line
     assert "NOT the reported EBITDA" in line
-    assert "15.8x" in line, "the restated level is what makes 9.0x readable"
+    # 15.6x, NOT 15.8x: the reported margin is computed from the STRUCTURED `EBITDA ($M)` /
+    # `Revenue ($M)` values (11.146%), never from the whole-percent display cell. Parsing the
+    # rendered "11%" published 15.8x and disagreed with the figure the underwrite derived by hand.
+    assert "15.6x" in line, "the restated level is what makes 9.0x readable"
 
 
 def test_it_is_silent_where_the_two_bases_agree() -> None:
     """(-) NOT A BANNER ON EVERY PAGE. Most names' implied and reported margins differ only by the
     rounding of a whole-percent cell; a line there would be noise that trains the reader to skip
     it — and then it is not there when it matters."""
-    if not (CORPUS / "GOOGL").is_dir():
-        return
     assert rend._multiple_basis_md(_dossier("GOOGL").mechanical) == ""
 
 
@@ -133,11 +136,44 @@ def test_it_discloses_rather_than_disqualifies() -> None:
     """(-) THE DESIGN CHOICE, PINNED. BURL's band is coherent — the gap is the order of its annual
     rent, i.e. an EBITDAR-like series — so the anchor must survive. Tightening the coherence bound
     instead would have thrown it away, which is VITL's treatment and wrong here."""
-    if not (CORPUS / "BURL").is_dir():
-        return
     m = _dossier("BURL").mechanical
     oh = m.valuation.own_history if m.valuation else None
     assert oh is not None and oh.status is SourceStatus.PRESENT
     band = next(b for b in (oh.value or []) if "EBITDA" in str(b.metric))
     assert band.data_quality is None, (
         "the band must stay USABLE — this is a disclosure, not a coherence failure")
+
+
+def test_the_store_date_reaches_the_model_as_a_string() -> None:
+    """(-) THE REGRESSION THAT CRASHED EVERY FRESH ASSEMBLY. `_valuation` read the store's
+    `DataField.as_of` — a `datetime.date` — and handed it to `ForwardMultiple.price_as_of`, a
+    `str` field. Pydantic does not coerce a date into a string, so the assembler raised
+    `string_type` for every name with a known price; the `getattr(..., "as_of", None)` that
+    supplied it typed as `Any`, so `mypy --strict` saw nothing. Pinned at the boundary that
+    actually failed: the record's date in, a model out."""
+    from datetime import date
+
+    from vinci.schemas.data_record import PriceFeatures
+    from vinci.schemas.envelope import DataField, SourceTier
+
+    u: DataField[float] = DataField.unknown(source="x", tier=SourceTier.DERIVED)
+    prices = PriceFeatures(
+        last=DataField.present(256.85, as_of=date(2026, 9, 22), source="EOD",
+                               tier=SourceTier.DERIVED),
+        high_52w=u, low_52w=u, drawdown_from_high=u, dist_from_low=u, ret_3m=u, ret_6m=u,
+        ret_12m=u, rel_ret_vs_market=u, adv_90d_shares=u, adv_90d_usd=u, turnover=u,
+        volume_spike=u)
+    # exactly the expression `_valuation` uses to cross the boundary
+    as_of = prices.last.as_of
+    got = forward_multiples(_table(), price=prices.last.value,
+                            price_as_of=as_of.isoformat() if as_of is not None else None)
+    assert got.status is SourceStatus.PRESENT
+    assert (got.value or [])[0].price_as_of == "2026-09-22"
+    # and the contract that made the raw date fatal, stated rather than remembered
+    import pytest
+
+    from vinci.dossier.schemas import ForwardMultiple
+    with pytest.raises(ValueError):
+        ForwardMultiple(label="x", column="FY27E", eps_basis="EPS (Normalized)", eps=1.0,
+                        multiple=1.0, price=1.0,
+                        price_as_of=date(2026, 9, 22))  # type: ignore[arg-type]
