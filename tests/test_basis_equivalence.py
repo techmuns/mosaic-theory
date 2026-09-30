@@ -112,12 +112,74 @@ def test_a_non_blank_reason_does_not_excuse_the_mismatch() -> None:
         "a long, sincere, non-bridging reason must NOT satisfy the guard")
 
 
-def test_a_reason_naming_both_periods_bridges_them() -> None:
-    """(+) The escape hatch that works: the analyst writes the bridge the mismatch requires."""
-    bridge = ("Entry is quoted on NTM; the leg strikes FY2027 because the eighteen-month horizon "
-              "this record states lands inside that year, and the roll between them is ~1.1x.")
-    rec = _with_base(_rec(entry_basis="NTM"), leg_fy="2027", reason=bridge)
+def test_prose_naming_both_periods_no_longer_bridges_anything() -> None:
+    """(-) THE ESCAPE THIS TEST USED TO ASSERT, NOW REFUSED. The first version excused a mismatch
+    when the reason named both periods. Review verified ordinary prose satisfies it — base reasons
+    routinely name their own year, so the test collapsed to "does the reason mention the window".
+    That is the escape-hatch-satisfied-by-legal-input failure the module criticises one guard up,
+    reproduced one guard later. The counter-example is kept verbatim."""
+    bridges_nothing = ("Base leg strikes FY2027 revenue at the street median; entry is quoted on "
+                       "NTM terms.")
+    rec = _with_base(_rec(entry_basis="NTM"), leg_fy="2027", reason=bridges_nothing)
+    assert sc.basis_problems(rec, require_stated=True), (
+        "prose that names both periods while bridging neither must NOT satisfy the guard")
+
+
+def test_a_stated_entry_denominator_quantifies_the_gap() -> None:
+    """(+) THE ESCAPE THAT WORKS: a NUMBER. Boilerplate cannot supply one, and it is the bridge the
+    mismatch actually requires — with it the roll and the re-rating are both computable."""
+    rec = _with_base(_rec(entry_basis="NTM", entry_denominator=13.05),
+                     leg_fy="2027", reason="a perfectly ordinary reason")
     assert sc.basis_problems(rec, require_stated=True) == []
+
+
+def test_every_leg_is_checked_not_only_base() -> None:
+    """(+) THE SCOPE THE GUARD WAS BUILT FOR AND COULD NOT SEE. GOOGL's motivating sentence is in
+    the BEAR leg, whose `leg_fy` is None — a base-only guard could never reach it however it was
+    configured. A leg that compares itself to the entry multiple must say what period it strikes
+    at, or the comparison is unverifiable."""
+    googl = ("Bear EPS EXCEEDS today's NTM $13.29, so the downside is multiple compression "
+             "from ~26x")
+    rec = _rec(entry_basis="NTM", entry_denominator=13.29)
+    legs = dict(rec.scenarios or {})
+    legs["bear"] = legs["base"].model_copy(update={"leg_fy": None, "reason": googl})
+    legs["base"] = legs["base"].model_copy(update={"leg_fy": "2027", "reason": "ordinary"})
+    got = sc.basis_problems(rec.model_copy(update={"scenarios": legs}), require_stated=True)
+    assert any("bear leg compares itself" in g for g in got), got
+
+
+def test_the_entry_claim_detector_only_adds_refusals() -> None:
+    """(-) THE ASYMMETRY THAT MAKES AN IMPRECISE DETECTOR SAFE. It is used ONLY to ADD a refusal,
+    never to excuse one: a miss leaves the status quo, a false positive asks for a year the leg
+    should state anyway. An escape hatch has the opposite asymmetry, which is how the prose bridge
+    failed. A leg with no entry-comparison and no year is left to `leg_fy_problems`."""
+    rec = _rec(entry_basis="NTM", entry_denominator=13.05)
+    legs = dict(rec.scenarios or {})
+    legs["bull"] = legs["base"].model_copy(
+        update={"leg_fy": None, "reason": "Revenue 1,410 is the highest street forecast."})
+    legs["base"] = legs["base"].model_copy(update={"leg_fy": "2027", "reason": "ordinary"})
+    got = sc.basis_problems(rec.model_copy(update={"scenarios": legs}), require_stated=True)
+    assert not any("bull" in g for g in got), got
+
+
+def test_the_decomposition_reproduces_the_records_own_return() -> None:
+    """(+) WHY THE FIELD IS READ AND NOT MERELY STORED. On GOOGL, with the entry NTM its own bear
+    leg names in prose, the split must multiply back to the return the record already implies —
+    otherwise the number bought nothing."""
+    rec = sc.read_record("GOOGL", root=ROOT).model_copy(
+        update={"entry_basis": "NTM", "entry_denominator": 13.29})
+    got = sc.basis_decomposition(rec, "base")
+    assert got is not None
+    base = (rec.scenarios or {})["base"]
+    implied = (base.eps or 0) * (base.multiple or 0) / (rec.spot or 1) - 1
+    assert abs(got["total"] - implied) < 1e-6, (got, implied)
+    assert got["denominator_roll"] > 0 and got["multiple_change"] < 0, (
+        "GOOGL's base is roll-led with mild compression — the split the prose asserted")
+
+
+def test_the_decomposition_is_none_without_both_sides() -> None:
+    """(-) It REPORTS and never refuses; an R1 leg carries no EPS and must simply yield nothing."""
+    assert sc.basis_decomposition(_rec(entry_basis="NTM")) is None
 
 
 def test_a_window_a_machine_cannot_compare_is_refused() -> None:

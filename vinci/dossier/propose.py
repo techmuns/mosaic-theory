@@ -714,6 +714,11 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
         # inventing the denominator the whole field exists to make explicit. Left blank and
         # refused at create, which is the same treatment as the six other empty cells.
         "entry_basis": "",
+        # EMPTY, NEVER PROPOSED, for the same reason as `entry_basis` beside it: the denominator
+        # the entry multiple divides is the analyst's to state. It is what turns a window mismatch
+        # from an assertion into arithmetic — with it the roll and the re-rating are both
+        # computable — so a proposed value would be the machine guessing the bridge.
+        "entry_denominator": "",
         "underwrite_date": "",
         "analyst": "",
         "spot": _get(doc, "mechanical", "stock_info", "price", "value"),
