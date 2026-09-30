@@ -707,6 +707,13 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
         "ticker": ticker,
         "recipe_id": _get(doc, "anchor", "recipe_hint"),
         "multiple_basis": "EV/EBITDA",
+        # THE ENTRY WINDOW — EMPTY, NEVER PROPOSED. `multiple_basis` names the METRIC; this names
+        # the PERIOD the entry multiple's denominator covers (NTM | LTM | FY####). The template
+        # cannot know which window the analyst struck their entry multiple on — the dossier
+        # publishes a price, not an entry multiple — so proposing one would be the machine
+        # inventing the denominator the whole field exists to make explicit. Left blank and
+        # refused at create, which is the same treatment as the six other empty cells.
+        "entry_basis": "",
         "underwrite_date": "",
         "analyst": "",
         "spot": _get(doc, "mechanical", "stock_info", "price", "value"),

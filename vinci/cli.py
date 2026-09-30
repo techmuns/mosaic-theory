@@ -1406,11 +1406,23 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
     _mech = doc.get("mechanical")
     _gap = (_mech.get("ev_gap") if isinstance(_mech, dict) else None) or {}
     _anchor_fy = _gap.get("anchor_fy") if isinstance(_gap, dict) else None
-    if _base.get("revenue") is not None and _base.get("multiple") is not None:
-        problems = problems + sc.leg_fy_problems(sc.ScenarioInput(
-            revenue=float(_base["revenue"]), margin=_base.get("margin"),
+    # REVENUE IS NOT REQUIRED TO ASK FOR THE YEAR. The gate used to require BOTH `revenue` and
+    # `multiple`, and R3 (forward-P/E) legs carry `eps` and no revenue — GOOGL's own recipe — so
+    # the whole leg-year requirement was skipped on exactly the recipe the entry-window work was
+    # motivated by. `ScenarioInput.revenue` is optional; only `multiple` is not.
+    if _base.get("multiple") is not None and str(_base.get("reason") or "").strip():
+        _base_leg = sc.ScenarioInput(
+            revenue=(float(_base["revenue"]) if _base.get("revenue") is not None else None),
+            margin=_base.get("margin"),
             multiple=float(_base["multiple"]), reason=str(_base.get("reason") or ""),
-            leg_fy=(str(_base["leg_fy"]) if _base.get("leg_fy") else None)), _anchor_fy)
+            leg_fy=(str(_base["leg_fy"]) if _base.get("leg_fy") else None))
+        problems = problems + sc.leg_fy_problems(_base_leg, _anchor_fy, require_stated=True)
+        # ...and the entry window, on the path that CREATES records. Without this the field is
+        # unreachable from its own writer: `scenario-supersede` requires it, so every record the
+        # create path produced would be refused by the very next supersede.
+        problems = problems + sc.entry_basis_problems(
+            (str(tpl.get("entry_basis")) if tpl.get("entry_basis") else None), _base_leg,
+            require_stated=True)
     if problems:
         print(f"=== scenario-create {t}: REFUSED ({len(problems)}) ===")
         for p in problems:
@@ -1423,6 +1435,11 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             ticker=t, recipe_id=str(tpl["recipe_id"]), recipe_desc=str(tpl.get("recipe_desc") or
                                                                        tpl["recipe_id"]),
             multiple_basis=str(tpl["multiple_basis"]),
+            # THE ENTRY WINDOW, carried from the template like every other stated field. Refused
+            # above when blank, so a created record can never read "unstated" — the state the
+            # field exists to end.
+            entry_basis=(str(tpl["entry_basis"]).strip().upper().replace(" ", "")
+                         if tpl.get("entry_basis") else None),
             underwrite_date=str(tpl["underwrite_date"]), analyst=str(tpl["analyst"]),
             spot=float(tpl["spot"]), spot_source=str(tpl["spot_source"]),
         # (PR-7) carried through from the template; `write_record` refuses without it from
@@ -1827,7 +1844,9 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     # anchor as nothing-to-check rather than a refusal — same non-forcing rule as the anchors above.
     _anchor_fy = ((doc or {}).get("mechanical") or {}).get("ev_gap") or {}
     problems += sc.leg_fy_problems(
-        (incoming.scenarios or {}).get("base"), _anchor_fy.get("anchor_fy"))
+        (incoming.scenarios or {}).get("base"), _anchor_fy.get("anchor_fy"), require_stated=True)
+    # ...and the entry window must be stated and period-equivalent to the leg it is compared with.
+    problems += sc.basis_problems(incoming, require_stated=True)
     if problems:
         print(f"=== scenario-supersede {t_up}: REFUSED ({len(problems)}) ===")
         for p in problems:

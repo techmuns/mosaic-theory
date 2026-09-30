@@ -1412,6 +1412,18 @@
       "default": null,
       "title": "Spot As Of"
     },
+    "entry_basis": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry Basis"
+    },
     "facts": {
       "additionalProperties": {
         "$ref": "#/$defs/Fact"
