@@ -1617,6 +1617,13 @@ def _valuation(
     ev = ciq_sheets.ev_ebitda_current(bundle)
     if ev.status is SourceStatus.PRESENT and adj_ev.status is not SourceStatus.PRESENT:
         ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
+    # The forward-multiple inputs: the annual summary's estimate columns and the latest stored
+    # close. The price is read ONLY as a numerator to divide by a consensus denominator — no anchor
+    # or screen value derives from it, so the anchor stays the spot-independent figure it claims.
+    _fwd_annual = ciq_sheets.financial_summary_annual(bundle)
+    _fwd_table = _fwd_annual.value if _fwd_annual.status is SourceStatus.PRESENT else None
+    _fwd_price = record.prices.last.value if record.prices.last.is_known else None
+    _fwd_as_of = getattr(record.prices.last, "as_of", None)
     return Valuation(
         cross_sectional=ciq_sheets.cross_sectional_valuation(bundle),
         pe=pe,
@@ -1637,6 +1644,10 @@ def _valuation(
         adjusted_eps=adj_eps,
         range_position=ciq_sheets.range_position(bundle),
         own_history=ciq_sheets.own_history_bands(bundle),  # (P3) structured bands for the chart
+        # FORWARD multiples, each naming the column and EPS row behind it. The price is read only
+        # to DIVIDE by a consensus denominator — no anchor or screen value derives from it.
+        forward_multiples=ciq_sheets.forward_multiples(
+            _fwd_table, price=_fwd_price, price_as_of=_fwd_as_of),
     )
 
 

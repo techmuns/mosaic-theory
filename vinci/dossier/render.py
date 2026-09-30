@@ -27,6 +27,7 @@ from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
     Dossier,
     FinancialSummary,
+    ForwardMultiple,
     MechanicalLayer,
     PriceStoreStamp,
     Sourced,
@@ -165,6 +166,85 @@ def _fmt_insider(v: Any) -> str:
         return text
     total = sum(int(n) for n in re.findall(r"×(\d+)", m.group(1)))
     return text[: m.start()] + f"other filings {total}"
+
+
+#: How far the multiple series' own implied EBITDA margin may sit from the margin the company
+#: REPORTS before the difference is stated beside the multiple. Measured 2026-09-30 across the 22
+#: committed dossiers carrying both figures: 19 sit at or below 1.33x (most of that is rounding —
+#: the reported margin is a whole percent), CNXC 1.33x and ROST 1.31x are the honest top, BURL is
+#: 1.75x and VITL 5.01x. VITL already FAILS the coherence guard and never reaches here.
+#:
+#: BURL IS NOT CORRUPT DATA, WHICH IS WHY THIS DISCLOSES RATHER THAN DISQUALIFIES. Its implied
+#: margin is 19.3% against 11.0% reported — a gap of $991M on $12.2B of revenue, which is the
+#: order of its annual rent. The series is struck on something like EBITDAR: coherent, internally
+#: consistent, and NOT the reported EBITDA the label "EV/EBITDA (TEV/LTM)" implies. Tightening the
+#: coherence bound instead would have thrown the anchor away (VITL's treatment) over data that is
+#: not broken. A reader told "9.0x, 8th percentile, near-floor" cannot otherwise know that 9.0x and
+#: the company's reported EBITDA are not the same arithmetic — on BURL the same TEV over reported
+#: EBITDA is nearer 15.6x, which is not a floor at all.
+_MARGIN_BASIS_GAP = 0.25
+
+
+def _reported_ltm_ebitda_margin(m: MechanicalLayer) -> float | None:
+    """The EBITDA margin the company REPORTS, from the annual summary's LTM column."""
+    fs = getattr(m, "financial_summary", None)
+    ann = getattr(fs, "annual", None) if fs is not None else None
+    tbl = ann.value if ann is not None and ann.status is SourceStatus.PRESENT else None
+    if tbl is None or "LTM" not in (tbl.columns or []):
+        return None
+    i = tbl.columns.index("LTM")
+    for row in tbl.rows or []:
+        if str(row.label).strip() != "EBITDA margin":
+            continue
+        cell = (row.cells or [])[i] if i < len(row.cells or []) else None
+        if not cell or "%" not in str(cell):
+            return None
+        try:
+            return float(str(cell).replace("%", "").strip()) / 100
+        except ValueError:
+            return None
+    return None
+
+
+def _multiple_basis_md(m: MechanicalLayer) -> str:
+    """State the EV/EBITDA series' OWN denominator when it is not the reported one.
+
+    Empty when the two agree, when either is missing, or when no band carries an implied margin —
+    so the line appears only where it changes how the multiple should be read."""
+    val = getattr(m, "valuation", None)
+    oh = getattr(val, "own_history", None) if val is not None else None
+    bands = oh.value if oh is not None and oh.status is SourceStatus.PRESENT else None
+    if not bands:
+        return ""
+    band = next((b for b in bands if b.implied_ebitda_margin and "EBITDA" in str(b.metric)), None)
+    reported = _reported_ltm_ebitda_margin(m)
+    if band is None or not reported or reported <= 0:
+        return ""
+    implied = float(band.implied_ebitda_margin or 0)
+    if not implied or abs(implied - reported) / reported <= _MARGIN_BASIS_GAP:
+        return ""
+    restated = band.current * (implied / reported) if band.current else None
+    tail = (f"; the same TEV over REPORTED EBITDA is nearer {restated:,.1f}x"
+            if restated else "")
+    return (f"- **Multiple basis — read before the level:** the {band.metric} series implies a "
+            f"{implied * 100:,.1f}% EBITDA margin, against {reported * 100:,.0f}% reported. Its "
+            f"denominator is NOT the reported EBITDA{tail}. The level and percentile above are "
+            f"internally consistent on the series' own basis; they are not comparable to a "
+            f"multiple struck on reported EBITDA.")
+
+
+def _forward_multiples_md(s: Sourced[list[ForwardMultiple]] | None) -> str:
+    """The forward multiples as ONE line, each naming its column. Empty string when unbuilt, so a
+    dossier assembled before the field renders exactly as it did."""
+    if s is None:
+        return ""
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return f"- **Forward multiples:** _{s.status.value.upper()}_ — {_clean_note(str(s.note))}"
+    parts = "; ".join(f"{fm.label} {fm.multiple:,.1f}x (EPS ${fm.eps:,.2f})" for fm in s.value)
+    px = s.value[0]
+    asof = f" as-of {px.price_as_of}" if px.price_as_of else ""
+    return (f"- **Forward multiples:** {parts} — at ${px.price:,.2f}{asof}"
+            f"{_cite(s.source_ref)}")
 
 
 def _fmt_customers(v: Any) -> str:
@@ -3307,6 +3387,16 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     if m.valuation is not None:
         out += [_fact("vs own trading history", m.valuation.range_position),
                 _fact("vs peers", m.valuation.cross_sectional)]
+        # FORWARD multiples, each naming the column its denominator came from. MAIN BODY, not
+        # audit: this is a decision value, and it is the row whose absence sent a real underwrite
+        # outside the dossier for a multiple with no stated basis. Printing the basis beside the
+        # number is the entire point — two of these can never be silently compared across periods.
+        # APPEND ONLY WHEN THERE IS A LINE. Both helpers return "" where they do not apply —
+        # every dossier assembled before these fields is in that state — and an appended "" is a
+        # BLANK LINE in the rendered page, which makes the committed .md stale against its own
+        # JSON on names that gained nothing. Caught by the three e2e mirror pins, not by a unit.
+        out += [line for line in (_forward_multiples_md(m.valuation.forward_multiples),
+                                  _multiple_basis_md(m)) if line]
     if m.peer_comps is not None:
         out.append(_fact("Comparability", m.peer_comps.comparability))
     if m.catalyst_path is not None:
