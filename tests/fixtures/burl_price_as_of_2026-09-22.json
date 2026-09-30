@@ -1,0 +1,87 @@
+{
+  "stock_info": {
+    "price": {
+      "value": 256.85,
+      "source_ref": "EOD BURL last close",
+      "status": "present",
+      "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly \u2014 run `vinci refresh` before assembling"
+    },
+    "high_52w": {
+      "value": 378.33,
+      "source_ref": "EOD BURL 52-week high",
+      "status": "present",
+      "note": "52-week window 2025-09-22\u21922026-09-22: spans 365d over 252 bars"
+    },
+    "low_52w": {
+      "value": 226.85,
+      "source_ref": "EOD BURL 52-week low",
+      "status": "present",
+      "note": "52-week window 2025-09-22\u21922026-09-22: spans 365d over 252 bars"
+    },
+    "shares_out": {
+      "value": 62815195.0,
+      "source_ref": "EDGAR XBRL shares outstanding",
+      "status": "present",
+      "note": null
+    },
+    "book_value_ps": {
+      "value": 31.88,
+      "source_ref": "CIQ Financials\u2192Balance Sheet\u2192Book Value/Share (2026-08-01)",
+      "status": "present",
+      "note": null
+    },
+    "market_cap": {
+      "value": 15998.4,
+      "source_ref": "CIQ Comparable Analysis\u2192Financial Data (name Market Capitalization Latest) \u00b7 as-of 2026-09-28",
+      "status": "present",
+      "note": null
+    },
+    "as_of": "2026-09-22",
+    "market_cap_as_of": "2026-09-28"
+  },
+  "valuation": {
+    "forward_multiples": {
+      "value": [
+        {
+          "label": "P/FY27E (normalized)",
+          "column": "FY27E",
+          "eps_basis": "EPS (Normalized)",
+          "eps": 11.8,
+          "multiple": 21.7669,
+          "price": 256.85,
+          "price_as_of": "2026-09-22"
+        },
+        {
+          "label": "P/FY27E (GAAP)",
+          "column": "FY27E",
+          "eps_basis": "EPS (GAAP, dil.)",
+          "eps": 11.48,
+          "multiple": 22.3737,
+          "price": 256.85,
+          "price_as_of": "2026-09-22"
+        },
+        {
+          "label": "P/FY28E (normalized)",
+          "column": "FY28E",
+          "eps_basis": "EPS (Normalized)",
+          "eps": 13.68,
+          "multiple": 18.7756,
+          "price": 256.85,
+          "price_as_of": "2026-09-22"
+        },
+        {
+          "label": "P/FY28E (GAAP)",
+          "column": "FY28E",
+          "eps_basis": "EPS (GAAP, dil.)",
+          "eps": 13.4,
+          "multiple": 19.1679,
+          "price": 256.85,
+          "price_as_of": "2026-09-22"
+        }
+      ],
+      "source_ref": "price \u00f7 CIQ consensus EPS, per estimate column of the Financials annual summary",
+      "status": "present",
+      "note": null
+    }
+  }
+}

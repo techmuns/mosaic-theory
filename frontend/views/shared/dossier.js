@@ -864,7 +864,9 @@ function howToRead() {
 // VALUE — an own-history band's observation date, a per-point series date — is a different object,
 // and counting the second as the first inverts the ranking: SMPL reads 115d stale on the mixed
 // measure and 3d, the tightest in the fleet, on arrivals alone. Exclusions pinned in test_parity_pins.
-const _NOT_A_PANEL = /own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points/;
+// `price_as_of` (2026-09-30): each forward-multiple row stamps the close its own multiple
+// divides by — a copy of `stock_info.as_of`, which still gates, not a new arrival.
+const _NOT_A_PANEL = /own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points|price_as_of/;
 function panelDates(node, path = "") {
   const out = [];
   if (node && typeof node === "object" && !Array.isArray(node)) {
