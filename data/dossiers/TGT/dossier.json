@@ -420,6 +420,49 @@
         "status": "present",
         "note": null
       },
+      "forward_multiples": {
+        "value": [
+          {
+            "label": "P/FY27E (normalized)",
+            "column": "FY27E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 10.24,
+            "multiple": 15.5293,
+            "price": 159.02,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY27E (GAAP)",
+            "column": "FY27E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 10.37,
+            "multiple": 15.3346,
+            "price": 159.02,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY28E (normalized)",
+            "column": "FY28E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 9.55,
+            "multiple": 16.6513,
+            "price": 159.02,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY28E (GAAP)",
+            "column": "FY28E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 9.48,
+            "multiple": 16.7743,
+            "price": 159.02,
+            "price_as_of": "2026-09-22"
+          }
+        ],
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -4522,7 +4565,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[FIVE-YEAR CREDIT AGREEMENT · 0000027419-26-000032]\n  Principal / commitment amount: $4,000,000,000 (aggregate Commitments at the Effective Date); may be increased…\n  Interest / coupon rate: Term SOFR Loans: Applicable Margin plus Term SOFR; Base Rate Loans: Applicable…\n  Maturity date: August 14, 2031 (subject to extension pursuant to Section 2.17)\n  Financial-maintenance covenants: Leverage Ratio (Section 5.08): Total Finance Liabilities to Total Capitalization not…\nMaturity event (8-K 0000027419-26-000032 (2026-08-14)): \"receipt by the Agent of evidence satisfactory to it of (i) the payment of all principal of and interest on any loans outstanding under, and of all accrued fees under the Existing Five-Year Agreement and the Existing 364-Day Agreement, and (ii) the satisfaction of all obligations, termination of…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[FIVE-YEAR CREDIT AGREEMENT · 0000027419-26-000032]\n  Principal / commitment amount: $4,000,000,000 (aggregate Commitments at the Effective Date); may be increased…\n  Interest / coupon rate: Term SOFR Loans: Applicable Margin plus Term SOFR; Base Rate Loans: Applicable…\n  Maturity date: August 14, 2031 (subject to extension pursuant to Section 2.17)\n  Financial-maintenance covenants: Leverage Ratio (Section 5.08): Total Finance Liabilities to Total Capitalization not…\nMaturity event (8-K 0000027419-26-000032 (2026-08-14)): Section 3.01(e): receipt by the Agent of evidence satisfactory to it of (i) the payment of all principal of and interest on any loans outstanding under, and of all accrued fees under the Existing Five-Year Agreement and the Existing 364-Day Agreement, and (ii) the satisfaction of all obligations,…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4548,10 +4591,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$4,000,000,000 (aggregate Commitments at the Effective Date); may be increased pursuant to Section 2.16 provided combined Commitments do not exceed $5,000,000,000",
+              "value": "$4,000,000,000 (aggregate Commitments at the Effective Date); may be increased pursuant to Section 2.16 up to combined Commitments not exceeding $5,000,000,000",
               "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
               "status": "present",
-              "note": "verbatim: ““Commitment” means, with respect to each Bank, its obligation to make Loans to the Borrower pursuant to Section 2.01 ... the aggregate amount of which at the Effective Date is $4,000,000,000.”"
+              "note": "verbatim: ““ Commitment ” means, with respect to each Bank, its obligation to make Loans to the Borrower pursuant to Section 2.01 , in an aggregate principal amount at any one time outstanding not to exceed the amount set forth opposite the name of such Bank on Schedule 1.01(b) or pursuant to any Assignment and Assumption Agreement, as such amount may be reduced from time to time pursuant to Section 2.08 or 2.09 , or may be increased at any time pursuant to Section 2.16 , the aggregate amount of which at the Effective Date is $4,000,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4564,13 +4607,13 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR Loans: Applicable Margin plus Term SOFR; Base Rate Loans: Applicable Margin plus Base Rate. Applicable Margin for Term SOFR Loans ranges from 0.455% (Level I) to 0.900% (Level V) based on Debt Rating; Applicable Margin for Base Rate Loans 0.000% at all Levels. Term SOFR floor of 0.00%.",
+              "value": "Term SOFR Loans: Applicable Margin plus Term SOFR; Base Rate Loans: Applicable Margin plus Base Rate. Applicable Margin for Term SOFR Loans ranges 0.455% (Level I) to 0.900% (Level V) based on Debt Rating; Applicable Margin for Base Rate Loans 0.000% at all Levels. Term SOFR floor 0.00%.",
               "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
               "status": "present",
-              "note": "verbatim: “Each Term SOFR Loan shall bear interest on the outstanding principal amount thereof, for each day during the Interest Period applicable thereto, at a rate per annum equal to the sum of the Applicable Margin for such day plus Term SOFR for such Interest Period.”"
+              "note": "verbatim: “Each Term SOFR Loan shall bear interest on the outstanding principal amount thereof, for each day during the Interest Period applicable thereto, at a rate per annum equal to the sum of the Applicable Margin for such day plus Term SOFR for such Interest Period. ... Each Base Rate Loan shall bear interest ... at a rate per annum equal to the sum of the Applicable Margin for such day plus the Base Rate for such day.”"
             },
             "base_rate_label": "Term SOFR",
-            "margin_pct": 0.455,
+            "margin_pct": null,
             "margin_bps": null,
             "floor_pct": 0.0,
             "pik_pct": null,
@@ -4596,7 +4639,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Leverage Ratio (Section 5.08): Total Finance Liabilities to Total Capitalization not greater than or equal to 0.75 to 1.00 at end of any fiscal quarter. Limitation on Secured Debt (Section 5.07): secured Debt not to exceed 20% of Consolidated Tangible Net Worth at end of any fiscal quarter.",
+              "value": "Leverage Ratio (Section 5.08): Total Finance Liabilities to Total Capitalization not greater than or equal to 0.75 to 1.00. Also Section 5.07 Limitation on Secured Debt: secured Debt not to exceed 20% of Consolidated Tangible Net Worth.",
               "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
               "status": "present",
               "note": "verbatim: “Section 5.08 Leverage Ratio . The Borrower will not, at the end of any fiscal quarter of the Borrower, permit the ratio of (a) Total Finance Liabilities to (b) Total Capitalization to be greater than or equal to 0.75 to 1.00.”"
@@ -4612,7 +4655,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "No security/collateral or guarantors granted for the facility (unsecured revolving credit; Section 9.07 states Banks are not relying on margin stock as collateral)",
+              "value": "No collateral or guarantors stated; unsecured revolving credit facility. Section 5.07 limits secured Debt but the facility itself is not stated to be secured or guaranteed.",
               "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
               "status": "present",
               "note": "verbatim: “Section 9.07 Collateral . Each of the Banks represents to the Agent and each of the other Banks that it in good faith is not relying upon any “margin stock” (as defined in Regulation U) as collateral in the extension or maintenance of the credit provided for in this Agreement.”"
@@ -4628,10 +4671,58 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Events of Default (Section 6.01): (a) failure to pay principal when due or interest/fees within 5 Business Days; (b) failure to observe covenants in Sections 5.05-5.09; (c) failure to observe other covenants for 30 days after notice; (d) incorrect representation/warranty in material respect; (e) default on Material Debt (aggregate principal exceeding $250,000,000); (f)/(g) bankruptcy/insolvency; (h) ERISA events exceeding $250,000,000; (i) judgment in excess of $250,000,000. Change of Control offer of prepayment (Section 2.15): each Bank may terminate its Commitment and declare Loans due within 60 days after notice of Change of Control (50% or more voting power / board change). Illegality mandatory prepayment (Section 8.02): Borrower shall immediately prepay affected Term SOFR Loans if a Bank may not lawfully maintain them.",
+              "value": "Events of Default in Section 6.01 (payment default, covenant breaches, cross-default to Material Debt (aggregate principal exceeding $250,000,000), bankruptcy/insolvency, ERISA events exceeding $250,000,000, judgments in excess of $250,000,000, etc.). Change of Control / Offer of Prepayment in Section 2.15 (each Bank may terminate its Commitment and declare Loans due upon Change of Control or Prepayment Offer). Illegality prepayment in Section 8.02.",
               "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
               "status": "present",
-              "note": "verbatim: “Section 6.01 Events of Default . If one or more of the following events (“ Events of Default ”) shall have occurred and be continuing: (a) the Borrower shall fail to pay when due any principal of any Loan, or shall fail to pay within five Business Days of the due date thereof any interest on any Loan, any fees or any other amount payable hereunder;”"
+              "note": "verbatim: “Section 6.01 Events of Default . If one or more of the following events (“ Events of Default ”) shall have occurred and be continuing: (a) the Borrower shall fail to pay when due any principal of any Loan ... (b) ... fail to observe or perform any covenant contained in Sections 5.05 through 5.09 ... (e) ... default in the payment ... of any Material Debt ... (f)/(g) [bankruptcy] ...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "FIVE-YEAR CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Facility Fee",
+            "value": {
+              "value": "0.045% (Level I) to 0.100% (Level V) per annum on daily aggregate Commitments",
+              "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
+              "status": "present",
+              "note": "verbatim: ““ Facility Fee Rate ” means, at any date, a rate per annum equal to (i) 0.045%, if Level I Status exists at such date, (ii) 0.050%, if Level II Status exists at such date, (iii) 0.060%, if Level III Status exists at such date, (iv) 0.080%, if Level IV Status exists at such date, and (v) 0.100% if Level V Status exists at such date.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "FIVE-YEAR CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Optional prepayment",
+            "value": {
+              "value": "Permitted at any time in whole or in part without premium or penalty, subject to Section 2.12 funding losses; minimum $25,000,000 or whole multiple of $5,000,000",
+              "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
+              "status": "present",
+              "note": "verbatim: “The Borrower may, upon notice to the Agent pursuant to delivery to the Agent of a Notice of Loan Prepayment, at any time or from time to time voluntarily prepay Loans in whole or in part without premium or penalty, subject to Section 2.12”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "FIVE-YEAR CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York",
+              "source_ref": "8-K 0000027419-26-000032 · five-yearcreditagreementex.htm",
+              "status": "present",
+              "note": "verbatim: “This Agreement and each Note ... shall be governed by and construed in accordance with the laws of the State of New York.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4647,7 +4738,7 @@
         "note": null
       },
       "maturity_event": {
-        "value": "\"receipt by the Agent of evidence satisfactory to it of (i) the payment of all principal of and interest on any loans outstanding under, and of all accrued fees under the Existing Five-Year Agreement and the Existing 364-Day Agreement, and (ii) the satisfaction of all obligations, termination of all commitments under, and cancellation or expiration of, the Existing Five-Year Agreement and the Exis",
+        "value": "Section 3.01(e): receipt by the Agent of evidence satisfactory to it of (i) the payment of all principal of and interest on any loans outstanding under, and of all accrued fees under the Existing Five-Year Agreement and the Existing 364-Day Agreement, and (ii) the satisfaction of all obligations, termination of all commitments under, and cancellation or expiration of, the Existing Five-Year Agreem",
         "source_ref": "8-K 0000027419-26-000032 (2026-08-14)",
         "status": "present",
         "note": null
@@ -6511,7 +6602,7 @@
         "value": 159.02,
         "source_ref": "EOD TGT last close",
         "status": "present",
-        "note": null
+        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling"
       },
       "high_52w": {
         "value": 170.75,
@@ -9054,7 +9145,7 @@
           "kind": "leading_indicator",
           "metric": "net sales growth",
           "period": "first quarter",
-          "value": "6.7%",
+          "value": "grew by 6.7%",
           "value_num": null,
           "unit": null,
           "verbatim": "First quarter net sales grew by 6.7%, reflecting a 5.6% increase in comparable sales.",
@@ -9066,7 +9157,7 @@
           "kind": "leading_indicator",
           "metric": "comparable sales increase",
           "period": "first quarter",
-          "value": "5.6%",
+          "value": "5.6% increase",
           "value_num": null,
           "unit": null,
           "verbatim": "First quarter net sales grew by 6.7%, reflecting a 5.6% increase in comparable sales.",
@@ -9076,8 +9167,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "net sales vs Q1 2024 (2-year)",
-          "period": "Q1 2027 vs Q1 2024",
+          "metric": "two-year net sales growth",
+          "period": "Q1 of 2024",
           "value": "3.7% higher",
           "value_num": null,
           "unit": null,
@@ -9100,8 +9191,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "new items added in health and wellness",
-          "period": "recently",
+          "metric": "health and wellness new items added",
+          "period": null,
           "value": "around 1,500 new items",
           "value_num": null,
           "unit": null,
@@ -9112,9 +9203,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "wellness sales growth",
+          "metric": "wellness-related categories sales growth",
           "period": "first quarter",
-          "value": "double-digit sales growth",
+          "value": "double-digit sales growth ... doubling comp growth rates",
           "value_num": null,
           "unit": null,
           "verbatim": "These changes drove double-digit sales growth in the first quarter, doubling comp growth rates in wellness-related categories compared with Q4 of last year.",
@@ -9136,9 +9227,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "sales growth from new food items vs prior assortment",
+          "metric": "sales from new food items growth",
           "period": "Q1",
-          "value": "more than 50%",
+          "value": "growing more than 50% over the prior assortment",
           "value_num": null,
           "unit": null,
           "verbatim": "We introduced 3,000 new food items in Q1 alone, with sales from those items growing more than 50% over the prior assortment.",
@@ -9149,7 +9240,7 @@
         {
           "kind": "leading_indicator",
           "metric": "toys comp growth",
-          "period": "this quarter (Q1)",
+          "period": "this quarter",
           "value": "double-digit comp growth",
           "value_num": null,
           "unit": null,
@@ -9160,9 +9251,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "priority areas share of sales and growth contribution",
-          "period": "going forward",
-          "value": "about half of our sales; roughly 3/4 of our growth",
+          "metric": "priority areas share of sales and growth",
+          "period": null,
+          "value": "about half of our sales ... roughly 3/4 of our growth",
           "value_num": null,
           "unit": null,
           "verbatim": "These focus areas represent about half of our sales today and are expected to drive roughly 3/4 of our growth going forward.",
@@ -9171,10 +9262,22 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "guests shopping health and wellness",
+          "period": null,
+          "value": "more than 70% of our guests",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Busy families are also increasingly focused on health and wellness, an area shopped by more than 70% of our guests already.",
+          "following_context": "To deliver newness and drive greater distinction in the market, we recently added around 1,500 new items and have plans to refresh around 40% of our assortment this year. These changes drove double-digit sales growth in the first quarter, doubling comp growth rates in wellness-related categories compared with Q4 of last year.",
+          "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "traffic growth",
           "period": "Q2",
-          "value": "up 3.6%",
+          "value": "up 3.6% to last year",
           "value_num": null,
           "unit": null,
           "verbatim": "As we continue to elevate what we sell and how we sell it, they're choosing us more often, reflected in another strong quarter of traffic growth, up 3.6% to last year, which is a slight acceleration on a 2-year basis compared to Q1.",
@@ -9186,7 +9289,7 @@
           "kind": "pricing_action",
           "metric": "items with lowered prices",
           "period": "over the past year",
-          "value": "more than 10,000 items",
+          "value": "lowered prices on more than 10,000 items",
           "value_num": null,
           "unit": null,
           "verbatim": "Over the past year alone, we've lowered prices on more than 10,000 items, reinforcing our commitment to ensuring families can find a unique combination of style, quality and affordability every time they shop with us.",
@@ -9195,10 +9298,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "digital traffic from external AI platforms growth vs industry",
+          "kind": "competitive_position",
+          "metric": "digital traffic from external AI platforms growth",
           "period": "as compared to a year ago",
-          "value": "more than 3.5x the industry",
+          "value": "growing more than 3.5x the industry",
           "value_num": null,
           "unit": null,
           "verbatim": "And while still small in total today, as more consumers begin to explore the benefits of agentic shopping, Target's digital traffic sourced from external AI platforms is growing more than 3.5x the industry as compared to a year ago.",
@@ -9209,7 +9312,7 @@
         {
           "kind": "leading_indicator",
           "metric": "new full-size stores opened",
-          "period": "already this year",
+          "period": "Already this year",
           "value": "24 new full-size stores",
           "value_num": null,
           "unit": null,
@@ -9221,7 +9324,7 @@
         {
           "kind": "competitive_position",
           "metric": "priority areas share of sales",
-          "period": "today",
+          "period": null,
           "value": "about 50% of our sales",
           "value_num": null,
           "unit": null,
@@ -9232,9 +9335,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "snack sales vs last year post transition",
-          "period": "post transition (Q2)",
-          "value": "more than 15% ahead of last year",
+          "metric": "snack sales growth post transition",
+          "period": "post transition",
+          "value": "running more than 15% ahead of last year",
           "value_num": null,
           "unit": null,
           "verbatim": "For example, post transition, snack sales are running more than 15% ahead of last year, with outstanding momentum in protein bars, meat sticks and better-for-you snacking options.",
@@ -9244,9 +9347,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Heyday $10 headphones sales vs last year",
-          "period": "Q2",
-          "value": "more than 35% ahead of last year",
+          "metric": "Heyday $10 headphones sales growth",
+          "period": null,
+          "value": "running more than 35% ahead of last year",
           "value_num": null,
           "unit": null,
           "verbatim": "Sales of our style-forward $10 headphones are running more than 35% ahead of last year.",
@@ -9256,9 +9359,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "LEGO sales vs last year",
-          "period": "Q2",
-          "value": "up more than 30%",
+          "metric": "LEGO sales growth",
+          "period": null,
+          "value": "up more than 30% to last year",
           "value_num": null,
           "unit": null,
           "verbatim": "LEGO sales are up more than 30% to last year.",
@@ -9268,8 +9371,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "plush sales vs last year",
-          "period": "Q2",
+          "metric": "plush sales growth",
+          "period": null,
           "value": "up more than 20%",
           "value_num": null,
           "unit": null,
@@ -9286,147 +9389,146 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a real traffic-led recovery and sharp upward revisions, but an above-peer EBITDA multiple, an 82% run, and margins/returns still below prior peak.",
+    "evidence_balance": "mixed — a genuine, broker-ratified comp/traffic inflection collides with a ~83% one-year run and consensus's own FY28 step-down.",
     "bull_points": [
       {
-        "claim": "The consensus earnings path has re-rated sharply upward, with FY27 EBITDA revised from 8,165.8 (12m ago) to 9,563.2 (latest), a +17% net move, and FY27 EPS Normalized +28% over the same window — evidence the runway is being repriced upward, not down.",
+        "claim": "Consensus FY27 EBITDA has been revised up ~17% (from $8,165.8M to $9,563.2M over 12m) and normalized EPS +28%, indicating a genuine upgrade cycle rather than a bare multiple move.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Management-raised FY2026 guidance — net sales growth 'around 5%, one percentage point higher than the prior guidance range' — signals the return-to-growth strategy is delivering ahead of prior plan.",
-        "source_ref": "CIQ Key Developments: Target Corporation NYSE TGT Key Developments.rtf · Aug-19-2026",
-        "cited": true
-      },
-      {
-        "claim": "Traffic grew 3.6% in Q2, a slight two-year acceleration versus Q1, evidencing the top-line recovery is traffic-led rather than price-led.",
+        "claim": "Q2 traffic grew 3.6% year-over-year and represents a slight two-year acceleration versus Q1, the load-bearing driver of the top-line inflection management is claiming.",
         "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The seven priority merchandising areas represent about 50% of sales today and are expected to drive roughly three-quarters of future growth, with early durable proof points (baby comp acceleration, wellness double-digit growth, food-item sales +50% over prior assortment).",
+        "claim": "Q1 net sales grew 6.7% on a 5.6% comparable-sales increase, broad-based across all six core categories — a mechanism behind the revenue re-acceleration to +5.3% YoY in the latest quarter.",
         "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Q1 net sales grew 6.7% on a 5.6% comparable-sales increase, broad-based across all six core merchandise categories — a mechanism behind the upward EBITDA revisions.",
-        "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+        "claim": "Management raised FY26 guidance twice (net-sales growth from ~2% in March to ~5% in August), evidencing improving business momentum on a dated timetable.",
+        "source_ref": "CIQ Key Developments: Target Corporation NYSE TGT Key Developments.rtf · Aug-19-2026",
         "cited": true
       },
       {
-        "claim": "The business is self-funding and lowly levered: net-debt/EBITDA 1.6x, interest coverage 20.1x, LTM FCF positive at $3,433M, with an S&P issuer rating of A.",
+        "claim": "Absolute LTM EBITDA rose to $8,593M from $8,072M a year earlier even as the margin % held flat at 8%, so the trailing profit base is expanding, not contracting.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The business self-funds: net-debt/EBITDA 1.6x, interest coverage 20.1x, S&P issuer rating A, and both latest-Q OCF and LTM FCF positive.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "On P/E the name screens below the peer median (16.3x vs 18.6x, -13%); whether that gap is EARNED (weaker growth) or RESIDUAL must be judged against the heterogeneous peer set and the fundamental deltas, not read as clean cheapness.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "claim": "On TEV/EBITDA the name screens above the peer median (9.2x vs 7.8x LTM) — but that peer set spans $11.8B–$856.7B caps (72x), so whether any peer discount/premium is earned or residual cannot be read cleanly and must be judged by the human against the fundamental deltas.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "On EV/EBITDA the name trades ABOVE the peer median (9.2x vs 7.8x, +17%) and above its own 9.5-year center (61st percentile, median 8.4x) — so on the operating-cash multiple the quality is NOT being given away; the P/E discount is the optical read while the EBITDA multiple is the fuller signal that expectations are already elevated.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "claim": "The trailing P/E percentile sits at ~97% of its ~5-year range, so on a trailing-earnings basis the name is priced near the top of its own history — the trailing optic; the forward view is softer (P/FY27E ~15.5x normalized) so this is partly a consensus MISREAD of a depressed prior-year EPS base, leaving the overshoot-vs-terminal question unresolved.",
+        "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         "cited": true
       },
       {
-        "claim": "The equity has run +82.7% over the trailing ~year vs SPY +13.7%, so the recovery narrative and raised guidance are substantially already in the price — the expectations to beat are steep.",
+        "claim": "The stock has run +82.7% over the trailing year vs SPY +13.7%, so a large fraction of the operational recovery is already embedded in the price and must now be BEATEN, not merely delivered.",
         "source_ref": "EOD TGT vs SPY rebased to 100, 2025-09-23..2026-09-22",
         "cited": true
       },
       {
-        "claim": "Structural growth trails peers: revenue growth 2% vs peer-median 7%, LT EPS growth 6% vs 9%, and leverage is heavier (Debt/EBITDA 2.1 vs 1.9) — inputs suggesting part of any multiple discount is EARNED rather than residual.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "The multi-year record is one of stagnation: revenue $104.8B in FY26 is below the FY23 peak of $109.1B and ROIC has fallen from 19.3% (FY22) to 8.7% (FY26)/9.3% LTM, so the 'return to sustainable growth' is a claim not yet proven across a full cycle.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "Returns on capital have structurally stepped down and not recovered: RoCE 19.3% (FY22) → 8.3% (FY23) → 8.7% (FY26) → 9.3% (LTM), well below the pre-2023 double-digit base.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "claim": "Consensus itself sees the upgrade fading: FY28E EBITDA ($9,244M) and normalized EPS ($9.55) are BELOW FY27E ($9,563M / $10.24), so the current-year spike is not modelled to sustain into the following year.",
+        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
         "cited": true
       },
       {
-        "claim": "EBITDA margin sits at 8% (LTM) versus 11% in FY22, and absolute LTM EBITDA of $8,593M remains below the FY22 peak of $11,704M — the recovery has not restored prior profitability, so the % compression is a real signal, not merely an optical divisor effect.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "The revenue recovery leans on price cuts on more than 10,000 items over the past year, an investment that supports traffic but pressures margin — a genuine drag on the profitability side of the runway.",
+        "claim": "Management is funding the top line with a ~$1B incremental operating investment and price cuts on 10,000+ items, a margin drag against a flat 8% EBITDA margin — growth is being bought, and the durability of the returns is the open question.",
         "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Insiders sold into the strength: 0 open-market buys and 7 sells ($19.68M, 5 insiders) in the last 182 days, with no purchase in the 3-year scan; short interest is also rising (+6.0% to 16.8M shares).",
+        "claim": "Insiders sold $19.68M across 7 open-market sales (5 insiders) in the last 182 days with zero purchases in the 3-year scan, and short interest rose +6.0% into the run — a genuine counter-signal, though modest in scale relative to the float.",
         "source_ref": "EDGAR Form 4 (latest 0001288709-26-000013; 130 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Walmart Inc.",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "A mass-retail peer that funded price investment and store/digital modernization and sustained traffic-led growth, re-rating as execution proved durable.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "Best Buy Co.",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A big-box retailer whose turnaround delivered a period of margin/comp recovery but where structurally slower growth kept the multiple range-bound.",
+        "distinguishing_fact": "A big-box US retailer that engineered a turnaround narrative on merchandising/experience refresh; the pattern to test is whether a comp-driven recovery holds once the easy lap-year comparisons pass.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "The Kroger Co.",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A low-growth staples retailer where traffic and modest comps sustained the business but structurally low growth capped the operating multiple.",
+        "name": "The TJX Companies",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "A US retailer that sustained above-peer traffic and margin over a full cycle by structural model advantage rather than one-off assortment resets — the durability bar the subject's inflection must clear.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Walmart Inc.",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "A general-merchandise peer whose omnichannel/retail-media reinvestment translated into durable traffic gains, the analogue for whether the subject's tech and store investment compounds or merely defends share.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Dollar General Corporation",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A discount retailer whose earnings compressed then partially recovered, illustrating how a return-to-growth narrative is repriced only once profitability durability is proven.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "The TJX Companies",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "An off-price retailer that sustained peer-leading margins and comp growth, showing the outcome a durable-execution retailer earns when profitability is genuinely restored.",
+        "distinguishing_fact": "A US retailer where an ambitious store-investment/turnaround plan met margin pressure and choppy comps, the pattern to test against the subject's ~$1B incremental spend.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is the traffic-led recovery a durable return to compounding growth and restored profitability, or a price-investment-funded top-line rebound that leaves margins and returns-on-capital structurally below the prior peak while the multiple already prices recovery?",
+      "question": "Is the recent comp/traffic re-acceleration a durable inflection that compounds beyond FY27, or a lap-year-aided, investment-bought bump that fades — as consensus's own FY28 step-down implies?",
       "evidence_for": [
         {
-          "claim": "Consensus FY27 EBITDA has been revised +17% (8,165.8→9,563.2) and EPS Normalized +28% over 12 months, with the priority areas expected to drive ~3/4 of future growth.",
+          "claim": "Q2 traffic +3.6% YoY was a two-year acceleration versus Q1, and management characterises the guest response as 'durable' with growth concentrated in the priority categories receiving investment.",
+          "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "Consensus FY27 EBITDA was revised up ~17% and normalized EPS +28% over 12 months, and FY26 guidance was raised twice — a broker cohort ratifying the improvement.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Q2 traffic +3.6% accelerated on a two-year basis and management reports durable, not one-quarter, momentum in the invested categories.",
-          "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+          "claim": "Q1 comparable sales rose 5.6% with net sales +6.7% broad-based across all six core categories and both channels, led by traffic.",
+          "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The recovery is partly bought with price cuts on 10,000+ items, and EBITDA margin (8% LTM) and absolute EBITDA ($8,593M LTM) remain below the FY22 peak (11%, $11,704M).",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Consensus models the inflection fading: FY28E EBITDA and normalized EPS both fall below FY27E, so the upgrade cycle is not projected to sustain.",
+          "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
           "cited": true
         },
         {
-          "claim": "RoCE at 9.3% LTM is still roughly half the FY22 19.3% level, and revenue growth (2%) trails the peer median (7%).",
-          "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+          "claim": "Management explicitly attributes Q1 strength partly to lapping softer 2025 results and notes two-year growth (+3.7% vs 2024) is 'well below' the aspiration, and the top line is being supported by ~$1B incremental spend and 10,000+ price cuts.",
+          "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "ROIC has degraded from 19.3% (FY22) to 8.7%/9.3% and revenue remains below the FY23 peak, so the structural earnings power backing a durable claim is unproven across the cycle.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward EV/EBITDA on an adjusted basis and no adjusted EPS in the revised 99.1 guidance — cannot cleanly distinguish a temporarily depressed operating multiple from a permanently impaired one.",
-      "Single-segment (U.S. Retail) reporting means no segment-EBITDA breakout — the incremental profitability of the priority-growth areas versus the legacy base is not disclosed; treat this opacity as a risk, not a neutral gap.",
-      "Covenant leverage basis and net-debt/company-adjusted-EBITDA are UNKNOWN (not disclosed); the debt schedule is 195d old and predates a Item 1.02 termination filed 2026-08-14 — verify current instruments before relying on it.",
-      "Whether the P/E discount vs a HETEROGENEOUS peer set (caps span $11.8B–$856.7B, 72x) is EARNED (weaker growth/leverage) or RESIDUAL (overshoot) is unresolved and for the human to judge — not computed here.",
-      "The TEV/multiples panel is dated on/after 2026-09-28 while the price store ends 2026-09-22; the export date is a floor and unverified, so vintage alignment is imperfect.",
-      "The margin impact of the $1B incremental FY26 operating investment and the 10,000+ price cuts on the durability of restored profitability is not quantified in the supplied facts."
+      "Whether the trailing P/E at ~97%ile of its own 5y range reflects a permanently re-rated business or an artefact of a depressed prior-year EPS base — overshoot-vs-terminal is unresolved without a forward/adjusted EBITDA basis (ev_ebitda_adjusted_fwd is UNKNOWN).",
+      "No forward or company-adjusted EV/EBITDA and no adjusted EPS in the 99.1 revised guidance — the durability of the earnings base cannot be cross-checked on an adjusted basis (BEARISH opacity).",
+      "Single-segment (U.S. Retail Operations) reporting means NO segment-EBITDA breakout — the mix contribution of the 7 priority categories driving ~3/4 of claimed growth cannot be verified from disclosure (BEARISH opacity).",
+      "Covenant basis for leverage is UNKNOWN/not disclosed and the capital-structure panel is 195d old and predates an Item 1.02 termination (2026-08-14) — the debt schedule may not reflect current instruments.",
+      "The FY27 free-cash-flow drag from ~$1B incremental operating investment plus higher capex is not resolved against the margin path; whether the growth spend earns an adequate return is the crux.",
+      "Peer set is HETEROGENEOUS (caps span 72x); the earned-vs-residual read on any peer multiple gap must be adjudicated by the human, not taken as a clean benchmark."
     ],
     "draw_agreement": {
       "attempted": 5,
@@ -9439,23 +9541,23 @@
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Target, the US general-merchandise retailer, followed under the QUALITY book by operator decision 2026-09-28. At $159.02 on 2026-09-22 it is 6.4% below its 52-week closing high of $169.89 (2026-08-24) and 90.0% above the low of $83.68 (2025-11-20), ahead of IWM by 66.2 points over the window — the strongest of the three, and NOT a de-rated name whatever the earlier framing assumed. It is booked as quality because the question is durability of the recovery, not whether a fall overshot. EV/EBITDA 9.2x against an 8.4x own-history median (38 closes, 9.5 years), and R1 anchors at $138 on a 10-year median operating margin of 5.6% — the only one of the three whose margin leg reads FIRM. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+1.2s fetch)",
-    "Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.",
-    "Bare peer-comparison (a bear point): 'On EV/EBITDA the name trades ABOVE the peer median (9.2x vs 7.8x, +17%) and above its own 9.5-year center (61st percentile, median 8.4x) — so on the operating-cash multiple the quality is NOT being given away; the P/E discount is the optical read while the EBITDA multiple is the fuller signal that expectations are already elevated.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'On EV/EBITDA the name trades ABOVE the peer median (9.2x vs 7.8x, +17%) and above its own 9.5-year center (61st percentile, median 8.4x) — so on the operating-cash multiple the quality is NOT being given away; the P/E discount is the optical read while the EBITDA multiple is the fuller signal that expectations are already elevated.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling",
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+5.7s fetch)",
+    "Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0000027419-26-000016 · tgt20260131-exhibit1018.htm declares itself no agreement at all",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (364-Day Unsecured Revolving Credit Facility): 8-K 0000027419-16-000060 · form8-k_creditagreement105.htm declares itself no agreement at all",
+    "TWIN 'Dollar General Corporation' has numbers ['1'] — must be non-numeric",
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-28T13:47:33.201055Z",
+  "assembled_at": "2026-09-30T13:11:58.248416Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-col/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-burl/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-22"
   },
@@ -9478,7 +9580,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-28T13:53:10.576756Z",
+    "computed_at": "2026-09-30T13:18:21.299340Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

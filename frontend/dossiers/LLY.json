@@ -412,6 +412,49 @@
         "status": "present",
         "note": null
       },
+      "forward_multiples": {
+        "value": [
+          {
+            "label": "P/FY26E (normalized)",
+            "column": "FY26E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 36.73,
+            "multiple": 31.8579,
+            "price": 1170.14,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY26E (GAAP)",
+            "column": "FY26E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 35.17,
+            "multiple": 33.271,
+            "price": 1170.14,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY27E (normalized)",
+            "column": "FY27E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 47.34,
+            "multiple": 24.7178,
+            "price": 1170.14,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY27E (GAAP)",
+            "column": "FY27E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 44.49,
+            "multiple": 26.3012,
+            "price": 1170.14,
+            "price_as_of": "2026-09-22"
+          }
+        ],
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -6659,7 +6702,7 @@
         "value": 1170.14,
         "source_ref": "EOD LLY last close",
         "status": "present",
-        "note": null
+        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling"
       },
       "high_52w": {
         "value": 1292.65,
@@ -9380,25 +9423,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "key products revenue growth (Ebglyss, Inluriyo, Jaypirca, Kisunla, Mounjaro, Omvoh, Zepbound)",
-          "period": "Q1 2026 vs Q1 2025",
-          "value": "grew by more than $7 billion",
+          "metric": "Mounjaro and Zepbound combined global revenue",
+          "period": "Q1 2026",
+          "value": "$12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our key products currently defined as Ebglyss, Inluriyo, Jaypirca, Kisunla, Mounjaro, Omvoh, and Zepbound grew by more than $7 billion.",
-          "following_context": "Within key products, our Immunology, Oncology and Neuroscience medicines collectively grew by 160% compared to the same quarter last year as we continue to invest to drive growth across all of our therapeutic areas.",
-          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Immunology, Oncology and Neuroscience medicines collective growth",
-          "period": "Q1 2026 vs same quarter last year",
-          "value": "grew by 160%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Within key products, our Immunology, Oncology and Neuroscience medicines collectively grew by 160% compared to the same quarter last year as we continue to invest to drive growth across all of our therapeutic areas.",
-          "following_context": null,
+          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound global revenue was $12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025.",
+          "following_context": "As seen on Slide 9, the U.S. incretin analog market continued robust growth in Q1. The recent approval of oral GLP-1s expanded the market, enabling more people to benefit from the GLP-1s. Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -9418,7 +9449,7 @@
           "kind": "pricing_action",
           "metric": "U.S. price excluding rebate/discount adjustment",
           "period": "Q1 2026",
-          "value": "will have declined 10%",
+          "value": "declined 10%",
           "value_num": null,
           "unit": null,
           "verbatim": "Excluding this impact, U.S. price will have declined 10%.",
@@ -9429,8 +9460,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Ebglyss U.S. new patient starts",
-          "period": "Q1 2026 vs Q1 2025",
-          "value": "increased by 90%",
+          "period": "Q1 2026",
+          "value": "increased by 90% compared to Q1 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "U.S. new patient starts increased by 90% compared to Q1 2025, and we steadily gained share within the specialty dermatology market.",
@@ -9441,8 +9472,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Jaypirca worldwide sales growth",
-          "period": "Q1 2026 vs Q1 2025",
-          "value": "grew 79%",
+          "period": "Q1 2026",
+          "value": "grew 79% compared to Q1 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "Worldwide sales grew 79% compared to Q1 2025, and we continue to hear positive feedback from physicians globally.",
@@ -9452,21 +9483,21 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Inluriyo share of oral SERD new patient starts in metastatic breast cancer",
+          "metric": "Inluriyo share of oral SERD new patient starts",
           "period": "Q1 2026",
-          "value": "over 35% share",
+          "value": "over 35% share of oral SERD new patient starts in metastatic breast cancer",
           "value_num": null,
           "unit": null,
-          "verbatim": "Inluriyo performance in the U.S. was encouraging during its first full quarter launch, achieving over 35% share of oral SERD new patient starts in metastatic breast cancer in Q1.",
+          "verbatim": "Although still early, Inluriyo performance in the U.S. was encouraging during its first full quarter launch, achieving over 35% share of oral SERD new patient starts in metastatic breast cancer in Q1.",
           "following_context": "For the SERD market growth also increased, largely driven by the launch of Inluriyo. In Neuroscience, Kisunla continues to be the U.S. leader in amyloid targeting therapies. The market continues to steadily increase as diagnostic capabilities for Alzheimer's disease expand. We expect European launches to begin contributing to growth throughout 2026.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "Kisunla position in U.S. amyloid targeting therapies",
-          "period": null,
-          "value": "U.S. leader",
+          "metric": "Kisunla U.S. position in amyloid targeting therapies",
+          "period": "Q1 2026",
+          "value": "the U.S. leader in amyloid targeting therapies",
           "value_num": null,
           "unit": null,
           "verbatim": "In Neuroscience, Kisunla continues to be the U.S. leader in amyloid targeting therapies.",
@@ -9476,21 +9507,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Mounjaro and Zepbound global revenue",
-          "period": "Q1 2026 vs Q1 2025",
-          "value": "$12.8 billion combined, contributing $6.7 billion of growth",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound global revenue was $12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025.",
-          "following_context": "As seen on Slide 9, the U.S. incretin analog market continued robust growth in Q1. The recent approval of oral GLP-1s expanded the market, enabling more people to benefit from the GLP-1s. Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
-          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "U.S. incretin analog obesity market total prescriptions growth",
           "period": "Q1 2026",
-          "value": "grew by over 80%",
+          "value": "grew by over 80% in Q1",
           "value_num": null,
           "unit": null,
           "verbatim": "Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
@@ -9500,9 +9519,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Zepbound self-pay share of total prescriptions",
+          "metric": "Zepbound self-pay share of prescriptions",
           "period": "Q1 2026",
-          "value": "approximately 45%",
+          "value": "approximately 45% of total Zepbound prescriptions in Q1, and 55% of new prescriptions",
           "value_num": null,
           "unit": null,
           "verbatim": "Self-pay continues to be an important segment for Zepbound and accounted for approximately 45% of total Zepbound prescriptions in Q1, and 55% of new prescriptions.",
@@ -9525,8 +9544,8 @@
         {
           "kind": "competitive_position",
           "metric": "Mounjaro U.S. type 2 diabetes market share gain",
-          "period": "Q1 2026 vs end of 2025",
-          "value": "gained another 3 percentage points",
+          "period": "Q1 2026",
+          "value": "gained another 3 percentage points of market share compared to the end of 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "In the U.S. type 2 diabetes incretin analog market, total prescriptions grew 11%, and Mounjaro gained another 3 percentage points of market share compared to the end of 2025.",
@@ -9536,9 +9555,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "international incretin analog market growth (IQVIA gross sales)",
-          "period": "vs same period last year",
-          "value": "increased by 77%",
+          "metric": "International incretin analog market growth (IQVIA gross sales)",
+          "period": "Q1 2026",
+          "value": "increased by 77% since the same period last year",
           "value_num": null,
           "unit": null,
           "verbatim": "The total international market has increased by 77% since the same period last year as measured by IQVIA gross sales.",
@@ -9560,9 +9579,45 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "revenue growth",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "grew 48%",
+          "metric": "Q1 revenue growth",
+          "period": "Q1 2026",
+          "value": "grew 56% compared to Q1 2025",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Revenue grew 56% compared to Q1 2025, driven by Zepbound and Mounjaro, and solid momentum across all therapeutic areas and geographies.",
+          "following_context": "Gross margin as a percentage of revenue was 82.6% in Q1, a decrease of approximately 1 percentage point versus the same quarter last year. The change was driven primarily by low [ ICE ] prices.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "U.S. revenue growth",
+          "period": "Q1 2026",
+          "value": "increased 43% in Q1",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "U.S. revenue increased 43% in Q1, primarily driven by volume growth from Zepbound and Mounjaro as well as contributions from our Immunology, Oncology, and Neuroscience portfolio.",
+          "following_context": "U.S. price declined by 7%, including the impact of the previously announced direct-to-patient prices for Zepbound. U.S. price was positively impacted by a onetime adjustment to estimates for rebates and discounts, primarily impacting Zepbound and Mounjaro. Excluding this impact, U.S. price will have declined 10%.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Immunology, Oncology and Neuroscience key products growth",
+          "period": "Q1 2026",
+          "value": "grew by 160% compared to the same quarter last year",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Within key products, our Immunology, Oncology and Neuroscience medicines collectively grew by 160% compared to the same quarter last year as we continue to invest to drive growth across all of our therapeutic areas.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Q2 revenue growth",
+          "period": "Q2 2026",
+          "value": "grew 48% compared to Q2 of 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue grew 48% compared to Q2 of 2025, and our Key Products increased by almost $6.8 billion.",
@@ -9572,37 +9627,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Key Products revenue increase",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "increased by almost $6.8 billion",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Revenue grew 48% compared to Q2 of 2025, and our Key Products increased by almost $6.8 billion.",
-          "following_context": "Within Key Products, our Oncology, Immunology, and Neuroscience medicines collectively grew 121% compared to the same quarter last year, as we continue to expand our presence across the portfolio. The number of people taking incretins grew, and Lilly's portfolio of medicines extended its leadership position.",
-          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Oncology, Immunology, and Neuroscience medicines collective growth",
-          "period": "Q2 2026 vs same quarter last year",
-          "value": "grew 121%",
+          "metric": "Oncology, Immunology, and Neuroscience key products growth",
+          "period": "Q2 2026",
+          "value": "grew 121% compared to the same quarter last year",
           "value_num": null,
           "unit": null,
           "verbatim": "Within Key Products, our Oncology, Immunology, and Neuroscience medicines collectively grew 121% compared to the same quarter last year, as we continue to expand our presence across the portfolio.",
           "following_context": "The number of people taking incretins grew, and Lilly's portfolio of medicines extended its leadership position.",
-          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "people with U.S. coverage for obesity medicines (Medicare GLP-1 Bridge program)",
-          "period": "after July 1 launch",
-          "value": "35% more people now have coverage",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "With this expansion, 35% more people now have coverage for our obesity medicines in the United States.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -9632,9 +9663,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Ebglyss worldwide sales",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "more than doubled",
+          "metric": "U.S. revenue growth",
+          "period": "Q2 2026",
+          "value": "increased 33% in Q2",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "U.S. revenue increased 33% in Q2, primarily driven by volume growth from Zepbound and Mounjaro, as well as contributions from our Immunology, Oncology, and Neuroscience portfolio.",
+          "following_context": "U.S. price declined by 3%, driven by Zepbound and Mounjaro.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Ebglyss worldwide sales growth",
+          "period": "Q2 2026",
+          "value": "more than doubled compared to Q2 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "Within Immunology, Ebglyss worldwide sales more than doubled compared to Q2 2025.",
@@ -9644,9 +9687,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Ebglyss U.S. share of new prescriptions gain in specialty dermatology",
-          "period": "Q2 2026 vs last year",
-          "value": "increasing by approximately 4 percentage points",
+          "metric": "Ebglyss U.S. share of new prescriptions gain",
+          "period": "Q2 2026",
+          "value": "increasing by approximately 4 percentage points in the specialty dermatology market since last year",
           "value_num": null,
           "unit": null,
           "verbatim": "In the U.S., Ebglyss continued to gain share of new prescriptions, increasing by approximately 4 percentage points in the specialty dermatology market since last year.",
@@ -9657,8 +9700,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Jaypirca worldwide sales growth",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "increased 56%",
+          "period": "Q2 2026",
+          "value": "increased 56% compared to Q2 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "In Oncology, Jaypirca had another strong quarter of growth, and worldwide sales increased 56% compared to Q2 2025.",
@@ -9668,9 +9711,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Inluriyo U.S. share of new prescriptions in metastatic breast cancer oral SERD market",
-          "period": "after 2 full quarters",
-          "value": "more than 50% share",
+          "metric": "Inluriyo U.S. new prescription share in oral SERD market",
+          "period": "Q2 2026",
+          "value": "the U.S. leader in new prescriptions, with more than 50% share",
           "value_num": null,
           "unit": null,
           "verbatim": "After only 2 full quarters, Inluyro is the U.S. leader in new prescriptions, with more than 50% share.",
@@ -9681,8 +9724,8 @@
         {
           "kind": "leading_indicator",
           "metric": "P-tau217 blood tests",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "more than doubled",
+          "period": "Q2 2026",
+          "value": "more than doubled compared to Q2 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "Diagnostic testing momentum also continues to build, and the number of P-tau217 blood tests more than doubled compared to Q2 2025.",
@@ -9693,8 +9736,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Mounjaro and Zepbound combined revenue",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "$14.9 billion of revenue, contributing $6.3 billion of growth",
+          "period": "Q2 2026",
+          "value": "$14.9 billion of revenue, and contributing $6.3 billion of growth compared to Q2 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound had another strong quarter, combining for $14.9 billion of revenue, and contributing $6.3 billion of growth compared to Q2 2025.",
@@ -9705,8 +9748,8 @@
         {
           "kind": "leading_indicator",
           "metric": "U.S. incretin analogs market total prescriptions growth",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "grew 31%",
+          "period": "Q2 2026",
+          "value": "grew 31% compared to Q2 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "As seen on Slide 10, total prescriptions in the U.S. incretin analogs market grew 31% compared to Q2 2025.",
@@ -9715,10 +9758,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "injectable incretins share of new patient starts",
+          "kind": "competitive_position",
+          "metric": "Injectable incretins share of new patient starts",
           "period": "Q2 2026",
-          "value": "3 out of 4 new patient starts",
+          "value": "account for 3 out of 4 new patient starts",
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, injectable incretins continue to be an important growth driver, and account for 3 out of 4 new patient starts.",
@@ -9730,7 +9773,7 @@
           "kind": "leading_indicator",
           "metric": "U.S. incretin analogs obesity market total prescriptions growth",
           "period": "Q2 2026",
-          "value": "grew by 78%",
+          "value": "grew by 78% in Q2",
           "value_num": null,
           "unit": null,
           "verbatim": "Within the U.S. incretin analogs obesity market, total prescriptions grew by 78% in Q2, and the Lilly anti-obesity portfolio continues to lead.",
@@ -9740,9 +9783,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Lilly share of U.S. obesity incretin prescriptions",
+          "metric": "Lilly share of U.S. obesity prescriptions",
           "period": "Q2 2026",
-          "value": "approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions",
+          "value": "approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine",
           "value_num": null,
           "unit": null,
           "verbatim": "In Q2, approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine.",
@@ -9754,7 +9797,7 @@
           "kind": "leading_indicator",
           "metric": "Zepbound self-pay share of prescriptions",
           "period": "Q2 2026",
-          "value": "approximately 45% of total Zepbound prescriptions and approximately 55% of new prescriptions",
+          "value": "approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions",
           "value_num": null,
           "unit": null,
           "verbatim": "Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
@@ -9765,8 +9808,8 @@
         {
           "kind": "leading_indicator",
           "metric": "U.S. type 2 diabetes incretin analogs market total prescriptions growth",
-          "period": "Q2 2026 vs Q2 2025",
-          "value": "grew 9%",
+          "period": "Q2 2026",
+          "value": "grew 9% compared to Q2 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "In the U.S., type 2 diabetes incretin analogs market, total prescriptions grew 9% compared to Q2 2025, reflecting a more mature market compared to obesity.",
@@ -9778,7 +9821,7 @@
           "kind": "competitive_position",
           "metric": "Lilly share of U.S. type 2 diabetes incretin prescriptions",
           "period": "Q2 2026",
-          "value": "more than 6 out of 10 prescriptions",
+          "value": "more than 6 out of 10 prescriptions for an incretin were for a Lilly medicine",
           "value_num": null,
           "unit": null,
           "verbatim": "The Lilly portfolio continues to lead here as well, as more than 6 out of 10 prescriptions for an incretin were for a Lilly medicine.",
@@ -9788,9 +9831,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "international incretin analogs market growth (IQVIA gross sales)",
-          "period": "vs same period last year",
-          "value": "increased by 74%",
+          "metric": "International incretin analogs market growth (IQVIA gross sales)",
+          "period": "Q2 2026",
+          "value": "increased by 74% since the same period last year",
           "value_num": null,
           "unit": null,
           "verbatim": "Slide 11 shows aggregate trends in the international incretin analogs market, which has increased by 74% since the same period last year, as measured by IQVIA gross sales.",
@@ -9800,8 +9843,8 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Lilly international incretin market share",
-          "period": "Q2 2026 vs Q1 2026",
+          "metric": "Lilly global incretin market share",
+          "period": "Q2 2026",
           "value": "gaining almost 2 percentage points of share compared to Q1 2026, reaching approximately 55%",
           "value_num": null,
           "unit": null,
@@ -9818,78 +9861,68 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — mechanism-anchored 48% volume-led revenue growth and rising absolute EBITDA/ROIC, though the premium multiple is fully priced and price declines persist.",
+    "evidence_balance": "strongly-bullish — volume-led 48% revenue and 73% EBITDA growth with rising RoCE plausibly justify the premium; falling price and concentration are real but currently outweighed.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded from $18,807M (FY24) to $31,693M (FY25) to $41,707M LTM, with EBITDA margin climbing to 52% — the runway is expanding, not just re-rating.",
+        "claim": "Absolute EBITDA has compounded from $11,852M (FY23) to $41,707M (LTM Jun-30-2026) while revenue rose from $34,124M to $79,666M, a runway of durable operating scale-up rather than a one-off.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Q2 2026 revenue grew 48% YoY driven by Zepbound and Mounjaro volume, with Key Products up almost $6.8 billion — a mechanism-anchored volume runway, not a paper multiple.",
+        "claim": "The engine is validated by mechanism: Q2 2026 revenue grew 48% YoY with Mounjaro+Zepbound combining for $14.9B and contributing $6.3B of growth, driven by volume not price.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Mounjaro and Zepbound combined for $14.9B revenue in Q2, contributing $6.3B of growth, and the U.S. incretin obesity market's total prescriptions grew 78% — the demand pool the reinvestment case rests on is still expanding.",
+        "claim": "Growth is broadening beyond incretins — Oncology, Immunology and Neuroscience key products collectively grew 121% YoY in Q2 2026, reducing reliance on a single franchise.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Foundayo (oral GLP-1) launched in the U.S. in April 2026 with 40+ markets under review and a scalable small-molecule profile, opening a second incretin modality beyond injectables.",
-        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026",
-        "cited": true
-      },
-      {
-        "claim": "Management raised FY26 revenue guidance twice, to $85–87B, on strong H1 Key Products — the committed trajectory is being lifted, not defended.",
-        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Aug-05-2026",
-        "cited": true
-      },
-      {
-        "claim": "ROIC rose to 33.7% LTM from 20.0% in FY23, and RoCE from 20.0% to 33.7%, evidencing genuinely high-return reinvestment rather than dilutive scale.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "On peer fundamentals the name posts EBITDA growth 73% vs peer-median 6%, revenue growth 50% vs 5%, and LT EPS growth 22% vs 7% — the human should weigh whether the premium multiple is EARNED by these deltas rather than a residual overshoot, noting the peer set is moderately dispersed ($102.4B–$649.4B caps vs the name's $1,038.3B).",
+        "claim": "Fundamental deltas beside the peer multiple show the premium rests on far superior operating characteristics: EBITDA margin 52% vs peer-median 39%, revenue growth 50% vs 5%, EBITDA growth 73% vs 6%, LT EPS growth 22% vs 7% — the human must judge whether the premium is earned by these or residual.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Leverage is conservative at net-debt/EBITDA 1.1x with interest coverage 226.7x, giving balance-sheet room to fund the manufacturing and BD build-out.",
-        "source_ref": "CIQ Net Debt $45,162M [46203.0] ÷ CIQ EBITDA $41,707M [LTM 12 months Jun-30-2026]",
+        "claim": "Returns on capital are rising into the scale-up: RoCE moved from 20.0% (FY23) to 33.7% (LTM), evidence the reinvestment is high-returning rather than dilutive.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The forward multiple ladder shows the premium compressing as consensus EBITDA compounds (NTM TEV/EBITDA 21.52x stepping to FY30 14.18x), so the runway is partly self-amortising if estimates are met.",
-        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "claim": "Consensus embeds a long runway with rising forward earnings — FY27E EBITDA $54,009M and FY27E normalized EPS $47.34 pulling the forward P/E to 24.7x, materially below the 39.1x trailing multiple.",
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+        "cited": true
+      },
+      {
+        "claim": "The oral GLP-1 Foundayo launch adds an at-scale future leg: FDA-approved Apr 2026, now under review in 40+ countries with a full global rollout expected in 2027.",
+        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026",
+        "cited": true
+      },
+      {
+        "claim": "Management raised FY2026 guidance twice, lifting the revenue range to $85–87B in August after an April raise, corroborating the demand trajectory.",
+        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Aug-05-2026",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The premium is fully priced: EV/EBITDA 25.8x is +83% over the peer median 14.1x and P/E 39.1x is +57% over 24.9x — but the peer set is moderately dispersed ($102.4B–$649.4B vs the name's $1,038.3B), so the gap must be judged EARNED-vs-RESIDUAL against the fundamental deltas, not read as a clean benchmark discount/premium.",
+        "claim": "The quality is already richly paid for: EV/EBITDA 25.8x is +83% over peer median 14.1x and P/E 39.1x is +57% over peer median 24.9x — but this is the trailing-only read (no forward basis), so the human must weigh it against the forward P/E of 24.7x on FY27E that closes much of the gap.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "The multiple embeds a long-duration runway: peer-median NTM TEV/EBITDA of 12.27x on the name's TEV implies EBITDA of $88,304M vs consensus FY26E of only $43,514M — a large gap the business must GROW into to justify today's price.",
+        "claim": "Expectations are demanding: at the name's own NTM TEV/EBITDA of 21.52x the market implies an EBITDA level far above where peers trade, so the runway must be delivered, not merely hoped — a genuine counter-point, though outweighed by the 73% EBITDA growth and twice-raised guidance behind the number.",
         "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       },
       {
-        "claim": "U.S. price declined 3% in Q2 (9% excluding rebate/discount adjustments), so the entire growth story rests on volume while price is a persistent headwind — a genuine load-bearing risk to the margin trajectory the multiple assumes.",
+        "claim": "U.S. price is falling — down 3% in Q2 2026 (down 9% excluding rebate/discount adjustments) on Zepbound and Mounjaro — a real headwind if volume growth ever normalises, though currently more than offset by 33% U.S. volume-led revenue growth.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "FY26 EPS revision breadth is only 1↑/1↓ last month and the surprise history is a run of small GAAP-EPS misses (FY21 -5%, FY23 -4%, FY24 -5%), so beating the embedded expectations is not assured.",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
-        "cited": true
-      },
-      {
-        "claim": "There is a live guidance-basis mismatch — CIQ carries a $85,000–87,000M FY26 revenue guide while the primary-source release states $80,000–83,000M — meaning the anchor the premium is judged against is itself contested, an OUTWEIGHED-but-genuine counter to the raised-guidance bull read.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
+        "claim": "The premium multiple sits against a HETEROGENEOUS peer set (caps $102.4B–$649.4B vs the name's $1,038.3B), so the peer median is not a clean benchmark and any 'expensive vs peers' read is confidence-gated — a caution, outweighed by the fundamental deltas that plausibly justify a premium.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
         "cited": true
       }
     ],
@@ -9897,81 +9930,68 @@
       {
         "name": "Novo Nordisk",
         "outcome": "kept compounding",
-        "distinguishing_fact": "A single-therapeutic-franchise incretin leader that sustained a durable premium as GLP-1 volume expanded — the analogue for a category-defining metabolic runway.",
+        "distinguishing_fact": "A pure-play incretin/obesity franchise leader that sustained a large premium multiple while volume-led revenue and margins compounded — the closest analogue to the same demand wave.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "NVIDIA",
+        "name": "AbbVie Inc.",
+        "outcome": "re-rated to fair value",
+        "distinguishing_fact": "A pharma whose valuation and earnings pivoted on the durability of a dominant franchise as pricing and competitive dynamics evolved — the pattern of a franchise-concentration re-rating.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Regeneron Pharmaceuticals",
         "outcome": "kept compounding",
-        "distinguishing_fact": "A name where a very high trailing multiple was repeatedly justified by absolute-earnings compounding outrunning the premium as demand scaled.",
+        "distinguishing_fact": "A high-return drug developer that broadened beyond a single blockbuster into oncology/immunology to extend its reinvestment runway — the diversification-of-a-hit pattern.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Gilead Sciences",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A blockbuster-driven pharma whose premium faded once the flagship franchise's growth plateaued and pricing pressure set in — the cautionary path for a single-category compounder; appears in the roster.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Bristol-Myers Squibb",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A large-cap pharma that de-rated to a low-teens P/E as patent-cliff and pricing concerns dominated — the value-trap comparator within the same peer roster.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "AbbVie",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "A pharma that navigated a flagship-drug concentration and heavy BD/acquisition cadence while sustaining a premium — the analogue for concentration-plus-M&A execution risk resolving favourably.",
+        "distinguishing_fact": "A drugmaker whose premium compressed when a dominant therapeutic wave matured and pricing/volume tailwinds faded — the cautionary path if incretin growth normalises.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Will incretin (Zepbound/Mounjaro/Foundayo) volume keep expanding fast enough to grow into the long-duration EBITDA embedded in a 25.8x trailing / 21.5x NTM multiple, despite persistent U.S. price declines?",
+      "question": "Is the incretin-led volume runway (plus a broadening oncology/immunology/neuro portfolio and the Foundayo oral launch) long and large enough to grow into a trailing 25.8x EV/EBITDA — or is the premium already discounting a durability that falling U.S. price and franchise concentration will erode?",
       "evidence_for": [
         {
-          "claim": "Q2 2026 revenue grew 48% YoY on Zepbound/Mounjaro volume with Key Products up ~$6.8B, and U.S. obesity-market prescriptions grew 78% — the volume engine is still accelerating the base the premium discounts.",
+          "claim": "Q2 2026 U.S. revenue rose 33% on volume, and total U.S. incretin obesity-market prescriptions grew 78%, with Lilly holding ~6 of 10 total and ~7 of 10 injectable scripts — the volume engine is intact and share-leading.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Foundayo's April 2026 U.S. approval plus 40+ markets under review adds a scalable oral modality that could extend the runway beyond the injectable franchise.",
-          "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026",
+          "claim": "Consensus revenue is modeled climbing to $132,888M by FY2030 and $162,650M by FY2033, an explicit multi-year runway many analysts underwrite.",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
           "cited": true
         },
         {
-          "claim": "Consensus EBITDA is modeled to compound from FY26E $43,514M toward FY33 $103,731M, which the forward ladder shows compressing the multiple to the low-teens if delivered.",
-          "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+          "claim": "The Foundayo oral GLP-1 opens a scalable non-injectable leg under review in 40+ countries with a 2027 global rollout planned.",
+          "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "U.S. price fell 3% in Q2 (9% ex-adjustments), a structural headwind that erodes the margin uplift the multiple assumes even as volume grows.",
+          "claim": "U.S. price fell 9% ex-adjustments in Q2 2026 on the two lead products — the growth is volume that must keep outrunning erosion in price.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The gap to grow into is large — peer-median NTM TEV/EBITDA implies ~$88,304M EBITDA vs consensus FY26E $43,514M — so any deceleration leaves the price exposed.",
-          "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
-          "cited": true
-        },
-        {
-          "claim": "FY26 EPS revision breadth is flat (1↑/1↓) and the multi-year surprise record is a string of small GAAP-EPS misses, tempering confidence that embedded expectations are beatable.",
-          "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+          "claim": "The business is a single reported segment concentrated in cardiometabolic products, so a demand-curve or competitive shock has no offsetting segment to cushion it.",
+          "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Adjusted forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance), so the forward multiple cannot be reconciled to a company-adjusted basis — the trailing 25.8x cannot be cleanly distinguished from a temporarily depressed or permanently impaired level.",
-      "FCF sign is UNKNOWN in the survival block ('runway not assessable — a risk'); LTM levered FCF of $11,065.9M and CFO−capex of $18,190M differ 0.61x, so the self-funding basis is ambiguous — an opacity risk despite a strong balance sheet.",
-      "Guidance-basis conflict: CIQ carries FY26 revenue guide $85,000–87,000M but the primary-source release states $80,000–83,000M (MISMATCH flag) — the human must resolve which anchor is current.",
-      "EBITDA-basis coherence is UNRESOLVED: implied D&A 1.78x between actuals and estimates sits in the band where GAAP-actual-vs-adjusted-estimate basis changes have gone unflagged — reconcile the estimate row to the company's guidance basis before comparing across the boundary.",
-      "Covenant terms are UNKNOWN (extraction failed) and covenant/adjusted-leverage basis is not disclosed — cannot verify headroom against any covenant.",
-      "Segment- and brand-level profitability is not broken out (single-segment reporting; brand split not in XBRL) — concentration in the incretin franchise cannot be sized from disclosure, a bearish opacity gap.",
-      "Heavy 2026 BD/M&A cadence (Kelonia $7B, Centessa $5.9B, AtaiBeckley $2.6B, Merida $2.9B, and others) — integration and acquired-IPR&D charge impact on future margins is not quantified in the supplied facts.",
-      "Non-operating earnings share cannot be derived (no single-period operating income in XBRL) — quality of the earnings underpinning the multiple is partly unverifiable.",
-      "Export/as-of date is a FLOOR (≥2026-09-17, unverified) — some consensus and multiple vintages may be stale relative to the true export."
+      "Trailing EV/EBITDA of 25.8x sits at its own 5y 50th percentile and P/LTM EPS 39.1x near its own-history low-end (30.6 pctile) — a neutral fact whose overshoot-vs-terminal read is unresolved; the adjusted/company-defined forward EBITDA multiple is not in the revised guidance and must be reconciled.",
+      "FCF sign is flagged UNKNOWN in survival_capacity and two competing FCF bases exist (CIQ Levered FCF $11,066M vs CFO$28,083M−capex$9,893M=$18,190M) — the self-funding/per-share read depends on which basis; a missing clean cash-runway disclosure is a risk.",
+      "The EBITDA-basis triangulation is UNRESOLVED (implied D&A 1.78x in the 1.5–2.0x band where GAAP-actuals-vs-adjusted-estimates basis changes have gone unflagged) — reconcile the estimate row against the company's guidance basis before comparing forward multiples.",
+      "A guide-verification MISMATCH flag: CIQ revenue guide $85,000–87,000M vs a release actual/outlook $80,000–83,000M — the human must confirm which guidance vintage governs.",
+      "No segment or per-product EBITDA breakout (single-segment reporting) — franchise-level profitability and the true concentration in Mounjaro/Zepbound cannot be sized from the filings; an opacity risk.",
+      "Price is STALE at assembly (last close 2026-09-22, 8 days before assembly) and the CIQ export date is unverified (a floor ≥ 2026-09-17) — all price-derived multiples should be refreshed.",
+      "Insider signal is one-directional (0 buys, 6 sells / $34.59M over 182d; last buy ~13mo ago) — read against the twice-raised guidance."
     ],
     "draw_agreement": {
       "attempted": 5,
@@ -9986,21 +10006,23 @@
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Incretin/GLP-1 franchise followed under the QUALITY book: the question is whether durable demand and manufacturing scale outlast what the price already pays, not whether a de-rating is overdone — the name is near its highs and has never broken, which is the shape the overshoot twin cannot ask about. Also the natural first ticker for the GLP-1 demand-shift driver registered with zero names (#484). The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 8-K 0001193125-26-232707 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-25-184093 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+4.7s fetch)",
-    "P/E may be distorted by non-recurring EPS — latest annual EPS 22.95 vs recent median 8.76; verify against normalized/forward EPS (CIQ)",
-    "Unreconciled margin-compression (a decisive-against point): 'U.S. price fell 3% in Q2 (9% ex-adjustments), a structural headwind that erodes the margin uplift the multiple assumes even as volume grows.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
+    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+6.7s fetch)",
+    "P/E may be distorted by non-recurring EPS — latest annual EPS 22.95 vs recent median 8.76; verify against normalized/forward EPS (CIQ)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0000059478-26-000013 · lly-12312025x10kexhibit103.htm declares itself no agreement at all",
+    "operating-drivers: Tier-B row dropped — value figure 35 not in its quote (Medicare GLP-1 Bridge program coverage)",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-28T15:41:45.248532Z",
+  "assembled_at": "2026-09-30T13:33:51.880494Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-burl/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-22"
   },
@@ -10023,12 +10045,10 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-28T16:47:14.176482Z",
+    "computed_at": "2026-09-30T13:40:05.390981Z",
     "reason": null,
-    "data_quality": "vendor_bridge",
-    "data_quality_detail": [
-      "vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag"
-    ],
+    "data_quality": null,
+    "data_quality_detail": [],
     "margin": {
       "value": 0.298207,
       "unit": "fraction",
@@ -10069,10 +10089,10 @@
       "source": "committed financial_summary.annual (LTM)"
     },
     "ltm_fcf": {
-      "value": 18190.0,
+      "value": null,
       "unit": "$M",
-      "basis": "trailing twelve months (vendor basis)",
-      "source": "CIQ Financials->Cash Flow operating cash flow less capital expenditure [Eli Lilly and Company NYSE LLY Financials_Quarterly.xls sha 7f23de02b0]"
+      "basis": "free cash flow",
+      "source": "UNKNOWN — no aligned operating-cash-flow + capex pair"
     },
     "anchor_base_value_per_share": 699.6511,
     "midcycle_gap": {

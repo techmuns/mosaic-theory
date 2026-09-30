@@ -416,6 +416,49 @@
         "status": "present",
         "note": null
       },
+      "forward_multiples": {
+        "value": [
+          {
+            "label": "P/FY27E (normalized)",
+            "column": "FY27E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 8.35,
+            "multiple": 27.8455,
+            "price": 232.51,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY27E (GAAP)",
+            "column": "FY27E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 8.63,
+            "multiple": 26.9421,
+            "price": 232.51,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY28E (normalized)",
+            "column": "FY28E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 8.94,
+            "multiple": 26.0078,
+            "price": 232.51,
+            "price_as_of": "2026-09-22"
+          },
+          {
+            "label": "P/FY28E (GAAP)",
+            "column": "FY28E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 8.91,
+            "multiple": 26.0954,
+            "price": 232.51,
+            "price_as_of": "2026-09-22"
+          }
+        ],
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -5903,7 +5946,7 @@
         "value": 232.51,
         "source_ref": "EOD ROST last close",
         "status": "present",
-        "note": null
+        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling"
       },
       "high_52w": {
         "value": 257.0,
@@ -7630,7 +7673,7 @@
           "kind": "leading_indicator",
           "metric": "comparable store sales",
           "period": "Q1 2026",
-          "value": "17% increase",
+          "value": "up 17%",
           "value_num": null,
           "unit": null,
           "verbatim": "The overall growth in total sales was driven by a very robust 17% increase in comparable store sales.",
@@ -7640,19 +7683,31 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "comparable store customer count",
+          "metric": "total sales",
           "period": "Q1 2026",
-          "value": "double-digit increase",
+          "value": "up 21%",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we're seeing a double-digit increase in customer count on a comp store basis.",
-          "following_context": "We're seeing that very strong growth across all ethnicities, all age groups, including the young customer, all income levels. And then if you think about the flywheel concept of bringing more customers through marketing initiatives, great in-store environment, great merchandise selection, getting them in the store, converting shoppers into buyers with just compelling assortments and tidier stores and better in-store merchandising.",
+          "verbatim": "We delivered an outstanding quarter with total sales up 21% and earnings per share growth of 37%.",
+          "following_context": "The overall growth in total sales was driven by a very robust 17% increase in comparable store sales. While we attribute a portion of this growth to the increase in tax refunds versus last year, we are quite pleased that the underlying fundamentals of our growth were extremely healthy. The comp increase was primarily driven by growth in transactions, and we saw healthy increases in customer count on a comp store basis across income levels, ethnicities and all age groups, including the young customer.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "packaway as percent of total inventory",
+          "metric": "consolidated inventories",
+          "period": "end of Q1 2026",
+          "value": "up 12%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Consolidated inventories at the end of the quarter were up 12% and packaway represented 36% of total inventory compared with 41% last year.",
+          "following_context": "We are pleased with the overall level and composition of our inventory entering the second quarter. Turning to store growth. We expanded into new and existing markets and opened 13 new Ross and 4 dd's DISCOUNTS locations in the first quarter. We continue to plan for 5% unit growth for approximately 110 new stores this year comprised of about 85 Ross and 25 dd's. As usual, these numbers do not reflect our plans to close or relocate about 10 to 15 older stores.",
+          "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "packaway percent of total inventory",
           "period": "end of Q1 2026",
           "value": "36% of total inventory compared with 41% last year",
           "value_num": null,
@@ -7664,7 +7719,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "new stores opened",
+          "metric": "new store openings",
           "period": "Q1 2026",
           "value": "13 new Ross and 4 dd's DISCOUNTS locations",
           "value_num": null,
@@ -7676,21 +7731,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "unit growth / new stores planned",
-          "period": "fiscal 2026",
-          "value": "5% unit growth for approximately 110 new stores this year comprised of about 85 Ross and 25 dd's",
+          "metric": "customer count on comp store basis",
+          "period": "Q1 2026",
+          "value": "double-digit increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "We continue to plan for 5% unit growth for approximately 110 new stores this year comprised of about 85 Ross and 25 dd's.",
-          "following_context": "As usual, these numbers do not reflect our plans to close or relocate about 10 to 15 older stores.",
+          "verbatim": "So we're seeing a double-digit increase in customer count on a comp store basis.",
+          "following_context": "We're seeing that very strong growth across all ethnicities, all age groups, including the young customer, all income levels. And then if you think about the flywheel concept of bringing more customers through marketing initiatives, great in-store environment, great merchandise selection, getting them in the store, converting shoppers into buyers with just compelling assortments and tidier stores and better in-store merchandising.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "highest same-store sales growth in company history",
+          "metric": "same-store sales growth record",
           "period": "Q1 2026",
-          "value": "highest same-store sales growth in the company's 40-year history",
+          "value": "the highest same-store sales growth in the company's 40-year history",
           "value_num": null,
           "unit": null,
           "verbatim": "We were able to grow sales in the quarter by more than $1 billion and posted the highest same-store sales growth in the company's 40-year history.",
@@ -7702,7 +7757,7 @@
           "kind": "leading_indicator",
           "metric": "comparable store sales",
           "period": "Q2 2026",
-          "value": "10% comparable store sales growth",
+          "value": "10%",
           "value_num": null,
           "unit": null,
           "verbatim": "We are extremely pleased with the 10% comparable store sales growth we delivered in the second quarter, marking the second quarter in a row with double-digit comp growth.",
@@ -7712,25 +7767,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "packaway as percent of total inventory",
-          "period": "end of Q2 2026",
-          "value": "36% of total inventory compared with 38% last year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Packaway represented 36% of total inventory compared with 38% last year.",
-          "following_context": "We are leveraging our inventory position to not only meet the demand of higher customer traffic in our stores, but also to broaden our merchandise offerings on the selling floor across our store base. These efforts are leading to higher sales and improved merchandise margins while maintaining fast inventory turns. We are pleased with both the level and composition of our inventory and continue to have plenty of flexibility to capitalize on closeout opportunities as we enter the fall season.",
-          "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "pass_through_structure",
-          "metric": "tariff refunds contribution to gross margin",
+          "metric": "total sales",
           "period": "Q2 2026",
-          "value": "405 basis points of tariff refunds",
+          "value": "grew 13% to $6.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gross margin improved by 625 basis points, driven primarily by 405 basis points of tariff refunds.",
-          "following_context": "Merchandise margin increased by 110 basis points, while distribution costs were lower by 100 basis points given favorable timing of packaway-related expenses, higher productivity and as we anniversaried last year's tariff-related processing costs.",
+          "verbatim": "Total sales for the period grew 13% to $6.3 billion, with comparable store sales increasing 10%.",
+          "following_context": "As Jim mentioned earlier, the double-digit comp growth was primarily driven by an increase in the number of transactions. Gross margin improved by 625 basis points, driven primarily by 405 basis points of tariff refunds. Merchandise margin increased by 110 basis points, while distribution costs were lower by 100 basis points given favorable timing of packaway-related expenses, higher productivity and as we anniversaried last year's tariff-related processing costs.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7748,25 +7791,37 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "new stores planned for the year",
-          "period": "fiscal 2026",
-          "value": "115 locations in 2026, up from 110 in our prior guidance",
+          "metric": "packaway percent of total inventory",
+          "period": "end of Q2 2026",
+          "value": "36% of total inventory compared with 38% last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are now planning to open 115 locations in 2026, up from 110 in our prior guidance.",
-          "following_context": "We are particularly encouraged by the strength of our recent openings in both existing and newer markets, giving us added confidence in our ability to continue to grow our store base over time. Our plans also contemplate approximately 5 to 10 store relocations and closures. Overall, we remain confident that the actions we are taking across merchandising, marketing and stores are enhancing the customer experience and driving strong performance.",
+          "verbatim": "Packaway represented 36% of total inventory compared with 38% last year.",
+          "following_context": "We are leveraging our inventory position to not only meet the demand of higher customer traffic in our stores, but also to broaden our merchandise offerings on the selling floor across our store base. These efforts are leading to higher sales and improved merchandise margins while maintaining fast inventory turns. We are pleased with both the level and composition of our inventory and continue to have plenty of flexibility to capitalize on closeout opportunities as we enter the fall season.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "new stores planned",
-          "period": "Q3 2026",
-          "value": "51 stores during the third quarter, including 41 Ross and 10 dd's locations",
+          "metric": "comparable store sales",
+          "period": "first half of 2026",
+          "value": "up 13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As mentioned earlier, we raised our new store opening plans for the year and now expect to open 51 stores during the third quarter, including 41 Ross and 10 dd's locations.",
-          "following_context": "Net interest income is estimated to be approximately $30 million. The tax rate is projected to be about 25%, and diluted shares outstanding are expected to be approximately 319 million.",
+          "verbatim": "Comparable store sales for the first half of 2026 were up 13% and earnings per share were $4.69 compared to $3.03 for the first half of 2025.",
+          "following_context": "As a reminder, both the second quarter and first 6 months results in 2026 include $253 million or approximately $0.60 in earnings per share of tariff refunds.",
+          "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total sales",
+          "period": "first 6 months of 2026",
+          "value": "grew 17% to $12.3 billion",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Sales for the first 6 months of 2026 grew 17% to $12.3 billion, up from $10.5 billion in the prior year.",
+          "following_context": "Comparable store sales for the first half of 2026 were up 13% and earnings per share were $4.69 compared to $3.03 for the first half of 2025. As a reminder, both the second quarter and first 6 months results in 2026 include $253 million or approximately $0.60 in earnings per share of tariff refunds.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7790,73 +7845,78 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — durable transaction-led double-digit comps, rising unit runway, fortress balance sheet and upward revisions, but the premium is fully priced.",
+    "evidence_balance": "strongly-bullish — transaction-led record comps, raised guidance and expanding store runway dominate, though priced near the multiple's own ceiling.",
     "bull_points": [
       {
-        "claim": "Comparable-store sales rose 10% in Q2 2026, the second straight quarter of double-digit comps, driven primarily by transaction (customer-traffic) growth rather than price — the durable-runway mechanism.",
+        "claim": "Comparable-store sales rose 10% in Q2 2026, the second consecutive quarter of double-digit comps, driven primarily by transactions (customer traffic) rather than price — a durable-demand signal.",
         "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Q1 2026 comp was a 17% increase and management called it the highest same-store sales growth in the company's 40-year history, with the comp driven by transactions and a double-digit rise in customer count across income levels and age cohorts.",
+        "claim": "Q1 2026 delivered the highest same-store sales growth in the company's 40-year history, with comp growth again transaction-led, indicating a genuine step-change in customer acquisition rather than a one-off.",
         "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The reinvestment runway is being widened, not just defended: the 2026 store plan was raised from ~110 to 115 new locations with 51 openings slated for Q3 alone, extending unit-growth optionality.",
-        "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+        "claim": "Management raised full-year FY2026 earnings guidance for the third quarter, fourth quarter and full year — the reinvestment/growth flywheel is being confirmed on a timetable, not just asserted.",
+        "source_ref": "CIQ Key Developments: Ross Stores Inc NasdaqGS ROST Key Developments.rtf · Aug-20-2026",
         "cited": true
       },
       {
-        "claim": "Consensus estimates have been revised up sharply along the runway — FY2027 EBITDA rose from $3,263.6M (12m ago) to $3,992.4M (latest), +22%, and FY2027 EPS (GAAP) +26% — confirming the operating momentum is being underwritten by the forward numbers, not just the trailing print.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "The store-expansion runway is being widened: the 2026 opening plan was raised to 115 locations after opening 47 new stores in the quarter, extending the unit-growth reinvestment leg.",
+        "source_ref": "CIQ Key Developments: Ross Stores Inc NasdaqGS ROST Key Developments.rtf · Aug-20-2026",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA has climbed to $3,657M LTM (from $3,032M FY25 and $3,217M FY26), so the business is compounding profit dollars alongside revenue growth to $24,512M LTM.",
+        "claim": "Absolute EBITDA has compounded from $2,105M (FY17) to $3,657M (LTM Aug-01-2026) alongside revenue from $12,867M to $24,512M — the runway has translated into rising cash generation, not just headline growth.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Returns on capital are strong and rising — RoCE 17.5% LTM (up from 15.0% FY26) and RoE 42.6% — supporting the high-return-compounder framing.",
+        "claim": "ROIC has re-accelerated to 17.5% LTM from 12.6% in FY23, and RoE stands at 42.6%, evidencing high-return reinvestment that supports a premium multiple.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The balance sheet is fortress-grade: net-debt/EBITDA 0.1x, interest coverage 115.4x, FCF-positive and self-funding, with an S&P A- issuer rating scored 1/1/1/1 vs a peer-median 3/3/3/3.",
-        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-28",
+        "claim": "The balance sheet is close to unlevered (net-debt/EBITDA 0.1x, interest coverage 115.4x, S&P A-) and FCF-positive, so growth and the $2.55B buyback are self-funded.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "On the fundamental deltas the name out-earns and out-grows the peer median on every axis (EBITDA margin 15% vs 11%, rev growth 14% vs 9%, EBITDA growth 20% vs 13%, lower leverage 1.0x vs 1.7x, lower beta 0.9 vs 1.3) — a value trap this is not; the question is whether the premium, not a discount, is earned.",
+        "claim": "On the fundamental_deltas the name beats the heterogeneous peer median on every operating leg (EBITDA margin 15% vs 11%, rev growth 14% vs 9%, EBITDA growth 20% vs 13%, LT EPS growth 15% vs 10%, lower leverage and beta) — the price premium poses whether it is EARNED by these superior fundamentals rather than residual.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Consensus FY27 EPS has been revised up ~+21-26% over 12 months (normalized 6.89→8.35; GAAP 6.83→8.63) with broad upward next-2-FQ revision breadth, showing estimate momentum still building beneath the price.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The quality is fully paid for, not discounted: TEV/EBITDA is 15.7x against a peer median of 7.0x (+124%) and P/E 28.6x vs 13.8x (+108%) — but the peer set spans $234M–$143.1B (611x), so this is a low-comparability premium the runway must beat, not a clean benchmark.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "claim": "The stock trades at EV/EBITDA 15.7x, in the 87th percentile of its own ~9-year range (median 12.7x, range 7.7-29.0x) — the quality is real but the trailing multiple is near its own ceiling, so the expectations embedded in the price are elevated.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "cited": true
       },
       {
-        "claim": "The trailing multiple sits near its own-history ceiling — EV/EBITDA 15.7x at the 87th percentile of a 38-quarter range (7.7–29.0x, median 12.7x); this is trailing-only with no forward basis, so a temporarily elevated level cannot be distinguished from a durably re-rated one from this metric alone.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "claim": "The forward ladder does not de-rate quickly: P/FY27E normalized is 27.8x and NTM TEV/EBITDA 18.77x, so even on growing forward earnings the price still bakes in years of continued double-digit compounding — the trailing-only EV/EBITDA note flags it cannot itself distinguish a temporarily-high level from a permanently-priced one.",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       },
       {
-        "claim": "A large slice of the recent margin surge is non-recurring, not structural: gross margin improved 625bp in Q2 2026 but 405bp of that was tariff refunds, and ~$0.60 of FY2026 EPS is tariff-refund driven — the real signal is the ~205bp underlying operating-margin gain, far smaller than the headline.",
+        "claim": "A large slice of recent margin/EPS strength is non-recurring: Q2 gross margin improved 625bps of which 405bps was tariff refunds, and FY includes ~$0.60 EPS ($253M) of tariff refunds — the underlying operating-margin gain ex-refunds was 205bps, so trailing optics overstate the run-rate.",
         "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Even on the forward numbers the premium persists — NTM TEV/EBITDA 18.77x vs peer median 8.28x and NTM P/E 27.8x vs 13.75x — so the re-rating is not merely a trailing-EBITDA optical effect; the forward multiple embeds the runway too.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "claim": "Back-half comps are guided to decelerate sharply (Q3 6-7%, Q4 4-5%) against tougher prior-year comparisons, a genuine slowing of the very driver the premium is priced on.",
+        "source_ref": "CIQ Key Developments: Ross Stores Inc NasdaqGS ROST Key Developments.rtf · Aug-20-2026",
         "cited": true
       },
       {
-        "claim": "Management itself flags that part of the outsized comp was cyclical/idiosyncratic — higher tax refunds vs last year and pent-up first-quarter demand — a genuine counter-point to durability, though management maintains the underlying, transaction-led fundamentals were healthy.",
-        "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+        "claim": "A genuine counter-point: the stock underperformed SPY by ~8.4pts over the trailing 180 days despite strong operations, showing the market is not straightforwardly rewarding the beat — but this is OUTWEIGHED by the transaction-led double-digit comp and raised guidance that continue to lift consensus.",
+        "source_ref": "EOD ROST−SPY 180d to 2026-09-22 (assembly, cap-band)",
         "cited": true
       }
     ],
@@ -7864,95 +7924,90 @@
       {
         "name": "The TJX Companies",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Off-price peer with the same treasure-hunt, traffic-led, low-leverage model; long-duration store-unit runway repeatedly beat the high expectations embedded in its multiple.",
+        "distinguishing_fact": "Same off-price model and the largest, most directly comparable peer in the roster; sustained a premium multiple on durable traffic-led comps and steady unit growth.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Burlington Stores",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Off-price cohort member pursuing aggressive unit growth; illustrates the same store-count-expansion thesis but at higher leverage and weaker credit scoring.",
+        "distinguishing_fact": "Off-price peer pursuing aggressive store expansion and margin recovery; illustrates the runway-reinvestment path a growth-oriented off-price name can follow.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Costco Wholesale",
         "outcome": "kept compounding",
-        "distinguishing_fact": "A durable high-return retailer that traded persistently at a large premium to its sector while a membership/traffic flywheel kept beating already-elevated expectations.",
+        "distinguishing_fact": "A durable, traffic-driven value retailer that sustained a persistently high multiple far above discretionary-apparel peers for years as membership/traffic momentum held.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Dollar General",
+        "name": "Ulta Beauty",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A store-count-growth discount retailer whose premium compressed once same-store traffic and margins normalised and the reinvestment runway disappointed.",
+        "distinguishing_fact": "A high-return specialty retailer whose premium multiple compressed once comp growth normalized off exceptional highs despite unchanged store economics.",
         "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "The Gap",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Same-sector apparel retailer trading at a low-single-digit EBITDA multiple with negative EBITDA growth — the value-trap end of the peer roster against which the subject's premium is judged.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is the current transaction-led, double-digit comp surge a durable step-change in the reinvestment runway that justifies a premium well above the name's own history — or a cyclically inflated (tax-refund + tariff-refund) peak that normalises back toward the ~4% pre-pandemic comp, leaving the near-ceiling multiple exposed?",
+      "question": "Is the double-digit, transaction-led comp acceleration a durable step-change in customer acquisition that justifies the near-ceiling multiple, or a temporary surge (tax refunds + tariff refunds + easy Q1 compare) now normalizing into the guided back-half deceleration?",
       "evidence_for": [
         {
-          "claim": "Comps were transaction/traffic-driven across income levels and age groups for multiple consecutive quarters, and management frames the customer-acquisition 'flywheel' as early-stage with significant runway remaining.",
-          "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+          "claim": "Comps are transaction/traffic-driven with broad-based gains across income levels, ages and geographies, and management frames a customer-acquisition 'flywheel' still in early innings.",
+          "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The store-opening plan was raised (to 115 in 2026, 51 in Q3) and consensus FY2027 EBITDA/EPS were revised up double digits, indicating the runway is being underwritten forward, not just backward.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "claim": "Q2 traffic 'once again served as a primary driver' with a strong sequential build (July strongest month) and the opening plan raised to 115 stores, indicating momentum rather than a spent one-off.",
+          "source_ref": "CIQ Key Developments: Ross Stores Inc NasdaqGS ROST Key Developments.rtf · Aug-20-2026",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management attributes part of the outsized comp to higher tax refunds and idiosyncratic Q1 pent-up demand — cyclical aids that need not repeat.",
+          "claim": "Management itself attributes part of the outsized Q1 comp to higher tax refunds and flags Q1 was historically a conservatively-planned quarter with pent-up demand.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "405bp of the 625bp Q2 gross-margin gain was tariff refunds and ~$0.60 of FY EPS is refund-driven, so the underlying margin improvement (~205bp) is far below the reported print — a peak the trailing 87th-percentile multiple may be extrapolating.",
+          "claim": "Back-half comps are guided down to 6-7% (Q3) and 4-5% (Q4) against harder comparisons, and 405bps of the Q2 gross-margin gain was one-off tariff refunds.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Forward/adjusted EBITDA and adjusted EPS are not in the revised guidance (ev_ebitda_adjusted_fwd and adjusted_eps UNKNOWN), so a clean forward-multiple-vs-quality read cannot be built from the disclosed figures alone.",
-      "The trailing EV/EBITDA (15.7x, 87th percentile) is trailing-only with no forward basis — whether the level is a temporary peak or a permanent re-rate is unresolved and belongs to the human, not either directional case.",
-      "The financial-summary EBITDA-basis check flags a 1.56x implied-D&A ratio in the band where GAAP-actuals-vs-adjusted-estimates basis changes have gone undetected on this fleet — reconcile the estimate rows against the company's guidance basis before comparing across the boundary.",
-      "Segment/brand EBITDA is not broken out (single-segment Off-Price Retailing), so Ross vs dd's DISCOUNTS profitability and the mix behind the comp cannot be isolated.",
-      "The size and persistence of tariff refunds is uncertain — management excluded them from forward guidance owing to timing/amount uncertainty, so the recurring earnings base net of refunds is not cleanly disclosed.",
-      "Peer set is HETEROGENEOUS (caps 611x apart, mixed models), so every peer multiple is a confidence-gated input, not a clean benchmark; the earned-vs-residual read on the premium is the human's to make.",
-      "The customer-listed 'PT Galva Technologies Tbk' customer datum appears anomalous/unverified for a US off-price retailer and should not be read as a concentration signal without corroboration."
+      "Adjusted/forward EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance), so net-debt/adjusted-EBITDA and a clean forward EV/EBITDA cannot be formed — the trailing EV/EBITDA cannot distinguish a temporarily-depressed from a permanently-impaired/elevated level.",
+      "The financial-summary D&A-basis check sits in the 1.5-2.0x band where a GAAP-actuals-vs-adjusted-estimates basis change has gone unflagged on this fleet; the estimate rows should be reconciled to the company's own guidance basis before comparing forward multiples across the boundary.",
+      "Peer set is flagged HETEROGENEOUS (market caps span 611x, $234M-$143.1B vs the name's $75.4B); every peer multiple is a confidence-gated input, not a clean benchmark, so the earned-vs-residual premium judgment must be made cautiously.",
+      "The durability of comps once the tariff-refund (~$0.60 EPS / $253M) and tax-refund tailwinds fully anniversary is not resolvable from the data — only the guided decelerating back-half is visible.",
+      "The EV/expectations panel (TEV as-of 2026-09-28) is explicitly NOT date-corrected against a price store ending 2026-09-22, and the stored price is stale (8 days old at assembly) — precise multiple levels carry vintage risk.",
+      "Insider posture skews to selling (0 open-market buys, 8 sells / $22.07M over 182d incl. a $11.29M CEO sale 2026-09-14) with rising short interest (+10.9%) — direction of conviction unresolved."
     ],
     "draw_agreement": {
       "attempted": 5,
       "completed": 5,
       "labels": {
-        "mixed": 2,
-        "strongly-bullish": 3
+        "mixed": 1,
+        "strongly-bullish": 4
       },
       "unanimous": false
     }
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Ross Stores, the off-price apparel and home retailer (Ross Dress for Less, dd's DISCOUNTS), followed under the QUALITY book by operator decision 2026-09-28. At $232.51 on 2026-09-22 it is 8.9% below its 52-week closing high of $255.23 (2026-08-07) and 60.7% above the low of $144.67 (2025-09-22) — ahead of IWM by 43.2 points over the same window, so this is a compounder being underwritten on durability, not a de-rating. The binding question is what the current 15.7x EV/EBITDA assumes against a 12.7x own-history median (38 closes, 9.5 years): the multiple is richer than its own history while the business is executing. CAUTION ON THE ANCHOR: EDGAR tags OperatingIncomeLoss for only four fiscal years (FY2023-FY2026), so R1's margin median is drawn entirely from the post-COVID phase and the leg reads WEAK — a four-year window is not a cycle for an off-price retailer. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.4s fetch)",
-    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 2, 'strongly-bullish': 3}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
+    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+5.1s fetch)",
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 1, 'strongly-bullish': 4}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
+    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-28T13:42:48.206274Z",
+  "assembled_at": "2026-09-30T13:06:32.173590Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-col/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-burl/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
     "frontier": "2026-09-22"
   },
@@ -7975,7 +8030,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-28T13:47:29.622014Z",
+    "computed_at": "2026-09-30T13:11:54.416954Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],
