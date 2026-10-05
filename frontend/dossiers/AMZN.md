@@ -1,21 +1,19 @@
 # Dossier — AMAZON COM INC (Nasdaq: AMZN)
 
-_September 30, 2026 · extraction 2026-08-16.1_
+_October 5, 2026 · extraction 2026-08-16.1_
 
 # Brief — first cut
 
 ## At a glance
-> ⚠ **Verify before the verdict:** Heterogeneous-peer benchmark (a bear point): 'The forward multiple is not obviously cheap: NTM P/E is 26.73x vs peer… — full caveats in Analysis.
-
 Amazon.com, Inc. engages in the retail sale of consumer products, advertising, and subscriptions service through online and physical stores in North America and internationally.
-**Strongly-bullish** — AWS growth accelerating to a fresh multi-quarter high on a $496B backlog, with absolute EBITDA and margins both rising.
+**Mixed** — accelerating AWS/AI runway and doubled absolute EBITDA offset by negative free cash flow and a forward-basis premium once non-operating gains are stripped.
 - **Segments:** North America 59%; International 23%; Amazon Web Services (AWS) 18% [1]
 - **Geography:** United States 68%; Rest of World 15%; Germany 6%; United Kingdom 6%; Japan 4% [2]
-- **Snapshot:** Nasdaq · CMP $254.98 (2026-09-22) ⚠ PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling · cap $2653.0B (2026-09-16) ⚠ implies $245.96/sh vs CMP (-3.5%) · 52-wk $196.00–$287.20 · shares 10.8B · book value/sh $51.16 [3]
+- **Snapshot:** Nasdaq · CMP $254.98 (2026-09-22) ⚠ PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 13 calendar days before assembly — run `vinci refresh` before assembling · cap $2653.0B (2026-09-16) ⚠ implies $245.96/sh vs CMP (-3.5%) · 52-wk $196.00–$287.20 · shares 10.8B · book value/sh $51.16 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Will the ~$200B/yr AI-and-AWS capex convert into the compelling ROIC and free cash flow management asserts, or does multi-year negative FCF and slipping ROIC mean the runway is being funded faster than it monetizes?**
-_7 key unknowns + the evidence for/against — in Analysis_
+**Does the AWS/AI reinvestment cycle convert the current heavy capex into the durable, high-return free-cash-flow runway management describes, or is the quality already fully paid for at a forward premium while near-term free cash flow stays negative?**
+_8 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Launching September 1, Talking Tom Heroes: Suddenly Super makes its U.S ~2026-09 `[stated]` — calendar in Analysis
 
 ## What happened — and does it change the runway?
@@ -48,31 +46,31 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the runway outlasts the price:_
-- AWS revenue growth accelerated to 36.7% YoY in Q2 2026 — the fastest in 18 quarters and a fifth straight quarter of acceleration — on a $169B annualized run-rate base, the mechanism behind the runway thesis. [11]
-- AWS backlog stands at $496B growing triple digits YoY, evidencing multi-year contracted demand ahead of the reported revenue. [11]
-- FY2025 segment operating income shows AWS at $45,606M on a 35.4% margin — the high-return engine within the mix that a blended consolidated figure understates. [12]
+- AWS revenue growth accelerated for a fifth straight quarter to 36.7% year-over-year in Q2 2026, the fastest in 18 quarters, on a base that is now a $169 billion annualized run-rate business. [11]
+- AWS backlog stands at $496 billion growing triple digits year-over-year, with most AI capacity contracted for at least 5-year terms — a long-duration demand signal behind the runway case. [11]
+- Absolute EBITDA has compounded from $85,515M (FY23) to $168,912M (LTM Jun-30-2026) as EBITDA margin rose from 15% to 22% — the margin gain is real cash scale, not optical, because the absolute figure more than doubled. [12]
 _Bear case — the price already pays for it:_
-- Consensus itself models FY2026 free cash flow of −$34,182M and FY2027 of −$5,879M on ~$220B/$273B of guided capex — the reinvestment the bull case celebrates is priced as multi-year negative FCF that must earn its return. [13]
-- LTM levered free cash flow is only $3,219.1M and CFO − capex on the same period is $−11,625.0M (CFO $161,403M − capex $173,028M) — the survival/valuation read hinges on which basis; on the cash-conversion basis the business consumed cash this period. [14]
-- The trailing P/LTM EPS of 19.8x and much of the LTM net income are optically flattered by below-the-line items: three of the trailing four quarters carry a material non-operating block netting +$81,812M, so a trailing P/E spanning them is not an operating anchor — the real signal is that operating earnings are far below the headline. [15]
+- LTM levered free cash flow is just $3,219.1M and on a CFO-minus-capex basis the business CONSUMED cash (CFO $161,403M − capex $173,028M = −$11,625M) — the headline multiple rests on EBITDA that is not converting to free cash while capex runs ahead of operating cash. [13]
+- FY26 capex is guided to roughly −$220,500M and the server/networking investment takes a little less than 3 years to break even — the runway thesis is explicitly front-loaded with cash outlay that depresses near-term free cash flow, a genuine load-bearing risk management itself flags. [11]
+- On a normalized forward basis the name trades at NTM P/E 26.73x vs peer median 16.92x — a PREMIUM, not a discount, on the forward earnings basis, so the trailing 'cheap' optics invert once the non-operating gains are stripped (HETEROGENEOUS peer set caveat applies). [14]
 
 ## Financial snapshot
-- **Financial snapshot** — [13]  <!-- ds-table -->
+- **Financial snapshot** — [15]  <!-- ds-table -->
 
 |  | FY22 (R) | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Revenue ($M) | 513,983 | 574,785 | 637,959 | 716,924 | 775,680 | 828,225 | 946,790 |
+| Revenue ($M) | 513,983 | 574,785 | 637,959 | 716,924 | 775,680 | 828,285 | 947,853 |
 | Revenue growth | — (basis) | — (basis) | +11% | +12% | — (basis) | +16% (vs FY25) | +14% |
-| EBITDA ($M) | 55,269 | 85,515 | 121,388 | 145,731 | 168,912 | 216,860 | 273,308 |
+| EBITDA ($M) | 55,269 | 85,515 | 121,388 | 145,731 | 168,912 | 216,957 | 273,452 |
 | EBITDA margin | 11% | 15% | 19% | 20% | 22% | 26% | 29% |
-| EBIT ($M) | 13,348 | 36,852 | 68,593 | 79,975 | 93,712 | 109,863 | 140,131 |
-| Net income ($M) | -2,722 | 30,425 | 59,248 | 77,670 | 135,281 | 140,097 | 114,993 |
-| EPS (GAAP, dil.) | -0.27 | 2.90 | 5.53 | 7.17 | 12.44 | 12.88 | 10.47 |
+| EBIT ($M) | 13,348 | 36,852 | 68,593 | 79,975 | 93,712 | 109,867 | 140,372 |
+| Net income ($M) | -2,722 | 30,425 | 59,248 | 77,670 | 135,281 | 140,133 | 115,541 |
+| EPS (GAAP, dil.) | -0.27 | 2.90 | 5.53 | 7.17 | 12.44 | 12.88 | 10.51 |
 | FCF ($M) | 695 | 45,476 | 45,556 | 23,793 | 3,219 | — | — |
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
-> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 120,087 of D&A against 38,177 in the actuals (3.15x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 120,084 of D&A against 38,177 in the actuals (3.15x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 
 **Capital allocation — created or destroyed**
@@ -130,9 +128,9 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 14.9x as-of 2026-09-16 — trailing range 14.2–49.0x (median 24.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 19.8x [25]
 - **vs peers:** EV/EBITDA 14.9x vs peer median 15.7x (-5%); P/E 19.8x vs peer median 23.5x (-16%) [26]
-- **Forward multiples:** P/FY26E (normalized) 19.8x (EPS $12.87); P/FY26E (GAAP) 19.8x (EPS $12.88); P/FY27E (normalized) 24.6x (EPS $10.38); P/FY27E (GAAP) 24.4x (EPS $10.47) — at $254.98 as-of 2026-09-22 [27]
+- **Forward multiples:** P/FY26E (normalized) 30.7x (EPS $8.31); P/FY26E (GAAP) 19.8x (EPS $12.88); P/FY27E (normalized) 24.4x (EPS $10.47); P/FY27E (GAAP) 24.3x (EPS $10.51) — at $254.98 as-of 2026-09-22 [27]
 - **Comparability:** market caps span $1.4B–$4173.9B (2967x); the name is $2653.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [28]
-- **The street, for contrast (target · ratings):** Target price: mean $328.22, median $326.00, high/low 405.00/230.00, N 59/59; Ratings: Buy 43, Outperform 15, Hold 2, Underperform 0, Sell 0, No Opinion 3, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-09-02 · export date unverified] [29]
+- **The street, for contrast (target · ratings):** Target price: mean $330.59, median $330.00, high/low 405.00/230.00, N 57/57; Ratings: Buy 42, Outperform 15, Hold 2, Underperform 0, Sell 0, No Opinion 4, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-10-01 · export date unverified] [29]
 
 # Analysis — full dossier
 
@@ -171,95 +169,97 @@ _Company-specific or market-wide?_
 ## Business quality
 - **Segments (revenue share):** North America 59%; International 23%; Amazon Web Services (AWS) 18% [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — reports 3 segments (North America; International; Amazon Web Services (AWS)) but discloses no segment EBITDA — revenue is segmented in the filing and EBITDA is not
-- **Segments (profit — the filer's own measure, 10-K):** FY2025 segment operating income (10-K XBRL): Amazon Web Services $45,606M (35.4% margin) · North America $29,619M (6.9% margin) · International $4,750M (2.9% margin) — segments sum $79,975M = consolidated $79,975M. [12]
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [30]
+- **Segments (profit — the filer's own measure, 10-K):** FY2025 segment operating income (10-K XBRL): Amazon Web Services $45,606M (35.4% margin) · North America $29,619M (6.9% margin) · International $4,750M (2.9% margin) — segments sum $79,975M = consolidated $79,975M. [30]
+- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [31]
 - **Geographic:** United States 68%; Rest of World 15%; Germany 6%; United Kingdom 6%; Japan 4% [2]
 
 ## The argument
 
-**Evidence balance:** strongly-bullish — AWS growth accelerating to a fresh multi-quarter high on a $496B backlog, with absolute EBITDA and margins both rising.
+**Evidence balance:** mixed — accelerating AWS/AI runway and doubled absolute EBITDA offset by negative free cash flow and a forward-basis premium once non-operating gains are stripped.
 
-_Reproducibility: all 5 of 5 draws on this build returned the same lean._
+**Reproducibility: the draws DISAGREED** — 5 of 5 draws gave 3x mixed, 2x strongly-bullish. The read below is the first draw carrying the majority lean, and the machine proposal is withheld. A tally of this build, not a rate.
 
 ### Bull case — the runway outlasts the price
-- AWS revenue growth accelerated to 36.7% YoY in Q2 2026 — the fastest in 18 quarters and a fifth straight quarter of acceleration — on a $169B annualized run-rate base, the mechanism behind the runway thesis. [11]
-- AWS backlog stands at $496B growing triple digits YoY, evidencing multi-year contracted demand ahead of the reported revenue. [11]
-- FY2025 segment operating income shows AWS at $45,606M on a 35.4% margin — the high-return engine within the mix that a blended consolidated figure understates. [12]
-- The custom-silicon chips business now runs at over $25B annualized growing triple-digit YoY, with over $225B of Trainium revenue commitments, an emerging in-house cost/margin edge disclosed by management. [31]
-- Consensus current-FY EBITDA has been revised up +9% and Net Income +71% over the trailing 12 months of estimate vintages, with FY2026 revenue breadth 4↑/0↓ last month. [32]
-- Q3 2026 revenue guidance ($197.0–202.0B) is corroborated across sources and the most recent guided quarter (FQ2 2026) was MET on both revenue and EBIT. [33]
-- Absolute EBITDA has compounded from $85,515M (FY23) to $168,912M LTM Jun-30-2026, and EBITDA margin has risen 15%→19%→20%→22% over the same span — margin % and absolute both rising together. [34]
-- The name's fundamentals lead the peer median on the growth axes: EBITDA growth 25% vs 16%, LT EPS growth 21% vs 13%, with lower leverage (Debt/EBITDA 1.3 vs 1.6) — inputs that pose whether any discount to peers is residual rather than earned. [35]
+- AWS revenue growth accelerated for a fifth straight quarter to 36.7% year-over-year in Q2 2026, the fastest in 18 quarters, on a base that is now a $169 billion annualized run-rate business. [11]
+- AWS backlog stands at $496 billion growing triple digits year-over-year, with most AI capacity contracted for at least 5-year terms — a long-duration demand signal behind the runway case. [11]
+- Absolute EBITDA has compounded from $85,515M (FY23) to $168,912M (LTM Jun-30-2026) as EBITDA margin rose from 15% to 22% — the margin gain is real cash scale, not optical, because the absolute figure more than doubled. [12]
+- The custom-silicon chips business now has an annual revenue run rate over $25 billion growing triple-digit percentages, with over $225 billion in Trainium revenue commitments — a mechanism for the stated several-hundred-bps operating-margin advantage versus third-party chips. [32]
+- Consensus FY26 estimates have been revised sharply upward over the trailing year (EBIT +13%, EBITDA +9%) and the broker ratings skew Buy, consistent with improving fundamentals rather than deterioration. [33]
+- FY2025 segment operating income shows AWS at $45,606M on a 35.4% margin — the highest-return segment is also the fastest-growing, so the profit mix is shifting toward the compounding engine (disclosed only at 10-K XBRL segment level). [30]
+- On fundamental_deltas the name's EBITDA growth (25%) and LT EPS growth (21%) both exceed the peer median (16% and 13%) while leverage is lower (Debt/EBITDA 1.3 vs 1.6) — framing the question of whether any trading discount is RESIDUAL (overshoot) rather than EARNED, a judgment the human must make given the HETEROGENEOUS peer set. [34]
 
 ### Bear case — the price already pays for it
-- Consensus itself models FY2026 free cash flow of −$34,182M and FY2027 of −$5,879M on ~$220B/$273B of guided capex — the reinvestment the bull case celebrates is priced as multi-year negative FCF that must earn its return. [13]
-- LTM levered free cash flow is only $3,219.1M and CFO − capex on the same period is $−11,625.0M (CFO $161,403M − capex $173,028M) — the survival/valuation read hinges on which basis; on the cash-conversion basis the business consumed cash this period. [14]
-- The trailing P/LTM EPS of 19.8x and much of the LTM net income are optically flattered by below-the-line items: three of the trailing four quarters carry a material non-operating block netting +$81,812M, so a trailing P/E spanning them is not an operating anchor — the real signal is that operating earnings are far below the headline. [15]
-- The forward multiple is not obviously cheap: NTM P/E is 26.73x vs peer median 16.92x and P/FY27E normalized EPS is 24.6x, so the trailing 19.8x understates what the market pays on forward earnings — a genuine counter-point, but OUTWEIGHED by the accelerating $496B-backlog AWS mechanism and lower leverage than peers. [36]
-- ROIC has drifted down (10.7% FY24 → 9.7% FY25 → 9.0% LTM) even as spend ramps — a genuine returns-dilution flag, but OUTWEIGHED by the disclosed 30-plus-year data-center lives and management's stated multi-year break-even/ROIC framing. [37]
+- LTM levered free cash flow is just $3,219.1M and on a CFO-minus-capex basis the business CONSUMED cash (CFO $161,403M − capex $173,028M = −$11,625M) — the headline multiple rests on EBITDA that is not converting to free cash while capex runs ahead of operating cash. [13]
+- FY26 capex is guided to roughly −$220,500M and the server/networking investment takes a little less than 3 years to break even — the runway thesis is explicitly front-loaded with cash outlay that depresses near-term free cash flow, a genuine load-bearing risk management itself flags. [11]
+- On a normalized forward basis the name trades at NTM P/E 26.73x vs peer median 16.92x — a PREMIUM, not a discount, on the forward earnings basis, so the trailing 'cheap' optics invert once the non-operating gains are stripped (HETEROGENEOUS peer set caveat applies). [14]
+- Three of the trailing four quarters carry a large below-the-operating-line block netting +$81,812M (Q2-26 alone +$53,396M = 66% of pre-tax), so the trailing P/E of 19.8x and the EV/EBITDA 14.9x near-floor are flattered by non-operating gains — the trailing multiple is the consensus MISREAD, not a clean operating anchor; the normalized forward P/FY26E is 30.7x. [35]
+- Insiders sold on the open market 64 times ($416.64M across 8 insiders) over the last 182 days with zero buys and no purchase in the 3-year scan — a disconfirming signal against the fully-priced quality. [36]
 
 ### Decisive question
-**Will the ~$200B/yr AI-and-AWS capex convert into the compelling ROIC and free cash flow management asserts, or does multi-year negative FCF and slipping ROIC mean the runway is being funded faster than it monetizes?**
+**Does the AWS/AI reinvestment cycle convert the current heavy capex into the durable, high-return free-cash-flow runway management describes, or is the quality already fully paid for at a forward premium while near-term free cash flow stays negative?**
 
 ### …evidence for
-- Management states clear line of sight to strong returns, with servers breaking even in under 3 years and 30-plus-year data-center lives, and AWS backlog of $496B growing triple digits supports the contracted demand behind the spend. [11]
-- Absolute EBITDA rose to $168,912M LTM and AWS delivered a 35.4% segment operating margin in FY2025, showing the reinvestment sits on a genuinely high-return engine. [12]
+- AWS backlog of $496 billion growing triple digits with 5-year AI contracts gives visibility that the front-loaded capex is pre-committed demand, not speculative build. [11]
+- Management states servers/networking break even in a little under 3 years against 5-6 year useful lives, implying significant free cash flow in the 2-3 years after break-even. [11]
+- Absolute EBITDA roughly doubled from FY23 $85,515M to LTM $168,912M, evidence the reinvestment is already translating into operating scale. [12]
 
 ### …evidence against
-- Consensus models FY2026 FCF of −$34,182M and FY2027 of −$5,879M against guided capex of roughly $220B/$273B — the monetization is still years out on the numbers. [13]
-- ROIC has fallen 10.7% → 9.7% → 9.0% across FY24→FY25→LTM even as the spend accelerates. [37]
+- LTM free cash flow is only $3,219.1M on the levered basis and −$11,625M on CFO-minus-capex, so the cash runway is not yet visible in reported numbers. [13]
+- Consensus FCF (consensus basis) is guided to −$34,027M for FY26 and −$5,631M for FY27, so analysts model continued cash burn through the investment window. [15]
+- On a normalized forward basis the name trades at NTM P/E 26.73x versus peer median 16.92x — a premium that already prices durable compounding. [14]
 
 ### Key unknowns
-- Segment EBITDA is not disclosed (only revenue is segmented and, separately, segment operating income) — an opacity that prevents cleanly isolating AWS profit dollars from consolidated EBITDA; treat as a bearish visibility gap.
-- The 5-year P/E percentile cannot be constructed because a stock split falls inside the window and the older EPS is as-filed against split-adjusted prices — the trailing valuation percentile is unavailable.
-- No forward/adjusted EV/EBITDA is in the revised guidance, so the 14.9x trailing (3rd percentile of its own history) cannot be judged as temporarily depressed vs permanently reset — a neutral, unresolved fact for the human, not a directional one.
-- Which FCF basis governs: CIQ levered FCF (+$3.2B) vs CFO−capex (−$11.6B) carry opposite signs on the same period; the human must fix the basis before reading survival or valuation.
-- Consensus FY26 EBITDA rests on divergent broker bases (estimate columns imply ~3.15x the D&A of actuals), so trailing-vs-forward multiples are part definitional — do not compare a trailing multiple struck off actuals with a forward struck off estimates.
-- Insider activity is one-sided: 64 open-market sells and 0 buys over 182 days across 8 insiders (~$416.6M) — the human should weigh what, if anything, this signals.
-- The Globalstar acquisition ($10.7B) and other deals are in-flight; integration and capital-use implications are not quantified in the supplied facts.
+- EV/EBITDA sits at 14.9x (3rd percentile of its own 9.2-year range) but is TRAILING-ONLY with no forward basis — whether this near-floor reflects a temporarily depressed level or a terminal normalization is unresolved and belongs here, not as a directional point.
+- The 5-year P/E percentile cannot be built because a stock split inside the window divides split-adjusted prices against as-filed older EPS — the own-history valuation context is partially unavailable.
+- No segment EBITDA is disclosed (only segment operating income at the 10-K XBRL level and segment revenue) — AWS vs retail cash-generation split is an expected disclosure that is missing, a bearish opacity.
+- Company-adjusted LTM EBITDA and adjusted forward figures are not in the revised guidance, so net-debt/adjusted-EBITDA and an adjusted forward multiple cannot be struck; covenant leverage basis is undisclosed.
+- The consensus EBITDA estimate basis adds back ~3.15x more D&A than the actual row, so growth across the actual-to-estimate boundary is part definitional — forward and trailing multiples are not struck on the same basis.
+- Price is stale at assembly (last close 2026-09-22, 13 days before assembly); the as-of export date on estimates is a floor, not verified.
+- The peer set is HETEROGENEOUS (market caps span 2,967x) so every peer multiple is a confidence-gated input, not a clean benchmark for judging earned-vs-residual discount.
+- Whether FY26 capex (~−$220,500M) continues to be MET as a ceiling is unresolved — the most recent capex guidance outcome (FY2024) was MISSED (spend above ceiling).
 
 ### Twin reference cases
 - **Microsoft Corporation** — kept compounding
-  - distinguished by: Mega-cap cloud franchise that sustained premium growth while carrying heavy AI/data-center capex; sits in the same peer roster as a scale-and-margin analogue.
+  - distinguished by: A mega-cap cloud incumbent whose cloud segment re-accelerated on AI demand while capex surged ahead of revenue — the same front-loaded-investment, long-contract pattern the runway case rests on.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Alphabet Inc.** — kept compounding
-  - distinguished by: Peer-roster mega-cap that reinvested cash flow into cloud and AI infrastructure while the core stayed high-margin; a scale analogue for capex-heavy runway.
-  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Netflix** — kept compounding
-  - distinguished by: Roster peer that spent years cash-negative funding content build-out before free cash flow inflected — an analogue for the invest-ahead-of-monetization pattern.
+  - distinguished by: A dominant platform where a high-margin ad/cloud engine funded heavy AI data-center capex and the market debated whether the trailing multiple captured a long reinvestment runway.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Meta Platforms** — re-rated to fair value
-  - distinguished by: Roster peer whose stock de-rated hard during a heavy-capex investment cycle before the market re-assessed the reinvestment — an analogue for capex-driven multiple pressure.
+  - distinguished by: A platform that saw its multiple compress when heavy forward capital spending outran visible near-term returns before the market re-assessed the investment payoff — the capex-vs-free-cash-flow tension in view here.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Netflix** — kept compounding (LLM-claimed — verify)
+  - distinguished by: A content-and-infrastructure spender that burned free cash through an investment phase before the model inflected to cash generation, an analogue for the 'invest ahead of monetization' arc.
+  - source: [LLM-suggested, unverified]
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **Launching September 1, Talking Tom Heroes: Suddenly Super makes its U.S** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [38]
-- **000-customer Amazon Web Services (AWS) Marketplace starting in September** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [39]
-- **Unsecured 364-Day Revolving Credit Facility matures** — ~2026-10-28 `[stated]` — refinance / repay / convert before the wall — the survival read [40]
-- **Next results print** — ~2026-10-29 `[cadence-estimate]` — the next reported quarter against the committed trajectory [41]
-- **Milne's Winnie beginning on February 18, 2027** — ~2027-02 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [42]
-- **Short-Term Credit Facilities $455.0M matures** — ~2027-06-30 `[stated]` — refinance / repay / convert before the wall — the survival read [40]
+- **Launching September 1, Talking Tom Heroes: Suddenly Super makes its U.S** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [37]
+- **000-customer Amazon Web Services (AWS) Marketplace starting in September** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [38]
+- **Unsecured 364-Day Revolving Credit Facility matures** — ~2026-10-28 `[stated]` — refinance / repay / convert before the wall — the survival read [39]
+- **Next results print** — ~2026-10-29 `[cadence-estimate]` — the next reported quarter against the committed trajectory [40]
+- **Milne's Winnie beginning on February 18, 2027** — ~2027-02 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [41]
+- **Short-Term Credit Facilities $455.0M matures** — ~2027-06-30 `[stated]` — refinance / repay / convert before the wall — the survival read [39]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 14.9x vs peer median 15.7x (-5%); P/E 19.8x vs peer median 23.5x (-16%) [26]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-09-16 · multiples as-of 2026-09-02 · † at the name's own multiple the implied level is consensus by identity_
-- **Price-implied levels (at each stated multiple)** — [43]  <!-- ds-table -->
+  - _TEV as-of 2026-09-16 · multiples as-of 2026-10-01 · † at the name's own multiple the implied level is consensus by identity_
+- **Price-implied levels (at each stated multiple)** — [42]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
-| **name NTM TEV/EBITDA** | **11.55x** | **$240,835.4M EBITDA †** |
+| **name NTM TEV/EBITDA** | **11.79x** | **$235,932.9M EBITDA †** |
 | peer-median NTM TEV/EBITDA | 11.33x | $245,511.8M EBITDA |
 | peer-median LTM TEV/EBITDA | 15.7x | $177,175.1M EBITDA |
-| **name NTM TEV/Rev** | **3.15x** | **$883,063.1M Revenue †** |
+| **name NTM TEV/Rev** | **3.22x** | **$863,866.1M Revenue †** |
 | peer-median NTM TEV/Rev | 3.52x | $790,241.1M Revenue |
 | peer-median LTM TEV/Rev | 3.7x | $751,796.9M Revenue |
 
-- **Consensus path anchors (EBITDA):** FY26E $216860.4M · FY27E $273308.0M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
-- **Consensus path anchors (Revenue):** FY26E $828224.6M · FY27E $946790.2M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
+- **Consensus path anchors (EBITDA):** FY26E $216956.8M · FY27E $273451.5M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
+- **Consensus path anchors (Revenue):** FY26E $828285.1M · FY27E $947853.0M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
 
 ### The EV gap — our base case vs the street
 
@@ -269,7 +269,7 @@ _No gap is struck for this name: no scenario record for this name — the route 
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 14.9x as-of 2026-09-16 — trailing range 14.2–49.0x (median 24.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 19.8x [25]
 
 ## Peer comps
-- **Peer set (roster · caps · business)** — [44]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [43]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -287,7 +287,7 @@ _No gap is struck for this name: no scenario record for this name — the route 
 _the name: $2653.0B_
 
 - **Comparability (confidence gate):** market caps span $1.4B–$4173.9B (2967x); the name is $2653.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [28]
-- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [36]  <!-- ds-table -->
+- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [14]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
@@ -297,7 +297,7 @@ _the name: $2653.0B_
 
 _NM = a real state (negative base), not missing_
 
-- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [45]  <!-- ds-table -->
+- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [44]  <!-- ds-table -->
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
@@ -316,7 +316,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [34]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [12]  <!-- ds-table -->
 
 |  | Dec-2017 | Dec-2018 | Dec-2019 (R) | Dec-2020 | Dec-2021 | Dec-2022 (R) | Dec-2023 | Dec-2024 | Dec-2025 | Jun-2026 (LTM) |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -324,9 +324,9 @@ _NM = a real state (negative base), not missing_
 
 _Revenue YoY (latest same-quarter): +19.6% (Q2 Jun-30-2026 vs Q2 Jun-30-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** diluting (trailing ~1.8y): 10,515,011,008 (2024-10-18) → 10,786,313,572 (2026-07-22), +2.6% [46]
-- **Non-operating earnings:** 3 of the trailing four quarters carry a material block from BELOW the operating line — 2025-09-30 +$10,748M (38% of pre-tax · 6% of revenue) · 2026-03-31 +$15,982M (40% of pre-tax · 9% of revenue) · 2026-06-30 +$53,396M (66% of pre-tax · 27% of revenue) — netting +$81,812M across the four. A trailing EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the SUM, not the largest of them. [15]
-- **Return ratios — per fiscal period** — [47]  <!-- ds-table -->
+- **Share-count trend:** diluting (trailing ~1.8y): 10,515,011,008 (2024-10-18) → 10,786,313,572 (2026-07-22), +2.6% [45]
+- **Non-operating earnings:** 3 of the trailing four quarters carry a material block from BELOW the operating line — 2025-09-30 +$10,748M (38% of pre-tax · 6% of revenue) · 2026-03-31 +$15,982M (40% of pre-tax · 9% of revenue) · 2026-06-30 +$53,396M (66% of pre-tax · 27% of revenue) — netting +$81,812M across the four. A trailing EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the SUM, not the largest of them. [35]
+- **Return ratios — per fiscal period** — [46]  <!-- ds-table -->
 
 |  | FY17 | FY18 | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -339,28 +339,28 @@ _Revenue YoY (latest same-quarter): +19.6% (Q2 Jun-30-2026 vs Q2 Jun-30-2025). R
 
 
 ## The street — estimates & guidance
-_export date unverified (data ≥ 2026-09-02)_
-- **Horizon read (FQ — next-2Q revision breadth)** — [48]:
-  - EPS Normalized FQ3 2026: 1m 2↑/0↓, 2m 23↑/9↓, 3m 21↑/9↓
-  - EPS Normalized FQ4 2026: 1m 1↑/2↓, 2m 22↑/11↓, 3m 23↑/9↓
-  - EPS (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
-  - EPS (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
-  - Revenue FQ3 2026: 1m 2↑/2↓, 2m 12↑/32↓, 3m 10↑/31↓
-  - Revenue FQ4 2026: 1m 2↑/1↓, 2m 31↑/7↓, 3m 31↑/7↓
-  - EBITDA FQ3 2026: 1m 1↑/1↓, 2m 10↑/3↓, 3m 8↑/4↓
-  - EBITDA FQ4 2026: 1m 1↑/1↓, 2m 10↑/2↓, 3m 9↑/2↓
-  - EBIT FQ3 2026: 1m 1↑/2↓, 2m 25↑/10↓, 3m 23↑/10↓
-  - EBIT FQ4 2026: 1m 1↑/2↓, 2m 24↑/8↓, 3m 22↑/9↓
+_export date unverified (data ≥ 2026-10-01)_
+- **Horizon read (FQ — next-2Q revision breadth)** — [47]:
+  - EPS (GAAP) FQ3 2026: 1m 2↑/0↓, 2m 5↑/1↓, 3m 26↑/10↓
+  - EPS (GAAP) FQ4 2026: 1m 2↑/0↓, 2m 6↑/1↓, 3m 26↑/10↓
+  - EPS Normalized FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/0↓
+  - EPS Normalized FQ4 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/1↓
+  - Revenue FQ3 2026: 1m 0↑/2↓, 2m 4↑/2↓, 3m 10↑/31↓
+  - Revenue FQ4 2026: 1m 0↑/1↓, 2m 4↑/1↓, 3m 31↑/7↓
+  - EBITDA FQ3 2026: 1m 1↑/1↓, 2m 4↑/1↓, 3m 9↑/4↓
+  - EBITDA FQ4 2026: 1m 2↑/0↓, 2m 4↑/0↓, 3m 10↑/2↓
+  - EBIT FQ3 2026: 1m 2↑/0↓, 2m 5↑/3↓, 3m 23↑/10↓
+  - EBIT FQ4 2026: 1m 2↑/0↓, 2m 5↑/2↓, 3m 22↑/9↓
   - _+8 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 7.54 (12m) → 7.80 (9m) → 7.72 (6m) → 8.69 (3m) → 8.70 (2m) → 12.8 (1m) → 12.9 (latest); net +71% (12m→latest) | FY 2026 EPS (GAAP): 7.54 (12m) → 7.82 (9m) → 7.75 (6m) → 8.68 (3m) → 8.69 (2m) → 12.8 (1m) → 12.9 (latest); net +71% (12m→latest) | FY 2026 Revenue: 780,211.4 (12m) → 794,740.2 (9m) → 805,571.2 (6m) → 824,413.4 (3m) → 824,122.7 (2m) → 828,299.3 (1m) → 828,224.6 (latest); net +6% (12m→latest) | FY 2026 EBITDA: 198,921.3 (12m) → 205,637.3 (9m) → 209,975.4 (6m) → 210,945.6 (3m) → 211,271.8 (2m) → 220,690.0 (1m) → 216,860.4 (latest); net +9% (12m→latest) | FY 2026 EBIT: 97,082.2 (12m) → 100,223.3 (9m) → 98,688.3 (6m) → 103,833.2 (3m) → 103,971.5 (2m) → 109,809.1 (1m) → 109,863.3 (latest); net +13% (12m→latest) | FY 2026 Interest Expense: -2,154.8 (12m) → -2,278.9 (9m) → -2,622.2 (6m) → -3,413.1 (3m) → -3,475.0 (2m) → -4,231.3 (1m) → -4,390.8 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 98,868.5 (12m) → 103,454.3 (9m) → 102,033.9 (6m) → 121,549.2 (3m) → 121,854.5 (2m) → 179,415.4 (1m) → 179,204.7 (latest); net +81% (12m→latest) | FY 2026 Net Income (Excl. Excep): 81,851.0 (12m) → 85,420.1 (9m) → 83,864.8 (6m) → 94,839.0 (3m) → 94,989.6 (2m) → 139,029.4 (1m) → 139,927.3 (latest); net +71% (12m→latest) | FY 2026 Net Income (GAAP): 82,056.3 (12m) → 85,494.5 (9m) → 84,431.6 (6m) → 95,256.6 (3m) → 95,559.7 (2m) → 139,256.8 (1m) → 140,097.3 (latest); net +71% (12m→latest)  [data ≥ 2026-09-02 · export date unverified] [32]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [49]:
-  - NTM: TEV/REV 3.15 · TEV/EBITDA 11.55 · TEV/EBIT 22.59 · Price/Earnings 26.73 · PEG 1.29 · P/BV –
-  - FY 2026: TEV/REV 3.36 · TEV/EBITDA 12.83 · TEV/EBIT 25.32 · Price/Earnings 19.11 · PEG 0.92 · P/BV 4.64
-  - FY 2027: TEV/REV 2.94 · TEV/EBITDA 10.18 · TEV/EBIT 19.85 · Price/Earnings 23.71 · PEG 1.14 · P/BV 3.63
-  - FY 2028: TEV/REV 2.54 · TEV/EBITDA 7.87 · TEV/EBIT 15.27 · Price/Earnings 18.37 · PEG 0.88 · P/BV 2.88
+- **Acceleration read (monthly consensus path):** FY 2026 EPS (GAAP): 7.56 (12m) → 7.82 (9m) → 7.75 (6m) → 8.69 (3m) → 12.5 (2m) → 12.9 (1m) → 12.9 (latest); net +70% (12m→latest) | FY 2026 EPS Normalized: 7.54 (12m) → 7.81 (9m) → 7.73 (6m) → 8.02 (3m) → 8.23 (2m) → 8.23 (1m) → 8.31 (latest); net +10% (12m→latest) | FY 2026 Revenue: 780,920.4 (12m) → 794,751.1 (9m) → 806,344.3 (6m) → 824,299.8 (3m) → 827,601.9 (2m) → 828,276.2 (1m) → 828,285.1 (latest); net +6% (12m→latest) | FY 2026 EBITDA: 199,848.5 (12m) → 205,661.7 (9m) → 209,983.5 (6m) → 211,209.2 (3m) → 221,923.4 (2m) → 216,860.4 (1m) → 216,956.8 (latest); net +9% (12m→latest) | FY 2026 EBIT: 97,316.0 (12m) → 100,255.0 (9m) → 98,666.4 (6m) → 103,952.6 (3m) → 109,053.0 (2m) → 109,808.1 (1m) → 109,866.9 (latest); net +13% (12m→latest) | FY 2026 Interest Expense: -2,176.1 (12m) → -2,278.9 (9m) → -2,749.8 (6m) → -3,413.1 (3m) → -4,202.9 (2m) → -4,412.1 (1m) → -4,517.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 98,999.2 (12m) → 103,474.7 (9m) → 102,347.6 (6m) → 121,770.4 (3m) → 179,572.0 (2m) → 179,278.8 (1m) → 179,259.8 (latest); net +81% (12m→latest) | FY 2026 Net Income (Excl. Excep): 82,028.2 (12m) → 85,455.3 (9m) → 84,298.9 (6m) → 90,081.0 (3m) → 97,599.0 (2m) → 97,599.0 (1m) → 89,515.0 (latest); net +9% (12m→latest) | FY 2026 Net Income (GAAP): 82,134.1 (12m) → 85,528.3 (9m) → 84,807.9 (6m) → 95,466.1 (3m) → 137,240.9 (2m) → 140,255.8 (1m) → 140,132.7 (latest); net +71% (12m→latest)  [data ≥ 2026-10-01 · export date unverified] [33]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [48]:
+  - NTM: TEV/REV 3.22 · TEV/EBITDA 11.79 · TEV/EBIT 23.05 · Price/Earnings 26.81 · PEG 1.29 · P/BV –
+  - FY 2026: TEV/REV 3.43 · TEV/EBITDA 13.10 · TEV/EBIT 25.86 · Price/Earnings 19.52 · PEG 0.94 · P/BV 4.74
+  - FY 2027: TEV/REV 3.00 · TEV/EBITDA 10.39 · TEV/EBIT 20.24 · Price/Earnings 23.93 · PEG 1.15 · P/BV 3.71
+  - FY 2028: TEV/REV 2.59 · TEV/EBITDA 8.00 · TEV/EBIT 15.55 · Price/Earnings 18.21 · PEG 0.88 · P/BV 2.95
   - _+5 later fiscal years in JSON_
-- **Current guide (latest results filing):** net sales Q3 2026: 197,000.0–202,000.0 $M [50]
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [33]  <!-- ds-table -->
+- **Current guide (latest results filing):** net sales Q3 2026: 197,000.0–202,000.0 $M [49]
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [50]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
@@ -372,17 +372,17 @@ _export date unverified (data ≥ 2026-09-02)_
 
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
-- **Consensus stats (target + ratings):** Target price: mean $328.22, median $326.00, high/low 405.00/230.00, N 59/59; Ratings: Buy 43, Outperform 15, Hold 2, Underperform 0, Sell 0, No Opinion 3, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-09-02 · export date unverified] [29]
+- **Consensus stats (target + ratings):** Target price: mean $330.59, median $330.00, high/low 405.00/230.00, N 57/57; Ratings: Buy 42, Outperform 15, Hold 2, Underperform 0, Sell 0, No Opinion 4, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-10-01 · export date unverified] [29]
 - **Revision-event log (250 events · 24 broker-days)** — [51]  <!-- ds-table -->
 
-|  | Broker | Revisions | ↑ | ↓ | Largest revision | Prior | Current | Δ |
-|---|---|---:|---:|---:|---|---:|---:|---:|
-| 2026-09-02 | broker undisclosed | 18 | 17 | 1 | EBITDA FQ3 2026 | 56744.0 | 58060.0 | +1316.0 |
-| 2026-08-31 | Hyundai Motor Securities Co. Ltd. | 1 | 1 | — | EBITDA FY 2026 | 192745.0 | 206797.0 | +14052.0 |
-| 2026-08-31 | KGI Securities Co. Ltd. | 1 | 1 | — | EBITDA FY 2026 | 187577.0 | 192659.0 | +5082.0 |
-| 2026-08-31 | broker undisclosed | 19 | 11 | 8 | EBITDA FY 2026 | 210492.0 | 208711.0 | −1781.0 |
-| 2026-08-30 | broker undisclosed | 24 | 5 | 19 | EBITDA FQ3 2026 | 56310.0 | 56744.0 | +434.0 |
-| 2026-08-27 | broker undisclosed | 3 | 2 | 1 | EBITDA FY 2026 | 214290.0 | 214000.0 | −290.0 |
+|  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2:05 AM | broker undisclosed | 1 | — | 1 | — | LT Growth Non-periodic | 17.0 | 16.7 | −0.30 |
+| 2026-10-01 | New Street Research LLP | 17 | 13 | 4 | — | EBITDA FQ3 2026 | 53381.0 | 53787.0 | +406.0 |
+| 2026-09-30 | Rosenblatt Securities Inc. | 22 | 15 | 7 | — | EBITDA FQ3 2026 | 53769.0 | 53406.0 | −363.0 |
+| 2026-09-29 | broker undisclosed | 8 | — | — | 8 | — | — | — | — |
+| 2026-09-23 | broker undisclosed | 4 | — | — | 4 | — | — | — | — |
+| 2026-09-21 | broker undisclosed | 4 | — | — | 4 | — | — | — | — |
 
 _+18 more broker-days in JSON_
 
@@ -407,7 +407,7 @@ _S&P issuer rating AA · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** negative [10]
-- **Free cash flow ($M):** 3219.1 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex — and the two carry OPPOSITE SIGNS: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $161,403.0M − capex $173,028.0M = $-11,625.0M. One says the business generated cash this period and the other says it consumed it; the basis decides which, so name it before quoting either. [14]
+- **Free cash flow ($M):** 3219.1 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex — and the two carry OPPOSITE SIGNS: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $161,403.0M − capex $173,028.0M = $-11,625.0M. One says the business generated cash this period and the other says it consumed it; the basis decides which, so name it before quoting either. [13]
 - **Debt schedule vintage:** the debt schedule is 228d old (source filed 2026-02-06); no Item 1.02 (termination of a material agreement) has been filed since [58]
 - **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-06-2026** — [59]  <!-- ds-table -->
 
@@ -427,23 +427,24 @@ _14 undated / later aggregate line item(s) in the appendix panel_
 - **Capital-structure aggregates:** term loans 0.0; senior bonds 132,140.0; leases 109,771.0; total principal 252,406.0; total debt 251,635.0 (3 months Q2 Jun-30-2026) ($M) [60]
 - **Covenants — FIVE-YEAR REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR + 0.45% (Floor 0.00%) · Term SOFR (or applicable Relevant Rate: EURIBO Rate, TIBO Rate, Daily Simple SONIA, CDO Rate, AUD Bank Bill Rate, Daily… — per an 8-K filed 2023-11-01
-  - **Maturity:** November 1, 2028 · The later of (a) November 1, 2028 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date — per an 8-K filed 2023-11-01
-  - **Events of default:** acceleration · Mandatory prepayment: Section 2.03(b)-(c) require prepayment when Total Outstandings exceed 105% of Aggregate Commitmen… — per an 8-K filed 2023-11-01
-  - **Maturity:** Company may request extension of Maturity Date to the first anniversary of the then-current Maturity Date (Section 2.12… — per an 8-K filed 2023-11-01
+  - **Maturity:** November 1, 2028 · The later of (a) November 1, 2028 and (b) if extended pursuant to Section 2.12, such extended maturity date — per an 8-K filed 2023-11-01
+  - **Events of default:** acceleration · Mandatory prepayment (Section 2.03(b)-(c)) on currency/commitment excess. Events of Default (Section 8.01): (a) Non-Pay… — per an 8-K filed 2023-11-01
+  - **Maturity:** Company may request one-year extension(s); requires not less than Required Lenders agreeing (Section 2.12) — per an 8-K filed 2023-11-01
 - **Covenants — 364-DAY REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Adjusted Term SOFR + 0.45% · Adjusted Term SOFR plus the Applicable Rate (Applicable Rate: Term SOFR Loans and Daily Simple SOFR Loans, 0.45% per an… — per an 8-K filed 2022-11-18
-  - **Maturity:** November 17, 2023 · the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date — per an 8-K filed 2022-11-18
-  - **Financial maintenance:** Section 7.01(w): aggregate principal amount of outstanding Indebtedness secured by other Liens shall not exceed 20% of… — per an 8-K filed 2022-11-18
-  - **Events of default:** acceleration · Mandatory prepayment: Section 2.03(b) - if Total Outstandings exceed Aggregate Commitments, prepay within two Business… — per an 8-K filed 2022-11-18
+  - **Interest / coupon:** Adjusted Term SOFR + 0.45% · Term SOFR Loans: Adjusted Term SOFR plus 0.45% per annum; Base Rate Loans: Base Rate plus 0.00% per annum; Daily Simple… — per an 8-K filed 2022-11-18
+  - **Maturity:** November 17, 2023 · the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity dat… — per an 8-K filed 2022-11-18
+  - **Financial maintenance:** No financial-maintenance ratio covenant (e.g., leverage/interest coverage) is stated. The only quantified financial tes… — per an 8-K filed 2022-11-18
+  - **Events of default:** acceleration · Mandatory prepayment (Section 2.03(b)): if Total Outstandings exceed Aggregate Commitments, Borrower shall within two B… — per an 8-K filed 2022-11-18
+  - **Maturity:** Borrower may, on one occasion, request extension of the Existing Maturity Date for an additional period of 364 days (Se… — per an 8-K filed 2022-11-18
 - **Covenants — AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** LIBO Rate + 0.50% · Eurocurrency Rate Loans: LIBO Rate plus Applicable Rate (0.50% per annum); Base Rate Loans: Base Rate plus Applicable R… — per an 8-K filed 2020-06-23
+  - **Interest / coupon:** LIBO Rate + 0.50% (Floor 0.00%) · Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate (0.50% per annum); Base Rate Loans: Base Rate plus the Appl… — per an 8-K filed 2020-06-23
   - **Maturity:** June 23, 2023 · the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date — per an 8-K filed 2020-06-23
-  - **Financial maintenance:** No standalone financial-maintenance covenant (e.g. leverage/coverage ratio) is stated; the only financial-metric test s… — per an 8-K filed 2020-06-23
-  - **Events of default:** acceleration · Mandatory prepayment on Total Outstandings exceeding Aggregate Commitments (Section 2.03(b)) and Alternative Currency S… — per an 8-K filed 2020-06-23
+  - **Financial maintenance:** No traditional financial-maintenance covenant (e.g., leverage/interest coverage ratio) stated; the agreement contains a… — per an 8-K filed 2020-06-23
+  - **Events of default:** acceleration · Mandatory prepayment (Section 2.03(b)-(c)): prepay if Total Outstandings exceed 105% of Aggregate Commitments (currency… — per an 8-K filed 2020-06-23
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Eurocurrency Rate + 0.625% · Eurocurrency Rate Loan: Eurocurrency Rate plus the Applicable Rate; Base Rate Loan: Base Rate plus the Applicable Rate.… — per an 8-K filed 2014-09-05
-  - **Maturity:** September 5, 2016 · the later of (a) September 5, 2016 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity dat… — per an 8-K filed 2014-09-05
-  - **Events of default:** acceleration · Mandatory prepayment (Section 2.03(b)-(c)): prepay excess when Total Outstandings exceed 105% of Aggregate Commitments… — per an 8-K filed 2014-09-05
+  - **Maturity:** September 5, 2016 · The later of (a) September 5, 2016 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity dat… — per an 8-K filed 2014-09-05
+  - **Events of default:** acceleration · Mandatory prepayment (Section 2.03(b),(c)): if Total Outstandings exceed 105% of Aggregate Commitments (currency fluctu… — per an 8-K filed 2014-09-05
 
 ### Filing cross-checks — going concern · leverage basis
 
@@ -459,11 +460,8 @@ _14 undated / later aggregate line item(s) in the appendix panel_
 _3 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Amazon.com, followed under the QUALITY book by operator decision 2026-09-17 — one of the megacaps STATE.md §4 names in that book's class, judged on what today's price already assumes rather than on whether a de-rating is overdone. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
-- stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling
-- **Heterogeneous-peer benchmark** — The forward multiple is not obviously cheap: NTM P/E is 26.73x vs peer median 16.92x and P/FY27E normalized EPS is 24.6x, so the trailing 19.8x understates what the market pays on forward earnings — a genuine counter-point, but OUTWEIGHED by the accelerating $496B-backlog AWS mechanism and lower leverage than peers.
-  - _where:_ a bear point
-  - _why it matters:_ leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS
-  - _how to verify:_ confidence-gate every peer stat
+- stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 13 calendar days before assembly — run `vinci refresh` before assembling
+- synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bullish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
 
 # Appendix — data & audit
 
@@ -475,33 +473,33 @@ _3 to verify._
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
 
 
-## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-09-02)
+## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-10-01)
 ### Annual — every exported fiscal year + LTM + consensus
-- **Annual financials ($M; E = consensus)** — [13]  <!-- ds-table -->
+- **Annual financials ($M; E = consensus)** — [15]  <!-- ds-table -->
 
 |  | FY17 | FY18 | FY19 (R) | FY20 | FY21 | FY22 (R) | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 177,866 | 232,887 | 280,522 | 386,064 | 469,822 | 513,983 | 574,785 | 637,959 | 716,924 | 775,680 | 828,225 | 946,790 |
+| Revenue ($M) | 177,866 | 232,887 | 280,522 | 386,064 | 469,822 | 513,983 | 574,785 | 637,959 | 716,924 | 775,680 | 828,285 | 947,853 |
 | Revenue growth | — | +31% | — (basis) | — (basis) | +22% | — (basis) | — (basis) | +11% | +12% | — (basis) | +16% (vs FY25) | +14% |
-| EBITDA ($M) | 15,584 | 27,762 | 36,330 | 48,079 | 59,312 | 55,269 | 85,515 | 121,388 | 145,731 | 168,912 | 216,860 | 273,308 |
+| EBITDA ($M) | 15,584 | 27,762 | 36,330 | 48,079 | 59,312 | 55,269 | 85,515 | 121,388 | 145,731 | 168,912 | 216,957 | 273,452 |
 | EBITDA margin | 9% | 12% | 13% | 12% | 13% | 11% | 15% | 19% | 20% | 22% | 26% | 29% |
-| EBIT ($M) | 4,106 | 12,421 | 14,541 | 22,899 | 24,879 | 13,348 | 36,852 | 68,593 | 79,975 | 93,712 | 109,863 | 140,131 |
-| Net income ($M) | 3,033 | 10,073 | 11,588 | 21,331 | 33,364 | -2,722 | 30,425 | 59,248 | 77,670 | 135,281 | 140,097 | 114,993 |
-| EPS (GAAP, dil.) | 0.31 | 1.01 | 1.15 | 2.09 | 3.24 | -0.27 | 2.90 | 5.53 | 7.17 | 12.44 | 12.88 | 10.47 |
-| EPS (Normalized) | 0.23 | 0.70 | 0.84 | 1.34 | 1.42 | 0.68 | 2.18 | 4.08 | 4.70 | 5.44 | 12.87 | 10.38 |
+| EBIT ($M) | 4,106 | 12,421 | 14,541 | 22,899 | 24,879 | 13,348 | 36,852 | 68,593 | 79,975 | 93,712 | 109,867 | 140,372 |
+| Net income ($M) | 3,033 | 10,073 | 11,588 | 21,331 | 33,364 | -2,722 | 30,425 | 59,248 | 77,670 | 135,281 | 140,133 | 115,541 |
+| EPS (GAAP, dil.) | 0.31 | 1.01 | 1.15 | 2.09 | 3.24 | -0.27 | 2.90 | 5.53 | 7.17 | 12.44 | 12.88 | 10.51 |
+| EPS (Normalized) | 0.23 | 0.70 | 0.84 | 1.34 | 1.42 | 0.68 | 2.18 | 4.08 | 4.70 | 5.44 | 8.31 | 10.47 |
 | Gain (Loss) On Sale Of Invest. ($M) | 120 | 6 | 346 | 2,394 | 14,707 | -15,926 | 985 | -1,428 | 15,301 | 80,328 | — | — |
 | Asset Writedown ($M) | — | — | — | — | — | -1,100 | — | — | — | — | — | — |
-| CFO ($M) | 18,365 | 30,723 | 38,514 | 66,064 | 46,327 | 46,752 | 84,946 | 115,877 | 139,514 | 161,403 | 193,418 | 246,124 |
-| Capex ($M) | -11,955 | -13,427 | -16,861 | -40,140 | -61,053 | -63,645 | -52,729 | -82,999 | -131,819 | -173,028 | -220,447 | -273,404 |
+| CFO ($M) | 18,365 | 30,723 | 38,514 | 66,064 | 46,327 | 46,752 | 84,946 | 115,877 | 139,514 | 161,403 | 192,456 | 246,300 |
+| Capex ($M) | -11,955 | -13,427 | -16,861 | -40,140 | -61,053 | -63,645 | -52,729 | -82,999 | -131,819 | -173,028 | -220,500 | -275,063 |
 | FCF (levered, CIQ) | 9,448 | 24,888 | 18,882 | 36,456 | -968 | 695 | 45,476 | 45,556 | 23,793 | 3,219 | — | — |
 | D&A ($M) | 11,478 | 15,341 | 21,789 | 25,180 | 34,433 | 41,921 | 48,663 | 52,795 | 65,756 | 75,200 | — | — |
-| FCF (consensus basis) ($M) | — | — | — | — | — | — | — | — | — | — | -34,182 | -5,879 |
-| D&A (consensus basis) ($M) | — | — | — | — | — | — | — | — | — | — | 85,575 | 111,182 |
+| FCF (consensus basis) ($M) | — | — | — | — | — | — | — | — | — | — | -34,027 | -5,631 |
+| D&A (consensus basis) ($M) | — | — | — | — | — | — | — | — | — | — | 85,611 | 111,354 |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-09-02; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-01; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 
-> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 120,087 of D&A against 38,177 in the actuals (3.15x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 120,084 of D&A against 38,177 in the actuals (3.15x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 ### Quarterly — every exported quarter
 - **Quarterly financials** — [63]  <!-- ds-table -->
@@ -565,16 +563,18 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm |
-| Principal / commitment amount | Aggregate Commitments equal to US$15,000,000,000 (as of the Closing Date); Alternative Currency Sublimit equal to the lesser of the Aggregate Commitments and US$5,000,000,000 | base (footer) |
-| Interest / coupon rate | Term SOFR + 0.45% (Floor 0.00%) · Term SOFR (or applicable Relevant Rate: EURIBO Rate, TIBO Rate, Daily Simple SONIA, CDO Rate, AUD Bank Bill Rate, Daily Simple SARON, Base Rate, etc.) plus the Applicable Rate; Applicable Rate = 0.45… — full verbatim in JSON | base (footer) |
-| Maturity date | November 1, 2028 · The later of (a) November 1, 2028 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date | base (footer) |
+| Principal / commitment amount | US$15,000,000,000 (Aggregate Commitments as of the Closing Date); Alternative Currency Sublimit = lesser of the Aggregate Commitments and US$5,000,000,000 | base (footer) |
+| Interest / coupon rate | Term SOFR + 0.45% (Floor 0.00%) · Term SOFR (or applicable Relevant Rate: EURIBO Rate, TIBO Rate, Daily Simple SONIA, CDO Rate, AUD Bank Bill Rate, Daily Simple SARON, Base Rate, etc.) plus the Applicable Rate; Applicable Rate = 0.00… — full verbatim in JSON | base (footer) |
+| Maturity date | November 1, 2028 · The later of (a) November 1, 2028 and (b) if extended pursuant to Section 2.12, such extended maturity date | base (footer) |
 | Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm |
-| Security / collateral / guarantors | Company Guaranty (Article X): the Company guarantees the Obligations of the Designated Borrowers. Unsecured facility (no collateral pledged); the Guaranty is stated to not be affected by the existenc… — full verbatim in JSON | base (footer) |
-| Mandatory prepayment / events of default | acceleration · Mandatory prepayment: Section 2.03(b)-(c) require prepayment when Total Outstandings exceed 105% of Aggregate Commitments (currency fluctuation) or exceed Aggregate Commitments, and when Alternative… — full verbatim in JSON | base (footer) |
-| Commitment fee | Commitment fee = Applicable Rate (0.03% per annum) times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings | base (footer) |
-| Default Rate | Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum (or otherwise applicable rate plus 2% per annum for Term Benchmark / RFR Loans) | base (footer) |
-| Negative covenants (Liens / Fundamental Changes) | Section 7.01 Liens (with permitted-lien exceptions, including a basket where Indebtedness secured by other Liens shall not exceed 12.5% of Consolidated Total Assets); Section 7.02 Fundamental Changes… — full verbatim in JSON | base (footer) |
-| Extension of Maturity Date | Company may request extension of Maturity Date to the first anniversary of the then-current Maturity Date (Section 2.12), subject to Required Lenders' agreement | base (footer) |
+| Security / collateral / guarantors | Company (Amazon.com, Inc.) Guaranty of the Obligations of the Designated Borrowers under Article X. No security/collateral granted (unsecured facility); negative pledge on Liens under Section 7.01 | base (footer) |
+| Mandatory prepayment / events of default | acceleration · Mandatory prepayment (Section 2.03(b)-(c)) on currency/commitment excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warran… — full verbatim in JSON | base (footer) |
+| Commitment fee | Applicable Rate (0.03% per annum) times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings | base (footer) |
+| Default Rate | Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum (or otherwise applicable rate plus 2% per annum for Term Benchmark/RFR Loans) | base (footer) |
+| Negative covenant - Liens (negative pledge) | Section 7.01 negative pledge; basket under 7.01(x): other Liens securing Indebtedness not exceeding 12.5% of Consolidated Total Assets | base (footer) |
+| Facility type | Five-Year Revolving Credit Facility | base (footer) |
+| Borrowers / Guarantor | Amazon.com, Inc. (Company) and Designated Borrowers (subsidiaries); Company guarantees Designated Borrowers' Obligations | base (footer) |
+| Extension of Maturity Date | Company may request one-year extension(s); requires not less than Required Lenders agreeing (Section 2.12) | base (footer) |
 
 _Source §: 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm_
 
@@ -584,11 +584,16 @@ _Source §: 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm_
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001193125-22-289041 · d413765dex101.htm |
 | Principal / commitment amount | As of the Closing Date, the Aggregate Commitments equal to US$10,000,000,000. | base (footer) |
-| Interest / coupon rate | Adjusted Term SOFR + 0.45% · Adjusted Term SOFR plus the Applicable Rate (Applicable Rate: Term SOFR Loans and Daily Simple SOFR Loans, 0.45% per annum; Base Rate Loans, 0.00% per annum; commitment fee, 0.05% per annum) | base (footer) |
-| Maturity date | November 17, 2023 · the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date | base (footer) |
-| Financial-maintenance covenants | Section 7.01(w): aggregate principal amount of outstanding Indebtedness secured by other Liens shall not exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter | base (footer) |
-| Security / collateral / guarantors | Unsecured facility; no collateral or guarantors stated. Negative pledge in Section 7.01 (Liens) with permitted-lien exceptions. Section 11.21 addresses unsecured liability of Affected Financial Insti… — full verbatim in JSON | base (footer) |
-| Mandatory prepayment / events of default | acceleration · Mandatory prepayment: Section 2.03(b) - if Total Outstandings exceed Aggregate Commitments, prepay within two Business Days to eliminate excess. Events of Default: Section 8.01 (Non-Payment; Specific… — full verbatim in JSON | base (footer) |
+| Interest / coupon rate | Adjusted Term SOFR + 0.45% · Term SOFR Loans: Adjusted Term SOFR plus 0.45% per annum; Base Rate Loans: Base Rate plus 0.00% per annum; Daily Simple SOFR Loans: Adjusted Daily Simple SOFR plus 0.45% per annum; commitment fee 0.0… — full verbatim in JSON | base (footer) |
+| Maturity date | November 17, 2023 · the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date as determined pursuant to such Section | base (footer) |
+| Financial-maintenance covenants | No financial-maintenance ratio covenant (e.g., leverage/interest coverage) is stated. The only quantified financial test is a lien basket limited to Indebtedness secured by other Liens not exceeding… — full verbatim in JSON | base (footer) |
+| Security / collateral / guarantors | UNKNOWN | not stated in 8-K 0001193125-22-289041 · d413765dex101.htm |
+| Mandatory prepayment / events of default | acceleration · Mandatory prepayment (Section 2.03(b)): if Total Outstandings exceed Aggregate Commitments, Borrower shall within two Business Days prepay Loans sufficient to eliminate such excess. Events of Default… — full verbatim in JSON | base (footer) |
+| Commitment fee | Applicable Rate (0.05% per annum) times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings | base (footer) |
+| Default Rate | Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum; for Term SOFR/Daily Simple SOFR Loans, the otherwise applicable rate plus 2% per annum | base (footer) |
+| Extension of Maturity Date | Borrower may, on one occasion, request extension of the Existing Maturity Date for an additional period of 364 days (Section 2.12) | base (footer) |
+| Use of proceeds | solely for working capital, capital expenditures, acquisitions, payment of fees and expenses associated with this Agreement and other general corporate purposes | base (footer) |
+| Governing law | THE LAW OF THE STATE OF NEW YORK | base (footer) |
 
 _Source §: 8-K 0001193125-22-289041 · d413765dex101.htm_
 
@@ -597,12 +602,12 @@ _Source §: 8-K 0001193125-22-289041 · d413765dex101.htm_
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001193125-20-176528 · d948849dex101.htm |
-| Principal / commitment amount | As of the Closing Date, the Aggregate Commitments equal $7,000,000,000. | base (footer) |
-| Interest / coupon rate | LIBO Rate + 0.50% · Eurocurrency Rate Loans: LIBO Rate plus Applicable Rate (0.50% per annum); Base Rate Loans: Base Rate plus Applicable Rate (0.00% per annum); commitment fee 0.04% per annum | base (footer) |
+| Principal / commitment amount | As of the Closing Date, the Aggregate Commitments equal $7,000,000,000. Alternative Currency Sublimit: an amount equal to the lesser of the Aggregate Commitments and $3,000,000,000. | base (footer) |
+| Interest / coupon rate | LIBO Rate + 0.50% (Floor 0.00%) · Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate (0.50% per annum); Base Rate Loans: Base Rate plus the Applicable Rate (0.00% per annum); commitment fee 0.04% per annum | base (footer) |
 | Maturity date | June 23, 2023 · the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date | base (footer) |
-| Financial-maintenance covenants | No standalone financial-maintenance covenant (e.g. leverage/coverage ratio) is stated; the only financial-metric test stated is the Section 7.01(w) Lien basket limited to 20% of Consolidated Tangible… — full verbatim in JSON | base (footer) |
-| Security / collateral / guarantors | Company Guaranty of the Designated Borrowers' Obligations under Article X; no security/collateral stated (unsecured facility – Section 11.21 refers to liabilities “to the extent such liability is uns… — full verbatim in JSON | base (footer) |
-| Mandatory prepayment / events of default | acceleration · Mandatory prepayment on Total Outstandings exceeding Aggregate Commitments (Section 2.03(b)) and Alternative Currency Sublimit excess (Section 2.03(c)); Events of Default in Section 8.01 include Non-… — full verbatim in JSON | base (footer) |
+| Financial-maintenance covenants | No traditional financial-maintenance covenant (e.g., leverage/interest coverage ratio) stated; the agreement contains a 20% of Consolidated Tangible Net Worth basket limiting Indebtedness secured by… — full verbatim in JSON | base (footer) |
+| Security / collateral / guarantors | Company Guaranty (Article X): the Company guarantees the Obligations of the Designated Borrowers. No security/collateral stated (unsecured facility — Liens pursuant to Loan Documents permitted but no… — full verbatim in JSON | base (footer) |
+| Mandatory prepayment / events of default | acceleration · Mandatory prepayment (Section 2.03(b)-(c)): prepay if Total Outstandings exceed 105% of Aggregate Commitments (currency fluctuation) or exceed Aggregate Commitments (otherwise); similar for Alternati… — full verbatim in JSON | base (footer) |
 
 _Source §: 8-K 0001193125-20-176528 · d948849dex101.htm_
 
@@ -613,10 +618,10 @@ _Source §: 8-K 0001193125-20-176528 · d948849dex101.htm_
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm |
 | Principal / commitment amount | As of the Closing Date, the Aggregate Commitments equal $2,000,000,000. | base (footer) |
 | Interest / coupon rate | Eurocurrency Rate + 0.625% · Eurocurrency Rate Loan: Eurocurrency Rate plus the Applicable Rate; Base Rate Loan: Base Rate plus the Applicable Rate. Applicable Rate (Eurocurrency Rate +): Pricing Level 1 (A+/A1 or better) 0.625%… — full verbatim in JSON | base (footer) |
-| Maturity date | September 5, 2016 · the later of (a) September 5, 2016 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date as determined pursuant to such Section; provided that, in each case, if such d… — full verbatim in JSON | base (footer) |
+| Maturity date | September 5, 2016 · The later of (a) September 5, 2016 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date as determined pursuant to such Section; provided that, in each case, if such d… — full verbatim in JSON | base (footer) |
 | Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm |
-| Security / collateral / guarantors | Company Guaranty (Article X): the Company guarantees the Obligations of the Designated Borrowers to the Credit Parties. No security/collateral pledge is stated (Schedule 7.01 Existing Liens: None); f… — full verbatim in JSON | base (footer) |
-| Mandatory prepayment / events of default | acceleration · Mandatory prepayment (Section 2.03(b)-(c)): prepay excess when Total Outstandings exceed 105% of Aggregate Commitments (currency fluctuation) or exceed Aggregate Commitments, within two Business Days… — full verbatim in JSON | base (footer) |
+| Security / collateral / guarantors | Company Guaranty (Article X): Company guarantees the Obligations of the Designated Borrowers. Debt Rating is defined as the Borrower's non-credit-enhanced, senior unsecured long-term debt (no collate… — full verbatim in JSON | base (footer) |
+| Mandatory prepayment / events of default | acceleration · Mandatory prepayment (Section 2.03(b),(c)): if Total Outstandings exceed 105% of Aggregate Commitments (currency fluctuation) or the Aggregate Commitments (otherwise), prepay excess within two Busine… — full verbatim in JSON | base (footer) |
 
 _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 
@@ -640,22 +645,22 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [71]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 64 (8 insiders, $416.64M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.25M, CEO Worldwide Amazon Stores, 2026-09-01 (~1mo ago) · largest sale $682.65M, Executive Chair, 2025-06-27 (~15mo ago) · grants 0 · last filing 2026-09-09 · other filings 252 [72]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-15): 92.1M → 81.4M sh (-11.5%, falling) · 0.8% of shares out (EDGAR XBRL) · DTC 1.8d · recent: 2026-09-15 81.4M · 2026-08-31 92.1M · 2026-08-14 95.3M · 2026-07-31 98.4M [73]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 64 (8 insiders, $416.64M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.25M, CEO Worldwide Amazon Stores, 2026-09-01 (~1mo ago) · largest sale $682.65M, Executive Chair, 2025-06-27 (~15mo ago) · grants 0 · last filing 2026-09-09 · other filings 252 [36]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-15): 92.1M → 81.4M sh (-11.5%, falling) · 0.8% of shares out (EDGAR XBRL) · DTC 1.8d · recent: 2026-09-15 81.4M · 2026-08-31 92.1M · 2026-08-14 95.3M · 2026-07-31 98.4M [72]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [74]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 197000.0–202000.0 vs release 197000.0–202000.0 → cross-source VERIFIED [75]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [73]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 197000.0–202000.0 vs release 197000.0–202000.0 → cross-source VERIFIED [74]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-09-22 · assembled 2026-09-30 13:40 UTC
+- **Data window:** screened as of 2026-09-22 · assembled 2026-10-05 12:44 UTC
 - **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
-- **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
-- **Panel age:** oldest panel 14d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-09-30 build
-- **Consensus age:** consensus 28d old (2026-09-02, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Price store:** `wt-amzn → mosaic-theory-ta` · reaching 2026-09-22
+- **Panel age:** oldest panel 19d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-05 build
+- **Consensus age:** consensus 4d old (2026-10-01, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001018724` · Nasdaq : AMZN
-- **Assembly log:** primary-source: 8-K 0001104659-26-107526 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001104659-26-082293 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001104659-26-073562 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+5.3s fetch)
+- **Assembly log:** primary-source: 8-K 0001104659-26-107526 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001104659-26-082293 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001104659-26-073562 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+3.5s fetch)
 - **Re-run:** `python -m vinci dossier --ticker AMZN` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -673,10 +678,10 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 [9] `CIQ Net Debt $128,647M [Q2 Jun-30-2026] ÷ CIQ EBITDA $168,912M [LTM 12 months Jun-30-2026]`
 [10] `EDGAR XBRL FCF sign (screen data-record)`
 [11] `CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf`
-[12] `EDGAR 10-K 0001018724-26-000004 XBRL instance amzn-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31`
-[13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[14] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
-[15] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
+[12] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[13] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
+[14] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[15] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [16] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
 [17] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2025-12-31)`
 [18] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2024-01-01→2024-12-31, 365d)`
@@ -691,28 +696,28 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 [27] `price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary`
 [28] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [29] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
-[30] `CIQ Customers&Suppliers Amazon com Inc NasdaqGS AMZN Customers.rtf`
-[31] `CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf`
-[32] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[33] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
-[34] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-[35] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[36] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-[37] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[38] `CIQ Key Developments: Amazon com Inc NasdaqGS AMZN Key Developments.rtf · Sep-01-2026`
-[39] `CIQ Key Developments: Amazon com Inc NasdaqGS AMZN Key Developments.rtf · Aug-21-2026`
-[40] `CIQ capital-structure panel (maturity_date)`
-[41] `cadence: EDGAR submissions (median 91d gap over 24 results 8-Ks; last print 2026-07-30)`
-[42] `CIQ Key Developments: Amazon com Inc NasdaqGS AMZN Key Developments.rtf · Aug-12-2026`
-[43] `TEV = mcap 2653001.7 + net debt 128647.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-16, exported 2026-09-17) — simple-TEV basis`
-[44] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[45] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-16`
-[46] `EDGAR XBRL shares, trailing 2024-10-18..2026-07-22`
-[47] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
-[48] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-[49] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[50] `8-K 0001018724-26-000024 EX-99.1 (filed 2026-07-30)`
-[51] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-02 · export date unverified]`
+[30] `EDGAR 10-K 0001018724-26-000004 XBRL instance amzn-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31`
+[31] `CIQ Customers&Suppliers Amazon com Inc NasdaqGS AMZN Customers.rtf`
+[32] `CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf`
+[33] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+[34] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+[35] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
+[36] `EDGAR Form 4 (latest 0001284323-26-000002; 248 filings in the 1095d scanned; counts over 182d)`
+[37] `CIQ Key Developments: Amazon com Inc NasdaqGS AMZN Key Developments.rtf · Sep-01-2026`
+[38] `CIQ Key Developments: Amazon com Inc NasdaqGS AMZN Key Developments.rtf · Aug-21-2026`
+[39] `CIQ capital-structure panel (maturity_date)`
+[40] `cadence: EDGAR submissions (median 91d gap over 24 results 8-Ks; last print 2026-07-30)`
+[41] `CIQ Key Developments: Amazon com Inc NasdaqGS AMZN Key Developments.rtf · Aug-12-2026`
+[42] `TEV = mcap 2653001.7 + net debt 128647.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-16, exported 2026-09-17) — simple-TEV basis`
+[43] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
+[44] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-16`
+[45] `EDGAR XBRL shares, trailing 2024-10-18..2026-07-22`
+[46] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
+[47] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[48] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[49] `8-K 0001018724-26-000024 EX-99.1 (filed 2026-07-30)`
+[50] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[51] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-10-01 · export date unverified]`
 [52] `CIQ Estimates→Surprise (annual)`
 [53] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-16`
 [54] `CIQ Net Debt $128,647M [Q2 Jun-30-2026] ÷ CIQ OCF $161,403M [LTM 12 months Jun-30-2026]`
@@ -733,7 +738,6 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 [69] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-16`
 [70] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-16`
 [71] `CIQ transcript(s): Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf`
-[72] `EDGAR Form 4 (latest 0001284323-26-000002; 248 filings in the 1095d scanned; counts over 182d)`
-[73] `FINRA consolidated short interest (settle 2026-09-15); DTC = 81,440,414 short ÷ 45,463,371 screen 90d ADV`
-[74] `10-Q maturity wall vs CIQ capital panel (same window)`
-[75] `CIQ revenue guide vs release actual/outlook`
+[72] `FINRA consolidated short interest (settle 2026-09-15); DTC = 81,440,414 short ÷ 45,463,371 screen 90d ADV`
+[73] `10-Q maturity wall vs CIQ capital panel (same window)`
+[74] `CIQ revenue guide vs release actual/outlook`
