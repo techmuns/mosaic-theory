@@ -128,8 +128,10 @@ of synthesis, ~$185 cached — **a saving on the order of $250/month, not $661**
 Console's figure is other traffic on the org, which this repo cannot see or change.
 
 **3. The build is wider than one function.** 14 of the 18 duck-typed test fakes declare
-`extract(self, *, system, user, tool)` exactly, and fakes reach multi-draw `synthesize` through
-the assemble path — a new `cache` keyword raises `TypeError` in each until it is added.
+`extract(self, *, system, user, tool)` exactly — a fake handed to multi-draw `synthesize` raises
+`TypeError` on a new `cache` keyword until it gains the parameter. *(Corrected before merge: the
+build (#665) found only ONE such fake on that path — `_Scripted` in `tests/test_synthesis_draws.py`
+— with the full offline suite green; the other fakes never reach a multi-draw synthesis.)*
 `tests/test_graph.py` pins `last_usage` as exactly three keys, and will rightly redden when it
 gains the cache fields. `assemble.py` runs NAMES concurrently on a `ThreadPoolExecutor`; each
 name's draws stay sequential in its thread and names never share a prefix, so caching is
@@ -184,7 +186,8 @@ measurement this repo could make.
 
 **THE BUILD, IF APPROVED.** `extract(..., cache=False)`; when set, send top-level
 `cache_control={"type": "ephemeral"}` (5-minute TTL — draws start ~1 minute apart; SDK 0.112.0
-supports the parameter); `synthesize` passes `cache=draws > 1`; `last_usage` gains the two cache
+supports the parameter; the `anthropic>=0.69` floor in `pyproject.toml` does not prove an older SDK
+does, so the build raises it); `synthesize` passes `cache=draws > 1`; `last_usage` gains the two cache
 fields. Proven by one real 5-draw assembly showing draw 1 `cache_creation ≈ prompt` and draws 2–5
 `cache_read ≈ prompt`, pinned by a test that a single-draw call sends no `cache_control`.
 
