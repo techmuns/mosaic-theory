@@ -18,6 +18,8 @@ from __future__ import annotations
 
 import json
 import re
+import time
+import warnings
 from collections import Counter
 from typing import Any, cast
 
@@ -1182,6 +1184,40 @@ def _primary_source_digest(ps: PrimarySource) -> str:
 #: `docs/RUNBOOKS.md` draws at re-rolling a synthesis for cleaner flags.
 SYNTHESIS_DRAWS = 5
 
+#: A re-send started further apart than this has outlived its 5-minute cache entry, so its miss is
+#: EXPIRY rather than a prompt that failed to cache. Measured start-to-start, as the TTL is.
+_CACHE_TTL_S = 300.0
+
+
+class PromptCacheMissWarning(UserWarning):
+    """A repeated draw re-billed its whole prompt. A COST signal, never a data one — printed for the
+    operator and written to the call log, and kept off the dossier, whose facts it cannot touch."""
+
+
+def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
+    """Draws after the first that read NOTHING from the prompt cache, each with its likely cause.
+
+    ``sends`` is ``(draw, usage, started_s)`` for every draw whose call RETURNED, in order. Only a
+    usage record carrying ``cache_read_input_tokens`` can be judged: a client that reports no cache
+    fields is not evidence of a miss, so it is skipped rather than flagged.
+
+    WHY THIS EXISTS: a broken cache does not fail, it bills. Anything that makes the draws' prompts
+    differ — a timestamp in the facts, a dict serialised in another order, the draws moved onto a
+    thread pool — silently re-bills ~two thirds of synthesis input on every name, and nothing else
+    in the pipeline would notice."""
+    out: list[str] = []
+    for (prev_n, _, prev_t), (n, usage, t) in zip(sends, sends[1:], strict=False):
+        if "cache_read_input_tokens" not in usage or usage["cache_read_input_tokens"] > 0:
+            continue
+        prompt = sum(int(usage.get(k, 0) or 0) for k in
+                     ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
+        gap = t - prev_t
+        cause = (f"past the {_CACHE_TTL_S:.0f}s cache lifetime" if gap > _CACHE_TTL_S
+                 else "inside the cache lifetime, so the prompt was not cached or not reused")
+        out.append(f"draw {n} read 0 of its {prompt:,}-token prompt from cache; it started "
+                   f"{gap:.0f}s after draw {prev_n}, {cause}")
+    return out
+
 
 def synthesize(
     mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str,
@@ -1241,10 +1277,16 @@ def synthesize(
     attempted = max(1, draws)
     usable: list[tuple[str, dict[str, Any]]] = []  # (lean label, raw) per COMPLETED draw, in order
     last_fail: str | None = None
+    sends: list[tuple[int, dict[str, Any], float]] = []  # (draw, usage, started_s), RETURNED calls
+    t0 = time.monotonic()
     for n in range(1, attempted + 1):
         head = f"=== DRAW {n}/{attempted} ===" if attempted > 1 else "==="
+        started_s = round(time.monotonic() - t0, 1)
         try:
-            raw = llm.extract(system=system, user=user, tool=tool)
+            # A MULTI-DRAW BUILD RE-SENDS ONE PROMPT, so it asks for it to be cached; a single draw
+            # passes NOTHING, and its request stays byte-identical to every build before caching.
+            raw = (llm.extract(system=system, user=user, tool=tool, cache=True) if attempted > 1
+                   else llm.extract(system=system, user=user, tool=tool))
         except LlmError as exc:
             # ONE BAD DRAW IS NOT A FAILED SYNTHESIS when others remain. The 2026-09-01 Opus 5
             # regression is exactly this shape — a tool call that comes back unusable perhaps half
@@ -1257,7 +1299,8 @@ def synthesize(
         # SMPL 2026-08-04 that message was emitted about a response using a fifth of its budget.
         _u = getattr(llm, "last_usage", None)
         if _u:
-            log_parts += ["", f"{head} USAGE", json.dumps(_u)]
+            sends.append((n, _u, started_s))
+            log_parts += ["", f"{head} USAGE", json.dumps({**_u, "started_s": started_s})]
         log_parts += ["", f"{head} RAW OUTPUT", json.dumps(raw, indent=2, default=str)]
         missing = [k for k in structural if k not in raw]
         if missing:
@@ -1269,6 +1312,11 @@ def synthesize(
         decoded = cast(dict[str, Any], _decode_escapes(raw))
         parts = split_lean(str(decoded.get("evidence_balance") or ""))
         usable.append(((parts[0].strip().lower() if parts else ""), decoded))
+    misses = _cache_misses(sends) if attempted > 1 else []
+    if misses:
+        log_parts += ["", "=== PROMPT CACHE MISSED ===", *misses]
+        for miss in misses:
+            warnings.warn(f"{ticker}: {miss}", PromptCacheMissWarning, stacklevel=2)
     if not usable:
         # THE WORDING IS LOAD-BEARING, per failure kind. A RAISED call has always flagged "synthesis
         # failed (no usable output)" and `test_synthesis_fails_loud_when_llm_errors` reads that

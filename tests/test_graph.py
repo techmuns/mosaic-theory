@@ -247,7 +247,9 @@ def test_the_client_records_token_usage() -> None:
     assert c.last_usage is None                                    # type: ignore[attr-defined]
     c.extract(system="s", user="u", tool={"name": "t"})            # type: ignore[attr-defined]
     assert c.last_usage == {                                       # type: ignore[attr-defined]
-        "input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384}
+        "input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384,
+        # Both cache fields ALWAYS present, 0 when the call did not cache — see `last_usage`.
+        "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0}
 
 
 def test_usage_is_recorded_even_when_the_call_raises() -> None:
@@ -261,6 +263,8 @@ def test_usage_is_recorded_even_when_the_call_raises() -> None:
     with _pytest.raises(LlmError, match="truncated"):
         c.extract(system="s", user="u", tool={"name": "t"})         # type: ignore[attr-defined]
     assert c.last_usage == {                                        # type: ignore[attr-defined]
-        "input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384}, (
+        "input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384,
+        # Both cache fields ALWAYS present, 0 when the call did not cache — see `last_usage`.
+        "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0}, (
         "usage was lost on the raising path — recorded after the guard instead of before it")
 
