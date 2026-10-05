@@ -1197,9 +1197,13 @@ class PromptCacheMissWarning(UserWarning):
 def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
     """Draws after the first that read NOTHING from the prompt cache, each with its likely cause.
 
-    ``sends`` is ``(draw, usage, started_s)`` for every draw whose call RETURNED, in order. Only a
-    usage record carrying ``cache_read_input_tokens`` can be judged: a client that reports no cache
-    fields is not evidence of a miss, so it is skipped rather than flagged.
+    ``sends`` is ``(draw, usage, started_s)`` for EVERY draw, in order. A draw that raised
+    ``LlmError`` carries an EMPTY usage: it is never judged itself, but it stays in the list because
+    the API answered it (every ``LlmError`` the client raises follows a response), so it touched the
+    cache and its start is the one the next draw's gap is measured from. Dropping it measured the
+    gap from the draw BEFORE it and could call a non-reuse miss "expiry". Only a usage record
+    carrying ``cache_read_input_tokens`` can be judged: a client that reports no cache fields is not
+    evidence of a miss, so it is skipped rather than flagged.
 
     WHY THIS EXISTS: a broken cache does not fail, it bills. Anything that makes the draws' prompts
     differ — a timestamp in the facts, a dict serialised in another order, the draws moved onto a
@@ -1277,7 +1281,7 @@ def synthesize(
     attempted = max(1, draws)
     usable: list[tuple[str, dict[str, Any]]] = []  # (lean label, raw) per COMPLETED draw, in order
     last_fail: str | None = None
-    sends: list[tuple[int, dict[str, Any], float]] = []  # (draw, usage, started_s), RETURNED calls
+    sends: list[tuple[int, dict[str, Any], float]] = []  # (draw, usage, started_s), EVERY draw
     t0 = time.monotonic()
     for n in range(1, attempted + 1):
         head = f"=== DRAW {n}/{attempted} ===" if attempted > 1 else "==="
@@ -1294,6 +1298,7 @@ def synthesize(
             # tally fails the synthesis, which keeps the single-draw behaviour identical.
             last_fail = str(exc)
             log_parts += ["", f"{head} ERROR", str(exc)]
+            sends.append((n, {}, started_s))  # timing only — see `_cache_misses`
             continue
         # USAGE IN THE LOG, so "(likely truncated)" below can be CHECKED instead of believed. On
         # SMPL 2026-08-04 that message was emitted about a response using a fifth of its budget.

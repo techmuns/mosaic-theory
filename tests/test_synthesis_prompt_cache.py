@@ -24,7 +24,7 @@ import pytest
 from tests.test_dossier import _minimal_mech
 from tests.test_synthesis_draws import _LEANS, _payload
 from vinci.dossier import synthesis as syn
-from vinci.graph.llm import AnthropicLlmClient
+from vinci.graph.llm import AnthropicLlmClient, LlmError
 
 _UNCACHED_KEYS = {"model", "max_tokens", "system", "tools", "tool_choice", "messages"}
 
@@ -189,3 +189,36 @@ def test_a_healthy_build_is_silent() -> None:
                                          ticker="X", name="X Co", draws=syn.SYNTHESIS_DRAWS)
     assert "PROMPT CACHE MISSED" not in log
     assert '"cache_read_input_tokens": 1000' in log and '"started_s"' in log
+
+
+class _RaisesOnTwo(_Recording):
+    """Draw 2 comes back unusable (the API answered, so the cache was touched) and draw 3 misses."""
+
+    def extract(self, *, system: str, user: str, tool: dict[str, typing.Any],
+                cache: bool = False) -> dict[str, typing.Any]:
+        out = super().extract(system=system, user=user, tool=tool, cache=cache)
+        if len(self.cache_flags) == 2:
+            raise LlmError("no tool_use block")
+        return out
+
+
+def test_a_raised_draw_still_anchors_the_next_gap(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(+) REGRESSION — the gap is measured from the draw that was SENT before, not the last one
+    that returned. Draw 2 raised at 200s; draw 3 started at 360s and missed. Measured from draw 1
+    the 360s gap reads as expiry; measured from draw 2 it is 160s — inside the lifetime, so the
+    real cause is a prompt not cached or not reused, and that is what must be said."""
+    clock = iter([0.0, 0.0, 200.0, 360.0, 420.0, 480.0])
+    monkeypatch.setattr(syn.time, "monotonic", lambda: next(clock))
+    with pytest.warns(syn.PromptCacheMissWarning) as rec:
+        syn.synthesize(_minimal_mech(), llm=_RaisesOnTwo(miss_on=3),  # type: ignore[arg-type]
+                       ticker="X", name="X Co", draws=syn.SYNTHESIS_DRAWS)
+    [miss] = [str(w.message) for w in rec]
+    assert "draw 3 read 0" in miss and "160s after draw 2" in miss
+    assert "inside the cache lifetime" in miss and "past the" not in miss
+
+
+def test_a_raised_draw_is_never_itself_judged() -> None:
+    """(−) A raised draw carries no usage, so it supplies timing only and is never a miss."""
+    sends = [(1, {"cache_read_input_tokens": 0}, 0.0), (2, {}, 60.0),
+             (3, {"cache_read_input_tokens": 900}, 120.0)]
+    assert syn._cache_misses(sends) == []

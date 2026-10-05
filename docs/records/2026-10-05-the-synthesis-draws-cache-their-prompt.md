@@ -68,6 +68,15 @@ and printed no `FAILED` line to find. One mutation run by hand failed as it shou
 passes the list as an array and prints every run's exit code, so an erroring run cannot read as a
 green one.
 
+*Review fixes, before merge.* (a) A draw that RAISED was dropped from the miss guard's timeline,
+so the next draw's gap was measured from the draw before it — draw 2 raising at 200s and draw 3
+missing at 360s read as "past the 300s lifetime" when the gap was 160s. Every `LlmError` the client
+raises follows a response, so the raised draw touched the cache; it now stays in the list as timing
+only, never judged. Pinned end-to-end through `synthesize` (M10: drop it — caught). (b) The
+`anthropic>=0.69` floor admitted SDKs the top-level `cache_control` keyword was never verified on —
+a `TypeError` is not an `LlmError`, so it would have crashed the assembly rather than failed one
+draw; the floor is now 0.112, the version the real run used.
+
 *The gate.* ruff clean · `mypy --strict vinci` clean (154 files) · `pytest -m "not network"` exit 0.
 
 **BOUNDARY.** One real build — ROST, 2026-10-05, prices on the 2026-09-22 close, `claude-opus-4-8`
@@ -77,7 +86,7 @@ lower — 42–60% on #664's five-name estimate.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
-- **A changed interface.** `extract` gains `cache`; one test fake (`_Scripted`) and two
+- **A changed interface.** `extract` gains `cache` and the SDK floor rises to 0.112; one test fake (`_Scripted`) and two
   `last_usage` pins moved with it. Duck-typed fakes without the parameter still work everywhere a
   single draw is made.
 - **The saving depends on the draws staying sequential.** `assemble.py` already runs NAMES on a
