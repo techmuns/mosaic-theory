@@ -160,6 +160,24 @@ themselves prove today's traffic gets NO hits — draws 2–5 bill the full prom
 - **Stage 3 — after merge.** Realised saving from the next fleet pass's USAGE lines, and per-key
   attribution in the Console once vinci has its own API key.
 
+**STAGE 1 RAN 2026-10-05 — PASS.** BRBR's real prompt, three sequential calls, `claude-opus-4-8`,
+forced `tool_choice`, top-level `cache_control`, `max_tokens` 64:
+
+    call  start   took   input  cache_write  cache_read  output
+     1     0.0s   3.9s     24      112,791           0      64
+     2     3.9s   2.4s     24            0     112,791      64
+     3     6.3s   2.8s     24            0     112,791      64
+
+- **Fidelity is exact:** call 1's prompt totals **112,815 tokens — the logged uncached figure to
+  the token**, so the probe reproduced the production request rather than a lookalike.
+- **Caching works with our forced tool call on Opus 4.8** — the one thing the docs did not address.
+- **24 tokens per call stay uncached** — the framing after the last cacheable block; negligible.
+- **Billed ~$0.823 against ~$1.697 uncached** for the same three calls.
+- Calls 2–3 returned ~1.3s faster than call 1. Three calls with 64-token outputs is an
+  observation, not a latency measurement.
+- **NOT tested:** the 5-minute TTL under real ~1-minute draws (these calls were seconds apart),
+  and our own code path. Both are Stage 2.
+
 **What no test here can show:** that cached draws are DISTRIBUTED like uncached ones. Five draws
 cannot detect a shift, and none is expected — that rests on the documented guarantee, not on a
 measurement this repo could make.
