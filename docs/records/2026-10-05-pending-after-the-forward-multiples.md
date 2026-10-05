@@ -41,9 +41,11 @@ synthesis draws — measured on real call logs and awaiting a decision. Nothing 
    now"). Its page still carries the pre-#656 covenant heading.
 6. **AMZN's CIQ bundle lacks the Credit Health Panel** (10 files vs 11 for every other name). Its
    credit fields read UNKNOWN, not wrong. Unlock: one more CIQ export.
-7. **Decide on prompt caching for the synthesis draws** — below.
+7. ~~**Decide on prompt caching for the synthesis draws**~~ — **CLOSED by #665** before this
+   record merged: built and real-run verified (ROST, five draws, synthesis −56.9%). The
+   proposal below is kept as the reasoning that led there.
 
-**§5.0 OPEN NOW is at its 60-line ceiling with zero headroom** (since #663). These seven are folded
+**§5.0 OPEN NOW is at its 60-line ceiling with zero headroom** (since #663). The six still open are folded
 into row 32, which #663 opened, rather than taking lines from anyone else's items. The next build
 that opens an unrelated item must close a row first, or the operator raises the cap deliberately.
 
