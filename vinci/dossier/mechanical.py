@@ -2023,6 +2023,7 @@ def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
         interest_coverage=quality.interest_coverage,
         survival=quality.survival_capacity,
         credit_health=ciq_sheets.credit_health(bundle),
+        credit_health_panels=ciq_sheets.credit_health_panels(bundle),
     )
 
 
