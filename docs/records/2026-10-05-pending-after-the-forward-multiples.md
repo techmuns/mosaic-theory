@@ -79,9 +79,9 @@ confirmed on the prompt-caching page 2026-10-05) — draw 1 writes the prompt, d
     NKE     $3.51     $1.52    56.7%
     all    $21.57     $8.94    58.6%
 
-**Input cost falls 67%** (5× → 1.25× + 4×0.10×); output is untouched. Mean **$4.31 → $1.79 per
-name**, so a 26-name fleet pass runs roughly **$112 → $47** — an extrapolation from these five
-names, whose prompts span the fleet's range.
+**Input cost falls 67%** (5× → 1.25× + 4×0.10×); output is untouched. Mean **$4.31 → $1.79 of
+SYNTHESIS per name** — synthesis only; see the correction below before reading it as a per-name
+total.
 
 **IT DOES NOT CHANGE A SINGLE OUTPUT TOKEN — and for this fund that is the question that matters**,
 because the five-draw gate exists to MEASURE draw variance. The prompt-caching page states it
@@ -105,6 +105,64 @@ headroom; and draws 2–5 skip re-processing a ~200K-token prompt, so they start
   docstring exists so that "(likely truncated)" can be CHECKED against real prompt size. It must
   also record `cache_creation_input_tokens` and `cache_read_input_tokens`, or every log after the
   change reports a 200K prompt as 3 tokens.
+
+## Second pass, same day — three blind spots in the first
+
+**1. "Per name" was synthesis only — an assembly makes up to five more calls caching cannot touch.**
+Each assembly also sends up to 4 covenant-exhibit extractions and 1 transcript-driver extraction,
+each a DIFFERENT document sent ONCE, so there is no repeat to cache. Their text, read from the
+local EDGAR cache: AMZN's four loan agreements are **1,273,366 chars**, NFLX 993,674, NKE 812,579,
+BRBR 221,641, LLY none; transcripts ~24K chars each. ESTIMATED at 3.5–4.5 chars/token (prose —
+the JSON synthesis prompt measures 2.45), synthesis is **69–99% of an assembly's input**, and the
+saving per ASSEMBLY is:
+
+    AMZN 46–49%   BRBR 50–51%   LLY 59–60%   NFLX 42–44%   NKE 42–45%
+
+**42–60%, not 58.6%** — the 58.6% is the synthesis figure and stays correct as that.
+
+**2. The scale is far below the Console's $661.** Committed 5-draw assemblies since the draw gate
+merged (#648, 2026-09-26): **25, all between 2026-09-27 and 2026-09-30**, none since — a LOWER
+BOUND, since probes and re-runs that never reach git cost the same. At the measured mean that
+burst carried ~$108 of synthesis, ~$45 cached. A weekly 26-name fleet cadence would be ~$450/month
+of synthesis, ~$185 cached — **a saving on the order of $250/month, not $661**. The rest of the
+Console's figure is other traffic on the org, which this repo cannot see or change.
+
+**3. The build is wider than one function.** 14 of the 18 duck-typed test fakes declare
+`extract(self, *, system, user, tool)` exactly, and fakes reach multi-draw `synthesize` through
+the assemble path — a new `cache` keyword raises `TypeError` in each until it is added.
+`tests/test_graph.py` pins `last_usage` as exactly three keys, and will rightly redden when it
+gains the cache fields. `assemble.py` runs NAMES concurrently on a `ThreadPoolExecutor`; each
+name's draws stay sequential in its thread and names never share a prefix, so caching is
+unaffected — but that pool is where a future "parallelise the draws" change would be tempting.
+
+**Observed, separate, out of scope:** covenant extraction re-reads the SAME exhibits on every
+re-assembly — AMZN's 2014–2023 loan agreements, ~300K tokens, every time. Memoising that is a
+larger lever than draw caching on exhibit-heavy names, and a decision-path change (it reuses an
+LLM extraction instead of drawing a fresh one), so it is recorded rather than proposed.
+
+**What survived the second pass unchanged:** the draws are sequential and byte-identical; prompts
+are 100–200× the 1,024-token minimum; outputs are documented as unaffected; and the measured logs
+themselves prove today's traffic gets NO hits — draws 2–5 bill the full prompt, identical to draw 1.
+
+## How to test before building
+
+- **Stage 1 — a ~$0.85 probe, nothing in the repo.** Send BRBR's real prompt (system and user
+  verbatim from its `llm_call.log`, tool from `tool_for(sleeve)`) three times sequentially with the
+  real forced `tool_choice`, top-level `cache_control`, and `max_tokens` small so output is ~free.
+  PASS: call 1 `cache_creation_input_tokens` ≈ the full 112,815; calls 2–3 `cache_read` ≈ it and
+  `input_tokens` near zero. Settles the mechanics on our exact request shape — forced tool on
+  Opus 4.8 included, which the docs do not address — before a line of code changes.
+- **Stage 2 — the code on a branch, one real 5-draw assembly (~$1.50–2.50).** USAGE lines must show
+  draw 1 writing and draws 2–5 reading; start-to-start gaps under 300s, measured rather than
+  inferred; the gate still completes 5/5. Plus a standing guard: a multi-draw build whose later
+  draws read ZERO from cache raises a qa flag, because the costliest caching failure is silent —
+  a later prompt change quietly misses on every request and only the bill notices.
+- **Stage 3 — after merge.** Realised saving from the next fleet pass's USAGE lines, and per-key
+  attribution in the Console once vinci has its own API key.
+
+**What no test here can show:** that cached draws are DISTRIBUTED like uncached ones. Five draws
+cannot detect a shift, and none is expected — that rests on the documented guarantee, not on a
+measurement this repo could make.
 
 **THE BUILD, IF APPROVED.** `extract(..., cache=False)`; when set, send top-level
 `cache_control={"type": "ephemeral"}` (5-minute TTL — draws start ~1 minute apart; SDK 0.112.0
