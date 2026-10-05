@@ -52,8 +52,8 @@ class _Scripted:
     def model(self) -> str:
         return "scripted"
 
-    def extract(self, *, system: str, user: str,
-                tool: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    def extract(self, *, system: str, user: str, tool: dict[str, typing.Any],
+                cache: bool = False) -> dict[str, typing.Any]:
         lean = self._leans[min(self.calls, len(self._leans) - 1)]
         self.calls += 1
         return _payload(_LEANS[lean], draw=self.calls)
