@@ -3482,7 +3482,52 @@ function peerGridTable(s) {
 const _CH_DIMS = ["Overall", "Operational", "Solvency", "Liquidity"];
 const _CH_NAME_RE = /Overall\/Operational\/Solvency\/Liquidity\s+([\d.]+)\/([\d.]+)\/([\d.]+)\/([\d.]+)/;
 const _CH_PEER_RE = /peer-median\s+O\/Op\/S\/L\s+([\d.]+)\/([\d.]+)\/([\d.]+)\/([\d.]+)/;
+// (2026-10-05, twin of render._CH_SCALE / _credit_panel_label / _credit_panels_lines) every relative
+// credit-health panel as ONE table, a row per PEER GROUP — the industry panel first (primary), the
+// comp set after — read from the STRUCTURED panels, never from prose. Two rows and not a winner: the
+// same S&P score ranks the name inside two populations, which agreed on 23 of 40 dimensions.
+const _CH_SCALE = "S&P-MI relative score: 1 = top … 4 = bottom WITHIN each peer group — a rank among " +
+  "those companies, not an absolute measure";
+const _CH_KEYS = _CH_DIMS.map((d) => d.toLowerCase());  // derived, never retyped (27a)
+// a panel's COLUMN header — short, because a long one pushes the scores off a phone screen
+function _creditPanelCol(p) {
+  return p.population_kind === "industry" ? `Industry (${p.n})` : `Comps (${p.n})`;
+}
+function _creditPanelDefn(p) {
+  if (p.population_kind === "industry") {
+    const industry = String(p.population).replace(/ \(GICS industry\)$/, "");
+    return `industry = ${p.n} ${industry} companies (GICS industry), the primary panel`;
+  }
+  return `comps = the ${p.n} companies of the CIQ comps template`;
+}
+// dimensions DOWN, peer groups ACROSS (the preview's finding: group-per-row labels pushed every
+// score off a phone screen)
+function creditPanels(s) {
+  const ps = s.value || [];
+  const rows = _CH_DIMS.map((dim, i) => ({ label: dim, cells: ps.map((p) => String(p[_CH_KEYS[i]])) }));
+  const notes = [ps.map(_creditPanelDefn).join("; "), _CH_SCALE];
+  if (ps.length === 2) {
+    const diff = _CH_DIMS.filter((_, i) => ps[0][_CH_KEYS[i]] !== ps[1][_CH_KEYS[i]]);
+    if (diff.length) notes.push(`the two groups rank it differently on ${diff.join(", ")}`);
+  }
+  const rated = ps.find((p) => p.sp_long_term_issuer);
+  notes.push(rated ? `S&P issuer rating ${rated.sp_long_term_issuer}` : "no S&P issuer rating");
+  const ind = ps.find((p) => p.population_kind === "industry");
+  if (ind && ind.data_through) {
+    notes.push(`industry panel reflects financials updated through ${ind.data_through} — ` +
+      "the export stamps no date of its own");
+  }
+  if (s.note) notes.push(String(s.note));
+  return dataTable("Credit health — relative to each peer group", s.source_ref,
+    ps.map(_creditPanelCol), rows, notes.join(" · "));
+}
 function creditHealth(lv) {
+  // STRUCTURED panels when the page carries them; the prose mini-table below otherwise, so a page
+  // not yet refreshed renders exactly as it did.
+  const panels = lv.credit_health_panels;
+  if (panels && panels.status === "present" && panels.value && panels.value.length) {
+    return creditPanels(panels);
+  }
   const ch = lv.credit_health;
   if (!ch || ch.status !== "present" || ch.value == null) return fact("Credit health", ch);
   const text = String(ch.value);

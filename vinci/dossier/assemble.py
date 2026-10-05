@@ -827,6 +827,13 @@ def assemble_one(
     # (implied_valuation) is derived from, while overshoot treats the same file as colour.
     flags: list[str] = requirements.manifest_flags(bundle, ticker=ticker, location=location,
                                                    sleeve=fin.sleeve)
+    # A FILE IN THE FOLDER THAT NOTHING READS IS SAID OUT LOUD. The loader skips a name matching no
+    # workbook kind; twice that dropped real exports silently (`charting`, then ten standalone
+    # Credit Health Panels). A caveat, not QA: the operator produced the file and should see it.
+    if bundle.unrecognised:
+        flags.append(f"CIQ export(s) not recognised and NOT READ for {ticker}: "
+                     f"{'; '.join(bundle.unrecognised)} — no workbook kind matches the file name; "
+                     f"register it in ciq._WORKBOOK_KEYWORDS or remove it")
     with Store(cfg.db_path) as store:
         # RESOLVE THE COMPS PANEL'S REAL DATA DATE, ONCE, BEFORE ANY EXTRACTOR READS IT.
         # CIQ's `As-Of Date:` header is the EXPORT stamp; the data is an earlier trading close, so

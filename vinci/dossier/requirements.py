@@ -223,8 +223,9 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
             "comparability), the trailing-vs-forward peer-multiple spread (trading_multiples), the "
             "fundamental DELTAS (fundamental_deltas) + the per-peer GRID (peer_grid); the unified "
             "leverage block — comps total-debt/EBITDA (comps_total_debt_ebitda) + credit-health "
-            "scores (credit_health); and the CIQ IMPLIED VALUATION table posed for the human "
-            "(implied_valuation) — CIQ-computed, NO machine upside. Valuation Chart is empty"
+            "scores within the COMP SET (credit_health); and the CIQ IMPLIED VALUATION table posed "
+            "for the human (implied_valuation) — CIQ-computed, NO machine upside. Valuation Chart "
+            "is empty"
         ),
         granularity=Granularity.SNAPSHOT,
         lookback="current — the latest comp set (LTM + NTM forward), current-only",
@@ -234,6 +235,23 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         # the forward ladder. Optional for overshoot (colour); without it a quality verdict has no
         # evidence for the only thing that book claims.
         required_for_sleeves=("quality",),
+    ),
+    CiqModuleRequirement(
+        module="Credit Health Panel (S&P-MI, industry peers)",
+        workbook_kind="credit_health",
+        freq=None,
+        sheets=("Summary",),
+        used_for=(
+            "the name's relative credit-health scores WITHIN ITS GICS INDUSTRY "
+            "(credit_health_panels) — the PRIMARY panel, because its peer group is set by a "
+            "classification applied the same way to every name (21–40 public companies), where the "
+            "comps workbook's Credit Health sheet ranks within a 10–11-name comp set. Exported on "
+            "its own from the company's Credit Health Panel page; without it the page shows the "
+            "comp-set panel and says the industry panel is absent"
+        ),
+        granularity=Granularity.SNAPSHOT,
+        lookback="current — the latest scores, on the LTM financials CIQ holds",
+        required=False,
     ),
     CiqModuleRequirement(
         module="Public Company Profile (tearsheet)",

@@ -921,10 +921,73 @@ _CH_NAME_RE = re.compile(
 _CH_PEER_RE = re.compile(r"peer-median\s+O/Op/S/L\s+([\d.]+)/([\d.]+)/([\d.]+)/([\d.]+)")
 
 
+#: The scale, said where the scores are — a relative score read without it reads as absolute.
+_CH_SCALE = ("S&P-MI relative score: 1 = top … 4 = bottom WITHIN each peer group — a rank among "
+             "those companies, not an absolute measure")
+
+
+#: The panel's field names, DERIVED from the labels rather than retyped — a fourth hand-copied
+#: set across the py↔JS twins is exactly what `test_duplicate_definitions` exists to stop.
+_CH_KEYS = tuple(d.lower() for d in _CH_DIMS)
+
+
+def _credit_panel_col(p: Any) -> str:
+    """A panel's COLUMN header: short, because a long one pushes the scores off a phone screen
+    (preview, 2026-10-05). The full peer-group definition lives in the note. Twin: dossier.js."""
+    return f"Industry ({p.n})" if p.population_kind == "industry" else f"Comps ({p.n})"
+
+
+def _credit_panel_defn(p: Any) -> str:
+    """What a panel's peer group IS, in full — the note line its short header points to."""
+    if p.population_kind == "industry":
+        industry = str(p.population).removesuffix(" (GICS industry)")
+        return f"industry = {p.n} {industry} companies (GICS industry), the primary panel"
+    return f"comps = the {p.n} companies of the CIQ comps template"
+
+
+def _credit_panels_lines(s: Any) -> list[str]:
+    """Every relative credit-health panel on file as ONE table: a ROW per dimension, a COLUMN per
+    peer group — the industry panel first (primary), the comp set after. Read from the STRUCTURED
+    panels, never from prose.
+
+    WHY TWO COLUMNS AND NOT A WINNER: the same S&P score ranks the name inside two different
+    populations, and on ten corpus names the two agreed on 23 of 40 dimensions. AMZN's liquidity is
+    a 4 among megacap comps and a 2 among broadline retailers; both are true, and the page says
+    which population each number belongs to instead of choosing one.
+
+    DIMENSIONS DOWN, GROUPS ACROSS — the preview's own finding. The first cut put the groups in
+    the rows, and at phone width their long labels pushed every score off-screen. Twin: dossier.js
+    `creditPanels`."""
+    ps = list(s.value or [])
+    rows = [[dim, *(str(getattr(p, key)) for p in ps)] for dim, key in zip(_CH_DIMS, _CH_KEYS,
+                                                                            strict=True)]
+    notes = ["; ".join(_credit_panel_defn(p) for p in ps), _CH_SCALE]
+    if len(ps) == 2:
+        diff = [d for d, k in zip(_CH_DIMS, _CH_KEYS, strict=True)
+                if getattr(ps[0], k) != getattr(ps[1], k)]
+        if diff:
+            notes.append(f"the two groups rank it differently on {', '.join(diff)}")
+    rating = next((p.sp_long_term_issuer for p in ps if p.sp_long_term_issuer), None)
+    notes.append(f"S&P issuer rating {rating}" if rating else "no S&P issuer rating")
+    ind = next((p for p in ps if p.population_kind == "industry"), None)
+    if ind is not None and ind.data_through:
+        notes.append(f"industry panel reflects financials updated through {ind.data_through} — "
+                     f"the export stamps no date of its own")
+    if s.note:
+        notes.append(str(s.note))
+    return _table("Credit health — relative to each peer group", s.source_ref,
+                  [_credit_panel_col(p) for p in ps], rows, note=" · ".join(notes),
+                  num_cols=frozenset(range(len(ps))))
+
+
 def _credit_health_lines(lv: Any) -> list[str]:
-    """(K3) Credit health as a 4-row mini-table (dimension | name | peer median) parsed from the
-    prose ``credit_health`` value, with a scale footnote. Render-side only — no extractor change.
-    Falls back to the plain fact if the shape isn't as expected — never a fabricated score."""
+    """(K3) Credit health. The STRUCTURED panels when the page carries them (each row naming its
+    peer group); otherwise the older 4-row mini-table parsed from the prose ``credit_health``
+    value, kept so a page not yet refreshed renders exactly as it did. Falls back to the plain fact
+    if the shape isn't as expected — never a fabricated score."""
+    panels = getattr(lv, "credit_health_panels", None)
+    if panels is not None and panels.status is SourceStatus.PRESENT and panels.value:
+        return _credit_panels_lines(panels)
     ch = lv.credit_health
     if ch.status is not SourceStatus.PRESENT or not ch.value:
         return [_fact("Credit health", ch)]

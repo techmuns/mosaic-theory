@@ -552,6 +552,62 @@ def basis_triangulation_transform(ticker: str) -> Transform:
     return _apply
 
 
+def credit_health_transform(ticker: str) -> Transform:
+    """A `refresh_dossier` transform writing `mech.leverage_survival.credit_health_panels` — both
+    relative credit-health panels, each naming its peer group, under a KEPT synthesis.
+
+    WHY A TRANSFORM: the panels are deterministic reads of two CIQ exports, so re-assembling to land
+    them would re-draw every synthesis — a variance event per name spent on a table.
+
+    THE COMPS PANEL DESCRIBES THE STORED NUMBERS OR IS WITHHELD (the `ev_gap_transform` lesson). The
+    page already carries a comps reading as prose (`credit_health`), extracted at assembly. The
+    comps export may have been re-pulled since, so the panel is built only when today's comps
+    reading is the SAME as the stored one — and then it carries the stored citation, as-of and all.
+    When they differ the panel is withheld with a note, never published beside prose it
+    contradicts. The industry panel is new data with nothing stored to contradict.
+
+    A FOLDER THAT CANNOT BE READ LEAVES THE PAGE ALONE: no exports on this machine is not evidence
+    that the name has no panel, so nothing is written."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import INDUSTRY_CREDIT_REF, credit_health, credit_health_panels
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import CreditHealthPanel, Sourced
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        lv = out.get("leverage_survival")
+        if not isinstance(lv, dict):
+            return out                  # a pre-B2 page has no leverage block to extend
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return out
+        built = credit_health_panels(bundle)
+        if built is None:
+            return out
+        stored = lv.get("credit_health") or {}
+        today = credit_health(bundle)
+        panels: list[CreditHealthPanel] = list(built.value or [])
+        notes = [built.note] if built.note else []
+        if any(p.population_kind == "comps" for p in panels) and today.value != stored.get("value"):
+            panels = [p for p in panels if p.population_kind != "comps"]
+            notes.append("comps panel withheld: the comps export changed since this page was "
+                         "assembled — re-assemble to refresh it")
+        if not panels:
+            return out
+        refs = ([INDUSTRY_CREDIT_REF] if any(p.population_kind == "industry" for p in panels)
+                else [])
+        if any(p.population_kind == "comps" for p in panels) and stored.get("source_ref"):
+            refs.append(str(stored["source_ref"]))
+        lv["credit_health_panels"] = json.loads(Sourced.present(
+            panels, source_ref=" · ".join(refs), note="; ".join(notes) or None).model_dump_json())
+        return out
+
+    return _apply
+
+
 def ebitda_basis_transform() -> Transform:
     """A `refresh_dossier` transform writing `mech.financial_summary.ebitda_basis`.
 

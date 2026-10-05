@@ -32,6 +32,7 @@ from vinci.dossier.ciq import (
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
     CapitalInstrument,
+    CreditHealthPanel,
     DriverKind,
     FinRow,
     FinTable,
@@ -4012,11 +4013,24 @@ def _is_investment_grade(rating: str) -> bool | None:
     return None
 
 
-def credit_health(bundle: CiqBundle) -> Sourced[str]:
-    """(B2 leg) S&P-MI credit-health scores — name vs peers, scale LABELED. Scale direction is
-    verified FROM THE DATA, TIERED (1=strongest…4=weakest): (1) within the rated set, IG peers score
-    ≤ sub-IG peers (robust on a quality roster where 'unrated' ≠ weak); (2) fallback rated-score <
-    unrated-score; (3) else UNKNOWN — never a guessed direction."""
+class _CompsCredit(NamedTuple):
+    """The comps sheet's credit-health reading, STRUCTURED — the one source both the prose
+    ``credit_health`` and the comps :class:`CreditHealthPanel` are built from, so they cannot
+    disagree."""
+
+    cells: tuple[float | str | None, float | str | None, float | str | None, float | str | None]
+    peer_median: str        # "O/Op/S/L" medians across the comp set, the name excluded
+    rating: str             # verbatim S&P issuer rating, or "unrated"
+    n: int                  # companies in the comp set, the name included
+    scale_basis: str
+    source_ref: str
+
+
+def _comps_credit(bundle: CiqBundle) -> _CompsCredit | Sourced[str]:
+    """The comps Credit Health Panel → its structured reading, or the UNKNOWN/MISSING that explains
+    why not. Scale direction is verified FROM THE DATA, TIERED (1=strongest…4=weakest): (1) within
+    the rated set, IG peers score ≤ sub-IG peers (robust on a quality roster, 'unrated' ≠ weak);
+    (2) fallback rated-score < unrated-score; (3) else UNKNOWN — never a guessed direction."""
     try:
         ch = bundle.sheet("comps", "Credit Health Panel")
     except CiqUnavailableError as exc:
@@ -4036,25 +4050,176 @@ def credit_health(bundle: CiqBundle) -> Sourced[str]:
     unrated = [o for r, o in scored if not r]
     # TIERED scale-direction verification — a quality roster's 'unrated' peers are NOT weak, so the
     # rated-vs-unrated split can read falsely ambiguous; verify WITHIN the rated set first.
-    direction_ok = (
-        (len(ig) >= 1 and len(sub_ig) >= 1 and statistics.mean(ig) <= statistics.mean(sub_ig))
-        or (bool(rated) and bool(unrated) and statistics.mean(rated) < statistics.mean(unrated))
-    )
-    if not direction_ok:
+    tier1 = len(ig) >= 1 and len(sub_ig) >= 1 and statistics.mean(ig) <= statistics.mean(sub_ig)
+    tier2 = bool(rated) and bool(unrated) and statistics.mean(rated) < statistics.mean(unrated)
+    if not (tier1 or tier2):
         return Sourced.unknown(note="Credit Health Panel: scale direction ambiguous — not rendered")
-    scores = "/".join(_tok(_comps_cell(ch, tgt, c)) for c in (1, 2, 3, 4))
-    name_rating = _issuer_rating(ch[tgt][7]) or "unrated"
+    basis = ("verified from the comp set: investment-grade peers score at or below sub-IG peers"
+             if tier1 else "verified from the comp set: rated peers score below unrated peers")
 
     def dim_median(c: int) -> str:  # R1: peer median per dimension (not Overall only)
         vals = [v for i in peers if isinstance((v := _comps_cell(ch, i, c)), (int, float))]
         return f"{statistics.median(vals):g}" if vals else "–"
 
-    peer_med = "/".join(dim_median(c) for c in (1, 2, 3, 4))
-    return Sourced.present(
-        f"name Overall/Operational/Solvency/Liquidity {scores} (S&P issuer rating {name_rating}); "
-        f"peer-median O/Op/S/L {peer_med}; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+    return _CompsCredit(
+        cells=(_comps_cell(ch, tgt, 1), _comps_cell(ch, tgt, 2), _comps_cell(ch, tgt, 3),
+               _comps_cell(ch, tgt, 4)),
+        peer_median="/".join(dim_median(c) for c in (1, 2, 3, 4)),
+        rating=_issuer_rating(ch[tgt][7]) or "unrated",
+        n=len(peers) + 1,
+        scale_basis=basis,
         source_ref="CIQ Comparable Analysis→Credit Health Panel" + _comps_asof_suffix(bundle),
     )
+
+
+def credit_health(bundle: CiqBundle) -> Sourced[str]:
+    """(B2 leg) S&P-MI credit-health scores — name vs peers, scale LABELED, as one prose line.
+    Built from :func:`_comps_credit`; the structured twin is :func:`credit_health_panels`."""
+    r = _comps_credit(bundle)
+    if isinstance(r, Sourced):
+        return r
+    scores = "/".join(_tok(c) for c in r.cells)
+    return Sourced.present(
+        f"name Overall/Operational/Solvency/Liquidity {scores} (S&P issuer rating {r.rating}); "
+        f"peer-median O/Op/S/L {r.peer_median}; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+        source_ref=r.source_ref,
+    )
+
+
+#: The standalone export's verbal scores, on the same 1 = top … 4 = bottom scale as its table.
+_CH_WORD = {"Top": 1, "Above Average": 2, "Below Average": 3, "Bottom": 4}
+_CH_DIM_KEYS = ("overall", "operational", "solvency", "liquidity")
+
+
+def _score(cell: Any) -> int | None:
+    """A relative credit-health score cell → 1–4, or None for anything else (blank, NM, '-')."""
+    v = clean_num(cell)
+    return int(v) if v is not None and float(v).is_integer() and 1 <= v <= 4 else None
+
+
+def _industry_credit_panel(bundle: CiqBundle) -> CreditHealthPanel | str:
+    """The standalone Credit Health export → the name's panel WITHIN ITS GICS INDUSTRY, or the
+    reason it is refused.
+
+    THE DIRECTION IS DECLARED, NOT INFERRED. The comps reader has to infer "1 = top" from the
+    peers' ratings, and on BRBR and LLY that inference fails. This export prints its own verbal
+    scores (Top / Above Average / Below Average / Bottom) beside the numeric table, so the panel is
+    accepted ONLY when those words match the name's four numbers — measured 40 of 40 across the ten
+    corpus exports. Any mismatch is a refusal, never a guess at which half is right.
+
+    REFUSED, NEVER REPAIRED: a header that says N companies over a table holding another number,
+    a name row that cannot be found, or a score outside 1–4."""
+    try:
+        rows = bundle.sheet("credit_health", "Summary")
+    except CiqUnavailableError as exc:
+        return str(exc)
+    txt = [[str(c).strip() for c in r] for r in rows]
+    hdr_i = next((i for i, r in enumerate(txt) if "Primary Industry Classification" in r), None)
+    if hdr_i is None:
+        return "no industry peer table (no 'Primary Industry Classification' header)"
+    hdr = txt[hdr_i]
+    try:
+        col = {k: hdr.index(k) for k in ("Company", "Overall", "Operational", "Solvency",
+                                          "Liquidity", "Financials Updated",
+                                          "Primary Industry Classification")}
+    except ValueError as exc:
+        return f"industry peer table is missing a column ({exc})"
+    rating_col = next((i for i, h in enumerate(hdr) if h.startswith("S&P")), None)
+    body: list[list[str]] = []
+    for r in txt[hdr_i + 1:]:
+        if col["Company"] >= len(r) or not r[col["Company"]]:
+            break
+        body.append(r)
+    declared = next((int(m.group(1)) for r in txt[:hdr_i] for c in r
+                     if (m := re.search(r"Total Companies\s*:\s*(\d+)", c))), None)
+    if declared is None or declared != len(body):
+        return (f"the header declares {declared} companies but the table holds {len(body)} — "
+                f"refused rather than ranked against a population nobody can state")
+    me = next((r for r in body if re.search(rf":{re.escape(bundle.ticker)}\)", r[col["Company"]])),
+              None)
+    if me is None:
+        return f"{bundle.ticker} not found in its own industry peer table"
+    scores = {k: _score(me[col[k.title()]]) for k in _CH_DIM_KEYS}
+    if any(v is None for v in scores.values()):
+        return f"a score outside 1–4 for {bundle.ticker}: {scores}"
+    # the verbal block: 'Overall Score' over its word; 'Financial Category' | 'Score' per dimension
+    words: dict[str, str] = {}
+    for i, r in enumerate(txt[:hdr_i]):
+        if "Overall Score" in r and "Financial Category" in r and "Score" in r:
+            c_o, c_c = r.index("Overall Score"), r.index("Financial Category")
+            c_s = r.index("Score")
+            for rr in txt[i + 1:hdr_i]:
+                cat = rr[c_c] if c_c < len(rr) else ""
+                if not cat:
+                    break
+                if "overall" not in words and c_o < len(rr) and rr[c_o]:
+                    words["overall"] = rr[c_o]
+                if c_s < len(rr):
+                    words[cat.lower()] = rr[c_s]
+            break
+    stated = {k: _CH_WORD.get(words.get(k, "")) for k in _CH_DIM_KEYS}
+    if stated != scores:
+        return (f"the export's own labels {words} do not match its table {scores} — the "
+                f"direction cannot be confirmed, so the panel is refused")
+    updated = [d for r in body if (d := excel_date(clean_num(r[col["Financials Updated"]])))]
+    industry = me[col["Primary Industry Classification"]]
+    has_rating = rating_col is not None and rating_col < len(me)
+    rating = _issuer_rating(me[rating_col]) if has_rating and rating_col is not None else ""
+    return CreditHealthPanel(
+        population_kind="industry", population=f"{industry} (GICS industry)", n=len(body),
+        overall=scores["overall"] or 0, operational=scores["operational"] or 0,
+        solvency=scores["solvency"] or 0, liquidity=scores["liquidity"] or 0, primary=True,
+        scale_basis="declared: the export's own Top…Bottom labels match its table on all four",
+        sp_long_term_issuer=rating or None,
+        data_through=max(updated).isoformat() if updated else None)
+
+
+#: Where the industry panel comes from — named once, because the refresh transform rebuilds the
+#: panels' combined citation and must spell this part exactly as the assembler does.
+INDUSTRY_CREDIT_REF = ("CIQ Credit Health Panel export→Summary (industry peers; export date "
+                       "not stamped)")
+
+
+def credit_health_panels(bundle: CiqBundle) -> Sourced[list[CreditHealthPanel]] | None:
+    """Every relative credit-health panel on file for the name, each naming its peer group — the
+    INDUSTRY panel first and marked primary (operator ruling 2026-10-05: its population is set by a
+    classification applied the same way to every name, so a "2" means the same thing across names
+    and sectors; a comp set is chosen per name). The comps panel follows as context.
+
+    NEVER MERGED, NEVER RANKED AGAINST EACH OTHER: they answer different questions, and on the ten
+    names carrying both they agreed on 23 of 40 dimensions. ``None`` (absent) when no panel can be
+    built, so a page with no credit data is untouched; a refused panel is NAMED in the note."""
+    panels: list[CreditHealthPanel] = []
+    refs: list[str] = []
+    notes: list[str] = []
+    if bundle.has("credit_health"):
+        ind = _industry_credit_panel(bundle)
+        if isinstance(ind, CreditHealthPanel):
+            panels.append(ind)
+            refs.append(INDUSTRY_CREDIT_REF)
+        else:
+            notes.append(f"industry panel refused: {ind}")
+    else:
+        notes.append("industry panel not on file — request the standalone CIQ Credit Health "
+                     "Panel export")
+    cc = _comps_credit(bundle)
+    if isinstance(cc, _CompsCredit):
+        sc = [_score(c) for c in cc.cells]
+        if all(v is not None for v in sc):
+            o, op, so, li = (v or 0 for v in sc)
+            panels.append(CreditHealthPanel(
+                population_kind="comps", population="comp set (CIQ comps template)", n=cc.n,
+                overall=o, operational=op, solvency=so, liquidity=li, primary=False,
+                scale_basis=cc.scale_basis,
+                sp_long_term_issuer=None if cc.rating == "unrated" else cc.rating))
+            refs.append(cc.source_ref)
+        else:
+            notes.append(f"comps panel: a score outside 1–4 {cc.cells}")
+    elif cc.note:
+        notes.append(f"comps panel: {cc.note}")
+    if not panels:
+        return None
+    return Sourced.present(panels, source_ref=" · ".join(refs), note="; ".join(notes) or None)
 
 
 def comps_total_debt_ebitda(bundle: CiqBundle) -> Sourced[str]:

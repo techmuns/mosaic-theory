@@ -206,6 +206,11 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     # hardcode a position (notes lines 72, 361). Unregistered until now, which meant
     # `CiqBundle.from_files` DROPPED a charting export silently.
     "charting": ("charting", "chart export"),
+    # S&P-MI Credit Health Panel, exported ON ITS OWN (2026-10-05). The same relative score as the
+    # comps workbook's "Credit Health Panel" sheet, ranked within the name's GICS INDUSTRY (21–40
+    # public companies) instead of the 10–11-name comp set. Unregistered until now, so ten folders'
+    # exports were dropped without a word — the `charting` failure, a second time.
+    "credit_health": ("credit health",),
 }
 # unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
 _UNAVAILABLE_CELLS = frozenset({"", "-", "—", "NM", "NA", "N/A", "Entitlement Needed"})
@@ -304,17 +309,25 @@ class CiqBundle:
     #: PER-ASSEMBLY BY CONSTRUCTION: a bundle is built per ticker per run, so this cannot leak
     #: between names. Left None (the default) nothing changes and the header stamp stands.
     resolved_comps_as_of: date | None = field(default=None, repr=False)
+    #: Files in the folder that match NO workbook kind, by name. Reported by the assembler rather
+    #: than skipped: a dropped export is a fact the operator went to the trouble of producing, and
+    #: twice now (`charting`, then ten Credit Health exports) one vanished with no trace.
+    unrecognised: tuple[str, ...] = ()
 
     @classmethod
     def from_files(cls, ticker: str, paths: list[Path]) -> CiqBundle:
         wbs: list[CiqWorkbook] = []
         cache: dict[Path, dict[str, list[list[Any]]]] = {}
+        unrecognised: list[str] = []
         for p in paths:
             name = p.name.lower()
             kind = next(
                 (k for k, kws in _WORKBOOK_KEYWORDS.items() if any(w in name for w in kws)), None
             )
             if kind is None:
+                # Sync and editor droppings (`.DS_Store`, `~$book.xls` lock files) are not exports.
+                if not p.name.startswith((".", "~$")):
+                    unrecognised.append(p.name)
                 continue
             try:
                 fmt = classify(p)
@@ -328,7 +341,8 @@ class CiqBundle:
                 except CiqParseError:
                     freq = None
             wbs.append(CiqWorkbook(kind=kind, path=p, fmt=fmt, freq=freq))
-        return cls(ticker=ticker, workbooks=tuple(wbs), _cache=cache)
+        return cls(ticker=ticker, workbooks=tuple(wbs), _cache=cache,
+                   unrecognised=tuple(unrecognised))
 
     def workbook(self, kind: str, *, freq: str | None = None) -> CiqWorkbook | None:
         cands = [w for w in self.workbooks if w.kind == kind]

@@ -17,7 +17,7 @@ from __future__ import annotations
 import enum
 from collections.abc import Callable
 from datetime import date, datetime
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Literal, TypeVar
 
 from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
 
@@ -605,6 +605,37 @@ class PeerRow(BaseModel):
     model_config = {"frozen": True}
 
 
+class CreditHealthPanel(BaseModel):
+    """ONE S&P-MI relative credit-health panel: the name's four scores AND the peer group they rank
+    it within. The scores are RELATIVE — 1 = top … 4 = bottom WITHIN ``population`` — so a score
+    without its population is a count without its boundary, and reads as an absolute weakness.
+
+    THE SAME SCORE COMES IN TWO POPULATIONS, which is why this type exists (measured 2026-10-05 over
+    the ten names that carry both): the comps workbook ranks the name inside its 10–11-name comp
+    set, the standalone Credit Health export inside its GICS industry (21–40 public companies). They
+    agreed on 23 of 40 name-dimensions — AMZN's liquidity is 4 among megacap comps and 2 among
+    broadline retailers, and both are true. Neither is "right", so neither overwrites the other."""
+
+    population_kind: Literal["industry", "comps"]
+    population: str          # "Broadline Retail (GICS industry)" | "comp set (CIQ comps template)"
+    n: int                   # companies ranked, the name included
+    overall: int             # 1 = top … 4 = bottom, within `population`
+    operational: int
+    solvency: int
+    liquidity: int
+    primary: bool            # the panel to use where ONE is needed (operator ruling 2026-10-05)
+    scale_basis: str         # how "1 = top" was established for THIS panel — never assumed
+    #: S&P's long-term issuer credit rating, verbatim ("AA") — a THIRD-PARTY fact, named so the
+    #: no-conclusion guard never has to tell it apart from a verdict field.
+    sp_long_term_issuer: str | None = None
+    #: The latest "Financials Updated" across the panel's companies — a FLOOR on the export date.
+    #: The standalone export stamps no date of its own, so this is named for what it is and is NOT
+    #: an `as_of`: it travels with the values, it is not an arrival, and it does not gate freshness.
+    data_through: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class LeverageSurvival(BaseModel):
     """Unified leverage & survival (B2) — ONE block, two LABELED bases, NO basis-mixing (retires the
     net-vs-total 3.9x/5.8x incoherence). The name's CIQ NET-debt/EBITDA AND the comps TOTAL-debt/
@@ -616,6 +647,10 @@ class LeverageSurvival(BaseModel):
     interest_coverage: Sourced[float]
     survival: Sourced[str]  # FCF sign + nearest refinancing wall
     credit_health: Sourced[str]  # name vs peer S&P-MI PD scores; scale labeled (1=strongest…4)
+    #: Both relative panels, STRUCTURED, each naming its peer group; the industry panel first and
+    #: marked primary when present. The prose ``credit_health`` above is derived from the same comps
+    #: reading, kept for pages not yet refreshed. ABSENT (never null) until built (DROP_WHEN_NONE).
+    credit_health_panels: Sourced[list[CreditHealthPanel]] | None = None
 
     model_config = {"frozen": True}
 
@@ -1816,6 +1851,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("", "dilution_pipeline"),
     ("", "ownership_events"),
     ("", "sbc"),
+    ("leverage_survival", "credit_health_panels"),
 )
 
 
