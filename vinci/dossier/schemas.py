@@ -539,6 +539,53 @@ class ForwardConsensus(BaseModel, frozen=True):
     source_ref: str
 
 
+class MultipleClose(BaseModel, frozen=True):
+    """One dated Close of a Financials→Multiples row. `close` is None when the cell is not a
+    number, and `cell` then keeps what it said: 'NM' (CIQ: not meaningful — a negative or nil
+    denominator) and '-' (no data) are different states, and a None alone cannot tell them apart."""
+
+    date: str
+    close: float | None
+    cell: str | None = None
+
+
+class MultipleHistorySeries(BaseModel, frozen=True):
+    """One forward multiple's quarterly history, matched to its sheet row by EXACT label.
+
+    `points` is the whole row in time order, every non-number visible. `band` is the current close
+    against its own history, from the SAME helper as the trailing bands (`_own_history_band`); its
+    own `series` is left empty so the record carries ONE time series. A None band is named in the
+    layer's `withheld`, with why."""
+
+    metric: str        # display: 'EV/NTM EBIT'
+    row_label: str     # the sheet's label, verbatim: 'TEV/NTM EBIT'
+    context_only: bool  # True for P/NTM EPS — may not anchor a multiple leg (`note` says why)
+    note: str | None = None
+    points: list[MultipleClose]
+    band: OwnHistoryBand | None = None
+
+
+class ForwardMultipleHistory(BaseModel, frozen=True):
+    """(forward-multiple history) The quarterly history of the FORWARD multiples — EV/NTM Revenue,
+    EV/NTM EBITDA, EV/NTM EBIT, and P/NTM EPS as context only — that the trailing own-history bands
+    leave out. Read from the Financials→Multiples export the page's trailing bands come from.
+
+    OUTSIDE `mechanical` FOR THE SAME REASON AS `ForwardConsensus`: the synthesis is given only the
+    mechanical layer, and this is for the human and the scenario record. The anchor reads the
+    TRAILING EV/EBITDA band; nothing here feeds it.
+
+    `as_of` is the sheet's latest dated column — the Financials export's close, which can be weeks
+    older than the Estimates figures on the same page. `withheld` names every series or band not
+    written, and why."""
+
+    as_of: str | None = None
+    series: list[MultipleHistorySeries]
+    withheld: list[str] = []
+    source_file: str | None = None
+    source_sha256: str | None = None  # first 10 hex of the export read — the refresh's vintage key
+    source_ref: str
+
+
 class ConsensusContext(BaseModel):
     """Light consensus context (CIQ Estimates) — context for 'am I non-consensus', not a driver."""
 
@@ -1890,6 +1937,9 @@ class Dossier(BaseModel):
     # built (`dossier_json`), so a page without it round-trips byte-identically. Declared BEFORE
     # `anchor`, which must stay the LAST field serialised (`replace_anchor_block` depends on it).
     forward_consensus: ForwardConsensus | None = None
+    # (forward-multiple history) the quarterly history of the forward multiples — the same rules
+    # as `forward_consensus`: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
+    forward_multiple_history: ForwardMultipleHistory | None = None
     # (anchor) the R1 mid-cycle-margin × own-history-EV/EBITDA fundamental, PERSISTED source-bound
     # so triage is a cheap read (vinci.dossier.anchor). Spot-independent; an ATTENTION FILTER, not
     # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
@@ -1967,4 +2017,6 @@ def dossier_json(doc: Dossier) -> str:
     # ABSENT, never null, until built: `null` would claim the layer was built and came back empty
     if doc.forward_consensus is None:
         excl["forward_consensus"] = True
+    if doc.forward_multiple_history is None:
+        excl["forward_multiple_history"] = True
     return doc.model_dump_json(indent=2, exclude=excl or None)

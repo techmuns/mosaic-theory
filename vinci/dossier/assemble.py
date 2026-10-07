@@ -1109,6 +1109,8 @@ def assemble_one(
         # (forward consensus) FY+0..FY+2 paths, spreads, revision counts — built here and by the
         # refresh transform through the ONE builder; outside `mechanical`, so never synthesis input
         forward_consensus=ciq_sheets.forward_consensus(bundle),
+        # (forward-multiple history) the forward multiples' quarterly history — same rules
+        forward_multiple_history=ciq_sheets.forward_multiple_history(bundle),
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=built_at,

@@ -41,9 +41,12 @@ from vinci.dossier.schemas import (
     FinTable,
     ForwardConsensus,
     ForwardMultiple,
+    ForwardMultipleHistory,
     GuidanceRow,
     ImpliedRow,
     ImpliedValuation,
+    MultipleClose,
+    MultipleHistorySeries,
     OperatingDriver,
     OwnHistoryBand,
     PeerComps,
@@ -162,6 +165,14 @@ def _latest_col(rows: Rows, ri: int, hdr: int | None) -> tuple[int, float, str] 
 def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
     """(date, Close) pairs for a metric block across the dated columns. Close — not Average/High/Low
     (notes line 197); date from the serial header (line 126); empty/NM → None."""
+    return [(d, clean_num(c)) for d, c in _multiples_close_cells(rows, metric)]
+
+
+def _multiples_close_cells(rows: Rows, metric: str) -> list[tuple[Any, Any]]:
+    """`_multiples_close` before `clean_num`: (date, the Close cell AS EXPORTED). The one locator of
+    a metric's Close row, so the reader that must tell 'NM' from '-' cannot find a different row
+    from the readers that need only the number. The metric is matched EXACTLY (`_find_row`): a
+    prefix match on 'TEV/NTM EBIT' lands on 'TEV/NTM EBITDA', which the sheet prints first."""
     hdr = next(
         (
             i for i, r in enumerate(rows)
@@ -182,7 +193,7 @@ def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
     if close is None:
         return []
     cols = range(2, min(len(rows[hdr]), len(rows[close])))
-    out = [(excel_date(rows[hdr][j]), clean_num(rows[close][j])) for j in cols]
+    out = [(excel_date(rows[hdr][j]), rows[close][j]) for j in cols]
     # PAIRS COME BACK IN COLUMN ORDER, which is the SHEET's order and not a time order — nothing
     # in the export asserts one. Never take a positional `[-1]` off this, here or downstream; ask
     # `_latest_close` for the latest close BY DATE.
@@ -2739,6 +2750,86 @@ def forward_consensus(bundle: CiqBundle) -> ForwardConsensus | None:
         source_ref="CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the "
                    "section the sheet's own Market Summary vouches for) · Revisions (counts per "
                    "window, each block bounded by the next block of any kind)")
+
+
+#: (forward-multiple history) display metric, the sheet's row label VERBATIM, context-only. The
+#: labels are exact: this sheet prints 'TEV/NTM Total Revenues' (plural) beside 'TEV/LTM Total
+#: Revenue', and 'TEV/NTM EBITDA' directly above 'TEV/NTM EBIT'.
+_FORWARD_MULTIPLES: tuple[tuple[str, str, bool], ...] = (
+    ("EV/NTM Revenue", "TEV/NTM Total Revenues", False),
+    ("EV/NTM EBITDA", "TEV/NTM EBITDA", False),
+    ("EV/NTM EBIT", "TEV/NTM EBIT", False),
+    ("P/NTM EPS", "P/NTM EPS", True),
+)
+_CONTEXT_ONLY_NOTE = (
+    "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only "
+    "'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of "
+    "the current Estimates P/E. EV/NTM EBIT is the admissible cross-check "
+    "(docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).")
+
+
+def _cell_text(cell: Any) -> str:
+    """A non-numeric Close cell as the export printed it — 'NM', '-' — or '(blank)'."""
+    text = "" if cell is None else str(cell).strip()
+    return text or "(blank)"
+
+
+def forward_multiple_history(bundle: CiqBundle) -> ForwardMultipleHistory | None:
+    """(forward-multiple history) The quarterly Close history of the four forward multiples, each
+    with its own-history band. Built by assembly and by `forward_multiple_history_transform` through
+    this ONE function. None when the quarterly Financials export cannot be read.
+
+    EVERY CELL STAYS AS IT WAS. `_multiples_close` folds 'NM' and '-' into one None; across the 26
+    committed exports the four forward rows carry 218 'NM' and 62 '-' cells (2026-10-07), and the
+    difference is the difference between "the denominator is negative" and "CIQ has no figure".
+    So the points keep the cell, and a band refused at the latest close says which of the two it
+    met.
+
+    THE BAND IS THE TRAILING BANDS' OWN HELPER, so one definition of current, percentile and
+    history governs both — including the no-backward-fill rule: a latest close that is not a number
+    leaves no band, never an older close standing in for current."""
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    wb = bundle.workbook("financials", freq="quarterly")
+    src_file = wb.path.name if wb is not None else None
+    src_sha, src_mtime = file_provenance(wb.path) if wb is not None else (None, None)
+    series: list[MultipleHistorySeries] = []
+    withheld: list[str] = []
+    latest: date | None = None
+    for metric, label, context_only in _FORWARD_MULTIPLES:
+        cells = _multiples_close_cells(rows, label)
+        dated = sorted(((d, c) for d, c in cells if isinstance(d, date)), key=lambda p: p[0])
+        undated = sum(1 for d, c in cells if not isinstance(d, date) and clean_num(c) is not None)
+        if undated:
+            withheld.append(f"{metric}: {undated} close(s) in undated columns, not placed in time")
+        if not dated:
+            withheld.append(f"{metric}: no dated '{label}' Close in Financials→Multiples")
+            continue
+        latest = max(latest, dated[-1][0]) if latest else dated[-1][0]
+        points = [MultipleClose(date=d.isoformat(), close=v,
+                                cell=None if v is not None else _cell_text(c))
+                  for d, c in dated for v in (clean_num(c),)]
+        band = _own_history_band(metric, [(d, clean_num(c)) for d, c in dated],
+                                 source_file=src_file, source_sha256=src_sha,
+                                 source_mtime=src_mtime)
+        if band is None:
+            d, c = dated[-1]
+            why = (f"the latest close [{d.isoformat()}] reads '{_cell_text(c)}' — no current, and "
+                   "an older close is not one" if clean_num(c) is None
+                   else "fewer than 4 numeric closes")
+            withheld.append(f"{metric}: no own-history band — {why}")
+        series.append(MultipleHistorySeries(
+            metric=metric, row_label=label, context_only=context_only,
+            note=_CONTEXT_ONLY_NOTE if context_only else None, points=points,
+            band=band.model_copy(update={"series": []}) if band is not None else None))
+    if not series:
+        return None
+    return ForwardMultipleHistory(
+        as_of=latest.isoformat() if latest else None, series=series, withheld=withheld,
+        source_file=src_file, source_sha256=src_sha,
+        source_ref="CIQ Financials→Multiples (quarterly Close; forward rows, exact label)")
 
 
 def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int]]:
