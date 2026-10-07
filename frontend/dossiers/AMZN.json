@@ -11879,11 +11879,11 @@
   },
   "midcycle": null,
   "anchor": {
-    "recipe_hint": "R1_midcycle_margin_evebitda",
+    "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-10-07T08:08:27.396039Z",
-    "reason": null,
+    "reason": "OPERATOR RE-TAG 2026-10-07. The machine proposes R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite routes AMZN to R3 - EPS x forward P/E, an EQUITY basis, the recipe GOOGL is underwritten on. Both of R1's inputs are flagged on this page: the LTM operating margin (12.1%) sits 6.8 points above the 10-FY median R1 reverts to (5.3%), and the consensus EBITDA row adds back 3.14x the D&A in the actuals, so an EV/EBITDA leg mixes definitions. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": null,
     "data_quality_detail": [],
     "margin": {
