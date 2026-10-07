@@ -2760,15 +2760,47 @@ def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int
 def horizon_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
     """(a) HORIZON READ (FQ — the 180d verdict window): per metric, the next-2-FQ revision breadth
     across ALL THREE windows (1m/2m/3m Upward↑/Downward↓). This is the quarterly grid the old
-    FY-only Last-Month line hid — e.g. the 2-month-window downward revisions on near quarters."""
+    FY-only Last-Month line hid — e.g. the 2-month-window downward revisions on near quarters.
+
+    EACH BLOCK ENDS AT THE NEXT BLOCK OF ANY KIND (`_block_starts`). Until 2026-10-07 it ended at
+    the next metric on `_METRICS`, so `_revisions_windows` scanned on through every block in between
+    and kept the LAST one's windows. On 26 of 26 committed names that printed another block's counts
+    for 1-3 metrics, or dropped a line the metric's own block carries: AMZN's 'Net Income (GAAP) FQ3
+    2026 … 3m 41↑/4↓' were TEV's — the block's own read 24↑/8↓."""
     try:
         rows = bundle.sheet("estimates", "Revisions")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
+    blocks = _block_starts(rows)
+    value = _horizon_value(rows, {bi: next((s for s in blocks if s > bi), len(rows))
+                                  for bi in _metric_starts(rows, _METRICS)}, as_of)
+    if value is None:
+        return Sourced.unknown(note="no next-2-FQ revision breadth in Estimates→Revisions")
+    return Sourced.present(
+        value, source_ref="CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)")
+
+
+def horizon_read_as_assembled(bundle: CiqBundle, *, as_of: str | None = None) -> str | None:
+    """The horizon-read string as the PRE-2026-10-07 bounding wrote it: each block ending at the
+    next metric on `_METRICS`. ONE use, never a source of figures: the refresh transform rebuilds a
+    stored page's string with it, and corrects the field only when that rebuild is byte-identical —
+    the proof that the page came from THIS export, so the correction moves only what the bounding
+    got wrong (`refresh.horizon_read_transform`)."""
+    try:
+        rows = bundle.sheet("estimates", "Revisions")
+    except CiqUnavailableError:
+        return None
     starts = _metric_starts(rows, _METRICS)
+    return _horizon_value(rows, {bi: starts[i + 1] if i + 1 < len(starts) else len(rows)
+                                 for i, bi in enumerate(starts)}, as_of)
+
+
+def _horizon_value(rows: Rows, ends: dict[int, int], as_of: str | None) -> str | None:
+    """The horizon-read string for the blocks in ``ends`` ({block start: block end}, in sheet
+    order), or None when no block yields a count. One renderer for both boundings, so the two can
+    only differ in where a block ends."""
     lines: list[str] = []
-    for idx, bi in enumerate(starts):
-        end = starts[idx + 1] if idx + 1 < len(starts) else len(rows)
+    for bi, end in ends.items():
         metric = str(rows[bi][0]).strip()
         header = _metric_block_header(rows, bi)
         windows = _revisions_windows(rows, bi, end)
@@ -2789,12 +2821,7 @@ def horizon_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]
                 parts.append(f"{wk} {int(up or 0)}↑/{int(dn or 0)}↓")
             if parts:
                 lines.append(f"{metric} {period}: " + ", ".join(parts))
-    if not lines:
-        return Sourced.unknown(note="no next-2-FQ revision breadth in Estimates→Revisions")
-    return Sourced.present(
-        "; ".join(lines) + _asof_suffix(as_of),
-        source_ref="CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
-    )
+    return "; ".join(lines) + _asof_suffix(as_of) if lines else None
 
 
 def _cell_at(rows: Rows, ri: int | None, col: int) -> float | None:

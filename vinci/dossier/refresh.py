@@ -31,6 +31,7 @@ it would only ever run here.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable
 from datetime import date
 from pathlib import Path
@@ -122,6 +123,30 @@ def moved_cited_claims(before: dict[str, Any], after: dict[str, Any],
             hits.append(f"{key} = {val:,.1f} → "
                         f"{('absent' if key not in new else format(new[key], ',.1f'))}")
     return hits
+
+
+#: A revision count as the catalyst-path strings print it: '41↑/4↓'.
+_COUNT_TOKEN = re.compile(r"\d+↑/\d+↓")
+
+
+def _count_tokens(obj: Any) -> set[str]:
+    return set(_COUNT_TOKEN.findall(json.dumps(obj, ensure_ascii=False)))
+
+
+def moved_cited_counts(before: dict[str, Any], after: dict[str, Any],
+                       doc: dict[str, Any]) -> list[str]:
+    """Revision counts the stored prose cites that the refreshed layer no longer carries ANYWHERE —
+    the count-sized companion to `moved_cited_claims`, whose floor is money and lets every count
+    through.
+
+    A count still printed elsewhere on the page still traces, so only a VANISHED token refuses. The
+    prose is matched in both spellings: `_prose` serialises a dict claim with JSON's default ASCII
+    escaping, which turns '↑' into its escape sequence. LIMIT, stated: a count the prose paraphrased
+    ('41 upward revisions') is not a token and is not caught here."""
+    prose = _prose(doc)
+    return [f"revision count {t} (no longer on the page)"
+            for t in sorted(_count_tokens(before) - _count_tokens(after))
+            if t in prose or json.dumps(t)[1:-1] in prose]
 
 
 def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
@@ -278,7 +303,8 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     before = doc.get("mechanical") or {}
     staged = transform(json.loads(json.dumps(before))) if transform else before
     after = recompute_derived(staged)
-    if doc.get("synthesis") is not None and (bad := moved_cited_claims(before, after, doc)):
+    if doc.get("synthesis") is not None and (bad := [*moved_cited_claims(before, after, doc),
+                                                     *moved_cited_counts(before, after, doc)]):
         raise RefreshRefusedError(
             f"{doc.get('ticker')}: this refresh moves figures the stored synthesis CITES — "
             f"{'; '.join(bad)}. Preserving the prose would leave the page citing numbers its own "
@@ -643,6 +669,46 @@ def forward_consensus_transform(ticker: str) -> TopLevelTransform:
             return {}
         built = forward_consensus(bundle)
         return {} if built is None else {"forward_consensus": json.loads(built.model_dump_json())}
+
+    return _apply
+
+
+def horizon_read_transform(ticker: str) -> Transform:
+    """A `refresh_dossier` transform correcting `catalyst_path.horizon_read`: the revision counts a
+    mis-bounded Revisions read took from the wrong block (STATE §5.0 row 30 (A)).
+
+    THE CORRECTION MOVES ONLY WHAT THE BUG TOUCHED, OR NOTHING. The stored string is rebuilt from
+    the on-disk export under the bounding that wrote it (`horizon_read_as_assembled`), and the field
+    is replaced only when that rebuild is byte-identical — proof the page came from THIS export. Any
+    difference means the export was re-pulled or the renderer has moved since; the page is left
+    alone and the name needs a re-assembly instead.
+
+    UNDER A KEPT SYNTHESIS. A count the prose cites and the page no longer carries refuses the
+    refresh (`moved_cited_counts`), the same rule `moved_cited_claims` applies to money."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import horizon_read, horizon_read_as_assembled
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import SourceStatus
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        cp = out.get("catalyst_path")
+        hr = cp.get("horizon_read") if isinstance(cp, dict) else None
+        if not isinstance(cp, dict) or not isinstance(hr, dict) or not hr.get("value"):
+            return out
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return out
+        as_of = (cp.get("as_of") or {}).get("value")
+        if horizon_read_as_assembled(bundle, as_of=as_of) != hr["value"]:
+            return out          # not this export, or not this renderer: re-assemble instead
+        fixed = horizon_read(bundle, as_of=as_of)
+        if fixed.status is SourceStatus.PRESENT and fixed.value:
+            hr["value"] = fixed.value
+        return out
 
     return _apply
 
