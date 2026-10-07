@@ -9975,11 +9975,11 @@
   },
   "midcycle": null,
   "anchor": {
-    "recipe_hint": "R1_midcycle_margin_evebitda",
+    "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-09-28T16:47:14.006666Z",
-    "reason": null,
+    "reason": "OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
       "vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag"
