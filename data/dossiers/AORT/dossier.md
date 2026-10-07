@@ -76,11 +76,13 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Method | R2_NEEDED | applicable |
 | Mid-cycle margin | 3.9% | 10y history · firm |
 | Median multiple, own history | 32.1x | 42 closes · firm · EV/EBITDA |
 | Screen value / share | $19.79 | spot-independent · EV/EBIT 72.7x |
 | Overall confidence | firm |  |
+
+_margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe._
 
 ## The case
 _(top points; the full argument is in Analysis)_

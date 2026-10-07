@@ -34,7 +34,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
+| Method | R2_NEEDED | NOT applicable |
 | Mid-cycle margin | 6.0% | 8y history · firm |
 | Median multiple, own history | 4.2x | 24 closes · weak · EV/EBITDA |
 | Overall confidence | weak |  |
@@ -44,7 +44,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 - Multiples sheet implies D&A of 328.8 against 9.3 recorded (35.5x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure
 - market-implied EBITDA 453.6 vs 73.5 recorded (6.17x) — outside the 2.5x band. TEV 673.2 (market cap 586.2 + net debt 87.0) ÷ current multiple 1.484x
 
-_own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced_
+_trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted._
 
 ## The case
 _(top points; the full argument is in Analysis)_

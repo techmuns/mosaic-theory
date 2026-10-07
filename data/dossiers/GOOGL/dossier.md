@@ -63,7 +63,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Method | R3_forward_pe | applicable |
 | Mid-cycle margin | 26.3% | 9y history · firm |
 | Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
 | Screen value / share | $197.01 | spot-independent · EV/EBIT 21.3x |
@@ -73,6 +73,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 **data_quality: vendor_bridge**
 - vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
+
+_OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
 
 ## The case
 _(top points; the full argument is in Analysis)_

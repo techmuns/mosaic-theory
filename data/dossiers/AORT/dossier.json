@@ -9044,11 +9044,11 @@
   },
   "midcycle": null,
   "anchor": {
-    "recipe_hint": "R1_midcycle_margin_evebitda",
+    "recipe_hint": "R2_NEEDED",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-08-18T12:07:18.778409Z",
-    "reason": null,
+    "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
     "data_quality": null,
     "data_quality_detail": [],
     "margin": {

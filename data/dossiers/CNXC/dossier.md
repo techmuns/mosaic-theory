@@ -41,6 +41,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Screen value / share | $62.55 | spot-independent · EV/EBIT 13.8x |
 | Overall confidence | firm |  |
 
+_leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value._
+
 ## The case
 _(top points; the full argument is in Analysis)_
 
