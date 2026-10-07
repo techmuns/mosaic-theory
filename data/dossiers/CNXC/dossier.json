@@ -7480,6 +7480,615 @@
     ],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-07-17",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-03-31",
+            "close": 1.62054,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 1.606506,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 1.70223,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 1.801619,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 1.622625,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 1.363875,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 1.178389,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 1.433805,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 1.218876,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 0.909068,
+            "cell": null
+          },
+          {
+            "date": "2023-09-30",
+            "close": 0.611055,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 0.915059,
+            "cell": null
+          },
+          {
+            "date": "2024-03-31",
+            "close": 0.951108,
+            "cell": null
+          },
+          {
+            "date": "2024-06-30",
+            "close": 0.904191,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 0.811682,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 0.860434,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 0.845155,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 0.793308,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 0.732383,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 0.795813,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 0.609765,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 0.570724,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 0.675629,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 0.675629,
+          "low": 0.570724,
+          "high": 1.801619,
+          "median": 0.9120634999999999,
+          "percentile": 0.13636363636363635,
+          "n_closes": 22,
+          "as_of": "2026-07-17",
+          "mean": 1.084464090909091,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.3,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "69c3061346",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-12-31",
+            "close": 10.323157,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 10.512222,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 10.509822,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 10.708697,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 11.370155,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 10.073891,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 8.196834,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 7.172134,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 8.595056,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 7.315187,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 5.4627,
+            "cell": null
+          },
+          {
+            "date": "2023-09-30",
+            "close": 3.684273,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 5.564202,
+            "cell": null
+          },
+          {
+            "date": "2024-03-31",
+            "close": 5.479273,
+            "cell": null
+          },
+          {
+            "date": "2024-06-30",
+            "close": 5.25782,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 4.764691,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 5.305274,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 5.272371,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 4.985156,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 4.741237,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 5.151865,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 4.04449,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 3.891061,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 4.606284,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 4.606284,
+          "low": 3.684273,
+          "high": 11.370155,
+          "median": 5.479273,
+          "percentile": 0.13043478260869565,
+          "n_closes": 23,
+          "as_of": "2026-07-17",
+          "mean": 6.886155130434783,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.54,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "69c3061346",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-03-31",
+            "close": 12.808603,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 12.60471,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 12.737077,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 13.273456,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 11.625351,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 9.453478,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 8.239225,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 9.951883,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 8.4742,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 6.412239,
+            "cell": null
+          },
+          {
+            "date": "2023-09-30",
+            "close": 4.179459,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 7.741525,
+            "cell": null
+          },
+          {
+            "date": "2024-03-31",
+            "close": 6.423365,
+            "cell": null
+          },
+          {
+            "date": "2024-06-30",
+            "close": 6.256483,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 5.886036,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 6.260835,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 6.176294,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 5.964851,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 5.686715,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 6.179229,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 4.771009,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 4.582307,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 5.424589,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBIT",
+          "current": 5.424589,
+          "low": 4.179459,
+          "high": 13.273456,
+          "median": 6.417802,
+          "percentile": 0.13636363636363635,
+          "n_closes": 22,
+          "as_of": "2026-07-17",
+          "mean": 7.985833181818182,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.3,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "69c3061346",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2020-12-31",
+            "close": 13.520547,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 16.813026,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 16.68621,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 17.011052,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 16.872113,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 13.22167,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 10.938709,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 8.768154,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 10.950657,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 10.058921,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 6.595444,
+            "cell": null
+          },
+          {
+            "date": "2023-09-30",
+            "close": 6.023308,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 7.566255,
+            "cell": null
+          },
+          {
+            "date": "2024-03-31",
+            "close": 5.284916,
+            "cell": null
+          },
+          {
+            "date": "2024-06-30",
+            "close": 5.013269,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 4.118119,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 3.604631,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 4.69734,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 4.392211,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 3.907705,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 3.520745,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 2.256811,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 1.9196,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 2.093096,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "P/NTM EPS",
+          "current": 2.093096,
+          "low": 1.9196,
+          "high": 17.011052,
+          "median": 6.595444,
+          "percentile": 0.043478260869565216,
+          "n_closes": 23,
+          "as_of": "2026-07-17",
+          "mean": 8.423539695652174,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.54,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "69c3061346",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      }
+    ],
+    "withheld": [],
+    "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+    "source_sha256": "69c3061346",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R1_NOT_ROBUST",
     "applicable": true,

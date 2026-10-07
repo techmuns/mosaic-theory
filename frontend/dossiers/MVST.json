@@ -6857,6 +6857,595 @@
     "withheld": [],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-08-12",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-09-30",
+            "close": 15.60231,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 6.630693,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 7.908154,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 1.688965,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 1.214699,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 1.028447,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2023-06-30",
+            "close": 1.063561,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 1.0728,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 0.902503,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 0.587665,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 0.713551,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 0.454878,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 1.99173,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 1.333537,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 2.830733,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 2.962468,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 2.46034,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 1.610877,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 1.181746,
+            "cell": null
+          },
+          {
+            "date": "2026-08-12",
+            "close": 0.791675,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 0.791675,
+          "low": 0.454878,
+          "high": 15.60231,
+          "median": 1.333537,
+          "percentile": 0.15789473684210525,
+          "n_closes": 19,
+          "as_of": "2026-08-12",
+          "mean": 2.8020872105263157,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 4.87,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "e1f788d63f",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-12-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-09-29",
+            "close": 28.507696,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 20.348942,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 13.250203,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 37.73549,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 8.686074,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2025-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2025-06-30",
+            "close": 16.249699,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 11.503229,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 8.889855,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2026-06-30",
+            "close": 7.062554,
+            "cell": null
+          },
+          {
+            "date": "2026-08-12",
+            "close": 3.994106,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 3.994106,
+          "low": 7.062554,
+          "high": 37.73549,
+          "median": 13.250203,
+          "percentile": 0.0,
+          "n_closes": 9,
+          "as_of": "2026-08-12",
+          "mean": 16.914860222222224,
+          "series": [],
+          "periodicity_days_median": 92.0,
+          "window_span_years": 2.87,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "e1f788d63f",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-12-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-09-29",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-12-29",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-03-28",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-06-28",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2025-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2025-06-30",
+            "close": 137.803586,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 57.94814,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 212.831595,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 34.460607,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 16.433922,
+            "cell": null
+          },
+          {
+            "date": "2026-08-12",
+            "close": 8.898213,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBIT",
+          "current": 8.898213,
+          "low": 16.433922,
+          "high": 212.831595,
+          "median": 57.94814,
+          "percentile": 0.0,
+          "n_closes": 5,
+          "as_of": "2026-08-12",
+          "mean": 91.89556999999999,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 1.12,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "e1f788d63f",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "-"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-12-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-09-29",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2023-12-29",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-03-28",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-06-28",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2024-12-31",
+            "close": 34.5,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 11.7,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 30.25,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 22.647058,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 16.470588,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 25.0,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 13.0,
+            "cell": null
+          },
+          {
+            "date": "2026-08-12",
+            "close": 7.666666,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "P/NTM EPS",
+          "current": 7.666666,
+          "low": 11.7,
+          "high": 34.5,
+          "median": 22.647058,
+          "percentile": 0.0,
+          "n_closes": 7,
+          "as_of": "2026-08-12",
+          "mean": 21.938235142857142,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 1.61,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "e1f788d63f",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      }
+    ],
+    "withheld": [],
+    "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+    "source_sha256": "e1f788d63f",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R2_NEEDED",
     "applicable": false,

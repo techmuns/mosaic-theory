@@ -9873,6 +9873,535 @@
     "withheld": [],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-03-31",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2021-06-30",
+            "close": 5.931989,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 5.396639,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 5.112156,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 5.147447,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 4.964833,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 4.654619,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 4.294273,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 4.665997,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 5.089906,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 4.977435,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 5.637783,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 5.823051,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 6.084152,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 6.064437,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 5.287009,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 4.921052,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 5.281181,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 5.011036,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 4.411521,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 3.083179,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 3.083179,
+          "low": 4.294273,
+          "high": 6.084152,
+          "median": 5.112156,
+          "percentile": 0.0,
+          "n_closes": 19,
+          "as_of": "2026-03-31",
+          "mean": 5.197711368421053,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 4.75,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "0c0ef2dff6",
+          "source_mtime": "2026-09-01T17:49:33+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2021-06-30",
+            "close": 12.697967,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 11.67304,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 10.917594,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 11.273059,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 11.002171,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 10.089351,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 9.289213,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 10.064693,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 10.958989,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 10.786159,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 12.314629,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 12.637472,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 13.149389,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 13.034759,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 11.648409,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 11.121273,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 11.809711,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 11.124973,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 10.830071,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 7.714725,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 7.714725,
+          "low": 9.289213,
+          "high": 13.149389,
+          "median": 11.124973,
+          "percentile": 0.0,
+          "n_closes": 19,
+          "as_of": "2026-03-31",
+          "mean": 11.390680105263158,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 4.75,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "0c0ef2dff6",
+          "source_mtime": "2026-09-01T17:49:33+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2021-06-30",
+            "close": 27.447114,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 23.727925,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 20.0482,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 20.934019,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 18.655613,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 17.793261,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 16.37804,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 16.770328,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 17.452537,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 16.988345,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 18.643093,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 19.40161,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 20.2789,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 20.223179,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 18.625716,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 17.198198,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 18.034134,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 16.505975,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 17.529626,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 12.640519,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBIT",
+          "current": 12.640519,
+          "low": 16.37804,
+          "high": 27.447114,
+          "median": 18.625716,
+          "percentile": 0.0,
+          "n_closes": 19,
+          "as_of": "2026-03-31",
+          "mean": 19.086095421052633,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 4.75,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "0c0ef2dff6",
+          "source_mtime": "2026-09-01T17:49:33+00:00"
+        }
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2021-06-30",
+            "close": 39.209183,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 37.845303,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 27.851985,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 29.045495,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 36.654223,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 26.518288,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 27.743229,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 28.307568,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 30.139079,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 25.882352,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 26.926224,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 30.351282,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 30.807565,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 29.616613,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 27.24507,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 24.375981,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 26.332711,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 24.301456,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 23.569625,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 14.849838,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "P/NTM EPS",
+          "current": 14.849838,
+          "low": 23.569625,
+          "high": 39.209183,
+          "median": 27.851985,
+          "percentile": 0.0,
+          "n_closes": 19,
+          "as_of": "2026-03-31",
+          "mean": 29.09069642105263,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 4.75,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "0c0ef2dff6",
+          "source_mtime": "2026-09-01T17:49:33+00:00"
+        }
+      }
+    ],
+    "withheld": [],
+    "source_file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Quarterly.xls",
+    "source_sha256": "0c0ef2dff6",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,

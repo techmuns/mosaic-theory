@@ -9992,6 +9992,635 @@
     "withheld": [],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-07-17",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": 31.970093,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 26.971362,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 24.126678,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 19.716265,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 22.315788,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 15.917291,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 13.475437,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 7.941107,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 8.341748,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 6.313037,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 5.820458,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 6.805204,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 6.934962,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 7.145688,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 7.816149,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 6.459797,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 6.276549,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 6.46497,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 5.328342,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 5.730972,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 5.442847,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 5.03269,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 2.994189,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 3.082812,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 3.332468,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 3.332468,
+          "low": 2.994189,
+          "high": 31.970093,
+          "median": 6.870082999999999,
+          "percentile": 0.08333333333333333,
+          "n_closes": 24,
+          "as_of": "2026-07-17",
+          "mean": 10.767684791666667,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.79,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "nCino Inc NasdaqGS NCNO Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "4279cbed71",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-12-30",
+            "close": 82.383644,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 50.345925,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 52.735812,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 47.796853,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 42.729294,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 45.347855,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 35.187147,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 32.692025,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 31.924454,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 26.629108,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 25.720301,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 23.563866,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 20.646099,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 11.441292,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 11.396136,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 12.319033,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 12.319033,
+          "low": 11.396136,
+          "high": 82.383644,
+          "median": 32.692025,
+          "percentile": 0.13333333333333333,
+          "n_closes": 15,
+          "as_of": "2026-07-17",
+          "mean": 36.0359874,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 3.55,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "nCino Inc NasdaqGS NCNO Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "4279cbed71",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-12-30",
+            "close": 111.369548,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 58.653766,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 61.649473,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 56.228234,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 54.619423,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 49.729482,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 39.775556,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 36.707862,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 34.727068,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 28.458535,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 27.505268,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 24.454693,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 21.500441,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 12.21754,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 11.685211,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 12.631518,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBIT",
+          "current": 12.631518,
+          "low": 11.685211,
+          "high": 111.369548,
+          "median": 36.707862,
+          "percentile": 0.13333333333333333,
+          "n_closes": 15,
+          "as_of": "2026-07-17",
+          "mean": 41.95214,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 3.55,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "nCino Inc NasdaqGS NCNO Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "4279cbed71",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-12-30",
+            "close": 134.691798,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 66.104679,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 68.516833,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 62.771417,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 63.404977,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 59.753504,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 46.188867,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 42.328822,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 40.004765,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 32.890325,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 37.218895,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 31.4903,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 26.744549,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 14.598966,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 12.591451,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 13.751926,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "P/NTM EPS",
+          "current": 13.751926,
+          "low": 12.591451,
+          "high": 134.691798,
+          "median": 42.328822,
+          "percentile": 0.06666666666666667,
+          "n_closes": 15,
+          "as_of": "2026-07-17",
+          "mean": 49.286676533333335,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 3.55,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "nCino Inc NasdaqGS NCNO Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "4279cbed71",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      }
+    ],
+    "withheld": [],
+    "source_file": "nCino Inc NasdaqGS NCNO Financials_Quarterly.xls",
+    "source_sha256": "4279cbed71",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R2_NEEDED",
     "applicable": false,

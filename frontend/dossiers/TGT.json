@@ -11717,6 +11717,915 @@
     "withheld": [],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-09-25",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2017-03-31",
+            "close": 0.591108,
+            "cell": null
+          },
+          {
+            "date": "2017-06-30",
+            "close": 0.558057,
+            "cell": null
+          },
+          {
+            "date": "2017-09-29",
+            "close": 0.591168,
+            "cell": null
+          },
+          {
+            "date": "2017-12-29",
+            "close": 0.629214,
+            "cell": null
+          },
+          {
+            "date": "2018-03-29",
+            "close": 0.640241,
+            "cell": null
+          },
+          {
+            "date": "2018-06-29",
+            "close": 0.718428,
+            "cell": null
+          },
+          {
+            "date": "2018-09-28",
+            "close": 0.769947,
+            "cell": null
+          },
+          {
+            "date": "2018-12-31",
+            "close": 0.618526,
+            "cell": null
+          },
+          {
+            "date": "2019-03-29",
+            "close": 0.684938,
+            "cell": null
+          },
+          {
+            "date": "2019-06-28",
+            "close": 0.736039,
+            "cell": null
+          },
+          {
+            "date": "2019-09-30",
+            "close": 0.840548,
+            "cell": null
+          },
+          {
+            "date": "2019-12-31",
+            "close": 0.970061,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 0.710653,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 0.877102,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 1.030218,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 1.098546,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 1.153625,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 1.250806,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 1.152616,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 1.122874,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 0.991514,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 0.734967,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 0.765418,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 0.795145,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 0.836253,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 0.709404,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 0.635581,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 0.772846,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 0.910547,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 0.788643,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 0.80759,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 0.726568,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 0.580748,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 0.582802,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 0.534922,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 0.573613,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 0.652918,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 0.684066,
+            "cell": null
+          },
+          {
+            "date": "2026-09-25",
+            "close": 0.761692,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 0.761692,
+          "low": 0.534922,
+          "high": 1.250806,
+          "median": 0.735503,
+          "percentile": 0.5263157894736842,
+          "n_closes": 38,
+          "as_of": "2026-09-25",
+          "mean": 0.7849542105263158,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 9.49,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Target Corporation NYSE TGT Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "71714677f3",
+          "source_mtime": "2026-09-28T07:09:48+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2017-03-31",
+            "close": 6.453458,
+            "cell": null
+          },
+          {
+            "date": "2017-06-30",
+            "close": 6.037501,
+            "cell": null
+          },
+          {
+            "date": "2017-09-29",
+            "close": 6.487283,
+            "cell": null
+          },
+          {
+            "date": "2017-12-29",
+            "close": 7.094257,
+            "cell": null
+          },
+          {
+            "date": "2018-03-29",
+            "close": 7.03881,
+            "cell": null
+          },
+          {
+            "date": "2018-06-29",
+            "close": 8.160984,
+            "cell": null
+          },
+          {
+            "date": "2018-09-28",
+            "close": 9.01715,
+            "cell": null
+          },
+          {
+            "date": "2018-12-31",
+            "close": 7.358382,
+            "cell": null
+          },
+          {
+            "date": "2019-03-29",
+            "close": 8.098874,
+            "cell": null
+          },
+          {
+            "date": "2019-06-28",
+            "close": 8.636831,
+            "cell": null
+          },
+          {
+            "date": "2019-09-30",
+            "close": 9.588115,
+            "cell": null
+          },
+          {
+            "date": "2019-12-31",
+            "close": 10.804808,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 8.173841,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 10.6911,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 11.577929,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 11.779012,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 12.620069,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 12.381125,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 11.233909,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 11.063004,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 9.271572,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 9.411415,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 9.0113,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 11.000791,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 11.345934,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 9.362896,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 8.249375,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 9.672777,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 11.154829,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 9.686529,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 9.53816,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 9.105941,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 7.222908,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 7.817289,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 7.023994,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 7.508566,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 8.42312,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 8.709095,
+            "cell": null
+          },
+          {
+            "date": "2026-09-25",
+            "close": 9.491848,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 9.491848,
+          "low": 6.037501,
+          "high": 12.620069,
+          "median": 9.061545500000001,
+          "percentile": 0.6052631578947368,
+          "n_closes": 38,
+          "as_of": "2026-09-25",
+          "mean": 9.152971921052632,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 9.49,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Target Corporation NYSE TGT Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "71714677f3",
+          "source_mtime": "2026-09-28T07:09:48+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2017-03-31",
+            "close": 10.440079,
+            "cell": null
+          },
+          {
+            "date": "2017-06-30",
+            "close": 9.74309,
+            "cell": null
+          },
+          {
+            "date": "2017-09-29",
+            "close": 10.276182,
+            "cell": null
+          },
+          {
+            "date": "2017-12-29",
+            "close": 11.535748,
+            "cell": null
+          },
+          {
+            "date": "2018-03-29",
+            "close": 11.099454,
+            "cell": null
+          },
+          {
+            "date": "2018-06-29",
+            "close": 12.844419,
+            "cell": null
+          },
+          {
+            "date": "2018-09-28",
+            "close": 14.035851,
+            "cell": null
+          },
+          {
+            "date": "2018-12-31",
+            "close": 11.42339,
+            "cell": null
+          },
+          {
+            "date": "2019-03-29",
+            "close": 12.345073,
+            "cell": null
+          },
+          {
+            "date": "2019-06-28",
+            "close": 12.997664,
+            "cell": null
+          },
+          {
+            "date": "2019-09-30",
+            "close": 14.281343,
+            "cell": null
+          },
+          {
+            "date": "2019-12-31",
+            "close": 16.012521,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 11.989923,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 16.876895,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 17.218862,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 16.350861,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 17.63479,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 16.601482,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 14.924061,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 14.486597,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 11.876217,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 13.937945,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 12.480822,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 16.677085,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 16.892843,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 13.865187,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 12.419118,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 14.264154,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 16.248514,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 14.085224,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 13.896036,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 13.960315,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 10.969888,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 13.048864,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 11.380984,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 12.507384,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 13.751279,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 13.864098,
+            "cell": null
+          },
+          {
+            "date": "2026-09-25",
+            "close": 14.706685,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBIT",
+          "current": 14.706685,
+          "low": 9.74309,
+          "high": 17.63479,
+          "median": 13.8646425,
+          "percentile": 0.7368421052631579,
+          "n_closes": 38,
+          "as_of": "2026-09-25",
+          "mean": 13.664322157894738,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 9.49,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Target Corporation NYSE TGT Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "71714677f3",
+          "source_mtime": "2026-09-28T07:09:48+00:00"
+        }
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2017-03-31",
+            "close": 13.779689,
+            "cell": null
+          },
+          {
+            "date": "2017-06-30",
+            "close": 12.408343,
+            "cell": null
+          },
+          {
+            "date": "2017-09-29",
+            "close": 13.299826,
+            "cell": null
+          },
+          {
+            "date": "2017-12-29",
+            "close": 15.314744,
+            "cell": null
+          },
+          {
+            "date": "2018-03-29",
+            "close": 13.190366,
+            "cell": null
+          },
+          {
+            "date": "2018-06-29",
+            "close": 14.250678,
+            "cell": null
+          },
+          {
+            "date": "2018-09-28",
+            "close": 15.900569,
+            "cell": null
+          },
+          {
+            "date": "2018-12-31",
+            "close": 11.861516,
+            "cell": null
+          },
+          {
+            "date": "2019-03-29",
+            "close": 13.764669,
+            "cell": null
+          },
+          {
+            "date": "2019-06-28",
+            "close": 14.349144,
+            "cell": null
+          },
+          {
+            "date": "2019-09-30",
+            "close": 16.839667,
+            "cell": null
+          },
+          {
+            "date": "2019-12-31",
+            "close": 18.979733,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 13.932702,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 20.261526,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 21.759022,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 20.464873,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 22.770697,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 20.688415,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 18.423044,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 17.951661,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 14.538434,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 15.035024,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 13.384022,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 17.947112,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 19.406725,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 15.138646,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 13.007623,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 15.618968,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 18.877672,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 15.417621,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 15.609726,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 15.094466,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 11.435233,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 13.295148,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 11.53668,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 12.78279,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 15.163874,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 15.285498,
+            "cell": null
+          },
+          {
+            "date": "2026-09-25",
+            "close": 16.952711,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "P/NTM EPS",
+          "current": 16.952711,
+          "low": 11.435233,
+          "high": 22.770697,
+          "median": 15.15126,
+          "percentile": 0.7105263157894737,
+          "n_closes": 38,
+          "as_of": "2026-09-25",
+          "mean": 15.757003842105263,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 9.49,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Target Corporation NYSE TGT Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "71714677f3",
+          "source_mtime": "2026-09-28T07:09:48+00:00"
+        }
+      }
+    ],
+    "withheld": [],
+    "source_file": "Target Corporation NYSE TGT Financials_Quarterly.xls",
+    "source_sha256": "71714677f3",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,

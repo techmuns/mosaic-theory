@@ -10277,6 +10277,695 @@
     "withheld": [],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-09-21",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2019-12-31",
+            "close": 0.814409,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 3.320832,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 3.013562,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 3.325877,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 3.331156,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 3.487228,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 3.333521,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 3.511962,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 3.298312,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 4.370114,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 2.805219,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 2.398385,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 2.736561,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 3.275962,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 3.368187,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 3.497021,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 4.291419,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 4.331187,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 3.963154,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 4.012146,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 4.56887,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 4.358865,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 3.411532,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 2.254324,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 1.731234,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 1.244199,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 1.137483,
+            "cell": null
+          },
+          {
+            "date": "2026-09-21",
+            "close": 0.911518,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 0.911518,
+          "low": 0.814409,
+          "high": 4.56887,
+          "median": 3.331156,
+          "percentile": 0.037037037037037035,
+          "n_closes": 27,
+          "as_of": "2026-09-21",
+          "mean": 3.155285962962963,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 6.72,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "cb902c8d1d",
+          "source_mtime": "2026-09-22T08:52:22+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2019-12-31",
+            "close": 4.22678,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 17.2212,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 15.346642,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 16.374379,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 17.055534,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 17.863359,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 18.236262,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 19.205272,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 17.612827,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 24.364244,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 15.086407,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 12.371602,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 14.001648,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 16.926702,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 17.003261,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 17.489037,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 21.384066,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 21.498131,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 19.114979,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 18.99964,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 21.894674,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 20.747003,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 16.322351,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 11.325217,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 9.682801,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 7.006075,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 8.407701,
+            "cell": null
+          },
+          {
+            "date": "2026-09-21",
+            "close": 7.008515,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 7.008515,
+          "low": 4.22678,
+          "high": 24.364244,
+          "median": 17.055534,
+          "percentile": 0.07407407407407407,
+          "n_closes": 27,
+          "as_of": "2026-09-21",
+          "mean": 16.176584962962963,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 6.72,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "cb902c8d1d",
+          "source_mtime": "2026-09-22T08:52:22+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2019-12-31",
+            "close": 4.99429,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 20.377742,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 18.252518,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 19.182589,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 19.89934,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 21.080973,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 21.366206,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 22.121897,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 20.740875,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 27.391623,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 16.718269,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 14.02376,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 15.711445,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 19.067398,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 18.921746,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 19.418578,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 23.777273,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 23.930481,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 21.04453,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 20.910197,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 24.05366,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 22.718476,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 17.888169,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 12.424672,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 10.715691,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 7.756073,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 9.66187,
+            "cell": null
+          },
+          {
+            "date": "2026-09-21",
+            "close": 8.116619,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBIT",
+          "current": 8.116619,
+          "low": 4.99429,
+          "high": 27.391623,
+          "median": 19.418578,
+          "percentile": 0.07407407407407407,
+          "n_closes": 27,
+          "as_of": "2026-09-21",
+          "mean": 18.30186448148148,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 6.72,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "cb902c8d1d",
+          "source_mtime": "2026-09-22T08:52:22+00:00"
+        }
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2019-12-31",
+            "close": 32.253666,
+            "cell": null
+          },
+          {
+            "date": "2020-03-31",
+            "close": 24.843362,
+            "cell": null
+          },
+          {
+            "date": "2020-06-30",
+            "close": 29.50577,
+            "cell": null
+          },
+          {
+            "date": "2020-09-30",
+            "close": 28.279247,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 31.446052,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 28.663348,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 33.81163,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 30.035163,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 26.897331,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 29.215189,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 22.284895,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 17.636488,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 21.160527,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 26.885971,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 26.410737,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 27.604445,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 34.594236,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 34.711278,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 30.255215,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 29.937875,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 34.566609,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 32.416195,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 24.947246,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 16.177125,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 13.787518,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 8.15344,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 10.157783,
+            "cell": null
+          },
+          {
+            "date": "2026-09-21",
+            "close": 7.312688,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "P/NTM EPS",
+          "current": 7.312688,
+          "low": 8.15344,
+          "high": 34.711278,
+          "median": 28.279247,
+          "percentile": 0.0,
+          "n_closes": 27,
+          "as_of": "2026-09-21",
+          "mean": 26.171790407407407,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 6.72,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "cb902c8d1d",
+          "source_mtime": "2026-09-22T08:52:22+00:00"
+        }
+      }
+    ],
+    "withheld": [],
+    "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+    "source_sha256": "cb902c8d1d",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
