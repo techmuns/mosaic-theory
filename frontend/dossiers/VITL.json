@@ -9946,6 +9946,596 @@
     "withheld": [],
     "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
   },
+  "forward_multiple_history": {
+    "as_of": "2026-07-17",
+    "series": [
+      {
+        "metric": "EV/NTM Revenue",
+        "row_label": "TEV/NTM Total Revenues",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": 7.521043,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 3.863778,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 3.083049,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 2.626349,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 2.132626,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 2.097795,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 1.178292,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 0.746425,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 1.037581,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 1.290387,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 1.225162,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 0.88228,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 0.790258,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 1.088889,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 1.573384,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 3.090146,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 2.114196,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 2.201675,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 1.62879,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 2.014688,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 1.966282,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 1.497683,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 0.637526,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 0.639555,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 0.745548,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM Revenue",
+          "current": 0.745548,
+          "low": 0.637526,
+          "high": 7.521043,
+          "median": 1.601087,
+          "percentile": 0.08333333333333333,
+          "n_closes": 24,
+          "as_of": "2026-07-17",
+          "mean": 1.9553266249999999,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.79,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "7217811451",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBITDA",
+        "row_label": "TEV/NTM EBITDA",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": 227.24481,
+            "cell": null
+          },
+          {
+            "date": "2020-12-31",
+            "close": 76.018346,
+            "cell": null
+          },
+          {
+            "date": "2021-03-31",
+            "close": 111.374201,
+            "cell": null
+          },
+          {
+            "date": "2021-06-30",
+            "close": 84.036887,
+            "cell": null
+          },
+          {
+            "date": "2021-09-30",
+            "close": 64.608072,
+            "cell": null
+          },
+          {
+            "date": "2021-12-31",
+            "close": 70.003077,
+            "cell": null
+          },
+          {
+            "date": "2022-03-31",
+            "close": 31.73301,
+            "cell": null
+          },
+          {
+            "date": "2022-06-30",
+            "close": 17.612759,
+            "cell": null
+          },
+          {
+            "date": "2022-09-30",
+            "close": 20.924956,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 21.821627,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 17.850145,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 12.887456,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 9.926904,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 12.192762,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 14.70819,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 23.809777,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 16.339055,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 17.584833,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 11.968368,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 14.70454,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 14.060907,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 10.477228,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 5.62806,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": 72.780701,
+            "cell": null
+          },
+          {
+            "date": "2026-07-17",
+            "close": 87.453237,
+            "cell": null
+          }
+        ],
+        "band": {
+          "metric": "EV/NTM EBITDA",
+          "current": 87.453237,
+          "low": 5.62806,
+          "high": 227.24481,
+          "median": 17.731452,
+          "percentile": 0.9166666666666666,
+          "n_closes": 24,
+          "as_of": "2026-07-17",
+          "mean": 40.845694625,
+          "series": [],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 5.79,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "7217811451",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        }
+      },
+      {
+        "metric": "EV/NTM EBIT",
+        "row_label": "TEV/NTM EBIT",
+        "context_only": false,
+        "note": null,
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": 54.452786,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 53.060497,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 32.835721,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 23.074516,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 19.68198,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 21.309857,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 21.559419,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 33.702061,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 23.03168,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 25.376497,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 16.536892,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 21.025567,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 19.803031,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 13.674332,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 8.015156,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2026-07-17",
+            "close": null,
+            "cell": "NM"
+          }
+        ],
+        "band": null
+      },
+      {
+        "metric": "P/NTM EPS",
+        "row_label": "P/NTM EPS",
+        "context_only": true,
+        "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+        "points": [
+          {
+            "date": "2020-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2020-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-09-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2021-12-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-03-31",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2022-09-30",
+            "close": 100.251256,
+            "cell": null
+          },
+          {
+            "date": "2022-12-30",
+            "close": 86.342592,
+            "cell": null
+          },
+          {
+            "date": "2023-03-31",
+            "close": 46.723263,
+            "cell": null
+          },
+          {
+            "date": "2023-06-30",
+            "close": 39.701986,
+            "cell": null
+          },
+          {
+            "date": "2023-09-29",
+            "close": 33.085714,
+            "cell": null
+          },
+          {
+            "date": "2023-12-29",
+            "close": 32.020408,
+            "cell": null
+          },
+          {
+            "date": "2024-03-28",
+            "close": 32.631578,
+            "cell": null
+          },
+          {
+            "date": "2024-06-28",
+            "close": 50.655258,
+            "cell": null
+          },
+          {
+            "date": "2024-09-30",
+            "close": 33.818707,
+            "cell": null
+          },
+          {
+            "date": "2024-12-31",
+            "close": 34.920781,
+            "cell": null
+          },
+          {
+            "date": "2025-03-31",
+            "close": 24.015763,
+            "cell": null
+          },
+          {
+            "date": "2025-06-30",
+            "close": 29.279416,
+            "cell": null
+          },
+          {
+            "date": "2025-09-30",
+            "close": 28.038975,
+            "cell": null
+          },
+          {
+            "date": "2025-12-31",
+            "close": 19.450703,
+            "cell": null
+          },
+          {
+            "date": "2026-03-31",
+            "close": 12.114348,
+            "cell": null
+          },
+          {
+            "date": "2026-06-30",
+            "close": null,
+            "cell": "NM"
+          },
+          {
+            "date": "2026-07-17",
+            "close": null,
+            "cell": "NM"
+          }
+        ],
+        "band": null
+      }
+    ],
+    "withheld": [
+      "EV/NTM EBIT: no own-history band — the latest close [2026-07-17] reads 'NM' — no current, and an older close is not one",
+      "P/NTM EPS: no own-history band — the latest close [2026-07-17] reads 'NM' — no current, and an older close is not one"
+    ],
+    "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls",
+    "source_sha256": "7217811451",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+  },
   "anchor": {
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
