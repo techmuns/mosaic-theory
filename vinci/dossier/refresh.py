@@ -51,7 +51,7 @@ Transform = Callable[[dict[str, Any]], dict[str, Any]]
 #: in `_TOP_LEVEL_REFRESHABLE` may be set: the mechanical layer, the synthesis and the anchor each
 #: have their own write path and guards, and this seam must not become a way around them.
 TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
-_TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus"})
+_TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history"})
 
 
 class RefreshRefusedError(RuntimeError):
@@ -669,6 +669,42 @@ def forward_consensus_transform(ticker: str) -> TopLevelTransform:
             return {}
         built = forward_consensus(bundle)
         return {} if built is None else {"forward_consensus": json.loads(built.model_dump_json())}
+
+    return _apply
+
+
+def forward_multiple_history_transform(ticker: str) -> TopLevelTransform:
+    """A `refresh_dossier` top-level step writing `forward_multiple_history` — the forward
+    multiples' quarterly history — from the on-disk Financials export, under a KEPT synthesis.
+
+    ONLY FROM THE EXPORT THE PAGE WAS BUILT FROM. The page's trailing own-history bands stamp the
+    sha256 of the Financials file they were read from; the layer is written only when that stamp is
+    the file on disk. A page whose bands carry no stamp cannot say which export it came from, so it
+    is left alone and its layer waits for a re-assembly — on 2026-10-07 that is FUBO, ORKA and TECX,
+    which have no trailing band. FUBO's and ORKA's hash also sits inside a display string; reading
+    it from there would be the parse-the-rendered-string class this repo forbids.
+
+    A FOLDER THAT CANNOT BE READ LEAVES THE PAGE ALONE (the `credit_health_transform` rule)."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import forward_multiple_history
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        valuation = (doc.get("mechanical") or {}).get("valuation") or {}
+        bands = (valuation.get("own_history") or {}).get("value") or []
+        stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
+        if len(stamps) != 1 or None in stamps:
+            return {}               # no single stamped export behind the page: re-assemble instead
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return {}
+        built = forward_multiple_history(bundle)
+        if built is None or built.source_sha256 not in stamps:
+            return {}               # the export on disk is not the page's: re-assemble instead
+        return {"forward_multiple_history": json.loads(built.model_dump_json())}
 
     return _apply
 
