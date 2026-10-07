@@ -32,10 +32,14 @@ from vinci.dossier.ciq import (
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
     CapitalInstrument,
+    ConsensusPath,
+    ConsensusPoint,
+    ConsensusSpread,
     CreditHealthPanel,
     DriverKind,
     FinRow,
     FinTable,
+    ForwardConsensus,
     ForwardMultiple,
     GuidanceRow,
     ImpliedRow,
@@ -44,6 +48,7 @@ from vinci.dossier.schemas import (
     OwnHistoryBand,
     PeerComps,
     PeerRow,
+    RevisionCount,
     RevisionEvent,
     Sourced,
     SourceStatus,
@@ -2061,17 +2066,19 @@ def _metric_starts(rows: Rows, metrics: tuple[str, ...]) -> list[int]:
     return sorted(starts)
 
 
-def _snapshot_path(rows: Rows, bi: int, col: int) -> list[tuple[int, float]]:
+def _snapshot_path(rows: Rows, bi: int, col: int, *,
+                   lookback: dict[str, int] | None = None) -> list[tuple[int, float]]:
     """Present (lookback_months, value) Trends snapshots for the block at ``bi`` on column ``col``,
     sorted OLDEST→newest. Only snapshots actually present are returned; a present-but-empty ('-') or
     absent lookback is dropped, never interpolated. Stops at the next metric / a repeated lookback
-    (a second sub-series)."""
+    (a second sub-series). ``lookback`` widens the vintages read (default `_SNAP_LOOKBACK`)."""
+    vintages = _SNAP_LOOKBACK if lookback is None else lookback
     out: list[tuple[int, float]] = []
     seen: set[int] = set()
     for k in range(bi + 1, min(bi + 18, len(rows))):
         lbl = str(rows[k][0]).strip() if rows[k] else ""
-        if lbl in _SNAP_LOOKBACK:
-            lb = _SNAP_LOOKBACK[lbl]
+        if lbl in vintages:
+            lb = vintages[lbl]
             if lb in seen:
                 break
             seen.add(lb)
@@ -2466,6 +2473,272 @@ def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float |
         return None
     path = _snapshot_path(rows, bi, col)  # oldest→newest
     return path[-1][1] if path else None  # the newest (latest) snapshot value
+
+
+# --- (forward consensus) FY+0..FY+2 paths, spreads and revision counts ------------------------
+
+#: The forward metrics a scenario reads, by CIQ's own block titles, verbatim.
+FORWARD_METRICS: tuple[str, ...] = (
+    "Revenue", "EBITDA", "EBIT", "EPS Normalized", "EPS (GAAP)", "Depreciation & Amortization",
+    "Cash From Operations", "Capital Expenditure", "Free Cash Flow",
+)
+#: Lines CIQ states NEGATIVE: a 'Downward' revision is a LARGER outflow (see `RevisionCount`).
+_OUTFLOW_LINES = frozenset({"Capital Expenditure"})
+#: Trends carries an 18-month vintage `acceleration_read` never reads. A scenario needs it: the two
+#: halves of a price decomposition share a window (RUNBOOKS step 10), and 18 months is as far back
+#: as Trends goes.
+_FORWARD_LOOKBACK: dict[str, int] = {**_SNAP_LOOKBACK, "18 months ago": 18}
+_FORWARD_YEARS = 3  # FY+0, FY+1, FY+2
+_ANALYST_ROWS = {"# of Analysts": "analysts", "# of Analysts still in Consensus": "in_consensus"}
+#: A Consensus section's period header is labelled by level or listing, with its currency:
+#: 'Company Level (USD)', 'NasdaqGS:AMZN (USD)'. Annual and quarterly sections share the form.
+_SECTION_HEADER = re.compile(r"\([A-Z]{3}\)\s*$")
+#: Per-share lines sit in the listing's section; the other forward metrics in 'Company Level'.
+#: The Market Summary carries ONE of them as the listing's per-share line (AMZN and TECX 'EPS
+#: (GAAP)', BRBR and GOOGL 'EPS Normalized'), and that one identifies the section.
+_PER_SHARE = ("EPS (GAAP)", "EPS Normalized")
+
+
+def _forward_cols(header: list[Any]) -> list[tuple[int, str]]:
+    """The first `_FORWARD_YEARS` fiscal-year columns of a Trends/Revisions block, by label."""
+    fy = [(j, str(c).strip()) for j, c in enumerate(header)
+          if isinstance(c, str) and c.strip().startswith("FY")]
+    return fy[:_FORWARD_YEARS]
+
+
+def _block_starts(rows: Rows) -> list[int]:
+    """Every block in a Trends/Revisions sheet: a title-only row with its period header right below.
+
+    A block ENDS where the next block of ANY kind begins — never where the next block a caller
+    happens to read begins. `horizon_read` bounds by the next metric on its own list, so its window
+    scan runs on through every block in between, and the last one's counts are the ones it keeps."""
+    return [i for i, r in enumerate(rows)
+            if r and str(r[0]).strip() and all(c in ("", None) for c in r[1:])
+            and _metric_block_header(rows, i) is not None]
+
+
+def _governing_header(rows: Rows, title: int) -> int | None:
+    """The section header a Consensus title sits under: the nearest currency-labelled row above."""
+    return next((i for i in range(title - 1, -1, -1)
+                 if rows[i] and _SECTION_HEADER.search(str(rows[i][0]).strip())), None)
+
+
+def _header_years(row: list[Any]) -> dict[str, int]:
+    """{year: column} of an ANNUAL header; empty for a quarterly one (its cells read 'FQ…').
+
+    Years are read where they stand — CIQ omits years with no data (PARR's header jumps 2000 →
+    2003), so a header is never required to be a consecutive run."""
+    if any(isinstance(c, str) and c.strip().startswith("FQ") for c in row[1:]):
+        return {}
+    years: dict[str, int] = {}
+    for j, c in enumerate(row):
+        y = _stat_num(c) if j else None
+        if y is not None and y.is_integer() and 1990 <= y <= 2100:
+            years[str(int(y))] = j
+    return years
+
+
+def _market_summary(rows: Rows) -> dict[str, float]:
+    """{label: Current Year} from the Market Summary block ONLY — 'Market Summary' down to 'Fiscal
+    Years'. Bounded on purpose: `_market_summary_current_year` scans 60 rows past the block, so a
+    label the summary does not carry is answered from the annual section below it (BRBR's 'EPS
+    (GAAP)' read 3.12, a historical column, while its summary carries only 'EPS Normalized')."""
+    start = next((i for i, r in enumerate(rows[:200])
+                  if r and str(r[0]).strip() == "Market Summary"), None)
+    if start is None:
+        return {}
+    out: dict[str, float] = {}
+    for r in rows[start + 1:]:
+        cells = [str(c).strip() for c in r]
+        if "Fiscal Years" in cells:  # the banner sits in column 1, not 0 (AMZN, BRBR)
+            break
+        for k, label in enumerate(cells):
+            # a label is followed by Current Quarter, Current Year, NTM
+            if label and label not in out and k + 2 < len(cells) and _stat_num(label) is None:
+                cy = _stat_num(cells[k + 2])
+                if cy is not None and _stat_num(cells[k + 1]) is not None:
+                    out[label] = cy
+    return out
+
+
+def _identified_section(rows: Rows, probe: str, want: float) -> int | None:
+    """The header row of the section the sheet's OWN Market Summary vouches for: the first section
+    whose `probe` figure for the declared current fiscal year equals the summary's `want`. One
+    sheet agreeing with itself, so the match is exact — `consensus_block`'s test, applied per
+    section, because per-share lines sit in a different section from company-level ones.
+
+    Not cross-checked against Trends: the two sheets differ by design on some names (ROST
+    EBITDA FY2027 0.9% apart, measured 2026-10-07), so an equality across them would withhold good
+    spreads, while within one sheet it is exact."""
+    fy = _declared_current_fy(rows)
+    if fy is None:
+        return None
+    for t in (i for i, r in enumerate(rows)
+              if r and str(r[0]).strip() == probe and str(r[0]) == str(r[0]).lstrip()):
+        h = _governing_header(rows, t)
+        j = _header_years(rows[h]).get(str(fy)) if h is not None else None
+        v = _stat_num(rows[t][j]) if j is not None and j < len(rows[t]) else None
+        if v is not None and abs(v - want) < 0.01:
+            return h
+    return None
+
+
+def _consensus_stats(rows: Rows, title: int) -> dict[str, list[str]]:
+    """The labelled statistic rows under a Consensus title, up to the next unindented row."""
+    stats: dict[str, list[str]] = {}
+    for i in range(title + 1, len(rows)):
+        c0 = str(rows[i][0]) if rows[i] else ""
+        if c0 and c0 == c0.lstrip():
+            break
+        if c0.strip() in _CONSENSUS_STAT_ROWS:
+            stats[c0.strip()] = [str(c).strip() for c in rows[i]]
+    return stats
+
+
+def _forward_spreads(cons: Rows, metric: str, periods: list[str], sections: dict[str, int | None],
+                     withheld: list[str]) -> list[ConsensusSpread]:
+    """The metric's spread per forward year, read from the section the Market Summary vouches for.
+
+    BY SECTION, NEVER BY FIRST MATCH. A sheet carries the same title in several sections: AMZN's
+    'EPS (GAAP)' sits in the annual per-share section and again in a quarterly section from 2005,
+    and reading the first title after the company-level block printed Q4-2005's 0.01 as FY2026's
+    consensus while a low/median/high range check passed it. Here a title counts only if the
+    section it sits under is the one `_identified_section` vouched for; a section the sheet does
+    not vouch for withholds the metric and says so."""
+    sec = sections.get("per_share" if metric in _PER_SHARE else "company")
+    if sec is None:
+        withheld.append(f"{metric}: the Market Summary vouches for no Consensus section to read it "
+                        "from — spread withheld")
+        return []
+    titles = [i for i, r in enumerate(cons)
+              if r and str(r[0]).strip() == metric and str(r[0]) == str(r[0]).lstrip()
+              and _governing_header(cons, i) == sec]
+    if len(titles) != 1:
+        withheld.append(f"{metric}: {len(titles) or 'no'} title(s) under the vouched section — "
+                        "spread withheld")
+        return []
+    t, years = titles[0], _header_years(cons[sec])
+    stats = _consensus_stats(cons, t)
+    out: list[ConsensusSpread] = []
+    for period in periods:
+        j = years.get(period.split()[-1])
+        if j is None:
+            continue
+        cell = {k: (v[j] if j < len(v) else "") for k, v in stats.items()}
+        med, hi, lo = (_stat_num(cell.get(k)) for k in ("Median", "High", "Low"))
+        mean = _stat_num(cons[t][j] if j < len(cons[t]) else "")
+        if mean is None or med is None or hi is None or lo is None:
+            withheld.append(f"{metric} {period}: mean/median/high/low incomplete — spread withheld")
+            continue
+        if not (min(lo, hi) <= med <= max(lo, hi) and min(lo, hi) <= mean <= max(lo, hi)):
+            withheld.append(f"{metric} {period}: median {med} or mean {mean} sits outside "
+                            f"{lo}..{hi} — spread withheld")
+            continue
+        out.append(ConsensusSpread(
+            metric=metric, period=period, mean=mean, median=med, high=hi, low=lo,
+            std_dev=_stat_num(cell.get("Std. Dev.")),
+            estimates=cell.get("No. of Estimates") or None,
+            ordered_by="magnitude" if hi < lo else "value"))
+    return out
+
+
+def _forward_revisions(rev: Rows, metric: str, starts: list[int]) -> list[RevisionCount]:
+    """Up/down counts and analyst counts per window, per forward year, for one Revisions block —
+    bounded by the next block of ANY kind (`_block_starts`)."""
+    bi = _find_row(rev, metric)
+    header = _metric_block_header(rev, bi) if bi is not None else None
+    if bi is None or header is None:
+        return []
+    end = next((s for s in starts if s > bi), len(rev))
+    windows: dict[str, dict[str, int]] = {}
+    cur: str | None = None
+    for k in range(bi + 1, end):
+        lbl = str(rev[k][0]).strip() if rev[k] else ""
+        wk = next((w for w, name in _REV_WINDOWS if lbl == name), None)
+        if wk is not None:
+            cur, windows[wk] = wk, {}
+        elif cur is not None and lbl in ("Upward", "Downward", *_ANALYST_ROWS):
+            windows[cur][lbl] = k
+    out: list[RevisionCount] = []
+    for col, period in _forward_cols(header):
+        for wk, _name in _REV_WINDOWS:
+            w = windows.get(wk) or {}
+            up, down = _cell_at(rev, w.get("Upward"), col), _cell_at(rev, w.get("Downward"), col)
+            if up is None and down is None:
+                continue
+            n = {key: _cell_at(rev, w.get(lbl), col) for lbl, key in _ANALYST_ROWS.items()}
+            out.append(RevisionCount(
+                metric=metric, period=period, window=wk, up=int(up or 0), down=int(down or 0),
+                analysts=None if n["analysts"] is None else int(n["analysts"]),
+                analysts_in_consensus=None if n["in_consensus"] is None else int(n["in_consensus"]),
+                outflow_line=metric in _OUTFLOW_LINES))
+    return out
+
+
+def forward_consensus(bundle: CiqBundle) -> ForwardConsensus | None:
+    """THE ONE BUILDER for `Dossier.forward_consensus` — assembly and the refresh transform both
+    call it. None when the Estimates export has no Trends sheet, or Trends carries none of the
+    forward metrics: the paths are the spine every other part of the layer hangs off.
+
+    Per forward year (FY+0..FY+2) of each `FORWARD_METRICS` line: the Trends path (every vintage to
+    18 months), the Consensus spread (from the section the sheet's own Market Summary vouches for)
+    and the Revisions counts. A metric a sheet does not carry is simply absent; a cell that is
+    present but cannot be vouched for is WITHHELD and named in `withheld`."""
+    try:
+        trends = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        return None
+    withheld: list[str] = []
+    try:
+        cons: Rows | None = bundle.sheet("estimates", "Consensus")
+    except CiqUnavailableError:
+        cons = None
+        withheld.append("Consensus sheet absent — no spreads")
+    try:
+        rev: Rows | None = bundle.sheet("estimates", "Revisions")
+    except CiqUnavailableError:
+        rev = None
+        withheld.append("Revisions sheet absent — no revision counts")
+    starts = _block_starts(rev) if rev is not None else []
+    paths: list[ConsensusPath] = []
+    spreads: list[ConsensusSpread] = []
+    revisions: list[RevisionCount] = []
+    periods: list[str] = []
+    summary = _market_summary(cons) if cons is not None else {}
+    eps_probe = next((m for m in _PER_SHARE if m in summary), None)
+    sections: dict[str, int | None] = {} if cons is None else {
+        "company": (_identified_section(cons, "Revenue", summary["Revenue"])
+                    if "Revenue" in summary else None),
+        "per_share": (_identified_section(cons, eps_probe, summary[eps_probe])
+                      if eps_probe is not None else None),
+    }
+    for metric in FORWARD_METRICS:
+        bi = _find_row(trends, metric)
+        header = _metric_block_header(trends, bi) if bi is not None else None
+        if bi is None or header is None:
+            continue
+        read: list[str] = []
+        for col, period in _forward_cols(header):
+            path = _snapshot_path(trends, bi, col, lookback=_FORWARD_LOOKBACK)
+            if not path:
+                continue
+            read.append(period)
+            periods += [period] if period not in periods else []
+            paths.append(ConsensusPath(metric=metric, period=period, points=[
+                ConsensusPoint(months_ago=lb, value=v) for lb, v in path]))
+        if cons is not None and read:
+            spreads += _forward_spreads(cons, metric, read, sections, withheld)
+        if rev is not None:
+            revisions += _forward_revisions(rev, metric, starts)
+    if not paths:
+        return None
+    as_of = estimates_as_of(bundle)
+    return ForwardConsensus(
+        as_of=as_of.value if as_of.status is SourceStatus.PRESENT else None,
+        periods=periods, paths=paths, spreads=spreads, revisions=revisions, withheld=withheld,
+        source_ref="CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the "
+                   "section the sheet's own Market Summary vouches for) · Revisions (counts per "
+                   "window, each block bounded by the next block of any kind)")
 
 
 def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int]]:

@@ -46,6 +46,11 @@ from vinci.dossier.synthesis import (
 
 #: ``mech -> mech``, applied before the derived rebuild. The seam B1 plugs into.
 Transform = Callable[[dict[str, Any]], dict[str, Any]]
+#: ``doc -> {key: value}`` for DOSSIER-LEVEL fields that live outside ``mechanical``. Only the keys
+#: in `_TOP_LEVEL_REFRESHABLE` may be set: the mechanical layer, the synthesis and the anchor each
+#: have their own write path and guards, and this seam must not become a way around them.
+TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
+_TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus"})
 
 
 class RefreshRefusedError(RuntimeError):
@@ -230,7 +235,8 @@ def _rerender_only(path: Path) -> bool:
 _DROP_WHEN_NONE = DROP_WHEN_NONE
 
 
-def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
+def refresh_dossier(path: Path, *, transform: Transform | None = None,
+                    top_level: TopLevelTransform | None = None) -> bool:
     """Refresh one committed dossier IN PLACE, preserving its synthesis. True when anything moved.
 
     Writes BOTH artifacts — ``dossier.json`` and ``dossier.md`` — because the assembler does, and
@@ -253,7 +259,7 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     # runs the pass remembering. Keyed on the sidecar's presence, so a name that acquires one is
     # sealed without anyone editing this file.
     if (path.parent / "known_wrong.json").exists():
-        if transform is not None:
+        if transform is not None or top_level is not None:
             raise RefreshRefusedError(
                 f"{path.parent.name}: this record is SEALED by its own known_wrong.json — "
                 "refreshing it would make a page that says 'do not trust these figures' look "
@@ -279,6 +285,12 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
             "tables no longer show (item 19c, manufactured deliberately). Re-assemble this name "
             "instead; the other names in the batch are unaffected.")
     doc["mechanical"] = after
+    if top_level is not None:
+        extra = top_level(doc)
+        if stray := sorted(set(extra) - _TOP_LEVEL_REFRESHABLE):
+            raise ValueError(f"{doc.get('ticker')}: a top-level refresh may set only "
+                             f"{sorted(_TOP_LEVEL_REFRESHABLE)}, not {stray}")
+        doc.update(extra)
     # ONE SERIALIZER, SHARED WITH THE ASSEMBLER (`schemas.dossier_json`). This path used to re-dump
     # the model's payload with `json.dumps`, which differs from the assembler on unicode escaping
     # and on float repr. The escaping half was fixed by hand; the float half surfaced years later,
@@ -604,6 +616,33 @@ def credit_health_transform(ticker: str) -> Transform:
         lv["credit_health_panels"] = json.loads(Sourced.present(
             panels, source_ref=" · ".join(refs), note="; ".join(notes) or None).model_dump_json())
         return out
+
+    return _apply
+
+
+def forward_consensus_transform(ticker: str) -> TopLevelTransform:
+    """A `refresh_dossier` top-level step writing `forward_consensus` — FY+0..FY+2 paths, spreads
+    and revision counts — from the on-disk Estimates export, under a KEPT synthesis.
+
+    WHY A REFRESH: the layer is a deterministic read of one CIQ export, so re-assembling to land it
+    would re-draw every synthesis — a variance event per name spent on a table. It lives OUTSIDE
+    `mechanical`, so the synthesis never saw it and nothing the prose cites can move.
+
+    A FOLDER THAT CANNOT BE READ LEAVES THE PAGE ALONE: no export on this machine is not evidence
+    that the name has no consensus, so nothing is written (the `credit_health_transform` rule)."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import forward_consensus
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return {}
+        built = forward_consensus(bundle)
+        return {} if built is None else {"forward_consensus": json.loads(built.model_dump_json())}
 
     return _apply
 

@@ -465,6 +465,80 @@ class ConsensusLevel(BaseModel, frozen=True):
     estimates: str | None = None
 
 
+class ConsensusPoint(BaseModel, frozen=True):
+    """One Estimates→Trends vintage of a forward figure. ``months_ago`` 0 is CIQ's 'Current'."""
+
+    months_ago: int
+    value: float
+
+
+class ConsensusPath(BaseModel, frozen=True):
+    """How the street's figure for one metric x one fiscal year MOVED: every Trends vintage present,
+    oldest first. A hole stays a hole — a missing vintage is absent, never interpolated."""
+
+    metric: str  # CIQ's block title, verbatim
+    period: str  # CIQ's column label, verbatim ("FY 2027")
+    points: list[ConsensusPoint]
+
+
+class ConsensusSpread(BaseModel, frozen=True):
+    """How far the street DISAGREES on one metric x one fiscal year, from Estimates→Consensus.
+
+    `high`/`low` are CIQ's labels, verbatim. On an outflow line CIQ orders them by SIZE (AMZN FY27
+    capex: High −365,252 sits below Low −182,211 in value), so `ordered_by` states which ordering
+    the cell uses — read off the values, never inferred from the line's name. `estimates` is CIQ's
+    raw pair, never re-labelled (the `ConsensusLevel` rule)."""
+
+    metric: str
+    period: str
+    # CIQ's consensus mean for the year, from the Consensus sheet itself. It can sit a fraction of
+    # a percent from the Trends 'Current' (ROST/LLY/UBER FY revenue 0.03-0.23%, 2026-10-07):
+    # two sheets, two inclusion rules — each figure is labelled by the sheet it came from.
+    mean: float
+    median: float
+    high: float
+    low: float
+    std_dev: float | None = None
+    estimates: str | None = None
+    ordered_by: Literal["value", "magnitude"]
+
+
+class RevisionCount(BaseModel, frozen=True):
+    """One Estimates→Revisions window for one metric x one fiscal year: how many analysts moved
+    their figure, and how many there were. `up`/`down` are CIQ's VALUE directions — on an
+    `outflow_line`, a line CIQ states negative, a `down` revision is a LARGER outflow."""
+
+    metric: str
+    period: str
+    window: Literal["1m", "2m", "3m"]
+    up: int
+    down: int
+    analysts: int | None = None
+    analysts_in_consensus: int | None = None
+    outflow_line: bool = False
+
+
+class ForwardConsensus(BaseModel, frozen=True):
+    """(forward consensus) FY+0..FY+2 for the metrics a scenario reads: how each figure moved
+    (`paths`), how far the street disagrees (`spreads`), and who revised (`revisions`).
+
+    A DOSSIER-LEVEL FIELD, OUTSIDE `mechanical`, ON PURPOSE. `MechanicalLayer` is the ONLY input the
+    synthesis is given. This layer is for the human and the scenario record; inside `mechanical` it
+    would change every name's five-draw prompt and widen the untraceable-figure check by every
+    number in it, for data no claim was written against. A synthesis digest, if wanted, is a
+    separate decision with its own shape contract.
+
+    `withheld` names every cell NOT written, and why — the absence is visible, never silent."""
+
+    as_of: str | None = None  # the Estimates export's as-of, a `≥` floor when CIQ stamps none
+    periods: list[str]
+    paths: list[ConsensusPath]
+    spreads: list[ConsensusSpread]
+    revisions: list[RevisionCount]
+    withheld: list[str] = []
+    source_ref: str
+
+
 class ConsensusContext(BaseModel):
     """Light consensus context (CIQ Estimates) — context for 'am I non-consensus', not a driver."""
 
@@ -1811,6 +1885,11 @@ class Dossier(BaseModel):
     # committed dossier.json without it round-trips byte-identically; when absent the render emits
     # nothing (the section is gated on presence).
     midcycle: MidCycle | None = None
+    # (forward consensus) FY+0..FY+2 paths, spreads and revision counts for the scenario metrics.
+    # OUTSIDE `mechanical`, so the synthesis never sees it (see `ForwardConsensus`); ABSENT until
+    # built (`dossier_json`), so a page without it round-trips byte-identically. Declared BEFORE
+    # `anchor`, which must stay the LAST field serialised (`replace_anchor_block` depends on it).
+    forward_consensus: ForwardConsensus | None = None
     # (anchor) the R1 mid-cycle-margin × own-history-EV/EBITDA fundamental, PERSISTED source-bound
     # so triage is a cheap read (vinci.dossier.anchor). Spot-independent; an ATTENTION FILTER, not
     # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
@@ -1885,4 +1964,7 @@ def dossier_json(doc: Dossier) -> str:
     # key, so every committed page it does not apply to stays byte-identical
     if doc.anchor is not None and doc.anchor.midcycle_gap is None:
         excl["anchor"] = {"midcycle_gap"}
+    # ABSENT, never null, until built: `null` would claim the layer was built and came back empty
+    if doc.forward_consensus is None:
+        excl["forward_consensus"] = True
     return doc.model_dump_json(indent=2, exclude=excl or None)
