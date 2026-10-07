@@ -361,15 +361,15 @@ _export date unverified (data ≥ 2026-07-22)_
 - **Horizon read (FQ — next-2Q revision breadth)** — [13]:
   - EPS Normalized FQ2 2027: 1m 0↑/1↓, 2m 0↑/2↓, 3m 2↑/7↓
   - EPS Normalized FQ3 2027: 1m 0↑/0↓, 2m 0↑/1↓, 3m 5↑/5↓
-  - EPS (GAAP) FQ2 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/1↓
-  - EPS (GAAP) FQ3 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/1↓
+  - EPS (GAAP) FQ2 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/4↓
+  - EPS (GAAP) FQ3 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/3↓
   - Revenue FQ2 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 2↑/8↓
   - Revenue FQ3 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 3↑/7↓
   - EBITDA FQ2 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/4↓
   - EBITDA FQ3 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/4↓
   - EBIT FQ2 2027: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/9↓
   - EBIT FQ3 2027: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/8↓
-  - _+7 non-headline metric rows in JSON_
+  - _+8 non-headline metric rows in JSON_
 - **Acceleration read (monthly consensus path):** FY 2027 EPS Normalized: 0.93 (12m) → 0.98 (9m) → 1.03 (6m) → 1.20 (3m) → 1.27 (2m) → 1.25 (1m) → 1.25 (latest); net +34% (12m→latest) | FY 2027 EPS (GAAP): 0.01 (12m) → 0.06 (9m) → 0.06 (6m) → 0.28 (3m) → 0.34 (2m) → 0.35 (1m) → 0.35 (latest); net +3400% (12m→latest) | FY 2027 Revenue: 632.4 (12m) → 637.8 (9m) → 640.5 (6m) → 642.0 (3m) → 644.7 (2m) → 644.7 (1m) → 644.7 (latest); net +2% (12m→latest) | FY 2027 EBITDA: 154.3 (12m) → 162.4 (9m) → 167.7 (6m) → 179.3 (3m) → 179.1 (2m) → 175.0 (1m) → 175.1 (latest); net +13% (12m→latest) | FY 2027 EBIT: 145.1 (12m) → 149.4 (9m) → 154.7 (6m) → 168.1 (3m) → 169.4 (2m) → 169.4 (1m) → 169.4 (latest); net +17% (12m→latest) | FY 2027 Interest Expense: -11.1 (12m) → -11.6 (9m) → -14.6 (6m) → -13.7 (3m) → -15.2 (2m) → -14.9 (1m) → -14.9 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2027 EBT (GAAP): 26.9 (12m) → 25.9 (9m) → 32.1 (6m) → 46.2 (3m) → 49.5 (2m) → 49.5 (1m) → 49.4 (latest); net +84% (12m→latest) | FY 2027 Net Income (Excl. Excep): 113.4 (12m) → 118.1 (9m) → 121.3 (6m) → 135.9 (3m) → 139.0 (2m) → 138.4 (1m) → 138.1 (latest); net +22% (12m→latest) | FY 2027 Net Income (GAAP): 2.73 (12m) → 9.12 (9m) → 7.30 (6m) → 32.0 (3m) → 38.4 (2m) → 38.3 (1m) → 38.3 (latest); net +1303% (12m→latest)  [data ≥ 2026-07-22 · export date unverified] [46]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [47]:
   - NTM: TEV/REV 3.50 · TEV/EBITDA 12.92 · TEV/EBIT 13.25 · Price/Earnings 14.52 · PEG – · P/BV –

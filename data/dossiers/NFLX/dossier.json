@@ -1180,7 +1180,7 @@
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
       },
       "horizon_read": {
-        "value": "EPS Normalized FQ3 2026: 1m 4↑/1↓, 2m 6↑/1↓, 3m 11↑/21↓; EPS Normalized FQ4 2026: 1m 2↑/4↓, 2m 4↑/4↓, 3m 11↑/18↓; EPS (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/0↓; EPS (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/0↓; Revenue FQ3 2026: 1m 1↑/2↓, 2m 3↑/2↓, 3m 1↑/35↓; Revenue FQ4 2026: 1m 1↑/2↓, 2m 3↑/2↓, 3m 10↑/24↓; EBITDA FQ3 2026: 1m 2↑/1↓, 2m 3↑/1↓, 3m 6↑/19↓; EBITDA FQ4 2026: 1m 2↑/1↓, 2m 3↑/1↓, 3m 7↑/15↓; EBIT FQ3 2026: 1m 4↑/1↓, 2m 7↑/1↓, 3m 7↑/26↓; EBIT FQ4 2026: 1m 1↑/3↓, 2m 4↑/3↓, 3m 7↑/24↓; Interest Expense FQ3 2026: 1m 4↑/0↓, 2m 4↑/0↓, 3m 6↑/19↓; Interest Expense FQ4 2026: 1m 1↑/3↓, 2m 2↑/2↓, 3m 10↑/15↓; EBT (GAAP) FQ3 2026: 1m 3↑/0↓, 2m 2↑/0↓, 3m 6↑/17↓; EBT (GAAP) FQ4 2026: 1m 1↑/2↓, 2m 1↑/1↓, 3m 10↑/13↓; Net Income (Excl. Excep) FQ3 2026: 1m 2↑/2↓, 2m 2↑/2↓, 3m 6↑/22↓; Net Income (Excl. Excep) FQ4 2026: 1m 2↑/2↓, 2m 2↑/2↓, 3m 8↑/18↓; Net Income (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/1↓  [data ≥ 2026-10-06 · export date unverified]",
+        "value": "EPS Normalized FQ3 2026: 1m 4↑/1↓, 2m 6↑/1↓, 3m 11↑/21↓; EPS Normalized FQ4 2026: 1m 2↑/4↓, 2m 4↑/4↓, 3m 11↑/18↓; EPS (GAAP) FQ3 2026: 1m 2↑/1↓, 2m 4↑/1↓, 3m 10↑/21↓; EPS (GAAP) FQ4 2026: 1m 2↑/2↓, 2m 4↑/2↓, 3m 10↑/18↓; Revenue FQ3 2026: 1m 1↑/2↓, 2m 3↑/2↓, 3m 1↑/35↓; Revenue FQ4 2026: 1m 1↑/2↓, 2m 3↑/2↓, 3m 10↑/24↓; EBITDA FQ3 2026: 1m 2↑/1↓, 2m 3↑/1↓, 3m 6↑/19↓; EBITDA FQ4 2026: 1m 2↑/1↓, 2m 3↑/1↓, 3m 7↑/15↓; EBIT FQ3 2026: 1m 4↑/1↓, 2m 7↑/1↓, 3m 7↑/26↓; EBIT FQ4 2026: 1m 1↑/3↓, 2m 4↑/3↓, 3m 7↑/24↓; Interest Expense FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 9↑/2↓; Interest Expense FQ4 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 9↑/3↓; EBT (GAAP) FQ3 2026: 1m 3↑/0↓, 2m 2↑/0↓, 3m 6↑/17↓; EBT (GAAP) FQ4 2026: 1m 1↑/2↓, 2m 1↑/1↓, 3m 10↑/13↓; Net Income (Excl. Excep) FQ3 2026: 1m 2↑/2↓, 2m 2↑/2↓, 3m 6↑/22↓; Net Income (Excl. Excep) FQ4 2026: 1m 2↑/2↓, 2m 2↑/2↓, 3m 8↑/18↓; Net Income (GAAP) FQ3 2026: 1m 2↑/2↓, 2m 2↑/2↓, 3m 7↑/22↓; Net Income (GAAP) FQ4 2026: 1m 2↑/2↓, 2m 2↑/2↓, 3m 8↑/19↓  [data ≥ 2026-10-06 · export date unverified]",
         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "status": "present",
         "note": null
@@ -8909,6 +8909,2155 @@
     "note": null
   },
   "midcycle": null,
+  "forward_consensus": {
+    "as_of": "≥2026-10-06",
+    "periods": [
+      "FY 2026",
+      "FY 2027",
+      "FY 2028"
+    ],
+    "paths": [
+      {
+        "metric": "Revenue",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 49624.01
+          },
+          {
+            "months_ago": 12,
+            "value": 50833.16
+          },
+          {
+            "months_ago": 9,
+            "value": 50979.22
+          },
+          {
+            "months_ago": 6,
+            "value": 51290.87
+          },
+          {
+            "months_ago": 3,
+            "value": 51399.2
+          },
+          {
+            "months_ago": 2,
+            "value": 51213.62
+          },
+          {
+            "months_ago": 1,
+            "value": 51224.73
+          },
+          {
+            "months_ago": 0,
+            "value": 51217.98
+          }
+        ]
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 54885.37
+          },
+          {
+            "months_ago": 12,
+            "value": 56387.35
+          },
+          {
+            "months_ago": 9,
+            "value": 56680.99
+          },
+          {
+            "months_ago": 6,
+            "value": 57294.54
+          },
+          {
+            "months_ago": 3,
+            "value": 57401.47
+          },
+          {
+            "months_ago": 2,
+            "value": 57006.42
+          },
+          {
+            "months_ago": 1,
+            "value": 57006.4
+          },
+          {
+            "months_ago": 0,
+            "value": 56949.68
+          }
+        ]
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 60306.41
+          },
+          {
+            "months_ago": 12,
+            "value": 62157.01
+          },
+          {
+            "months_ago": 9,
+            "value": 61827.76
+          },
+          {
+            "months_ago": 6,
+            "value": 63128.35
+          },
+          {
+            "months_ago": 3,
+            "value": 63322.1
+          },
+          {
+            "months_ago": 2,
+            "value": 62808.78
+          },
+          {
+            "months_ago": 1,
+            "value": 62805.33
+          },
+          {
+            "months_ago": 0,
+            "value": 62713.34
+          }
+        ]
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 16122.34
+          },
+          {
+            "months_ago": 12,
+            "value": 17148.68
+          },
+          {
+            "months_ago": 9,
+            "value": 17357.3
+          },
+          {
+            "months_ago": 6,
+            "value": 17071.95
+          },
+          {
+            "months_ago": 3,
+            "value": 17099.05
+          },
+          {
+            "months_ago": 2,
+            "value": 17042.38
+          },
+          {
+            "months_ago": 1,
+            "value": 17046.9
+          },
+          {
+            "months_ago": 0,
+            "value": 17055.89
+          }
+        ]
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 18726.94
+          },
+          {
+            "months_ago": 12,
+            "value": 20291.88
+          },
+          {
+            "months_ago": 9,
+            "value": 20562.99
+          },
+          {
+            "months_ago": 6,
+            "value": 20384.43
+          },
+          {
+            "months_ago": 3,
+            "value": 20437.62
+          },
+          {
+            "months_ago": 2,
+            "value": 20083.51
+          },
+          {
+            "months_ago": 1,
+            "value": 20067.07
+          },
+          {
+            "months_ago": 0,
+            "value": 19979.95
+          }
+        ]
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 21338.27
+          },
+          {
+            "months_ago": 12,
+            "value": 23744.23
+          },
+          {
+            "months_ago": 9,
+            "value": 23458.74
+          },
+          {
+            "months_ago": 6,
+            "value": 23943.36
+          },
+          {
+            "months_ago": 3,
+            "value": 23918.5
+          },
+          {
+            "months_ago": 2,
+            "value": 23325.9
+          },
+          {
+            "months_ago": 1,
+            "value": 23321.87
+          },
+          {
+            "months_ago": 0,
+            "value": 23177.7
+          }
+        ]
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 15484.67
+          },
+          {
+            "months_ago": 12,
+            "value": 16564.99
+          },
+          {
+            "months_ago": 9,
+            "value": 16610.87
+          },
+          {
+            "months_ago": 6,
+            "value": 16330.83
+          },
+          {
+            "months_ago": 3,
+            "value": 16272.9
+          },
+          {
+            "months_ago": 2,
+            "value": 16125.0
+          },
+          {
+            "months_ago": 1,
+            "value": 16130.58
+          },
+          {
+            "months_ago": 0,
+            "value": 16123.16
+          }
+        ]
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 18133.67
+          },
+          {
+            "months_ago": 12,
+            "value": 19604.3
+          },
+          {
+            "months_ago": 9,
+            "value": 19676.25
+          },
+          {
+            "months_ago": 6,
+            "value": 19531.45
+          },
+          {
+            "months_ago": 3,
+            "value": 19428.82
+          },
+          {
+            "months_ago": 2,
+            "value": 19127.12
+          },
+          {
+            "months_ago": 1,
+            "value": 19149.42
+          },
+          {
+            "months_ago": 0,
+            "value": 19073.59
+          }
+        ]
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 20791.39
+          },
+          {
+            "months_ago": 12,
+            "value": 22564.89
+          },
+          {
+            "months_ago": 9,
+            "value": 22465.83
+          },
+          {
+            "months_ago": 6,
+            "value": 22810.15
+          },
+          {
+            "months_ago": 3,
+            "value": 22707.16
+          },
+          {
+            "months_ago": 2,
+            "value": 22223.62
+          },
+          {
+            "months_ago": 1,
+            "value": 22283.17
+          },
+          {
+            "months_ago": 0,
+            "value": 22144.76
+          }
+        ]
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 3.03
+          },
+          {
+            "months_ago": 12,
+            "value": 3.24
+          },
+          {
+            "months_ago": 9,
+            "value": 3.24
+          },
+          {
+            "months_ago": 6,
+            "value": 3.16
+          },
+          {
+            "months_ago": 3,
+            "value": 3.6
+          },
+          {
+            "months_ago": 2,
+            "value": 3.59
+          },
+          {
+            "months_ago": 1,
+            "value": 3.59
+          },
+          {
+            "months_ago": 0,
+            "value": 3.59
+          }
+        ]
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 3.64
+          },
+          {
+            "months_ago": 12,
+            "value": 3.94
+          },
+          {
+            "months_ago": 9,
+            "value": 3.9
+          },
+          {
+            "months_ago": 6,
+            "value": 3.86
+          },
+          {
+            "months_ago": 3,
+            "value": 3.84
+          },
+          {
+            "months_ago": 2,
+            "value": 3.82
+          },
+          {
+            "months_ago": 1,
+            "value": 3.82
+          },
+          {
+            "months_ago": 0,
+            "value": 3.81
+          }
+        ]
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 4.18
+          },
+          {
+            "months_ago": 12,
+            "value": 4.67
+          },
+          {
+            "months_ago": 9,
+            "value": 4.48
+          },
+          {
+            "months_ago": 6,
+            "value": 4.59
+          },
+          {
+            "months_ago": 3,
+            "value": 4.6
+          },
+          {
+            "months_ago": 2,
+            "value": 4.59
+          },
+          {
+            "months_ago": 1,
+            "value": 4.59
+          },
+          {
+            "months_ago": 0,
+            "value": 4.57
+          }
+        ]
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 3.02
+          },
+          {
+            "months_ago": 12,
+            "value": 3.23
+          },
+          {
+            "months_ago": 9,
+            "value": 3.24
+          },
+          {
+            "months_ago": 6,
+            "value": 3.21
+          },
+          {
+            "months_ago": 3,
+            "value": 3.59
+          },
+          {
+            "months_ago": 2,
+            "value": 3.58
+          },
+          {
+            "months_ago": 1,
+            "value": 3.58
+          },
+          {
+            "months_ago": 0,
+            "value": 3.58
+          }
+        ]
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 3.61
+          },
+          {
+            "months_ago": 12,
+            "value": 3.92
+          },
+          {
+            "months_ago": 9,
+            "value": 3.91
+          },
+          {
+            "months_ago": 6,
+            "value": 3.85
+          },
+          {
+            "months_ago": 3,
+            "value": 3.83
+          },
+          {
+            "months_ago": 2,
+            "value": 3.81
+          },
+          {
+            "months_ago": 1,
+            "value": 3.82
+          },
+          {
+            "months_ago": 0,
+            "value": 3.8
+          }
+        ]
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 4.17
+          },
+          {
+            "months_ago": 12,
+            "value": 4.58
+          },
+          {
+            "months_ago": 9,
+            "value": 4.48
+          },
+          {
+            "months_ago": 6,
+            "value": 4.56
+          },
+          {
+            "months_ago": 3,
+            "value": 4.57
+          },
+          {
+            "months_ago": 2,
+            "value": 4.57
+          },
+          {
+            "months_ago": 1,
+            "value": 4.58
+          },
+          {
+            "months_ago": 0,
+            "value": 4.55
+          }
+        ]
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 405.66
+          },
+          {
+            "months_ago": 12,
+            "value": 374.59
+          },
+          {
+            "months_ago": 9,
+            "value": 381.23
+          },
+          {
+            "months_ago": 6,
+            "value": 372.43
+          },
+          {
+            "months_ago": 3,
+            "value": 387.14
+          },
+          {
+            "months_ago": 2,
+            "value": 396.86
+          },
+          {
+            "months_ago": 1,
+            "value": 396.88
+          },
+          {
+            "months_ago": 0,
+            "value": 397.75
+          }
+        ]
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 433.91
+          },
+          {
+            "months_ago": 12,
+            "value": 416.82
+          },
+          {
+            "months_ago": 9,
+            "value": 413.39
+          },
+          {
+            "months_ago": 6,
+            "value": 412.37
+          },
+          {
+            "months_ago": 3,
+            "value": 427.22
+          },
+          {
+            "months_ago": 2,
+            "value": 432.42
+          },
+          {
+            "months_ago": 1,
+            "value": 432.44
+          },
+          {
+            "months_ago": 0,
+            "value": 433.64
+          }
+        ]
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 480.84
+          },
+          {
+            "months_ago": 12,
+            "value": 472.72
+          },
+          {
+            "months_ago": 9,
+            "value": 487.84
+          },
+          {
+            "months_ago": 6,
+            "value": 457.25
+          },
+          {
+            "months_ago": 3,
+            "value": 471.75
+          },
+          {
+            "months_ago": 2,
+            "value": 478.09
+          },
+          {
+            "months_ago": 1,
+            "value": 478.13
+          },
+          {
+            "months_ago": 0,
+            "value": 478.94
+          }
+        ]
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 11952.87
+          },
+          {
+            "months_ago": 12,
+            "value": 12882.51
+          },
+          {
+            "months_ago": 9,
+            "value": 12833.19
+          },
+          {
+            "months_ago": 6,
+            "value": 12401.71
+          },
+          {
+            "months_ago": 3,
+            "value": 13737.94
+          },
+          {
+            "months_ago": 2,
+            "value": 13300.26
+          },
+          {
+            "months_ago": 1,
+            "value": 13300.26
+          },
+          {
+            "months_ago": 0,
+            "value": 13294.02
+          }
+        ]
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 14143.74
+          },
+          {
+            "months_ago": 12,
+            "value": 15120.91
+          },
+          {
+            "months_ago": 9,
+            "value": 15302.9
+          },
+          {
+            "months_ago": 6,
+            "value": 15524.09
+          },
+          {
+            "months_ago": 3,
+            "value": 15346.47
+          },
+          {
+            "months_ago": 2,
+            "value": 15037.53
+          },
+          {
+            "months_ago": 1,
+            "value": 15037.53
+          },
+          {
+            "months_ago": 0,
+            "value": 14924.45
+          }
+        ]
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 18032.43
+          },
+          {
+            "months_ago": 12,
+            "value": 18831.2
+          },
+          {
+            "months_ago": 9,
+            "value": 19242.97
+          },
+          {
+            "months_ago": 6,
+            "value": 17862.25
+          },
+          {
+            "months_ago": 3,
+            "value": 17767.59
+          },
+          {
+            "months_ago": 2,
+            "value": 17355.3
+          },
+          {
+            "months_ago": 1,
+            "value": 17355.3
+          },
+          {
+            "months_ago": 0,
+            "value": 17210.9
+          }
+        ]
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": -526.63
+          },
+          {
+            "months_ago": 12,
+            "value": -587.31
+          },
+          {
+            "months_ago": 9,
+            "value": -573.61
+          },
+          {
+            "months_ago": 6,
+            "value": -631.63
+          },
+          {
+            "months_ago": 3,
+            "value": -684.96
+          },
+          {
+            "months_ago": 2,
+            "value": -764.2
+          },
+          {
+            "months_ago": 1,
+            "value": -764.23
+          },
+          {
+            "months_ago": 0,
+            "value": -768.16
+          }
+        ]
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": -556.08
+          },
+          {
+            "months_ago": 12,
+            "value": -624.84
+          },
+          {
+            "months_ago": 9,
+            "value": -605.56
+          },
+          {
+            "months_ago": 6,
+            "value": -699.72
+          },
+          {
+            "months_ago": 3,
+            "value": -716.43
+          },
+          {
+            "months_ago": 2,
+            "value": -757.67
+          },
+          {
+            "months_ago": 1,
+            "value": -767.97
+          },
+          {
+            "months_ago": 0,
+            "value": -773.25
+          }
+        ]
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": -607.49
+          },
+          {
+            "months_ago": 12,
+            "value": -741.4
+          },
+          {
+            "months_ago": 9,
+            "value": -685.93
+          },
+          {
+            "months_ago": 6,
+            "value": -700.28
+          },
+          {
+            "months_ago": 3,
+            "value": -744.48
+          },
+          {
+            "months_ago": 2,
+            "value": -801.57
+          },
+          {
+            "months_ago": 1,
+            "value": -815.61
+          },
+          {
+            "months_ago": 0,
+            "value": -822.76
+          }
+        ]
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2026",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 11313.85
+          },
+          {
+            "months_ago": 12,
+            "value": 12023.82
+          },
+          {
+            "months_ago": 9,
+            "value": 12145.1
+          },
+          {
+            "months_ago": 6,
+            "value": 11746.2
+          },
+          {
+            "months_ago": 3,
+            "value": 13174.56
+          },
+          {
+            "months_ago": 2,
+            "value": 12876.61
+          },
+          {
+            "months_ago": 1,
+            "value": 12868.06
+          },
+          {
+            "months_ago": 0,
+            "value": 12808.98
+          }
+        ]
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2027",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 13560.68
+          },
+          {
+            "months_ago": 12,
+            "value": 14371.45
+          },
+          {
+            "months_ago": 9,
+            "value": 14572.55
+          },
+          {
+            "months_ago": 6,
+            "value": 14462.55
+          },
+          {
+            "months_ago": 3,
+            "value": 14279.16
+          },
+          {
+            "months_ago": 2,
+            "value": 14204.41
+          },
+          {
+            "months_ago": 1,
+            "value": 14174.98
+          },
+          {
+            "months_ago": 0,
+            "value": 14058.08
+          }
+        ]
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2028",
+        "points": [
+          {
+            "months_ago": 18,
+            "value": 16038.19
+          },
+          {
+            "months_ago": 12,
+            "value": 18022.6
+          },
+          {
+            "months_ago": 9,
+            "value": 17520.49
+          },
+          {
+            "months_ago": 6,
+            "value": 17114.69
+          },
+          {
+            "months_ago": 3,
+            "value": 16988.45
+          },
+          {
+            "months_ago": 2,
+            "value": 16641.75
+          },
+          {
+            "months_ago": 1,
+            "value": 16629.13
+          },
+          {
+            "months_ago": 0,
+            "value": 16671.98
+          }
+        ]
+      }
+    ],
+    "spreads": [
+      {
+        "metric": "Revenue",
+        "period": "FY 2026",
+        "mean": 51217.98064,
+        "median": 51203.0,
+        "high": 51513.43015,
+        "low": 50954.0,
+        "std_dev": 126.72184,
+        "estimates": "47/47",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2027",
+        "mean": 56949.68156,
+        "median": 57119.75,
+        "high": 58274.0,
+        "low": 55701.22075,
+        "std_dev": 527.2587,
+        "estimates": "46/46",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2028",
+        "mean": 62713.33778,
+        "median": 62960.0,
+        "high": 64933.0,
+        "low": 59725.0,
+        "std_dev": 1102.71042,
+        "estimates": "35/35",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2026",
+        "mean": 17055.89315,
+        "median": 17073.85,
+        "high": 17710.0,
+        "low": 16347.78595,
+        "std_dev": 240.95045,
+        "estimates": "30/42",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2027",
+        "mean": 19979.95217,
+        "median": 20046.36337,
+        "high": 20767.0,
+        "low": 18240.84242,
+        "std_dev": 505.2002,
+        "estimates": "29/41",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2028",
+        "mean": 23177.6973,
+        "median": 23164.41146,
+        "high": 25384.0,
+        "low": 20727.70689,
+        "std_dev": 1046.65894,
+        "estimates": "23/30",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2026",
+        "mean": 16123.15647,
+        "median": 16139.11746,
+        "high": 16398.0,
+        "low": 15584.0,
+        "std_dev": 130.88613,
+        "estimates": "43/45",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2027",
+        "mean": 19073.58616,
+        "median": 19184.5,
+        "high": 19875.82384,
+        "low": 17795.14395,
+        "std_dev": 456.86524000000003,
+        "estimates": "42/42",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2028",
+        "mean": 22144.75572,
+        "median": 22186.08093,
+        "high": 24549.0,
+        "low": 20062.0,
+        "std_dev": 1065.03145,
+        "estimates": "32/32",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2026",
+        "mean": 3.58933,
+        "median": 3.58469,
+        "high": 3.69,
+        "low": 3.52,
+        "std_dev": 0.03876,
+        "estimates": "39/44",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2027",
+        "mean": 3.80713,
+        "median": 3.82428,
+        "high": 4.09,
+        "low": 3.48,
+        "std_dev": 0.13441,
+        "estimates": "43/43",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2028",
+        "mean": 4.5695,
+        "median": 4.585,
+        "high": 5.1,
+        "low": 3.81,
+        "std_dev": 0.28598,
+        "estimates": "32/32",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2026",
+        "mean": 3.5834,
+        "median": 3.58,
+        "high": 3.69,
+        "low": 3.51,
+        "std_dev": 0.03699,
+        "estimates": "41/45",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2027",
+        "mean": 3.80137,
+        "median": 3.80943,
+        "high": 4.09,
+        "low": 3.48,
+        "std_dev": 0.13024,
+        "estimates": "45/45",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2028",
+        "mean": 4.54949,
+        "median": 4.58,
+        "high": 5.1,
+        "low": 3.81,
+        "std_dev": 0.28303,
+        "estimates": "33/33",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2026",
+        "mean": 397.7463,
+        "median": 399.1,
+        "high": 488.0,
+        "low": 333.0,
+        "std_dev": 30.65568,
+        "estimates": "23/28",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2027",
+        "mean": 433.641,
+        "median": 420.0,
+        "high": 594.0,
+        "low": 343.0,
+        "std_dev": 46.05998,
+        "estimates": "20/26",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2028",
+        "mean": 478.9375,
+        "median": 464.5,
+        "high": 651.0,
+        "low": 353.0,
+        "std_dev": 75.89822,
+        "estimates": "16/19",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2026",
+        "mean": 13294.02105,
+        "median": 13314.0,
+        "high": 14459.0,
+        "low": 11043.0,
+        "std_dev": 715.00669,
+        "estimates": "19/22",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2027",
+        "mean": 14924.45,
+        "median": 14686.0,
+        "high": 17902.0,
+        "low": 10750.0,
+        "std_dev": 1723.16951,
+        "estimates": "20/20",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2028",
+        "mean": 17210.9,
+        "median": 16629.0,
+        "high": 21510.0,
+        "low": 12409.0,
+        "std_dev": 2099.49352,
+        "estimates": "15/15",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2026",
+        "mean": -768.1567,
+        "median": -783.0,
+        "high": -978.0,
+        "low": -500.0,
+        "std_dev": 113.42307,
+        "estimates": "27/29",
+        "ordered_by": "magnitude"
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2027",
+        "mean": -773.25392,
+        "median": -848.0,
+        "high": -1041.0,
+        "low": -400.0,
+        "std_dev": 167.75011,
+        "estimates": "27/27",
+        "ordered_by": "magnitude"
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2028",
+        "mean": -822.7587,
+        "median": -897.0,
+        "high": -1089.0,
+        "low": -400.0,
+        "std_dev": 202.76258,
+        "estimates": "22/23",
+        "ordered_by": "magnitude"
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2026",
+        "mean": 12808.97642,
+        "median": 12584.0,
+        "high": 14851.2,
+        "low": 11485.0,
+        "std_dev": 804.98796,
+        "estimates": "24/28",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2027",
+        "mean": 14058.07543,
+        "median": 14042.0,
+        "high": 16935.0,
+        "low": 12726.0,
+        "std_dev": 1061.63824,
+        "estimates": "23/26",
+        "ordered_by": "value"
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2028",
+        "mean": 16671.975,
+        "median": 16434.95,
+        "high": 20910.0,
+        "low": 14958.0,
+        "std_dev": 1466.3502,
+        "estimates": "20/23",
+        "ordered_by": "value"
+      }
+    ],
+    "revisions": [
+      {
+        "metric": "Revenue",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 2,
+        "down": 3,
+        "analysts": 47,
+        "analysts_in_consensus": 47,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 5,
+        "down": 2,
+        "analysts": 46,
+        "analysts_in_consensus": 46,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 6,
+        "down": 38,
+        "analysts": 46,
+        "analysts_in_consensus": 46,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 2,
+        "down": 6,
+        "analysts": 46,
+        "analysts_in_consensus": 46,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 3,
+        "down": 8,
+        "analysts": 46,
+        "analysts_in_consensus": 46,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 4,
+        "down": 38,
+        "analysts": 45,
+        "analysts_in_consensus": 45,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 2,
+        "down": 5,
+        "analysts": 35,
+        "analysts_in_consensus": 35,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 2,
+        "down": 6,
+        "analysts": 34,
+        "analysts_in_consensus": 34,
+        "outflow_line": false
+      },
+      {
+        "metric": "Revenue",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 3,
+        "down": 25,
+        "analysts": 31,
+        "analysts_in_consensus": 31,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 2,
+        "down": 3,
+        "analysts": 31,
+        "analysts_in_consensus": 30,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 3,
+        "down": 3,
+        "analysts": 31,
+        "analysts_in_consensus": 30,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 9,
+        "down": 20,
+        "analysts": 30,
+        "analysts_in_consensus": 30,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 2,
+        "down": 6,
+        "analysts": 30,
+        "analysts_in_consensus": 29,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 3,
+        "down": 7,
+        "analysts": 30,
+        "analysts_in_consensus": 29,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 2,
+        "down": 26,
+        "analysts": 29,
+        "analysts_in_consensus": 29,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 2,
+        "down": 5,
+        "analysts": 23,
+        "analysts_in_consensus": 23,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 2,
+        "down": 5,
+        "analysts": 22,
+        "analysts_in_consensus": 22,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBITDA",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 0,
+        "down": 19,
+        "analysts": 20,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 1,
+        "down": 7,
+        "analysts": 43,
+        "analysts_in_consensus": 43,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 3,
+        "down": 7,
+        "analysts": 42,
+        "analysts_in_consensus": 42,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 8,
+        "down": 35,
+        "analysts": 45,
+        "analysts_in_consensus": 43,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 3,
+        "down": 6,
+        "analysts": 43,
+        "analysts_in_consensus": 42,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 3,
+        "down": 9,
+        "analysts": 43,
+        "analysts_in_consensus": 42,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 8,
+        "down": 31,
+        "analysts": 40,
+        "analysts_in_consensus": 40,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 3,
+        "down": 5,
+        "analysts": 32,
+        "analysts_in_consensus": 32,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 3,
+        "down": 6,
+        "analysts": 31,
+        "analysts_in_consensus": 31,
+        "outflow_line": false
+      },
+      {
+        "metric": "EBIT",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 4,
+        "down": 22,
+        "analysts": 27,
+        "analysts_in_consensus": 27,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 3,
+        "down": 2,
+        "analysts": 39,
+        "analysts_in_consensus": 39,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 5,
+        "down": 2,
+        "analysts": 37,
+        "analysts_in_consensus": 37,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 14,
+        "down": 23,
+        "analysts": 39,
+        "analysts_in_consensus": 38,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 2,
+        "down": 6,
+        "analysts": 43,
+        "analysts_in_consensus": 43,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 3,
+        "down": 9,
+        "analysts": 43,
+        "analysts_in_consensus": 43,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 11,
+        "down": 30,
+        "analysts": 44,
+        "analysts_in_consensus": 43,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 2,
+        "down": 4,
+        "analysts": 31,
+        "analysts_in_consensus": 31,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 3,
+        "down": 6,
+        "analysts": 31,
+        "analysts_in_consensus": 31,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS Normalized",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 9,
+        "down": 13,
+        "analysts": 26,
+        "analysts_in_consensus": 26,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 2,
+        "down": 2,
+        "analysts": 41,
+        "analysts_in_consensus": 41,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 4,
+        "down": 2,
+        "analysts": 39,
+        "analysts_in_consensus": 39,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 14,
+        "down": 24,
+        "analysts": 40,
+        "analysts_in_consensus": 39,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 1,
+        "down": 6,
+        "analysts": 45,
+        "analysts_in_consensus": 45,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 2,
+        "down": 9,
+        "analysts": 45,
+        "analysts_in_consensus": 45,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 12,
+        "down": 30,
+        "analysts": 45,
+        "analysts_in_consensus": 45,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 1,
+        "down": 5,
+        "analysts": 32,
+        "analysts_in_consensus": 32,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 2,
+        "down": 7,
+        "analysts": 32,
+        "analysts_in_consensus": 32,
+        "outflow_line": false
+      },
+      {
+        "metric": "EPS (GAAP)",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 9,
+        "down": 14,
+        "analysts": 27,
+        "analysts_in_consensus": 27,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 1,
+        "down": 0,
+        "analysts": 23,
+        "analysts_in_consensus": 23,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 2,
+        "down": 0,
+        "analysts": 23,
+        "analysts_in_consensus": 23,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 16,
+        "down": 5,
+        "analysts": 23,
+        "analysts_in_consensus": 23,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 1,
+        "down": 0,
+        "analysts": 20,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 2,
+        "down": 0,
+        "analysts": 20,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 12,
+        "down": 4,
+        "analysts": 21,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 1,
+        "down": 0,
+        "analysts": 16,
+        "analysts_in_consensus": 16,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 2,
+        "down": 0,
+        "analysts": 16,
+        "analysts_in_consensus": 16,
+        "outflow_line": false
+      },
+      {
+        "metric": "Depreciation & Amortization",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 8,
+        "down": 3,
+        "analysts": 15,
+        "analysts_in_consensus": 15,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 2,
+        "down": 1,
+        "analysts": 19,
+        "analysts_in_consensus": 19,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 2,
+        "down": 1,
+        "analysts": 19,
+        "analysts_in_consensus": 19,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 4,
+        "down": 14,
+        "analysts": 20,
+        "analysts_in_consensus": 19,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 1,
+        "down": 2,
+        "analysts": 20,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 1,
+        "down": 2,
+        "analysts": 20,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 5,
+        "down": 13,
+        "analysts": 20,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 1,
+        "down": 1,
+        "analysts": 14,
+        "analysts_in_consensus": 14,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 1,
+        "down": 1,
+        "analysts": 14,
+        "analysts_in_consensus": 14,
+        "outflow_line": false
+      },
+      {
+        "metric": "Cash From Operations",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 3,
+        "down": 9,
+        "analysts": 14,
+        "analysts_in_consensus": 14,
+        "outflow_line": false
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 2,
+        "down": 2,
+        "analysts": 27,
+        "analysts_in_consensus": 27,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 2,
+        "down": 3,
+        "analysts": 26,
+        "analysts_in_consensus": 26,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 3,
+        "down": 19,
+        "analysts": 28,
+        "analysts_in_consensus": 27,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 2,
+        "down": 1,
+        "analysts": 27,
+        "analysts_in_consensus": 27,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 3,
+        "down": 2,
+        "analysts": 27,
+        "analysts_in_consensus": 27,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 7,
+        "down": 11,
+        "analysts": 27,
+        "analysts_in_consensus": 27,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 1,
+        "down": 1,
+        "analysts": 22,
+        "analysts_in_consensus": 22,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 2,
+        "down": 2,
+        "analysts": 22,
+        "analysts_in_consensus": 22,
+        "outflow_line": true
+      },
+      {
+        "metric": "Capital Expenditure",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 4,
+        "down": 11,
+        "analysts": 22,
+        "analysts_in_consensus": 22,
+        "outflow_line": true
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2026",
+        "window": "1m",
+        "up": 2,
+        "down": 2,
+        "analysts": 25,
+        "analysts_in_consensus": 24,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2026",
+        "window": "2m",
+        "up": 2,
+        "down": 2,
+        "analysts": 24,
+        "analysts_in_consensus": 23,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2026",
+        "window": "3m",
+        "up": 5,
+        "down": 15,
+        "analysts": 23,
+        "analysts_in_consensus": 22,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2027",
+        "window": "1m",
+        "up": 1,
+        "down": 3,
+        "analysts": 24,
+        "analysts_in_consensus": 23,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2027",
+        "window": "2m",
+        "up": 1,
+        "down": 3,
+        "analysts": 23,
+        "analysts_in_consensus": 22,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2027",
+        "window": "3m",
+        "up": 6,
+        "down": 11,
+        "analysts": 21,
+        "analysts_in_consensus": 20,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2028",
+        "window": "1m",
+        "up": 0,
+        "down": 2,
+        "analysts": 19,
+        "analysts_in_consensus": 18,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2028",
+        "window": "2m",
+        "up": 0,
+        "down": 2,
+        "analysts": 18,
+        "analysts_in_consensus": 17,
+        "outflow_line": false
+      },
+      {
+        "metric": "Free Cash Flow",
+        "period": "FY 2028",
+        "window": "3m",
+        "up": 2,
+        "down": 10,
+        "analysts": 17,
+        "analysts_in_consensus": 16,
+        "outflow_line": false
+      }
+    ],
+    "withheld": [],
+    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
+  },
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
