@@ -330,15 +330,15 @@ _export date unverified (data ≥ 2026-09-14)_
 - **Horizon read (FQ — next-2Q revision breadth)** — [36]:
   - EPS Normalized FQ3 2026: 1m 1↑/2↓, 2m 1↑/11↓, 3m 0↑/11↓
   - EPS Normalized FQ4 2026: 1m 1↑/2↓, 2m 2↑/10↓, 3m 0↑/10↓
-  - EPS (GAAP) FQ3 2026: 1m 1↑/0↓, 2m 2↑/0↓, 3m 2↑/0↓
-  - EPS (GAAP) FQ4 2026: 1m 1↑/0↓, 2m 1↑/1↓, 3m 0↑/2↓
+  - EPS (GAAP) FQ3 2026: 1m 1↑/0↓, 2m 0↑/3↓, 3m 0↑/3↓
+  - EPS (GAAP) FQ4 2026: 1m 1↑/0↓, 2m 1↑/2↓, 3m 0↑/3↓
   - Revenue FQ3 2026: 1m 0↑/1↓, 2m 2↑/10↓, 3m 0↑/12↓
   - Revenue FQ4 2026: 1m 1↑/1↓, 2m 3↑/8↓, 3m 1↑/11↓
   - EBITDA FQ3 2026: 1m 1↑/2↓, 2m 1↑/10↓, 3m 0↑/11↓
   - EBITDA FQ4 2026: 1m 1↑/2↓, 2m 3↑/8↓, 3m 2↑/9↓
   - EBIT FQ3 2026: 1m 0↑/1↓, 2m 0↑/4↓, 3m 0↑/6↓
   - EBIT FQ4 2026: 1m 0↑/1↓, 2m 0↑/4↓, 3m 0↑/5↓
-  - _+7 non-headline metric rows in JSON_
+  - _+8 non-headline metric rows in JSON_
 - **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 2.73 (12m) → 1.03 (9m) → 1.58 (6m) → 3.76 (3m) → 3.43 (2m) → 3.23 (1m) → 3.19 (latest); net +17% (12m→latest) | FY 2026 EPS (GAAP): 2.66 (12m) → 1.23 (9m) → 1.27 (6m) → 3.42 (3m) → 3.83 (2m) → 3.07 (1m) → 3.10 (latest); net +17% (12m→latest) | FY 2026 Revenue: 12,165.8 (12m) → 11,461.1 (9m) → 11,408.5 (6m) → 12,031.0 (3m) → 11,861.6 (2m) → 11,775.2 (1m) → 11,764.7 (latest); net -3% (12m→latest) | FY 2026 EBITDA: 1,792.4 (12m) → 1,501.7 (9m) → 1,605.1 (6m) → 2,034.1 (3m) → 1,947.9 (2m) → 1,918.9 (1m) → 1,913.9 (latest); net +7% (12m→latest) | FY 2026 EBIT: 553.1 (12m) → 259.1 (9m) → 470.7 (6m) → 640.1 (3m) → 584.7 (2m) → 689.1 (1m) → 681.9 (latest); net +23% (12m→latest) | FY 2026 Interest Expense: -156.0 (12m) → -166.0 (9m) → -212.4 (6m) → -217.3 (3m) → -218.5 (2m) → -209.9 (1m) → -209.9 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 473.2 (12m) → 263.3 (9m) → 190.1 (6m) → 660.3 (3m) → 583.0 (2m) → 508.0 (1m) → 508.0 (latest); net +7% (12m→latest) | FY 2026 Net Income (Excl. Excep): 345.9 (12m) → 145.1 (9m) → 195.4 (6m) → 466.6 (3m) → 421.5 (2m) → 412.0 (1m) → 408.9 (latest); net +18% (12m→latest) | FY 2026 Net Income (GAAP): 320.4 (12m) → 134.5 (9m) → 140.7 (6m) → 435.5 (3m) → 438.1 (2m) → 403.3 (1m) → 406.8 (latest); net +27% (12m→latest)  [data ≥ 2026-09-14 · export date unverified] [33]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [46]:
   - NTM: TEV/REV 1.13 · TEV/EBITDA 6.78 · TEV/EBIT 16.65 · Price/Earnings 19.18 · PEG – · P/BV –

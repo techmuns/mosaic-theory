@@ -318,8 +318,8 @@ _export date unverified (data ≥ 2026-09-17)_
 - **Horizon read (FQ — next-2Q revision breadth)** — [48]:
   - EPS Normalized FQ3 2027: 1m 0↑/0↓, 2m 29↑/2↓, 3m 29↑/2↓
   - EPS Normalized FQ4 2027: 1m 0↑/0↓, 2m 30↑/1↓, 3m 29↑/1↓
-  - EPS (GAAP) FQ3 2027: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
-  - EPS (GAAP) FQ4 2027: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
+  - EPS (GAAP) FQ3 2027: 1m 0↑/0↓, 2m 17↑/1↓, 3m 17↑/1↓
+  - EPS (GAAP) FQ4 2027: 1m 0↑/0↓, 2m 17↑/1↓, 3m 16↑/1↓
   - Revenue FQ3 2027: 1m 0↑/0↓, 2m 29↑/0↓, 3m 29↑/0↓
   - Revenue FQ4 2027: 1m 0↑/0↓, 2m 29↑/0↓, 3m 29↑/0↓
   - EBITDA FQ3 2027: 1m 0↑/0↓, 2m 10↑/1↓, 3m 10↑/1↓

@@ -304,7 +304,7 @@ _export date unverified (data ≥ 2026-08-09)_
   - EBIT FQ3 2026: 1m 4↑/1↓, 2m 4↑/1↓, 3m 4↑/1↓
   - EBIT FQ4 2026: 1m 1↑/3↓, 2m 1↑/3↓, 3m 1↑/3↓
   - _no revisions in any window: Revenue FQ3 2026, Revenue FQ4 2026_
-  - _+4 non-headline metric rows in JSON_
+  - _+5 non-headline metric rows in JSON_
 - **Acceleration read (monthly consensus path):** FY 2026 EPS (GAAP): -4.82 (12m) → -4.82 (9m) → -4.80 (6m) → -5.32 (3m) → -5.32 (2m) → -5.32 (1m) → -5.09 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 Revenue: 0.00 (12m) → 0.00 (9m) → 0.00 (6m) → 0.00 (3m) → 0.00 (2m) → 0.00 (1m) → 0.00 (latest); flat (12m→latest) | FY 2026 EBITDA: -89.0 (12m) — level only | FY 2026 EBIT: -105.2 (12m) → -102.3 (9m) → -104.7 (6m) → -111.2 (3m) → -111.2 (2m) → -111.2 (1m) → -108.0 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 Interest Expense: -0.04 (6m) → -0.02 (3m) → -0.02 (2m) → -0.02 (1m) → -0.02 (latest); improving (magnitude toward zero) (6m→latest) | FY 2026 EBT (GAAP): -103.9 (12m) → -100.7 (9m) → -98.4 (6m) → -105.9 (3m) → -105.9 (2m) → -105.9 (1m) → -101.8 (latest); improving (magnitude toward zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): -97.8 (6m) → -97.8 (3m) → -97.8 (2m) → -97.8 (1m); flat (6m→1m) | FY 2026 Net Income (GAAP): -102.0 (12m) → -99.7 (9m) → -101.0 (6m) → -106.9 (3m) → -106.9 (2m) → -106.9 (1m) → -101.2 (latest); improving (magnitude toward zero) (12m→latest)  [data ≥ 2026-08-09 · export date unverified] [32]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [33]:
   - _+5 later fiscal years in JSON_

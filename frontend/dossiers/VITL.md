@@ -326,13 +326,15 @@ _export date unverified (data ≥ 2026-07-21)_
 - **Horizon read (FQ — next-2Q revision breadth)** — [43]:
   - EPS Normalized FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/7↓
   - EPS Normalized FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/7↓
+  - EPS (GAAP) FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/6↓
+  - EPS (GAAP) FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/6↓
   - Revenue FQ2 2026: 1m 0↑/4↓, 2m 0↑/4↓, 3m 0↑/9↓
   - Revenue FQ3 2026: 1m 4↑/0↓, 2m 4↑/0↓, 3m 0↑/9↓
   - EBITDA FQ2 2026: 1m 0↑/3↓, 2m 0↑/3↓, 3m 0↑/8↓
   - EBITDA FQ3 2026: 1m 1↑/1↓, 2m 1↑/1↓, 3m 0↑/8↓
   - EBIT FQ2 2026: 1m 0↑/3↓, 2m 0↑/3↓, 3m 0↑/8↓
   - EBIT FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/8↓
-  - _+7 non-headline metric rows in JSON_
+  - _+8 non-headline metric rows in JSON_
 - **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 1.54 (12m) → 1.61 (9m) → 1.71 (6m) → 0.95 (3m) → -0.42 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 EPS (GAAP): 1.56 (12m) → 1.63 (9m) → 1.69 (6m) → 0.88 (3m) → -0.42 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Revenue: 891.1 (12m) → 927.5 (9m) → 939.1 (6m) → 878.0 (3m) → 777.8 (2m) → 777.8 (1m) → 775.3 (latest); net -13% (12m→latest) | FY 2026 EBITDA: 123.1 (12m) → 131.2 (9m) → 133.7 (6m) → 85.9 (3m) → 4.05 (2m) → 4.05 (1m) → 3.42 (latest); net -97% (12m→latest) | FY 2026 EBIT: 90.8 (12m) → 96.4 (9m) → 102.5 (6m) → 56.5 (3m) → -24.8 (2m) → -24.8 (1m) → -25.4 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Interest Expense: -0.87 (12m) → -0.93 (9m) → -0.97 (6m) → -0.83 (3m) → -1.20 (2m) → -1.20 (1m) → -1.20 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 93.4 (12m) → 97.2 (9m) → 104.0 (6m) → 55.6 (3m) → -26.5 (2m) → -26.5 (1m) → -24.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): 71.8 (12m) → 75.1 (9m) → 78.9 (6m) → 41.9 (3m) → -18.7 (2m) → -18.7 (1m) → -18.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (GAAP): 71.3 (12m) → 74.0 (9m) → 78.7 (6m) → 41.6 (3m) → -18.8 (2m) → -18.8 (1m) → -19.0 (latest); worsening (crossed zero) (12m→latest)  [data ≥ 2026-07-21 · export date unverified] [14]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [33]:
   - NTM: TEV/REV 0.75 · TEV/EBITDA 89.30 · TEV/EBIT – · Price/Earnings – · PEG –
