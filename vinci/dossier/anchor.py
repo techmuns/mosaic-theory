@@ -930,18 +930,36 @@ def replace_valuation_fields(text: str, updates: dict[str, Any]) -> str:
     return out + "\n" if text.endswith("\n") and not out.endswith("\n") else out
 
 
+#: Hints the machine writes when it could NOT compute a recipe: an input absent (`unknown`) or
+#: unresolved (`ANCHOR_UNRESOLVED`). A placeholder records a data gap, never a judgment.
+_PLACEHOLDER_HINTS = frozenset({RECIPE_UNKNOWN, RECIPE_UNRESOLVED})
+
+
 def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list[str]]:
     """An operator's hand re-tag OUTRANKS the machine's fresh proposal. Returns (anchor, notes).
 
     The backfill recomputes ``recipe_hint``/``reason`` from EDGAR on every run, so AORT's,
     CNXC's and VITL's hand re-tags — each carrying a judgment the machine cannot derive
     ("leveraged residual", "forward-margin question") — were one backfill away from silently
-    vanishing. That was the queued overwrite defect; this closes it.
+    vanishing. That was the queued overwrite defect; this closes it. Since #670 assembly applies
+    the same rule, so this is the ONE rule for both paths that write an anchor.
 
     Provenance is NOT recorded on the block, so the rule is deliberately the conservative one:
-    ANY divergence from the committed hint keeps the COMMITTED value, rather than guessing which
+    ANY divergence from a committed RECIPE keeps the committed value, rather than guessing which
     side was human. The machine's proposal is reported, never applied — the tagger is propose-only
-    for the same reason.
+    for the same reason. Two things on the block are not recipes, and the rule does not keep them
+    (review of #670, both reproduced on the committed corpus):
+
+    * A PLACEHOLDER hint (``_PLACEHOLDER_HINTS``) is the machine saying it could not compute one.
+      Kept, it would outlive the data gap that wrote it — FUBO, ORKA and TECX sit committed as
+      `unknown`, and keeping it over a later R1 would print "own-history multiple missing" above
+      an anchor marked applicable. A real recipe IS still kept over a placeholder: NCNO went
+      `R2_NEEDED` → `unknown` on a data gap (07-23), and keeping `R2_NEEDED` there was right.
+    * A REASON under an unchanged recipe is the fresh run's. The branch that kept the committed
+      reason could not tell an operator's note from a machine refusal, and no operator note under
+      an unchanged recipe appears in the committed history — while NFLX and V carry the machine's
+      "R1 inputs incomplete", which a later run finding a DIFFERENT cause would have kept on the
+      page. A reason does not outlive the state (review of #534) or the cause it described.
 
     Only the RECIPE is preserved. Every computed VALUE (margin, multiple, the bridge, the base)
     refreshes normally: a re-tag is a judgment about which recipe fits, not a freeze on the
@@ -952,25 +970,18 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
     if old is None:
         return new, notes
     updates: dict[str, Any] = {}
-    if old.recipe_hint and old.recipe_hint != new.recipe_hint:
+    if (old.recipe_hint and old.recipe_hint not in _PLACEHOLDER_HINTS
+            and old.recipe_hint != new.recipe_hint):
         updates["recipe_hint"] = old.recipe_hint
         updates["reason"] = old.reason
-        notes.append(f"PRESERVED operator recipe_hint {old.recipe_hint!r} "
+        notes.append(f"PRESERVED committed recipe_hint {old.recipe_hint!r} "
                      f"(machine proposed {new.recipe_hint!r}) — reason kept verbatim")
-    elif old.reason and old.reason != new.reason and old.applicable == new.applicable:
-        updates["reason"] = old.reason
-        notes.append(f"PRESERVED operator reason under the same hint {old.recipe_hint!r}")
+    elif old.recipe_hint != new.recipe_hint:
+        notes.append(f"REPLACED placeholder {old.recipe_hint!r} with this run's "
+                     f"{new.recipe_hint!r} — a data gap is not a recipe")
     elif old.reason and old.reason != new.reason:
-        # A REASON DOES NOT OUTLIVE THE STATE IT DESCRIBED (review of #534). This branch exists to
-        # keep an OPERATOR's judgment, but it cannot tell one from a machine refusal — so when an
-        # anchor that was refusing becomes applicable, the old text was a description of the
-        # refusal and is now false. GOOGL and NFLX both gained a base (196.01 / 58.17, confidence
-        # "firm") while keeping "R1 inputs incomplete — see per-input source stamps", and the
-        # renderer prints the reason unconditionally: a refusal sentence under a table stating the
-        # anchor applies. Applicability CHANGED, so the fresh reason wins and the drop is reported.
-        notes.append(
-            f"DROPPED stale reason {old.reason!r} — it described applicable={old.applicable} and "
-            f"this run is applicable={new.applicable}; a reason never outlives its own state")
+        notes.append(f"REFRESHED reason under {new.recipe_hint!r} — was {old.reason!r} "
+                     f"(applicable={old.applicable} → {new.applicable})")
     fresh_detail = new.data_quality_detail or []
     dropped = [d for d in (old.data_quality_detail or []) if d not in fresh_detail]
     if dropped:

@@ -18,10 +18,12 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, TypeVar
 
+from pydantic import ValidationError
+
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
 from vinci.dossier import flags as dossier_flags
-from vinci.dossier.anchor import RECIPE_UNKNOWN, Anchor, compute_anchor
+from vinci.dossier.anchor import RECIPE_UNKNOWN, Anchor, compute_anchor, preserve_operator_tag
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.covenant_extract import (
     covenant_digest,
@@ -631,17 +633,77 @@ def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
         "letting the artifact pass commit blank blocks over good ones.")
 
 
-def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
+def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
+    """A RE-ASSEMBLY KEEPS THE COMMITTED RECIPE — this build's own proposal is SHOWN, never applied.
+
+    FOUR HAND RE-TAGS ON RECORD, AND THE NEXT RE-ASSEMBLY ERASED EVERY ONE. This path computed the
+    anchor fresh and wrote it straight over the committed block, so a re-tag lasted only until the
+    name was rebuilt: AORT's `R2_NEEDED` (07-21) was gone on 07-23, CNXC's `R1_NOT_ROBUST` and
+    VITL's `R2_NEEDED` (both 07-21) on 07-22, and GOOGL's `R3_forward_pe` (09-01 — the fund's
+    first confirmed position) went back to R1 in the 09-18 artifact pass (#631). `anchor-backfill`
+    has kept re-tags since July; this was the other write path, and it never did. The cost reached
+    the scenario gate: `check_tier_agreement` refuses an R3 record against an R1 hint, so GOOGL's
+    own confirmed record could no longer be superseded.
+
+    ONE RULE FOR BOTH WRITE PATHS — `preserve_operator_tag`, the backfill's, not a second variant
+    here to drift from it. Its limit comes with it: provenance is not recorded on the block, so ANY
+    divergence from a committed RECIPE keeps it, the machine's included — but a placeholder
+    (`unknown`, `ANCHOR_UNRESOLVED`) is a data gap and never kept, and under an unchanged recipe
+    the reason is always this build's (review of #670). Keeping a recipe is the tagger's own
+    contract (it proposes, it never writes), and it is why the divergence is written as a CAVEAT
+    rather than left in the log: once the build stops applying its proposal, a name drifting across
+    a recipe boundary is noticed only if the page says so. Not on the QA hide-list, on purpose — a
+    wrong recipe is invisible in the arithmetic it produces.
+
+    GATED ON THE COMMITTED FILE, like the two refusals beside it: no file, or one that is not JSON,
+    holds no recipe to keep. A readable file whose anchor block does not VALIDATE is refused —
+    writing over a recipe this build cannot read is the incident itself, reached another way."""
+    fresh = dossier.anchor
+    existing = folder / "dossier.json"
+    if fresh is None or not existing.exists():
+        return dossier
+    try:
+        raw = json.loads(existing.read_text())
+    except (OSError, ValueError):
+        return dossier  # an unreadable prior file is not evidence of a recipe to keep
+    block = raw.get("anchor") if isinstance(raw, dict) else None
+    if block is None:
+        return dossier
+    try:
+        committed = Anchor.model_validate(block)
+    except ValidationError as exc:
+        raise DossierAssemblyError(
+            f"{dossier.ticker}: the committed dossier's anchor block does not validate "
+            f"({exc.error_count()} error(s)) — writing would replace a recipe this build cannot "
+            "read, which is how four hand re-tags were lost. Repair the committed block first."
+        ) from exc
+    # Decided on the STRUCTURED result, never on the notes' wording: the notes are console text
+    # written for the backfill, and one of them reports data-quality churn that is not a recipe.
+    kept, _notes = preserve_operator_tag(committed, fresh)
+    if kept.recipe_hint == fresh.recipe_hint:
+        return dossier  # the rule keeps only a RECIPE, and none was kept over this build's own
+    caveat = (f"Recipe kept from the committed dossier: {kept.recipe_hint}. This build's own "
+              f"read proposes {fresh.recipe_hint} — a recipe changes only by hand, so review "
+              "whether the committed one still fits this name.")
+    if fresh.reason and fresh.reason != kept.reason:
+        caveat += f" This build's own reason: {fresh.reason}"
+    return dossier.model_copy(update={"anchor": kept, "caveats": [*dossier.caveats, caveat]})
+
+
+def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Dossier:
+    """Persist one dossier and RETURN WHAT WAS WRITTEN — which can differ from what was passed in,
+    because the committed recipe outranks this build's proposal (`_keep_committed_recipe`)."""
     folder = out_root / dossier.ticker
     _refuse_synthesis_overwrite(dossier, folder)
     _refuse_degraded_drawdown_overwrite(dossier, folder)
+    dossier = _keep_committed_recipe(dossier, folder)
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "dossier.json").write_text(dossier_json(dossier))
     (folder / "dossier.md").write_text(
         render_markdown(dossier, card=_read_scenario_card(dossier.ticker),
                         dossiers_root=folder.parent))
     (folder / "llm_call.log").write_text(llm_log or "(no LLM call — synthesis skipped)")
-    return folder
+    return dossier
 
 
 
@@ -1056,8 +1118,7 @@ def assemble_one(
         # that actually produced it, not claim whichever one the re-render happens to sit next to.
         price_store=_price_store_stamp(cfg),
     )
-    _write(dossier, llm_log, out_root)
-    return dossier
+    return _write(dossier, llm_log, out_root)
 
 
 def assemble_cohort(

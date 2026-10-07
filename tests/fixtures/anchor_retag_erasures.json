@@ -1,0 +1,482 @@
+{
+  "_provenance": "Verbatim `anchor` blocks from git: for each name, the committed block immediately before the re-assembly that erased its hand re-tag, and the block that re-assembly wrote. Extracted 2026-10-07 from main @4ab4de36 history; both blocks validate under the current Anchor schema.",
+  "AORT": {
+    "committed_at": "b2a5f5b5",
+    "rebuilt_at": "28baa8f5",
+    "rebuilt_subject": "2026-07-23 data: re-assemble 10 names on the event-study package (daily perf + detector params + 8.01 labels) + STATE",
+    "committed": {
+      "recipe_hint": "R2_NEEDED",
+      "applicable": true,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-20T17:11:31.264475Z",
+      "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
+      "data_quality": null,
+      "data_quality_detail": [
+        "[re-audited 2026-07-21: the flag was a DURATION artifact, not a partial tag — EDGAR stamps quarterly points inside a 10-K with fp=\"FY\", and the guard compared tags WITHOUT filtering to a ~365-day span, so a 90-day quarter was read as the year. At matched FY duration the candidate tags agree and no conflict exists. Committed margin value is UNCHANGED at stored precision (verified before/after); only the flag and the confidence move.] AORT note: the flag's PROTECTIVE work was real even though its mechanism label was wrong — the bad short-duration denominator did corrupt the original anchor, so capping it was correct; the recorded cause is what is being corrected here."
+      ],
+      "margin": {
+        "value": 0.038721,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY",
+        "anchor_years": 10,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 32.106241,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 42,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 22.458,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts dep_amort (combined)"
+      },
+      "net_debt": {
+        "value": 202.393,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 215 + finance leases 4 + operating leases 39 − cash 56 ($M)"
+      },
+      "diluted_shares": {
+        "value": 49731000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 458.689,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "anchor_base_value_per_share": 21.8954,
+      "anchor_ev_ebit": 72.7036,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "R1_midcycle_margin_evebitda",
+      "applicable": true,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-23T12:04:57.022908Z",
+      "reason": null,
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": {
+        "value": 0.038721,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY",
+        "anchor_years": 10,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 32.106241,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 42,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 22.458,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
+      },
+      "net_debt": {
+        "value": 202.393,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 215 + finance leases 4 + operating leases 39 − cash 56 ($M)"
+      },
+      "diluted_shares": {
+        "value": 49731000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 458.689,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 0.839,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": 21.8954,
+      "anchor_ev_ebit": 72.7036,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  },
+  "CNXC": {
+    "committed_at": "b2a5f5b5",
+    "rebuilt_at": "5d663ea3",
+    "rebuilt_subject": "2026-07-22 data: re-assemble BRBR/CNXC/EPAM/NCNO/SMPL on the recovered releases + STATE",
+    "committed": {
+      "recipe_hint": "R1_NOT_ROBUST",
+      "applicable": true,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-20T19:57:26.035434Z",
+      "reason": "leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value.",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": {
+        "value": 0.065422,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 7 FY",
+        "anchor_years": 7,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 6.888432,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 23,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 660.433,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR Depreciation + AmortizationOfIntangibleAssets (split, FY2025)"
+      },
+      "net_debt": {
+        "value": 5248.695,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 4,585 + finance leases 0 + operating leases 919 − cash 256 ($M)"
+      },
+      "diluted_shares": {
+        "value": 61078000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 9953.94,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "anchor_base_value_per_share": 61.9935,
+      "anchor_ev_ebit": 13.8745,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "R1_midcycle_margin_evebitda",
+      "applicable": true,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-22T12:43:26.656655Z",
+      "reason": null,
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": {
+        "value": 0.065422,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 7 FY",
+        "anchor_years": 7,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 6.888432,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 23,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 660.433,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR Depreciation + AmortizationOfIntangibleAssets (split, FY2025)"
+      },
+      "net_debt": {
+        "value": 5248.695,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 4,585 + finance leases 0 + operating leases 919 − cash 256 ($M)"
+      },
+      "diluted_shares": {
+        "value": 61078000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 9999.042,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 572.471,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": 62.3263,
+      "anchor_ev_ebit": 13.843,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  },
+  "VITL": {
+    "committed_at": "b2a5f5b5",
+    "rebuilt_at": "4a4e00ee",
+    "rebuilt_subject": "2026-07-22 data: re-assemble 9 names on the direction/guidance/marker fix + STATE",
+    "committed": {
+      "recipe_hint": "R2_NEEDED",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-20T19:57:26.121380Z",
+      "reason": "trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted.",
+      "data_quality": "band_incoherent+band_unreconciled",
+      "data_quality_detail": [
+        "own_history multiple: band_incoherent - CIQ Financials->Multiples implies D&A of 328.8 ($M) against 9.254 recorded (35.5x), outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure. SOURCE LAYERS: implied 328.8 = (TEV/LTM Total Revenue 0.743744 x LTM revenue 784.41) / TEV/LTM EBITDA 1.484275, all from the Multiples sheet, 2026-07-17 column; recorded 9.254 = EDGAR companyfacts dep_amort, latest FY. The CIQ Cash Flow LTM figure for the same item is 15.212 - the two recorded layers differ by period and source, and the finding holds against either (35.5x and 21.6x).",
+        "own_history multiple: band_unreconciled - market-implied EBITDA 340.0 against 73.5 recorded (4.62x), outside the 2.5x band. TEV 504.7 (CIQ market cap 479.5 as-of 2026-06-29 + EDGAR lease-inclusive net debt 25.2) / current multiple 1.484275.",
+        "ROOT CAUSE (2026-07-21, reproducible): the TEV/LTM EBITDA row is populated against a RENT-ADJUSTED denominator, not EBITDA. Backing the denominator out of the sheet's own TEV gives 393.1 against the Income Statement's EBITDAR of 390.5 (1.007x) and its EBITDA of 79.5 (4.94x); the same ~1.0x-to-EBITDAR relation holds across the four most recent columns. VITL carries an imputed operating-lease charge of ~$311M against $79M of EBITDA, which is why the distortion is so large on this name. The TEV/LTM EBIT row is unaffected (EBIT takes no rent add-back) and reconciles to EDGAR's $64.272M exactly.",
+        "CONSEQUENCE: valuation.own_history.median 4.198793x is derived from this series, so the R1 anchor base of $4.7561 that stood until 2026-07-21 is WITHDRAWN, not merely downgraded."
+      ],
+      "margin": {
+        "value": 0.060239,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 8 FY",
+        "anchor_years": 8,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 4.198793,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 24,
+        "confidence": "weak"
+      },
+      "d_and_a": {
+        "value": 9.254,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts dep_amort (combined)"
+      },
+      "net_debt": {
+        "value": 25.195,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 8 + finance leases 9 + operating leases 45 − cash 37 ($M)"
+      },
+      "diluted_shares": {
+        "value": 44587704.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 784.41,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": "weak",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "R1_midcycle_margin_evebitda",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-22T15:02:38.183042Z",
+      "reason": "own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced",
+      "data_quality": "band_incoherent+band_unreconciled",
+      "data_quality_detail": [
+        "own_history multiple: band_incoherent (periodicity quarterly)",
+        "Multiples sheet implies D&A of 328.8 against 9.3 recorded (35.5x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure",
+        "market-implied EBITDA 340.0 vs 73.5 recorded (4.62x) — outside the 2.5x band. TEV 504.7 (market cap 479.5 + net debt 25.2) ÷ current multiple 1.484x"
+      ],
+      "margin": {
+        "value": 0.060239,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 8 FY",
+        "anchor_years": 8,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 4.198793,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 24,
+        "confidence": "weak"
+      },
+      "d_and_a": {
+        "value": 9.254,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
+      },
+      "net_debt": {
+        "value": 25.195,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 8 + finance leases 9 + operating leases 45 − cash 37 ($M)"
+      },
+      "diluted_shares": {
+        "value": 44587704.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 784.41,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": -48.235,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": "weak",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  },
+  "GOOGL": {
+    "committed_at": "c005449f",
+    "rebuilt_at": "0251f4cb",
+    "rebuilt_subject": "2026-09-18 Artifact pass: PARR, AMZN and WLK committed; 9 pages re-assembled; 7 refused loud (#631)",
+    "committed": {
+      "recipe_hint": "R3_forward_pe",
+      "applicable": true,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-08-31T13:29:33.345933Z",
+      "reason": "OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+      "data_quality": "vendor_bridge",
+      "data_quality_detail": [
+        "vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag"
+      ],
+      "margin": {
+        "value": 0.262717,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 9 FY",
+        "anchor_years": 9,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 17.365283,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 37,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 25536.0,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) [Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls sha c105755a5f]"
+      },
+      "net_debt": {
+        "value": 64880.0,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 100,164 + finance leases 2,590 + operating leases 18,037 − cash 55,911 ($M)"
+      },
+      "diluted_shares": {
+        "value": 12309000000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 445866.0,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 73266.0,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": 196.0087,
+      "anchor_ev_ebit": 21.1509,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "R1_midcycle_margin_evebitda",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-09-17T19:25:51.917458Z",
+      "reason": "R1 inputs incomplete — see per-input source stamps",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": {
+        "value": 0.262717,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 9 FY",
+        "anchor_years": 9,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 17.365283,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 37,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": null,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "UNKNOWN — no D&A tag (combined or split)"
+      },
+      "net_debt": {
+        "value": 64880.0,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 100,164 + finance leases 2,590 + operating leases 18,037 − cash 55,911 ($M)"
+      },
+      "diluted_shares": {
+        "value": 12309000000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 445866.0,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 73266.0,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  }
+}

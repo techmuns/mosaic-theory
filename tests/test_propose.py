@@ -159,16 +159,17 @@ def test_a_supplied_none_is_refused_with_the_reason_it_was_not_proposed() -> Non
 # --- the recipe/tier disagreement, which has a live case ----------------------------------------
 
 
-def test_a_dossier_record_recipe_disagreement_refuses_and_aort_is_the_live_case() -> None:
-    """AORT ON DAY ONE. Its dossier reads `recipe_hint: R1_midcycle_margin_evebitda`,
-    `applicable: True`, while its committed record is R2 (`tier: B`). The record governs — but a
-    silent disagreement is how a record acquires the wrong arithmetic, so the write stops."""
-    if (DOSS / "AORT").is_dir():
-        aort = _doc("AORT")
-        assert (aort.get("anchor") or {}).get("recipe_hint") == "R1_midcycle_margin_evebitda", (
-            "AORT no longer carries the hint this pin was built on — re-check the live case")
-        with pytest.raises(ProposalRefusedError, match="disagrees"):
-            check_tier_agreement(aort, "R2_terminal_margin")
+def test_a_dossier_record_recipe_disagreement_refuses() -> None:
+    """A dossier reading `R1_midcycle_margin_evebitda` beside a committed R2 record: the record
+    governs, but a silent disagreement is how a record acquires the wrong arithmetic, so the write
+    stops.
+
+    AORT WAS THE LIVE CASE, AND IT WAS NEVER A REAL DISAGREEMENT (#670). Its dossier read R1
+    because the 07-23 re-assembly had erased its hand `R2_NEEDED` re-tag; restored, dossier and
+    record agree. The pin stood on the erasure, so the refusal is pinned on its own shape here."""
+    with pytest.raises(ProposalRefusedError, match="disagrees"):
+        check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda"}},
+                             "R2_terminal_margin")
     check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda"}},
                          "R1_midcycle_margin_evebitda")
     with pytest.raises(ProposalRefusedError, match="R2_NEEDED"):
@@ -206,15 +207,19 @@ def test_a_zero_anchor_does_not_silently_accept_everything() -> None:
 
 
 def test_applicable_false_is_a_disagreement_and_vitl_is_the_second_live_case() -> None:
-    """VITL, MISSED BY THE FIRST CUT. It carries `recipe_hint: R1_midcycle_margin_evebitda` with
-    `applicable: False` — the dossier declining that recipe for this name (EBITDA dispersion 263.7%,
-    so it routes two-ratio). Checking only the hint STRING waved it through."""
+    """VITL, MISSED BY THE FIRST CUT. Its dossier declines R1 for this name (EBITDA dispersion
+    263.7%, so it routes two-ratio), and checking only the hint STRING waved an R1 record through.
+
+    THE CORPUS HALF ASKS WHAT HOLDS EITHER WAY (#670). VITL read `R1` + `applicable: False` only
+    because the 07-22 re-assembly erased its hand `R2_NEEDED` re-tag; restored, the refusal comes
+    from the recipe instead. An R1 record on VITL is refused in both states, so that is the corpus
+    pin, and the `applicable=False` branch is pinned on its own shape."""
     if (DOSS / "VITL").is_dir():
-        vitl = _doc("VITL")
-        assert (vitl.get("anchor") or {}).get("applicable") is False, (
-            "VITL is no longer applicable=False — re-check this live case")
-        with pytest.raises(ProposalRefusedError, match="applicable=False"):
-            check_tier_agreement(vitl, "R1_midcycle_margin_evebitda")
+        with pytest.raises(ProposalRefusedError):
+            check_tier_agreement(_doc("VITL"), "R1_midcycle_margin_evebitda")
+    with pytest.raises(ProposalRefusedError, match="applicable=False"):
+        check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda",
+                                         "applicable": False}}, "R1_midcycle_margin_evebitda")
     check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda",
                                      "applicable": True}}, "R1_midcycle_margin_evebitda")
 
