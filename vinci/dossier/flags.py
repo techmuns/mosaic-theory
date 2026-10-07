@@ -77,6 +77,7 @@ _REVOICE_WHERE: dict[str, str] = {
     "UNRECONCILED": "Unreconciled margin-compression",
     "PEER-COMP-BARE": "Bare peer-comparison",
     "HETEROGENEOUS-BENCHMARK": "Heterogeneous-peer benchmark",
+    "GAAP-EPS-MOMENTUM": "GAAP-EPS move that normalized EPS did not make",
 }
 # token → replacement lead, for caveats without a `{where}:` field (the two FALSE-BALANCE variants).
 _REVOICE_PLAIN: dict[str, str] = {

@@ -1,0 +1,1770 @@
+{
+ "provenance": "data/dossiers/<T>/dossier.json at main bc3954c2 (2026-10-07): synthesis claims verbatim, and forward_consensus EPS (GAAP) / EPS Normalized paths. FROZEN — the live pages re-draw their prose on re-assembly; this file does not.",
+ "cases": {
+  "AMZN": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 7.57
+      },
+      {
+       "months_ago": 12,
+       "value": 7.54
+      },
+      {
+       "months_ago": 9,
+       "value": 7.81
+      },
+      {
+       "months_ago": 6,
+       "value": 7.73
+      },
+      {
+       "months_ago": 3,
+       "value": 8.02
+      },
+      {
+       "months_ago": 2,
+       "value": 8.23
+      },
+      {
+       "months_ago": 1,
+       "value": 8.23
+      },
+      {
+       "months_ago": 0,
+       "value": 8.31
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 9.48
+      },
+      {
+       "months_ago": 12,
+       "value": 9.14
+      },
+      {
+       "months_ago": 9,
+       "value": 9.42
+      },
+      {
+       "months_ago": 6,
+       "value": 9.37
+      },
+      {
+       "months_ago": 3,
+       "value": 9.89
+      },
+      {
+       "months_ago": 2,
+       "value": 10.39
+      },
+      {
+       "months_ago": 1,
+       "value": 10.44
+      },
+      {
+       "months_ago": 0,
+       "value": 10.47
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 11.38
+      },
+      {
+       "months_ago": 12,
+       "value": 10.74
+      },
+      {
+       "months_ago": 9,
+       "value": 12.21
+      },
+      {
+       "months_ago": 6,
+       "value": 11.72
+      },
+      {
+       "months_ago": 3,
+       "value": 12.58
+      },
+      {
+       "months_ago": 2,
+       "value": 13.17
+      },
+      {
+       "months_ago": 1,
+       "value": 13.25
+      },
+      {
+       "months_ago": 0,
+       "value": 13.27
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 7.58
+      },
+      {
+       "months_ago": 12,
+       "value": 7.56
+      },
+      {
+       "months_ago": 9,
+       "value": 7.82
+      },
+      {
+       "months_ago": 6,
+       "value": 7.75
+      },
+      {
+       "months_ago": 3,
+       "value": 8.69
+      },
+      {
+       "months_ago": 2,
+       "value": 12.65
+      },
+      {
+       "months_ago": 1,
+       "value": 12.89
+      },
+      {
+       "months_ago": 0,
+       "value": 12.89
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 9.46
+      },
+      {
+       "months_ago": 12,
+       "value": 9.15
+      },
+      {
+       "months_ago": 9,
+       "value": 9.48
+      },
+      {
+       "months_ago": 6,
+       "value": 9.45
+      },
+      {
+       "months_ago": 3,
+       "value": 9.99
+      },
+      {
+       "months_ago": 2,
+       "value": 10.48
+      },
+      {
+       "months_ago": 1,
+       "value": 10.5
+      },
+      {
+       "months_ago": 0,
+       "value": 10.53
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 11.38
+      },
+      {
+       "months_ago": 12,
+       "value": 10.74
+      },
+      {
+       "months_ago": 9,
+       "value": 11.33
+      },
+      {
+       "months_ago": 6,
+       "value": 11.73
+      },
+      {
+       "months_ago": 3,
+       "value": 13.02
+      },
+      {
+       "months_ago": 2,
+       "value": 13.75
+      },
+      {
+       "months_ago": 1,
+       "value": 13.75
+      },
+      {
+       "months_ago": 0,
+       "value": 14.11
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bull_point",
+     "On the peer-vs-name fundamentals the name shows superior EBITDA growth (25% vs 16% peer median) and higher LT EPS growth (21% vs 13%) while carrying lower leverage (Debt/EBITDA 1.3 vs 1.6) — the inputs for asking whether any peer discount is residual overshoot rather than earned."
+    ],
+    [
+     "bull_point",
+     "Consensus FY26E EBITDA path has risen net +8% over 12 months (to $216,790.9M) and FY26E GAAP EPS +71%, with GAAP-EPS breadth 3↑/0↓ last month — estimate momentum is upward."
+    ],
+    [
+     "bear_point",
+     "The low trailing EV/EBITDA (14.9x, ~3rd percentile of its own 9-year range) is largely OPTICAL, not a cheapness signal: the trailing P/LTM EPS of 19.8x rests on LTM net income inflated by +$81,812M of below-operating-line items across the trailing four quarters (Q2-26 alone +$53,396M, 66% of pre-tax), so the trailing denominator is not an operating anchor."
+    ]
+   ]
+  },
+  "AORT": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 0.65
+      },
+      {
+       "months_ago": 12,
+       "value": 0.86
+      },
+      {
+       "months_ago": 9,
+       "value": 0.84
+      },
+      {
+       "months_ago": 6,
+       "value": 0.84
+      },
+      {
+       "months_ago": 3,
+       "value": 0.81
+      },
+      {
+       "months_ago": 2,
+       "value": 0.49
+      },
+      {
+       "months_ago": 1,
+       "value": 0.44
+      },
+      {
+       "months_ago": 0,
+       "value": 0.44
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 1.03
+      },
+      {
+       "months_ago": 9,
+       "value": 1.07
+      },
+      {
+       "months_ago": 6,
+       "value": 1.07
+      },
+      {
+       "months_ago": 3,
+       "value": 1.16
+      },
+      {
+       "months_ago": 2,
+       "value": 0.77
+      },
+      {
+       "months_ago": 1,
+       "value": 0.72
+      },
+      {
+       "months_ago": 0,
+       "value": 0.72
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 1.55
+      },
+      {
+       "months_ago": 9,
+       "value": 1.61
+      },
+      {
+       "months_ago": 6,
+       "value": 1.56
+      },
+      {
+       "months_ago": 3,
+       "value": 1.42
+      },
+      {
+       "months_ago": 2,
+       "value": 1.19
+      },
+      {
+       "months_ago": 1,
+       "value": 1.22
+      },
+      {
+       "months_ago": 0,
+       "value": 1.14
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 0.4
+      },
+      {
+       "months_ago": 12,
+       "value": 0.45
+      },
+      {
+       "months_ago": 9,
+       "value": 0.4
+      },
+      {
+       "months_ago": 6,
+       "value": 0.45
+      },
+      {
+       "months_ago": 3,
+       "value": 0.36
+      },
+      {
+       "months_ago": 2,
+       "value": 0.14
+      },
+      {
+       "months_ago": 1,
+       "value": 0.1
+      },
+      {
+       "months_ago": 0,
+       "value": 0.08
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 0.65
+      },
+      {
+       "months_ago": 9,
+       "value": 0.61
+      },
+      {
+       "months_ago": 6,
+       "value": 0.67
+      },
+      {
+       "months_ago": 3,
+       "value": 0.75
+      },
+      {
+       "months_ago": 2,
+       "value": 0.45
+      },
+      {
+       "months_ago": 1,
+       "value": 0.41
+      },
+      {
+       "months_ago": 0,
+       "value": 0.41
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 0.92
+      },
+      {
+       "months_ago": 9,
+       "value": 0.97
+      },
+      {
+       "months_ago": 6,
+       "value": 0.94
+      },
+      {
+       "months_ago": 3,
+       "value": 0.84
+      },
+      {
+       "months_ago": 2,
+       "value": 0.84
+      },
+      {
+       "months_ago": 1,
+       "value": 0.8
+      },
+      {
+       "months_ago": 0,
+       "value": 0.79
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bear_point",
+     "Consensus FY26 estimates collapsed across the board: GAAP EPS -82% (0.45→0.08), EBT (GAAP) -79%, EBIT -36% over the 12m→latest path — the forward earnings base is being marked down hard, the REAL signal in the depressed P/E, not an optical artifact."
+    ],
+    [
+     "decisive.against",
+     "FY26 consensus GAAP EPS fell 82% (0.45→0.08) and adjusted-EBITDA guide was re-cut to $92–99M by August, a durable downward re-rating of the forward base."
+    ]
+   ]
+  },
+  "CNXC": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 12.72
+      },
+      {
+       "months_ago": 12,
+       "value": 12.45
+      },
+      {
+       "months_ago": 9,
+       "value": 12.33
+      },
+      {
+       "months_ago": 6,
+       "value": 12.17
+      },
+      {
+       "months_ago": 3,
+       "value": 11.71
+      },
+      {
+       "months_ago": 2,
+       "value": 11.71
+      },
+      {
+       "months_ago": 1,
+       "value": 11.71
+      },
+      {
+       "months_ago": 0,
+       "value": 11.2
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 12.97
+      },
+      {
+       "months_ago": 9,
+       "value": 13.98
+      },
+      {
+       "months_ago": 6,
+       "value": 13.32
+      },
+      {
+       "months_ago": 3,
+       "value": 12.84
+      },
+      {
+       "months_ago": 2,
+       "value": 12.84
+      },
+      {
+       "months_ago": 1,
+       "value": 12.84
+      },
+      {
+       "months_ago": 0,
+       "value": 11.89
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 6.4
+      },
+      {
+       "months_ago": 12,
+       "value": 5.6
+      },
+      {
+       "months_ago": 9,
+       "value": 5.46
+      },
+      {
+       "months_ago": 6,
+       "value": 5.4
+      },
+      {
+       "months_ago": 3,
+       "value": 4.0
+      },
+      {
+       "months_ago": 2,
+       "value": 4.0
+      },
+      {
+       "months_ago": 1,
+       "value": 4.0
+      },
+      {
+       "months_ago": 0,
+       "value": 3.19
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 6,
+       "value": 7.27
+      },
+      {
+       "months_ago": 3,
+       "value": 6.74
+      },
+      {
+       "months_ago": 2,
+       "value": 6.74
+      },
+      {
+       "months_ago": 1,
+       "value": 6.74
+      },
+      {
+       "months_ago": 0,
+       "value": 6.04
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bear_point",
+     "Forward estimates are being cut hard, not just optically: FY26 EBITDA consensus -10% and GAAP EPS -43% (12m→latest), with FQ3/FQ4 revisions running 0 up / 3 down across revenue, EBITDA and EBIT — the direction of travel is real deterioration, not a stale trailing print."
+    ],
+    [
+     "decisive.against",
+     "FY26 GAAP EPS consensus has been cut -43% and EBITDA -10% (12m→latest), the forward path management's optimism must overcome."
+    ]
+   ]
+  },
+  "WERN": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 2.13
+      },
+      {
+       "months_ago": 12,
+       "value": 1.16
+      },
+      {
+       "months_ago": 9,
+       "value": 0.89
+      },
+      {
+       "months_ago": 6,
+       "value": 0.74
+      },
+      {
+       "months_ago": 3,
+       "value": 0.94
+      },
+      {
+       "months_ago": 2,
+       "value": 0.95
+      },
+      {
+       "months_ago": 1,
+       "value": 1.04
+      },
+      {
+       "months_ago": 0,
+       "value": 1.07
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 3.28
+      },
+      {
+       "months_ago": 12,
+       "value": 1.8
+      },
+      {
+       "months_ago": 9,
+       "value": 1.58
+      },
+      {
+       "months_ago": 6,
+       "value": 1.73
+      },
+      {
+       "months_ago": 3,
+       "value": 1.93
+      },
+      {
+       "months_ago": 2,
+       "value": 1.98
+      },
+      {
+       "months_ago": 1,
+       "value": 2.13
+      },
+      {
+       "months_ago": 0,
+       "value": 2.18
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 6,
+       "value": 2.0
+      },
+      {
+       "months_ago": 3,
+       "value": 2.66
+      },
+      {
+       "months_ago": 2,
+       "value": 2.8
+      },
+      {
+       "months_ago": 1,
+       "value": 3.26
+      },
+      {
+       "months_ago": 0,
+       "value": 3.27
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 2.0
+      },
+      {
+       "months_ago": 12,
+       "value": 1.17
+      },
+      {
+       "months_ago": 9,
+       "value": 0.9
+      },
+      {
+       "months_ago": 6,
+       "value": 0.71
+      },
+      {
+       "months_ago": 3,
+       "value": 0.73
+      },
+      {
+       "months_ago": 2,
+       "value": 0.77
+      },
+      {
+       "months_ago": 1,
+       "value": 0.87
+      },
+      {
+       "months_ago": 0,
+       "value": 0.83
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 1.65
+      },
+      {
+       "months_ago": 9,
+       "value": 1.65
+      },
+      {
+       "months_ago": 6,
+       "value": 1.67
+      },
+      {
+       "months_ago": 3,
+       "value": 1.75
+      },
+      {
+       "months_ago": 2,
+       "value": 1.81
+      },
+      {
+       "months_ago": 1,
+       "value": 1.89
+      },
+      {
+       "months_ago": 0,
+       "value": 2.03
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bear_point",
+     "FY26 GAAP EPS consensus has been cut -29% (12m→latest, 1.17→0.83) and FY26 EBT -25%, so the trajectory the market is pricing has been marked down materially even as revenue estimates rose."
+    ],
+    [
+     "decisive.against",
+     "FY26 GAAP EPS consensus has been cut -29% (12m→latest) and the name still prints negative GAAP net income LTM (-$46.3M), so the earnings recovery remains a forecast, not a realized result."
+    ]
+   ]
+  },
+  "V": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 12.75
+      },
+      {
+       "months_ago": 12,
+       "value": 12.82
+      },
+      {
+       "months_ago": 9,
+       "value": 12.8
+      },
+      {
+       "months_ago": 6,
+       "value": 12.85
+      },
+      {
+       "months_ago": 3,
+       "value": 13.1
+      },
+      {
+       "months_ago": 2,
+       "value": 13.15
+      },
+      {
+       "months_ago": 1,
+       "value": 13.14
+      },
+      {
+       "months_ago": 0,
+       "value": 13.22
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 14.4
+      },
+      {
+       "months_ago": 12,
+       "value": 14.43
+      },
+      {
+       "months_ago": 9,
+       "value": 14.43
+      },
+      {
+       "months_ago": 6,
+       "value": 14.53
+      },
+      {
+       "months_ago": 3,
+       "value": 14.83
+      },
+      {
+       "months_ago": 2,
+       "value": 14.87
+      },
+      {
+       "months_ago": 1,
+       "value": 14.87
+      },
+      {
+       "months_ago": 0,
+       "value": 14.98
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 16.81
+      },
+      {
+       "months_ago": 12,
+       "value": 16.31
+      },
+      {
+       "months_ago": 9,
+       "value": 16.21
+      },
+      {
+       "months_ago": 6,
+       "value": 16.35
+      },
+      {
+       "months_ago": 3,
+       "value": 16.75
+      },
+      {
+       "months_ago": 2,
+       "value": 16.82
+      },
+      {
+       "months_ago": 1,
+       "value": 16.81
+      },
+      {
+       "months_ago": 0,
+       "value": 16.99
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 12.66
+      },
+      {
+       "months_ago": 12,
+       "value": 12.69
+      },
+      {
+       "months_ago": 9,
+       "value": 12.71
+      },
+      {
+       "months_ago": 6,
+       "value": 12.6
+      },
+      {
+       "months_ago": 3,
+       "value": 12.72
+      },
+      {
+       "months_ago": 2,
+       "value": 12.75
+      },
+      {
+       "months_ago": 1,
+       "value": 12.75
+      },
+      {
+       "months_ago": 0,
+       "value": 12.53
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 14.28
+      },
+      {
+       "months_ago": 12,
+       "value": 14.29
+      },
+      {
+       "months_ago": 9,
+       "value": 14.27
+      },
+      {
+       "months_ago": 6,
+       "value": 14.42
+      },
+      {
+       "months_ago": 3,
+       "value": 14.69
+      },
+      {
+       "months_ago": 2,
+       "value": 14.73
+      },
+      {
+       "months_ago": 1,
+       "value": 14.74
+      },
+      {
+       "months_ago": 0,
+       "value": 14.84
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 16.36
+      },
+      {
+       "months_ago": 12,
+       "value": 16.27
+      },
+      {
+       "months_ago": 9,
+       "value": 16.09
+      },
+      {
+       "months_ago": 6,
+       "value": 16.22
+      },
+      {
+       "months_ago": 3,
+       "value": 16.57
+      },
+      {
+       "months_ago": 2,
+       "value": 16.64
+      },
+      {
+       "months_ago": 1,
+       "value": 16.67
+      },
+      {
+       "months_ago": 0,
+       "value": 16.86
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bear_point",
+     "The premium is largely EARNED, not residual: name EBITDA margin 70% vs peer-median 29% and Debt/EBITDA 0.8x vs 3.8x — but growth is NO better (rev 14% vs 17%, EBITDA 14% vs 15%, LT EPS 13% vs 14%), so a quality-justified multiple leaves little residual cushion if growth merely matches peers."
+    ],
+    [
+     "bear_point",
+     "GAAP EPS revision breadth is negative (FY2026: 0 up / 16 down last month) and FY26 GAAP net income has been revised net -2% (12m→latest), a genuine near-term downgrade counter to the runway story."
+    ],
+    [
+     "decisive.against",
+     "On the fundamentals that justify a premium, the name's growth is NOT better than peers (rev 14% vs 17%, EBITDA 14% vs 15%, LT EPS 13% vs 14%) even though margin and leverage are far superior — leaving the premium resting on quality, not on a growth edge."
+    ],
+    [
+     "decisive.against",
+     "GAAP EPS revisions are net negative (FY26 0 up / 16 down last month; net income net -2% 12m→latest), a near-term downgrade against the compounding narrative."
+    ]
+   ]
+  },
+  "SMPL": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 2.16
+      },
+      {
+       "months_ago": 12,
+       "value": 2.02
+      },
+      {
+       "months_ago": 9,
+       "value": 1.89
+      },
+      {
+       "months_ago": 6,
+       "value": 1.95
+      },
+      {
+       "months_ago": 3,
+       "value": 1.61
+      },
+      {
+       "months_ago": 2,
+       "value": 1.65
+      },
+      {
+       "months_ago": 1,
+       "value": 1.64
+      },
+      {
+       "months_ago": 0,
+       "value": 1.65
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 2.34
+      },
+      {
+       "months_ago": 12,
+       "value": 2.2
+      },
+      {
+       "months_ago": 9,
+       "value": 2.09
+      },
+      {
+       "months_ago": 6,
+       "value": 2.19
+      },
+      {
+       "months_ago": 3,
+       "value": 1.74
+      },
+      {
+       "months_ago": 2,
+       "value": 1.77
+      },
+      {
+       "months_ago": 1,
+       "value": 1.68
+      },
+      {
+       "months_ago": 0,
+       "value": 1.71
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 2.4
+      },
+      {
+       "months_ago": 12,
+       "value": 2.34
+      },
+      {
+       "months_ago": 9,
+       "value": 2.22
+      },
+      {
+       "months_ago": 6,
+       "value": 2.33
+      },
+      {
+       "months_ago": 3,
+       "value": 1.91
+      },
+      {
+       "months_ago": 2,
+       "value": 1.89
+      },
+      {
+       "months_ago": 1,
+       "value": 1.81
+      },
+      {
+       "months_ago": 0,
+       "value": 1.86
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 1.83
+      },
+      {
+       "months_ago": 12,
+       "value": 1.7
+      },
+      {
+       "months_ago": 9,
+       "value": 1.64
+      },
+      {
+       "months_ago": 6,
+       "value": 1.65
+      },
+      {
+       "months_ago": 3,
+       "value": -0.06
+      },
+      {
+       "months_ago": 2,
+       "value": 0.35
+      },
+      {
+       "months_ago": 1,
+       "value": -1.7
+      },
+      {
+       "months_ago": 0,
+       "value": -1.7
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 1.98
+      },
+      {
+       "months_ago": 12,
+       "value": 1.83
+      },
+      {
+       "months_ago": 9,
+       "value": 1.88
+      },
+      {
+       "months_ago": 6,
+       "value": 1.92
+      },
+      {
+       "months_ago": 3,
+       "value": 1.47
+      },
+      {
+       "months_ago": 2,
+       "value": 1.53
+      },
+      {
+       "months_ago": 1,
+       "value": 1.61
+      },
+      {
+       "months_ago": 0,
+       "value": 1.61
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 2.16
+      },
+      {
+       "months_ago": 9,
+       "value": 1.96
+      },
+      {
+       "months_ago": 6,
+       "value": 2.04
+      },
+      {
+       "months_ago": 3,
+       "value": 1.66
+      },
+      {
+       "months_ago": 2,
+       "value": 1.66
+      },
+      {
+       "months_ago": 1,
+       "value": 1.85
+      },
+      {
+       "months_ago": 0,
+       "value": 1.85
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bear_point",
+     "GAAP-EPS delivery has been chronically weak — FY2025 GAAP-EPS surprise -36%, following -9% (FY24) and -42% (FY21) — a track record of missing its own trajectory."
+    ]
+   ]
+  },
+  "NCNO": {
+   "periods": [
+    "FY 2027",
+    "FY 2028",
+    "FY 2029"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 1.15
+      },
+      {
+       "months_ago": 12,
+       "value": 0.93
+      },
+      {
+       "months_ago": 9,
+       "value": 0.98
+      },
+      {
+       "months_ago": 6,
+       "value": 1.03
+      },
+      {
+       "months_ago": 3,
+       "value": 1.2
+      },
+      {
+       "months_ago": 2,
+       "value": 1.27
+      },
+      {
+       "months_ago": 1,
+       "value": 1.25
+      },
+      {
+       "months_ago": 0,
+       "value": 1.25
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 1.2
+      },
+      {
+       "months_ago": 9,
+       "value": 1.23
+      },
+      {
+       "months_ago": 6,
+       "value": 1.25
+      },
+      {
+       "months_ago": 3,
+       "value": 1.42
+      },
+      {
+       "months_ago": 2,
+       "value": 1.53
+      },
+      {
+       "months_ago": 1,
+       "value": 1.49
+      },
+      {
+       "months_ago": 0,
+       "value": 1.49
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2029",
+     "points": [
+      {
+       "months_ago": 3,
+       "value": 1.63
+      },
+      {
+       "months_ago": 2,
+       "value": 1.76
+      },
+      {
+       "months_ago": 1,
+       "value": 1.7
+      },
+      {
+       "months_ago": 0,
+       "value": 1.7
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": 0.26
+      },
+      {
+       "months_ago": 12,
+       "value": 0.01
+      },
+      {
+       "months_ago": 9,
+       "value": 0.06
+      },
+      {
+       "months_ago": 6,
+       "value": 0.06
+      },
+      {
+       "months_ago": 3,
+       "value": 0.28
+      },
+      {
+       "months_ago": 2,
+       "value": 0.34
+      },
+      {
+       "months_ago": 1,
+       "value": 0.35
+      },
+      {
+       "months_ago": 0,
+       "value": 0.35
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 12,
+       "value": 0.36
+      },
+      {
+       "months_ago": 9,
+       "value": 0.4
+      },
+      {
+       "months_ago": 6,
+       "value": 0.42
+      },
+      {
+       "months_ago": 3,
+       "value": 0.55
+      },
+      {
+       "months_ago": 2,
+       "value": 0.57
+      },
+      {
+       "months_ago": 1,
+       "value": 0.56
+      },
+      {
+       "months_ago": 0,
+       "value": 0.56
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2029",
+     "points": [
+      {
+       "months_ago": 3,
+       "value": 0.93
+      },
+      {
+       "months_ago": 2,
+       "value": 0.96
+      },
+      {
+       "months_ago": 1,
+       "value": 0.96
+      },
+      {
+       "months_ago": 0,
+       "value": 0.96
+      }
+     ]
+    }
+   ],
+   "claims": [
+    [
+     "bull_point",
+     "Consensus target price mean $23.36 / median $23.00 sits above the $20.23 close, and the rating skews Buy/Outperform with FY27 EPS revised net +34% over 12 months — analyst posture is constructive."
+    ]
+   ]
+  },
+  "ORKA": {
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "paths": [
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": -1.97
+      },
+      {
+       "months_ago": 12,
+       "value": -2.27
+      },
+      {
+       "months_ago": 9,
+       "value": -2.39
+      },
+      {
+       "months_ago": 6,
+       "value": -2.39
+      },
+      {
+       "months_ago": 3,
+       "value": -2.04
+      },
+      {
+       "months_ago": 2,
+       "value": -2.04
+      },
+      {
+       "months_ago": 1,
+       "value": -2.04
+      },
+      {
+       "months_ago": 0,
+       "value": -2.32
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": -2.16
+      },
+      {
+       "months_ago": 12,
+       "value": -1.97
+      },
+      {
+       "months_ago": 9,
+       "value": -2.82
+      },
+      {
+       "months_ago": 6,
+       "value": -2.7
+      },
+      {
+       "months_ago": 3,
+       "value": -2.46
+      },
+      {
+       "months_ago": 2,
+       "value": -2.46
+      },
+      {
+       "months_ago": 1,
+       "value": -2.49
+      },
+      {
+       "months_ago": 0,
+       "value": -2.83
+      }
+     ]
+    },
+    {
+     "metric": "EPS Normalized",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": -2.87
+      },
+      {
+       "months_ago": 12,
+       "value": -2.43
+      },
+      {
+       "months_ago": 9,
+       "value": -3.41
+      },
+      {
+       "months_ago": 6,
+       "value": -3.48
+      },
+      {
+       "months_ago": 3,
+       "value": -3.47
+      },
+      {
+       "months_ago": 2,
+       "value": -3.47
+      },
+      {
+       "months_ago": 1,
+       "value": -3.52
+      },
+      {
+       "months_ago": 0,
+       "value": -3.8
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2026",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": -2.29
+      },
+      {
+       "months_ago": 12,
+       "value": -2.56
+      },
+      {
+       "months_ago": 9,
+       "value": -2.64
+      },
+      {
+       "months_ago": 6,
+       "value": -2.58
+      },
+      {
+       "months_ago": 3,
+       "value": -2.19
+      },
+      {
+       "months_ago": 2,
+       "value": -2.19
+      },
+      {
+       "months_ago": 1,
+       "value": -2.2
+      },
+      {
+       "months_ago": 0,
+       "value": -2.4
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2027",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": -2.41
+      },
+      {
+       "months_ago": 12,
+       "value": -2.54
+      },
+      {
+       "months_ago": 9,
+       "value": -3.01
+      },
+      {
+       "months_ago": 6,
+       "value": -2.87
+      },
+      {
+       "months_ago": 3,
+       "value": -2.61
+      },
+      {
+       "months_ago": 2,
+       "value": -2.61
+      },
+      {
+       "months_ago": 1,
+       "value": -2.64
+      },
+      {
+       "months_ago": 0,
+       "value": -2.83
+      }
+     ]
+    },
+    {
+     "metric": "EPS (GAAP)",
+     "period": "FY 2028",
+     "points": [
+      {
+       "months_ago": 18,
+       "value": -3.05
+      },
+      {
+       "months_ago": 12,
+       "value": -3.03
+      },
+      {
+       "months_ago": 9,
+       "value": -3.6
+      },
+      {
+       "months_ago": 6,
+       "value": -3.61
+      },
+      {
+       "months_ago": 3,
+       "value": -3.6
+      },
+      {
+       "months_ago": 2,
+       "value": -3.6
+      },
+      {
+       "months_ago": 1,
+       "value": -3.65
+      },
+      {
+       "months_ago": 0,
+       "value": -3.69
+      }
+     ]
+    }
+   ],
+   "claims": []
+  }
+ }
+}

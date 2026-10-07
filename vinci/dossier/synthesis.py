@@ -26,6 +26,7 @@ from typing import Any, cast
 from vinci.dossier.schemas import (
     DecisiveQuestion,
     DrawAgreement,
+    ForwardConsensus,
     MechanicalLayer,
     OperatingDriversExtract,
     PrimarySource,
@@ -1589,6 +1590,22 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
     return out
 
 
+def _located_claims(synth: Synthesis) -> list[tuple[str, str]]:
+    """Every free-text claim the synthesis makes, with WHERE it sits — the field name a flag
+    reports. One enumeration for the claim-level lints, so two of them cannot cover different
+    fields."""
+    texts: list[tuple[str, str]] = []
+    if synth.evidence_balance:
+        texts.append(("evidence_balance", synth.evidence_balance))
+    texts += [("bull_point", p.claim) for p in synth.bull_points]
+    texts += [("bear_point", p.claim) for p in synth.bear_points]
+    texts += [("key_unknown", u) for u in synth.key_unknowns]
+    texts.append(("decisive_question", synth.decisive_question.question))
+    texts += [("decisive.for", p.claim) for p in synth.decisive_question.evidence_for]
+    texts += [("decisive.against", p.claim) for p in synth.decisive_question.evidence_against]
+    return texts
+
+
 def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
     """(P2) The durable guard this incident earns: flag a synthesis pending-claim ('not extracted',
     'must be read', …) whose SUBJECT is a mechanical block that IS present — the failure where a
@@ -1617,17 +1634,8 @@ def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
                    and "AGREES" in (ps.wall_coherence.value or ""))
     if not (covenant_present or maturity_present or quantified or gc_doubt or wall_agrees):
         return []
-    texts: list[tuple[str, str]] = []
-    if synth.evidence_balance:
-        texts.append(("evidence_balance", synth.evidence_balance))
-    texts += [("bull_point", p.claim) for p in synth.bull_points]
-    texts += [("bear_point", p.claim) for p in synth.bear_points]
-    texts += [("key_unknown", u) for u in synth.key_unknowns]
-    texts.append(("decisive_question", synth.decisive_question.question))
-    texts += [("decisive.for", p.claim) for p in synth.decisive_question.evidence_for]
-    texts += [("decisive.against", p.claim) for p in synth.decisive_question.evidence_against]
     flags: list[str] = []
-    for where, txt in texts:
+    for where, txt in _located_claims(synth):
         low = txt.lower()
         if _PENDING_RE.search(txt):  # (P2) pending-claim about a PRESENT block
             if covenant_present and _COVENANT_SUBJ.search(txt):
@@ -1646,4 +1654,98 @@ def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
         if wall_agrees and _WALL_DIVERGE_RE.search(txt):
             flags.append(f"CONTRADICTION ({where}): claims the wall/panel diverge — but the filing "
                          f"AGREES with the CIQ panel (same window). Claim: “{_snip(txt)}”")
+    return flags
+
+
+# --- GAAP-EPS momentum: a GAAP consensus move that operating EPS did not make ---------------------
+
+#: A claim that names GAAP EPS — 'GAAP EPS', 'GAAP-EPS', 'GAAP diluted EPS', 'EPS (GAAP)'. A bare
+#: 'EPS' is not enough: on CIQ's sheets the unqualified figure is the normalized one (NCNO's
+#: "FY27 EPS revised net +34%" is the normalized move, 0.93 → 1.25).
+_GAAP_EPS = re.compile(r"\bGAAP[\s-]+(?:diluted\s+)?EPS\b|\bEPS\s*\(GAAP\)", re.IGNORECASE)
+#: A percentage the claim states, with its sign when it carries one: '+71%', '-43%', '−29%', '26%'.
+_CLAIM_PCT = re.compile(r"([+\-−]?)\s*(\d+(?:\.\d+)?)\s*%")
+#: How far apart, in percentage points over ONE window, the GAAP and normalized EPS consensus moves
+#: may sit before the GAAP move stops describing operating momentum. FACE VALIDITY — a ten-point
+#: disagreement over one window is not a rounding difference — stated with its sensitivity rather
+#: than tuned: on the 26 committed pages (2026-10-07) the claims citing the current-FY GAAP move sit
+#: at 60 (AMZN), 33 (AORT, CNXC) and 21 (WERN) points, and the nearest one below sits at 4 (V), so
+#: any threshold from 5 to 20 gives the same answer today. Nothing here reads a forward return.
+EPS_MOMENTUM_GAP = 0.10
+#: A stated percentage matches a move when it is within this many points of it — the prose rounds.
+_PCT_MATCH_PTS = 1.5
+
+
+_EpsMove = tuple[str, int, float, float, float, float, float, float]
+#: The longest lookback the synthesis is shown: `acceleration_read` prints the current-FY consensus
+#: path back to 12 months, and a claim's percentage is that path's net change.
+_ACCEL_MAX_MONTHS = 12
+
+
+def _eps_move(fc: ForwardConsensus) -> _EpsMove | None:
+    """(period, months, gaap move, normalized move, gaap then, gaap now, norm then, norm now) — the
+    ONE move a claim can be citing: the current fiscal year, over the longest lookback up to 12
+    months, which is what `acceleration_read` puts in front of the synthesis. The normalized move
+    is taken over that SAME window or not at all — two halves of a comparison share a window
+    (RUNBOOKS step 10). None when either base is not positive: a sign-crossing or loss-making base
+    has no percentage move.
+
+    ONE MOVE, NOT EVERY WINDOW, AND THE CORPUS IS WHY. Matching a claim's percentage against every
+    period and window found coincidences on the first real run: SMPL's GAAP-EPS SURPRISE of -9%
+    matched a FY2028 six-month consensus move, AORT's 'EBT (GAAP) -79%' matched a three-month EPS
+    move, and CNXC's '-43% (12m→latest)' was reported against its nine-month window."""
+    if not fc.periods:
+        return None
+    period = fc.periods[0]
+    paths = {(p.metric, p.period): {pt.months_ago: pt.value for pt in p.points} for p in fc.paths}
+    gaap, norm = paths.get(("EPS (GAAP)", period)), paths.get(("EPS Normalized", period))
+    if not gaap or not norm or 0 not in gaap or 0 not in norm:
+        return None
+    months = max((m for m in gaap if 0 < m <= _ACCEL_MAX_MONTHS), default=None)
+    if months is None or months not in norm:
+        return None
+    g0, n0 = gaap[months], norm[months]
+    if g0 <= 0 or n0 <= 0:
+        return None
+    return (period, months, (gaap[0] - g0) / g0, (norm[0] - n0) / n0, g0, gaap[0], n0, norm[0])
+
+
+def gaap_eps_momentum_flags(synth: Synthesis, fc: ForwardConsensus | None) -> list[str]:
+    """Flag a claim that cites a GAAP-EPS consensus MOVE which normalized EPS did not make over the
+    same window — a human CAVEAT, because it changes how the claim should be read; never a block.
+
+    THE INCIDENT. AMZN's committed synthesis argues the bull case from "FY26E GAAP EPS +71%". Over
+    the same 12 months normalized FY26 EPS moved +10% (7.54 → 8.31): the GAAP move came in one step
+    at the Q2 report, from below-the-line gains the page itself records (+$53.4bn that quarter). A
+    re-assembly can repeat the claim and nothing flagged it.
+
+    WHAT FIRES IT, all deterministic: the claim names GAAP EPS; it states a percentage within
+    `_PCT_MATCH_PTS` of the current-FY GAAP consensus move the synthesis was shown (`_eps_move`;
+    sign-checked when the claim gives one); and over that window the normalized move differs by
+    `EPS_MOMENTUM_GAP` or more. The
+    direction does not matter — a GAAP cut that is mostly charges (CNXC: −43% against −10%)
+    overstates deterioration exactly as AMZN's gain overstates momentum.
+
+    DOES IT SELECT ON FORM? No: it reads the size of two consensus moves and the figure the claim
+    cites, not how either is disclosed. LIMITS, stated: a claim citing GAAP EPS LEVELS without a
+    percentage, or GAAP net income, is not read here; and another figure in the same claim that
+    equals the GAAP move within the tolerance is read as citing it."""
+    move = _eps_move(fc) if fc is not None else None
+    if move is None or abs(move[2] - move[3]) < EPS_MOMENTUM_GAP:
+        return []
+    period, months, g, n, g0, g1, n0, n1 = move
+    flags: list[str] = []
+    for where, text in _located_claims(synth):
+        if not _GAAP_EPS.search(text):
+            continue
+        if not any(abs(abs(g) * 100 - float(num)) <= _PCT_MATCH_PTS
+                   and (not sign or (sign == "+") == (g > 0))
+                   for sign, num in _CLAIM_PCT.findall(text)):
+            continue
+        flags.append(
+            f"GAAP-EPS-MOMENTUM {where}: '{_snip(text, 120)}' — over the {months} months to the "
+            f"latest, {period} GAAP EPS consensus moved {g:+.0%} ({g0:,.2f} → {g1:,.2f}) while "
+            f"normalized EPS moved {n:+.0%} ({n0:,.2f} → {n1:,.2f}). The gap is items CIQ's "
+            "normalized figure excludes — one-offs and non-operating gains or charges — so it is "
+            "not operating momentum; read the normalized move")
     return flags

@@ -46,6 +46,7 @@ from vinci.dossier.schemas import (
 from vinci.dossier.synthesis import (
     SYNTHESIS_DRAWS,
     contradiction_flags,
+    gaap_eps_momentum_flags,
     synthesize,
     uncited_material_figures,
 )
@@ -934,6 +935,9 @@ def assemble_one(
     unparsed = ciq_sheets.unparsed_transcript_flag(bundle, transcript)
     if unparsed is not None:
         flags.append(unparsed)
+    # (forward consensus) built ONCE, here: the page carries it and the GAAP-EPS momentum check
+    # reads it, so the check judges the claims against the same figures the reader is shown.
+    forward_consensus = ciq_sheets.forward_consensus(bundle)
     synthesis = None
     logs: list[str] = []
     term_rows = None  # (E5) per-exhibit rows — attached to mech AFTER synthesis (render only)
@@ -1055,6 +1059,8 @@ def assemble_one(
         # durable guard the FIX-0 incident earns); QA-channel.
         if synthesis is not None:
             flags += contradiction_flags(synthesis, mech)
+            # a GAAP-EPS move the normalized figure did not make — a human caveat, not a block
+            flags += gaap_eps_momentum_flags(synthesis, forward_consensus)
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
     # (A2) THE EV GAP — ASSEMBLY MUST PRODUCE IT, or a re-assembly DROPS it.
@@ -1108,7 +1114,7 @@ def assemble_one(
         business_description=ciq_sheets.business_description(bundle),
         # (forward consensus) FY+0..FY+2 paths, spreads, revision counts — built here and by the
         # refresh transform through the ONE builder; outside `mechanical`, so never synthesis input
-        forward_consensus=ciq_sheets.forward_consensus(bundle),
+        forward_consensus=forward_consensus,
         # (forward-multiple history) the forward multiples' quarterly history — same rules
         forward_multiple_history=ciq_sheets.forward_multiple_history(bundle),
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets

@@ -249,6 +249,9 @@ PR (CLAUDE.md: coin-time translation).
   **freeze** = the frozen theme source artifact that must reproduce byte-identical.
 - **mirror** — the committed `frontend/` copy of data snapshots the static dashboard serves
   (`frontend/build.py`); an artifact pass is incomplete until source AND mirror are synced.
+- **GAAP-EPS-MOMENTUM** — the analyst caveat on a synthesis claim citing a GAAP-EPS consensus
+  move that normalized EPS did not make over the same window (plain words: *that EPS jump is a
+  one-off, not operating momentum*) — `synthesis.gaap_eps_momentum_flags`.
 - **`git checkout origin/main` MEANS `origin/main` AS OF YOUR LAST FETCH.** Fourth multi-session
   hazard, after the stale stash, the half-applied edit and the concurrent writes. Branching from
   a stale ref silently gives you a tree WITHOUT the work you just merged: an append to a file
