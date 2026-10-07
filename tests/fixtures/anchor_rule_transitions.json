@@ -1,0 +1,339 @@
+{
+  "_provenance": "Verbatim anchor blocks from git (NCNO) and from the committed corpus at main @4ab4de36 (NFLX, VITL), extracted 2026-10-07. NCNO's two entries are the real 07-23 and 07-27 builds; NFLX_new_cause is NFLX's committed refusal against a build that is still R1 and still not applicable for a different cause — VITL's committed machine reason, a real string.",
+  "NCNO_onto_placeholder": {
+    "committed_at": "28baa8f5",
+    "rebuilt_at": "3bc94aeb",
+    "committed": {
+      "recipe_hint": "R2_NEEDED",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-23T12:27:09.917176Z",
+      "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": null,
+      "multiple": null,
+      "d_and_a": {
+        "value": 42.255,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2026)"
+      },
+      "net_debt": {
+        "value": 223.899,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 263 + finance leases 51 + operating leases 13 − cash 103 ($M)"
+      },
+      "diluted_shares": {
+        "value": 109458472.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 610.058,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 82.564,
+        "unit": "$M",
+        "basis": "latest FY2026 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2026, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": null,
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "unknown",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-23T15:10:32.928611Z",
+      "reason": "own-history multiple missing (valuation.own_history.median absent)",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": null,
+      "multiple": null,
+      "d_and_a": {
+        "value": 42.255,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2026)"
+      },
+      "net_debt": {
+        "value": 223.899,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 263 + finance leases 51 + operating leases 13 − cash 103 ($M)"
+      },
+      "diluted_shares": {
+        "value": 109458472.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": null,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 82.564,
+        "unit": "$M",
+        "basis": "latest FY2026 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2026, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": null,
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  },
+  "NCNO_off_placeholder": {
+    "committed_at": "3bc94aeb",
+    "rebuilt_at": "99bbfbf0",
+    "committed": {
+      "recipe_hint": "unknown",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-23T15:10:32.928611Z",
+      "reason": "own-history multiple missing (valuation.own_history.median absent)",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": null,
+      "multiple": null,
+      "d_and_a": {
+        "value": 42.255,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2026)"
+      },
+      "net_debt": {
+        "value": 223.899,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 263 + finance leases 51 + operating leases 13 − cash 103 ($M)"
+      },
+      "diluted_shares": {
+        "value": 109458472.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": null,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 82.564,
+        "unit": "$M",
+        "basis": "latest FY2026 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2026, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": null,
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "R2_NEEDED",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-07-27T09:41:44.340126Z",
+      "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": null,
+      "multiple": null,
+      "d_and_a": {
+        "value": 42.255,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2026)"
+      },
+      "net_debt": {
+        "value": 223.899,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 263 + finance leases 51 + operating leases 13 − cash 103 ($M)"
+      },
+      "diluted_shares": {
+        "value": 109458472.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 610.058,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 82.564,
+        "unit": "$M",
+        "basis": "latest FY2026 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2026, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "anchor_ev_ebit": null,
+      "overall_confidence": null,
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  },
+  "NFLX_new_cause": {
+    "committed_at": "4ab4de36",
+    "rebuilt_at": "composed",
+    "committed": {
+      "recipe_hint": "R1_midcycle_margin_evebitda",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-10-07T07:18:28.502466Z",
+      "reason": "R1 inputs incomplete — see per-input source stamps",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": {
+        "value": 0.114915,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / Revenues — reported median over 19 FY",
+        "anchor_years": 19,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 43.346486999999996,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 38,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 333.389,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2012 (13y behind)"
+      },
+      "net_debt": {
+        "value": null,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ"
+      },
+      "diluted_shares": {
+        "value": 4261300000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 48370.764,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 9461.053,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "midcycle_gap": {
+        "ltm_margin": 0.29676,
+        "median_margin": 0.114915,
+        "median_years": 19,
+        "gap_pts": 18.18,
+        "ltm_side": "above",
+        "basis_year": 2025,
+        "basis_gap_pts": 0.0,
+        "basis_gaap_margin": 0.294947,
+        "basis_ciq_margin": 0.294947,
+        "same_source": false,
+        "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: EDGAR companyfacts OperatingIncomeLoss / Revenues — reported median over 19 FY; flagged at ≥5 points; sources said to agree within 2",
+        "read": "The last twelve months' operating margin of 29.7% (CIQ EBIT) sits 18.2 points ABOVE the 19-year median of 11.5% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source."
+      },
+      "anchor_ev_ebit": null,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    },
+    "rebuilt": {
+      "recipe_hint": "R1_midcycle_margin_evebitda",
+      "applicable": false,
+      "multiple_basis": "EV/EBITDA",
+      "computed_at": "2026-10-07T07:18:28.502466Z",
+      "reason": "own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced",
+      "data_quality": null,
+      "data_quality_detail": [],
+      "margin": {
+        "value": 0.114915,
+        "unit": "fraction",
+        "basis": "operating margin (EBIT / revenue)",
+        "source": "EDGAR companyfacts OperatingIncomeLoss / Revenues — reported median over 19 FY",
+        "anchor_years": 19,
+        "confidence": "firm"
+      },
+      "multiple": {
+        "value": 43.346486999999996,
+        "unit": "EV/EBITDA",
+        "source": "valuation.own_history.median",
+        "history_quarters": 38,
+        "confidence": "firm"
+      },
+      "d_and_a": {
+        "value": 333.389,
+        "unit": "$M",
+        "basis": "consolidated latest FY",
+        "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2012 (13y behind)"
+      },
+      "net_debt": {
+        "value": null,
+        "unit": "$M",
+        "basis": "lease-inclusive net debt (latest 10-Q)",
+        "source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ"
+      },
+      "diluted_shares": {
+        "value": 4261300000.0,
+        "unit": "shares",
+        "basis": "diluted weighted-average (latest 10-Q)",
+        "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      },
+      "ltm_revenue": {
+        "value": 48370.764,
+        "unit": "$M",
+        "basis": "LTM revenue",
+        "source": "committed financial_summary.annual (LTM)"
+      },
+      "ltm_fcf": {
+        "value": 9461.053,
+        "unit": "$M",
+        "basis": "latest FY2025 (not LTM)",
+        "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+      },
+      "anchor_base_value_per_share": null,
+      "midcycle_gap": {
+        "ltm_margin": 0.29676,
+        "median_margin": 0.114915,
+        "median_years": 19,
+        "gap_pts": 18.18,
+        "ltm_side": "above",
+        "basis_year": 2025,
+        "basis_gap_pts": 0.0,
+        "basis_gaap_margin": 0.294947,
+        "basis_ciq_margin": 0.294947,
+        "same_source": false,
+        "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: EDGAR companyfacts OperatingIncomeLoss / Revenues — reported median over 19 FY; flagged at ≥5 points; sources said to agree within 2",
+        "read": "The last twelve months' operating margin of 29.7% (CIQ EBIT) sits 18.2 points ABOVE the 19-year median of 11.5% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source."
+      },
+      "anchor_ev_ebit": null,
+      "overall_confidence": "firm",
+      "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    }
+  }
+}

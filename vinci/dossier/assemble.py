@@ -647,11 +647,13 @@ def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
 
     ONE RULE FOR BOTH WRITE PATHS — `preserve_operator_tag`, the backfill's, not a second variant
     here to drift from it. Its limit comes with it: provenance is not recorded on the block, so ANY
-    divergence keeps the committed recipe, the machine's included. That is the tagger's own contract
-    (it proposes, it never writes), and it is why the divergence is written as a CAVEAT rather than
-    left in the log: once the build stops applying its proposal, a name drifting across a recipe
-    boundary is noticed only if the page says so. Not on the QA hide-list, on purpose — a wrong
-    recipe is invisible in the arithmetic it produces.
+    divergence from a committed RECIPE keeps it, the machine's included — but a placeholder
+    (`unknown`, `ANCHOR_UNRESOLVED`) is a data gap and never kept, and under an unchanged recipe
+    the reason is always this build's (review of #670). Keeping a recipe is the tagger's own
+    contract (it proposes, it never writes), and it is why the divergence is written as a CAVEAT
+    rather than left in the log: once the build stops applying its proposal, a name drifting across
+    a recipe boundary is noticed only if the page says so. Not on the QA hide-list, on purpose — a
+    wrong recipe is invisible in the arithmetic it produces.
 
     GATED ON THE COMMITTED FILE, like the two refusals beside it: no file, or one that is not JSON,
     holds no recipe to keep. A readable file whose anchor block does not VALIDATE is refused —
@@ -678,15 +680,11 @@ def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
     # Decided on the STRUCTURED result, never on the notes' wording: the notes are console text
     # written for the backfill, and one of them reports data-quality churn that is not a recipe.
     kept, _notes = preserve_operator_tag(committed, fresh)
-    if kept.recipe_hint == fresh.recipe_hint and kept.reason == fresh.reason:
-        return dossier
-    if kept.recipe_hint != fresh.recipe_hint:
-        caveat = (f"Recipe kept from the committed dossier: {kept.recipe_hint}. This build's own "
-                  f"read proposes {fresh.recipe_hint} — a recipe changes only by hand, so review "
-                  "whether the committed one still fits this name.")
-    else:
-        caveat = (f"Recipe reason kept from the committed dossier under {kept.recipe_hint} — this "
-                  "build reached a different reason; review whether the committed one still holds.")
+    if kept.recipe_hint == fresh.recipe_hint:
+        return dossier  # the rule keeps only a RECIPE, and none was kept over this build's own
+    caveat = (f"Recipe kept from the committed dossier: {kept.recipe_hint}. This build's own "
+              f"read proposes {fresh.recipe_hint} — a recipe changes only by hand, so review "
+              "whether the committed one still fits this name.")
     if fresh.reason and fresh.reason != kept.reason:
         caveat += f" This build's own reason: {fresh.reason}"
     return dossier.model_copy(update={"anchor": kept, "caveats": [*dossier.caveats, caveat]})
