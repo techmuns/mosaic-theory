@@ -41,10 +41,13 @@ from vinci.dossier.schemas import (
     DriverKind,
     FinRow,
     FinTable,
+    ForecastErrorObservation,
+    ForecastErrorSeries,
     ForwardConsensus,
     ForwardMultiple,
     ForwardMultipleHistory,
     GuidanceRow,
+    HistoricalForecastError,
     ImpliedRow,
     ImpliedValuation,
     MultipleClose,
@@ -2883,6 +2886,142 @@ def forward_multiple_history(bundle: CiqBundle) -> ForwardMultipleHistory | None
         latest_close_quarter_end=_is_quarter_end_close(latest) if latest else None,
         history_through=settled[-1].isoformat() if settled else None,
         source_ref="CIQ Financials→Multiples (quarterly Close; forward rows, exact label)")
+
+
+#: (historical forecast error) the company-level lines, and how each is normalised: 'pct' divides
+#: by its own estimate (revenue cannot change sign; a ZERO estimate — TECX, pre-revenue — writes
+#: no percentage rather than a division by zero); 'revenue' divides the
+#: miss by forecast revenue and adds the margin error; 'magnitude' does the same on |values| —
+#: CIQ prints capex as a negative outflow, and spend above forecast should read positive.
+_FORECAST_ERROR_LINES: tuple[tuple[str, str], ...] = (
+    ("Revenue", "pct"), ("EBITDA", "revenue"), ("EBIT", "revenue"),
+    ("Capital Expenditure", "magnitude"),
+)
+_SURPRISE_SUB_ROWS = frozenset({"Difference", "Actual", "Estimate", "Announced Date",
+                                "Acctg. Standard", "Guidance Low", "Guidance High", "Guidance Mid"})
+_SURPRISE_BANNER = re.compile(r"(?:Fiscal|Calendar) (?:Years|Quarters)")
+_FORECAST_ERROR_ELIGIBILITY = (
+    "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures "
+    "last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has "
+    "been. It is NOT a distribution of how far consensus moves over a holding period; that needs "
+    "point-in-time consensus snapshots, which no Estimates Report carries.")
+_FORECAST_ERROR_USAGE = (
+    "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. "
+    "Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. "
+    "ratio_error alone answers how wrong the margin (or capex-intensity) forecast was, and "
+    "multiplied by revenue it drops the revenue miss's effect. Exact identity: "
+    "error_per_forecast_revenue = ratio_error + (actual ÷ actual revenue) × (actual revenue ÷ "
+    "forecast revenue − 1).")
+
+
+def _fiscal_company_section(rows: Rows) -> tuple[int, int] | None:
+    """[header, end) of the company-level block under the Surprise sheet's 'Fiscal Years' banner.
+
+    BY BANNER, NEVER BY POSITION. Six of the 26 exports (BRBR, IT, NKE, PARR, SMPL, V) carry a
+    second annual company-level block under 'Calendar Years', with different figures (SMPL FY2017
+    revenue 396.2 against a calendarised 405.0). The banner sits in column 1, as on Consensus."""
+    banner = next((i for i, r in enumerate(rows)
+                   if len(r) > 1 and str(r[1]).strip() == "Fiscal Years"), None)
+    if banner is None:
+        return None
+    end = next((i for i in range(banner + 1, len(rows)) if len(rows[i]) > 1
+                and _SURPRISE_BANNER.fullmatch(str(rows[i][1]).strip())), len(rows))
+    hdr = next((i for i in range(banner + 1, end) if rows[i]
+                and str(rows[i][0]).strip().startswith("Company Level")
+                and len(_header_years(rows[i])) >= 3), None)
+    return (hdr, end) if hdr is not None else None
+
+
+def _surprise_line(rows: Rows, start: int, end: int, metric: str) -> dict[str, list[Any]]:
+    """The metric's sub-rows ('Actual', 'Estimate', …) within [start, end), ending at the next
+    block of any kind — a label that is not one of the sub-row names."""
+    ti = next((i for i in range(start, end) if str(rows[i][0]).strip() == metric), None)
+    if ti is None:
+        return {}
+    out: dict[str, list[Any]] = {}
+    for k in range(ti + 1, end):
+        label = str(rows[k][0]).strip()
+        if label and label not in _SURPRISE_SUB_ROWS:
+            break
+        if label and label not in out:
+            out[label] = rows[k]
+    return out
+
+
+def historical_forecast_error(bundle: CiqBundle) -> HistoricalForecastError | None:
+    """(historical forecast error) The final consensus's miss for every completed fiscal year, per
+    company-level line — from Estimates→Surprise. Built by assembly and by
+    `historical_forecast_error_transform` through this ONE function. None when the export has no
+    'Fiscal Years' company-level block (FUBO, ORKA)."""
+    try:
+        rows = bundle.sheet("estimates", "Surprise")
+    except CiqUnavailableError:
+        return None
+    section = _fiscal_company_section(rows)
+    if section is None:
+        return None
+    hdr, end = section
+    years = _header_years(rows[hdr])
+    lines = {metric: _surprise_line(rows, hdr + 1, end, metric)
+             for metric, _ in _FORECAST_ERROR_LINES}
+
+    def _pair(sub: dict[str, list[Any]], col: int) -> tuple[float, float] | None:
+        a = clean_num(sub["Actual"][col]) if "Actual" in sub and col < len(sub["Actual"]) else None
+        e = (clean_num(sub["Estimate"][col]) if "Estimate" in sub and col < len(sub["Estimate"])
+             else None)
+        return (a, e) if a is not None and e is not None else None
+
+    revenue = lines["Revenue"]
+    series: list[ForecastErrorSeries] = []
+    withheld: list[str] = []
+    for metric, kind in _FORECAST_ERROR_LINES:
+        sub = lines[metric]
+        if not sub:
+            withheld.append(f"{metric}: no block in the Fiscal Years company-level section")
+            continue
+        obs: list[ForecastErrorObservation] = []
+        for year_label, col in years.items():
+            year = int(year_label)
+            pair = _pair(sub, col)
+            if pair is None:
+                continue
+            actual, estimate = pair
+            rev = _pair(revenue, col) if revenue else None
+            announced = (excel_date(sub["Announced Date"][col]) if "Announced Date" in sub
+                         and col < len(sub["Announced Date"]) else None)
+            basis = (str(sub["Acctg. Standard"][col]).strip() if "Acctg. Standard" in sub
+                     and col < len(sub["Acctg. Standard"]) else "")
+            a, e = (abs(actual), abs(estimate)) if kind == "magnitude" else (actual, estimate)
+            err = a - e
+            per_rev = ratio = None
+            if kind != "pct" and rev is not None and rev[0] and rev[1]:
+                per_rev = err / rev[1]
+                ratio = a / rev[0] - e / rev[1]
+            elif kind != "pct":
+                withheld.append(f"{metric} {year}: revenue actual or estimate absent or zero "
+                                "(pre-revenue) — revenue-normalised errors not computed")
+            obs.append(ForecastErrorObservation(
+                fiscal_year=year, announced=announced.isoformat() if announced else None,
+                accounting_basis=basis if basis and basis != "-" else None,
+                actual=actual, final_estimate=estimate, dollar_error=err,
+                pct_error=(actual / estimate - 1) if kind == "pct" and estimate else None,
+                error_per_forecast_revenue=per_rev, ratio_error=ratio))
+        if obs:
+            series.append(ForecastErrorSeries(metric=metric, observations=obs))
+        else:
+            withheld.append(f"{metric}: no year with both an actual and a final estimate")
+    if not series:
+        return None
+    wb = bundle.workbook("estimates")
+    return HistoricalForecastError(
+        estimate_type="final consensus before each result — CIQ Estimates→Surprise 'Estimate', "
+                      "Fiscal Years, company level",
+        eligibility_note=_FORECAST_ERROR_ELIGIBILITY, usage_note=_FORECAST_ERROR_USAGE,
+        series=series, withheld=withheld,
+        source_file=wb.path.name if wb is not None else None,
+        source_sha256=file_provenance(wb.path)[0] if wb is not None else None,
+        source_ref="CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, "
+                   "Announced Date)")
 
 
 def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int]]:

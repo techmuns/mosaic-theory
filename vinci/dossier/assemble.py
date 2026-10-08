@@ -1117,6 +1117,8 @@ def assemble_one(
         forward_consensus=forward_consensus,
         # (forward-multiple history) the forward multiples' quarterly history — same rules
         forward_multiple_history=ciq_sheets.forward_multiple_history(bundle),
+        # (historical forecast error) the final consensus's miss per fiscal year — same rules
+        historical_forecast_error=ciq_sheets.historical_forecast_error(bundle),
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=built_at,
