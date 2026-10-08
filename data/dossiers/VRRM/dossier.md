@@ -37,7 +37,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 20.9% | 8y history · weak |
 | Median multiple, own history | 13.6x | 19 closes · weak · EV/EBITDA |
-| Screen value / share | $21.75 | spot-independent · EV/EBIT 21.2x |
+| Screen value / share | $21.79 | spot-independent · EV/EBIT 21.2x |
 | Overall confidence | weak |  |
 
 **data_quality: revenue_tag_conflict**

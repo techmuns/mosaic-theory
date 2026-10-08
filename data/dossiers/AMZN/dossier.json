@@ -16378,7 +16378,7 @@
     "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-08T06:08:48.844050Z",
+    "computed_at": "2026-10-08T11:20:44.397112Z",
     "reason": "OPERATOR RE-TAG 2026-10-07. The machine proposes R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite routes AMZN to R3 - EPS x forward P/E, an EQUITY basis, the recipe GOOGL is underwritten on. Both of R1's inputs are flagged on this page: the LTM operating margin (12.1%) sits 6.8 points above the 10-FY median R1 reverts to (5.3%), and the consensus EBITDA row adds back 3.14x the D&A in the actuals, so an EV/EBITDA leg mixes definitions. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": null,
     "data_quality_detail": [],
@@ -16404,10 +16404,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, 12m to 2026-06-30) — CHOSEN BY VINTAGE over 2 staler candidate(s), oldest FY2017 (9y behind)"
     },
     "net_debt": {
-      "value": 163782.0,
+      "value": 119007.0,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 132,224 + finance leases 13,451 + operating leases 96,320 − cash 78,213 ($M)"
+      "source": "EDGAR: total debt 132,224 + finance leases 13,451 + operating leases 96,320 − cash 78,213 − short-term investments 44,775 (MarketableSecuritiesCurrent, 2026-06-30) ($M)"
     },
     "diluted_shares": {
       "value": 10903000000.0,
@@ -16427,7 +16427,7 @@
       "basis": "trailing 12m to 2026-06-30 (the filer's own 10-Q column)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (12m to 2026-06-30, same period)"
     },
-    "anchor_base_value_per_share": 245.4634,
+    "anchor_base_value_per_share": 249.57,
     "midcycle_gap": {
       "ltm_margin": 0.120813,
       "median_margin": 0.053144,

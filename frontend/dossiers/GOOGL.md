@@ -66,7 +66,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | R3_forward_pe | applicable |
 | Mid-cycle margin | 26.3% | 9y history · firm |
 | Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $197.01 | spot-independent · EV/EBIT 21.3x |
+| Screen value / share | $212.17 | spot-independent · EV/EBIT 21.3x |
 | Overall confidence | firm |  |
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.1% (CIQ EBIT) sits 6.8 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.

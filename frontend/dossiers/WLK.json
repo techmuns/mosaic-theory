@@ -13022,7 +13022,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-28T16:46:47.813719Z",
+    "computed_at": "2026-10-08T11:20:44.790860Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
@@ -13054,10 +13054,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
     },
     "net_debt": {
-      "value": 4233.0,
+      "value": 4024.0,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 5,067 + finance leases 0 + operating leases 809 − cash 1,643 ($M)"
+      "source": "EDGAR: total debt 5,067 + finance leases 0 + operating leases 809 − cash 1,643 − short-term investments 209 (AvailableForSaleSecuritiesDebtSecuritiesCurrent, 2026-06-30) ($M)"
     },
     "diluted_shares": {
       "value": 128500530.0,
@@ -13077,7 +13077,7 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 104.3529,
+    "anchor_base_value_per_share": 105.9794,
     "midcycle_gap": {
       "ltm_margin": 0.010625,
       "median_margin": 0.097831,
