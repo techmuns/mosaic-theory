@@ -98,6 +98,12 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "(`forward_consensus.pe_eps_basis`): the FY rows and the NTM row each measured, never "
         "assumed · the anchor's net debt nets the short-term securities a CIQ TEV nets (#684)",
     ),
+    (
+        "2026-10-08.4",
+        "CIQ's TEV claims beside the page (`ev_bridge`): total debt, preferred, minority interest, "
+        "cash and long-term marketable securities as CIQ builds its enterprise value, the "
+        "consensus net-debt line tested for basis, and the exit default per the operator's rule",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

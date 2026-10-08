@@ -1,0 +1,737 @@
+{
+ "_about": "Derived EV-bridge values for the pins (2026-10-08): each case's CIQ TEV build-up, consensus net-debt check and exit default, built by vinci.dossier.ciq_sheets.ev_bridge from the Financials and Estimates exports named by hash. Derived values only — the workbooks are never committed.",
+ "cases": {
+  "AMZN": {
+   "bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "claims": 128647.0,
+    "consensus": {
+     "balance_sheet": 55518.0,
+     "balance_sheet_date": "2025-12-31",
+     "current": true,
+     "fiscal_year": 2025,
+     "fiscal_year_end": "2025-12-31",
+     "forward": {
+      "FY 2026": 22278.36,
+      "FY 2027": 74022.11,
+      "FY 2028": 104012.74
+     },
+     "gap_ratio": 0.632321,
+     "note": null,
+     "reported": -57381.0,
+     "same_basis": false
+    },
+    "edgar_net_debt": 119007.0,
+    "edgar_source": "EDGAR: total debt 132,224 + finance leases 13,451 + operating leases 96,320 − cash 78,213 − short-term investments 44,775 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+    "estimates_sha256": "e10ed62223",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": 128647.0
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": 128647.0
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": 128647.0
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [Q2 Jun-30-2026]",
+      "value": 251635.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [Q2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [Q2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+      "value": 122988.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [Q2 Jun-30-2026, the last reported]",
+      "value": 0.0
+     }
+    ],
+    "net_debt": 128647.0,
+    "note": "the consensus net-debt line is not on the balance sheet's basis — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "Amazon com Inc NasdaqGS AMZN Financials_Quarterly.xls",
+    "source_sha256": "e5abf9d69d"
+   },
+   "edgar_net_debt": 119007.0,
+   "edgar_source": "EDGAR: total debt 132,224 + finance leases 13,451 + operating leases 96,320 − cash 78,213 − short-term investments 44,775 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "claims equal net debt — no preferred, minority or LT marketable securities"
+  },
+  "FUBO": {
+   "bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "claims": 1997.973,
+    "consensus": null,
+    "edgar_net_debt": 172.4,
+    "edgar_source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [FuboTV Inc NYSE FUBO Financials_Quarterly.xls sha 10d6ec8cfa]",
+    "estimates_sha256": "6a70302115",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": 1997.973
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": 1997.973
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": 1997.973
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [FQ3/CQ2 Jun-30-2026]",
+      "value": 402.74
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [FQ3/CQ2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [FQ3/CQ2 Jun-30-2026]",
+      "value": 1825.516
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [FQ3/CQ2 Jun-30-2026]",
+      "value": 230.283
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [FQ3/CQ2 Jun-30-2026, the last reported]",
+      "value": 0.0
+     }
+    ],
+    "net_debt": 172.457,
+    "note": "no consensus net-debt line with a reported year — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "FuboTV Inc NYSE FUBO Financials_Quarterly.xls",
+    "source_sha256": "10d6ec8cfa"
+   },
+   "edgar_net_debt": 172.4,
+   "edgar_source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [FuboTV Inc NYSE FUBO Financials_Quarterly.xls sha 10d6ec8cfa]",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "minority +$1,826M; no consensus net-debt line with a reported year"
+  },
+  "GOOGL": {
+   "bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "claims": -103660.0,
+    "consensus": {
+     "balance_sheet": -59847.0,
+     "balance_sheet_date": "2025-12-31",
+     "current": true,
+     "fiscal_year": 2025,
+     "fiscal_year_end": "2025-12-31",
+     "forward": {
+      "FY 2026": -131323.34,
+      "FY 2027": -79012.05,
+      "FY 2028": -56290.98,
+      "FY 2029": -124424.0,
+      "FY 2030": -308307.7,
+      "FY 2031": -604056.4
+     },
+     "gap_ratio": 0.305227,
+     "note": null,
+     "reported": -80296.0,
+     "same_basis": false
+    },
+    "edgar_net_debt": -121683.0,
+    "edgar_source": "EDGAR: total debt 100,164 + finance leases 2,590 + operating leases 18,037 − cash 55,911 − short-term investments 186,563 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+    "estimates_sha256": "be704f7f75",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": -103660.0
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": -103660.0
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": -103660.0
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [Q2 Jun-30-2026]",
+      "value": 120791.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [Q2 Jun-30-2026]",
+      "value": 18023.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [Q2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+      "value": 242474.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [Q2 Jun-30-2026, the last reported]",
+      "value": 0.0
+     }
+    ],
+    "net_debt": -121683.0,
+    "note": "the consensus net-debt line is not on the balance sheet's basis — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls",
+    "source_sha256": "36160a403e"
+   },
+   "edgar_net_debt": -121683.0,
+   "edgar_source": "EDGAR: total debt 100,164 + finance leases 2,590 + operating leases 18,037 − cash 55,911 − short-term investments 186,563 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "preferred +$18,023M"
+  },
+  "LLY": {
+   "bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "claims": 45162.0,
+    "consensus": {
+     "balance_sheet": 36597.0,
+     "balance_sheet_date": "2025-12-31",
+     "current": true,
+     "fiscal_year": 2025,
+     "fiscal_year_end": "2025-12-31",
+     "forward": {
+      "FY 2026": 23563.51,
+      "FY 2027": 820.64,
+      "FY 2028": -28781.45,
+      "FY 2029": -27911.0,
+      "FY 2030": -58166.5,
+      "FY 2031": -70455.0,
+      "FY 2032": -97470.0,
+      "FY 2033": -124697.0,
+      "FY 2034": -152128.0,
+      "FY 2035": -179309.0
+     },
+     "gap_ratio": 0.03105,
+     "note": null,
+     "reported": 35235.0,
+     "same_basis": false
+    },
+    "edgar_net_debt": 47320.0,
+    "edgar_source": "EDGAR: total debt 54,908 + finance leases 0 + operating leases 1,362 − cash 8,950 ($M)",
+    "estimates_sha256": "62f8412e37",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": 45162.0
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": 45162.0
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": 45162.0
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [46203.0]",
+      "value": 54908.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [46203.0]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [46203.0]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [46203.0]",
+      "value": 8950.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [46203.0, the last reported]",
+      "value": 796.0
+     }
+    ],
+    "net_debt": 45958.0,
+    "note": "the consensus net-debt line is not on the balance sheet's basis — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "Eli Lilly and Company NYSE LLY Financials_Quarterly.xls",
+    "source_sha256": "7f23de02b0"
+   },
+   "edgar_net_debt": 47320.0,
+   "edgar_source": "EDGAR: total debt 54,908 + finance leases 0 + operating leases 1,362 − cash 8,950 ($M)",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "LT marketable securities −$796M"
+  },
+  "MVST": {
+   "bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "claims": 65.214,
+    "consensus": {
+     "balance_sheet": -334.55899999999997,
+     "balance_sheet_date": "2021-12-31",
+     "current": false,
+     "fiscal_year": 2021,
+     "fiscal_year_end": "2021-12-31",
+     "forward": {},
+     "gap_ratio": 0.003076,
+     "note": "same basis on FY2021, but FY2021 is not the latest completed year — not used",
+     "reported": -333.53,
+     "same_basis": true
+    },
+    "edgar_net_debt": null,
+    "edgar_source": "EDGAR: total debt 13 + finance leases 0 + operating leases 17 − cash 128 ($M) — UNDER-CAPTURED: ShortTermBorrowings $104M alone exceeds the extracted long-term+current total; pull CIQ",
+    "estimates_sha256": "75a45b4f84",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": 65.214
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": 65.214
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": 65.214
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [Q2 Jun-30-2026]",
+      "value": 193.042
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [Q2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [Q2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+      "value": 127.828
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [Q2 Jun-30-2026, the last reported]",
+      "value": 0.0
+     }
+    ],
+    "net_debt": 65.214,
+    "note": "the consensus net-debt line stopped before the latest completed year — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+    "source_sha256": "e1f788d63f"
+   },
+   "edgar_net_debt": null,
+   "edgar_source": "EDGAR: total debt 13 + finance leases 0 + operating leases 17 − cash 128 ($M) — UNDER-CAPTURED: ShortTermBorrowings $104M alone exceeds the extracted long-term+current total; pull CIQ",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "same-basis but stale (FY2021) — held"
+  },
+  "NKE": {
+   "bridge": {
+    "balance_sheet_date": "2026-05-31",
+    "claims": 2016.0,
+    "consensus": {
+     "balance_sheet": 2016.0,
+     "balance_sheet_date": "2026-05-31",
+     "current": true,
+     "fiscal_year": 2026,
+     "fiscal_year_end": "2026-05-31",
+     "forward": {
+      "FY 2027": 1723.66,
+      "FY 2028": 2159.7,
+      "FY 2029": 2228.87,
+      "FY 2030": -2028.0,
+      "FY 2031": -3905.0
+     },
+     "gap_ratio": 0.000906,
+     "note": null,
+     "reported": 2006.0,
+     "same_basis": true
+    },
+    "edgar_net_debt": 3470.0,
+    "edgar_source": "EDGAR: total debt 7,942 + finance leases 0 + operating leases 3,091 − cash 7,563 ($M)",
+    "estimates_sha256": "5cfdb477c9",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2027",
+      "method": "consensus",
+      "value": 1723.66
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "consensus",
+      "value": 2159.7
+     },
+     {
+      "fiscal_year": "FY 2029",
+      "method": "consensus",
+      "value": 2228.87
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-05-31",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [FQ4/CQ2 May-31-2026]",
+      "value": 11043.0
+     },
+     {
+      "as_of": "2026-05-31",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [FQ4/CQ2 May-31-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-05-31",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [FQ4/CQ2 May-31-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-05-31",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [FQ4/CQ2 May-31-2026]",
+      "value": 9027.0
+     },
+     {
+      "as_of": "2026-05-31",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [FQ4/CQ2 May-31-2026, the last reported]",
+      "value": 0.0
+     }
+    ],
+    "net_debt": 2016.0,
+    "note": null,
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "NIKE Inc NYSE NKE Financials_Quarterly.xls",
+    "source_sha256": "d0ffd11313"
+   },
+   "edgar_net_debt": 3470.0,
+   "edgar_source": "EDGAR: total debt 7,942 + finance leases 0 + operating leases 3,091 − cash 7,563 ($M)",
+   "fy_periods": [
+    "FY 2027",
+    "FY 2028",
+    "FY 2029"
+   ],
+   "why": "the one same-basis, current consensus line — exit by consensus"
+  },
+  "SMPL": {
+   "bridge": {
+    "balance_sheet_date": "2026-05-30",
+    "claims": 324.58,
+    "consensus": {
+     "balance_sheet": 205.959,
+     "balance_sheet_date": "2025-08-30",
+     "current": true,
+     "fiscal_year": 2025,
+     "fiscal_year_end": "2025-08-31",
+     "forward": {
+      "FY 2026": 251.88,
+      "FY 2027": 162.69,
+      "FY 2028": 101.59,
+      "FY 2029": -32.94,
+      "FY 2030": -147.84
+     },
+     "gap_ratio": 0.181853,
+     "note": null,
+     "reported": 150.598,
+     "same_basis": false
+    },
+    "edgar_net_debt": 324.582,
+    "edgar_source": "EDGAR: total debt 397 + finance leases 0 + operating leases 51 − cash 124 ($M)",
+    "estimates_sha256": "06670995ba",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": 324.58
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": 324.58
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": 324.58
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-05-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [FQ3/CQ2 May-30-2026]",
+      "value": 448.464
+     },
+     {
+      "as_of": "2026-05-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [FQ3/CQ2 May-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-05-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [FQ3/CQ2 May-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-05-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [FQ3/CQ2 May-30-2026]",
+      "value": 123.884
+     },
+     {
+      "as_of": "2026-05-30",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [FQ3/CQ2 May-30-2026, the last reported]",
+      "value": 0.0
+     }
+    ],
+    "net_debt": 324.58,
+    "note": "the consensus net-debt line is not on the balance sheet's basis — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls",
+    "source_sha256": "e41ebc16a4"
+   },
+   "edgar_net_debt": 324.582,
+   "edgar_source": "EDGAR: total debt 397 + finance leases 0 + operating leases 51 − cash 124 ($M)",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "52/53-week year-end: the balance sheet sits a day off the banner date"
+  },
+  "UBER": {
+   "bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "claims": 6550.0,
+    "consensus": {
+     "balance_sheet": 4669.0,
+     "balance_sheet_date": "2025-12-31",
+     "current": true,
+     "fiscal_year": 2025,
+     "fiscal_year_end": "2025-12-31",
+     "forward": {
+      "FY 2026": 2193.86,
+      "FY 2027": -4845.95,
+      "FY 2028": -12670.03,
+      "FY 2029": -21522.0
+     },
+     "gap_ratio": 0.069338,
+     "note": null,
+     "reported": 3816.0,
+     "same_basis": false
+    },
+    "edgar_net_debt": 7565.0,
+    "edgar_source": "EDGAR: total debt 10,726 + finance leases 222 + operating leases 2,008 − cash 4,870 − short-term investments 521 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+    "estimates_sha256": "265b3a9f59",
+    "exit_claims": [
+     {
+      "fiscal_year": "FY 2026",
+      "method": "held",
+      "value": 6550.0
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "method": "held",
+      "value": 6550.0
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "method": "held",
+      "value": 6550.0
+     }
+    ],
+    "lines": [
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Debt",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Debt' [Press Release Q2 Jun-30-2026]",
+      "value": 14731.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Pref. Equity' [Press Release Q2 Jun-30-2026]",
+      "value": 0.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "source": "CIQ Financials→Balance Sheet 'Total Minority Interest' [Press Release Q2 Jun-30-2026]",
+      "value": 1083.0
+     },
+     {
+      "as_of": "2026-06-30",
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Press Release Q2 Jun-30-2026]",
+      "value": 5391.0
+     },
+     {
+      "as_of": "2026-03-31",
+      "label": "Long Term Marketable Securities",
+      "sign": -1,
+      "source": "CIQ Financials→Historical Capitalization '− Long Term Marketable Securities' [Q1 Mar-31-2026, the last reported]",
+      "value": 3873.0
+     }
+    ],
+    "net_debt": 9340.0,
+    "note": "the consensus net-debt line is not on the balance sheet's basis — today's claims held",
+    "rule": "claims = total debt + preferred + minority interest − cash & ST investments − long-term marketable securities (CIQ's TEV build-up, less market cap); exit default: a same-basis consensus net debt (within 0.5% on its last reported year, which must be the latest) with the other claims held, else today's claims held — never current − FCF",
+    "source_file": "Uber Technologies Inc NYSE UBER Financials_Quarterly.xls",
+    "source_sha256": "fb3c714dff"
+   },
+   "edgar_net_debt": 7565.0,
+   "edgar_source": "EDGAR: total debt 10,726 + finance leases 222 + operating leases 2,008 − cash 4,870 − short-term investments 521 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "why": "minority +$1,083M and LT marketable securities −$3,873M (last reported, Q1) beside a Q2 balance sheet"
+  }
+ }
+}

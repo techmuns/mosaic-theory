@@ -638,6 +638,77 @@ class HistoricalForecastError(BaseModel, frozen=True):
     source_ref: str
 
 
+class ClaimLine(BaseModel, frozen=True):
+    """One line of CIQ's own TEV build-up — what it adds to market capitalisation, or subtracts,
+    to reach the enterprise value its multiples divide. `sign` is +1 for a claim (debt, preferred,
+    minority interest) and −1 for an offset (cash, long-term marketable securities)."""
+
+    label: str                       # the CIQ row, verbatim
+    sign: Literal[1, -1]
+    value: float                     # $M, as CIQ prints it (≥ 0 for every line in the corpus)
+    as_of: str | None = None         # the balance-sheet date, or the filing date it was priced at
+    source: str
+
+
+class ConsensusNetDebtCheck(BaseModel, frozen=True):
+    """Is CIQ's consensus 'Net Debt' line on the balance sheet's basis? Its last REPORTED fiscal
+    year is set against CIQ's own Total Debt − Total Cash & ST Investments at that year-end. Brokers
+    define net debt their own way — AMZN's reported FY2025 is −$57,381M against +$55,518M on CIQ's
+    balance sheet — so the forward line is used only where the reported one matches."""
+
+    fiscal_year: int
+    fiscal_year_end: str             # the year-end the reported figure refers to
+    reported: float                  # the consensus line's FY actual, $M
+    balance_sheet: float | None = None   # CIQ Total Debt − Total Cash & ST Investments there
+    balance_sheet_date: str | None = None
+    gap_ratio: float | None = None   # |reported − balance_sheet| ÷ max(|balance_sheet|, total debt)
+    same_basis: bool
+    current: bool                    # the reported year is the latest completed one
+    forward: dict[str, float] = {}   # the line's forward consensus by fiscal year, $M
+    note: str | None = None
+
+
+class ExitClaims(BaseModel, frozen=True):
+    """The default claims at a fiscal year-end, per the operator's exit rule (2026-10-08)."""
+
+    fiscal_year: str                 # 'FY 2027'
+    value: float                     # $M
+    method: Literal["consensus", "held"]
+
+
+class EvBridge(BaseModel, frozen=True):
+    """(EV bridge) The claims between CIQ's enterprise value and equity — the bridge an enterprise
+    recipe (R4) subtracts from TEV, read on THE MULTIPLE'S OWN BASIS.
+
+    CIQ STATES ITS BUILD-UP (Financials→Historical Capitalization): TEV = market cap − cash & ST
+    investments + total debt + preferred equity + minority interest − long-term marketable
+    securities. `claims` is that build-up less market cap. It equals Total Debt − Total Cash & ST
+    Investments (CIQ's 'Net Debt', the comps sheet's figure) only where the other three lines are
+    nil: on 2026-10-08 they differ on 11 of 26 names, among them UBER ($6,550M against $9,340M) and
+    GOOGL ($18,023M of preferred).
+
+    THE EXIT DEFAULT FOLLOWS THE OPERATOR'S RULE (2026-10-08). A same-basis consensus is used where
+    one exists, with the other claims held; otherwise today's claims are held. It is never derived
+    as current − FCF. `exit_claims` is that default per fiscal year-end, and it needs no manual
+    input. The underwriting prompt may override it with a stated derivation on this basis.
+
+    Outside `mechanical`, ABSENT until built, declared before `anchor`."""
+
+    balance_sheet_date: str | None = None
+    lines: list[ClaimLine]
+    claims: float                    # TEV − market cap, $M
+    net_debt: float                  # Total Debt − Total Cash & ST Investments, $M, shown beside it
+    edgar_net_debt: float | None = None  # the anchor's figure, a cross-check, $M
+    edgar_source: str | None = None
+    consensus: ConsensusNetDebtCheck | None = None
+    exit_claims: list[ExitClaims] = []
+    rule: str
+    note: str | None = None
+    source_file: str | None = None   # the Financials export
+    source_sha256: str | None = None
+    estimates_sha256: str | None = None  # the Estimates export the consensus check read
+
+
 class ForwardConsensus(BaseModel, frozen=True):
     """(forward consensus) FY+0..FY+2 for the metrics a scenario reads: how each figure moved
     (`paths`), how far the street disagrees (`spreads`), and who revised (`revisions`).
@@ -2078,6 +2149,9 @@ class Dossier(BaseModel):
     # (historical forecast error) the final consensus's miss per completed fiscal year — the same
     # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
     historical_forecast_error: HistoricalForecastError | None = None
+    # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — the same
+    # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
+    ev_bridge: EvBridge | None = None
     # (anchor) the R1 mid-cycle-margin × own-history-EV/EBITDA fundamental, PERSISTED source-bound
     # so triage is a cheap read (vinci.dossier.anchor). Spot-independent; an ATTENTION FILTER, not
     # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
@@ -2173,6 +2247,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["forward_multiple_history"] = True
     if doc.historical_forecast_error is None:
         excl["historical_forecast_error"] = True
+    if doc.ev_bridge is None:
+        excl["ev_bridge"] = True
     for layer, key in TOP_DROP_WHEN_NONE:
         held = getattr(doc, layer)
         if held is not None and getattr(held, key) is None:
