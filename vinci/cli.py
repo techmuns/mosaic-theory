@@ -1472,6 +1472,10 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 # assuming a number, and a field the template cannot set is a field a created
                 # record can never carry.
                 eps=(float(c["eps"]) if c.get("eps") is not None else None),
+                # (R4) the EV/NTM EBIT recipe's leg driver — carried for the same reason as `eps`:
+                # `_run_r4` refuses a leg without one, so a template that cannot set it is a
+                # recipe the create path cannot reach (found by a real create on AMZN, 2026-10-08)
+                ebit=(float(c["ebit"]) if c.get("ebit") is not None else None),
                 bear_basis=(c.get("bear_basis") or None),
                 margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
