@@ -11051,7 +11051,47 @@
       }
     ],
     "source_file": "Artivion,IncNYSEAORTEstimatesReport.xls",
-    "source_sha256": "528430a2ed"
+    "source_sha256": "528430a2ed",
+    "pe_eps_basis": {
+      "fiscal_years": "gaap",
+      "ntm": "gaap",
+      "periods": [
+        "FY 2027",
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ2 2026",
+        "FQ3 2026",
+        "FQ4 2026",
+        "FQ1 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            27.719018,
+            27.55
+          ],
+          "spread": 0.00611621,
+          "ntm_implied_eps": 0.12418,
+          "ntm_quarter_sum": 0.12,
+          "ntm_gap": 0.03365891
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            48.677301,
+            39.755696
+          ],
+          "spread": 0.20177094,
+          "ntm_implied_eps": 0.12418,
+          "ntm_quarter_sum": 0.47,
+          "ntm_gap": 2.78483595
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-07-17",

@@ -11995,7 +11995,50 @@
       }
     ],
     "source_file": "VisaIncNYSEVEstimatesReport.xls",
-    "source_sha256": "1df9360514"
+    "source_sha256": "1df9360514",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "normalized",
+      "periods": [
+        "FY 2026",
+        "FY 2027",
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ4 2026",
+        "FQ1 2027",
+        "FQ2 2027",
+        "FQ3 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            343.690554,
+            359.200871,
+            359.793016
+          ],
+          "spread": 0.04482857,
+          "ntm_implied_eps": 14.464473,
+          "ntm_quarter_sum": 14.25,
+          "ntm_gap": 0.01482755
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            362.616849,
+            362.589558,
+            362.567221
+          ],
+          "spread": 0.00013687,
+          "ntm_implied_eps": 14.464473,
+          "ntm_quarter_sum": 14.46,
+          "ntm_gap": 0.00030922
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-08-07",

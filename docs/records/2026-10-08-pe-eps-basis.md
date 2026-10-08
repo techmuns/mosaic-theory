@@ -215,3 +215,9 @@ AMZN and UBER remain the only names meeting all three conditions.
   P/NTM EPS rows keep their `BASIS MATCH: LIMITED` ruling. Both are out of scope here.
 - **Version row `2026-10-08.3`** names this change, and also #684's anchor change, which appended
   no row. That is the same omission the 2026-10-08.1 note records, caught here rather than left.
+## Amendments
+**2026-10-08 — finding 2 RULED: keep the current rule.** Operator, after the review: "keep the
+current rule". Separation stays tested first: a line is named when it fits within its cap and its
+rival is at least 3× as dispersed and at least 0.5%, whether or not the rival also sits inside its
+own cap. IT stays normalized on both rows and TGT's NTM row stays normalized. The field reached the
+26 pages in #687 (`docs/records/2026-10-08-artifact-pass-pe-eps-basis.md`).

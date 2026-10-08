@@ -11132,7 +11132,47 @@
       }
     ],
     "source_file": "TheSimplyGoodFoodsCompanyNasdaqCMSMPLEstimatesReport.xls",
-    "source_sha256": "06670995ba"
+    "source_sha256": "06670995ba",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "normalized",
+      "periods": [
+        "FY 2027",
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ4 2026",
+        "FQ1 2027",
+        "FQ2 2027",
+        "FQ3 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            10.244683,
+            10.8069
+          ],
+          "spread": 0.05341332,
+          "ntm_implied_eps": 1.674927,
+          "ntm_quarter_sum": 1.58,
+          "ntm_gap": 0.05667517
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            10.880998,
+            10.865316
+          ],
+          "spread": 0.00144232,
+          "ntm_implied_eps": 1.674927,
+          "ntm_quarter_sum": 1.67,
+          "ntm_gap": 0.00294147
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-08-11",

@@ -9318,7 +9318,44 @@
       }
     ],
     "source_file": "FuboTVIncNYSEFUBOEstimatesReport.xls",
-    "source_sha256": "6a70302115"
+    "source_sha256": "6a70302115",
+    "pe_eps_basis": {
+      "fiscal_years": "undetermined",
+      "ntm": "undetermined",
+      "periods": [
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ4 2026",
+        "FQ1 2027",
+        "FQ2 2027",
+        "FQ3 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            9.7
+          ],
+          "spread": null,
+          "ntm_implied_eps": null,
+          "ntm_quarter_sum": -0.38,
+          "ntm_gap": null
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            12.302439
+          ],
+          "spread": null,
+          "ntm_implied_eps": null,
+          "ntm_quarter_sum": 0.26,
+          "ntm_gap": null
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": "1 FY row(s) carry a positive P/E and a positive EPS on both lines — two are needed to compare; NTM not tested: the FY rows establish no price"
+    }
   },
   "anchor": {
     "recipe_hint": "unknown",
