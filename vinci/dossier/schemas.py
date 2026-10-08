@@ -544,6 +544,60 @@ class ConsensusReconciliation(BaseModel, frozen=True):
     estimates: dict[str, str]     # contributor counts per line, as CIQ prints them ('25/27')
 
 
+class ForecastErrorObservation(BaseModel, frozen=True):
+    """One completed fiscal year: the FINAL consensus before the result, the actual, and the miss.
+
+    ALL ERRORS ARE FRACTIONS (×100 for percent or points). Which are filled depends on the line:
+    `pct_error` only where the base cannot change sign (Revenue; none on a zero estimate); the
+    revenue-normalised pair for profit lines and capex, which can (AMZN's 2014 EBIT estimate was
+    −$216M against an actual +$178M). Capex errors are on MAGNITUDES — spend above forecast is
+    positive — because CIQ prints capex as a negative outflow."""
+
+    fiscal_year: int
+    announced: str | None = None          # the result's announcement date — the estimate's as-of
+    accounting_basis: str | None = None
+    actual: float
+    final_estimate: float
+    dollar_error: float                   # actual − estimate ($M; capex: |actual| − |estimate|)
+    pct_error: float | None = None        # actual ÷ estimate − 1 (Revenue only)
+    error_per_forecast_revenue: float | None = None  # dollar_error ÷ that year's forecast revenue
+    ratio_error: float | None = None      # actual ÷ actual revenue − estimate ÷ forecast revenue
+
+
+class ForecastErrorSeries(BaseModel, frozen=True):
+    metric: str                           # the sheet's label: 'Revenue', 'EBIT', 'EBITDA', …
+    observations: list[ForecastErrorObservation]
+
+
+class HistoricalForecastError(BaseModel, frozen=True):
+    """(historical forecast error) How far the FINAL consensus missed each completed fiscal year,
+    from CIQ Estimates→Surprise ('Fiscal Years' section, company level) — a cross-check on
+    scenario severity, NOT a revision distribution.
+
+    WHY THE ELIGIBILITY IS A FIELD. Each observation is the consensus on the eve of the result, so
+    its lead time is ~0: it measures last-mile surprise, which is narrower by construction than how
+    far consensus moves over a holding period. A reader — human or model — that sees 22 EBIT
+    observations must not count them as 22 horizon-matched revisions (operator's analyst review,
+    2026-10-08). `usable_as_revision_distribution` is False by type, not by convention.
+
+    WHICH MEASURE ANSWERS WHICH QUESTION is `usage_note`. They are linked EXACTLY:
+    error_per_forecast_revenue = ratio_error + actual ratio × (actual revenue ÷ forecast − 1).
+    An EBIT-level shock is error_per_forecast_revenue × today's revenue consensus; the margin
+    error alone drops the revenue miss's EBIT effect and can flip the sign (AMZN 2025: EBIT beat by
+    $78M while the margin error is −0.02 points)."""
+
+    estimate_type: str
+    usable_as_forecast_error_cross_check: Literal[True] = True
+    usable_as_revision_distribution: Literal[False] = False
+    eligibility_note: str
+    usage_note: str
+    series: list[ForecastErrorSeries]
+    withheld: list[str] = []
+    source_file: str | None = None
+    source_sha256: str | None = None
+    source_ref: str
+
+
 class ForwardConsensus(BaseModel, frozen=True):
     """(forward consensus) FY+0..FY+2 for the metrics a scenario reads: how each figure moved
     (`paths`), how far the street disagrees (`spreads`), and who revised (`revisions`).
@@ -1979,6 +2033,9 @@ class Dossier(BaseModel):
     # (forward-multiple history) the quarterly history of the forward multiples — the same rules
     # as `forward_consensus`: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
     forward_multiple_history: ForwardMultipleHistory | None = None
+    # (historical forecast error) the final consensus's miss per completed fiscal year — the same
+    # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
+    historical_forecast_error: HistoricalForecastError | None = None
     # (anchor) the R1 mid-cycle-margin × own-history-EV/EBITDA fundamental, PERSISTED source-bound
     # so triage is a cheap read (vinci.dossier.anchor). Spot-independent; an ATTENTION FILTER, not
     # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
@@ -2071,6 +2128,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["forward_consensus"] = True
     if doc.forward_multiple_history is None:
         excl["forward_multiple_history"] = True
+    if doc.historical_forecast_error is None:
+        excl["historical_forecast_error"] = True
     for layer, key in TOP_DROP_WHEN_NONE:
         held = getattr(doc, layer)
         if held is not None and getattr(held, key) is None:

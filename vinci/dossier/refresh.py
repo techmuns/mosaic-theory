@@ -51,7 +51,8 @@ Transform = Callable[[dict[str, Any]], dict[str, Any]]
 #: in `_TOP_LEVEL_REFRESHABLE` may be set: the mechanical layer, the synthesis and the anchor each
 #: have their own write path and guards, and this seam must not become a way around them.
 TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
-_TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history"})
+_TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
+                                    "historical_forecast_error"})
 
 
 class RefreshRefusedError(RuntimeError):
@@ -705,6 +706,47 @@ def forward_multiple_history_transform(ticker: str) -> TopLevelTransform:
         if built is None or built.source_sha256 not in stamps:
             return {}               # the export on disk is not the page's: re-assemble instead
         return {"forward_multiple_history": json.loads(built.model_dump_json())}
+
+    return _apply
+
+
+def historical_forecast_error_transform(ticker: str) -> TopLevelTransform:
+    """A `refresh_dossier` top-level step writing `historical_forecast_error` — the final
+    consensus's miss per completed fiscal year — from the on-disk Estimates export, under a KEPT
+    synthesis.
+
+    ONLY FROM THE EXPORT THE PAGE WAS BUILT FROM. The page's `forward_consensus` names its Estimates
+    export: by hash where the page carries one, else by the export's as-of. A page that names
+    neither, or names another export, is left alone. A folder that cannot be read leaves the page
+    alone too (the `credit_health_transform` rule)."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import estimates_as_of, file_provenance, historical_forecast_error
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import SourceStatus
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        fc = doc.get("forward_consensus") or {}
+        if not fc.get("source_sha256") and not fc.get("as_of"):
+            return {}
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return {}
+        wb = bundle.workbook("estimates")
+        if wb is None:
+            return {}
+        if fc.get("source_sha256"):
+            if file_provenance(wb.path)[0] != fc["source_sha256"]:
+                return {}       # another export than the page's: re-assemble instead
+        else:
+            as_of = estimates_as_of(bundle)
+            if as_of.status is not SourceStatus.PRESENT or as_of.value != fc["as_of"]:
+                return {}
+        built = historical_forecast_error(bundle)
+        return ({} if built is None
+                else {"historical_forecast_error": json.loads(built.model_dump_json())})
 
     return _apply
 

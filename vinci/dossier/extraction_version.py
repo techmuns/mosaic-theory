@@ -83,6 +83,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "CIQ's FCF and EBITDA consensus set against CFO − CapEx and EBIT + D&A, and the Estimates "
         "export's file and hash",
     ),
+    (
+        "2026-10-08.2",
+        "the final consensus's miss per completed fiscal year beside the page "
+        "(`historical_forecast_error`): revenue as a percentage, profit lines and capex as "
+        "dollars, per forecast revenue and as a margin or intensity error — a cross-check, never "
+        "a revision distribution",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

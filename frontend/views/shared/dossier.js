@@ -32,6 +32,11 @@ const EXTRACTION_VERSIONS = [
     " (`current_multiples`), the history's latest close marked quarter-end or not, CIQ's FCF " +
     "and EBITDA consensus set against CFO − CapEx and EBIT + D&A, and the Estimates export's " +
     "file and hash"],
+  ["2026-10-08.2",
+    "the final consensus's miss per completed fiscal year beside the page " +
+    "(`historical_forecast_error`): revenue as a percentage, profit lines and capex as " +
+    "dollars, per forecast revenue and as a margin or intensity error — a cross-check, never " +
+    "a revision distribution"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
