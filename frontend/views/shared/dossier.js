@@ -37,6 +37,10 @@ const EXTRACTION_VERSIONS = [
     "(`historical_forecast_error`): revenue as a percentage, profit lines and capex as " +
     "dollars, per forecast revenue and as a margin or intensity error — a cross-check, never " +
     "a revision distribution"],
+  ["2026-10-08.3",
+    "the forward P/E states which consensus EPS line it is struck on " +
+    "(`forward_consensus.pe_eps_basis`): the FY rows and the NTM row each measured, never " +
+    "assumed · the anchor's net debt nets the short-term securities a CIQ TEV nets (#684)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
