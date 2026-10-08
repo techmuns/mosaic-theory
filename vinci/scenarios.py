@@ -183,9 +183,11 @@ LADDER_FIELDS: tuple[str, ...] = (
 #: committed records stay byte-identical — verified against the corpus, not assumed. On an R3
 #: record they are the axes the arithmetic does not use, and a null there asserts something false:
 #: that someone looked for a revenue and found none. Absent is the true statement.
+#: `ebit` (2026-10-08, R4) for the `eps` reason: absent says *this record is not an EV/NTM EBIT
+#: underwrite*, and every committed record stays byte-identical.
 #: NOT `margin_basis`/`bear_basis`, which ARE null across the committed corpus today — adding
 #: those would churn every record the mechanism exists to leave alone.
-LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps", "revenue", "margin")
+LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps", "ebit", "revenue", "margin")
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -391,6 +393,9 @@ class ScenarioInput(BaseModel):
     # field rather than a reuse of `revenue` because the two carry different units ($/share vs $M)
     # and a recipe that read the wrong one would be off by a factor of the share count.
     eps: float | None = None
+    # (R4) NTM EBIT at this leg's exit date, $M — the twelve months AFTER the exit, which is what an
+    # NTM multiple prices at that date (AMZN, exit end-2027: FY2028 EBIT). None on R1–R3.
+    ebit: float | None = None
     reason: str                    # WHY this deviates from the anchor — required, never blank
     # (R2) years from today to this leg's terminal year. Per LEG, not per record: a bear case that
     # takes longer to arrive is worth less today, and forcing one horizon on all three legs would
@@ -1109,6 +1114,26 @@ R3_FORMULA: tuple[str, ...] = (
     "value/share = EPS × forward P/E multiple",
 )
 
+#: R4 — an EV/NTM EBIT underwrite: the NTM operating earnings at the exit date × the forward
+#: enterprise multiple, bridged to equity per share. Ruled by the operator 2026-10-08 for names
+#: whose forward operating profit is positive, whose history R1 cannot anchor, and whose P/E CIQ
+#: strikes on GAAP EPS beside material non-operating income (AMZN first, UBER second —
+#: `docs/records/2026-10-08-ev-ntm-ebit-eligibility-ratified.md`).
+#:
+#: THE BRIDGE IS ONE RULER WITH THE MULTIPLE. The multiple is CIQ's TEV/NTM EBIT, so the net debt is
+#: CIQ's (leases in, cash and short-term investments out), carried to the exit by the operator's
+#: rule (2026-10-08): a reliable same-basis consensus forecast where one exists, otherwise today's
+#: figure held constant — never "current − FCF" unless the data show that cash-flow line IS the
+#: whole change in the balance. Non-operating investments stay INSIDE the multiple (ruled "for now";
+#: the bias — the stake scales with EBIT — is stated on the record, about −1.5% on AMZN's hold leg).
+RECIPE_R4 = "R4_forward_ev_ebit"
+BASIS_EV_NTM_EBIT = "EV/NTM EBIT"
+R4_FORMULA: tuple[str, ...] = (
+    "EV = NTM EBIT at exit × EV/NTM EBIT multiple",
+    "equity = EV − net debt at exit (CIQ basis)",
+    "value/share = equity ÷ diluted shares",
+)
+
 AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {
     RECIPE_R1: ("revenue", "margin", "multiple"),
     # R2 models the HORIZON as a fourth axis: when the terminal year arrives is an assumption in
@@ -1120,6 +1145,12 @@ AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {
     # they derived an input the arithmetic never reads, which is the "reviewable-looking paragraph
     # attached to nothing" the EV/Revenue note below refuses for R2.
     RECIPE_R3: ("earnings", "multiple"),
+    # R4 models TWO axes, like R3, but on the ENTERPRISE line: the NTM EBIT at the exit date (one
+    # number per leg, operator ruling 2026-10-08 — revenue × margin is the leg's derivation, not
+    # its input) and the multiple. Named `ebit`, not `earnings`, because the leg field differs:
+    # `earnings` is R3's EPS, and one axis name meaning two units is the mismatch this map exists
+    # to prevent.
+    RECIPE_R4: ("ebit", "multiple"),
 }
 
 # R2 on an EV/Revenue basis models THREE axes: the margin axis does not exist, because the value
@@ -1823,6 +1854,79 @@ def _run_r3(rec: ScenarioRecord) -> ScenarioRecord:
     return rec.model_copy(update={"result": res, "recipe_formula": list(R3_FORMULA)})
 
 
+def _run_r4(rec: ScenarioRecord) -> ScenarioRecord:
+    """(R4) Value each leg as ``(ebit × multiple − net_debt) ÷ diluted_shares`` — an EV/NTM EBIT
+    underwrite, displaced from today's multiple the way R3 is (RUNBOOKS step 10).
+
+    WHAT IT REFUSES, and why each is a refusal rather than an ignore:
+
+    * **An EPS, revenue or margin on a leg.** The value reads NTM EBIT and the multiple only; a leg
+      stating another driver shows a number the value never used.
+    * **A D&A fact.** D&A belongs to an EBITDA recipe (R1); here it would be a fact nothing reads.
+    * **A non-positive EBIT.** A forward EV/EBIT multiple on a loss is meaningless, and a name with
+      no forward operating profit is R2's case, not this one (eligibility condition 1).
+
+    UNITS, as R1: ``ebit`` and ``net_debt`` in $M, ``diluted_shares`` in MILLIONS → value/share in
+    $. The facts carry the bridge the multiple was struck on — CIQ's net debt at the exit, by the
+    operator's exit rule (module note at :data:`RECIPE_R4`); this function checks they are present
+    and positive where they must be, and computes.
+
+    The machine records the bar test; it does NOT touch ``verdict``.
+    """
+    if rec.multiple_basis != BASIS_EV_NTM_EBIT:
+        raise ValueError(
+            f"record multiple_basis {rec.multiple_basis!r} is not {BASIS_EV_NTM_EBIT!r} — "
+            f"{RECIPE_R4} prices NTM EBIT on a forward ENTERPRISE multiple and refuses any other "
+            f"unit")
+    if rec.recipe_formula and rec.recipe_formula != list(R4_FORMULA):
+        raise ValueError("record's recipe_formula does not match R4_FORMULA — refusing to compute "
+                         "under a misstated recipe")
+    for key in ("net_debt", "diluted_shares"):
+        if key not in rec.facts:
+            raise ValueError(f"recipe {RECIPE_R4} needs fact {key!r} — refusing to assume it")
+    if "d_and_a" in rec.facts:
+        raise ValueError(
+            f"{RECIPE_R4} carries fact 'd_and_a', which belongs to an EBITDA recipe — an EV/EBIT "
+            f"multiple prices EBIT, so a D&A fact is a number nothing reads")
+    net_debt = rec.facts["net_debt"].value
+    shares = rec.facts["diluted_shares"].value            # MILLIONS → $M/M = $/share
+    if shares <= 0:
+        raise ValueError("diluted_shares must be > 0")
+    per: dict[str, ScenarioOutcome] = {}
+    for name, sc in rec.scenarios.items():
+        if sc.ebit is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R4} values a leg from its NTM EBIT at exit — "
+                             f"a leg without one cannot be computed")
+        if sc.ebit <= 0:
+            raise ValueError(
+                f"{name}: recipe {RECIPE_R4} needs a POSITIVE NTM EBIT (got {sc.ebit!r}) — a "
+                f"forward EV/EBIT multiple on a loss means nothing, and that name is R2's case")
+        for field, val in (("eps", sc.eps), ("revenue", sc.revenue), ("margin", sc.margin)):
+            if val is not None:
+                raise ValueError(
+                    f"{name}: recipe {RECIPE_R4} reads NTM EBIT and the multiple only — a leg "
+                    f"stating {field} {val!r} shows a driver the value never reads")
+        # AN ENTERPRISE RECIPE FILLS THE ENTERPRISE FIELDS (`ScenarioOutcome`: "required-in-spirit
+        # on an enterprise recipe") — the EBIT, the EV it prices, and the equity left after the
+        # bridge — so a reader can walk the leg from its driver to the per-share value.
+        ev = sc.ebit * sc.multiple
+        per[name] = ScenarioOutcome(
+            value_per_share=round((ev - net_debt) / shares, 4), op_income=round(sc.ebit, 3),
+            ev=round(ev, 3), equity=round(ev - net_debt, 3), ev_ebit=round(sc.multiple, 4),
+            years=sc.years_to_terminal)
+    res = Result(per_scenario=per, bar=BAR)
+    if "base" in per and "bear" in per:
+        from vinci.dossier import midcycle as mc
+        rr = mc.reward_risk(base_vps=per["base"].value_per_share,
+                            bear_vps=per["bear"].value_per_share, spot=rec.spot)
+        res = Result(per_scenario=per, reward=rr.reward, risk=rr.risk, ratio=rr.ratio,
+                     ratio_undefined=rr.undefined, bar=BAR,
+                     pass_fail=("UNDEFINED" if rr.ratio is None else
+                                ("PASS" if rr.clears_bar else "FAIL")))
+    res = _with_irr_gate(res, rec)
+    return rec.model_copy(update={"result": res, "recipe_formula": list(R4_FORMULA)})
+
+
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
     """Compute ``result{}`` for a record via the mid-cycle block, and return a NEW record with it.
 
@@ -1837,9 +1941,11 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
         return _run_r2(rec)
     if rec.recipe_id == RECIPE_R3:
         return _run_r3(rec)
+    if rec.recipe_id == RECIPE_R4:
+        return _run_r4(rec)
     if rec.recipe_id != RECIPE_R1:
         raise ValueError(f"unknown recipe_id {rec.recipe_id!r} — this runner implements "
-                         f"{RECIPE_R1}, {RECIPE_R2} and {RECIPE_R3}")
+                         f"{RECIPE_R1}, {RECIPE_R2}, {RECIPE_R3} and {RECIPE_R4}")
     if rec.multiple_basis != mc.MULTIPLE_BASIS:
         raise ValueError(f"record multiple_basis {rec.multiple_basis!r} != block basis "
                          f"{mc.MULTIPLE_BASIS!r} — refusing to compute on a mismatched unit")

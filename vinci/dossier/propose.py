@@ -207,6 +207,16 @@ def check_tier_agreement(doc: dict[str, Any], recipe_id: str) -> None:
             f"{doc.get('ticker')}: dossier hint {hint!r} disagrees with record recipe "
             f"{recipe_id!r}. The record governs, but the disagreement is resolved by a human — "
             "AORT already carries this shape, so it is a real state and not a hypothetical.")
+    # A NAMED FORWARD RECIPE ON THE PAGE THAT THE RECORD DOES NOT MATCH (2026-10-08, R4). The R1
+    # check above was the whole guard while R3 was the only other recipe a page could name; once R4
+    # existed, a page tagged R3 and a record claiming R4 — AMZN, the day R4 landed — passed with
+    # nobody told. A forward recipe on the page is an operator's tag, so writing across it is the
+    # same disagreement this guard exists for.
+    if hint.startswith(("R3", "R4")) and hint != recipe_id:
+        raise ProposalRefusedError(
+            f"{doc.get('ticker')}: dossier hint {hint!r} disagrees with record recipe "
+            f"{recipe_id!r} — re-tag the page or write the record on its recipe; never write "
+            "across the disagreement")
 
 
 def _anchors_on_basis(anchors: list[Anchor], basis: str | None) -> list[Anchor]:
@@ -344,7 +354,7 @@ def record_legs_for_validation(rec: Any,
     assumptions = getattr(rec, "assumptions", None) or {}
     for leg, s in (rec.scenarios or {}).items():
         d: dict[str, Any] = {"revenue": s.revenue, "margin": s.margin, "multiple": s.multiple,
-                             "eps": getattr(s, "eps", None),
+                             "eps": getattr(s, "eps", None), "ebit": getattr(s, "ebit", None),
                              "years_to_terminal": getattr(s, "years_to_terminal", None),
                              "reason": s.reason}
         for axis in (axes or AXES):
@@ -697,6 +707,10 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
         # the analyst will choose, and a leg carrying both is refused at compute time by whichever
         # recipe it turns out to be, which is a louder failure than a template that guessed.
         cell["eps"] = None
+        # (R4) NTM EBIT at exit — EMPTY, NEVER PROPOSED, for the `eps` reason: it is the whole of
+        # the EV/NTM EBIT recipe's leg driver. Without the cell the field is declared on
+        # `ScenarioInput` but not writable from the path that creates records (2026-10-08).
+        cell["ebit"] = None
 
         if leg == "bear":
             cell["bear_basis"] = ""                  # own-history | bear-state-comps | peer-… |…
