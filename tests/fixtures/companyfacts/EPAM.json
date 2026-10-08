@@ -25488,6 +25488,206 @@
      ]
     }
    },
+   "ShortTermInvestments": {
+    "description": "Amount of investments including trading securities, available-for-sale securities, held-to-maturity securities, and short-term investments classified as other and current.",
+    "label": "Short-term Investments",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001352010-22-000048",
+       "end": "2021-12-31",
+       "filed": "2022-08-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2022,
+       "val": 0
+      },
+      {
+       "accn": "0001352010-22-000057",
+       "end": "2021-12-31",
+       "filed": "2022-11-04",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 0
+      },
+      {
+       "accn": "0001352010-22-000048",
+       "end": "2022-06-30",
+       "filed": "2022-08-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2022Q2I",
+       "fy": 2022,
+       "val": 60098000
+      },
+      {
+       "accn": "0001352010-22-000057",
+       "end": "2022-09-30",
+       "filed": "2022-11-04",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2022Q3I",
+       "fy": 2022,
+       "val": 60216000
+      },
+      {
+       "accn": "0001352010-23-000027",
+       "end": "2022-12-31",
+       "filed": "2023-05-05",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2023,
+       "val": 60336000
+      },
+      {
+       "accn": "0001352010-23-000044",
+       "end": "2022-12-31",
+       "filed": "2023-08-03",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2023,
+       "val": 60336000
+      },
+      {
+       "accn": "0001352010-23-000051",
+       "end": "2022-12-31",
+       "filed": "2023-11-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2023,
+       "val": 60336000
+      },
+      {
+       "accn": "0001352010-24-000008",
+       "end": "2022-12-31",
+       "filed": "2024-02-22",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2023,
+       "val": 60336000
+      },
+      {
+       "accn": "0001352010-23-000027",
+       "end": "2023-03-31",
+       "filed": "2023-05-05",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2023,
+       "val": 60373000
+      },
+      {
+       "accn": "0001352010-23-000044",
+       "end": "2023-06-30",
+       "filed": "2023-08-03",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2023Q2I",
+       "fy": 2023,
+       "val": 71376000
+      },
+      {
+       "accn": "0001352010-23-000051",
+       "end": "2023-09-30",
+       "filed": "2023-11-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2023Q3I",
+       "fy": 2023,
+       "val": 60431000
+      },
+      {
+       "accn": "0001352010-24-000008",
+       "end": "2023-12-31",
+       "filed": "2024-02-22",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2023,
+       "val": 60739000
+      },
+      {
+       "accn": "0001352010-24-000018",
+       "end": "2023-12-31",
+       "filed": "2024-05-09",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2024,
+       "val": 60739000
+      },
+      {
+       "accn": "0001352010-24-000027",
+       "end": "2023-12-31",
+       "filed": "2024-08-08",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2024,
+       "val": 60739000
+      },
+      {
+       "accn": "0001352010-24-000044",
+       "end": "2023-12-31",
+       "filed": "2024-11-07",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2024,
+       "val": 60739000
+      },
+      {
+       "accn": "0001352010-25-000007",
+       "end": "2023-12-31",
+       "filed": "2025-02-28",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2024,
+       "val": 60739000
+      },
+      {
+       "accn": "0001352010-24-000018",
+       "end": "2024-03-31",
+       "filed": "2024-05-09",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2024Q1I",
+       "fy": 2024,
+       "val": 61625000
+      },
+      {
+       "accn": "0001352010-24-000027",
+       "end": "2024-06-30",
+       "filed": "2024-08-08",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2024Q2I",
+       "fy": 2024,
+       "val": 61492000
+      },
+      {
+       "accn": "0001352010-24-000044",
+       "end": "2024-09-30",
+       "filed": "2024-11-07",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2024Q3I",
+       "fy": 2024,
+       "val": 22316000
+      },
+      {
+       "accn": "0001352010-25-000007",
+       "end": "2024-12-31",
+       "filed": "2025-02-28",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2024,
+       "val": 1690000
+      }
+     ]
+    }
+   },
    "WeightedAverageNumberOfDilutedSharesOutstanding": {
     "description": "The average number of shares or units issued and outstanding that are used in calculating diluted EPS or earnings per unit (EPU), determined based on the timing of issuance of shares or units in the period.",
     "label": "Weighted Average Number of Shares Outstanding, Diluted",

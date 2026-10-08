@@ -83,6 +83,17 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
     "ConvertibleNotesPayableCurrent",
     "SeniorNotes",
     "NotesPayable",
+    # net debt: the short-term securities CIQ's TEV nets beside cash (§5.0 row 27, 2026-10-08) —
+    # the three the anchor reads, in its priority order …
+    "MarketableSecuritiesCurrent",
+    "ShortTermInvestments",
+    "AvailableForSaleSecuritiesDebtSecuritiesCurrent",
+    # … and the three it must NOT read, kept so the negative pins prove the trap is in the data
+    # rather than passing on an absent tag: the parent carries the noncurrent part (ORKA), and the
+    # AFS total includes securities already inside cash equivalents (NFLX).
+    "MarketableSecurities",
+    "MarketableSecuritiesNoncurrent",
+    "AvailableForSaleSecuritiesDebtSecurities",
     # free cash flow
     "NetCashProvidedByUsedInOperatingActivities",
     "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations",

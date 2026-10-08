@@ -443,6 +443,243 @@
      ]
     }
    },
+   "AvailableForSaleSecuritiesDebtSecuritiesCurrent": {
+    "description": "Amount of investment in debt security measured at fair value with change in fair value recognized in other comprehensive income (available-for-sale), classified as current.",
+    "label": "Debt Securities, Available-for-sale, Current",
+    "units": {
+     "USD": [
+      {
+       "accn": "0000320187-19-000051",
+       "end": "2018-05-31",
+       "filed": "2019-07-23",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2018Q2I",
+       "fy": 2019,
+       "val": 996000000
+      },
+      {
+       "accn": "0000320187-19-000051",
+       "end": "2019-05-31",
+       "filed": "2019-07-23",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2019,
+       "val": 197000000
+      },
+      {
+       "accn": "0000320187-19-000071",
+       "end": "2019-05-31",
+       "filed": "2019-10-04",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2020,
+       "val": 197000000
+      },
+      {
+       "accn": "0000320187-20-000004",
+       "end": "2019-05-31",
+       "filed": "2020-01-07",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2020,
+       "val": 197000000
+      },
+      {
+       "accn": "0000320187-20-000018",
+       "end": "2019-05-31",
+       "filed": "2020-04-07",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2020,
+       "val": 197000000
+      },
+      {
+       "accn": "0000320187-20-000047",
+       "end": "2019-05-31",
+       "filed": "2020-07-24",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2019Q2I",
+       "fy": 2020,
+       "val": 197000000
+      },
+      {
+       "accn": "0000320187-19-000071",
+       "end": "2019-08-31",
+       "filed": "2019-10-04",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2019Q3I",
+       "fy": 2020,
+       "val": 198000000
+      },
+      {
+       "accn": "0000320187-20-000004",
+       "end": "2019-11-30",
+       "filed": "2020-01-07",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2019Q4I",
+       "fy": 2020,
+       "val": 432000000
+      },
+      {
+       "accn": "0000320187-20-000018",
+       "end": "2020-02-29",
+       "filed": "2020-04-07",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2020Q1I",
+       "fy": 2020,
+       "val": 319000000
+      },
+      {
+       "accn": "0000320187-20-000047",
+       "end": "2020-05-31",
+       "filed": "2020-07-24",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2020,
+       "val": 439000000
+      },
+      {
+       "accn": "0000320187-20-000061",
+       "end": "2020-05-31",
+       "filed": "2020-10-08",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2021,
+       "val": 439000000
+      },
+      {
+       "accn": "0000320187-21-000003",
+       "end": "2020-05-31",
+       "filed": "2021-01-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2021,
+       "val": 439000000
+      },
+      {
+       "accn": "0000320187-21-000012",
+       "end": "2020-05-31",
+       "filed": "2021-04-02",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2021,
+       "val": 439000000
+      },
+      {
+       "accn": "0000320187-21-000028",
+       "end": "2020-05-31",
+       "filed": "2021-07-20",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2020Q2I",
+       "fy": 2021,
+       "val": 439000000
+      },
+      {
+       "accn": "0000320187-20-000061",
+       "end": "2020-08-31",
+       "filed": "2020-10-08",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2020Q3I",
+       "fy": 2021,
+       "val": 1332000000
+      },
+      {
+       "accn": "0000320187-21-000003",
+       "end": "2020-11-30",
+       "filed": "2021-01-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2020Q4I",
+       "fy": 2021,
+       "val": 3177000000
+      },
+      {
+       "accn": "0000320187-21-000012",
+       "end": "2021-02-28",
+       "filed": "2021-04-02",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2021Q1I",
+       "fy": 2021,
+       "val": 4012000000
+      },
+      {
+       "accn": "0000320187-21-000028",
+       "end": "2021-05-31",
+       "filed": "2021-07-20",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2021,
+       "val": 3587000000
+      },
+      {
+       "accn": "0000320187-21-000045",
+       "end": "2021-05-31",
+       "filed": "2021-10-05",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2022,
+       "val": 3587000000
+      },
+      {
+       "accn": "0000320187-22-000004",
+       "end": "2021-05-31",
+       "filed": "2022-01-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2022,
+       "val": 3587000000
+      },
+      {
+       "accn": "0000320187-22-000017",
+       "end": "2021-05-31",
+       "filed": "2022-04-05",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2021Q2I",
+       "fy": 2022,
+       "val": 3587000000
+      },
+      {
+       "accn": "0000320187-21-000045",
+       "end": "2021-08-31",
+       "filed": "2021-10-05",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2021Q3I",
+       "fy": 2022,
+       "val": 2975000000
+      },
+      {
+       "accn": "0000320187-22-000004",
+       "end": "2021-11-30",
+       "filed": "2022-01-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 4352000000
+      },
+      {
+       "accn": "0000320187-22-000017",
+       "end": "2022-02-28",
+       "filed": "2022-04-05",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2022Q1I",
+       "fy": 2022,
+       "val": 4763000000
+      }
+     ]
+    }
+   },
    "CashAndCashEquivalentsAtCarryingValue": {
     "description": "Amount of currency on hand as well as demand deposits with banks or financial institutions. Includes other kinds of accounts that have the general characteristics of demand deposits. Also includes short-term, highly liquid investments that are both readily convertible to known amounts of cash and so near their maturity that they present insignificant risk of changes in value because of changes in interest rates. Excludes cash and cash equivalents within disposal group and discontinued operation.",
     "label": "Cash and Cash Equivalents, at Carrying Value",
@@ -19403,6 +19640,167 @@
        "fy": 2019,
        "start": "2018-09-01",
        "val": 9374000000
+      }
+     ]
+    }
+   },
+   "ShortTermInvestments": {
+    "description": "Amount of investments including trading securities, available-for-sale securities, held-to-maturity securities, and short-term investments classified as other and current.",
+    "label": "Short-term Investments",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001193125-10-161874",
+       "end": "2009-05-31",
+       "filed": "2010-07-20",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2009Q2I",
+       "fy": 2010,
+       "val": 1164000000
+      },
+      {
+       "accn": "0001193125-10-078534",
+       "end": "2009-05-31",
+       "filed": "2010-04-07",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2010,
+       "val": 1164000000
+      },
+      {
+       "accn": "0001193125-10-002092",
+       "end": "2009-05-31",
+       "filed": "2010-01-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2010,
+       "val": 1164000000
+      },
+      {
+       "accn": "0001193125-09-205690",
+       "end": "2009-05-31",
+       "filed": "2009-10-08",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2010,
+       "val": 1164000000
+      },
+      {
+       "accn": "0001193125-09-205690",
+       "end": "2009-08-31",
+       "filed": "2009-10-08",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2009Q3I",
+       "fy": 2010,
+       "val": 1369200000
+      },
+      {
+       "accn": "0001193125-10-002092",
+       "end": "2009-11-30",
+       "filed": "2010-01-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2009Q4I",
+       "fy": 2010,
+       "val": 1974800000
+      },
+      {
+       "accn": "0001193125-10-078534",
+       "end": "2010-02-28",
+       "filed": "2010-04-07",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2010Q1I",
+       "fy": 2010,
+       "val": 1813700000
+      },
+      {
+       "accn": "0001193125-11-194791",
+       "end": "2010-05-31",
+       "filed": "2011-07-22",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2010Q2I",
+       "fy": 2011,
+       "val": 2067000000
+      },
+      {
+       "accn": "0001193125-11-090259",
+       "end": "2010-05-31",
+       "filed": "2011-04-06",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2011,
+       "val": 2067000000
+      },
+      {
+       "accn": "0001193125-11-002957",
+       "end": "2010-05-31",
+       "filed": "2011-01-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2011,
+       "val": 2067000000
+      },
+      {
+       "accn": "0001193125-10-224858",
+       "end": "2010-05-31",
+       "filed": "2010-10-06",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2011,
+       "val": 2067000000
+      },
+      {
+       "accn": "0001193125-10-161874",
+       "end": "2010-05-31",
+       "filed": "2010-07-20",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2010,
+       "val": 2066800000
+      },
+      {
+       "accn": "0001193125-10-224858",
+       "end": "2010-08-31",
+       "filed": "2010-10-06",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2010Q3I",
+       "fy": 2011,
+       "val": 2678000000
+      },
+      {
+       "accn": "0001193125-11-002957",
+       "end": "2010-11-30",
+       "filed": "2011-01-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2010Q4I",
+       "fy": 2011,
+       "val": 3021000000
+      },
+      {
+       "accn": "0001193125-11-090259",
+       "end": "2011-02-28",
+       "filed": "2011-04-06",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2011Q1I",
+       "fy": 2011,
+       "val": 2333000000
+      },
+      {
+       "accn": "0001193125-11-194791",
+       "end": "2011-05-31",
+       "filed": "2011-07-22",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2011Q2I",
+       "fy": 2011,
+       "val": 2583000000
       }
      ]
     }

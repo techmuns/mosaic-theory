@@ -834,6 +834,94 @@
      ]
     }
    },
+   "AvailableForSaleSecuritiesDebtSecurities": {
+    "description": "Amount of investment in debt security measured at fair value with change in fair value recognized in other comprehensive income (available-for-sale).",
+    "label": "Debt Securities, Available-for-sale",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001193125-14-057107",
+       "end": "2013-12-31",
+       "filed": "2014-02-18",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2013Q4I",
+       "fy": 2013,
+       "val": 4188000
+      },
+      {
+       "accn": "0001193125-14-163119",
+       "end": "2014-03-31",
+       "filed": "2014-04-28",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2014Q1I",
+       "fy": 2014,
+       "val": 4092000
+      },
+      {
+       "accn": "0001193125-14-282448",
+       "end": "2014-06-30",
+       "filed": "2014-07-28",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2014Q2I",
+       "fy": 2014,
+       "val": 8800000
+      },
+      {
+       "accn": "0001193125-14-394184",
+       "end": "2014-09-30",
+       "filed": "2014-11-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2014Q3I",
+       "fy": 2014,
+       "val": 2835000
+      },
+      {
+       "accn": "0001193125-15-065723",
+       "end": "2014-12-31",
+       "filed": "2015-02-26",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2014Q4I",
+       "fy": 2014,
+       "val": 3700000
+      },
+      {
+       "accn": "0001193125-15-172113",
+       "end": "2015-03-31",
+       "filed": "2015-05-05",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2015Q1I",
+       "fy": 2015,
+       "val": 900000
+      },
+      {
+       "accn": "0001564590-15-006235",
+       "end": "2015-06-30",
+       "filed": "2015-08-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2015Q2I",
+       "fy": 2015,
+       "val": 1100000
+      },
+      {
+       "accn": "0001564590-15-009169",
+       "end": "2015-09-30",
+       "filed": "2015-11-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2015Q3I",
+       "fy": 2015,
+       "val": 1100000
+      }
+     ]
+    }
+   },
    "CashAndCashEquivalentsAtCarryingValue": {
     "description": "Amount of currency on hand as well as demand deposits with banks or financial institutions. Includes other kinds of accounts that have the general characteristics of demand deposits. Also includes short-term, highly liquid investments that are both readily convertible to known amounts of cash and so near their maturity that they present insignificant risk of changes in value because of changes in interest rates. Excludes cash and cash equivalents within disposal group and discontinued operation.",
     "label": "Cash and Cash Equivalents, at Carrying Value",

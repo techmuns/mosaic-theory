@@ -16165,6 +16165,62 @@
      ]
     }
    },
+   "ShortTermInvestments": {
+    "description": "Amount of investments including trading securities, available-for-sale securities, held-to-maturity securities, and short-term investments classified as other and current.",
+    "label": "Short-term Investments",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001193125-26-209227",
+       "end": "2025-12-31",
+       "filed": "2026-05-06",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2026,
+       "val": 0
+      },
+      {
+       "accn": "0001193125-26-335490",
+       "end": "2025-12-31",
+       "filed": "2026-08-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2025Q4I",
+       "fy": 2026,
+       "val": 0
+      },
+      {
+       "accn": "0001193125-26-209227",
+       "end": "2026-03-31",
+       "filed": "2026-05-06",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2026,
+       "val": 6068000
+      },
+      {
+       "accn": "0001193125-26-335490",
+       "end": "2026-03-31",
+       "filed": "2026-08-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2026Q1I",
+       "fy": 2026,
+       "val": 6068000
+      },
+      {
+       "accn": "0001193125-26-335490",
+       "end": "2026-06-30",
+       "filed": "2026-08-05",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2026Q2I",
+       "fy": 2026,
+       "val": 5237000
+      }
+     ]
+    }
+   },
    "WeightedAverageNumberOfDilutedSharesOutstanding": {
     "description": "The average number of shares or units issued and outstanding that are used in calculating diluted EPS or earnings per unit (EPU), determined based on the timing of issuance of shares or units in the period.",
     "label": "Weighted Average Number of Shares Outstanding, Diluted",
