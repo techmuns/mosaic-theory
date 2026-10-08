@@ -450,3 +450,13 @@
 {"bar_date": "2026-09-18", "close": 349.54, "high": 359.44, "internal_id": "SEC-0001652044-GOOGL", "low": 348.445, "open": 357.305, "source": "polygon-aggs", "volume": 47631754.952083}
 {"bar_date": "2026-09-21", "close": 354.97, "high": 357.61, "internal_id": "SEC-0001652044-GOOGL", "low": 349.1, "open": 350.64, "source": "polygon-aggs", "volume": 30455384.925347}
 {"bar_date": "2026-09-22", "close": 351.16, "high": 364.17, "internal_id": "SEC-0001652044-GOOGL", "low": 350.22, "open": 357.65, "source": "polygon-aggs", "volume": 29788597.994939}
+{"bar_date": "2026-09-23", "close": 337.83, "high": 350.0, "internal_id": "SEC-0001652044-GOOGL", "low": 337.45, "open": 349.86, "source": "polygon-grouped", "volume": 35576229.892471}
+{"bar_date": "2026-09-24", "close": 342.36, "high": 343.09, "internal_id": "SEC-0001652044-GOOGL", "low": 336.0201, "open": 336.22, "source": "polygon-grouped", "volume": 23777195.248938}
+{"bar_date": "2026-09-25", "close": 343.92, "high": 347.03, "internal_id": "SEC-0001652044-GOOGL", "low": 341.11, "open": 342.35, "source": "polygon-grouped", "volume": 21880846.824476}
+{"bar_date": "2026-09-28", "close": 342.75, "high": 343.59, "internal_id": "SEC-0001652044-GOOGL", "low": 339.56, "open": 340.7, "source": "polygon-grouped", "volume": 19318322.993823}
+{"bar_date": "2026-09-29", "close": 340.92, "high": 342.84, "internal_id": "SEC-0001652044-GOOGL", "low": 338.02, "open": 341.95, "source": "polygon-grouped", "volume": 21066900.656335}
+{"bar_date": "2026-09-30", "close": 344.08, "high": 352.6, "internal_id": "SEC-0001652044-GOOGL", "low": 340.99, "open": 344.15, "source": "polygon-grouped", "volume": 37373739.231087}
+{"bar_date": "2026-10-01", "close": 338.24, "high": 353.22, "internal_id": "SEC-0001652044-GOOGL", "low": 335.5108, "open": 350.785, "source": "polygon-grouped", "volume": 33269338.471006}
+{"bar_date": "2026-10-02", "close": 343.5, "high": 345.77, "internal_id": "SEC-0001652044-GOOGL", "low": 341.16, "open": 341.315, "source": "polygon-grouped", "volume": 23772148.150943}
+{"bar_date": "2026-10-05", "close": 346.47, "high": 348.09, "internal_id": "SEC-0001652044-GOOGL", "low": 342.4, "open": 342.59, "source": "polygon-grouped", "volume": 25630552.571191}
+{"bar_date": "2026-10-06", "close": 347.68, "high": 349.09, "internal_id": "SEC-0001652044-GOOGL", "low": 344.6805, "open": 347.37, "source": "polygon-grouped", "volume": 18715627.539378}

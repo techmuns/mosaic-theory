@@ -450,3 +450,13 @@
 {"bar_date": "2026-09-18", "close": 10.04, "high": 10.19, "internal_id": "SEC-0001484769-FUBO", "low": 9.71, "open": 9.9, "source": "polygon-aggs", "volume": 1971366.696232}
 {"bar_date": "2026-09-21", "close": 10.3, "high": 10.32, "internal_id": "SEC-0001484769-FUBO", "low": 10.02, "open": 10.19, "source": "polygon-aggs", "volume": 1316621.163519}
 {"bar_date": "2026-09-22", "close": 10.13, "high": 10.6, "internal_id": "SEC-0001484769-FUBO", "low": 10.11, "open": 10.5, "source": "polygon-aggs", "volume": 923871.274021}
+{"bar_date": "2026-09-23", "close": 9.63, "high": 10.1, "internal_id": "SEC-0001484769-FUBO", "low": 9.59, "open": 10.07, "source": "polygon-grouped", "volume": 1437111.007058}
+{"bar_date": "2026-09-24", "close": 9.73, "high": 9.78, "internal_id": "SEC-0001484769-FUBO", "low": 9.51, "open": 9.61, "source": "polygon-grouped", "volume": 1093324.895738}
+{"bar_date": "2026-09-25", "close": 9.64, "high": 10.1, "internal_id": "SEC-0001484769-FUBO", "low": 9.64, "open": 9.83, "source": "polygon-grouped", "volume": 770595.858088}
+{"bar_date": "2026-09-28", "close": 9.45, "high": 9.55, "internal_id": "SEC-0001484769-FUBO", "low": 9.29, "open": 9.53, "source": "polygon-grouped", "volume": 689492.590797}
+{"bar_date": "2026-09-29", "close": 9.09, "high": 9.58, "internal_id": "SEC-0001484769-FUBO", "low": 9.051, "open": 9.55, "source": "polygon-grouped", "volume": 970428.091861}
+{"bar_date": "2026-09-30", "close": 8.96, "high": 9.2499, "internal_id": "SEC-0001484769-FUBO", "low": 8.81, "open": 9.18, "source": "polygon-grouped", "volume": 1144784.590891}
+{"bar_date": "2026-10-01", "close": 8.88, "high": 9.1877, "internal_id": "SEC-0001484769-FUBO", "low": 8.5, "open": 9.06, "source": "polygon-grouped", "volume": 1555402.234275}
+{"bar_date": "2026-10-02", "close": 8.66, "high": 9.04, "internal_id": "SEC-0001484769-FUBO", "low": 8.51, "open": 9.02, "source": "polygon-grouped", "volume": 1586017.293449}
+{"bar_date": "2026-10-05", "close": 8.62, "high": 8.69, "internal_id": "SEC-0001484769-FUBO", "low": 8.48, "open": 8.65, "source": "polygon-grouped", "volume": 1072265.91052}
+{"bar_date": "2026-10-06", "close": 8.83, "high": 9.015, "internal_id": "SEC-0001484769-FUBO", "low": 8.65, "open": 8.66, "source": "polygon-grouped", "volume": 1001439.710132}

@@ -450,3 +450,14 @@
 {"bar_date": "2026-09-18", "close": 253.71, "high": 255.43, "internal_id": "SEC-0001018724-AMZN", "low": 251.88, "open": 252.92, "source": "polygon-aggs", "volume": 52274713.979046}
 {"bar_date": "2026-09-21", "close": 258.45, "high": 259.49, "internal_id": "SEC-0001018724-AMZN", "low": 253.6, "open": 256.4, "source": "polygon-aggs", "volume": 42979407.350433}
 {"bar_date": "2026-09-22", "close": 254.98, "high": 259.0, "internal_id": "SEC-0001018724-AMZN", "low": 253.78, "open": 255.11, "source": "polygon-aggs", "volume": 41982569.912589}
+{"bar_date": "2026-09-23", "close": 249.27, "high": 253.99, "internal_id": "SEC-0001018724-AMZN", "low": 247.76, "open": 253.0, "source": "polygon-grouped", "volume": 44209157.682033}
+{"bar_date": "2026-09-24", "close": 249.38, "high": 250.43, "internal_id": "SEC-0001018724-AMZN", "low": 245.6, "open": 246.02, "source": "polygon-grouped", "volume": 33040052.506031}
+{"bar_date": "2026-09-25", "close": 249.67, "high": 250.8775, "internal_id": "SEC-0001018724-AMZN", "low": 247.18, "open": 248.56, "source": "polygon-grouped", "volume": 34263902.406377}
+{"bar_date": "2026-09-28", "close": 246.15, "high": 247.7699, "internal_id": "SEC-0001018724-AMZN", "low": 244.725, "open": 246.625, "source": "polygon-grouped", "volume": 32596709.836274}
+{"bar_date": "2026-09-29", "close": 246.67, "high": 248.8389, "internal_id": "SEC-0001018724-AMZN", "low": 245.14, "open": 246.705, "source": "polygon-grouped", "volume": 33730401.79194}
+{"bar_date": "2026-09-30", "close": 249.15, "high": 252.44, "internal_id": "SEC-0001018724-AMZN", "low": 246.08, "open": 246.79, "source": "polygon-grouped", "volume": 41913110.99511}
+{"bar_date": "2026-10-01", "close": 248.23, "high": 251.83, "internal_id": "SEC-0001018724-AMZN", "low": 246.1167, "open": 251.605, "source": "polygon-grouped", "volume": 33243918.407616}
+{"bar_date": "2026-10-02", "close": 251.52, "high": 253.5577, "internal_id": "SEC-0001018724-AMZN", "low": 250.02, "open": 251.505, "source": "polygon-grouped", "volume": 33433392.106973}
+{"bar_date": "2026-10-05", "close": 251.4, "high": 254.5262, "internal_id": "SEC-0001018724-AMZN", "low": 250.18, "open": 250.19, "source": "polygon-grouped", "volume": 39273944.482935}
+{"bar_date": "2026-10-06", "close": 256.29, "high": 256.675, "internal_id": "SEC-0001018724-AMZN", "low": 251.08, "open": 253.4, "source": "polygon-grouped", "volume": 34120787.03448}
+{"bar_date": "2026-10-07", "close": 259.92, "high": 260.14, "internal_id": "SEC-0001018724-AMZN", "low": 253.17, "open": 254.23, "source": "polygon-grouped", "volume": 36225813.860152}

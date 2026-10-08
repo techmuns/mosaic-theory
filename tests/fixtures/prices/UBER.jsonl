@@ -450,3 +450,13 @@
 {"bar_date": "2026-09-18", "close": 70.5, "high": 71.0, "internal_id": "SEC-0001543151-UBER", "low": 70.06, "open": 70.895, "source": "polygon-aggs", "volume": 20652837.211654}
 {"bar_date": "2026-09-21", "close": 70.84, "high": 71.39, "internal_id": "SEC-0001543151-UBER", "low": 70.1108, "open": 70.82, "source": "polygon-aggs", "volume": 16956050.535318}
 {"bar_date": "2026-09-22", "close": 69.89, "high": 71.9, "internal_id": "SEC-0001543151-UBER", "low": 69.54, "open": 71.65, "source": "polygon-aggs", "volume": 26420310.311131}
+{"bar_date": "2026-09-23", "close": 69.42, "high": 70.04, "internal_id": "SEC-0001543151-UBER", "low": 68.55, "open": 69.56, "source": "polygon-grouped", "volume": 18010117.684642}
+{"bar_date": "2026-09-24", "close": 69.22, "high": 70.08, "internal_id": "SEC-0001543151-UBER", "low": 68.925, "open": 69.45, "source": "polygon-grouped", "volume": 14479628.771211}
+{"bar_date": "2026-09-25", "close": 69.62, "high": 69.67, "internal_id": "SEC-0001543151-UBER", "low": 68.7964, "open": 69.27, "source": "polygon-grouped", "volume": 10911598.273741}
+{"bar_date": "2026-09-28", "close": 68.16, "high": 69.68, "internal_id": "SEC-0001543151-UBER", "low": 67.73, "open": 69.36, "source": "polygon-grouped", "volume": 16746610.856811}
+{"bar_date": "2026-09-29", "close": 69.36, "high": 69.89, "internal_id": "SEC-0001543151-UBER", "low": 68.4, "open": 68.47, "source": "polygon-grouped", "volume": 14777394.18262}
+{"bar_date": "2026-09-30", "close": 68.51, "high": 69.97, "internal_id": "SEC-0001543151-UBER", "low": 68.5, "open": 69.9, "source": "polygon-grouped", "volume": 15629629.965898}
+{"bar_date": "2026-10-01", "close": 67.88, "high": 68.91, "internal_id": "SEC-0001543151-UBER", "low": 67.32, "open": 68.54, "source": "polygon-grouped", "volume": 17746836.930609}
+{"bar_date": "2026-10-02", "close": 68.11, "high": 68.47, "internal_id": "SEC-0001543151-UBER", "low": 67.22, "open": 68.24, "source": "polygon-grouped", "volume": 15575448.43371}
+{"bar_date": "2026-10-05", "close": 69.48, "high": 70.01, "internal_id": "SEC-0001543151-UBER", "low": 68.38, "open": 68.4, "source": "polygon-grouped", "volume": 17031677.124268}
+{"bar_date": "2026-10-06", "close": 69.08, "high": 69.94, "internal_id": "SEC-0001543151-UBER", "low": 68.76, "open": 69.56, "source": "polygon-grouped", "volume": 15066682.370845}
