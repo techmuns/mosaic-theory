@@ -303,7 +303,7 @@
    },
    "expected": {
     "fiscal_years": "indistinguishable",
-    "ntm": "undetermined"
+    "ntm": "indistinguishable"
    },
    "fy_periods": [
     "FY 2026",
@@ -324,7 +324,7 @@
    ],
    "sha256": "406592d103",
    "source_file": "Netflix,IncNasdaqGSNFLXEstimatesReport.xls",
-   "why": "the two lines move together (<0.5% apart): FY indistinguishable, NTM untested"
+   "why": "the two lines move together (<0.5% apart): FY indistinguishable; the NTM row, tested at each line's own price, fits both — indistinguishable"
   },
   "ROST": {
    "as_of": "≥2026-09-27",
@@ -371,7 +371,7 @@
    ],
    "sha256": "4d3a31a6be",
    "source_file": "RossStores,IncNasdaqGSROSTEstimatesReport.xls",
-   "why": "normalized; the NTM row is ~1% off both lines — not named"
+   "why": "normalized; the NTM row fits normalized (0.91%) but GAAP (1.02%) neither fits nor separates — not named"
   },
   "TGT": {
    "as_of": "≥2026-09-17",

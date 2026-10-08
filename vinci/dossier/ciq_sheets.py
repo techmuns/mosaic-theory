@@ -2755,10 +2755,20 @@ def forward_consensus(bundle: CiqBundle) -> ForwardConsensus | None:
     wb = bundle.workbook("estimates")
     src_sha = file_provenance(wb.path)[0] if wb is not None else None
     cm = current_multiples(bundle)
+    # AN ANNOTATION MUST NOT COST THE LAYER: the paths, spreads and revisions stand without it, so a
+    # failure here is WITHHELD and named — visible on the page — rather than raised.
+    try:
+        pe_basis = _pe_eps_basis(cm, trends, paths, periods)
+    except Exception as exc:  # noqa: BLE001 — named in `withheld`, never swallowed silently
+        pe_basis = None
+        withheld.append(f"P/E basis: not built ({type(exc).__name__}: {exc})")
+    else:
+        if pe_basis is None and cm:
+            withheld.append("P/E basis: the ladder carries no FY Price/Earnings — nothing to test")
     return ForwardConsensus(
         as_of=as_of.value if as_of.status is SourceStatus.PRESENT else None,
         periods=periods, paths=paths, spreads=spreads, revisions=revisions, withheld=withheld,
-        current_multiples=cm, pe_eps_basis=_pe_eps_basis(cm, trends),
+        current_multiples=cm, pe_eps_basis=pe_basis,
         reconciliations=_consensus_reconciliations(periods, spreads) or None,
         source_file=wb.path.name if wb is not None else None, source_sha256=src_sha,
         source_ref="CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the "
@@ -3165,56 +3175,73 @@ _PE_EPS_LINES: tuple[tuple[str, str], ...] = (
     ("gaap", "EPS (GAAP)"), ("normalized", "EPS Normalized"),
 )
 #: THE RULE, set by face validity on the 26 committed names' exports (2026-10-08), never by what
-#: any number paid. A line is NAMED when its implied prices agree within PE_BASIS_SPREAD_MAX AND
-#: its rival's disagree by at least PE_BASIS_SEPARATION times as much and by at least
-#: PE_BASIS_RIVAL_FLOOR. The NTM test widens the cap to the cent-rounding of four summed quarters
-#: where that is larger — AORT's next four sum to $0.12, so rounding alone is ±17%; no FY row in
-#: the corpus needs the same allowance, so the FY test carries none. The floor is what makes
-#: NFLX `indistinguishable`: its two lines differ by under 0.5%, so a 0.24% rival spread is not
-#: evidence against GAAP. A struck line is not exact — LLY's agrees to 0.05% and ROST's to 0.56%,
-#: because CIQ strikes the multiple on figures Trends prints rounded — hence a cap, not equality.
+#: any number paid. SEPARATION IS TESTED FIRST: a line is NAMED when its own dispersion is inside
+#: its cap AND its rival's is at least PE_BASIS_SEPARATION times as large and at least
+#: PE_BASIS_RIVAL_FLOOR — whether or not the rival also sits inside ITS cap (IT: normalized 0.06%
+#: against GAAP 0.99%, both under 1%, named normalized at 17x). `indistinguishable` is the case
+#: where both fit and neither separates; `undetermined` where the closer line does not fit, or fits
+#: while its rival is neither inside its cap nor separated. The floor is what holds NFLX's FY rows
+#: at `indistinguishable`: its two lines differ by under 0.5%. A struck line is not exact — LLY's
+#: agrees to 0.05% and ROST's to 0.56%, because CIQ strikes the multiple on figures Trends prints
+#: rounded — hence a cap, not equality. The NTM cap widens to the cent-rounding of four summed
+#: quarters, RELATIVE TO THE IMPLIED NTM EPS the gap is measured against, where that is larger:
+#: AORT's next four sum to $0.12, so rounding alone is ±16%. No FY row in the corpus needs the same
+#: allowance, so the FY test carries none.
 PE_BASIS_SPREAD_MAX = 0.01
 PE_BASIS_SEPARATION = 3.0
 PE_BASIS_RIVAL_FLOOR = 0.005
 #: Trends prints EPS to the cent: half a cent is the rounding on one figure.
 _EPS_HALF_CENT = 0.005
 _PE_BASIS_RULE = (
-    f"named when the line's implied prices agree within {PE_BASIS_SPREAD_MAX:.0%} and the "
-    f"rival's spread is ≥{PE_BASIS_SEPARATION:g}× it and ≥{PE_BASIS_RIVAL_FLOOR:.1%}; "
-    "indistinguishable when both lines fit; NTM tested on the next four quarters against the price "
-    "the FY rows establish, its cap widened to their cent-rounding where larger"
+    f"named when the line fits within {PE_BASIS_SPREAD_MAX:.0%} and the rival's dispersion is "
+    f"≥{PE_BASIS_SEPARATION:g}× it and ≥{PE_BASIS_RIVAL_FLOOR:.1%} (tested first, whether or not "
+    "the rival also fits); indistinguishable when both fit and neither separates; NTM tested on "
+    "the next four quarters against each line's implied NTM EPS — the named FY line's price for "
+    "both, or each line's own price when the FY rows are indistinguishable — its cap widened to "
+    "four quarters' cent-rounding where larger"
 )
 
 
-def _trends_current(rows: Rows, metric: str) -> dict[str, float]:
-    """{period label: the 'Current' consensus} for one Trends metric block — every column it
-    carries, quarters included. The block is found and bounded exactly as `forward_consensus`
-    reads it (`_find_row`, `_snapshot_path`), so the two cannot read different cells."""
+def _trends_current(rows: Rows, metric: str) -> tuple[list[str], dict[str, float]]:
+    """(every period label in the block's header, in sheet order; {label: the 'Current'
+    consensus}) for one Trends metric block. The block is found and bounded exactly as
+    `forward_consensus` reads it (`_find_row`, `_snapshot_path`). The labels come back apart from
+    the values so a quarter with no Current figure is a GAP in the sequence, never skipped over to
+    the next one."""
     bi = _find_row(rows, metric)
     header = _metric_block_header(rows, bi) if bi is not None else None
     if bi is None or header is None:
-        return {}
+        return [], {}
+    labels = [str(c).strip() for c in header[1:]]
     out: dict[str, float] = {}
-    for j in range(1, len(header)):
-        label = str(header[j]).strip()
+    for j, label in enumerate(labels, start=1):
         path = _snapshot_path(rows, bi, j, lookback={"Current": 0}) if label else []
         if path:
             out[label] = path[-1][1]
-    return out
+    return labels, out
 
 
 def _spread(xs: list[float]) -> float | None:
-    return (max(xs) - min(xs)) / statistics.median(xs) if len(xs) >= 2 else None
+    return (max(xs) - min(xs)) / abs(statistics.median(xs)) if len(xs) >= 2 else None
 
 
-def _basis_of(dispersion: dict[str, float], cap: dict[str, float]) -> EpsBasis:
-    """Apply the rule to {line: dispersion} with each line's own noise cap."""
+def _basis_of(dispersion: dict[str, float],
+              cap: dict[str, float]) -> tuple[EpsBasis, str | None]:
+    """Apply the rule to {line: dispersion} with each line's own noise cap: (outcome, why it is
+    not named — None when it is)."""
+    if len(dispersion) != 2:
+        return "undetermined", f"{len(dispersion)} line(s) measurable — two are needed to compare"
     (a, da), (b, db) = sorted(dispersion.items(), key=lambda kv: kv[1])
-    if da <= cap[a] and db >= max(PE_BASIS_SEPARATION * da, PE_BASIS_RIVAL_FLOOR):
-        return "gaap" if a == "gaap" else "normalized"
-    if da <= cap[a] and db <= cap[b]:
-        return "indistinguishable"
-    return "undetermined"
+    if da > cap[a]:
+        return "undetermined", (f"neither line fits — the closer, {a}, is {da:.2%} off against a "
+                                f"{cap[a]:.2%} cap")
+    if db >= max(PE_BASIS_SEPARATION * da, PE_BASIS_RIVAL_FLOOR):
+        return ("gaap" if a == "gaap" else "normalized"), None
+    if db <= cap[b]:
+        return "indistinguishable", None
+    return "undetermined", (f"{a} fits ({da:.2%}) but {b} ({db:.2%}) is neither inside its "
+                            f"{cap[b]:.2%} cap nor separated (≥{PE_BASIS_SEPARATION:g}× and "
+                            f"≥{PE_BASIS_RIVAL_FLOOR:.1%})")
 
 
 def pe_eps_basis(pe: dict[str, float], eps: dict[str, dict[str, float]], *,
@@ -3223,80 +3250,94 @@ def pe_eps_basis(pe: dict[str, float], eps: dict[str, dict[str, float]], *,
 
     ``pe`` is {ladder row: Price/Earnings} ('NTM', 'FY 2027', …); ``eps`` is {schema line name:
     {period: Current consensus}}; ``fy_periods`` the FY rows to test (the page's FY+0..FY+2);
-    ``quarters`` the next four quarters in sheet order. None when there is no P/E to test.
+    ``quarters`` the next four quarters in sheet order. None ONLY when the ladder carries no FY P/E
+    at all — anything with a P/E to test returns an outcome, `undetermined` with its reason when it
+    cannot be tested.
 
     THE TEST NEEDS NO PRICE. P/E × EPS IS the price the multiple was struck at, so on the line CIQ
     used it is one number in every FY row, and on the other it drifts with the gap between the two
-    lines. A row with no P/E, or a non-positive EPS on either line (CIQ prints '-' for an NM
-    multiple), is not tested; under two tested rows nothing is named."""
+    lines. A row whose P/E is not positive, or whose EPS is not positive on either line (CIQ prints
+    '-' for an NM multiple), is not tested; under two tested rows nothing is named."""
     if not any(k.startswith("FY") for k in pe):
         return None
     lines = dict(_PE_EPS_LINES)
     periods = [p for p in fy_periods
-               if pe.get(p) and all((eps.get(k, {}).get(p) or 0) > 0 for k in lines)]
+               if pe.get(p, 0) > 0 and all((eps.get(k, {}).get(p) or 0) > 0 for k in lines)]
     implied = {k: [pe[p] * eps[k][p] for p in periods] for k in lines}
     spread = {k: _spread(v) for k, v in implied.items()}
     notes: list[str] = []
     fy: EpsBasis = "undetermined"
     if len(periods) < 2:
-        notes.append(f"{len(periods)} FY row(s) carry a P/E and a positive EPS on both lines — "
-                     "two are needed to compare")
+        notes.append(f"{len(periods)} FY row(s) carry a positive P/E and a positive EPS on both "
+                     "lines — two are needed to compare")
     else:
-        fy = _basis_of({k: v for k, v in spread.items() if v is not None},
-                       dict.fromkeys(lines, PE_BASIS_SPREAD_MAX))
+        fy, why = _basis_of({k: v for k, v in spread.items() if v is not None},
+                            dict.fromkeys(lines, PE_BASIS_SPREAD_MAX))
+        if why:
+            notes.append(f"FY rows: {why}")
     # THE NTM ROW, tested on its own — the row an R3 anchor reads
     ntm: EpsBasis = "undetermined"
     sums: dict[str, float | None] = dict.fromkeys(lines)
     gaps: dict[str, float | None] = dict.fromkeys(lines)
-    implied_ntm: float | None = None
+    implied_ntm: dict[str, float | None] = dict.fromkeys(lines)
     have_q = len(quarters) == 4 and all(
         eps.get(k, {}).get(q) is not None for k in lines for q in quarters)
     if have_q:
         sums = {k: sum(eps[k][q] for q in quarters) for k in lines}
-    if fy not in ("gaap", "normalized"):
-        notes.append("NTM not tested: the FY rows name no basis, so they establish no price")
-    elif not pe.get("NTM"):
-        notes.append("NTM not tested: no NTM P/E on the ladder")
+    if fy == "undetermined":
+        notes.append("NTM not tested: the FY rows establish no price")
+    elif pe.get("NTM", 0) <= 0:
+        notes.append("NTM not tested: no positive NTM P/E on the ladder")
     elif not have_q:
         notes.append("NTM not tested: the next four quarters are not all present on both lines")
     else:
-        implied_ntm = statistics.median(implied[fy]) / pe["NTM"]
-        gaps = {k: abs(s / implied_ntm - 1) if (s := sums[k]) else None for k in lines}
-        if all(g is not None for g in gaps.values()):
-            ntm = _basis_of({k: g for k, g in gaps.items() if g is not None},
-                            {k: max(PE_BASIS_SPREAD_MAX, 4 * _EPS_HALF_CENT / abs(sums[k] or 1))
-                             for k in lines})
-        if ntm in ("gaap", "normalized") and ntm != fy:
+        # A NAMED FY line gives ONE price, against which both lines' quarters are set; when the FY
+        # rows fit both lines, each line's own price is a price, and each is tested against it.
+        for k in lines:
+            implied_ntm[k] = statistics.median(implied[fy if fy in lines else k]) / pe["NTM"]
+        gaps = {k: abs(s / i - 1) if (s := sums[k]) is not None and (i := implied_ntm[k])
+                else None for k in lines}
+        ntm, why = _basis_of({k: g for k, g in gaps.items() if g is not None},
+                             {k: max(PE_BASIS_SPREAD_MAX, 4 * _EPS_HALF_CENT / abs(i))
+                              for k in lines if (i := implied_ntm[k])})
+        if ntm in lines and fy in lines and ntm != fy:
             notes.append(f"NTM fits {ntm} while the FY rows are {fy} — not named")
             ntm = "undetermined"
-        elif ntm == "undetermined":
-            notes.append("NTM: neither line's next four quarters reproduce the row within the rule")
+        elif why:
+            notes.append(f"NTM: {why}")
     return PeEpsBasis(
         fiscal_years=fy, ntm=ntm, periods=periods,
         ntm_quarters=quarters if have_q else [],
-        ntm_implied_eps=round(implied_ntm, 6) if implied_ntm is not None else None,
         fits=[EpsLineFit(line=title, implied_prices=[round(x, 6) for x in implied[k]],
                          spread=round(s, 8) if (s := spread[k]) is not None else None,
+                         ntm_implied_eps=round(i, 6) if (i := implied_ntm[k]) is not None else None,
                          ntm_quarter_sum=round(q, 6) if (q := sums[k]) is not None else None,
                          ntm_gap=round(g, 8) if (g := gaps[k]) is not None else None)
               for k, title in _PE_EPS_LINES],
         rule=_PE_BASIS_RULE, note="; ".join(notes) or None)
 
 
-def _pe_eps_basis(cm: list[CurrentMultiple] | None, trends: Rows) -> PeEpsBasis | None:
-    """The bundle-side read for `pe_eps_basis`: the ladder's P/E column, and each EPS line's Current
-    consensus off Trends. The FY rows are the same FY+0..FY+2 the page's paths cover; the quarters
-    are the first four the GAAP block carries — Trends lists only unreported periods, so those are
-    the next four, which is what CIQ's NTM figure sums."""
-    pe = {m.period: m.value for m in cm or [] if m.metric == "Price/Earnings" and m.value}
-    eps = {k: _trends_current(trends, title) for k, title in _PE_EPS_LINES}
-    bi = _find_row(trends, "EPS (GAAP)")
-    header = _metric_block_header(trends, bi) if bi is not None else None
-    if not pe or header is None:
-        return None
-    labels = [str(c).strip() for c in header]
-    return pe_eps_basis(pe, eps, fy_periods=[p for _j, p in _forward_cols(header)],
-                        quarters=[c for c in labels if c.startswith("FQ")][:4])
+def _pe_eps_basis(cm: list[CurrentMultiple] | None, trends: Rows, paths: list[ConsensusPath],
+                  periods: list[str]) -> PeEpsBasis | None:
+    """The bundle-side read for `pe_eps_basis`, ONE READER PER FIGURE: the P/E column is the
+    ladder `current_multiples` already read; the FY EPS is the Current point of the layer's own
+    `paths` (what the page commits); only the four quarters, which no path carries, are read here.
+    Trends lists only unreported periods, so the first four quarters a block carries are the next
+    four — what CIQ's NTM figure sums. A missing EPS block leaves its line untested, and the
+    outcome says so; it never drops the field."""
+    pe = {m.period: m.value for m in cm or [] if m.metric == "Price/Earnings"
+          and m.value is not None}
+    eps: dict[str, dict[str, float]] = {}
+    quarters: list[str] = []
+    for k, title in _PE_EPS_LINES:
+        eps[k] = {p.period: p.points[-1].value for p in paths
+                  if p.metric == title and p.points and p.points[-1].months_ago == 0}
+        labels, current = _trends_current(trends, title)
+        block_q = [lbl for lbl in labels if lbl.startswith("FQ")][:4]
+        quarters = quarters or block_q
+        eps[k].update({q: current[q] for q in block_q if q in current})
+    return pe_eps_basis(pe, eps, fy_periods=[p for p in periods if p.startswith("FY")],
+                        quarters=quarters)
 
 
 def cross_name_anchor(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:

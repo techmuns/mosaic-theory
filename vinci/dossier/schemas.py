@@ -541,9 +541,10 @@ class EpsLineFit(BaseModel, frozen=True):
 
     line: str                       # 'EPS (GAAP)' | 'EPS Normalized' — the Trends sheet's title
     implied_prices: list[float]     # P/E × this line's EPS, one per tested FY row (`periods` order)
-    spread: float | None = None     # (max − min) ÷ median of `implied_prices`; None under two rows
+    spread: float | None = None     # (max − min) ÷ |median| of `implied_prices`; None under two
+    ntm_implied_eps: float | None = None   # the price this line is tested at ÷ the NTM P/E
     ntm_quarter_sum: float | None = None   # this line's consensus summed over `ntm_quarters`
-    ntm_gap: float | None = None    # |ntm_quarter_sum ÷ the NTM row's implied EPS − 1|
+    ntm_gap: float | None = None    # |ntm_quarter_sum ÷ ntm_implied_eps − 1|
 
 
 class PeEpsBasis(BaseModel, frozen=True):
@@ -553,15 +554,15 @@ class PeEpsBasis(BaseModel, frozen=True):
 
     `fiscal_years` comes from the FY rows the page carries (FY+0..FY+2). `ntm` is tested separately,
     because the NTM row is the one an R3 anchor reads: the price the FY rows establish, ÷ the NTM
-    P/E, against each line's next four quarters. `ntm` is never INHERITED from the FY rows — a row
-    not tested is `undetermined`, and an NTM row that fits the OTHER line is `undetermined` too,
-    never silently flipped. `note` states why a row was not named."""
+    P/E, against each line's next four quarters — the named line's price for both, or each line's
+    own when the FY rows fit both. `ntm` is never INHERITED from the FY rows — a row not tested is
+    `undetermined`, and an NTM row that fits the OTHER line from a named FY basis is `undetermined`
+    too, never silently flipped. `note` states why a row was not named."""
 
     fiscal_years: EpsBasis
     ntm: EpsBasis
     periods: list[str]              # the FY rows tested
     ntm_quarters: list[str] = []    # the four quarters summed for the NTM test
-    ntm_implied_eps: float | None = None
     fits: list[EpsLineFit]
     rule: str                       # the thresholds, as applied
     note: str | None = None
