@@ -518,6 +518,32 @@ class RevisionCount(BaseModel, frozen=True):
     outflow_line: bool = False
 
 
+class CurrentMultiple(BaseModel, frozen=True):
+    """One cell of the Estimates→Multiples ladder: TODAY'S multiple for a period ('NTM', 'FY 2027')
+    on the Estimates export's date. `cell` keeps a non-number as written ('-')."""
+
+    period: str
+    metric: str      # the sheet's column: 'TEV/REV', 'TEV/EBITDA', 'TEV/EBIT', 'Price/Earnings', …
+    value: float | None
+    cell: str | None = None
+
+
+class ConsensusReconciliation(BaseModel, frozen=True):
+    """A consensus line set against the identity it is often assumed to obey — 'CFO − CapEx =
+    FCF', 'EBIT + D&A = EBITDA' — from the same period's consensus means. The GAP is information,
+    not an error: each line's mean is its own contributors' (`estimates`), and brokers define FCF
+    and EBITDA their own way, so the lines are not additive. A model must use the reported line, or
+    state the identity it imposes instead — never swap one for the other silently."""
+
+    period: str
+    identity: str                 # 'CFO − CapEx vs FCF' | 'EBIT + D&A vs EBITDA'
+    parts: dict[str, float]       # component consensus means, by line
+    implied: float                # what the identity gives from the parts
+    reported: float               # the consensus mean of the line itself
+    gap: float                    # reported − implied
+    estimates: dict[str, str]     # contributor counts per line, as CIQ prints them ('25/27')
+
+
 class ForwardConsensus(BaseModel, frozen=True):
     """(forward consensus) FY+0..FY+2 for the metrics a scenario reads: how each figure moved
     (`paths`), how far the street disagrees (`spreads`), and who revised (`revisions`).
@@ -537,6 +563,13 @@ class ForwardConsensus(BaseModel, frozen=True):
     revisions: list[RevisionCount]
     withheld: list[str] = []
     source_ref: str
+    # (2026-10-08) ADDED LATER — ABSENT until a page is rebuilt with them (`TOP_DROP_WHEN_NONE`).
+    # Today's forward multiples, on this export's date; the history of them is
+    # `forward_multiple_history`, which ends at the FINANCIALS export's latest close.
+    current_multiples: list[CurrentMultiple] | None = None
+    reconciliations: list[ConsensusReconciliation] | None = None
+    source_file: str | None = None
+    source_sha256: str | None = None
 
 
 class MultipleClose(BaseModel, frozen=True):
@@ -584,6 +617,12 @@ class ForwardMultipleHistory(BaseModel, frozen=True):
     source_file: str | None = None
     source_sha256: str | None = None  # first 10 hex of the export read — the refresh's vintage key
     source_ref: str
+    # (2026-10-08) ADDED LATER — ABSENT until rebuilt. `as_of` is the latest close, and each band's
+    # `current` is that close: an EXPORT-DAY close when the export was pulled mid-quarter (AMZN
+    # 2026-09-16), a settled quarter-end otherwise. `history_through` is the last quarter-end close.
+    # TODAY'S multiple is `forward_consensus.current_multiples`, never a band's `current`.
+    latest_close_quarter_end: bool | None = None
+    history_through: str | None = None
 
 
 class ConsensusContext(BaseModel):
@@ -1984,6 +2023,19 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
 )
 
 
+#: The same rule for keys added later INSIDE a dossier-level layer: ABSENT, never null, so a page
+#: built before the key round-trips byte-identically and "not yet rebuilt" never reads as "built,
+#: and empty". `(layer, key)`.
+TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
+    ("forward_consensus", "current_multiples"),
+    ("forward_consensus", "reconciliations"),
+    ("forward_consensus", "source_file"),
+    ("forward_consensus", "source_sha256"),
+    ("forward_multiple_history", "latest_close_quarter_end"),
+    ("forward_multiple_history", "history_through"),
+)
+
+
 def dossier_json(doc: Dossier) -> str:
     """THE ONE SERIALIZER for a committed `dossier.json` — the assembler and the refresh path both
     write through it, so a no-op refresh cannot rewrite bytes the assembler produced.
@@ -2019,4 +2071,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["forward_consensus"] = True
     if doc.forward_multiple_history is None:
         excl["forward_multiple_history"] = True
+    for layer, key in TOP_DROP_WHEN_NONE:
+        held = getattr(doc, layer)
+        if held is not None and getattr(held, key) is None:
+            excl.setdefault(layer, set()).add(key)
     return doc.model_dump_json(indent=2, exclude=excl or None)

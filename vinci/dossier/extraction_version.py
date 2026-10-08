@@ -63,6 +63,26 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "every Multiples reader selects the latest close BY DATE, never by column position, and "
         "refuses on an NM or undated one rather than reaching back a quarter (#459)",
     ),
+    # TWO ROWS AT ONCE, AND WHY (2026-10-08, the operator's analyst review). #673, #674, #676 and
+    # #678 all changed extraction OUTPUT and none appended a row, so AMZN's 2026-10-08 page — built
+    # on that code — carries `2026-08-16.1`, a stamp naming code that did not build it. The first
+    # row names the vintage that DID build it, so the page's stamp can be corrected to a real row;
+    # the second names this change. Refresh passes land layers on older pages without re-stamping
+    # them: the stamp names the extractor that ASSEMBLED a page.
+    (
+        "2026-10-07.1",
+        "forward consensus (FY+0..FY+2 paths, spreads, revision counts) and the forward-multiple "
+        "history sit beside the page, outside the synthesis (#673, #676) · horizon_read takes "
+        "each metric's revision counts from its OWN block — values change on every page (#674) · "
+        "a claim citing a GAAP-EPS move normalized EPS did not make is caveated (#678)",
+    ),
+    (
+        "2026-10-08.1",
+        "the forward layers state their own basis: today's forward multiples beside their "
+        "history (`current_multiples`), the history's latest close marked quarter-end or not, "
+        "CIQ's FCF and EBITDA consensus set against CFO − CapEx and EBIT + D&A, and the Estimates "
+        "export's file and hash",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
