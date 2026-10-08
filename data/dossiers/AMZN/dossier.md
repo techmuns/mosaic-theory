@@ -1,6 +1,6 @@
 # Dossier — AMAZON COM INC (Nasdaq: AMZN)
 
-_October 8, 2026 · extraction 2026-08-16.1_
+_October 8, 2026 · extraction 2026-10-07.1_
 
 # Brief — first cut
 
@@ -666,7 +666,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-09-22 · assembled 2026-10-08 05:59 UTC
-- **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
+- **Extraction:** 2026-10-07.1 — forward consensus (FY+0..FY+2 paths, spreads, revision counts) and the forward-multiple history sit beside the page, outside the synthesis (#673, #676) · horizon_read takes each metric's revision counts from its OWN block — values change on every page (#674) · a claim citing a GAAP-EPS move normalized EPS did not make is caveated (#678)
 - **Price store:** `wt-amzn → mosaic-theory-ta` · reaching 2026-10-07
 - **Panel age:** oldest panel 2d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-08 build
 - **Consensus age:** consensus 2d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

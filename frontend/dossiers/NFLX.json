@@ -11056,7 +11056,433 @@
       }
     ],
     "withheld": [],
-    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
+    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)",
+    "current_multiples": [
+      {
+        "period": "NTM",
+        "metric": "TEV/REV",
+        "value": 5.43098918588564,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBITDA",
+        "value": 15.8506969807468,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBIT",
+        "value": 16.7238365875001,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "Price/Earnings",
+        "value": 19.8640832851359,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "PEG",
+        "value": 0.937896855628794,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/REV",
+        "value": 5.73134207316222,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBITDA",
+        "value": 17.210929076701,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBIT",
+        "value": 18.206594216873,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "Price/Earnings",
+        "value": 19.1372763161927,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "PEG",
+        "value": 0.903580146368366,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "P/BV",
+        "value": 9.13104222026961,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/REV",
+        "value": 5.1545111281293,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBITDA",
+        "value": 14.6921156190355,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBIT",
+        "value": 15.3902766308336,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "Price/Earnings",
+        "value": 18.0424624323309,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "PEG",
+        "value": 0.851887728226871,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "P/BV",
+        "value": 7.82215278307618,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/REV",
+        "value": 4.6807868586777,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBITDA",
+        "value": 12.6650962580498,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBIT",
+        "value": 13.2558593581289,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "Price/Earnings",
+        "value": 15.0322792428056,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "PEG",
+        "value": 0.709759782638006,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "P/BV",
+        "value": 6.58977792956833,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/REV",
+        "value": 4.29808774752601,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBITDA",
+        "value": 11.0310363891034,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBIT",
+        "value": 11.5900017187935,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "Price/Earnings",
+        "value": 12.9809018788197,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "PEG",
+        "value": 0.612902537741631,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "P/BV",
+        "value": 4.87996521719362,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/REV",
+        "value": 3.95136285675578,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBITDA",
+        "value": 9.72761372064387,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBIT",
+        "value": 10.2391918181661,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "Price/Earnings",
+        "value": 11.1171713280885,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "PEG",
+        "value": 0.524905170927419,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "P/BV",
+        "value": 4.03278361289035,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/REV",
+        "value": 3.55031222357353,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/EBITDA",
+        "value": 8.19358749821368,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/EBIT",
+        "value": 9.41061320861141,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "Price/Earnings",
+        "value": 11.1872964169381,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "PEG",
+        "value": 0.528216176997454,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "P/BV",
+        "value": 2.87405857740586,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/REV",
+        "value": 3.34041883312885,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/EBITDA",
+        "value": 8.59865511806039,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/EBIT",
+        "value": 8.49186053936225,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "Price/Earnings",
+        "value": 9.88345323741007,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "PEG",
+        "value": 0.466654291620772,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "P/BV",
+        "value": 2.37353144436766,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/REV",
+        "value": 3.14429333833668,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/EBITDA",
+        "value": 7.92216136839316,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/EBIT",
+        "value": 7.83153948930313,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "Price/Earnings",
+        "value": 9.00852459016394,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "PEG",
+        "value": 0.425343911706802,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "P/BV",
+        "value": 1.97158438576349,
+        "cell": null
+      }
+    ],
+    "reconciliations": [
+      {
+        "period": "FY 2026",
+        "identity": "CFO − CapEx vs FCF",
+        "parts": {
+          "Cash From Operations": 13294.02105,
+          "Capital Expenditure": -768.1567
+        },
+        "implied": 12525.86435,
+        "reported": 12808.97642,
+        "gap": 283.11207000000104,
+        "estimates": {
+          "Free Cash Flow": "24/28",
+          "Cash From Operations": "19/22",
+          "Capital Expenditure": "27/29"
+        }
+      },
+      {
+        "period": "FY 2026",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 16123.15647,
+          "Depreciation & Amortization": 397.7463
+        },
+        "implied": 16520.90277,
+        "reported": 17055.89315,
+        "gap": 534.9903799999993,
+        "estimates": {
+          "EBITDA": "30/42",
+          "EBIT": "43/45",
+          "Depreciation & Amortization": "23/28"
+        }
+      },
+      {
+        "period": "FY 2027",
+        "identity": "CFO − CapEx vs FCF",
+        "parts": {
+          "Cash From Operations": 14924.45,
+          "Capital Expenditure": -773.25392
+        },
+        "implied": 14151.196080000002,
+        "reported": 14058.07543,
+        "gap": -93.12065000000075,
+        "estimates": {
+          "Free Cash Flow": "23/26",
+          "Cash From Operations": "20/20",
+          "Capital Expenditure": "27/27"
+        }
+      },
+      {
+        "period": "FY 2027",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 19073.58616,
+          "Depreciation & Amortization": 433.641
+        },
+        "implied": 19507.22716,
+        "reported": 19979.95217,
+        "gap": 472.72501000000193,
+        "estimates": {
+          "EBITDA": "29/41",
+          "EBIT": "42/42",
+          "Depreciation & Amortization": "20/26"
+        }
+      },
+      {
+        "period": "FY 2028",
+        "identity": "CFO − CapEx vs FCF",
+        "parts": {
+          "Cash From Operations": 17210.9,
+          "Capital Expenditure": -822.7587
+        },
+        "implied": 16388.141300000003,
+        "reported": 16671.975,
+        "gap": 283.8336999999956,
+        "estimates": {
+          "Free Cash Flow": "20/23",
+          "Cash From Operations": "15/15",
+          "Capital Expenditure": "22/23"
+        }
+      },
+      {
+        "period": "FY 2028",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 22144.75572,
+          "Depreciation & Amortization": 478.9375
+        },
+        "implied": 22623.69322,
+        "reported": 23177.6973,
+        "gap": 554.0040799999988,
+        "estimates": {
+          "EBITDA": "23/30",
+          "EBIT": "32/32",
+          "Depreciation & Amortization": "16/19"
+        }
+      }
+    ],
+    "source_file": "Netflix,IncNasdaqGSNFLXEstimatesReport.xls",
+    "source_sha256": "406592d103"
   },
   "forward_multiple_history": {
     "as_of": "2026-09-21",
@@ -11946,7 +12372,1043 @@
     ],
     "source_file": "Netflix Inc NasdaqGS NFLX Financials_Quarterly.xls",
     "source_sha256": "d162f709ec",
-    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)",
+    "latest_close_quarter_end": false,
+    "history_through": "2026-06-30"
+  },
+  "historical_forecast_error": {
+    "estimate_type": "final consensus before each result — CIQ Estimates→Surprise 'Estimate', Fiscal Years, company level",
+    "usable_as_forecast_error_cross_check": true,
+    "usable_as_revision_distribution": false,
+    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries.",
+    "usage_note": "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. ratio_error alone answers how wrong the margin (or capex-intensity) forecast was, and multiplied by revenue it drops the revenue miss's effect. Exact identity: error_per_forecast_revenue = ratio_error + (actual ÷ actual revenue) × (actual revenue ÷ forecast revenue − 1).",
+    "series": [
+      {
+        "metric": "Revenue",
+        "observations": [
+          {
+            "fiscal_year": 2002,
+            "announced": "2003-01-15",
+            "accounting_basis": null,
+            "actual": 152.806,
+            "final_estimate": 151.65,
+            "dollar_error": 1.156000000000006,
+            "pct_error": 0.007622815694032337,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2003,
+            "announced": "2004-01-21",
+            "accounting_basis": null,
+            "actual": 272.243,
+            "final_estimate": 271.43143,
+            "dollar_error": 0.8115700000000174,
+            "pct_error": 0.0029899632478080918,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2004,
+            "announced": "2005-01-24",
+            "accounting_basis": null,
+            "actual": 506.228,
+            "final_estimate": 502.0032,
+            "dollar_error": 4.224800000000016,
+            "pct_error": 0.0084158826079197,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2005,
+            "announced": "2006-01-24",
+            "accounting_basis": null,
+            "actual": 687.994,
+            "final_estimate": 687.48236,
+            "dollar_error": 0.5116400000000567,
+            "pct_error": 0.0007442227317657757,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2006,
+            "announced": "2007-01-24",
+            "accounting_basis": null,
+            "actual": 996.66,
+            "final_estimate": 996.646,
+            "dollar_error": 0.014000000000010004,
+            "pct_error": 0.000014047114020421247,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2007,
+            "announced": "2008-01-23",
+            "accounting_basis": null,
+            "actual": 1205.34,
+            "final_estimate": 1204.54587,
+            "dollar_error": 0.7941299999999956,
+            "pct_error": 0.0006592775084603986,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2008,
+            "announced": "2009-01-26",
+            "accounting_basis": null,
+            "actual": 1364.661,
+            "final_estimate": 1359.645,
+            "dollar_error": 5.016000000000076,
+            "pct_error": 0.00368919828337555,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2009,
+            "announced": "2010-01-27",
+            "accounting_basis": null,
+            "actual": 1670.269,
+            "final_estimate": 1685.07524,
+            "dollar_error": -14.806239999999889,
+            "pct_error": -0.008786693702768966,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2010,
+            "announced": "2011-01-26",
+            "accounting_basis": null,
+            "actual": 2162.625,
+            "final_estimate": 2164.09913,
+            "dollar_error": -1.4741300000000592,
+            "pct_error": -0.000681174896087211,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2011,
+            "announced": "2012-01-26",
+            "accounting_basis": null,
+            "actual": 3204.577,
+            "final_estimate": 3185.46463,
+            "dollar_error": 19.112370000000283,
+            "pct_error": 0.005999868848018064,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2012,
+            "announced": "2013-01-23",
+            "accounting_basis": null,
+            "actual": 3609.282,
+            "final_estimate": 3598.78185,
+            "dollar_error": 10.500150000000303,
+            "pct_error": 0.0029176956085850136,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2013,
+            "announced": "2014-01-22",
+            "accounting_basis": null,
+            "actual": 4374.562,
+            "final_estimate": 4365.78216,
+            "dollar_error": 8.77984000000015,
+            "pct_error": 0.0020110577390788364,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2014,
+            "announced": "2015-01-20",
+            "accounting_basis": null,
+            "actual": 5504.656,
+            "final_estimate": 5504.11969,
+            "dollar_error": 0.5363099999995029,
+            "pct_error": 0.00009743792471916812,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2015,
+            "announced": "2016-01-19",
+            "accounting_basis": null,
+            "actual": 6779.511,
+            "final_estimate": 6785.76176,
+            "dollar_error": -6.2507599999999,
+            "pct_error": -0.0009211581869623675,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2016,
+            "announced": "2017-01-18",
+            "accounting_basis": null,
+            "actual": 8830.669,
+            "final_estimate": 8819.93455,
+            "dollar_error": 10.734449999999924,
+            "pct_error": 0.0012170668545381513,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2017,
+            "announced": "2018-01-22",
+            "accounting_basis": null,
+            "actual": 11692.713,
+            "final_estimate": 11685.65534,
+            "dollar_error": 7.057660000000396,
+            "pct_error": 0.0006039592812430161,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2018,
+            "announced": "2019-01-17",
+            "accounting_basis": null,
+            "actual": 15794.341,
+            "final_estimate": 15813.21146,
+            "dollar_error": -18.870460000000094,
+            "pct_error": -0.0011933350823603028,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2019,
+            "announced": "2020-01-21",
+            "accounting_basis": null,
+            "actual": 20156.447,
+            "final_estimate": 20140.90231,
+            "dollar_error": 15.544689999998809,
+            "pct_error": 0.0007717971002858537,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2020,
+            "announced": "2021-01-19",
+            "accounting_basis": null,
+            "actual": 24996.056,
+            "final_estimate": 24962.61551,
+            "dollar_error": 33.440490000000864,
+            "pct_error": 0.0013396228446735936,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-01-20",
+            "accounting_basis": null,
+            "actual": 29697.844,
+            "final_estimate": 29703.32153,
+            "dollar_error": -5.477530000000115,
+            "pct_error": -0.000184407996071001,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-01-19",
+            "accounting_basis": null,
+            "actual": 31615.55,
+            "final_estimate": 31612.0059,
+            "dollar_error": 3.544099999999162,
+            "pct_error": 0.0001121124680036889,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-01-23",
+            "accounting_basis": null,
+            "actual": 33723.297,
+            "final_estimate": 33637.60387,
+            "dollar_error": 85.69312999999966,
+            "pct_error": 0.0025475396621941204,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2024,
+            "announced": "2025-01-21",
+            "accounting_basis": null,
+            "actual": 39000.966,
+            "final_estimate": 38873.9631,
+            "dollar_error": 127.0028999999995,
+            "pct_error": 0.003267042767759465,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2025,
+            "announced": "2026-01-20",
+            "accounting_basis": null,
+            "actual": 45183.036,
+            "final_estimate": 45099.2128,
+            "dollar_error": 83.8231999999989,
+            "pct_error": 0.001858639980518717,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          }
+        ]
+      },
+      {
+        "metric": "EBITDA",
+        "observations": [
+          {
+            "fiscal_year": 2002,
+            "announced": "2003-01-15",
+            "accounting_basis": "US GAAP",
+            "actual": 24.676,
+            "final_estimate": 4.75,
+            "dollar_error": 19.926,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.13139465875370918,
+            "ratio_error": 0.13016368222094254
+          },
+          {
+            "fiscal_year": 2003,
+            "announced": "2004-01-21",
+            "accounting_basis": "US GAAP",
+            "actual": 66.182,
+            "final_estimate": 64.457,
+            "dollar_error": 1.7250000000000085,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.006355196227643971,
+            "ratio_error": 0.005628339163673751
+          },
+          {
+            "fiscal_year": 2004,
+            "announced": "2005-01-24",
+            "accounting_basis": "US GAAP",
+            "actual": 123.388,
+            "final_estimate": 111.80927,
+            "dollar_error": 11.578730000000007,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.02306505217496623,
+            "ratio_error": 0.021013765159577924
+          },
+          {
+            "fiscal_year": 2005,
+            "announced": "2006-01-24",
+            "accounting_basis": "US GAAP",
+            "actual": 114.646,
+            "final_estimate": 105.8014,
+            "dollar_error": 8.8446,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.012865202824985938,
+            "ratio_error": 0.012741186977019175
+          },
+          {
+            "fiscal_year": 2006,
+            "announced": "2007-01-24",
+            "accounting_basis": "US GAAP",
+            "actual": 234.246,
+            "final_estimate": 191.90635,
+            "dollar_error": 42.339650000000006,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.04248213508106189,
+            "ratio_error": 0.04247883357375665
+          },
+          {
+            "fiscal_year": 2007,
+            "announced": "2008-01-23",
+            "accounting_basis": "US GAAP",
+            "actual": 328.099,
+            "final_estimate": 275.39267,
+            "dollar_error": 52.70632999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.04375618339881069,
+            "ratio_error": 0.04357672507896038
+          },
+          {
+            "fiscal_year": 2008,
+            "announced": "2009-01-26",
+            "accounting_basis": "US GAAP",
+            "actual": 375.98,
+            "final_estimate": 369.359,
+            "dollar_error": 6.621000000000038,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.00486965347572347,
+            "ratio_error": 0.0038532363797681435
+          },
+          {
+            "fiscal_year": 2009,
+            "announced": "2010-01-27",
+            "accounting_basis": "US GAAP",
+            "actual": 229.983,
+            "final_estimate": 238.14676,
+            "dollar_error": -8.163759999999996,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.004844745092806655,
+            "ratio_error": -0.003634885975596247
+          },
+          {
+            "fiscal_year": 2010,
+            "announced": "2011-01-26",
+            "accounting_basis": "US GAAP",
+            "actual": 321.74,
+            "final_estimate": 332.42871,
+            "dollar_error": -10.688710000000015,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.004939103690689074,
+            "ratio_error": -0.004837763323742861
+          },
+          {
+            "fiscal_year": 2011,
+            "announced": "2012-01-26",
+            "accounting_basis": "US GAAP",
+            "actual": 490.397,
+            "final_estimate": 477.5971,
+            "dollar_error": 12.79989999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.004018220726563201,
+            "ratio_error": 0.0031000597076638325
+          },
+          {
+            "fiscal_year": 2012,
+            "announced": "2013-01-23",
+            "accounting_basis": "US GAAP",
+            "actual": 169.409,
+            "final_estimate": 140.38219,
+            "dollar_error": 29.026809999999983,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.00806573201984999,
+            "ratio_error": 0.007928784035360334
+          },
+          {
+            "fiscal_year": 2013,
+            "announced": "2014-01-22",
+            "accounting_basis": "US GAAP",
+            "actual": 349.821,
+            "final_estimate": 342.13974,
+            "dollar_error": 7.681260000000009,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0017594235622603784,
+            "ratio_error": 0.0015986051239019194
+          },
+          {
+            "fiscal_year": 2014,
+            "announced": "2015-01-20",
+            "accounting_basis": "US GAAP",
+            "actual": 571.915,
+            "final_estimate": 570.23647,
+            "dollar_error": 1.6785299999999097,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0003049588480151509,
+            "ratio_error": 0.0002948353796792952
+          },
+          {
+            "fiscal_year": 2015,
+            "announced": "2016-01-19",
+            "accounting_basis": "US GAAP",
+            "actual": 492.834,
+            "final_estimate": 478.89761,
+            "dollar_error": 13.936390000000017,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0020537694208704457,
+            "ratio_error": 0.0021207326685019345
+          },
+          {
+            "fiscal_year": 2016,
+            "announced": "2017-01-18",
+            "accounting_basis": "US GAAP",
+            "actual": 610.996,
+            "final_estimate": 585.30702,
+            "dollar_error": 25.688980000000015,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.002912604379813682,
+            "ratio_error": 0.0028283952468640267
+          },
+          {
+            "fiscal_year": 2017,
+            "announced": "2018-01-22",
+            "accounting_basis": "US GAAP",
+            "actual": 1092.799,
+            "final_estimate": 1087.17457,
+            "dollar_error": 5.624430000000075,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0004813106185622,
+            "ratio_error": 0.0004248646852203636
+          },
+          {
+            "fiscal_year": 2018,
+            "announced": "2019-01-17",
+            "accounting_basis": "US GAAP",
+            "actual": 2009.04,
+            "final_estimate": 1987.50895,
+            "dollar_error": 21.53105000000005,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0013615861682785622,
+            "ratio_error": 0.001513378377517638
+          },
+          {
+            "fiscal_year": 2019,
+            "announced": "2020-01-21",
+            "accounting_basis": "US GAAP",
+            "actual": 3113.209,
+            "final_estimate": 3157.14843,
+            "dollar_error": -43.93943000000036,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.002181601862900866,
+            "ratio_error": -0.0023008076772382535
+          },
+          {
+            "fiscal_year": 2020,
+            "announced": "2021-01-19",
+            "accounting_basis": "US GAAP",
+            "actual": 5116.179,
+            "final_estimate": 5018.06169,
+            "dollar_error": 98.11730999999963,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0039305700943354244,
+            "ratio_error": 0.00365637682697198
+          },
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-01-20",
+            "accounting_basis": "US GAAP",
+            "actual": 6806.141,
+            "final_estimate": 6720.90586,
+            "dollar_error": 85.23513999999977,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0028695491146979403,
+            "ratio_error": 0.0029118116716292386
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-01-19",
+            "accounting_basis": "US GAAP",
+            "actual": 6544.965,
+            "final_estimate": 6336.71772,
+            "dollar_error": 208.2472800000005,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.006587600946892158,
+            "ratio_error": 0.006564391729303065
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-01-23",
+            "accounting_basis": "US GAAP",
+            "actual": 7650.318,
+            "final_estimate": 7349.01822,
+            "dollar_error": 301.2997800000003,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.008957230757709149,
+            "ratio_error": 0.008379307177657114
+          },
+          {
+            "fiscal_year": 2024,
+            "announced": "2025-01-21",
+            "accounting_basis": "US GAAP",
+            "actual": 11019.116,
+            "final_estimate": 10920.24933,
+            "dollar_error": 98.86666999999943,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0025432619191841396,
+            "ratio_error": 0.0016202098277333654
+          },
+          {
+            "fiscal_year": 2025,
+            "announced": "2026-01-20",
+            "accounting_basis": "US GAAP",
+            "actual": 14028.441,
+            "final_estimate": 13967.5982,
+            "dollar_error": 60.84280000000035,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0013490878492673013,
+            "ratio_error": 0.0007720168151972295
+          }
+        ]
+      },
+      {
+        "metric": "EBIT",
+        "observations": [
+          {
+            "fiscal_year": 2004,
+            "announced": "2005-01-24",
+            "accounting_basis": null,
+            "actual": 18.597,
+            "final_estimate": 16.0,
+            "dollar_error": 2.5970000000000013,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.005173273795864252,
+            "ratio_error": 0.004864104471252656
+          },
+          {
+            "fiscal_year": 2005,
+            "announced": "2006-01-24",
+            "accounting_basis": null,
+            "actual": 7.644,
+            "final_estimate": 7.50638,
+            "dollar_error": 0.13762000000000008,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.00020017968170121496,
+            "ratio_error": 0.00019191094889014527
+          },
+          {
+            "fiscal_year": 2006,
+            "announced": "2007-01-24",
+            "accounting_basis": null,
+            "actual": 77.11,
+            "final_estimate": 59.545,
+            "dollar_error": 17.564999999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.017624111269196885,
+            "ratio_error": 0.017623024466313142
+          },
+          {
+            "fiscal_year": 2007,
+            "announced": "2008-01-23",
+            "accounting_basis": null,
+            "actual": 103.137,
+            "final_estimate": 80.01356,
+            "dollar_error": 23.123440000000002,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.019196811492118604,
+            "ratio_error": 0.019140399272836006
+          },
+          {
+            "fiscal_year": 2008,
+            "announced": "2009-01-26",
+            "accounting_basis": null,
+            "actual": 121.506,
+            "final_estimate": 117.92964,
+            "dollar_error": 3.576359999999994,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.002630363072713829,
+            "ratio_error": 0.0023018860907968314
+          },
+          {
+            "fiscal_year": 2009,
+            "announced": "2010-01-27",
+            "accounting_basis": null,
+            "actual": 191.939,
+            "final_estimate": 183.812,
+            "dollar_error": 8.126999999999981,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.004822930043171236,
+            "ratio_error": 0.005832653149219297
+          },
+          {
+            "fiscal_year": 2010,
+            "announced": "2011-01-26",
+            "accounting_basis": null,
+            "actual": 283.641,
+            "final_estimate": 276.84715,
+            "dollar_error": 6.79385000000002,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.003139343251803821,
+            "ratio_error": 0.003228683349463385
+          },
+          {
+            "fiscal_year": 2011,
+            "announced": "2012-01-26",
+            "accounting_basis": null,
+            "actual": 385.068,
+            "final_estimate": 370.40081,
+            "dollar_error": 14.667190000000005,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.004604411507780579,
+            "ratio_error": 0.0038834559814915903
+          },
+          {
+            "fiscal_year": 2012,
+            "announced": "2013-01-23",
+            "accounting_basis": null,
+            "actual": 49.992,
+            "final_estimate": 22.62399,
+            "dollar_error": 27.368009999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.007604798273615834,
+            "ratio_error": 0.0075643854051105795
+          },
+          {
+            "fiscal_year": 2013,
+            "announced": "2014-01-22",
+            "accounting_basis": null,
+            "actual": 228.347,
+            "final_estimate": 219.49575,
+            "dollar_error": 8.851250000000022,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0020274144873962336,
+            "ratio_error": 0.0019224396347034545
+          },
+          {
+            "fiscal_year": 2014,
+            "announced": "2015-01-20",
+            "accounting_basis": null,
+            "actual": 402.648,
+            "final_estimate": 399.077,
+            "dollar_error": 3.5710000000000264,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0006487867635741813,
+            "ratio_error": 0.0006416594906778761
+          },
+          {
+            "fiscal_year": 2015,
+            "announced": "2016-01-19",
+            "accounting_basis": null,
+            "actual": 305.826,
+            "final_estimate": 292.45837,
+            "dollar_error": 13.36763000000002,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0019699527441116678,
+            "ratio_error": 0.002011506496836006
+          },
+          {
+            "fiscal_year": 2016,
+            "announced": "2017-01-18",
+            "accounting_basis": null,
+            "actual": 379.793,
+            "final_estimate": 349.00213,
+            "dollar_error": 30.790869999999984,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0034910542505102813,
+            "ratio_error": 0.0034387101447708873
+          },
+          {
+            "fiscal_year": 2017,
+            "announced": "2018-01-22",
+            "accounting_basis": null,
+            "actual": 838.679,
+            "final_estimate": 834.05263,
+            "dollar_error": 4.626369999999952,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0003959016302803221,
+            "ratio_error": 0.00035258166116505785
+          },
+          {
+            "fiscal_year": 2018,
+            "announced": "2019-01-17",
+            "accounting_basis": null,
+            "actual": 1605.226,
+            "final_estimate": 1610.29798,
+            "dollar_error": -5.0719799999999395,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.00032074319709375084,
+            "ratio_error": -0.00019946099222575842
+          },
+          {
+            "fiscal_year": 2019,
+            "announced": "2020-01-21",
+            "accounting_basis": null,
+            "actual": 2604.254,
+            "final_estimate": 2636.65284,
+            "dollar_error": -32.39884000000029,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.0016086091626547534,
+            "ratio_error": -0.001708326919738018
+          },
+          {
+            "fiscal_year": 2020,
+            "announced": "2021-01-19",
+            "accounting_basis": null,
+            "actual": 4585.289,
+            "final_estimate": 4484.89496,
+            "dollar_error": 100.39404000000013,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.004021775681309612,
+            "ratio_error": 0.0037760345974429954
+          },
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-01-20",
+            "accounting_basis": null,
+            "actual": 6194.509,
+            "final_estimate": 6145.46365,
+            "dollar_error": 49.045350000000326,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0016511739251270302,
+            "ratio_error": 0.0016896385689353088
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-01-19",
+            "accounting_basis": null,
+            "actual": 5632.831,
+            "final_estimate": 5486.27592,
+            "dollar_error": 146.5550800000001,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0046360575935486615,
+            "ratio_error": 0.004616082910670838
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-01-23",
+            "accounting_basis": null,
+            "actual": 6954.003,
+            "final_estimate": 6686.41512,
+            "dollar_error": 267.58788000000004,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.007955022035283872,
+            "ratio_error": 0.007429699779470111
+          },
+          {
+            "fiscal_year": 2024,
+            "announced": "2025-01-21",
+            "accounting_basis": null,
+            "actual": 10417.614,
+            "final_estimate": 10358.04019,
+            "dollar_error": 59.57380999999987,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0015324861488073972,
+            "ratio_error": 0.0006598208287738605
+          },
+          {
+            "fiscal_year": 2025,
+            "announced": "2026-01-20",
+            "accounting_basis": null,
+            "actual": 13326.603,
+            "final_estimate": 13310.05051,
+            "dollar_error": 16.552490000000034,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0003670239228654571,
+            "ratio_error": -0.0001811764490683987
+          }
+        ]
+      },
+      {
+        "metric": "Capital Expenditure",
+        "observations": [
+          {
+            "fiscal_year": 2005,
+            "announced": "2006-01-24",
+            "accounting_basis": "US GAAP",
+            "actual": -30.619,
+            "final_estimate": -24.65167,
+            "dollar_error": 5.9673300000000005,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.008679975439660736,
+            "ratio_error": 0.008646853994090077
+          },
+          {
+            "fiscal_year": 2006,
+            "announced": "2007-01-24",
+            "accounting_basis": "US GAAP",
+            "actual": -196.861,
+            "final_estimate": -157.8094,
+            "dollar_error": 39.05159999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.039183019848572094,
+            "ratio_error": 0.03918024525250807
+          },
+          {
+            "fiscal_year": 2007,
+            "announced": "2008-01-23",
+            "accounting_basis": "US GAAP",
+            "actual": -266.558,
+            "final_estimate": -152.2823,
+            "dollar_error": 114.2757,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.09487035973150612,
+            "ratio_error": 0.09472456211913102
+          },
+          {
+            "fiscal_year": 2008,
+            "announced": "2009-01-26",
+            "accounting_basis": "US GAAP",
+            "actual": -43.79,
+            "final_estimate": -115.88,
+            "dollar_error": -72.09,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.05302119303200468,
+            "ratio_error": -0.05313957407523007
+          },
+          {
+            "fiscal_year": 2009,
+            "announced": "2010-01-27",
+            "accounting_basis": "US GAAP",
+            "actual": -45.932,
+            "final_estimate": -42.33892,
+            "dollar_error": 3.5930800000000005,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.002132296478345976,
+            "ratio_error": 0.002373928464065391
+          },
+          {
+            "fiscal_year": 2010,
+            "announced": "2011-01-26",
+            "accounting_basis": "US GAAP",
+            "actual": -33.837,
+            "final_estimate": -41.04436,
+            "dollar_error": -7.207359999999994,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.0033304204507489422,
+            "ratio_error": -0.0033197626090246957
+          },
+          {
+            "fiscal_year": 2011,
+            "announced": "2012-01-26",
+            "accounting_basis": "US GAAP",
+            "actual": -49.682,
+            "final_estimate": -50.4507,
+            "dollar_error": -0.7686999999999955,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.00024131487531223837,
+            "ratio_error": -0.00033433354333214406
+          },
+          {
+            "fiscal_year": 2012,
+            "announced": "2013-01-23",
+            "accounting_basis": "US GAAP",
+            "actual": -41.457,
+            "final_estimate": -33.57518,
+            "dollar_error": 7.881819999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.002190135531554934,
+            "ratio_error": 0.0021566222436364205
+          },
+          {
+            "fiscal_year": 2013,
+            "announced": "2014-01-22",
+            "accounting_basis": "US GAAP",
+            "actual": -54.143,
+            "final_estimate": -48.55041,
+            "dollar_error": 5.592590000000001,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0012810052803917274,
+            "ratio_error": 0.001256114857266637
+          },
+          {
+            "fiscal_year": 2014,
+            "announced": "2015-01-20",
+            "accounting_basis": "US GAAP",
+            "actual": -69.726,
+            "final_estimate": -81.41811,
+            "dollar_error": -11.69211,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.0021242470473966015,
+            "ratio_error": -0.0021254812674348696
+          },
+          {
+            "fiscal_year": 2015,
+            "announced": "2016-01-19",
+            "accounting_basis": "US GAAP",
+            "actual": -91.248,
+            "final_estimate": -105.84384,
+            "dollar_error": -14.595839999999995,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.0021509508462318892,
+            "ratio_error": -0.002138552630159383
+          },
+          {
+            "fiscal_year": 2016,
+            "announced": "2017-01-18",
+            "accounting_basis": "US GAAP",
+            "actual": -107.653,
+            "final_estimate": -76.80405,
+            "dollar_error": 30.848950000000002,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0034976393333893845,
+            "ratio_error": 0.0034828023037043656
+          },
+          {
+            "fiscal_year": 2017,
+            "announced": "2018-01-22",
+            "accounting_basis": "US GAAP",
+            "actual": -173.302,
+            "final_estimate": -187.39755,
+            "dollar_error": -14.095550000000003,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.0012062267446611174,
+            "ratio_error": -0.0012151782473070784
+          },
+          {
+            "fiscal_year": 2018,
+            "announced": "2019-01-17",
+            "accounting_basis": "US GAAP",
+            "actual": -173.946,
+            "final_estimate": -157.86768,
+            "dollar_error": 16.07831999999999,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0010167650031538875,
+            "ratio_error": 0.0010299074232292954
+          },
+          {
+            "fiscal_year": 2019,
+            "announced": "2020-01-21",
+            "accounting_basis": "US GAAP",
+            "actual": -253.035,
+            "final_estimate": -219.37086,
+            "dollar_error": 33.66414,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0016714315715282372,
+            "ratio_error": 0.0016617427767088508
+          },
+          {
+            "fiscal_year": 2020,
+            "announced": "2021-01-19",
+            "accounting_basis": "US GAAP",
+            "actual": -497.923,
+            "final_estimate": -423.59596,
+            "dollar_error": 74.32704000000001,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.002977534143816968,
+            "ratio_error": 0.002950848772905315
+          },
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-01-20",
+            "accounting_basis": "US GAAP",
+            "actual": -524.585,
+            "final_estimate": -484.34979,
+            "dollar_error": 40.23521000000005,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0013545693857625642,
+            "ratio_error": 0.0013578267827850203
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-01-19",
+            "accounting_basis": "US GAAP",
+            "actual": -407.729,
+            "final_estimate": -442.54141,
+            "dollar_error": -34.81241,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.00110124014623191,
+            "ratio_error": -0.0011026860013401314
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-01-23",
+            "accounting_basis": "US GAAP",
+            "actual": -348.552,
+            "final_estimate": -402.81383,
+            "dollar_error": -54.261829999999975,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.0016131300615140984,
+            "ratio_error": -0.0016394605251202257
+          },
+          {
+            "fiscal_year": 2024,
+            "announced": "2025-01-21",
+            "accounting_basis": "US GAAP",
+            "actual": -439.538,
+            "final_estimate": -392.03875,
+            "dollar_error": 47.49925000000002,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0012218782499178742,
+            "ratio_error": 0.0011850589197490938
+          },
+          {
+            "fiscal_year": 2025,
+            "announced": "2026-01-20",
+            "accounting_basis": "US GAAP",
+            "actual": -688.22,
+            "final_estimate": -575.95307,
+            "dollar_error": 112.26693,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.0024893323636903924,
+            "ratio_error": 0.002461021888772492
+          }
+        ]
+      }
+    ],
+    "withheld": [],
+    "source_file": "Netflix,IncNasdaqGSNFLXEstimatesReport.xls",
+    "source_sha256": "406592d103",
+    "source_ref": "CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, Announced Date)"
   },
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
