@@ -334,12 +334,17 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 
 #: Committed anchors whose ``anchor_base_value_per_share`` diverges from a fresh recompute.
 #:
-#: **NOW EMPTY — the backfill ran (2026-07-31).** It held ``{BRBR, CNXC, SMPL}`` for exactly one
-#: PR: SMPL 41.60→43.33 (+4.16%), BRBR 55.41→55.97 (+1.02%), CNXC 62.33→62.55 (+0.35%), each the
-#: cumulative-period defect leaving the committed artifact. Empty is the load-bearing state — from
-#: here the pin asserts committed JSON and a fresh recompute AGREE on every applicable anchor, so
-#: future drift reds on the first run rather than waiting to be noticed.
-ANCHORS_AWAITING_BACKFILL: set[str] = set()
+#: It held ``{BRBR, CNXC, SMPL}`` for exactly one PR (the backfill ran 2026-07-31): SMPL
+#: 41.60→43.33 (+4.16%), BRBR 55.41→55.97 (+1.02%), CNXC 62.33→62.55 (+0.35%), each the
+#: cumulative-period defect leaving the committed artifact.
+#:
+#: **HOLDS ``{AMZN, VRRM, WLK}`` AGAIN (2026-10-08, §5.0 row 27)** — the net-debt cash leg now
+#: nets short-term securities at the cash instant, so these three committed bases are the old
+#: cash-only bridge: AMZN 245.46→249.57, WLK 104.35→105.98, VRRM 21.75→21.79 on the same facts.
+#: GOOGL (197.01→212.17) and UBER (net debt only; R1 inapplicable) move too, but this pin cannot
+#: see them: GOOGL is in ``BRIDGE_ONLY_ANCHORS`` and UBER has no base. The anchor backfill empties
+#: this set, in the artifact PR that also re-renders the pages.
+ANCHORS_AWAITING_BACKFILL: set[str] = {"AMZN", "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than

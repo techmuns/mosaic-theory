@@ -1,0 +1,53 @@
+{
+ "_about": "CIQ 'Total Cash & ST Investments' and 'Total Debt' ($M), the figures a CIQ TEV nets, read 2026-10-08 through vinci.dossier.ciq_balance.extract from the git-ignored Financials workbooks named here. DERIVED values only \u2014 the workbooks are never committed. Frozen so the net-debt cash-leg pins (\u00a75.0 row 27) check EDGAR against an independent source in CI. All six balance sheets are at 2026-06-30, the same instant as each name's EDGAR cash.",
+ "names": {
+  "AMZN": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "e5abf9d69d",
+   "source": "CIQ Financials\u2192Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 122988.0,
+   "total_debt": 251635.0,
+   "workbook": "Amazon com Inc NasdaqGS AMZN Financials_Quarterly.xls"
+  },
+  "GOOGL": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "36160a403e",
+   "source": "CIQ Financials\u2192Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 242474.0,
+   "total_debt": 120791.0,
+   "workbook": "Alphabet Inc NasdaqGS GOOGL Financials_Quarterly 2.12.06\u202fPM.xls"
+  },
+  "NFLX": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "d162f709ec",
+   "source": "CIQ Financials\u2192Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 9127.9,
+   "total_debt": 16654.7,
+   "workbook": "Netflix Inc NasdaqGS NFLX Financials_Quarterly.xls"
+  },
+  "ORKA": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "add437d7e3",
+   "source": "CIQ Financials\u2192Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 873.6,
+   "total_debt": 2.5,
+   "workbook": "Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls"
+  },
+  "UBER": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "fb3c714dff",
+   "source": "CIQ Financials\u2192Balance Sheet 'Total Cash & ST Investments' [Press Release Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 5391.0,
+   "total_debt": 14731.0,
+   "workbook": "Uber Technologies Inc NYSE UBER Financials_Quarterly.xls"
+  },
+  "WLK": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "15bec6cee3",
+   "source": "CIQ Financials\u2192Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 1852.0,
+   "total_debt": 5876.0,
+   "workbook": "Westlake Corporation NYSE WLK Financials_Quarterly.xls"
+  }
+ }
+}
