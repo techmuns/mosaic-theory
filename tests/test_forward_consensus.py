@@ -215,5 +215,6 @@ def test_assembly_builds_the_layer_through_the_one_builder() -> None:
     has one."""
     from vinci.dossier import assemble as asm
 
-    assert "forward_consensus=ciq_sheets.forward_consensus(bundle)" in inspect.getsource(
-        asm.assemble_one)
+    src = inspect.getsource(asm.assemble_one)
+    assert "forward_consensus = ciq_sheets.forward_consensus(bundle)" in src
+    assert "forward_consensus=forward_consensus," in src
