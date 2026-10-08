@@ -450,3 +450,13 @@
 {"bar_date": "2026-09-18", "close": 226.61, "high": 230.24, "internal_id": "SEC-0000745732-ROST", "low": 226.385, "open": 228.395, "source": "polygon-aggs", "volume": 3980251.94782}
 {"bar_date": "2026-09-21", "close": 231.25, "high": 233.27, "internal_id": "SEC-0000745732-ROST", "low": 226.11, "open": 226.7, "source": "polygon-aggs", "volume": 2227931.912313}
 {"bar_date": "2026-09-22", "close": 232.51, "high": 234.81, "internal_id": "SEC-0000745732-ROST", "low": 230.53, "open": 233.575, "source": "polygon-aggs", "volume": 2124182.339035}
+{"bar_date": "2026-09-23", "close": 233.98, "high": 236.34, "internal_id": "SEC-0000745732-ROST", "low": 233.19, "open": 233.57, "source": "polygon-grouped", "volume": 1564725.065261}
+{"bar_date": "2026-09-24", "close": 235.4, "high": 237.0, "internal_id": "SEC-0000745732-ROST", "low": 233.05, "open": 234.39, "source": "polygon-grouped", "volume": 1454068.780429}
+{"bar_date": "2026-09-25", "close": 236.12, "high": 236.92, "internal_id": "SEC-0000745732-ROST", "low": 233.34, "open": 235.87, "source": "polygon-grouped", "volume": 1712944.971021}
+{"bar_date": "2026-09-28", "close": 237.09, "high": 239.7282, "internal_id": "SEC-0000745732-ROST", "low": 233.33, "open": 236.12, "source": "polygon-grouped", "volume": 1971246.366551}
+{"bar_date": "2026-09-29", "close": 234.4, "high": 236.24, "internal_id": "SEC-0000745732-ROST", "low": 233.54, "open": 236.01, "source": "polygon-grouped", "volume": 1485901.07088}
+{"bar_date": "2026-09-30", "close": 233.4, "high": 235.75, "internal_id": "SEC-0000745732-ROST", "low": 233.305, "open": 235.75, "source": "polygon-grouped", "volume": 1746356.551085}
+{"bar_date": "2026-10-01", "close": 234.1, "high": 235.73, "internal_id": "SEC-0000745732-ROST", "low": 231.75, "open": 234.36, "source": "polygon-grouped", "volume": 1744307.643091}
+{"bar_date": "2026-10-02", "close": 228.54, "high": 236.0, "internal_id": "SEC-0000745732-ROST", "low": 227.66, "open": 234.98, "source": "polygon-grouped", "volume": 2358676.493725}
+{"bar_date": "2026-10-05", "close": 226.37, "high": 231.25, "internal_id": "SEC-0000745732-ROST", "low": 224.94, "open": 228.79, "source": "polygon-grouped", "volume": 2588473.740212}
+{"bar_date": "2026-10-06", "close": 224.21, "high": 226.95, "internal_id": "SEC-0000745732-ROST", "low": 221.765, "open": 224.89, "source": "polygon-grouped", "volume": 2899847.412911}
