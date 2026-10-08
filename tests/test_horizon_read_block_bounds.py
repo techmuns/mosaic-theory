@@ -12,6 +12,7 @@ The CIQ-backed tests read the licensed workbooks on disk and SKIP without them (
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +22,8 @@ from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
 from vinci.dossier.refresh import (
     RefreshRefusedError,
+    _count_tokens,
+    _prose,
     horizon_read_transform,
     moved_cited_counts,
     refresh_dossier,
@@ -155,22 +158,40 @@ def test_a_count_the_prose_cites_may_not_vanish_from_the_page() -> None:
     assert moved_cited_counts(before, after, cites_kept) == []
 
 
+def _a_page_whose_prose_cites_a_count() -> tuple[str, str]:
+    """(ticker, count) — the first committed page whose stored prose cites a revision count its own
+    mechanical layer carries. FOUND, NEVER NAMED: the prose re-draws on every re-assembly, so a
+    page and a count chosen by hand are an LLM-string pin on a living artifact (CLAUDE.md
+    TEST-LAYER RULE). The first version named AMZN's '3↑/0↓' and went red when AMZN was
+    re-assembled on 2026-10-08 — the new prose cites no count at all."""
+    for path in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        doc = json.loads(path.read_text())
+        if doc.get("synthesis") is None or (path.parent / "known_wrong.json").exists():
+            continue
+        prose = _prose(doc)
+        for token in sorted(_count_tokens(doc["mechanical"])):
+            if token in prose or json.dumps(token)[1:-1] in prose:
+                return path.parent.name, token
+    pytest.skip("no committed page's prose cites a revision count its page carries")
+
+
 def test_the_refresh_path_refuses_when_a_cited_count_vanishes(tmp_path: Path) -> None:
-    """END TO END on AMZN's real prose, which cites the 3↑/0↓ last-month breadth. A refresh that
-    makes that count vanish from every field is refused and writes nothing."""
-    src = ROOT / "data" / "dossiers" / "AMZN"
-    folder = tmp_path / "AMZN"
+    """END TO END on real stored prose: a refresh that makes a count the prose cites vanish from
+    every field is refused and writes nothing."""
+    ticker, token = _a_page_whose_prose_cites_a_count()
+    src = ROOT / "data" / "dossiers" / ticker
+    folder = tmp_path / ticker
     folder.mkdir()
     for name in ("dossier.json", "dossier.md"):
         (folder / name).write_text((src / name).read_text())
     before = (folder / "dossier.json").read_text()
-    assert "3\\u2191/0\\u2193" in before or "3↑/0↓" in before, "AMZN's prose no longer cites it"
+    pattern = re.compile(rf"(?<!\d){re.escape(token)}")
 
     def erase(mech: dict[str, Any]) -> dict[str, Any]:
-        text = json.dumps(mech, ensure_ascii=False).replace("3↑/0↓", "9↑/9↓")
+        text = pattern.sub("999↑/999↓", json.dumps(mech, ensure_ascii=False))
         out: dict[str, Any] = json.loads(text)
         return out
 
-    with pytest.raises(RefreshRefusedError, match="revision count 3↑/0↓"):
+    with pytest.raises(RefreshRefusedError, match=f"revision count {re.escape(token)}"):
         refresh_dossier(folder / "dossier.json", transform=erase)
     assert (folder / "dossier.json").read_text() == before
