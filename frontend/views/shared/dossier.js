@@ -22,6 +22,16 @@ const EXTRACTION_VERSIONS = [
   ["2026-08-16.1",
     "every Multiples reader selects the latest close BY DATE, never by column position, and " +
     "refuses on an NM or undated one rather than reaching back a quarter (#459)"],
+  ["2026-10-07.1",
+    "forward consensus (FY+0..FY+2 paths, spreads, revision counts) and the forward-multiple " +
+    "history sit beside the page, outside the synthesis (#673, #676) · horizon_read takes " +
+    "each metric's revision counts from its OWN block — values change on every page (#674) · " +
+    "a claim citing a GAAP-EPS move normalized EPS did not make is caveated (#678)"],
+  ["2026-10-08.1",
+    "the forward layers state their own basis: today's forward multiples beside their history" +
+    " (`current_multiples`), the history's latest close marked quarter-end or not, CIQ's FCF " +
+    "and EBITDA consensus set against CFO − CapEx and EBIT + D&A, and the Estimates export's " +
+    "file and hash"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

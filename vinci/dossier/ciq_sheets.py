@@ -34,8 +34,10 @@ from vinci.dossier.schemas import (
     CapitalInstrument,
     ConsensusPath,
     ConsensusPoint,
+    ConsensusReconciliation,
     ConsensusSpread,
     CreditHealthPanel,
+    CurrentMultiple,
     DriverKind,
     FinRow,
     FinTable,
@@ -2744,12 +2746,50 @@ def forward_consensus(bundle: CiqBundle) -> ForwardConsensus | None:
     if not paths:
         return None
     as_of = estimates_as_of(bundle)
+    wb = bundle.workbook("estimates")
+    src_sha = file_provenance(wb.path)[0] if wb is not None else None
     return ForwardConsensus(
         as_of=as_of.value if as_of.status is SourceStatus.PRESENT else None,
         periods=periods, paths=paths, spreads=spreads, revisions=revisions, withheld=withheld,
+        current_multiples=current_multiples(bundle),
+        reconciliations=_consensus_reconciliations(periods, spreads) or None,
+        source_file=wb.path.name if wb is not None else None, source_sha256=src_sha,
         source_ref="CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the "
                    "section the sheet's own Market Summary vouches for) · Revisions (counts per "
                    "window, each block bounded by the next block of any kind)")
+
+
+#: (reconciliation) the identities a model is tempted to impose on consensus lines:
+#: (name, reported line, [(component line, sign)]). Capital expenditure and D&A enter by MAGNITUDE —
+#: CIQ prints capex as a negative outflow — so the identity holds whatever sign a sheet uses.
+_RECONCILIATIONS: tuple[tuple[str, str, tuple[tuple[str, int], ...]], ...] = (
+    ("CFO − CapEx vs FCF", "Free Cash Flow",
+     (("Cash From Operations", 1), ("Capital Expenditure", -1))),
+    ("EBIT + D&A vs EBITDA", "EBITDA", (("EBIT", 1), ("Depreciation & Amortization", 1))),
+)
+
+
+def _consensus_reconciliations(periods: list[str],
+                               spreads: list[ConsensusSpread]) -> list[ConsensusReconciliation]:
+    """Each identity, per period, from the consensus MEANS — only where every line has one. A
+    signed part enters by magnitude: `+1` adds |value|, `-1` subtracts it."""
+    means = {(sp.metric, sp.period): sp for sp in spreads if sp.mean is not None}
+    out: list[ConsensusReconciliation] = []
+    for period in periods:
+        for name, reported, parts in _RECONCILIATIONS:
+            lines = [reported, *(line for line, _ in parts)]
+            if any((line, period) not in means for line in lines):
+                continue
+            values = {line: means[(line, period)].mean for line in lines}
+            implied = sum(sign * abs(values[line]) for line, sign in parts)
+            got = values[reported]
+            assert got is not None
+            out.append(ConsensusReconciliation(
+                period=period, identity=name,
+                parts={line: v for line, v in values.items() if line != reported and v is not None},
+                implied=implied, reported=got, gap=got - implied,
+                estimates={line: means[(line, period)].estimates or "" for line in lines}))
+    return out
 
 
 #: (forward-multiple history) display metric, the sheet's row label VERBATIM, context-only. The
@@ -2766,6 +2806,15 @@ _CONTEXT_ONLY_NOTE = (
     "'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of "
     "the current Estimates P/E. EV/NTM EBIT is the admissible cross-check "
     "(docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).")
+
+
+def _is_quarter_end_close(d: date) -> bool:
+    """A Multiples column dated on a calendar quarter's last trading days. The sheet's history
+    runs on those (2017-09-29, 2024-03-28 — never a fiscal quarter end, even for BURL or NKE), and
+    an export pulled mid-quarter adds one more column on its own date (AMZN 2026-09-16). The 26th
+    is the floor because a quarter's last trading day can fall days before its calendar end over a
+    weekend plus a holiday; an export pulled in a quarter's last five days would read as settled."""
+    return d.month in (3, 6, 9, 12) and d.day >= 26
 
 
 def _cell_text(cell: Any) -> str:
@@ -2826,9 +2875,13 @@ def forward_multiple_history(bundle: CiqBundle) -> ForwardMultipleHistory | None
             band=band.model_copy(update={"series": []}) if band is not None else None))
     if not series:
         return None
+    dates = sorted({date.fromisoformat(pt.date) for sr in series for pt in sr.points})
+    settled = [d for d in dates if _is_quarter_end_close(d)]
     return ForwardMultipleHistory(
         as_of=latest.isoformat() if latest else None, series=series, withheld=withheld,
         source_file=src_file, source_sha256=src_sha,
+        latest_close_quarter_end=_is_quarter_end_close(latest) if latest else None,
+        history_through=settled[-1].isoformat() if settled else None,
         source_ref="CIQ Financials→Multiples (quarterly Close; forward rows, exact label)")
 
 
@@ -2919,6 +2972,50 @@ def _cell_at(rows: Rows, ri: int | None, col: int) -> float | None:
     return clean_num(rows[ri][col]) if ri is not None and col < len(rows[ri]) else None
 
 
+def _ladder_cells(rows: Rows) -> list[tuple[str, list[tuple[str, Any]]]] | None:
+    """Estimates→Multiples as (row label, [(column name, cell AS EXPORTED)]) for each ladder row
+    the sheet carries, in `_MULT_LADDER_ROWS` order. None without the TEV/REV header. The ONE read
+    of the ladder: `cross_name_anchor` renders it, `current_multiples` keeps it structured."""
+    hi = next(
+        (i for i, r in enumerate(rows) if any(isinstance(c, str) and "TEV/REV" in c for c in r)),
+        None,
+    )
+    if hi is None:
+        return None
+    hdr = rows[hi]
+    cols = [(j, str(hdr[j]).strip()) for j in range(1, len(hdr)) if str(hdr[j]).strip()]
+    out: list[tuple[str, list[tuple[str, Any]]]] = []
+    for label in _MULT_LADDER_ROWS:
+        ri = _find_row(rows, label)
+        if ri is None:
+            continue
+        row = rows[ri]
+        out.append((label, [(name, row[j] if j < len(row) else None) for j, name in cols]))
+    return out
+
+
+def current_multiples(bundle: CiqBundle) -> list[CurrentMultiple] | None:
+    """TODAY'S forward multiples — the Estimates→Multiples ladder, structured: one entry per
+    (period, multiple) the sheet carries, a non-number kept as written. The same cells
+    `cross_name_anchor` renders, so the string and the values cannot disagree.
+
+    WHY IT EXISTS. The forward-multiple HISTORY ends at the Financials export's latest close (AMZN:
+    22.59x EV/NTM EBIT on 2026-09-16) while today's figure sat only inside a display string (23.34x
+    on the Estimates export, ≥2026-10-06). A consumer reading the history's `current` as today's
+    multiple read the wrong date; one parsing the string is the parser class this repo forbids."""
+    try:
+        rows = bundle.sheet("estimates", "Multiples")
+    except CiqUnavailableError:
+        return None
+    ladder = _ladder_cells(rows)
+    if ladder is None:
+        return None
+    out = [CurrentMultiple(period=label, metric=name, value=(v := clean_num(cell)),
+                           cell=None if v is not None else _cell_text(cell))
+           for label, row in ladder for name, cell in row]
+    return out or None
+
+
 def cross_name_anchor(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
     """(c) CROSS-NAME ANCHOR (NTM) — the forward-multiple ladder from Estimates→Multiples: NTM +
     FY26→FY33 across TEV/REV · TEV/EBITDA · TEV/EBIT · P/E · PEG ("-" → absent). The cross-sectional
@@ -2927,23 +3024,15 @@ def cross_name_anchor(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
         rows = bundle.sheet("estimates", "Multiples")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
-    hi = next(
-        (i for i, r in enumerate(rows) if any(isinstance(c, str) and "TEV/REV" in c for c in r)),
-        None,
-    )
-    if hi is None:
+    ladder = _ladder_cells(rows)
+    if ladder is None:
         return Sourced.unknown(note="no TEV/REV multiple header in Estimates→Multiples")
-    hdr = rows[hi]
-    cols = [(j, str(hdr[j]).strip()) for j in range(1, len(hdr)) if str(hdr[j]).strip()]
     lines: list[str] = []
-    for label in _MULT_LADDER_ROWS:
-        ri = _find_row(rows, label)
-        if ri is None:
-            continue
+    for label, row in ladder:
         cells = []
         any_val = False
-        for j, name in cols:
-            v = clean_num(rows[ri][j]) if j < len(rows[ri]) else None
+        for name, cell in row:
+            v = clean_num(cell)
             if v is not None:
                 any_val = True
             cells.append(f"{name} {v:.2f}" if v is not None else f"{name} –")

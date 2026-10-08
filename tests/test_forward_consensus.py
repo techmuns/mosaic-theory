@@ -201,7 +201,9 @@ def test_a_top_level_refresh_may_set_only_its_allowlisted_key(tmp_path: Path) ->
     layer = json.loads(_minimal().model_dump_json())
     refresh_dossier(folder / "dossier.json", top_level=lambda d: {"forward_consensus": layer})
     written = json.loads((folder / "dossier.json").read_text())
-    assert written["forward_consensus"] == layer
+    # compared as the MODEL: keys added later are written ABSENT, never null, so the dict the
+    # model dumps and the dict the one serializer writes differ by design (TOP_DROP_WHEN_NONE)
+    assert ForwardConsensus.model_validate(written["forward_consensus"]) == _minimal()
     assert written["mechanical"] == json.loads(before)["mechanical"], "the mechanical layer moved"
     (folder / "known_wrong.json").write_text("{}")
     with pytest.raises(RefreshRefusedError):
