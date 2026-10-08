@@ -9036,7 +9036,289 @@
       }
     ],
     "withheld": [],
-    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
+    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)",
+    "current_multiples": [
+      {
+        "period": "NTM",
+        "metric": "TEV/REV",
+        "value": 0.357167560219125,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBITDA",
+        "value": 16.1929171501313,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "NTM",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "NTM",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/REV",
+        "value": 0.370597601572144,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBITDA",
+        "value": 24.0562257657062,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/REV",
+        "value": 0.352628246545452,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBITDA",
+        "value": 13.0289274488728,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/REV",
+        "value": 0.338735381411212,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBITDA",
+        "value": 7.21863605557572,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBIT",
+        "value": 16.3501797549209,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "Price/Earnings",
+        "value": 11.8292682926829,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBIT",
+        "value": 8.67785790492424,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "Price/Earnings",
+        "value": 4.57547169811321,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBIT",
+        "value": 6.60217431383285,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "Price/Earnings",
+        "value": 3.9917695473251,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      }
+    ],
+    "reconciliations": [
+      {
+        "period": "FY 2026",
+        "identity": "CFO − CapEx vs FCF",
+        "parts": {
+          "Cash From Operations": -392.881,
+          "Capital Expenditure": -11.5
+        },
+        "implied": 381.381,
+        "reported": -411.2152,
+        "gap": -792.5962,
+        "estimates": {
+          "Free Cash Flow": "5/6",
+          "Cash From Operations": "4/5",
+          "Capital Expenditure": "2/6"
+        }
+      },
+      {
+        "period": "FY 2026",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": -101.63257,
+          "Depreciation & Amortization": 128.6432
+        },
+        "implied": 230.27577000000002,
+        "reported": 95.23333,
+        "gap": -135.04244000000003,
+        "estimates": {
+          "EBITDA": "9/10",
+          "EBIT": "7/8",
+          "Depreciation & Amortization": "10/10"
+        }
+      },
+      {
+        "period": "FY 2027",
+        "identity": "CFO − CapEx vs FCF",
+        "parts": {
+          "Cash From Operations": 128.632,
+          "Capital Expenditure": -7.8715
+        },
+        "implied": 120.76050000000001,
+        "reported": 135.72475,
+        "gap": 14.964249999999993,
+        "estimates": {
+          "Free Cash Flow": "4/5",
+          "Cash From Operations": "4/4",
+          "Capital Expenditure": "6/6"
+        }
+      },
+      {
+        "period": "FY 2027",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": -2.6682,
+          "Depreciation & Amortization": 129.79511
+        },
+        "implied": 132.46331,
+        "reported": 175.836,
+        "gap": 43.372690000000006,
+        "estimates": {
+          "EBITDA": "10/10",
+          "EBIT": "5/7",
+          "Depreciation & Amortization": "9/9"
+        }
+      },
+      {
+        "period": "FY 2028",
+        "identity": "CFO − CapEx vs FCF",
+        "parts": {
+          "Cash From Operations": 204.967,
+          "Capital Expenditure": -8.3655
+        },
+        "implied": 196.60150000000002,
+        "reported": 254.687,
+        "gap": 58.085499999999996,
+        "estimates": {
+          "Free Cash Flow": "2/4",
+          "Cash From Operations": "1/2",
+          "Capital Expenditure": "6/6"
+        }
+      },
+      {
+        "period": "FY 2028",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 140.118,
+          "Depreciation & Amortization": 125.91729
+        },
+        "implied": 266.03529,
+        "reported": 317.36667,
+        "gap": 51.331380000000024,
+        "estimates": {
+          "EBITDA": "9/9",
+          "EBIT": "6/7",
+          "Depreciation & Amortization": "7/7"
+        }
+      }
+    ],
+    "source_file": "FuboTVIncNYSEFUBOEstimatesReport.xls",
+    "source_sha256": "6a70302115"
   },
   "anchor": {
     "recipe_hint": "unknown",

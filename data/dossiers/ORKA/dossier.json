@@ -8266,7 +8266,335 @@
       "Capital Expenditure: the Market Summary vouches for no Consensus section to read it from — spread withheld",
       "Free Cash Flow: the Market Summary vouches for no Consensus section to read it from — spread withheld"
     ],
-    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
+    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)",
+    "current_multiples": [
+      {
+        "period": "NTM",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "NTM",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "NTM",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "NTM",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "P/BV",
+        "value": 6.49991824222898,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "P/BV",
+        "value": 7.77507844753627,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "P/BV",
+        "value": 9.94047734039105,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/REV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/REV",
+        "value": 32.1472840099944,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBIT",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "NM"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/REV",
+        "value": 5.68679128684765,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/EBIT",
+        "value": 37.5811707296189,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "Price/Earnings",
+        "value": 44.5288461538462,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2031",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/REV",
+        "value": 2.34550924255165,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/EBIT",
+        "value": 5.08763193908531,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "Price/Earnings",
+        "value": 7.07427916746229,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2032",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/REV",
+        "value": 1.51442668211357,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/EBITDA",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/EBIT",
+        "value": 2.88289145174751,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "Price/Earnings",
+        "value": 4.49393498301795,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2033",
+        "metric": "P/BV",
+        "value": null,
+        "cell": "-"
+      }
+    ],
+    "source_file": "OrukaTherapeutics,IncNasdaqGMORKAEstimatesReport.xls",
+    "source_sha256": "0dcc20d8f5"
   },
   "anchor": {
     "recipe_hint": "unknown",

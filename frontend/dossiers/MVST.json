@@ -6855,7 +6855,331 @@
       }
     ],
     "withheld": [],
-    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)"
+    "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)",
+    "current_multiples": [
+      {
+        "period": "NTM",
+        "metric": "TEV/REV",
+        "value": 0.791675086836867,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBITDA",
+        "value": 3.99410612977951,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "TEV/EBIT",
+        "value": 8.89821343952088,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "Price/Earnings",
+        "value": 7.66666666666667,
+        "cell": null
+      },
+      {
+        "period": "NTM",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/REV",
+        "value": 0.94278352732309,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBITDA",
+        "value": 6.74934319920101,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "TEV/EBIT",
+        "value": 20.9907430735703,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "Price/Earnings",
+        "value": 23.0,
+        "cell": null
+      },
+      {
+        "period": "FY 2026",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/REV",
+        "value": 0.708342628243546,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBITDA",
+        "value": 2.83627391026509,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "TEV/EBIT",
+        "value": 6.10548313095177,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "Price/Earnings",
+        "value": 6.13333333333333,
+        "cell": null
+      },
+      {
+        "period": "FY 2027",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/REV",
+        "value": 0.55391132505655,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBITDA",
+        "value": 2.30904651933823,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "TEV/EBIT",
+        "value": 3.56283409824913,
+        "cell": null
+      },
+      {
+        "period": "FY 2028",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2028",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/REV",
+        "value": 0.478897204036589,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBITDA",
+        "value": 1.92570712223371,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "TEV/EBIT",
+        "value": 2.77541998449951,
+        "cell": null
+      },
+      {
+        "period": "FY 2029",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2029",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/REV",
+        "value": 0.419726124002741,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBITDA",
+        "value": 1.6366629965625,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "TEV/EBIT",
+        "value": 2.23672587227273,
+        "cell": null
+      },
+      {
+        "period": "FY 2030",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2030",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/REV",
+        "value": 0.372002549165496,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/EBITDA",
+        "value": 1.40740450022002,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "TEV/EBIT",
+        "value": 1.84836587032764,
+        "cell": null
+      },
+      {
+        "period": "FY 2031",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2031",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/REV",
+        "value": 0.332731690890465,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/EBITDA",
+        "value": 1.22216341120637,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "TEV/EBIT",
+        "value": 1.55661295903999,
+        "cell": null
+      },
+      {
+        "period": "FY 2032",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2032",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/REV",
+        "value": 0.299822266690615,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/EBITDA",
+        "value": 1.07196679890599,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "TEV/EBIT",
+        "value": 1.33327094363158,
+        "cell": null
+      },
+      {
+        "period": "FY 2033",
+        "metric": "Price/Earnings",
+        "value": null,
+        "cell": "-"
+      },
+      {
+        "period": "FY 2033",
+        "metric": "PEG",
+        "value": null,
+        "cell": "-"
+      }
+    ],
+    "reconciliations": [
+      {
+        "period": "FY 2026",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 19.9605,
+          "Depreciation & Amortization": 42.875
+        },
+        "implied": 62.835499999999996,
+        "reported": 62.078,
+        "gap": -0.7574999999999932,
+        "estimates": {
+          "EBITDA": "1/1",
+          "EBIT": "2/2",
+          "Depreciation & Amortization": "1/1"
+        }
+      },
+      {
+        "period": "FY 2027",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 68.6245,
+          "Depreciation & Amortization": 56.21
+        },
+        "implied": 124.83449999999999,
+        "reported": 147.724,
+        "gap": 22.889499999999998,
+        "estimates": {
+          "EBITDA": "1/1",
+          "EBIT": "2/2",
+          "Depreciation & Amortization": "1/1"
+        }
+      },
+      {
+        "period": "FY 2028",
+        "identity": "EBIT + D&A vs EBITDA",
+        "parts": {
+          "EBIT": 117.599,
+          "Depreciation & Amortization": 59.68
+        },
+        "implied": 177.279,
+        "reported": 181.454,
+        "gap": 4.175000000000011,
+        "estimates": {
+          "EBITDA": "1/1",
+          "EBIT": "1/1",
+          "Depreciation & Amortization": "1/1"
+        }
+      }
+    ],
+    "source_file": "MicrovastHoldings,IncNasdaqCMMVSTEstimatesReport.xls",
+    "source_sha256": "75a45b4f84"
   },
   "forward_multiple_history": {
     "as_of": "2026-08-12",
@@ -7444,7 +7768,207 @@
     "withheld": [],
     "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
     "source_sha256": "e1f788d63f",
-    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)"
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)",
+    "latest_close_quarter_end": false,
+    "history_through": "2026-06-30"
+  },
+  "historical_forecast_error": {
+    "estimate_type": "final consensus before each result — CIQ Estimates→Surprise 'Estimate', Fiscal Years, company level",
+    "usable_as_forecast_error_cross_check": true,
+    "usable_as_revision_distribution": false,
+    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries.",
+    "usage_note": "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. ratio_error alone answers how wrong the margin (or capex-intensity) forecast was, and multiplied by revenue it drops the revenue miss's effect. Exact identity: error_per_forecast_revenue = ratio_error + (actual ÷ actual revenue) × (actual revenue ÷ forecast revenue − 1).",
+    "series": [
+      {
+        "metric": "Revenue",
+        "observations": [
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-03-29",
+            "accounting_basis": "US GAAP",
+            "actual": 151.976,
+            "final_estimate": 148.15878,
+            "dollar_error": 3.817219999999992,
+            "pct_error": 0.025764386018837238,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-03-16",
+            "accounting_basis": "US GAAP",
+            "actual": 204.495,
+            "final_estimate": 200.1,
+            "dollar_error": 4.39500000000001,
+            "pct_error": 0.02196401799100456,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-04-01",
+            "accounting_basis": "US GAAP",
+            "actual": 306.617,
+            "final_estimate": 296.7025,
+            "dollar_error": 9.914500000000032,
+            "pct_error": 0.03341562676418319,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2024,
+            "announced": "2025-03-31",
+            "accounting_basis": "US GAAP",
+            "actual": 379.801,
+            "final_estimate": 358.916,
+            "dollar_error": 20.88499999999999,
+            "pct_error": 0.05818910274270306,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          },
+          {
+            "fiscal_year": 2025,
+            "announced": "2026-03-16",
+            "accounting_basis": "US GAAP",
+            "actual": 427.516,
+            "final_estimate": 462.5,
+            "dollar_error": -34.98399999999998,
+            "pct_error": -0.07564108108108103,
+            "error_per_forecast_revenue": null,
+            "ratio_error": null
+          }
+        ]
+      },
+      {
+        "metric": "EBITDA",
+        "observations": [
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-03-29",
+            "accounting_basis": "US GAAP",
+            "actual": -173.351,
+            "final_estimate": -89.97692,
+            "dollar_error": -83.37407999999999,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.5627346553474589,
+            "ratio_error": -0.5333465803833103
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-03-16",
+            "accounting_basis": "US GAAP",
+            "actual": -56.731,
+            "final_estimate": -61.9,
+            "dollar_error": 5.168999999999997,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.025832083958020974,
+            "ratio_error": 0.031925341517607675
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-04-01",
+            "accounting_basis": "US GAAP",
+            "actual": -19.594,
+            "final_estimate": -24.51775,
+            "dollar_error": 4.923749999999998,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.016594905671505965,
+            "ratio_error": 0.01873029213350058
+          }
+        ]
+      },
+      {
+        "metric": "EBIT",
+        "observations": [
+          {
+            "fiscal_year": 2021,
+            "announced": "2022-03-29",
+            "accounting_basis": "US GAAP",
+            "actual": -194.064,
+            "final_estimate": -122.44692,
+            "dollar_error": -71.61707999999999,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.48338060019122714,
+            "ratio_error": -0.45048106468325444
+          },
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-03-16",
+            "accounting_basis": "US GAAP",
+            "actual": -159.946,
+            "final_estimate": -170.3,
+            "dollar_error": 10.354000000000013,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.05174412793603205,
+            "ratio_error": 0.068923309928693
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-04-01",
+            "accounting_basis": "US GAAP",
+            "actual": -106.729,
+            "final_estimate": -112.5315,
+            "dollar_error": 5.802499999999995,
+            "pct_error": null,
+            "error_per_forecast_revenue": 0.019556626587238043,
+            "ratio_error": 0.031188129174878287
+          },
+          {
+            "fiscal_year": 2024,
+            "announced": "2025-03-31",
+            "accounting_basis": "US GAAP",
+            "actual": -116.09,
+            "final_estimate": -31.86,
+            "dollar_error": -84.23,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.23467886636427465,
+            "ratio_error": -0.21689278118440314
+          },
+          {
+            "fiscal_year": 2025,
+            "announced": "2026-03-16",
+            "accounting_basis": "US GAAP",
+            "actual": 6.983,
+            "final_estimate": 41.559,
+            "dollar_error": -34.576,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.07475891891891892,
+            "ratio_error": -0.07352340570025764
+          }
+        ]
+      },
+      {
+        "metric": "Capital Expenditure",
+        "observations": [
+          {
+            "fiscal_year": 2022,
+            "announced": "2023-03-16",
+            "accounting_basis": "US GAAP",
+            "actual": -150.88,
+            "final_estimate": -194.7,
+            "dollar_error": -43.81999999999999,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.21899050474762616,
+            "ratio_error": -0.23519594270201505
+          },
+          {
+            "fiscal_year": 2023,
+            "announced": "2024-04-01",
+            "accounting_basis": "US GAAP",
+            "actual": -186.788,
+            "final_estimate": -199.321,
+            "dollar_error": -12.532999999999987,
+            "pct_error": null,
+            "error_per_forecast_revenue": -0.04224096527666598,
+            "ratio_error": -0.06259742983025629
+          }
+        ]
+      }
+    ],
+    "withheld": [],
+    "source_file": "MicrovastHoldings,IncNasdaqCMMVSTEstimatesReport.xls",
+    "source_sha256": "75a45b4f84",
+    "source_ref": "CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, Announced Date)"
   },
   "anchor": {
     "recipe_hint": "R2_NEEDED",
