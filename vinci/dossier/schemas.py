@@ -528,6 +528,45 @@ class CurrentMultiple(BaseModel, frozen=True):
     cell: str | None = None
 
 
+#: Which consensus EPS line a Price/Earnings figure is struck on. `indistinguishable`: both lines
+#: fit (they move together, so the data cannot tell them apart); `undetermined`: neither is shown
+#: to.
+EpsBasis = Literal["gaap", "normalized", "indistinguishable", "undetermined"]
+
+
+class EpsLineFit(BaseModel, frozen=True):
+    """How well ONE consensus EPS line explains the Price/Earnings column — the evidence behind
+    `PeEpsBasis`. P/E × EPS is the price the multiple was struck at, so on the line CIQ used it is
+    the same number in every row; on the other line it drifts with the gap between the two."""
+
+    line: str                       # 'EPS (GAAP)' | 'EPS Normalized' — the Trends sheet's title
+    implied_prices: list[float]     # P/E × this line's EPS, one per tested FY row (`periods` order)
+    spread: float | None = None     # (max − min) ÷ median of `implied_prices`; None under two rows
+    ntm_quarter_sum: float | None = None   # this line's consensus summed over `ntm_quarters`
+    ntm_gap: float | None = None    # |ntm_quarter_sum ÷ the NTM row's implied EPS − 1|
+
+
+class PeEpsBasis(BaseModel, frozen=True):
+    """WHICH EPS LINE CIQ STRIKES THE P/E ON — measured, per export, never assumed. CIQ picks it per
+    company: AMZN's forward P/E is struck on GAAP EPS and GOOGL's on normalized. An R3 underwrite
+    that multiplies normalized EPS by a GAAP-struck multiple mixes two bases.
+
+    `fiscal_years` comes from the FY rows the page carries (FY+0..FY+2). `ntm` is tested separately,
+    because the NTM row is the one an R3 anchor reads: the price the FY rows establish, ÷ the NTM
+    P/E, against each line's next four quarters. `ntm` is never INHERITED from the FY rows — a row
+    not tested is `undetermined`, and an NTM row that fits the OTHER line is `undetermined` too,
+    never silently flipped. `note` states why a row was not named."""
+
+    fiscal_years: EpsBasis
+    ntm: EpsBasis
+    periods: list[str]              # the FY rows tested
+    ntm_quarters: list[str] = []    # the four quarters summed for the NTM test
+    ntm_implied_eps: float | None = None
+    fits: list[EpsLineFit]
+    rule: str                       # the thresholds, as applied
+    note: str | None = None
+
+
 class ConsensusReconciliation(BaseModel, frozen=True):
     """A consensus line set against the identity it is often assumed to obey — 'CFO − CapEx =
     FCF', 'EBIT + D&A = EBITDA' — from the same period's consensus means. The GAP is information,
@@ -624,6 +663,8 @@ class ForwardConsensus(BaseModel, frozen=True):
     reconciliations: list[ConsensusReconciliation] | None = None
     source_file: str | None = None
     source_sha256: str | None = None
+    # (2026-10-08) which EPS line `current_multiples`' Price/Earnings rows are struck on
+    pe_eps_basis: PeEpsBasis | None = None
 
 
 class MultipleClose(BaseModel, frozen=True):
@@ -2088,6 +2129,7 @@ TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("forward_consensus", "reconciliations"),
     ("forward_consensus", "source_file"),
     ("forward_consensus", "source_sha256"),
+    ("forward_consensus", "pe_eps_basis"),
     ("forward_multiple_history", "latest_close_quarter_end"),
     ("forward_multiple_history", "history_through"),
 )

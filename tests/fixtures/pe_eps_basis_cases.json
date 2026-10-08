@@ -1,0 +1,516 @@
+{
+ "_about": "Derived values for the P/E-basis pins (2026-10-08): each case's Price/Earnings rows (Estimates→Multiples) and each EPS line's Current consensus (Estimates→Trends) for the FY rows and next four quarters the test reads — the same figures `forward_consensus` commits to every page. Read through vinci.dossier.ciq_sheets from the exports named; the workbooks are never committed.",
+ "cases": {
+  "AMZN": {
+   "as_of": "≥2026-10-06",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 2.36,
+     "FQ2 2027": 2.64,
+     "FQ3 2026": 1.95,
+     "FQ4 2026": 2.44,
+     "FY 2026": 12.89,
+     "FY 2027": 10.53,
+     "FY 2028": 14.11
+    },
+    "normalized": {
+     "FQ1 2027": 2.23,
+     "FQ2 2027": 2.48,
+     "FQ3 2026": 1.98,
+     "FQ4 2026": 2.41,
+     "FY 2026": 8.31,
+     "FY 2027": 10.47,
+     "FY 2028": 13.27
+    }
+   },
+   "expected": {
+    "fiscal_years": "gaap",
+    "ntm": "gaap"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2026": 19.8792461259942,
+    "FY 2027": 24.3461987859674,
+    "FY 2028": 18.1594151349007,
+    "NTM": 27.2573543487971
+   },
+   "quarters": [
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027"
+   ],
+   "sha256": "e10ed62223",
+   "source_file": "Amazoncom,IncNasdaqGSAMZNEstimatesReport.xls",
+   "why": "P/E struck on GAAP; the NTM row confirms on the next four quarters"
+  },
+  "AORT": {
+   "as_of": "≥2026-06-30",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 0.07,
+     "FQ2 2026": 0.0,
+     "FQ3 2026": 0.0,
+     "FQ4 2026": 0.05,
+     "FY 2026": 0.08,
+     "FY 2027": 0.41,
+     "FY 2028": 0.79
+    },
+    "normalized": {
+     "FQ1 2027": 0.11,
+     "FQ2 2026": 0.1,
+     "FQ3 2026": 0.1,
+     "FQ4 2026": 0.16,
+     "FY 2026": 0.44,
+     "FY 2027": 0.72,
+     "FY 2028": 1.14
+    }
+   },
+   "expected": {
+    "fiscal_years": "gaap",
+    "ntm": "gaap"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2027": 67.6073619631902,
+    "FY 2028": 34.873417721519,
+    "NTM": 222.536348949919
+   },
+   "quarters": [
+    "FQ2 2026",
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027"
+   ],
+   "sha256": "528430a2ed",
+   "source_file": "Artivion,IncNYSEAORTEstimatesReport.xls",
+   "why": "GAAP, with EPS small enough that cent-rounding sets the noise cap"
+  },
+  "FUBO": {
+   "as_of": "≥2026-08-11",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": -0.15,
+     "FQ2 2027": 0.12,
+     "FQ3 2027": 0.06,
+     "FQ4 2026": -0.41,
+     "FY 2026": -1.21,
+     "FY 2027": -0.11,
+     "FY 2028": 0.82
+    },
+    "normalized": {
+     "FQ1 2027": -0.02,
+     "FQ2 2027": 0.31,
+     "FQ3 2027": 0.21,
+     "FQ4 2026": -0.24,
+     "FY 2026": -0.52,
+     "FY 2027": 0.47,
+     "FY 2028": 1.04
+    }
+   },
+   "expected": {
+    "fiscal_years": "undetermined",
+    "ntm": "undetermined"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2028": 11.8292682926829
+   },
+   "quarters": [
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027",
+    "FQ3 2027"
+   ],
+   "sha256": "6a70302115",
+   "source_file": "FuboTVIncNYSEFUBOEstimatesReport.xls",
+   "why": "one testable FY row — nothing named"
+  },
+  "GOOGL": {
+   "as_of": "≥2026-09-17",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 3.42,
+     "FQ2 2027": 3.59,
+     "FQ3 2026": 3.02,
+     "FQ4 2026": 3.34,
+     "FY 2026": 20.62,
+     "FY 2027": 14.91,
+     "FY 2028": 17.8
+    },
+    "normalized": {
+     "FQ1 2027": 3.43,
+     "FQ2 2027": 3.59,
+     "FQ3 2026": 3.02,
+     "FQ4 2026": 3.35,
+     "FY 2026": 20.62,
+     "FY 2027": 14.88,
+     "FY 2028": 17.61
+    }
+   },
+   "expected": {
+    "fiscal_years": "normalized",
+    "ntm": "indistinguishable"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2026": 17.2142555781327,
+    "FY 2027": 23.8525131586286,
+    "FY 2028": 20.1571481868674,
+    "NTM": 26.5201831915068
+   },
+   "quarters": [
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027"
+   ],
+   "sha256": "be704f7f75",
+   "source_file": "AlphabetIncNasdaqGSGOOGLEstimatesReport.xls",
+   "why": "normalized; the NTM row's two lines agree within 0.15%, so it cannot be told"
+  },
+  "IT": {
+   "as_of": "≥2026-07-27",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 3.47,
+     "FQ2 2026": 3.53,
+     "FQ3 2026": 2.54,
+     "FQ4 2026": 3.67,
+     "FY 2026": 12.9,
+     "FY 2027": 14.33,
+     "FY 2028": 16.32
+    },
+    "normalized": {
+     "FQ1 2027": 3.7,
+     "FQ2 2026": 3.73,
+     "FQ3 2026": 2.74,
+     "FQ4 2026": 3.91,
+     "FY 2026": 13.68,
+     "FY 2027": 15.31,
+     "FY 2028": 17.48
+    }
+   },
+   "expected": {
+    "fiscal_years": "normalized",
+    "ntm": "normalized"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2026": 12.104653185062,
+    "FY 2027": 10.8221997190736,
+    "FY 2028": 9.47423568398091,
+    "NTM": 11.7626591491688
+   },
+   "quarters": [
+    "FQ2 2026",
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027"
+   ],
+   "sha256": "d324beb8f6",
+   "source_file": "Gartner,IncNYSEITEstimatesReport.xls",
+   "why": "normalized; the GAAP rival is 0.99% dispersed — under the cap, but 17× the struck line"
+  },
+  "LLY": {
+   "as_of": "≥2026-09-17",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 8.63,
+     "FQ2 2027": 10.49,
+     "FQ3 2026": 9.25,
+     "FQ4 2026": 9.71,
+     "FY 2026": 35.17,
+     "FY 2027": 44.49,
+     "FY 2028": 51.01
+    },
+    "normalized": {
+     "FQ1 2027": 9.73,
+     "FQ2 2027": 11.21,
+     "FQ3 2026": 9.87,
+     "FQ4 2026": 9.98,
+     "FY 2026": 36.73,
+     "FY 2027": 47.34,
+     "FY 2028": 54.03
+    }
+   },
+   "expected": {
+    "fiscal_years": "normalized",
+    "ntm": "undetermined"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2026": 31.5631293747174,
+    "FY 2027": 24.5020873963664,
+    "FY 2028": 21.4626965219779,
+    "NTM": 27.9670701667619
+   },
+   "quarters": [
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027"
+   ],
+   "sha256": "62f8412e37",
+   "source_file": "EliLillyandCompanyNYSELLYEstimatesReport.xls",
+   "why": "normalized; the NTM row is 1.6% off both quarterly sums — not named"
+  },
+  "NFLX": {
+   "as_of": "≥2026-10-06",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 0.93,
+     "FQ2 2027": 0.95,
+     "FQ3 2026": 0.82,
+     "FQ4 2026": 0.73,
+     "FY 2026": 3.58,
+     "FY 2027": 3.8,
+     "FY 2028": 4.55
+    },
+    "normalized": {
+     "FQ1 2027": 0.94,
+     "FQ2 2027": 0.96,
+     "FQ3 2026": 0.82,
+     "FQ4 2026": 0.73,
+     "FY 2026": 3.59,
+     "FY 2027": 3.81,
+     "FY 2028": 4.57
+    }
+   },
+   "expected": {
+    "fiscal_years": "indistinguishable",
+    "ntm": "undetermined"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2026": 19.1372763161927,
+    "FY 2027": 18.0424624323309,
+    "FY 2028": 15.0322792428056,
+    "NTM": 19.8640832851359
+   },
+   "quarters": [
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027"
+   ],
+   "sha256": "406592d103",
+   "source_file": "Netflix,IncNasdaqGSNFLXEstimatesReport.xls",
+   "why": "the two lines move together (<0.5% apart): FY indistinguishable, NTM untested"
+  },
+  "ROST": {
+   "as_of": "≥2026-09-27",
+   "eps": {
+    "gaap": {
+     "FQ1 2028": 2.14,
+     "FQ2 2028": 2.29,
+     "FQ3 2027": 1.83,
+     "FQ4 2027": 2.25,
+     "FY 2027": 8.63,
+     "FY 2028": 8.91,
+     "FY 2029": 9.69
+    },
+    "normalized": {
+     "FQ1 2028": 2.12,
+     "FQ2 2028": 2.29,
+     "FQ3 2027": 1.83,
+     "FQ4 2027": 2.26,
+     "FY 2027": 8.35,
+     "FY 2028": 8.94,
+     "FY 2029": 9.7
+    }
+   },
+   "expected": {
+    "fiscal_years": "normalized",
+    "ntm": "undetermined"
+   },
+   "fy_periods": [
+    "FY 2027",
+    "FY 2028",
+    "FY 2029"
+   ],
+   "pe": {
+    "FY 2027": 28.0417562319632,
+    "FY 2028": 26.3146163584815,
+    "FY 2029": 24.1181187213679,
+    "NTM": 27.796482471217
+   },
+   "quarters": [
+    "FQ3 2027",
+    "FQ4 2027",
+    "FQ1 2028",
+    "FQ2 2028"
+   ],
+   "sha256": "4d3a31a6be",
+   "source_file": "RossStores,IncNasdaqGSROSTEstimatesReport.xls",
+   "why": "normalized; the NTM row is ~1% off both lines — not named"
+  },
+  "TGT": {
+   "as_of": "≥2026-09-17",
+   "eps": {
+    "gaap": {
+     "FQ1 2028": 1.89,
+     "FQ2 2028": 2.65,
+     "FQ3 2027": 2.04,
+     "FQ4 2027": 2.66,
+     "FY 2027": 10.37,
+     "FY 2028": 9.48,
+     "FY 2029": 10.0
+    },
+    "normalized": {
+     "FQ1 2028": 1.9,
+     "FQ2 2028": 2.66,
+     "FQ3 2027": 2.05,
+     "FQ4 2027": 2.67,
+     "FY 2027": 10.24,
+     "FY 2028": 9.55,
+     "FY 2029": 10.38
+    }
+   },
+   "expected": {
+    "fiscal_years": "normalized",
+    "ntm": "normalized"
+   },
+   "fy_periods": [
+    "FY 2027",
+    "FY 2028",
+    "FY 2029"
+   ],
+   "pe": {
+    "FY 2027": 15.3763669780678,
+    "FY 2028": 16.4907962608992,
+    "FY 2029": 15.1719698699807,
+    "NTM": 16.9527111417374
+   },
+   "quarters": [
+    "FQ3 2027",
+    "FQ4 2027",
+    "FQ1 2028",
+    "FQ2 2028"
+   ],
+   "sha256": "a66e1fb385",
+   "source_file": "TargetCorporationNYSETGTEstimatesReport.xls",
+   "why": "normalized; the NTM rival sits 0.535% off, just past the 0.5% floor"
+  },
+  "UBER": {
+   "as_of": "≥2026-08-05",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 1.0,
+     "FQ2 2027": 1.18,
+     "FQ3 2026": 0.96,
+     "FQ4 2026": 1.06,
+     "FY 2026": 3.21,
+     "FY 2027": 4.62,
+     "FY 2028": 5.73
+    },
+    "normalized": {
+     "FQ1 2027": 0.92,
+     "FQ2 2027": 1.1,
+     "FQ3 2026": 0.86,
+     "FQ4 2026": 0.96,
+     "FY 2026": 3.37,
+     "FY 2027": 4.42,
+     "FY 2028": 5.49
+    }
+   },
+   "expected": {
+    "fiscal_years": "gaap",
+    "ntm": "gaap"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2026": 21.2251962816993,
+    "FY 2027": 14.7596523320381,
+    "FY 2028": 11.906362691767,
+    "NTM": 16.2171162171162
+   },
+   "quarters": [
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027"
+   ],
+   "sha256": "265b3a9f59",
+   "source_file": "UberTechnologies,IncNYSEUBEREstimatesReport.xls",
+   "why": "P/E struck on GAAP"
+  },
+  "VITL": {
+   "as_of": "≥2026-07-21",
+   "eps": {
+    "gaap": {
+     "FQ1 2027": 0.04,
+     "FQ2 2026": -0.45,
+     "FQ3 2026": -0.07,
+     "FQ4 2026": 0.13,
+     "FY 2026": -0.42,
+     "FY 2027": 0.47,
+     "FY 2028": 0.49
+    },
+    "normalized": {
+     "FQ1 2027": 0.04,
+     "FQ2 2026": -0.45,
+     "FQ3 2026": -0.07,
+     "FQ4 2026": 0.13,
+     "FY 2026": -0.42,
+     "FY 2027": 0.44,
+     "FY 2028": 0.49
+    }
+   },
+   "expected": {
+    "fiscal_years": "normalized",
+    "ntm": "undetermined"
+   },
+   "fy_periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "pe": {
+    "FY 2027": 30.7906997681694,
+    "FY 2028": 27.9183673469388
+   },
+   "quarters": [
+    "FQ2 2026",
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027"
+   ],
+   "sha256": "bf69f2abd7",
+   "source_file": "VitalFarms,IncNasdaqGMVITLEstimatesReport.xls",
+   "why": "normalized on two rows at 0.97%, under the cap; no NTM P/E"
+  }
+ }
+}

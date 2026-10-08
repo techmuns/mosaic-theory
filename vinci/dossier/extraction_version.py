@@ -90,6 +90,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "dollars, per forecast revenue and as a margin or intensity error — a cross-check, never "
         "a revision distribution",
     ),
+    # #684 changed the anchor's net debt and appended no row — the omission the 2026-10-08.1 note
+    # names — so this row names it beside its own change rather than leaving the stamp lying.
+    (
+        "2026-10-08.3",
+        "the forward P/E states which consensus EPS line it is struck on "
+        "(`forward_consensus.pe_eps_basis`): the FY rows and the NTM row each measured, never "
+        "assumed · the anchor's net debt nets the short-term securities a CIQ TEV nets (#684)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
