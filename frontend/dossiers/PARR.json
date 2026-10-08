@@ -10787,7 +10787,50 @@
       }
     ],
     "source_file": "ParPacificHoldings,IncNYSEPARREstimatesReport.xls",
-    "source_sha256": "2d58fb9902"
+    "source_sha256": "2d58fb9902",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "normalized",
+      "periods": [
+        "FY 2026",
+        "FY 2027",
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ3 2026",
+        "FQ4 2026",
+        "FQ1 2027",
+        "FQ2 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            75.449637,
+            67.912491,
+            110.822081
+          ],
+          "spread": 0.56871831,
+          "ntm_implied_eps": 18.11052,
+          "ntm_quarter_sum": 14.73,
+          "ntm_gap": 0.18666056
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            84.910407,
+            84.905951,
+            84.941475
+          ],
+          "spread": 0.00041838,
+          "ntm_implied_eps": 18.11052,
+          "ntm_quarter_sum": 18.11,
+          "ntm_gap": 0.00002869
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-09-16",

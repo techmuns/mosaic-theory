@@ -11044,7 +11044,50 @@
       }
     ],
     "source_file": "Gartner,IncNYSEITEstimatesReport.xls",
-    "source_sha256": "d324beb8f6"
+    "source_sha256": "d324beb8f6",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "normalized",
+      "periods": [
+        "FY 2026",
+        "FY 2027",
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ2 2026",
+        "FQ3 2026",
+        "FQ4 2026",
+        "FQ1 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            156.150026,
+            155.082122,
+            154.619526
+          ],
+          "spread": 0.00986896,
+          "ntm_implied_eps": 14.079269,
+          "ntm_quarter_sum": 13.21,
+          "ntm_gap": 0.06174105
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            165.591656,
+            165.687878,
+            165.60964
+          ],
+          "spread": 0.00058102,
+          "ntm_implied_eps": 14.079269,
+          "ntm_quarter_sum": 14.08,
+          "ntm_gap": 0.00005194
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-07-17",

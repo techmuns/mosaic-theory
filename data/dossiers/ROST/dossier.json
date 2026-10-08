@@ -10491,7 +10491,50 @@
       }
     ],
     "source_file": "RossStores,IncNasdaqGSROSTEstimatesReport.xls",
-    "source_sha256": "4d3a31a6be"
+    "source_sha256": "4d3a31a6be",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "undetermined",
+      "periods": [
+        "FY 2027",
+        "FY 2028",
+        "FY 2029"
+      ],
+      "ntm_quarters": [
+        "FQ3 2027",
+        "FQ4 2027",
+        "FQ1 2028",
+        "FQ2 2028"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            242.000356,
+            234.463232,
+            233.70457
+          ],
+          "spread": 0.03538203,
+          "ntm_implied_eps": 8.42368,
+          "ntm_quarter_sum": 8.51,
+          "ntm_gap": 0.01024734
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            234.148665,
+            235.25267,
+            233.945752
+          ],
+          "spread": 0.00558158,
+          "ntm_implied_eps": 8.42368,
+          "ntm_quarter_sum": 8.5,
+          "ntm_gap": 0.00906021
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": "NTM: normalized fits (0.91%) but gaap (1.02%) is neither inside its 1.00% cap nor separated (≥3× and ≥0.5%)"
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-09-25",

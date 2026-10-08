@@ -7606,7 +7606,42 @@
       }
     ],
     "source_file": "ConcentrixCorporationNasdaqGSCNXCEstimatesReport.xls",
-    "source_sha256": "809c8f8c08"
+    "source_sha256": "809c8f8c08",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "undetermined",
+      "periods": [
+        "FY 2026",
+        "FY 2027"
+      ],
+      "ntm_quarters": [],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            7.564857,
+            13.492212
+          ],
+          "spread": 0.56298004,
+          "ntm_implied_eps": null,
+          "ntm_quarter_sum": null,
+          "ntm_gap": null
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            26.56,
+            26.56
+          ],
+          "spread": 0.0,
+          "ntm_implied_eps": null,
+          "ntm_quarter_sum": null,
+          "ntm_gap": null
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": "NTM not tested: the next four quarters are not all present on both lines"
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-07-17",

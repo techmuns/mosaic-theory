@@ -7891,7 +7891,33 @@
       }
     ],
     "source_file": "TectonicTherapeutic,IncNasdaqGMTECXEstimatesReport.xls",
-    "source_sha256": "dbc1a9bcd3"
+    "source_sha256": "dbc1a9bcd3",
+    "pe_eps_basis": {
+      "fiscal_years": "undetermined",
+      "ntm": "undetermined",
+      "periods": [],
+      "ntm_quarters": [],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [],
+          "spread": null,
+          "ntm_implied_eps": null,
+          "ntm_quarter_sum": null,
+          "ntm_gap": null
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [],
+          "spread": null,
+          "ntm_implied_eps": null,
+          "ntm_quarter_sum": null,
+          "ntm_gap": null
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": "0 FY row(s) carry a positive P/E and a positive EPS on both lines — two are needed to compare; NTM not tested: the FY rows establish no price"
+    }
   },
   "historical_forecast_error": {
     "estimate_type": "final consensus before each result — CIQ Estimates→Surprise 'Estimate', Fiscal Years, company level",

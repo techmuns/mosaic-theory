@@ -10463,7 +10463,47 @@
       }
     ],
     "source_file": "WernerEnterprises,IncNasdaqGSWERNEstimatesReport.xls",
-    "source_sha256": "f9f23c93b9"
+    "source_sha256": "f9f23c93b9",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "normalized",
+      "periods": [
+        "FY 2026",
+        "FY 2027"
+      ],
+      "ntm_quarters": [
+        "FQ3 2026",
+        "FQ4 2026",
+        "FQ1 2027",
+        "FQ2 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            29.749298,
+            35.729026
+          ],
+          "spread": 0.18264756,
+          "ntm_implied_eps": 1.713786,
+          "ntm_quarter_sum": 1.67,
+          "ntm_gap": 0.02554942
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            38.351505,
+            38.369102
+          ],
+          "spread": 0.00045874,
+          "ntm_implied_eps": 1.713786,
+          "ntm_quarter_sum": 1.72,
+          "ntm_gap": 0.00362575
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-08-18",

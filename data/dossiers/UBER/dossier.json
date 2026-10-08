@@ -12316,7 +12316,50 @@
       }
     ],
     "source_file": "UberTechnologies,IncNYSEUBEREstimatesReport.xls",
-    "source_sha256": "265b3a9f59"
+    "source_sha256": "265b3a9f59",
+    "pe_eps_basis": {
+      "fiscal_years": "gaap",
+      "ntm": "gaap",
+      "periods": [
+        "FY 2026",
+        "FY 2027",
+        "FY 2028"
+      ],
+      "ntm_quarters": [
+        "FQ3 2026",
+        "FQ4 2026",
+        "FQ1 2027",
+        "FQ2 2027"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            68.13288,
+            68.189594,
+            68.223458
+          ],
+          "spread": 0.00132833,
+          "ntm_implied_eps": 4.204792,
+          "ntm_quarter_sum": 4.2,
+          "ntm_gap": 0.00113955
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            71.528911,
+            65.237663,
+            65.365931
+          ],
+          "spread": 0.09624659,
+          "ntm_implied_eps": 4.204792,
+          "ntm_quarter_sum": 3.84,
+          "ntm_gap": 0.08675616
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-08-05",

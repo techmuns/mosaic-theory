@@ -11236,7 +11236,50 @@
       }
     ],
     "source_file": "BurlingtonStores,IncNYSEBURLEstimatesReport.xls",
-    "source_sha256": "758eae1432"
+    "source_sha256": "758eae1432",
+    "pe_eps_basis": {
+      "fiscal_years": "normalized",
+      "ntm": "normalized",
+      "periods": [
+        "FY 2027",
+        "FY 2028",
+        "FY 2029"
+      ],
+      "ntm_quarters": [
+        "FQ3 2027",
+        "FQ4 2027",
+        "FQ1 2028",
+        "FQ2 2028"
+      ],
+      "fits": [
+        {
+          "line": "EPS (GAAP)",
+          "implied_prices": [
+            247.760266,
+            249.462823,
+            250.571197
+          ],
+          "spread": 0.01126794,
+          "ntm_implied_eps": 12.059612,
+          "ntm_quarter_sum": 11.82,
+          "ntm_gap": 0.019869
+        },
+        {
+          "line": "EPS Normalized",
+          "implied_prices": [
+            254.666476,
+            254.675479,
+            254.747384
+          ],
+          "spread": 0.00031769,
+          "ntm_implied_eps": 12.059612,
+          "ntm_quarter_sum": 12.06,
+          "ntm_gap": 0.00003214
+        }
+      ],
+      "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+      "note": null
+    }
   },
   "forward_multiple_history": {
     "as_of": "2026-09-25",
