@@ -11111,7 +11111,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-18T12:55:49.102639Z",
+    "computed_at": "2026-10-08T11:20:44.713501Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
@@ -11144,10 +11144,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
     },
     "net_debt": {
-      "value": 1038.131,
+      "value": 1032.894,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 1,035 + finance leases 0 + operating leases 53 − cash 50 ($M)"
+      "source": "EDGAR: total debt 1,035 + finance leases 0 + operating leases 53 − cash 50 − short-term investments 5 (ShortTermInvestments, 2026-06-30) ($M)"
     },
     "diluted_shares": {
       "value": 151945000.0,
@@ -11167,7 +11167,7 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 21.7512,
+    "anchor_base_value_per_share": 21.7857,
     "anchor_ev_ebit": 21.2115,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."

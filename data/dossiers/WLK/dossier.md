@@ -39,7 +39,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 9.8% | 10y history · weak |
 | Median multiple, own history | 7.7x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $104.35 | spot-independent · EV/EBIT 16.0x |
+| Screen value / share | $105.98 | spot-independent · EV/EBIT 16.0x |
 | Overall confidence | weak |  |
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 1.1% (CIQ EBIT) sits 8.7 points BELOW the 10-year median of 9.8% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. On FY2025 the two sources differ by 12.5 points (GAAP a 14.1% loss vs CIQ a 1.6% loss): GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the GAAP side — which pulls the median down toward the twelve months, so the difference narrows this gap rather than creating it: no reason to discount it, and if anything it understates it.

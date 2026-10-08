@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-09-10
 prs: []
 supersedes:
@@ -91,3 +91,16 @@ throughout, and the ratio row is a multiple (x). Measured at `origin/main c65619
   currently rests on the wrong number. FALSIFIER: a name whose underwrite DOES route through
   EV−net-debt and which carries material short-term investments; there its anchor bridge would be
   wrong by the securities balance, silently.
+## Amendments
+**2026-10-08 — closed for the anchor by #684 (code) and #685 (the backfill); this record's `prs:`
+was empty because it was written as a diagnosis, so the PRs that closed it are named here.**
+
+The fix took the second rule this record offered: a securities leg gated on a shared period_end.
+`anchor._short_term_securities` reads ONE current-securities tag, only at the cash instant, and
+never the bare parent `MarketableSecurities` or the AFS total (the two traps measured above).
+GOOGL's `anchor.net_debt` now reads −$121,683M — CIQ's figure, to the dollar. The falsifier above
+was about to fire: an EV/NTM EBIT bridge on AMZN, ruled 2026-10-08, would have deducted $44,775M of
+securities CIQ's TEV had already netted. Detail in
+`docs/records/2026-10-08-net-debt-nets-short-term-securities.md` and
+`docs/records/2026-10-08-artifact-pass-net-debt-backfill.md`. NOT closed here, and still on §5.0
+row 27: the screen's EDGAR snapshot (`client.compute_fundamental_snapshot`) still nets cash only.

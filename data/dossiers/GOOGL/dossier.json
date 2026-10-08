@@ -14418,7 +14418,7 @@
     "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-28T16:47:14.006666Z",
+    "computed_at": "2026-10-08T11:20:44.579945Z",
     "reason": "OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
@@ -14446,10 +14446,10 @@
       "source": "CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) [Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls sha 36160a403e]"
     },
     "net_debt": {
-      "value": 64880.0,
+      "value": -121683.0,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 100,164 + finance leases 2,590 + operating leases 18,037 − cash 55,911 ($M)"
+      "source": "EDGAR: total debt 100,164 + finance leases 2,590 + operating leases 18,037 − cash 55,911 − short-term investments 186,563 (MarketableSecuritiesCurrent, 2026-06-30) ($M)"
     },
     "diluted_shares": {
       "value": 12309000000.0,
@@ -14469,7 +14469,7 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 197.0118,
+    "anchor_base_value_per_share": 212.1684,
     "midcycle_gap": {
       "ltm_margin": 0.331104,
       "median_margin": 0.262717,
