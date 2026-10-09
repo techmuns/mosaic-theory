@@ -52,7 +52,7 @@ Transform = Callable[[dict[str, Any]], dict[str, Any]]
 #: have their own write path and guards, and this seam must not become a way around them.
 TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
 _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
-                                    "historical_forecast_error"})
+                                    "historical_forecast_error", "ev_bridge"})
 
 
 class RefreshRefusedError(RuntimeError):
@@ -706,6 +706,44 @@ def forward_multiple_history_transform(ticker: str) -> TopLevelTransform:
         if built is None or built.source_sha256 not in stamps:
             return {}               # the export on disk is not the page's: re-assemble instead
         return {"forward_multiple_history": json.loads(built.model_dump_json())}
+
+    return _apply
+
+
+def ev_bridge_transform(ticker: str) -> TopLevelTransform:
+    """A `refresh_dossier` top-level step writing `ev_bridge` — CIQ's TEV claims and the exit
+    default an enterprise recipe subtracts — under a KEPT synthesis.
+
+    ONLY FROM THE EXPORTS THE PAGE WAS BUILT FROM, BOTH OF THEM. The claims come off the Financials
+    export, which the page's trailing own-history bands stamp; the consensus check reads the
+    Estimates export the page's `forward_consensus` names by hash. A page that cannot name either,
+    or names another, is left alone and waits for a re-assembly. The EDGAR cross-check is the page's
+    own anchor figure. A folder that cannot be read leaves the page alone too (the
+    `credit_health_transform` rule)."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import ev_bridge
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        valuation = (doc.get("mechanical") or {}).get("valuation") or {}
+        bands = (valuation.get("own_history") or {}).get("value") or []
+        stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
+        fc = doc.get("forward_consensus") or {}
+        if len(stamps) != 1 or None in stamps or not fc.get("source_sha256"):
+            return {}               # the page cannot name both exports: re-assemble instead
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return {}
+        nd = (doc.get("anchor") or {}).get("net_debt") or {}
+        built = ev_bridge(bundle, fy_periods=list(fc.get("periods") or []),
+                          edgar_net_debt=nd.get("value"), edgar_source=nd.get("source"))
+        if (built is None or built.source_sha256 not in stamps
+                or built.estimates_sha256 != fc.get("source_sha256")):
+            return {}               # an export on disk is not the page's: re-assemble instead
+        return {"ev_bridge": json.loads(built.model_dump_json())}
 
     return _apply
 

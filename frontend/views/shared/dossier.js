@@ -41,6 +41,11 @@ const EXTRACTION_VERSIONS = [
     "the forward P/E states which consensus EPS line it is struck on " +
     "(`forward_consensus.pe_eps_basis`): the FY rows and the NTM row each measured, never " +
     "assumed · the anchor's net debt nets the short-term securities a CIQ TEV nets (#684)"],
+  ["2026-10-08.4",
+    "CIQ's current TEV claims beside the page (`ev_bridge`): Net Debt + preferred + minority " +
+    "interest at the latest balance-sheet column, checked against CIQ's own TEV less market " +
+    "cap, the consensus net-debt line tested for basis over three years, and the exit " +
+    "default per the operator's rule"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

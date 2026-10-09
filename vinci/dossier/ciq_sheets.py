@@ -14,7 +14,7 @@ import re
 import statistics
 from collections.abc import Callable
 from datetime import date, datetime
-from typing import Any, NamedTuple
+from typing import Any, Literal, NamedTuple
 
 from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_coherence
 from vinci.dossier.ciq import (
@@ -32,15 +32,20 @@ from vinci.dossier.ciq import (
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
     CapitalInstrument,
+    ClaimLine,
+    ConsensusNetDebtCheck,
     ConsensusPath,
     ConsensusPoint,
     ConsensusReconciliation,
     ConsensusSpread,
+    ConsensusYear,
     CreditHealthPanel,
     CurrentMultiple,
     DriverKind,
     EpsBasis,
     EpsLineFit,
+    EvBridge,
+    ExitClaims,
     FinRow,
     FinTable,
     ForecastErrorObservation,
@@ -2960,6 +2965,232 @@ def _surprise_line(rows: Rows, start: int, end: int, metric: str) -> dict[str, l
         if label and label not in out:
             out[label] = rows[k]
     return out
+
+
+#: (EV bridge) CIQ's CURRENT TEV build-up, as its comps sheet builds TEV: market cap + Net Debt +
+#: preferred + minority interest — each read off the BALANCE SHEET at ONE dated column, the latest.
+#: CIQ's 'Net Debt' row nets long-term marketable securities WHEN that column discloses them (LLY's
+#: latest 10-Q: $796M) and nothing when it does not (UBER's Q2 press release), so nothing is
+#: carried forward from an older filing. THE FIRST CUT DID (2026-10-08): it took UBER's Q1
+#: securities ($3,873M) as "last reported", after Historical Capitalization's footnote, and read
+#: $6,550M against the $10,423M CIQ's current TEV — and the multiple R4 anchors on — uses.
+_TEV_CLAIM_ROWS: tuple[tuple[str, Literal[1, -1]], ...] = (
+    ("Net Debt", 1), ("Total Pref. Equity", 1), ("Total Minority Interest", 1),
+)
+#: A consensus net-debt year AGREES when it sits within this fraction of CIQ's balance-sheet Net
+#: Debt at that year-end (of the larger of |net debt| and total debt).
+CONSENSUS_SAME_BASIS_MAX = 0.005
+#: ...and the line is SAME-BASIS only when its last THIS MANY reported years each agree. One year
+#: is not evidence: NKE's line agreed in FY2026 (0.09%) after missing by 22–28% in every year
+#: FY2020–25 — consistent with brokers' net debt leaving out the leases on the balance sheet.
+CONSENSUS_SAME_BASIS_YEARS = 3
+#: A 52/53-week filer's year-end is not the banner's date (SMPL Aug-30, VITL Dec-28).
+_FYE_TOLERANCE_DAYS = 7
+_FYE_BANNER = re.compile(r"Current Fiscal Year End:\s*([A-Za-z]{3})-(\d{1,2})-(\d{4})")
+_NETTED_LABEL = "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)"
+_EV_BRIDGE_RULE = (
+    "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet "
+    "column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt "
+    f"(within {CONSENSUS_SAME_BASIS_MAX:.1%} in each of its last {CONSENSUS_SAME_BASIS_YEARS} "
+    "reported years, the latest of them the latest completed year) with preferred and minority "
+    "held, else today's claims held — never current − FCF"
+)
+
+
+def _column_date(cell: Any) -> date | None:
+    """A period-header cell → its date: a serial or bare date, or the last token of a CIQ label
+    ('Q2\nJun-30-2026', 'Press Release Q2 Jun-30-2026', 'FQ3/CQ2 Jun-30-2026')."""
+    if (d := excel_date(cell)) is not None:
+        return d
+    tokens = str(cell).split()
+    return excel_date(tokens[-1]) if tokens else None
+
+
+def _dated_header(rows: Rows) -> int | None:
+    """The first row carrying at least two decodable column dates."""
+    return next((i for i, r in enumerate(rows)
+                 if r and sum(1 for c in r[1:] if _column_date(c) is not None) >= 2), None)
+
+
+def _row_at(rows: Rows, label: str, col: int) -> float | None:
+    """`label`'s value at `col`; None when the row is absent or the cell is not a number."""
+    ri = next((i for i, r in enumerate(rows) if r and str(r[0]).strip() == label), None)
+    return clean_num(rows[ri][col]) if ri is not None and col < len(rows[ri]) else None
+
+
+def _bs_column_near(bundle: CiqBundle, when: date) -> tuple[Rows, int, date] | None:
+    """The balance-sheet column dated within `_FYE_TOLERANCE_DAYS` of `when`, quarterly first."""
+    for freq in ("quarterly", "annual"):
+        try:
+            rows = (bundle.sheet("financials", "Balance Sheet", freq="quarterly")
+                    if freq == "quarterly" else
+                    bundle.sheet("financials", "Balance Sheet", freq="annual"))
+        except CiqUnavailableError:
+            continue
+        hdr = _dated_header(rows)
+        if hdr is None:
+            continue
+        for j in range(1, len(rows[hdr])):
+            d = _column_date(rows[hdr][j])
+            if d is not None and abs((d - when).days) <= _FYE_TOLERANCE_DAYS:
+                return rows, j, d
+    return None
+
+
+def _consensus_net_debt_check(bundle: CiqBundle) -> ConsensusNetDebtCheck | None:
+    """CIQ's consensus 'Net Debt' line against the balance sheet's Net Debt, year by year."""
+    try:
+        su = bundle.sheet("estimates", "Surprise")
+        co = bundle.sheet("estimates", "Consensus")
+        tr = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        return None
+    banner = next((m for r in co[:40] if r and (m := _FYE_BANNER.search(str(r[0])))), None)
+    cur_fy = _declared_current_fy(co)
+    sec = _fiscal_company_section(su)
+    if banner is None or cur_fy is None or sec is None:
+        return None
+    hdr, end = sec
+    years = _header_years(su[hdr])
+    actual = _surprise_line(su, hdr, end, "Net Debt").get("Actual") or []
+    reported = {int(y): v for y, c in years.items()
+                if c < len(actual) and (v := clean_num(actual[c])) is not None}
+    if not reported:
+        return None
+    month = datetime.strptime(banner.group(1), "%b").month
+    day = int(banner.group(2))
+    checked: list[ConsensusYear] = []
+    for fy in sorted(reported, reverse=True)[:CONSENSUS_SAME_BASIS_YEARS]:
+        year = int(banner.group(3)) - (cur_fy - fy)
+        fye = date(year, month, min(day, 28)) if (month, day) == (2, 29) else date(year, month, day)
+        near = _bs_column_near(bundle, fye)
+        bs = bs_date = ratio = None
+        if near is not None:
+            rows, j, bs_d = near
+            nd, td = _row_at(rows, "Net Debt", j), _row_at(rows, "Total Debt", j)
+            if nd is not None:
+                bs, bs_date = nd, bs_d.isoformat()
+                ratio = abs(reported[fy] - nd) / max(abs(nd), abs(td or 0.0), 1.0)
+        checked.append(ConsensusYear(
+            fiscal_year=fy, fiscal_year_end=fye.isoformat(), reported=reported[fy],
+            balance_sheet=bs, balance_sheet_date=bs_date,
+            gap_ratio=round(ratio, 6) if ratio is not None else None))
+    same = (len(checked) == CONSENSUS_SAME_BASIS_YEARS
+            and all(y.gap_ratio is not None and y.gap_ratio <= CONSENSUS_SAME_BASIS_MAX
+                     for y in checked))
+    _labels, cur = _trends_current(tr, "Net Debt")
+    return ConsensusNetDebtCheck(
+        years=checked, same_basis=same, current=checked[0].fiscal_year == cur_fy - 1,
+        forward={k: v for k, v in cur.items() if k.startswith("FY")})
+
+
+def exit_claims_for(claims: float, net_debt: float, check: ConsensusNetDebtCheck | None,
+                    fy_periods: list[str]) -> tuple[list[ExitClaims], str | None]:
+    """THE OPERATOR'S EXIT RULE (2026-10-08), pure: the default claims at each fiscal year-end, and
+    why it is not the consensus where it is not.
+
+    A RELIABLE same-basis consensus is one whose last reported years each match the balance sheet
+    (`same_basis`), the latest of them the latest completed year (`current` — a line that stopped
+    is not a forecast), with forward values. Its forward net debt then stands in for CIQ's Net Debt,
+    with preferred and minority interest held. Otherwise today's claims are held for every year.
+    Never current − FCF."""
+    other = claims - net_debt          # preferred + minority interest
+    if check is not None and check.same_basis and check.current and check.forward:
+        return ([ExitClaims(fiscal_year=fy, value=round(check.forward[fy] + other, 3),
+                            method="consensus")
+                 for fy in fy_periods if fy in check.forward], None)
+    held = [ExitClaims(fiscal_year=fy, value=round(claims, 3), method="held")
+            for fy in fy_periods if fy.startswith("FY")]
+    if check is None:
+        return held, "no consensus net-debt line with a reported year — today's claims held"
+    checkable = sum(1 for y in check.years if y.gap_ratio is not None)
+    why = (f"can be checked on only {checkable} of its last {CONSENSUS_SAME_BASIS_YEARS} reported "
+           "years" if not check.same_basis and checkable < CONSENSUS_SAME_BASIS_YEARS else
+           f"does not match the balance sheet in each of its last {CONSENSUS_SAME_BASIS_YEARS} "
+           "reported years" if not check.same_basis else
+           "stopped before the latest completed year" if not check.current else
+           "carries no forward values")
+    return held, f"the consensus net-debt line {why} — today's claims held"
+
+
+def _ciq_tev_claims(bundle: CiqBundle) -> tuple[float, str] | None:
+    """CIQ's own current TEV less market cap for the name (comps→Financial Data) — the figure the
+    bridge must equal. The subject row is found by ticker (`_comps_layout`)."""
+    try:
+        fd = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError:
+        return None
+    hdr, _peers, tgt = _comps_layout(fd, bundle.ticker)
+    if hdr is None or tgt is None:
+        return None
+    labels = [str(c).strip() for c in fd[hdr]]
+    tev_c = next((j for j, h in enumerate(labels) if h.startswith("Total Enterprise Value")), None)
+    cap_c = next((j for j, h in enumerate(labels) if h.startswith("Market Capitalization")), None)
+    if tev_c is None or cap_c is None:
+        return None
+    tev, cap = _comps_cell(fd, tgt, tev_c), _comps_cell(fd, tgt, cap_c)
+    if not isinstance(tev, float) or not isinstance(cap, float):
+        return None
+    return round(tev - cap, 3), ("CIQ Comparable Analysis→Financial Data 'Total Enterprise "
+                                 "Value' − 'Market Capitalization'")
+
+
+def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float | None = None,
+              edgar_source: str | None = None) -> EvBridge | None:
+    """(EV bridge) THE ONE BUILDER for `Dossier.ev_bridge` — assembly and `ev_bridge_transform` both
+    call it. None when the balance sheet carries no Net Debt, Total Debt and cash at a dated column
+    (nothing is assumed when its source is missing)."""
+    try:
+        bs = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    hdr = _dated_header(bs)
+    col = (max((j for j in range(1, len(bs[hdr])) if _column_date(bs[hdr][j]) is not None),
+               default=None) if hdr is not None else None)
+    if hdr is None or col is None:
+        return None
+    bs_date = _column_date(bs[hdr][col])
+    nd = _row_at(bs, "Net Debt", col)
+    td, cash = _row_at(bs, "Total Debt", col), _row_at(bs, "Total Cash & ST Investments", col)
+    if nd is None or td is None or cash is None:
+        return None
+    period = str(bs[hdr][col]).replace("\n", " ").strip()
+    as_of = bs_date.isoformat() if bs_date else None
+    src = f"CIQ Financials→Balance Sheet [{period}]"
+    pref = _row_at(bs, "Total Pref. Equity", col) or 0.0
+    minority = _row_at(bs, "Total Minority Interest", col) or 0.0
+    lines = [
+        ClaimLine(label="Total Debt", sign=1, value=td, as_of=as_of, source=src),
+        ClaimLine(label="Total Cash & ST Investments", sign=-1, value=cash, as_of=as_of,
+                  source=src),
+        ClaimLine(label=_NETTED_LABEL, sign=-1, value=round(td - cash - nd, 3) + 0.0, as_of=as_of,
+                  source=f"{src}: Total Debt − Total Cash & ST Investments − 'Net Debt'"),
+        ClaimLine(label="Total Pref. Equity", sign=1, value=pref, as_of=as_of, source=src),
+        ClaimLine(label="Total Minority Interest", sign=1, value=minority, as_of=as_of,
+                  source=src),
+    ]
+    claims = nd + pref + minority
+    check = _consensus_net_debt_check(bundle)
+    exit_claims, note = exit_claims_for(claims, nd, check, fy_periods)
+    notes = [note] if note else []
+    ciq = _ciq_tev_claims(bundle)
+    if ciq is None:
+        notes.append("CIQ's current TEV less market cap is unread (no comps export) — the bridge "
+                     "is not checked against it")
+    elif abs(ciq[0] - claims) > 0.5:
+        notes.append(f"DISAGREES with CIQ's current TEV less market cap (${ciq[0]:,.1f}M) by "
+                     f"${claims - ciq[0]:,.1f}M — the Financials and comps exports sit on "
+                     "different balance sheets; re-pull before an R4 record reads this")
+    wb = bundle.workbook("financials", freq="quarterly")
+    est = bundle.workbook("estimates")
+    return EvBridge(
+        balance_sheet_date=as_of, lines=lines, claims=round(claims, 3), net_debt=round(nd, 3),
+        ciq_tev_claims=ciq[0] if ciq else None, ciq_tev_claims_source=ciq[1] if ciq else None,
+        edgar_net_debt=edgar_net_debt, edgar_source=edgar_source, consensus=check,
+        exit_claims=exit_claims, rule=_EV_BRIDGE_RULE, note="; ".join(notes) or None,
+        source_file=wb.path.name if wb is not None else None,
+        source_sha256=file_provenance(wb.path)[0] if wb is not None else None,
+        estimates_sha256=file_provenance(est.path)[0] if est is not None else None)
 
 
 def historical_forecast_error(bundle: CiqBundle) -> HistoricalForecastError | None:
