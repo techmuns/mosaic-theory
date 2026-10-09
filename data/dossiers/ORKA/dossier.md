@@ -35,7 +35,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | unknown | NOT applicable |
+| Method | unknown | R1 screen: NOT applicable |
 | Overall confidence | — |  |
 
 **data_quality: vendor_bridge**

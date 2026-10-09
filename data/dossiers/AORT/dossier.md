@@ -76,7 +76,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | R2_NEEDED | applicable |
+| Method | R2_NEEDED | R1 screen: applicable |
 | Mid-cycle margin | 3.9% | 10y history · firm |
 | Median multiple, own history | 32.1x | 42 closes · firm · EV/EBITDA |
 | Screen value / share | $19.79 | spot-independent · EV/EBIT 72.7x |

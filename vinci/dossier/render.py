@@ -3323,10 +3323,15 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     it would hide a known gap behind an empty section."""
     if anchor is None:
         return []
-    method = (_SCREEN_METHOD_R1 if anchor.recipe_hint.startswith("R1")
-              else (anchor.recipe_hint or "—"))
-    rows = [f"| Method | {_md_cell(method)} | "
-            f"{'applicable' if anchor.applicable else 'NOT applicable'} |"]
+    is_r1 = anchor.recipe_hint.startswith("R1")
+    method = _SCREEN_METHOD_R1 if is_r1 else (anchor.recipe_hint or "—")
+    # WHOSE BIT IS `applicable` (2026-10-09). It is R1's — whether R1's arithmetic, the rows below,
+    # can anchor — but it printed beside whatever recipe is TAGGED, so UBER's page read
+    # "R4_forward_ev_ebit | NOT applicable", a verdict on R4 that the bit never made. Beside an R1
+    # tag the plain word stays (every R1 page is byte-identical); beside any other it names R1.
+    # The render twin of the gate coupling STATE row 10 records (#670). Twin: anchorInner().
+    fit = "applicable" if anchor.applicable else "NOT applicable"
+    rows = [f"| Method | {_md_cell(method)} | {fit if is_r1 else f'R1 screen: {fit}'} |"]
     mg, mu = anchor.margin, anchor.multiple
     if mg is not None:
         rows.append(f"| Mid-cycle margin | {'—' if mg.value is None else f'{mg.value * 100:.1f}%'} "

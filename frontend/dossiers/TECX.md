@@ -35,7 +35,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | unknown | NOT applicable |
+| Method | unknown | R1 screen: NOT applicable |
 | Overall confidence | — |  |
 
 _own-history multiple missing (valuation.own_history.median absent)_

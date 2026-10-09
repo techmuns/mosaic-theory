@@ -34,7 +34,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | R2_NEEDED | NOT applicable |
+| Method | R2_NEEDED | R1 screen: NOT applicable |
 | Mid-cycle margin | 6.0% | 8y history · firm |
 | Median multiple, own history | 4.2x | 24 closes · weak · EV/EBITDA |
 | Overall confidence | weak |  |
