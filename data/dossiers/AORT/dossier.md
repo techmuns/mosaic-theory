@@ -1,6 +1,6 @@
 # Dossier — ARTIVION, INC. (NYSE: AORT)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -752,6 +752,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
   - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
+  - 2026-10-09 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus is 49d old (2026-06-30, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.

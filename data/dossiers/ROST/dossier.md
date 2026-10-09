@@ -1,6 +1,6 @@
 # Dossier — ROSS STORES, INC. (Nasdaq: ROST)
 
-_September 30, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
+_September 30, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -522,6 +522,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
+  - 2026-10-09 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 8d old — 2026-09-22 (stock_info.as_of), against a 2026-09-30 build
 - **Consensus age:** consensus 3d old (2026-09-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

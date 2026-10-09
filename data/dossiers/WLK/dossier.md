@@ -1,6 +1,6 @@
 # Dossier — WESTLAKE CORP (NYSE: WLK)
 
-_September 28, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
+_September 28, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -669,6 +669,7 @@ _Source §: 8-K 0001193125-07-267027 · dex101.htm_
   - 2026-10-08 · anchor — anchor-backfill at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
+  - 2026-10-09 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 12d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 14d old (2026-09-14, valuation.implied_expectations.multiples_as_of) — within the ceiling
