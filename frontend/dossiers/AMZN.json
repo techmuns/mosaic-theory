@@ -14,10 +14,10 @@
         "note": null
       },
       "pe": {
-        "value": 36.25104602510461,
+        "value": 35.433751743375176,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-10-07 ÷ annual diluted EPS for the period ending 2025-12-31 (280d old, filed 2026-02-06)"
+        "note": "price 2026-10-08 ÷ annual diluted EPS for the period ending 2025-12-31 (281d old, filed 2026-02-06)"
       },
       "pe_percentile_5y": {
         "value": null,
@@ -419,36 +419,36 @@
             "column": "FY26E",
             "eps_basis": "EPS (Normalized)",
             "eps": 8.31,
-            "multiple": 31.278,
-            "price": 259.92,
-            "price_as_of": "2026-10-07"
+            "multiple": 30.5728,
+            "price": 254.06,
+            "price_as_of": "2026-10-08"
           },
           {
             "label": "P/FY26E (GAAP)",
             "column": "FY26E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 12.89,
-            "multiple": 20.1645,
-            "price": 259.92,
-            "price_as_of": "2026-10-07"
+            "multiple": 19.7099,
+            "price": 254.06,
+            "price_as_of": "2026-10-08"
           },
           {
             "label": "P/FY27E (normalized)",
             "column": "FY27E",
             "eps_basis": "EPS (Normalized)",
             "eps": 10.47,
-            "multiple": 24.8252,
-            "price": 259.92,
-            "price_as_of": "2026-10-07"
+            "multiple": 24.2655,
+            "price": 254.06,
+            "price_as_of": "2026-10-08"
           },
           {
             "label": "P/FY27E (GAAP)",
             "column": "FY27E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 10.53,
-            "multiple": 24.6838,
-            "price": 259.92,
-            "price_as_of": "2026-10-07"
+            "multiple": 24.1273,
+            "price": 254.06,
+            "price_as_of": "2026-10-08"
           }
         ],
         "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
@@ -4727,7 +4727,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[FIVE-YEAR REVOLVING CREDIT AGREEMENT · 0001104659-23-113444]\n  Principal / commitment amount: Aggregate Commitments equal to US$15,000,000,000 as of the Closing Date; Alternative…\n  Interest / coupon rate: Term SOFR (and other Relevant Rate benchmarks per currency) plus the Applicable…\n  Maturity date: The later of (a) November 1, 2028 and (b) if extended pursuant to Section 2.12, such…\n  Negative covenants: Liens (Section 7.01, with basket: other Liens securing Indebtedness not exceeding…\n[364-DAY REVOLVING CREDIT AGREEMENT · 0001193125-22-289041]\n  Principal / commitment amount: US$10,000,000,000 (Aggregate Commitments as of the Closing Date)\n  Interest / coupon rate: Term SOFR Loans and Daily Simple SOFR Loans: Adjusted Term SOFR / Adjusted Daily…\n  Maturity date: The later of (a) November 17, 2023 and (b) if extended pursuant to Section 2.12,…\n  Financial-maintenance covenants: No stated financial-maintenance ratio covenant (e.g., leverage/interest coverage).…\n  Extension of Maturity Date: Borrower may, on one occasion, request extension of Existing Maturity Date for an…\n[AMENDED AND RESTATED CREDIT AGREEMENT · 0001193125-20-176528]\n  Principal / commitment amount: Aggregate Commitments equal $7,000,000,000 as of the Closing Date; Alternative…\n… (+7 lower-priority terms in the table)",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[FIVE-YEAR REVOLVING CREDIT AGREEMENT · 0001104659-23-113444]\n  Principal / commitment amount: Aggregate Commitments equal to US$15,000,000,000 as of the Closing Date; Alternative…\n  Interest / coupon rate: Term Benchmark Loans and RFR Loans: Applicable Rate of 0.45% per annum; Base Rate…\n  Maturity date: The later of (a) November 1, 2028 and (b) if extended pursuant to Section 2.12, such…\n  Negative covenant - Liens: Section 7.01 restricts Liens; basket under 7.01(x) for other Liens securing…\n  Extension of Maturity Date option: Company may request extension to the first anniversary of the Maturity Date then in…\n[364-DAY REVOLVING CREDIT AGREEMENT · 0001193125-22-289041]\n  Principal / commitment amount: As of the Closing Date, the Aggregate Commitments equal to US$10,000,000,000.\n  Interest / coupon rate: Term SOFR Loans and Daily Simple SOFR Loans: Adjusted (Term/Daily Simple) SOFR plus…\n  Maturity date: the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to…\n  Extension of Maturity Date: Borrower may, on one occasion, request extension of the Existing Maturity Date for…\n[AMENDED AND RESTATED CREDIT AGREEMENT · 0001193125-20-176528]\n  Principal / commitment amount: As of the Closing Date, the Aggregate Commitments equal $7,000,000,000. [Alternative…\n… (+7 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4753,7 +4753,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Aggregate Commitments equal to US$15,000,000,000 as of the Closing Date; Alternative Currency Sublimit equal to the lesser of the Aggregate Commitments and US$5,000,000,000",
+              "value": "Aggregate Commitments equal to US$15,000,000,000 as of the Closing Date; Alternative Currency Sublimit an amount equal to the lesser of the Aggregate Commitments and US$5,000,000,000",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000.”"
@@ -4769,15 +4769,15 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR (and other Relevant Rate benchmarks per currency) plus the Applicable Rate; Applicable Rate for Term Benchmark Loans and RFR Loans = 0.45% per annum, Base Rate Loans = 0.00% per annum, commitment fee = 0.03% per annum",
+              "value": "Term Benchmark Loans and RFR Loans: Applicable Rate of 0.45% per annum; Base Rate Loans: 0.00% per annum; commitment fee: 0.03% per annum. Term SOFR Borrowings bear interest at Term SOFR plus the Applicable Rate (0.45%)",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: ““ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Term Benchmark Loans and RFR Loans, 0.45% per annum and (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.03% per annum. ... each Term SOFR Borrowing shall bear interest on the outstanding principal amount thereof for the Interest Period applicable to such Borrowing at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate”"
+              "note": "verbatim: ““ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Term Benchmark Loans and RFR Loans, 0.45% per annum and (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.03% per annum. ... each Term SOFR Borrowing shall bear interest on the outstanding principal amount thereof for the Interest Period applicable to such Borrowing at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate;”"
             },
             "base_rate_label": "Term SOFR",
             "margin_pct": 0.45,
             "margin_bps": null,
-            "floor_pct": null,
+            "floor_pct": 0.0,
             "pik_pct": null,
             "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
             "agreement_is_amendment": false
@@ -4817,7 +4817,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty (Article X) of the Obligations of the Designated Borrowers; the facility is unsecured (no collateral/security grant stated)",
+              "value": "Unsecured facility. Company Guaranty (Article X): Company guarantees the Obligations of the Designated Borrowers. No Designated Borrower guarantees other obligations; Obligations are several and not joint",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “The Company hereby absolutely and unconditionally guarantees, as a guaranty of payment and not merely as a guaranty of collection, prompt payment when due ... of any and all of the Obligations ... of the Designated Borrowers to the Credit Parties ... (the “ Guarantee Obligations ”).”"
@@ -4833,10 +4833,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: Section 2.03(b)-(c) require prepayment within two Business Days if Total Outstandings exceed 105% of Aggregate Commitments (currency fluctuation) or exceed the Aggregate Commitments (otherwise), and similar for the Alternative Currency Sublimit. Events of Default: Section 8.01 lists (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (Material Indebtedness = US$1,500,000,000 threshold); (f) Insolvency Proceedings; (g) Judgments exceeding US$1,500,000,000; (h) ERISA; (i) Change of Control",
+              "value": "Mandatory prepayment under Section 2.03(b)-(c) if Total Outstandings exceed Aggregate Commitments (105% if from FX fluctuations) or Alternative Currency Sublimit is exceeded. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (Material Indebtedness = US$1,500,000,000 or more); (f) Insolvency Proceedings; (g) Judgments exceeding US$1,500,000,000; (h) ERISA; (i) Change of Control",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Borrowers at any time that (i) solely as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments ... or (ii) ... the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, in either case, within two Business Days after receipt of such notice, the Borrowers shall prepay Loans in an aggregate amount sufficient to eliminate such excess.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Borrowers at any time that (i) solely as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect or (ii) other than as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, in either case, within two Business Days after receipt of such notice, the Borrowers shall prepay Loans in an aggregate amount sufficient to eliminate such excess. ... Any of the following shall constitute an “ Event of Default ”: (a) Non-Payment ... (e) Cross-Acceleration ... (f) Insolvency Proceedings, Etc. ... (i) Change of Control . There occurs any Change of Control.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4847,25 +4847,9 @@
             "agreement_is_amendment": false
           },
           {
-            "name": "Commitment fee",
-            "value": {
-              "value": "Commitment fee = Applicable Rate (0.03% per annum) times actual daily amount by which Aggregate Commitments exceed Total Outstandings",
-              "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “The Company shall pay to the Administrative Agent, for the account of each Lender in accordance with its Applicable Percentage, a commitment fee in US Dollars equal to the Applicable Rate times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings”"
-            },
-            "base_rate_label": null,
-            "margin_pct": 0.03,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
             "name": "Default Rate",
             "value": {
-              "value": "Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum (or otherwise applicable rate plus 2% for Term Benchmark/RFR Loans)",
+              "value": "Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum; for Term Benchmark/RFR Loans, the otherwise applicable rate plus 2% per annum",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
               "note": "verbatim: ““ Default Rate ” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Term Benchmark Loan, an RFR Loan ... the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”"
@@ -4879,12 +4863,12 @@
             "agreement_is_amendment": false
           },
           {
-            "name": "Negative covenants",
+            "name": "Negative covenant - Liens",
             "value": {
-              "value": "Liens (Section 7.01, with basket: other Liens securing Indebtedness not exceeding 12.5% of Consolidated Total Assets), Fundamental Changes (Section 7.02), Sanctions (7.03), Anti-Corruption Laws (7.04)",
+              "value": "Section 7.01 restricts Liens; basket under 7.01(x) for other Liens securing Indebtedness not exceeding 12.5% of Consolidated Total Assets",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “ARTICLE VII. NEGATIVE COVENANTS ... 7.01 Liens ... 7.02 Fundamental Changes ... 7.03 Sanctions ... 7.04 Anti-Corruption Laws”"
+              "note": "verbatim: “7.01 Liens . The Company shall not, nor shall it permit any Subsidiary to, create or suffer to exist any Lien upon any of its property, assets or revenues, whether now owned or hereafter acquired, other than the following:”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4895,28 +4879,12 @@
             "agreement_is_amendment": false
           },
           {
-            "name": "Change of Control",
+            "name": "Extension of Maturity Date option",
             "value": {
-              "value": "Beneficial ownership by a person/group (other than Permitted Holders) of 50% or more of the voting equity securities of the Company (is an Event of Default under Section 8.01(i))",
+              "value": "Company may request extension to the first anniversary of the Maturity Date then in effect, subject to Required Lenders agreeing (Section 2.12)",
               "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: ““ Change of Control ” means an event or series of events by which any “person” or “group” ... other than the Permitted Holders, becomes the “beneficial owner” ... directly or indirectly, of 50% or more of the equity securities of the Company entitled to vote for members of the Board of Directors”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “THIS AGREEMENT AND THE OTHER LOAN DOCUMENTS ... SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+              "note": "verbatim: “The Company may, on one or more occasions during the term of this Agreement, by notice to the Administrative Agent (which shall promptly notify the Lenders), request that each Lender agree to extend the Maturity Date to the first anniversary of the Maturity Date then in effect (the “ Existing Maturity Date ”).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4945,7 +4913,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "US$10,000,000,000 (Aggregate Commitments as of the Closing Date)",
+              "value": "As of the Closing Date, the Aggregate Commitments equal to US$10,000,000,000.",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Commitments ” means, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$10,000,000,000.”"
@@ -4961,12 +4929,12 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR Loans and Daily Simple SOFR Loans: Adjusted Term SOFR / Adjusted Daily Simple SOFR plus Applicable Rate of 0.45% per annum; Base Rate Loans: Base Rate plus Applicable Rate of 0.00% per annum; commitment fee 0.05% per annum",
+              "value": "Term SOFR Loans and Daily Simple SOFR Loans: Adjusted (Term/Daily Simple) SOFR plus Applicable Rate of 0.45% per annum; Base Rate Loans: Base Rate plus Applicable Rate of 0.00% per annum; commitment fee 0.05% per annum",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
-              "note": "verbatim: “(a) each Term SOFR Borrowing shall bear interest on the outstanding principal amount thereof for the Interest Period applicable to such Borrowing at a rate per annum equal to the Adjusted Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Borrowing shall bear interest ... at a rate per annum equal to the Base Rate plus the Applicable Rate; and (iii) each Daily Simple SOFR Borrowing ... at a rate per annum equal to the Adjusted Daily Simple SOFR plus the Applicable Rate.”"
+              "note": "verbatim: “each Term SOFR Borrowing shall bear interest on the outstanding principal amount thereof for the Interest Period applicable to such Borrowing at a rate per annum equal to the Adjusted Term SOFR for such Interest Period plus the Applicable Rate; ... each Base Rate Borrowing shall bear interest ... equal to the Base Rate plus the Applicable Rate; ... each Daily Simple SOFR Borrowing ... equal to the Adjusted Daily Simple SOFR plus the Applicable Rate. “ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Term SOFR Loans and Daily Simple SOFR Loans, 0.45% per annum and (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.05% per annum.”"
             },
-            "base_rate_label": "Term SOFR",
+            "base_rate_label": "Adjusted Term SOFR",
             "margin_pct": 0.45,
             "margin_bps": null,
             "floor_pct": null,
@@ -4977,7 +4945,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "The later of (a) November 17, 2023 and (b) if extended pursuant to Section 2.12, such extended maturity date",
+              "value": "the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12 , such extended maturity date as determined pursuant to such Section; provided that, in each case, if such date is not a Business Day, the Maturity Date shall be the immediately preceding Business Day.”"
@@ -4993,10 +4961,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "No stated financial-maintenance ratio covenant (e.g., leverage/interest coverage). The only financial metric referenced is a 20% of Consolidated Tangible Net Worth basket limiting Indebtedness secured by certain Liens under Section 7.01(w).",
-              "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
-              "status": "present",
-              "note": "verbatim: “other Liens not expressly permitted by clauses (a) through (v) above; provided that the aggregate principal amount of outstanding Indebtedness secured by such other Liens does not, at the time of, and after giving effect to the incurrence of such Indebtedness, exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter for which financial statements have been delivered (or otherwise made available) pursuant to Section 6.01 .”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001193125-22-289041 · d413765dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5025,10 +4993,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: Section 2.03(b) - if Total Outstandings exceed Aggregate Commitments, Borrower shall prepay within two Business Days to eliminate the excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults (30-day cure); (d) Representations and Warranties; (e) Cross-Acceleration (threshold US$1,000,000,000); (f) Insolvency Proceedings (60-day period); (g) Judgments (exceeding US$1,000,000,000); (h) ERISA; (i) Change of Control",
+              "value": "Mandatory prepayment (Section 2.03(b)): if Total Outstandings exceed Aggregate Commitments, prepay within two Business Days to eliminate excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (Indebtedness/Guarantee aggregate principal amount of more than US$1,000,000,000); (f) Insolvency Proceedings; (g) Judgments (exceeding US$1,000,000,000); (h) ERISA; (i) Change of Control",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Borrower at any time that the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, within two Business Days after receipt of such notice, the Borrower shall prepay Loans in an aggregate amount sufficient to eliminate such excess. ... 8.01 Events of Default . Any of the following shall constitute an “ Event of Default ”: (a) Non-Payment ... (e) Cross-Acceleration ... having an aggregate principal amount ... of more than the US$1,000,000,000 ... (f) Insolvency Proceedings, Etc ... (g) Judgments ... exceeding US$1,000,000,000 ... (i) Change of Control . There occurs any Change of Control.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Borrower at any time that the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, within two Business Days after receipt of such notice, the Borrower shall prepay Loans in an aggregate amount sufficient to eliminate such excess. ... 8.01 Events of Default . Any of the following shall constitute an “ Event of Default ”: (a) Non-Payment ... (b) Specific Covenants ... (c) Other Defaults ... (d) Representations and Warranties ... (e) Cross-Acceleration ... (f) Insolvency Proceedings, Etc ... (g) Judgments ... (h) ERISA ... (i) Change of Control . There occurs any Change of Control.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5041,13 +5009,13 @@
           {
             "name": "Commitment fee",
             "value": {
-              "value": "Commitment fee equal to the Applicable Rate (0.05% per annum) times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings",
+              "value": "commitment fee equal to the Applicable Rate (0.05% per annum) times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Applicable Rate ” means ... (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.05% per annum.”"
+              "note": "verbatim: “The Borrower shall pay to the Administrative Agent, for the account of each Lender in accordance with its Applicable Percentage, a commitment fee in US Dollars equal to the Applicable Rate times the actual daily amount by which the Aggregate Commitments exceed the Total Outstandings, subject to adjustment as provided in Section 2.13 .”"
             },
             "base_rate_label": null,
-            "margin_pct": 0.05,
+            "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null,
@@ -5057,26 +5025,10 @@
           {
             "name": "Default Rate",
             "value": {
-              "value": "Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum; for Term SOFR / Daily Simple SOFR Loans, the otherwise applicable rate plus 2% per annum",
+              "value": "(a) the Base Rate plus (b) the Applicable Rate applicable to Base Rate Loans plus (c) 2% per annum; for Term SOFR / Daily Simple SOFR Loans, otherwise applicable rate plus 2% per annum",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Default Rate ” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate, if any, applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Term SOFR Loan, a Daily Simple SOFR Loan ... the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": 2.0,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Facility type",
-            "value": {
-              "value": "364-Day Revolving Credit Agreement",
-              "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
-              "status": "present",
-              "note": "verbatim: “364-DAY REVOLVING CREDIT AGREEMENT dated as of November 18, 2022, among AMAZON.COM, INC. , JPMORGAN CHASE BANK, N.A. , as Administrative Agent, and the LENDERS party hereto”"
+              "note": "verbatim: ““ Default Rate ” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate, if any, applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Term SOFR Loan, a Daily Simple SOFR Loan or, in each case, any interest thereon, the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5089,7 +5041,7 @@
           {
             "name": "Extension of Maturity Date",
             "value": {
-              "value": "Borrower may, on one occasion, request extension of Existing Maturity Date for an additional 364 days (Section 2.12)",
+              "value": "Borrower may, on one occasion, request extension of the Existing Maturity Date for an additional period of 364 days (Section 2.12)",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
               "note": "verbatim: “The Borrower may (but only on one occasion during the term of this Agreement), by notice ... request that each Lender agree to extend the Existing Maturity Date for an additional period of 364 days.”"
@@ -5103,28 +5055,12 @@
             "agreement_is_amendment": false
           },
           {
-            "name": "Use of proceeds",
+            "name": "Negative pledge (Liens)",
             "value": {
-              "value": "Working capital, capital expenditures, acquisitions, payment of fees and expenses associated with this Agreement and other general corporate purposes",
+              "value": "Borrower shall not create or suffer to exist any Lien other than permitted Liens; basket (w) aggregate Indebtedness secured by other Liens not to exceed 20% of Consolidated Tangible Net Worth",
               "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
               "status": "present",
-              "note": "verbatim: “Use the proceeds of each Loan solely for working capital, capital expenditures, acquisitions, payment of fees and expenses associated with this Agreement and other general corporate purposes not in contravention of any Law or of any Loan Document; provided that the Borrower will not use the proceeds of the Loans in a manner that violates Regulation U issued by the Federal Reserve Board.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
-              "status": "present",
-              "note": "verbatim: “THIS AGREEMENT AND THE OTHER LOAN DOCUMENTS ... SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+              "note": "verbatim: “7.01 Liens . The Borrower shall not, nor shall it permit any Subsidiary to, create or suffer to exist any Lien upon any of its property, assets or revenues, whether now owned or hereafter acquired, other than the following: ... (w) other Liens ... provided that the aggregate principal amount of outstanding Indebtedness secured by such other Liens does not, at the time of, and after giving effect to the incurrence of such Indebtedness, exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5153,7 +5089,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Aggregate Commitments equal $7,000,000,000 as of the Closing Date; Alternative Currency Sublimit equal to the lesser of the Aggregate Commitments and $3,000,000,000",
+              "value": "As of the Closing Date, the Aggregate Commitments equal $7,000,000,000. [Alternative Currency Sublimit: an amount equal to the lesser of the Aggregate Commitments and $3,000,000,000.]",
               "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders. As of the Closing Date, the Aggregate Commitments equal $7,000,000,000.”"
@@ -5169,7 +5105,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate (0.50% per annum for Eurocurrency Rate Loans); Base Rate Loans: Base Rate plus the Applicable Rate (0.00% per annum for Base Rate Loans). “Applicable Rate” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Eurocurrency Rate Loans, 0.50% per annum, and (c) with respect to the commitment fee set forth in Section 2.07(a), 0.04% per annum.",
+              "value": "Eurocurrency Rate Loans: LIBO Rate plus Applicable Rate (0.50% per annum); Base Rate Loans: Base Rate plus Applicable Rate (0.00% per annum). Commitment fee: 0.04% per annum.",
               "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
               "status": "present",
               "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the LIBO Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing or conversion date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
@@ -5185,7 +5121,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "The later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date",
+              "value": "the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date",
               "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12 , such extended maturity date as determined pursuant to such Section; provided that, in each case, if such date is not a Business Day, the Maturity Date shall be the immediately preceding Business Day.”"
@@ -5201,10 +5137,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "No standalone financial-maintenance covenant (e.g., leverage/interest coverage ratio) is stated. The Negative Covenants (Article VII) include a Lien basket tied to a financial measure: other Liens limited so that outstanding Indebtedness secured by such other Liens does not exceed 20% of Consolidated Tangible Net Worth; also letters of credit secured by Liens shall not exceed $500,000,000.",
+              "value": "No stated financial-maintenance covenant (e.g., leverage/interest-coverage ratio). The negative covenant in Section 7.01(w) limits other Liens securing Indebtedness to not exceed 20% of Consolidated Tangible Net Worth.",
               "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
               "status": "present",
-              "note": "verbatim: “other Liens not expressly permitted by clauses (a) through (v) above; provided that the aggregate principal amount of outstanding Indebtedness secured by such other Liens does not, at the time of, and after giving effect to the incurrence of such Indebtedness, exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter for which financial statements have been delivered (or otherwise made available) pursuant to Section 6.01 .”"
+              "note": "verbatim: “other Liens not expressly permitted by clauses (a) through (v) above; provided that the aggregate principal amount of outstanding Indebtedness secured by such other Liens does not, at the time of, and after giving effect to the incurrence of such Indebtedness, exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter for which financial statements have been delivered”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5217,10 +5153,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guaranty: The Company guarantees the Obligations of the Designated Borrowers (Article X). No security/collateral stated — this is an unsecured revolving credit facility; Liens pursuant to Loan Documents permitted but no collateral grant stated.",
+              "value": "Unsecured facility (no collateral provisions). Company Guaranty under Article X: the Company guarantees the Obligations of the Designated Borrowers. No Designated Borrower is obligated as a guarantor under Article X.",
               "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
               "status": "present",
-              "note": "verbatim: “The Company hereby absolutely and unconditionally guarantees, as a guaranty of payment and not merely as a guaranty of collection, prompt payment when due... of any and all of the Obligations... of the Designated Borrowers to the Credit Parties, arising hereunder or under any other Loan Document”"
+              "note": "verbatim: “The Company hereby absolutely and unconditionally guarantees, as a guaranty of payment and not merely as a guaranty of collection, prompt payment when due ... of any and all of the Obligations ... of the Designated Borrowers to the Credit Parties, arising hereunder or under any other Loan Document ... (the “ Guarantee Obligations ”).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5233,10 +5169,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.03(b)-(c)): Borrowers shall prepay if Total Outstandings exceed 105% (currency fluctuation) or exceed Aggregate Commitments; similar for Alternative Currency Sublimit excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (Indebtedness > $1,000,000,000); (f) Insolvency Proceedings; (g) Judgments exceeding $1,000,000,000; (h) ERISA; (i) Change of Control.",
+              "value": "Mandatory prepayment (Section 2.03(b)-(c)): if Total Outstandings exceed Aggregate Commitments (or 105% due to FX), or Alternative Currency Loans exceed Alternative Currency Sublimit, prepay within two Business Days. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (>$1,000,000,000); (f) Insolvency Proceedings; (g) Judgments (>$1,000,000,000); (h) ERISA; (i) Change of Control.",
               "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Borrowers at any time that (i) solely as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect or (ii) other than as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, in either case, within two Business Days after receipt of such notice, the Borrowers shall prepay Loans in an aggregate amount at least equal to such excess.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Borrowers at any time that ... the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then ... within two Business Days after receipt of such notice, the Borrowers shall prepay Loans in an aggregate amount at least equal to such excess. ... Any of the following shall constitute an “ Event of Default ”: (a) Non-Payment ... (e) Cross-Acceleration ... (f) Insolvency Proceedings ... (g) Judgments ... (i) Change of Control.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5265,7 +5201,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "As of the Closing Date, the Aggregate Commitments equal $2,000,000,000. (Alternative Currency Sublimit: an amount equal to the lesser of the Aggregate Commitments and $1,000,000,000)",
+              "value": "As of the Closing Date, the Aggregate Commitments equal $2,000,000,000.",
               "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders.  As of the Closing Date, the Aggregate Commitments equal $2,000,000,000.”"
@@ -5281,7 +5217,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurocurrency Rate Loan: Eurocurrency Rate plus the Applicable Rate; Base Rate Loan: Base Rate plus the Applicable Rate. Applicable Rate (Eurocurrency Rate +) ranges 0.625% / 0.750% / 1.000% based on Debt Rating; Base Rate + 0.000%. (Eurocurrency Rate based on LIBOR)",
+              "value": "Eurocurrency Rate Loan: Eurocurrency Rate plus the Applicable Rate; Base Rate Loan: Base Rate plus the Applicable Rate. Applicable Rate (Eurocurrency Rate +): 0.625% (Level 1), 0.750% (Level 2), 1.000% (Level 3); Base Rate + 0.000%; Commitment Fee: 0.060%/0.080%/0.100%",
               "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
               "status": "present",
               "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurocurrency Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
@@ -5329,7 +5265,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guaranty by the Company (Article X) of the Obligations of the Designated Borrowers. Debt Rating is defined by reference to the Borrower's non-credit-enhanced, senior unsecured long-term debt. (No collateral/security interest stated; facility is unsecured.)",
+              "value": "Company Guaranty (Article X): the Company guarantees the Obligations of the Designated Borrowers. (Unsecured revolving credit facility; no collateral stated.)",
               "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
               "status": "present",
               "note": "verbatim: “The Company hereby absolutely and unconditionally guarantees, as a guaranty of payment and not merely as a guaranty of collection, prompt payment when due... of any and all of the Obligations... of the Designated Borrowers to the Credit Parties, arising hereunder or under any other Loan Document... (the “ Guarantee Obligations ”).”"
@@ -5345,7 +5281,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.03(b)-(c)) upon Total Outstandings exceeding Aggregate Commitments (or 105% due to currency fluctuations) and Alternative Currency Sublimit excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (Material Debt Amount: $500,000,000 individually / $1,000,000,000 aggregate); (f) Insolvency Proceedings; (g) Inability to Pay Debts; Attachment; (h) Judgments (exceeding $500,000,000); (i) ERISA; (j) Change of Control.",
+              "value": "Mandatory prepayment (Section 2.03(b)-(c)): prepay excess over Aggregate Commitments/Alternative Currency Sublimit within two Business Days. Events of Default (Section 8.01): Non-Payment; Specific Covenants; Other Defaults; Representations and Warranties; Cross-Acceleration (Material Debt Amount); Insolvency Proceedings; Inability to Pay Debts/Attachment; Judgments (exceeding $500,000,000); ERISA; Change of Control.",
               "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
               "status": "present",
               "note": "verbatim: “If the Administrative Agent notifies the Borrowers at any time that (i) solely as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect or (ii) other than as a result of fluctuations in currency exchange rates, the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, in either case, within two Business Days after receipt of such notice, the Borrowers shall prepay Loans in an aggregate amount at least equal to such excess.”"
@@ -7048,7 +6984,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 259.92,
+        "value": 254.06,
         "source_ref": "EOD AMZN last close",
         "status": "present",
         "note": null
@@ -7057,13 +6993,13 @@
         "value": 287.2,
         "source_ref": "EOD AMZN 52-week high",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-10-07: spans 380d over 263 bars"
+        "note": "52-week window 2025-09-22→2026-10-08: spans 381d over 264 bars"
       },
       "low_52w": {
         "value": 196.0,
         "source_ref": "EOD AMZN 52-week low",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-10-07: spans 380d over 263 bars"
+        "note": "52-week window 2025-09-22→2026-10-08: spans 381d over 264 bars"
       },
       "shares_out": {
         "value": 10786313572.0,
@@ -7083,7 +7019,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-10-07",
+      "as_of": "2026-10-08",
       "market_cap_as_of": "2026-10-06"
     },
     "stock_performance": {
@@ -11236,7 +11172,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "AWS revenue growth rate year-over-year",
+          "metric": "AWS year-over-year growth rate",
           "period": "Q1 2026",
           "value": "up 28% year-over-year, the fastest growth rate in 15 quarters",
           "value_num": null,
@@ -11261,7 +11197,7 @@
         {
           "kind": "leading_indicator",
           "metric": "AWS AI revenue run rate",
-          "period": "Q1 2026",
+          "period": "first 3 years of this AI wave",
           "value": "over $15 billion, nearly 260x larger",
           "value_num": null,
           "unit": null,
@@ -11271,25 +11207,25 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "Bedrock customer spend growth quarter-over-quarter",
-          "period": "Q1 2026",
-          "value": "170% growth in customer spend quarter-over-quarter",
+          "kind": "competitive_position",
+          "metric": "SageMaker training time reduction",
+          "period": null,
+          "value": "reduces training time by up to 40%",
           "value_num": null,
           "unit": null,
-          "verbatim": "high-performance inference with the leading selection of frontier models in Bedrock, which saw 170% growth in customer spend quarter-over-quarter, and processed more tokens in Q1 than all prior years combined.",
+          "verbatim": "First, we've built broader capabilities than others. That includes model building with SageMaker, which reduces training time by up to 40%, high-performance inference with the leading selection of frontier models in Bedrock, which saw 170% growth in customer spend quarter-over-quarter, and processed more tokens in Q1 than all prior years combined.",
           "following_context": "We're excited to make OpenAI's models available in Bedrock. Yesterday, we added OpenAI's GPT-5.4 model with 5.5 coming soon.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "SageMaker training time reduction",
+          "kind": "leading_indicator",
+          "metric": "Bedrock customer spend growth",
           "period": "Q1 2026",
-          "value": "reduces training time by up to 40%",
+          "value": "170% growth in customer spend quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "That includes model building with SageMaker, which reduces training time by up to 40%, high-performance inference with the leading selection of frontier models in Bedrock, which saw 170% growth in customer spend quarter-over-quarter, and processed more tokens in Q1 than all prior years combined.",
+          "verbatim": "First, we've built broader capabilities than others. That includes model building with SageMaker, which reduces training time by up to 40%, high-performance inference with the leading selection of frontier models in Bedrock, which saw 170% growth in customer spend quarter-over-quarter, and processed more tokens in Q1 than all prior years combined.",
           "following_context": "We're excited to make OpenAI's models available in Bedrock. Yesterday, we added OpenAI's GPT-5.4 model with 5.5 coming soon.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
@@ -11309,7 +11245,7 @@
         {
           "kind": "leading_indicator",
           "metric": "AgentCore agent deployment frequency",
-          "period": "Q1 2026",
+          "period": null,
           "value": "as frequently as every 10 seconds",
           "value_num": null,
           "unit": null,
@@ -11320,7 +11256,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Kiro developer usage",
+          "metric": "Kiro developers using it",
           "period": "Q1 2026",
           "value": "more than doubled quarter-over-quarter, and enterprise customer usage increased nearly 10x",
           "value_num": null,
@@ -11332,8 +11268,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Transform manual effort saved",
-          "period": "Q1 2026",
+          "metric": "Transform hours saved",
+          "period": null,
           "value": "over 1.56 million hours of manual effort",
           "value_num": null,
           "unit": null,
@@ -11344,7 +11280,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Quick new customers growth quarter-over-quarter",
+          "metric": "Quick new customers",
           "period": "Q1 2026",
           "value": "grown more than 4x quarter-over-quarter",
           "value_num": null,
@@ -11381,7 +11317,7 @@
         {
           "kind": "competitive_position",
           "metric": "custom silicon ranking among data center chip businesses",
-          "period": "Q1 2026",
+          "period": null,
           "value": "one of the top 3 data center chip businesses in the world",
           "value_num": null,
           "unit": null,
@@ -11393,7 +11329,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Trainium revenue commitments",
-          "period": "Q1 2026",
+          "period": null,
           "value": "over $225 billion in revenue commitments for Trainium",
           "value_num": null,
           "unit": null,
@@ -11404,9 +11340,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Trainium2 price performance vs GPUs",
-          "period": "Q1 2026",
-          "value": "about 30% better price performance than comparable GPUs",
+          "metric": "Trainium2 price performance vs comparable GPUs",
+          "period": null,
+          "value": "about 30% better price performance than comparable GPUs and is largely sold out",
           "value_num": null,
           "unit": null,
           "verbatim": "Our Trainium2 chip has about 30% better price performance than comparable GPUs and is largely sold out.",
@@ -11417,7 +11353,7 @@
         {
           "kind": "competitive_position",
           "metric": "Trainium3 price performance vs Trainium2",
-          "period": "Q1 2026",
+          "period": null,
           "value": "30% to 40% more price performance than Trainium2",
           "value_num": null,
           "unit": null,
@@ -11429,7 +11365,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Bedrock customers",
-          "period": "Q1 2026",
+          "period": null,
           "value": "over 125,000 customers",
           "value_num": null,
           "unit": null,
@@ -11440,20 +11376,8 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Fortune 100 companies using Bedrock",
-          "period": "Q1 2026",
-          "value": "almost 80% of the Fortune 100 companies",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Amazon Bedrock, which is used expansively by over 125,000 customers, runs most of its inference on Trainium, and almost 80% of the Fortune 100 companies are using Bedrock.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
           "metric": "Graviton price performance vs x86 processors",
-          "period": "Q1 2026",
+          "period": null,
           "value": "up to 40% better price performance than any other x86 processors, and now used by 98% of the top 1,000 EC2 customers",
           "value_num": null,
           "unit": null,
@@ -11463,49 +11387,25 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "total revenue",
-          "period": "Q1 2026",
-          "value": "$181.5 billion in revenue, up 17% year-over-year",
+          "kind": "competitive_position",
+          "metric": "Trainium operating margin advantage",
+          "period": null,
+          "value": "tens of billions of dollars of CapEx each year and provide several hundred basis points of operating margin advantage",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're reporting $181.5 billion in revenue, up 17% year-over-year.",
-          "following_context": "Excluding the $2.9 billion favorable impact from foreign exchange, net sales increased 15%. Operating income was $23.9 billion. Q1 was a strong quarter for Amazon. Starting with AWS, growth continued to accelerate, up 28% year-over-year, the fastest growth rate in 15 quarters, up $2 billion quarter-over-quarter, the largest Q4 to Q1 AWS revenue increase ever. AWS is now a $150 billion annualized revenue run rate business. It's very unusual for a business to grow this fast on a base this large. The last time we saw growth at this clip, AWS was roughly half the size.",
+          "verbatim": "For perspective, at scale, we expect Trainium will save us tens of billions of dollars of CapEx each year and provide several hundred basis points of operating margin advantage versus relying on others' chips for inference.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "total revenue growth excluding FX",
-          "period": "Q1 2026",
-          "value": "net sales increased 15%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Excluding the $2.9 billion favorable impact from foreign exchange, net sales increased 15%.",
-          "following_context": "Operating income was $23.9 billion. Q1 was a strong quarter for Amazon. Starting with AWS, growth continued to accelerate, up 28% year-over-year, the fastest growth rate in 15 quarters, up $2 billion quarter-over-quarter, the largest Q4 to Q1 AWS revenue increase ever. AWS is now a $150 billion annualized revenue run rate business. It's very unusual for a business to grow this fast on a base this large. The last time we saw growth at this clip, AWS was roughly half the size.",
-          "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "total revenue",
+          "metric": "AWS year-over-year growth rate",
           "period": "Q2 2026",
-          "value": "$200.6 billion in revenue, up 20% year-over-year",
+          "value": "Revenue growth of 36.7% year-over-year, accelerating for the fifth straight quarter, our fastest growth in 18 quarters",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're reporting $200.6 billion in revenue, up 20% year-over-year.",
-          "following_context": "Operating income was $27.5 billion, up 43% year-over-year. Q2 was another very strong quarter for Amazon. I'll start with AWS, which is booming right now, and I'll share the numbers, what we think is going on and why we're enthusiastic about the ROIC equation, even with heavy CapEx the next few years.",
-          "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "AWS revenue growth rate year-over-year",
-          "period": "Q2 2026",
-          "value": "36.7% year-over-year, accelerating for the fifth straight quarter, our fastest growth in 18 quarters",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Revenue growth of 36.7% year-over-year, accelerating for the fifth straight quarter, our fastest growth in 18 quarters, back when AWS was less than half its current revenue size.",
+          "verbatim": "First, the numbers. Revenue growth of 36.7% year-over-year, accelerating for the fifth straight quarter, our fastest growth in 18 quarters, back when AWS was less than half its current revenue size.",
           "following_context": "We added over $4.6 billion in revenue quarter-over-quarter, about 80% more than our largest increase ever, and our backlog stands at $496 billion, growing triple digits year-over-year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
           "tier": "llm-fenced"
@@ -11573,7 +11473,7 @@
         {
           "kind": "competitive_position",
           "metric": "Graviton price performance vs other options",
-          "period": "Q2 2026",
+          "period": null,
           "value": "up to 30% to 40% better price performance than other options",
           "value_num": null,
           "unit": null,
@@ -11595,9 +11495,21 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Graviton top 1,000 EC2 customers usage",
+          "kind": "leading_indicator",
+          "metric": "Quick new integrations",
           "period": "Q2 2026",
+          "value": "16 new integrations, including Adobe, Moody's and Snowflake",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In Q2, we made Quick even more capable, adding autonomous agents that customers set up in plain language to run continuously in the background and carry out multistep tasks, a personalized activity feed that pulls e-mail, messages, calendars and tasks into one prioritized view, and 16 new integrations, including Adobe, Moody's and Snowflake.",
+          "following_context": "Quick has momentum, with 3M, Allianz, AstraZeneca, Autodesk, BMW, Exxon, FINRA, Hyundai, Intuit, Mondelez, Moody's, the NBA, the NFL, New York Life Insurance and Southwest Airlines all using it.",
+          "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "Graviton EC2 customer penetration",
+          "period": null,
           "value": "used by 98% of our top 1,000 EC2 customers",
           "value_num": null,
           "unit": null,
@@ -11608,25 +11520,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Graviton revenue commitments growth quarter-over-quarter",
+          "metric": "Graviton revenue commitments growth",
           "period": "Q2 2026",
-          "value": "increased nearly 3x quarter-over-quarter",
+          "value": "increased nearly 3x quarter-over-quarter, and Graviton5 is growing nearly 2x faster as Graviton4 did",
           "value_num": null,
           "unit": null,
           "verbatim": "The revenue commitments have increased nearly 3x quarter-over-quarter, and Graviton5 is growing nearly 2x faster as Graviton4 did.",
           "following_context": "We also continue to have a deep partnership with NVIDIA, and we'll continue making AWS the best place to run NVIDIA chips, as we have customers who will run on NVIDIA for as long as we can foresee, and we believe strongly that customers want choice. Choice is good for customers, competition and driving the cost of inference down, which customers care deeply about.",
-          "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "operating income",
-          "period": "Q2 2026",
-          "value": "$27.5 billion, up 43% year-over-year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Operating income was $27.5 billion, up 43% year-over-year.",
-          "following_context": "Q2 was another very strong quarter for Amazon. I'll start with AWS, which is booming right now, and I'll share the numbers, what we think is going on and why we're enthusiastic about the ROIC equation, even with heavy CapEx the next few years.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -11638,73 +11538,68 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — accelerating AWS/AI growth and rising absolute EBITDA against record capex driving negative cash conversion and already-full forward operating multiples.",
+    "evidence_balance": "strongly-bullish — AWS profit engine accelerating with a $496B backlog and rising estimates, against a CapEx-driven cash drain that is funded, not existential.",
     "bull_points": [
       {
-        "claim": "AWS revenue growth accelerated to 36.7% year-over-year in Q2 2026 — the fifth straight quarter of acceleration and fastest in 18 quarters — on a base far larger than at the prior comparable clip, the core mechanism behind the runway case.",
-        "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "AWS backlog stands at $496 billion, growing triple digits year-over-year, evidencing contracted future demand ahead of revenue recognition.",
-        "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The chips business now runs at over $25 billion annualized, growing triple-digit percentages, with Trainium carrying over $225 billion in revenue commitments and the custom-silicon franchise described as a top-3 data-center chip business.",
-        "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA rose from $121,388M (FY24) to $145,731M (FY25) to $168,912M LTM Jun-2026 as EBITDA margin climbed 19%→20%→22%, so the margin step-up is real operating leverage, not mix optics.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "FY2025 segment operating income shows AWS at $45,606M on a 35.4% margin versus North America 6.9% and International 2.9%, so the highest-margin, fastest-growing segment is also the profit engine.",
+        "claim": "AWS — 18% of revenue but the profit engine — carries a 35.4% segment operating margin ($45,606M on $128,725M), dwarfing North America's 6.9% and International's 2.9%, so the mix is shifting toward the highest-return leg.",
         "source_ref": "EDGAR 10-K 0001018724-26-000004 XBRL instance amzn-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
         "cited": true
       },
       {
-        "claim": "Consensus EBITDA is modeled rising from $216,791M (FY26E) to $273,634M (FY27E), with the forward-multiple ladder compressing TEV/EBITDA from 13.3x (FY26) to 10.6x (FY27) on current price — a longer-runway earnings path than the trailing multiple implies.",
-        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "claim": "AWS growth is ACCELERATING, not fading: revenue up 36.7% YoY in Q2 2026, the fifth straight quarter of acceleration and fastest in 18 quarters, on a $169B run-rate base.",
+        "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The name's own fundamentals screen ahead of the peer median on growth: EBITDA growth 25% vs 16%, long-term EPS growth 21% vs 13%, with EBITDA margin in line (22% vs 22%) and lower leverage (Debt/EBITDA 1.3 vs 1.6) — raising whether any discount is RESIDUAL rather than EARNED (the human judges, not computed here).",
+        "claim": "An AWS backlog of $496 billion growing triple digits YoY underwrites the forward revenue runway the price must be paid for.",
+        "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The custom-silicon stack is a genuine moat leg: over $225 billion in Trainium revenue commitments, with Trainium2 ~30% better price/performance than comparable GPUs and largely sold out.",
+        "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Absolute EBITDA is compounding hard — $55,269M (FY22) → $85,515M → $121,388M → $145,731M → $168,912M LTM — alongside a margin that climbed to 22%, so the quality is real and improving, not optical.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The fundamental_deltas lean favourable, not value-trap: EBITDA growth 25% vs peer-median 16%, LT EPS growth 21% vs 13%, leverage 1.3x vs 1.6x — superior growth and lower debt than the peer median.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Credit is strong: net-debt/EBITDA 0.8x, interest coverage 50.7x and an S&P AA issuer rating, supporting the heavy reinvestment without survival stress on this basis.",
-        "source_ref": "CIQ Net Debt $128,647M [Q2 Jun-30-2026] ÷ CIQ EBITDA $168,912M [LTM 12 months Jun-30-2026]",
+        "claim": "Near-term consensus is being revised UP: FY26 GAAP EPS path moved from 7.56 (12m ago) to 12.9 (latest), +71%, and EBT (GAAP) +81% over the same window.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "LTM free cash flow is essentially gone at $3,219M, and on the CFO-minus-capex basis the same period is NEGATIVE: CFO $161,403M − capex $173,028M = −$11,625M — the real signal is that record capex ($131,819M FY25 → $173,028M LTM) is consuming the cash the income statement generates, not an optical FCF quirk.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
+        "claim": "The trailing EV/EBITDA of 14.9x sits at the 3rd percentile of its own 9.2-year range (median 24.4x) — but it is TRAILING ONLY with no forward basis, so a near-floor reading cannot distinguish a temporarily depressed level from a permanently de-rated one; this is an unresolved neutral, not a clean bull signal.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "cited": true
       },
       {
-        "claim": "The trailing P/LTM-EPS of 19.8x sits at its own 0th percentile and EV/EBITDA 14.9x at the 3rd percentile over ~9 years, but this is largely an OPTICAL MISREAD: three of the last four quarters carry a below-the-line block netting +$81,812M (Q2-26 alone +$53,396M = 66% of pre-tax), so trailing EPS is inflated by non-operating gains and the low trailing P/E is not a clean 'cheap' signal.",
+        "claim": "The LTM earnings anchor is polluted from below the operating line: three of the trailing four quarters carry material non-operating blocks summing +$81,812M, so a trailing P/E of 19.8x overstates operating quality — the consensus 'cheap trailing multiple' read is partly an artifact, not the real signal.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       },
       {
-        "claim": "On a forward operating basis the stock is NOT cheap: P/FY26E normalized EPS is 31.3x and NTM P/E 27.3x — above the peer-median NTM P/E of 18.2x — so the runway is substantially priced in once below-the-line gains are stripped out.",
-        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+        "claim": "Reported levered FCF is only $3,219M and CFO minus capex is NEGATIVE $11,625M on the same LTM period — the heavy AI/AWS CapEx build is consuming cash that the compounding EBITDA has not yet converted.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "Management itself frames heavy CapEx (~$200B planned for 2026) as challenging early-years free cash flow until capacity matures — the reinvestment thesis explicitly defers cash returns and depends on multi-year monetization.",
-        "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+        "claim": "Consensus FY26 capex is guided to ~-$220,548M against FY25's -$131,819M, and consensus FCF is deeply negative (-$34,027M FY26), so the runway is being bought with a capital-intensity step-up that depresses free cash flow.",
+        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "The consensus FCF path is deeply negative — FY26E −$34,027M and FY27E −$8,248M — confirming that even the Street models years of cash outflow before the AWS/AI runway converts to free cash.",
-        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+        "claim": "Insiders are one-directional sellers: 0 open-market buys vs 65 sells (8 insiders, $416.89M) over the last 182 days, with no purchase in the three years scanned.",
+        "source_ref": "EDGAR Form 4 (latest 0001936006-26-000026; 249 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
     ],
@@ -11712,80 +11607,79 @@
       {
         "name": "Microsoft Corporation",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Hyperscale-cloud leader that sustained a premium multiple through a multi-year heavy-capex AI build-out while cloud revenue kept accelerating — the pattern of paying up front for durable infrastructure demand.",
+        "distinguishing_fact": "A hyperscaler whose cloud leg re-accelerated on an AI demand wave while funding a heavy multi-year data-center CapEx cycle; a direct peer in this roster.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Alphabet Inc.",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Scaled platform peer whose own-capex surge for AI/data-center capacity coincided with continued double-digit revenue growth, testing whether near-term FCF compression is rewarded or penalized.",
+        "distinguishing_fact": "A roster peer whose highest-margin cloud/platform leg carried the group's profit while absolute profit dollars rose through a heavy investment phase.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Meta Platforms",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Large-cap platform that de-rated sharply when a capex/opex spending cycle ran ahead of visible return, then re-rated as monetization appeared — the analogue for a market losing patience with front-loaded investment.",
+        "distinguishing_fact": "A roster peer that de-rated sharply during a visible CapEx surge before the market re-underwrote the returns on that spend — the pattern the FCF-drain bear case fears.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Netflix",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Growth platform that spent years cash-flow-negative funding content build before inflecting to free cash — the pattern of a durable franchise whose FCF lag is either a value trap or a timing artifact.",
+        "name": "NVIDIA",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "A silicon supplier whose revenue-commitment backlog scaled far ahead of delivered cash as an AI-compute cycle inflected — an analogue for the Trainium commitment-vs-cash gap.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Will the record AWS/AI capex cycle convert into the free cash flow and ROIC the price already embeds, or does the multi-year cash drain and already-elevated forward operating multiple mean the runway is paid for?",
+      "question": "Will the AI/AWS CapEx step-up convert into free cash flow at the ROIC management asserts, or does the multi-year cash drain mean the long-duration runway is being bought at a price the returns won't vindicate?",
       "evidence_for": [
         {
-          "claim": "AWS growth is accelerating (36.7% YoY, fifth straight quarter) with a $496B triple-digit-growing backlog, evidencing contracted demand ahead of the spend.",
+          "claim": "AWS revenue is accelerating (36.7% YoY, fastest in 18 quarters) on a $169B run-rate with a $496B backlog, the demand signal underwriting the CapEx.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA scaled to $168,912M LTM with EBITDA margin reaching 22%, and consensus models EBITDA rising to $273,634M FY27E — the operating base that must fund and then out-earn the capex.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Over $225 billion in Trainium revenue commitments and a largely-sold-out Trainium2 give forward contracted demand for a substantial portion of the spend.",
+          "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Trainium carries over $225 billion in revenue commitments and the chips business runs over $25B annualized, growing triple-digit — pre-committed monetization for a large slice of the build.",
-          "source_ref": "CIQ transcript: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
+          "claim": "Interest coverage is 50.7x and net-debt/EBITDA just 0.8x, so the balance sheet can carry the build without survival stress.",
+          "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Capex rose to $173,028M LTM, turning CFO-minus-capex NEGATIVE (−$11,625M) and leaving levered FCF at just $3,219M — the cash cost of the runway is landing now.",
+          "claim": "On the same LTM period CFO minus capex is NEGATIVE $11,625M, so the spend is currently outrunning operating cash generation.",
           "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
           "cited": true
         },
         {
-          "claim": "Consensus FCF is modeled negative for FY26E (−$34,027M) and FY27E (−$8,248M), so even the Street expects years before the spend converts to cash.",
-          "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+          "claim": "Consensus FY26 capex of ~-$220,548M nearly doubles FY25's -$131,819M, driving consensus FCF to -$34,027M.",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
           "cited": true
         },
         {
-          "claim": "Forward operating multiples are already full — P/FY26E normalized 31.3x and NTM P/E 27.3x versus a peer-median NTM P/E of 18.2x — leaving little margin for execution slippage.",
-          "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+          "claim": "The most recent FY capex guidance-delivery outcome was a MISS (FY2024), so the spend ceiling has not reliably held.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "EV/EBITDA 14.9x is TRAILING-ONLY with no adjusted forward basis in the revised guidance, and the actual-vs-estimate EBITDA bases diverge ~3.1x on implied D&A — a trailing multiple at its own-history floor cannot be compared cleanly to the forward ladder; overshoot-vs-terminal is unresolved.",
-      "The 5y P/E percentile cannot be built because a stock split inside the window divides split-adjusted prices against as-filed older EPS — the current P/E stands but its historical position is unknowable.",
-      "No segment EBITDA is disclosed (only segment operating income) and consensus EBITDA is not split by segment — the AWS vs retail profit mix going forward is a reporting gap that must be inferred, a bearish opacity.",
-      "Company-adjusted LTM EBITDA, adjusted EPS, and the covenant leverage basis are all UNKNOWN (not in the 99.1 revised guidance) — the leverage read rests entirely on the GAAP/CIQ basis.",
-      "The peer set is flagged HETEROGENEOUS (market caps span $1.4B–$4,235B, 2984x) mixing hyperscalers with small-cap retailers, so every peer multiple is a confidence-gated input, not a clean benchmark; whether the modest trailing discount to peers is EARNED or RESIDUAL is unresolved.",
-      "Capex guidance for FY26 (~$200B / −$220,548M consensus) and the pace of break-even on server/data-center cohorts are management-stated but unverified against outcome — the whole FCF-conversion thesis turns on this timetable.",
-      "Insiders sold $416.89M across 65 open-market sales over 182 days with zero buys in the 3-year scan — directionally not a bull signal, though routine for scheduled executive sales; intent unresolved."
+      "No segment-level EBITDA is disclosed — only segment operating income — so AWS's true all-in cash economics after allocated CapEx cannot be isolated (an expected disclosure that is absent).",
+      "The 5-year P/E percentile cannot be built because a stock split falls inside the window, dividing split-adjusted prices against as-filed older EPS — the trailing-multiple percentile stands only for EV/EBITDA.",
+      "No adjusted/forward EBITDA or adjusted EPS in the revised guidance, and the actual-vs-estimate EBITDA bases diverge 3.14x on implied D&A — trailing and forward multiples are not struck on the same basis and should not be compared directly.",
+      "Whether the ~$220B FY26 capex converts to the asserted ROIC is unresolved: management states 'strong line of sight' but the FY24 capex guide MISSED and FCF is negative now.",
+      "The peer set is HETEROGENEOUS (market caps span $1.4B–$4,235B, 2984x), so every peer-median multiple is a confidence-gated input, not a clean benchmark.",
+      "Covenant basis and company-adjusted LTM EBITDA leverage are UNKNOWN (not disclosed), so the leverage read rests only on GAAP-basis CIQ figures."
     ],
     "draw_agreement": {
       "attempted": 5,
       "completed": 5,
       "labels": {
-        "mixed": 4,
-        "strongly-bullish": 1
+        "strongly-bullish": 3,
+        "mixed": 2
       },
       "unanimous": false
     }
@@ -11795,10 +11689,10 @@
     "primary-source: 8-K 0001104659-26-107526 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001104659-26-082293 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001104659-26-073562 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)",
-    "Bare peer-comparison (a bear point): 'On a forward operating basis the stock is NOT cheap: P/FY26E normalized EPS is 31.3x and NTM P/E 27.3x — above the peer-median NTM P/E of 18.2x — so the runway is substantially priced in once below-the-line gains are stripped out.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'On a forward operating basis the stock is NOT cheap: P/FY26E normalized EPS is 31.3x and NTM P/E 27.3x — above the peer-median NTM P/E of 18.2x — so the runway is substantially priced in once below-the-line gains are stripped out.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat",
-    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 4, 'strongly-bullish': 1}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)",
+    "primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+4.3s fetch)",
+    "Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (7 bull vs 5 bear) and the minority bear_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case",
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'strongly-bullish': 3, 'mixed': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)",
+    "GAAP-EPS move that normalized EPS did not make (a bull point): 'Near-term consensus is being revised UP: FY26 GAAP EPS path moved from 7.56 (12m ago) to 12.9 (latest), +71%, and EBT…' — over the 12 months to the latest, FY 2026 GAAP EPS consensus moved +71% (7.56 → 12.89) while normalized EPS moved +10% (7.54 → 8.31). The gap is items CIQ's normalized figure excludes — one-offs and non-operating gains or charges — so it is not operating momentum; read the normalized move",
     "Recipe kept from the committed dossier: R3_forward_pe. This build's own read proposes R1_midcycle_margin_evebitda — a recipe changes only by hand, so review whether the committed one still fits this name."
   ],
   "qa_flags": [
@@ -11806,16 +11700,15 @@
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
     "(E5) exhibit not extracted (cost bound): Short-Term Credit Facilities·d574720dex101.htm",
     "(E5) exhibit not extracted (cost bound): Unsecured 364-Day Revolving Credit Facility·tm2613616d4_ex10-1.htm",
-    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
-    "VERIFICATION-CLAIM bear_point: 'The consensus FCF path is deeply negative — FY26E −$34,027M and FY27E…' — the dossier cites, it does not verify; confirm against the source (cited ≠ verified)"
+    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-10-08T05:59:55.524077Z",
-  "extraction_version": "2026-10-07.1",
+  "assembled_at": "2026-10-09T07:50:58.315502Z",
+  "extraction_version": "2026-10-08.4",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/7a8c48c6-a821-4457-bb5d-851644a93205/scratchpad/wt-amzn/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/7a8c48c6-a821-4457-bb5d-851644a93205/scratchpad/wt-amzn2/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-10-07"
+    "frontier": "2026-10-08"
   },
   "sector": "Consumer Discretionary",
   "industry": {
@@ -16525,7 +16418,7 @@
     "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-08T11:20:44.397112Z",
+    "computed_at": "2026-10-09T07:59:20.404225Z",
     "reason": "OPERATOR RE-TAG 2026-10-07. The machine proposes R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite routes AMZN to R3 - EPS x forward P/E, an EQUITY basis, the recipe GOOGL is underwritten on. Both of R1's inputs are flagged on this page: the LTM operating margin (12.1%) sits 6.8 points above the 10-FY median R1 reverts to (5.3%), and the consensus EBITDA row adds back 3.14x the D&A in the actuals, so an EV/EBITDA leg mixes definitions. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": null,
     "data_quality_detail": [],

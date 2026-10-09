@@ -690,8 +690,14 @@ def _cmd_financials_backfill(args: argparse.Namespace) -> int:
             print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} "
                   f"(dry-run, nothing written)")
             continue
+        moved = (fs.get("annual"), fs.get("quarterly")) != (new_ann, new_qtr)
         fs["annual"], fs["quarterly"] = new_ann, new_qtr
-        jp.write_text(_json.dumps(doc, indent=2, ensure_ascii=False))
+        out = _json.dumps(doc, indent=2, ensure_ascii=False)
+        if moved:   # the page records the refresh and its vintage (`layer_refresh`) — not a no-op
+            from vinci.dossier import layer_refresh
+            out = layer_refresh.upsert_text(
+                out, layer_refresh.entry("financials-backfill", ["mechanical.financial_summary"]))
+        jp.write_text(out)
         print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} → {jp}")
     return rc
 
@@ -882,8 +888,12 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         elif not moved:
             print(f"  {t}: anchor unchanged — not rewritten (artifact left byte-identical)")
         else:
-            # byte-preserving replace/insert (a model round-trip drifts older-schema fields)
-            path.write_text(replace_anchor_block(original, anchor))
+            # byte-preserving replace/insert (a model round-trip drifts older-schema fields), and
+            # the page records this refresh and the vintage that ran it (`layer_refresh`)
+            from vinci.dossier import layer_refresh
+            path.write_text(layer_refresh.upsert_text(
+                replace_anchor_block(original, anchor),
+                layer_refresh.entry("anchor-backfill", ["anchor"])))
             # AND THE PAGE, because the UI does NOT ignore the anchor (review of #534). This wrote
             # only dossier.json on the claim that the block is data-only; the renderer prints both
             # the base and the reason, so every backfill left the page asserting the PREVIOUS
@@ -1036,7 +1046,11 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         print(f"{t:7}{fmt(oh_old):>20}{fmt(oh_new):>20}{per:>11}  {status}"
               f"{'' if not changed else '  [' + ', '.join(sorted(updates)) + ']'}")
         if changed and not args.dry_run:
-            path.write_text(replace_valuation_fields(original, updates))
+            # the page records this refresh and the vintage that ran it (`layer_refresh`)
+            from vinci.dossier import layer_refresh
+            path.write_text(layer_refresh.upsert_text(
+                replace_valuation_fields(original, updates),
+                layer_refresh.entry("own-history-refresh", ["mechanical.valuation"])))
     return 0
 
 

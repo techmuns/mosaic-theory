@@ -2083,6 +2083,36 @@ class PriceStoreStamp(BaseModel):
     model_config = {"frozen": True}
 
 
+#: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
+#: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
+LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill")
+
+
+class LayerRefresh(BaseModel):
+    """One change a writer made to a committed page AFTER its assembly — which layers, by which code
+    vintage, when, through which writer.
+
+    WHY IT EXISTS — the unlock the 2026-08-17 ruling named
+    (`docs/records/2026-08-17-extraction-vintage-residue-closed-2026-08-17-fix.md`), built
+    2026-10-09. `extraction_version` names the extractor that ASSEMBLED the page. Refresh passes
+    land layers built by LATER code without re-stamping, because a new stamp would claim the whole
+    page was re-extracted — and the old stamp then under-claims. On 2026-10-09, 23 pages carried
+    `ev_bridge` (version `2026-10-08.4`) under stamps of `2026-08-16.1`.
+    This field is the honest record between the two: the stamp still names the assembly; each entry
+    names one later refresh and the vintage that ran it.
+
+    `layers` names what MOVED, at the page's own grain: a top-level layer (`ev_bridge`, `anchor`)
+    or a `mechanical.<section>`. Entries are appended in the order the writers ran.
+    """
+
+    date: str                       # ISO date (UTC) the writer ran
+    extraction_version: str         # the declared extraction version current when it ran
+    writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill"]
+    layers: list[str]
+
+    model_config = {"frozen": True}
+
+
 class Dossier(BaseModel):
     """A per-finalist dossier: source-bound mechanical facts + fenced synthesis. Assembles, cites;
     never concludes. The human's BUY/AVOID verdict is logged separately via the ledger CLI."""
@@ -2160,6 +2190,11 @@ class Dossier(BaseModel):
     # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — the same
     # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
     ev_bridge: EvBridge | None = None
+    # (layer refreshes) the writers that changed this page since its assembly, each with the code
+    # vintage that ran it (`LayerRefresh`). ABSENT until a writer records one, and dropped by the
+    # next full assembly, whose stamp then covers the whole page. Declared IMMEDIATELY BEFORE
+    # `anchor`: the text writers splice it there (`layer_refresh.upsert_text`).
+    layer_refreshes: list[LayerRefresh] | None = None
     # (anchor) the R1 mid-cycle-margin × own-history-EV/EBITDA fundamental, PERSISTED source-bound
     # so triage is a cheap read (vinci.dossier.anchor). Spot-independent; an ATTENTION FILTER, not
     # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
@@ -2257,6 +2292,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["historical_forecast_error"] = True
     if doc.ev_bridge is None:
         excl["ev_bridge"] = True
+    if doc.layer_refreshes is None:
+        excl["layer_refreshes"] = True
     for layer, key in TOP_DROP_WHEN_NONE:
         held = getattr(doc, layer)
         if held is not None and getattr(held, key) is None:
