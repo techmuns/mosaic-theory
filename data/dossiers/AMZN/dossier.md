@@ -34,7 +34,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | R3_forward_pe | applicable |
+| Method | R4_forward_ev_ebit | applicable |
 | Mid-cycle margin | 5.3% | 10y history · firm |
 | Median multiple, own history | 24.4x | 38 closes · firm · EV/EBITDA |
 | Screen value / share | $249.57 | spot-independent · EV/EBIT 68.9x |
@@ -42,7 +42,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 12.1% (CIQ EBIT) sits 6.8 points ABOVE the 10-year median of 5.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
 
-_OPERATOR RE-TAG 2026-10-07. The machine proposes R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite routes AMZN to R3 - EPS x forward P/E, an EQUITY basis, the recipe GOOGL is underwritten on. Both of R1's inputs are flagged on this page: the LTM operating margin (12.1%) sits 6.8 points above the 10-FY median R1 reverts to (5.3%), and the consensus EBITDA row adds back 3.14x the D&A in the actuals, so an EV/EBITDA leg mixes definitions. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
+_OPERATOR RE-TAG 2026-10-09. R3 -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 23.3x); R1 cannot anchor - the EBITDA basis is divergent (consensus-implied D&A 3.14x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. EBIT is the one earnings line with no GAAP/normalized fork. The bridge is CIQ's TEV claims less market cap (ev_bridge). The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
 
 ## The case
 _(top points; the full argument is in Analysis)_
