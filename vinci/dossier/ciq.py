@@ -171,7 +171,7 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
         return {s.name: [s.row_values(r) for r in range(s.nrows)] for s in book.sheets()}
     if fmt is CiqFormat.OOXML:
         try:
-            import openpyxl  # type: ignore[import-untyped]
+            import openpyxl
         except ImportError as exc:
             raise CiqParseError(
                 f"{path.name}: .xlsx needs `openpyxl` (pip install openpyxl) — not installed"
