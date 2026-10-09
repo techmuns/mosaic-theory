@@ -75,5 +75,7 @@ step, `ev_bridge_transform` — #689's `ev_bridge`. `mirror_to_frontend()` then 
   amended.
 - **The page does not show the bridge yet.** It is in the JSON (machine-complete). The R4 card
   render is a layout change under the preview rule, due before any R4 record.
-- **The operator's confirmation of the build-up as "CIQ net debt"** is still open (STATE row 10).
+- **The build-up is CONFIRMED as the bridge.** Asked after the pass, the operator answered "yes
+  confirmed" (2026-10-09). The ruling is recorded as amendments to `2026-10-08-ev-bridge.md` and
+  `2026-10-08-r4-forward-ev-ebit.md`, and in STATE row 10.
 - **Next in the ruled build order:** the R4 template, reading `exit_claims` (STATE row 10).
