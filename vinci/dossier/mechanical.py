@@ -56,6 +56,7 @@ from vinci.dossier.schemas import (
     ImpliedValuation,
     LeverageSurvival,
     MechanicalLayer,
+    NonOperatingQuarters,
     OperatingDriver,
     OperatingDriversExtract,
     OwnershipEvents,
@@ -930,6 +931,48 @@ _NONOP_PRETAX_SHARE = 0.20
 _NONOP_REVENUE_SHARE = 0.05
 
 
+def _nonop_common(op: dict[date, float], pre: dict[date, float], rev: dict[date, float],
+                  reference_date: date) -> list[date]:
+    """The quarters for which ALL THREE totals were filed, up to the reference date, oldest first.
+    ONE PERIOD BY CONSTRUCTION: the subtraction is within one period because there was never
+    another option (see `_nonoperating_earnings`)."""
+    return sorted(d for d in (set(op) & set(pre) & set(rev)) if d <= reference_date)
+
+
+def _nonop_arms(d: date, op: dict[date, float], pre: dict[date, float],
+                rev: dict[date, float]) -> tuple[float, float | None, float | None]:
+    """``(gap, share of pre-tax, share of revenue)``.
+
+    A ZERO PRE-TAX QUARTER IS THE MOST RELEVANT CASE, NOT AN ABSENT ONE (review finding, #415).
+    Returning None for the share there dropped the quarter from `material` and printed "no
+    material non-operating item" — but pre-tax of exactly zero with a non-zero gap means the
+    below-the-line block precisely offsets operating income, which is the strongest possible
+    statement that GAAP EPS is not an operating anchor. The share is genuinely undefined, so it
+    is `inf`: the pre-tax arm passes, the REVENUE arm still has to carry the materiality, and
+    the existing >1.5 branch renders the "nets near zero" wording instead of a nonsense
+    percentage. A zero gap on zero pre-tax is a true nothing and stays 0.0.
+    """
+    g = pre[d] - op[d]
+    share = (abs(g) / abs(pre[d]) if pre[d] else (math.inf if g else 0.0))
+    return (g, share, (abs(g) / abs(rev[d]) if rev[d] else None))
+
+
+def _nonop_material(window: list[date], op: dict[date, float], pre: dict[date, float],
+                    rev: dict[date, float]) -> list[tuple[date, float, float, float]]:
+    """The quarters in `window` whose below-the-line block is MATERIAL — at least
+    `_NONOP_PRETAX_SHARE` of pre-tax AND at least `_NONOP_REVENUE_SHARE` of revenue — as
+    ``(quarter, gap, share of pre-tax, share of revenue)``, in window order. ONE definition,
+    read by the prose (`_nonoperating_earnings`) and the structured count
+    (`_nonoperating_quarters`)."""
+    out: list[tuple[date, float, float, float]] = []
+    for d in window:
+        g, sh, r = _nonop_arms(d, op, pre, rev)
+        if sh is not None and r is not None and sh >= _NONOP_PRETAX_SHARE \
+                and r >= _NONOP_REVENUE_SHARE:
+            out.append((d, g, sh, r))
+    return out
+
+
 def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
     """``{period_end: value}`` for ~quarterly points, merged ACROSS the concept's aliases.
 
@@ -1004,7 +1047,7 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
     # straggler refuses a name whose data is fine (it refused UBER, the case this exists for).
     # Intersecting first asks the right question — the newest quarter for which ALL THREE totals
     # were filed — so the subtraction is within one period because there was never another option.
-    common = sorted(d for d in (set(op) & set(pre) & set(rev)) if d <= reference_date)
+    common = _nonop_common(op, pre, rev, reference_date)
     if not common:
         return Sourced.unknown(
             note="operating income, pre-tax income and revenue never share a quarter in EDGAR "
@@ -1018,24 +1061,9 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
     src = f"EDGAR XBRL pre-tax − operating, quarters {window[0]}..{window[-1]}"
 
     def _arms(d: date) -> tuple[float, float | None, float | None]:
-        """``(gap, share of pre-tax, share of revenue)``.
+        return _nonop_arms(d, op, pre, rev)
 
-        A ZERO PRE-TAX QUARTER IS THE MOST RELEVANT CASE, NOT AN ABSENT ONE (review finding, #415).
-        Returning None for the share there dropped the quarter from `material` and printed "no
-        material non-operating item" — but pre-tax of exactly zero with a non-zero gap means the
-        below-the-line block precisely offsets operating income, which is the strongest possible
-        statement that GAAP EPS is not an operating anchor. The share is genuinely undefined, so it
-        is `inf`: the pre-tax arm passes, the REVENUE arm still has to carry the materiality, and
-        the existing >1.5 branch renders the "nets near zero" wording instead of a nonsense
-        percentage. A zero gap on zero pre-tax is a true nothing and stays 0.0.
-        """
-        g = pre[d] - op[d]
-        share = (abs(g) / abs(pre[d]) if pre[d] else (math.inf if g else 0.0))
-        return (g, share, (abs(g) / abs(rev[d]) if rev[d] else None))
-
-    material = [(d, g, s, r) for d, g, s, r in ((d, *_arms(d)) for d in window)
-                if s is not None and r is not None
-                and s >= _NONOP_PRETAX_SHARE and r >= _NONOP_REVENUE_SHARE]
+    material = _nonop_material(window, op, pre, rev)
     if not material:
         end = window[-1]
         gap = _arms(end)[0]
@@ -1815,11 +1843,43 @@ def _quality(
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),
+        # (2026-10-09) the same read's COUNT, structured — R4's materiality condition reads it
+        nonoperating_quarters=(
+            _nonoperating_quarters(edgar, record.identity.cik, reference_date)
+            if record.identity.cik else None
+        ),
         liquidity_covenant_flags=liquidity,
         multi_year_trajectory=trajectory,
         roic_trend=ciq_sheets.roic_trend(bundle),  # (P3) structured ROIC series for the chart
     )
 
+
+def _nonoperating_quarters(edgar: EdgarClient, cik: str,
+                           reference_date: date) -> NonOperatingQuarters | None:
+    """THE COUNT BEHIND `_nonoperating_earnings`' PROSE, structured (2026-10-09).
+
+    "3 of the trailing four quarters carry a material block" was computed here and then written
+    only into a sentence, so the one number R4's eligibility rule needs ("earnings from below the
+    operating line are material", ruled at ≥2 of the trailing four) could be read back only by
+    parsing prose — the parse this repo forbids. Same window, same arms, same materiality test as
+    the prose (`_nonop_common`, `_nonop_material`), so the two cannot disagree. None where the
+    prose itself is UNKNOWN: no count is invented for a window that does not exist."""
+    try:
+        facts = edgar.companyfacts(cik)
+    except (HttpError, KeyError):
+        return None
+    op = _quarterly_map(facts, "operating_income")
+    pre = _quarterly_map(facts, "pretax_income")
+    rev = _quarterly_map(facts, "revenue")
+    if not (op and pre and rev):
+        return None
+    window = _nonop_common(op, pre, rev, reference_date)[-4:]
+    if not window:
+        return None
+    return NonOperatingQuarters(
+        material=len(_nonop_material(window, op, pre, rev)), window=len(window),
+        window_end=window[-1].isoformat(),
+        source_ref=f"EDGAR XBRL pre-tax − operating, quarters {window[0]}..{window[-1]}")
 
 def _money_m(v: float) -> str:
     return f"−${abs(v):,.0f}M" if v < 0 else f"${v:,.0f}M"
