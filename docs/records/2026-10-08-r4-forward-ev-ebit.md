@@ -150,3 +150,9 @@ The committed `scenarios/_schema.json` is regenerated for the new field, +12 lin
    (2) have landed.
 5. **`basis_decomposition` reports nothing for R4.** It reads `eps`. It only reports and never
    refuses, so this is a missing readout, not a wrong one.
+## Amendments
+**2026-10-09 — ruling 2 made precise: the bridge is CIQ's TEV build-up.** "CIQ net debt" was ruled
+for its reason — the same source as the multiple. CIQ's TEV carries preferred and minority interest
+beside its 'Net Debt' line, so the claims the multiple embeds are Net Debt + preferred + minority
+(#689). Asked to confirm that reading, the operator answered: "yes confirmed". The R4 template
+reads those claims from the page's `ev_bridge` (`docs/records/2026-10-08-ev-bridge.md`).

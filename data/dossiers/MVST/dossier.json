@@ -8005,6 +8005,90 @@
     "source_sha256": "75a45b4f84",
     "source_ref": "CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, Announced Date)"
   },
+  "ev_bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "lines": [
+      {
+        "label": "Total Debt",
+        "sign": 1,
+        "value": 193.042,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      },
+      {
+        "label": "Total Cash & ST Investments",
+        "sign": -1,
+        "value": 127.828,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      },
+      {
+        "label": "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)",
+        "sign": -1,
+        "value": 0.0,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]: Total Debt − Total Cash & ST Investments − 'Net Debt'"
+      },
+      {
+        "label": "Total Pref. Equity",
+        "sign": 1,
+        "value": 0.0,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      },
+      {
+        "label": "Total Minority Interest",
+        "sign": 1,
+        "value": 0.0,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      }
+    ],
+    "claims": 65.214,
+    "net_debt": 65.214,
+    "ciq_tev_claims": 65.2,
+    "ciq_tev_claims_source": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
+    "edgar_net_debt": null,
+    "edgar_source": "EDGAR: total debt 13 + finance leases 0 + operating leases 17 − cash 128 ($M) — UNDER-CAPTURED: ShortTermBorrowings $104M alone exceeds the extracted long-term+current total; pull CIQ",
+    "consensus": {
+      "years": [
+        {
+          "fiscal_year": 2021,
+          "fiscal_year_end": "2021-12-31",
+          "reported": -333.53,
+          "balance_sheet": -334.6,
+          "balance_sheet_date": "2021-12-31",
+          "gap_ratio": 0.003198
+        }
+      ],
+      "same_basis": false,
+      "current": false,
+      "forward": {},
+      "note": null
+    },
+    "exit_claims": [
+      {
+        "fiscal_year": "FY 2026",
+        "value": 65.214,
+        "method": "held"
+      },
+      {
+        "fiscal_year": "FY 2027",
+        "value": 65.214,
+        "method": "held"
+      },
+      {
+        "fiscal_year": "FY 2028",
+        "value": 65.214,
+        "method": "held"
+      }
+    ],
+    "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
+    "note": "the consensus net-debt line can be checked on only 1 of its last 3 reported years — today's claims held",
+    "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+    "source_sha256": "e1f788d63f",
+    "estimates_sha256": "75a45b4f84"
+  },
   "anchor": {
     "recipe_hint": "R2_NEEDED",
     "applicable": false,

@@ -12465,6 +12465,112 @@
     "source_sha256": "56dbe56923",
     "source_ref": "CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, Announced Date)"
   },
+  "ev_bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "lines": [
+      {
+        "label": "Total Debt",
+        "sign": 1,
+        "value": 152.243,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      },
+      {
+        "label": "Total Cash & ST Investments",
+        "sign": -1,
+        "value": 789.397,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      },
+      {
+        "label": "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)",
+        "sign": -1,
+        "value": 0.046,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]: Total Debt − Total Cash & ST Investments − 'Net Debt'"
+      },
+      {
+        "label": "Total Pref. Equity",
+        "sign": 1,
+        "value": 0.0,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      },
+      {
+        "label": "Total Minority Interest",
+        "sign": 1,
+        "value": 0.582,
+        "as_of": "2026-06-30",
+        "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]"
+      }
+    ],
+    "claims": -636.618,
+    "net_debt": -637.2,
+    "ciq_tev_claims": -636.6,
+    "ciq_tev_claims_source": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
+    "edgar_net_debt": -637.154,
+    "edgar_source": "EDGAR: total debt 25 + finance leases 0 + operating leases 127 − cash 789 ($M)",
+    "consensus": {
+      "years": [
+        {
+          "fiscal_year": 2025,
+          "fiscal_year_end": "2025-12-31",
+          "reported": -1296.077,
+          "balance_sheet": -1152.4,
+          "balance_sheet_date": "2025-12-31",
+          "gap_ratio": 0.124676
+        },
+        {
+          "fiscal_year": 2024,
+          "fiscal_year_end": "2024-12-31",
+          "reported": 1286.267,
+          "balance_sheet": -1123.0,
+          "balance_sheet_date": "2024-12-31",
+          "gap_ratio": 2.145385
+        },
+        {
+          "fiscal_year": 2023,
+          "fiscal_year_end": "2023-12-31",
+          "reported": -2036.235,
+          "balance_sheet": -1925.0,
+          "balance_sheet_date": "2023-12-31",
+          "gap_ratio": 0.057784
+        }
+      ],
+      "same_basis": false,
+      "current": true,
+      "forward": {
+        "FY 2026": -1330.27,
+        "FY 2027": -1809.59,
+        "FY 2028": -2311.73,
+        "FY 2029": -1000.0,
+        "FY 2030": -1102.0
+      },
+      "note": null
+    },
+    "exit_claims": [
+      {
+        "fiscal_year": "FY 2026",
+        "value": -636.618,
+        "method": "held"
+      },
+      {
+        "fiscal_year": "FY 2027",
+        "value": -636.618,
+        "method": "held"
+      },
+      {
+        "fiscal_year": "FY 2028",
+        "value": -636.618,
+        "method": "held"
+      }
+    ],
+    "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls",
+    "source_sha256": "7baf86ffeb",
+    "estimates_sha256": "56dbe56923"
+  },
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
