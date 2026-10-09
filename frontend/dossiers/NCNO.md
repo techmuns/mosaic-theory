@@ -76,7 +76,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | R2_NEEDED | NOT applicable |
+| Method | R2_NEEDED | R1 screen: NOT applicable |
 | Overall confidence | — |  |
 
 _no positive operating margin over available history — needs revenue-anchored recipe_

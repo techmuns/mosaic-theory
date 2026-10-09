@@ -35,7 +35,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | R4_forward_ev_ebit | NOT applicable |
+| Method | R4_forward_ev_ebit | R1 screen: NOT applicable |
 | Overall confidence | — |  |
 
 _OPERATOR RE-TAG 2026-10-09. R2_NEEDED -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 15.4x); R1 cannot anchor - its anchor declines (no positive operating margin over available history) and the EBITDA basis is divergent (consensus-implied D&A 4.01x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. R2 (pre-profit, survival-gated) does not fit a name at 15.4x forward EBIT. The bridge is CIQ's TEV claims less market cap (ev_bridge), including $1,083M of minority interest. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
