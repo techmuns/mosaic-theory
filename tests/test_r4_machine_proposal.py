@@ -202,6 +202,10 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
         folder.mkdir()
         page = _page(t)                     # CONSTRUCTED: the tags each page carried before the
         page["anchor"]["recipe_hint"] = committed      # 2026-10-09 re-tags, so the copy disagrees
+        # ...and a reason of that recipe's own. Since AMZN's re-assembly (#700) its committed reason
+        # IS this build's R4 reason, and the caveat appends the fresh reason only where it differs
+        # from the kept one — so a copy keeping it would test a state that never existed.
+        page["anchor"]["reason"] = f"CONSTRUCTED: the hand reason for {committed}"
         (folder / "dossier.json").write_text(json.dumps(page))
         doc = _with_count(t)
         doc["caveats"] = []
