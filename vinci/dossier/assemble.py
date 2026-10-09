@@ -1137,6 +1137,15 @@ def assemble_one(
         # that actually produced it, not claim whichever one the re-render happens to sit next to.
         price_store=_price_store_stamp(cfg),
     )
+    # (2026-10-09) THE MACHINE'S R4 PROPOSAL — the operator's three ratified conditions, read off
+    # the page just built (`recipe_proposal`). It replaces this build's FRESH R1 hint only; `_write`
+    # then keeps any committed recipe and writes the divergence as a caveat, so a hand tag still
+    # wins and a page with no committed recipe takes R4 directly (ruled 2026-10-09).
+    if dossier.anchor is not None:
+        from vinci.dossier import recipe_proposal
+
+        dossier = dossier.model_copy(update={"anchor": recipe_proposal.propose(
+            json.loads(dossier_json(dossier)), dossier.anchor)})
     return _write(dossier, llm_log, out_root)
 
 

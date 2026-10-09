@@ -297,6 +297,20 @@ class TrendPoint(BaseModel):
     model_config = {"frozen": True}
 
 
+class NonOperatingQuarters(BaseModel):
+    """The COUNT behind `Quality.nonoperating_earnings`' prose, structured (2026-10-09): how many of
+    the trailing quarters carry a MATERIAL block from below the operating line (at least 20% of
+    pre-tax AND 5% of revenue — `mechanical._NONOP_*`). R4's third condition reads `material`
+    against the operator's ≥2-of-4 ruling; reading it out of the sentence would be a parse."""
+
+    material: int
+    window: int                 # quarters in the trailing window — up to four
+    window_end: str             # the newest quarter in it (ISO)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
 class Quality(BaseModel):
     """Durability: cash generation, margins, leverage, dilution, liquidity/covenant flags."""
 
@@ -319,6 +333,8 @@ class Quality(BaseModel):
     # unusual-items block is annual-only, so a quarterly one-off stayed invisible until it landed
     # in a fiscal year. Optional-with-default so committed JSON predating the field round-trips.
     nonoperating_earnings: Sourced[str] | None = None
+    # (2026-10-09) the same read's COUNT, structured — ABSENT until built (`DROP_WHEN_NONE`)
+    nonoperating_quarters: NonOperatingQuarters | None = None
     liquidity_covenant_flags: Sourced[str]
     multi_year_trajectory: Sourced[str]  # 5y arc of revenue/EBITDA/segment-EBITDA/ROIC (per period)
     # (Phase-3) STRUCTURED per-period ROIC series — the numbers behind multi_year_trajectory's ROIC
@@ -2236,6 +2252,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("", "ownership_events"),
     ("", "sbc"),
     ("leverage_survival", "credit_health_panels"),
+    ("quality", "nonoperating_quarters"),
 )
 
 

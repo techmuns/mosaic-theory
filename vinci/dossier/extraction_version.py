@@ -114,6 +114,12 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "moved, the extraction version that ran the writer, the date and the writer — printed "
         "beside the stamp, which still names the assembly",
     ),
+    (
+        "2026-10-09.2",
+        "the non-operating read carries its count (`quality.nonoperating_quarters`: material "
+        "quarters of the trailing four), and the build proposes R4 when the operator's three "
+        "ratified conditions hold — shown beside a committed recipe, never written over one",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

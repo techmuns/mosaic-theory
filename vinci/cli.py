@@ -876,6 +876,10 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
         anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
                                 computed_at=datetime.now(UTC), ciq=ciq)
+        # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the
+        # assembler applies, and like it only ever a PROPOSAL: the committed recipe is kept below
+        from vinci.dossier import recipe_proposal
+        anchor = recipe_proposal.propose(json.loads(original), anchor)
         # An operator's hand re-tag outranks the machine's fresh proposal — the recipe is preserved
         # and the divergence reported, never silently overwritten (the queued 2026-07-21 defect).
         anchor, notes = preserve_operator_tag(d.anchor, anchor)
