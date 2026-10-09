@@ -80,6 +80,13 @@ RE-TAG 2026-10-09. R3 -> R4 …". Where the build's proposal equals the committe
 - **Fixtures:** `build_companyfacts_fixture.py AMZN` and `build_price_fixture.py` both rebuilt
   byte-identically.
 - **Suite:** `pytest -m "not network"` on the freshly-committed artifacts. Counts are in the PR.
+  - The first run failed one test, `test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe`.
+    It copies a committed page with the tag set back to its pre-re-tag recipe, and expects the
+    "Recipe kept" caveat to carry this build's reason. The caveat appends that reason only where it
+    differs from the kept one (`assemble.py`), and AMZN's committed reason is now this build's own.
+    So the copy simulated a state that never existed: an R3 tag beside an R4 reason.
+  - **Fixed test-only, in a separate commit.** The copy now carries a reason of its own recipe, and
+    the invariant is unchanged. A mutant that drops the reason from the caveat still fails it.
 
 **BOUNDARY.**
 - **Scope:** one page, AMZN, 2026-10-09.
