@@ -12650,6 +12650,51 @@
     "source_sha256": "abe144277e",
     "estimates_sha256": "2d58fb9902"
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-10-07",
+      "extraction_version": "2026-08-16.1",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus",
+        "mechanical.catalyst_path"
+      ]
+    },
+    {
+      "date": "2026-10-07",
+      "extraction_version": "2026-08-16.1",
+      "writer": "refresh",
+      "layers": [
+        "forward_multiple_history"
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "extraction_version": "2026-10-08.2",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus",
+        "forward_multiple_history",
+        "historical_forecast_error"
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "extraction_version": "2026-10-08.3",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "extraction_version": "2026-10-08.4",
+      "writer": "refresh",
+      "layers": [
+        "ev_bridge"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,

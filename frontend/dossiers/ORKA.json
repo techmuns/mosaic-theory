@@ -8627,6 +8627,33 @@
       "note": "0 FY row(s) carry a positive P/E and a positive EPS on both lines — two are needed to compare; NTM not tested: the FY rows establish no price"
     }
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-10-07",
+      "extraction_version": "2026-08-16.1",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus",
+        "mechanical.catalyst_path"
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "extraction_version": "2026-10-08.2",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus"
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "extraction_version": "2026-10-08.3",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "unknown",
     "applicable": false,
