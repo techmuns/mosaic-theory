@@ -1,7 +1,7 @@
 ---
-status: open
+status: shipped
 date: 2026-10-09
-prs: []
+prs: [695]
 supersedes:
 superseded-by:
 ---
