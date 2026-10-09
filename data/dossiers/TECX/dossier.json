@@ -8019,6 +8019,34 @@
     "source_sha256": "dbc1a9bcd3",
     "source_ref": "CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, Announced Date)"
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-10-07",
+      "extraction_version": "2026-08-16.1",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus",
+        "mechanical.catalyst_path"
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "extraction_version": "2026-10-08.2",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus",
+        "historical_forecast_error"
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "extraction_version": "2026-10-08.3",
+      "writer": "refresh",
+      "layers": [
+        "forward_consensus"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "unknown",
     "applicable": false,

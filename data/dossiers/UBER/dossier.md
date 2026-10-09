@@ -1,6 +1,6 @@
 # Dossier — Uber Technologies, Inc (NYSE: UBER)
 
-_September 17, 2026 · extraction 2026-08-16.1_
+_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
 
 # Brief — first cut
 
@@ -599,6 +599,13 @@ _Source §: 8-K 0001552781-21-000058 · e21071_ex10-1.htm · amended by 00015527
 ## Record & reproduce
 - **Data window:** screened as of 2026-08-24 · assembled 2026-09-17 19:40 UTC
 - **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
+- **Refreshed since assembly** (oldest first):
+  - 2026-10-07 · forward_consensus, mechanical.catalyst_path — refresh at 2026-08-16.1
+  - 2026-10-07 · forward_multiple_history — refresh at 2026-08-16.1
+  - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
+  - 2026-10-08 · anchor — anchor-backfill at 2026-10-08.2
+  - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
+  - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 43d old — 2026-08-05 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 43d old (2026-08-05, valuation.implied_expectations.multiples_as_of) — within the ceiling
