@@ -42,7 +42,7 @@ from typing import Any
 
 from vinci.dossier.schemas import PrimarySource
 from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
-from vinci.scenarios import RefPoint
+from vinci.scenarios import BASIS_EV_NTM_EBIT, RECIPE_R4, RefPoint
 
 #: A supplied leg value further than this from its anchor is a DEVIATION and must state why.
 #: Relative, so it reads the same on a 1,330 revenue and a 12.5x multiple. Not tuned on outcomes —
@@ -85,6 +85,12 @@ UNPROPOSED_REASON: dict[tuple[str, str], str] = {
     ("multiple", "bull"): "no established anchor — p75 and the band high are both candidates and "
                           "neither reflects committed practice",
 }
+
+#: (R4) Why NTM EBIT at exit is never proposed, on any leg. KEPT OUT OF `UNPROPOSED_REASON`, which
+#: is R1's six cells exactly (pinned): that table drives R1's base-axis fallback, and an R4 entry
+#: there would read as R1 base cells becoming unproposable.
+R4_EBIT_WHY = ("NTM EBIT at exit is the recipe's whole leg driver — a pre-filled number would be "
+               "the machine writing the underwrite (the R3 EPS rule)")
 
 
 class ProposalRefusedError(RuntimeError):
@@ -190,7 +196,13 @@ def check_tier_agreement(doc: dict[str, Any], recipe_id: str) -> None:
     # the margin ratio is suppressed and it routes two-ratio). Checking only the hint STRING would
     # wave an R1 record through on a name the dossier has already declined to underwrite that way.
     hint = _get(doc, "anchor", "recipe_hint")
-    if _get(doc, "anchor", "applicable") is False and hint and hint != "R2_NEEDED":
+    # EXCEPT ON AN R4 TAG. `applicable` is R1's bit — whether R1's arithmetic could anchor — and
+    # R4's own eligibility (ruled 2026-10-08) includes "R1 cannot anchor". So on an R4-tagged page
+    # `applicable=False` is the EXPECTED state, not a disagreement: UBER, one of the two names the
+    # rule admits, carries it, and would be refused by its own eligibility condition. R3 keeps the
+    # coupling (§5.0 row 10, #670) — its eligibility asks nothing of R1, so that is a separate call.
+    if (_get(doc, "anchor", "applicable") is False and hint and hint != "R2_NEEDED"
+            and hint != RECIPE_R4):
         raise ProposalRefusedError(
             f"{doc.get('ticker')}: the dossier carries recipe hint {hint!r} but marks it "
             "applicable=False — writing a record on a recipe the dossier says does not apply is "
@@ -426,33 +438,10 @@ def resolve_shares(doc: dict[str, Any]) -> tuple[float, str, str]:
 # --- the evidence each refused cell needs, carried from the dossier ------------------------------
 
 
-def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
-    """What the analyst needs in front of them for the six cells the machine will not propose.
-
-    A line reading "bear revenue: required" is a FORM. The evidence is already in the dossier, and
-    withholding it means the analyst goes and finds it by hand — which is where an unanchored number
-    acquires an unstated derivation. Keyed by axis, since bear and bull read the same frame.
-    """
-    ev: dict[str, list[str]] = {"revenue": [], "margin": [], "multiple": []}
-
-    # revenue — the consensus frame with its n and dispersion, LTM, guidance, and the reported arc
-    for r in _get(doc, "mechanical", "consensus_context", "consensus_levels", "Revenue") or []:
-        ev["revenue"].append(
-            f"consensus FY{r.get('fy')}: median {r.get('median')} · low {r.get('low')} · "
-            f"high {r.get('high')} · n {r.get('estimates')} · sd {r.get('std_dev')}")
-    fs = _get(doc, "mechanical", "financial_summary", "annual", "value") or {}
-    cols = fs.get("columns") or []
-    for row in fs.get("rows") or []:
-        # THE LEVEL ROW ONLY. `startswith("revenue")` also matches "Revenue YoY"/"Revenue QoQ",
-        # which emitted a second, EMPTY arc line — evidence nobody can read is noise in a block
-        # whose purpose is to be read.
-        label = str(row.get("label", "")).strip().lower()
-        if label.split(" (")[0] not in ("revenue", "total revenue"):
-            continue
-        pairs = [f"{c} {v}" for c, v in zip(cols, row.get("values") or [], strict=False)
-                 if v is not None]
-        if pairs:
-            ev["revenue"].append("reported/estimated revenue arc: " + " → ".join(pairs))
+def _guidance_lines(doc: dict[str, Any]) -> list[str]:
+    """Every guidance row on the page, each carrying its own vintage mark. ONE copy, read by the R1
+    evidence (under revenue) and the R4 evidence (under EBIT)."""
+    out: list[str] = []
     # GUIDANCE COMES FROM `primary_source`, WHICH KNOWS WHICH GUIDE IS CURRENT.
     #
     # It used to read `drawdown_cause.revised_guidance` and print whatever that held under the
@@ -483,9 +472,76 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
                     val = f"CHANGE of {g.low}–{g.high}"
                 else:
                     val = f"{g.low}–{g.high}"
-                ev["revenue"].append(
+                out.append(
                     f"guidance ({g.metric} {g.period}): {val} {g.unit or ''}".rstrip()
                     + f"{mark} → {g.source_ref}")
+    return out
+
+
+def _operating_driver_lines(doc: dict[str, Any]) -> list[str]:
+    """The page's operating-driver rows, unsplit, NOT truncated. ONE copy, read by the R1 and R4
+    evidence; empty when the page has none."""
+    # --- THE OPERATING DRIVERS, UNSPLIT AND UNDER EVERY AXIS ------------------------------------
+    # The rows the analyst is setting six numbers against were, until 2026-08-04, capped out of the
+    # artifact entirely; they are now kept in full. They belong in the template because the page
+    # having them is not the same as the ANALYST having them at the judgment.
+    #
+    # WHY THEY ARE NOT SPLIT BY AXIS, and why that is not laziness: `kind` describes the NATURE OF
+    # THE STATEMENT, not the valuation axis it informs. Measured on SMPL's own rows — `attribution`
+    # rows are all EXPENSE lines (operating expenses, S&M, G&A), which inform MARGIN and not
+    # revenue; `pricing_action` ("price increase across most of portfolio") moves revenue AND margin
+    # together; and `leading_indicator` is defined as a unit-volume/KPI run-rate, which is
+    # revenue-shaped on SMPL today but was `adjusted gross margin` on BRBR. **No mapping is
+    # derivable from the field**, and inventing a classifier here is the same move refused at
+    # extraction and at render. So: the full set under each axis, and the analyst reads.
+    rows = _get(doc, "mechanical", "operating_drivers", "rows") or []
+    if rows:
+        head = (f"OPERATING DRIVERS ({len(rows)} rows, unsplit — `kind` states what KIND of "
+                "claim a row is, not which axis it informs, so no axis mapping is derivable "
+                "from it and none was invented)")
+        lines = [head]
+        for r in rows:
+            # NOT TRUNCATED. The 130-char cap here was copied from `_operating_drivers_digest`,
+            # where it bounds LLM *input* and earns its keep. A template is a FILE THE ANALYST
+            # READS — there is no token budget to protect, so the cap bought nothing and cost
+            # something: measured across the fleet, 11 of 242 values exceeded it and TWO carried a
+            # figure in the tail that the kept head did not (CNXC `30,`, VITL `2026`). Small
+            # figures, but this is the row cap's argument one scale down — a bound that buys
+            # nothing still drops things.
+            lines.append(
+                f"  [{r.get('kind')}] {r.get('metric')}: {r.get('value')} → {r.get('source_ref')}")
+        return lines
+    return []
+
+
+def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
+    """What the analyst needs in front of them for the six cells the machine will not propose.
+
+    A line reading "bear revenue: required" is a FORM. The evidence is already in the dossier, and
+    withholding it means the analyst goes and finds it by hand — which is where an unanchored number
+    acquires an unstated derivation. Keyed by axis, since bear and bull read the same frame.
+    """
+    ev: dict[str, list[str]] = {"revenue": [], "margin": [], "multiple": []}
+
+    # revenue — the consensus frame with its n and dispersion, LTM, guidance, and the reported arc
+    for r in _get(doc, "mechanical", "consensus_context", "consensus_levels", "Revenue") or []:
+        ev["revenue"].append(
+            f"consensus FY{r.get('fy')}: median {r.get('median')} · low {r.get('low')} · "
+            f"high {r.get('high')} · n {r.get('estimates')} · sd {r.get('std_dev')}")
+    fs = _get(doc, "mechanical", "financial_summary", "annual", "value") or {}
+    cols = fs.get("columns") or []
+    for row in fs.get("rows") or []:
+        # THE LEVEL ROW ONLY. `startswith("revenue")` also matches "Revenue YoY"/"Revenue QoQ",
+        # which emitted a second, EMPTY arc line — evidence nobody can read is noise in a block
+        # whose purpose is to be read.
+        label = str(row.get("label", "")).strip().lower()
+        if label.split(" (")[0] not in ("revenue", "total revenue"):
+            continue
+        pairs = [f"{c} {v}" for c, v in zip(cols, row.get("values") or [], strict=False)
+                 if v is not None]
+        if pairs:
+            ev["revenue"].append("reported/estimated revenue arc: " + " → ".join(pairs))
+    ev["revenue"].extend(_guidance_lines(doc))
 
     # margin — the RAW per-FY series, because "clean" is the judgment the machine cannot make
     mt = _get(doc, "mechanical", "quality", "margin_trend")
@@ -536,37 +592,9 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
             " The template carries both so the analyst does not depend on what a roll happened to "
             "cite.")
 
-    # --- THE OPERATING DRIVERS, UNSPLIT AND UNDER EVERY AXIS ------------------------------------
-    # The rows the analyst is setting six numbers against were, until 2026-08-04, capped out of the
-    # artifact entirely; they are now kept in full. They belong in the template because the page
-    # having them is not the same as the ANALYST having them at the judgment.
-    #
-    # WHY THEY ARE NOT SPLIT BY AXIS, and why that is not laziness: `kind` describes the NATURE OF
-    # THE STATEMENT, not the valuation axis it informs. Measured on SMPL's own rows — `attribution`
-    # rows are all EXPENSE lines (operating expenses, S&M, G&A), which inform MARGIN and not
-    # revenue; `pricing_action` ("price increase across most of portfolio") moves revenue AND margin
-    # together; and `leading_indicator` is defined as a unit-volume/KPI run-rate, which is
-    # revenue-shaped on SMPL today but was `adjusted gross margin` on BRBR. **No mapping is
-    # derivable from the field**, and inventing a classifier here is the same move refused at
-    # extraction and at render. So: the full set under each axis, and the analyst reads.
-    rows = _get(doc, "mechanical", "operating_drivers", "rows") or []
-    if rows:
-        head = (f"OPERATING DRIVERS ({len(rows)} rows, unsplit — `kind` states what KIND of "
-                "claim a row is, not which axis it informs, so no axis mapping is derivable "
-                "from it and none was invented)")
-        lines = [head]
-        for r in rows:
-            # NOT TRUNCATED. The 130-char cap here was copied from `_operating_drivers_digest`,
-            # where it bounds LLM *input* and earns its keep. A template is a FILE THE ANALYST
-            # READS — there is no token budget to protect, so the cap bought nothing and cost
-            # something: measured across the fleet, 11 of 242 values exceeded it and TWO carried a
-            # figure in the tail that the kept head did not (CNXC `30,`, VITL `2026`). Small
-            # figures, but this is the row cap's argument one scale down — a bound that buys
-            # nothing still drops things.
-            lines.append(
-                f"  [{r.get('kind')}] {r.get('metric')}: {r.get('value')} → {r.get('source_ref')}")
-        for axis in AXES:
-            ev[axis].extend(lines)
+    lines = _operating_driver_lines(doc)
+    for axis in AXES:
+        ev[axis].extend(lines)
     return ev
 
 
@@ -575,6 +603,11 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
 #: Keys the template carries for the analyst's benefit and `scenario-create` ignores. Underscore
 #: marks them, so a reviewer reading the diff can see at a glance what is input and what is context.
 COMMENTARY_PREFIX = "_"
+
+#: Why the horizon is never proposed — one sentence, read by the R1 and R4 templates alike.
+HORIZON_WHY = ("no statistic anchors WHEN a thesis realises — it is the analyst's judgment about "
+               "the catalyst path, and a default here would set the IRR the record is graded on. "
+               "State it in years: 1.5 = 18 months.")
 
 
 def _refuse_if_recipe_unresolved(doc: dict[str, Any], ticker: str) -> None:
@@ -633,6 +666,12 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     refused ones arrive EMPTY with the reason they are empty and the dossier evidence beside them.
     """
     ticker = str(doc.get("ticker") or "")
+    # AN R4-TAGGED PAGE GETS AN R4-SHAPED TEMPLATE (2026-10-09). The R1 shape below pre-fills a
+    # revenue, a margin and a D&A fact — three inputs `_run_r4` REFUSES — and names an EV/EBITDA
+    # basis it also refuses, so an R4 underwrite could only be written by hand-deleting half the
+    # template: the hand-correction §5.0 row 10 records for R3, one recipe worse.
+    if _get(doc, "anchor", "recipe_hint") == RECIPE_R4:
+        return build_r4_template(doc)
     _refuse_if_recipe_unresolved(doc, ticker)
     ancs = {(a.axis, a.leg): a for a in propose_anchors(doc)}
     shares, sh_basis, sh_source = resolve_shares(doc)
@@ -697,10 +736,7 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
             # which is the state the flag exists to reduce. An analyst who moves the revenue to
             # another year moves this with it — and then `leg_fy_problems` asks them to say why.
             cell["leg_fy"] = str(_get(doc, "mechanical", "ev_gap", "anchor_fy") or "") or None
-            cell[f"{COMMENTARY_PREFIX}years_to_terminal_why_no_anchor"] = (
-                "no statistic anchors WHEN a thesis realises — it is the analyst's judgment about "
-                "the catalyst path, and a default here would set the IRR the record is graded on. "
-                "State it in years: 1.5 = 18 months.")
+            cell[f"{COMMENTARY_PREFIX}years_to_terminal_why_no_anchor"] = HORIZON_WHY
         # (R3) EPS — EMPTY, NEVER PROPOSED. The P/E recipe reads this and nothing else, so a
         # pre-filled number would be the machine writing the entire underwrite. It sits alongside
         # `revenue`/`margin` rather than replacing them: the template does not know which recipe
@@ -751,6 +787,302 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
             "why it "
             "has no anchor, and the evidence block carries what the dossier already knows. Keys "
             "beginning '_' are commentary and are ignored on create."),
+    }
+
+
+
+# --- (R4) the EV/NTM EBIT template ---------------------------------------------------------------
+
+#: The bridge's two non-debt lines, by the labels `ciq_sheets.ev_bridge` writes them under.
+_PREF_LINE, _MINORITY_LINE = "Total Pref. Equity", "Total Minority Interest"
+
+
+def r4_bridge_fact(doc: dict[str, Any]) -> dict[str, Any]:
+    """The R4 record's `net_debt` fact, from the page's `ev_bridge` — or a refusal, never a guess.
+
+    THE CLAIMS ARE CIQ'S CURRENT TEV BUILD-UP LESS MARKET CAP — Net Debt + preferred + minority
+    interest — which the operator confirmed on 2026-10-09 as what "CIQ net debt" meant: the multiple
+    is CIQ's, so the bridge is the one CIQ's TEV carries. The exit value is the page's own
+    `exit_claims`, where the operator's exit rule has already run (#689).
+
+    REFUSES RATHER THAN PREFILLING, on each of:
+    * **no bridge on the page** — FUBO, ORKA and TECX today;
+    * **an unchecked or flagged bridge** — no CIQ TEV less market cap to check it against, or one
+      it misses by more than `EV_BRIDGE_CIQ_TOL`: the exports sit on different balance sheets;
+    * **a bridge and a multiple from two pulls** — the bridge's Estimates export is not the one
+      `forward_consensus` (which carries today's EV/NTM EBIT) was read from;
+    * **exit claims that differ by fiscal year** — the template cannot choose the record's exit year
+      for the analyst. No committed page carries this today; every exit is held.
+    """
+    from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
+
+    t = doc.get("ticker")
+    eb = doc.get("ev_bridge")
+    if not isinstance(eb, dict):
+        raise ProposalRefusedError(
+            f"{t}: the page carries no `ev_bridge`, so an R4 template has no bridge from "
+            "enterprise value to equity. Land it (the ev_bridge pass) or re-assemble the page "
+            "first.")
+    claims, ciq = eb.get("claims"), eb.get("ciq_tev_claims")
+    if not isinstance(claims, (int, float)) or not isinstance(ciq, (int, float)):
+        raise ProposalRefusedError(
+            f"{t}: the page's bridge was never checked against CIQ's own current TEV less market "
+            "cap (no comps figure) — an unchecked bridge is not prefilled into an underwrite.")
+    if abs(claims - ciq) > EV_BRIDGE_CIQ_TOL:
+        raise ProposalRefusedError(
+            f"{t}: the page's bridge (${claims:,.1f}M) disagrees with CIQ's own TEV less market "
+            f"cap (${ciq:,.1f}M) by ${claims - ciq:,.1f}M — the Financials and comps exports sit "
+            "on different balance sheets. Re-pull and rebuild the bridge before underwriting.")
+    fc_sha = _get(doc, "forward_consensus", "source_sha256")
+    if not fc_sha or eb.get("estimates_sha256") != fc_sha:
+        raise ProposalRefusedError(
+            f"{t}: the bridge was built against Estimates export {eb.get('estimates_sha256')!r} "
+            f"but the page's forward multiples come from {fc_sha!r} — a bridge and a multiple from "
+            "two pulls. Rebuild the bridge from the page's own exports.")
+    exits = [x for x in eb.get("exit_claims") or [] if isinstance(x, dict)]
+    if not exits or any(not isinstance(x.get("value"), (int, float)) for x in exits):
+        raise ProposalRefusedError(
+            f"{t}: the page's bridge carries no complete exit claims — the operator's exit rule "
+            "has not run on it, so there is no exit value to carry. Rebuild the bridge.")
+    values = {round(float(x["value"]), 3) for x in exits}
+    if len(values) != 1:
+        listed = ", ".join(f"{x.get('fiscal_year')} {x['value']:,.1f} ({x.get('method')})"
+                           for x in exits)
+        raise ProposalRefusedError(
+            f"{t}: the page's exit claims differ by fiscal year ({listed}) — the template cannot "
+            "choose the record's exit year for you. State the claims for your exit year from "
+            "`ev_bridge.exit_claims` by hand, naming that year in the basis.")
+    by_label = {ln.get("label"): ln.get("value") for ln in eb.get("lines") or []
+                if isinstance(ln, dict)}
+    pref, minority = by_label.get(_PREF_LINE) or 0.0, by_label.get(_MINORITY_LINE) or 0.0
+    fys = ", ".join(str(x.get("fiscal_year")) for x in exits)
+    methods = "/".join(sorted({str(x.get("method")) for x in exits}))
+    note = str(eb.get("note") or "").strip()
+    return {
+        "value": values.pop(),
+        "unit": "$M",
+        "basis": (
+            f"CIQ's TEV claims less market cap: Net Debt {eb.get('net_debt'):,.1f} + preferred "
+            f"{pref:,.1f} + minority interest {minority:,.1f} = {claims:,.1f} ($M), at the "
+            f"{eb.get('balance_sheet_date')} balance sheet — the build-up CIQ's TEV, and so the "
+            "EV/NTM EBIT multiple, carries (operator-confirmed 2026-10-09). At exit ("
+            f"{fys}): {methods}" + (f" — {note}" if note else "") + "."),
+        "source": (
+            f"dossier ev_bridge — CIQ Financials {eb.get('source_file')} (sha "
+            f"{eb.get('source_sha256')}), equal to CIQ's TEV less market cap "
+            f"(${ciq:,.1f}M, {eb.get('ciq_tev_claims_source')}); Estimates sha "
+            f"{eb.get('estimates_sha256')}"),
+    }
+
+
+def _ev_ntm_ebit_band(doc: dict[str, Any]) -> dict[str, Any] | None:
+    """The page's own EV/NTM EBIT history band (`forward_multiple_history`), or None."""
+    for s in _get(doc, "forward_multiple_history", "series") or []:
+        if isinstance(s, dict) and s.get("metric") == "EV/NTM EBIT" and isinstance(
+                s.get("band"), dict):
+            return dict(s["band"], context_only=s.get("context_only"), note=s.get("note"))
+    return None
+
+
+def _r4_multiple_why(doc: dict[str, Any]) -> str:
+    """Why the R4 multiple is not proposed — with the page's own band, when the band says more.
+
+    NOT PROPOSED BECAUSE NOTHING IS RULED, and the page shows what an unruled default would do.
+    R1's base anchor is a TRAILING EV/EBITDA median — a different multiple — and no ruling makes the
+    EV/NTM EBIT history its R4 counterpart. Measured on AMZN 2026-10-09: today's 22.59x sits BELOW
+    its own nine-year low (23.22x) and the median is 52.56x, so a median default would propose
+    2.3× today's multiple, struck on years when the EBIT it priced was a fraction of today's.
+    """
+    why = ("no ruled anchor for a forward EV/EBIT multiple — R1's own-history anchor is a TRAILING "
+           "EV/EBITDA, a different multiple, and no ruling makes the page's EV/NTM EBIT history "
+           "the base. That history is in the evidence")
+    b = _ev_ntm_ebit_band(doc)
+    cur, lo, hi, med = ((b or {}).get(k) for k in ("current", "low", "high", "median"))
+    if all(isinstance(v, (int, float)) for v in (cur, lo, hi, med)) and cur and (
+            cur < lo or cur > hi):
+        why += (f"; today's {cur:.2f}x sits OUTSIDE it ({lo:.2f}x–{hi:.2f}x), so its median "
+                f"({med:.2f}x) would propose {med / cur:.1f}× today's multiple")
+    return why + "."
+
+
+def r4_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
+    """What the analyst needs beside the R4 cells: EBIT, the multiple, and the bridge.
+
+    Every list is COMPLETE — a template is a file the analyst reads, so no row is capped (the
+    operating-driver note above says why). Each line names its source layer.
+    """
+    ev: dict[str, list[str]] = {"ebit": [], "multiple": [], "net_debt": []}
+    fc = doc.get("forward_consensus") or {}
+    as_of = fc.get("as_of")
+
+    # ebit — consensus by FY with its dispersion, the path it took, the reported arc, the final
+    # consensus's historical miss, and any guidance
+    for r in fc.get("spreads") or []:
+        if r.get("metric") == "EBIT":
+            ev["ebit"].append(
+                f"consensus EBIT {r.get('period')} ($M, CIQ Estimates {as_of}): median "
+                f"{r.get('median')} · mean {r.get('mean')} · low {r.get('low')} · high "
+                f"{r.get('high')} · n {r.get('estimates')} · sd {r.get('std_dev')}")
+    for r in fc.get("paths") or []:
+        if r.get("metric") == "EBIT" and r.get("points"):
+            pts = " → ".join(f"{p.get('months_ago')}m ago {p.get('value')}" for p in r["points"])
+            ev["ebit"].append(f"consensus EBIT {r.get('period')} path ($M): {pts}")
+    fs = _get(doc, "mechanical", "financial_summary", "annual", "value") or {}
+    for row in fs.get("rows") or []:
+        if str(row.get("label", "")).strip().lower().split(" (")[0] == "ebit":
+            pairs = [f"{c} {v}" for c, v in zip(fs.get("columns") or [], row.get("values") or [],
+                                                strict=False) if v is not None]
+            if pairs:
+                ev["ebit"].append("reported/estimated EBIT arc ($M): " + " → ".join(pairs))
+    hfe = doc.get("historical_forecast_error") or {}
+    obs = next((s.get("observations") or [] for s in hfe.get("series") or []
+                if s.get("metric") == "EBIT"), [])
+    if obs:
+        ev["ebit"].append(
+            f"HOW WRONG THE FINAL CONSENSUS HAS BEEN — EBIT, {len(obs)} fiscal years "
+            f"({hfe.get('estimate_type')}). {hfe.get('eligibility_note')} {hfe.get('usage_note')}")
+        for o in obs:
+            epr = o.get("error_per_forecast_revenue")
+            ev["ebit"].append(
+                f"  FY{o.get('fiscal_year')} ({o.get('accounting_basis')}): actual "
+                f"{o.get('actual')} vs final consensus {o.get('final_estimate')} → "
+                f"{o.get('dollar_error')} $M"
+                + (f", {epr:+.2%} of forecast revenue" if isinstance(epr, (int, float)) else ""))
+    guidance = _guidance_lines(doc)
+    ev["ebit"].extend(guidance)
+    ps = _get(doc, "mechanical", "primary_source", "releases") or []
+    if not any(any(w in str(g.get("metric") or "").lower() for w in ("operating income", "ebit"))
+               and "ebitda" not in str(g.get("metric") or "").lower()
+               for r in ps if isinstance(r, dict) for g in r.get("guidance") or []):
+        ev["ebit"].append("no operating-income or EBIT guidance is read on this page"
+                          + (" — the guidance above is on other lines" if guidance else ""))
+
+    # multiple — today's, its own history, and the peers
+    cm = [m for m in fc.get("current_multiples") or [] if m.get("metric") == "TEV/EBIT"]
+    if cm:
+        ev["multiple"].append(
+            f"today's EV/EBIT (CIQ Estimates→Multiples, {as_of}): "
+            + " · ".join(f"{m.get('period')} {m.get('value')}" for m in cm))
+    b = _ev_ntm_ebit_band(doc)
+    if b:
+        pct = b.get("percentile")
+        rank = (f"{float(pct) * 100:.1f}th pctile of its own range"
+                if isinstance(pct, (int, float)) else "rank unknown")
+        ev["multiple"].append(
+            f"own history EV/NTM EBIT (CIQ Financials→Multiples, quarter-end closes to "
+            f"{b.get('as_of')}): current {b.get('current')} ({rank}) · low {b.get('low')} · "
+            f"median {b.get('median')} · high {b.get('high')} · {b.get('n_closes')} closes over "
+            f"{b.get('window_span_years')}y"
+            + (" · CONTEXT ONLY" if b.get("context_only") else "")
+            + (f" · {b['note']}" if b.get("note") else ""))
+    tm = _get(doc, "mechanical", "peer_comps", "trading_multiples")
+    if isinstance(tm, dict) and tm.get("value"):
+        ev["multiple"].append(f"PEER CROSS-SECTION (LTM and NTM) — {tm['value']}")
+
+    # net_debt — the bridge, line by line, its checks, and the exit rule as run
+    eb = doc.get("ev_bridge") or {}
+    for ln in eb.get("lines") or []:
+        sign = "+" if ln.get("sign", 1) > 0 else "−"
+        ev["net_debt"].append(f"{sign} {ln.get('label')}: {ln.get('value')} ($M, "
+                              f"{ln.get('as_of')})")
+    if eb:
+        ev["net_debt"].append(
+            f"= claims {eb.get('claims')}; CIQ's own TEV less market cap "
+            f"{eb.get('ciq_tev_claims')} ({eb.get('ciq_tev_claims_source')}); CIQ 'Net Debt' "
+            f"line {eb.get('net_debt')}")
+        ev["net_debt"].append(
+            f"EDGAR cross-check (the anchor's net debt, not the bridge): {eb.get('edgar_net_debt')}"
+            + (f" — {eb.get('edgar_source')}" if eb.get("edgar_source") else " — withheld"))
+        cons = eb.get("consensus") or {}
+        for y in cons.get("years") or []:
+            ev["net_debt"].append(
+                f"consensus net-debt line FY{y.get('fiscal_year')}: reported {y.get('reported')} "
+                f"vs balance sheet {y.get('balance_sheet')} ({y.get('balance_sheet_date')}) — gap "
+                f"{y.get('gap_ratio')}")
+        ev["net_debt"].append(
+            f"consensus line same-basis: {cons.get('same_basis')} · current: {cons.get('current')}"
+            + (f" · {cons['note']}" if cons.get("note") else ""))
+        for x in eb.get("exit_claims") or []:
+            ev["net_debt"].append(f"exit claims {x.get('fiscal_year')}: {x.get('value')} "
+                                  f"({x.get('method')})")
+        ev["net_debt"].append(f"RULE — {eb.get('rule')}")
+    drivers = _operating_driver_lines(doc)
+    ev["ebit"].extend(drivers)
+    ev["multiple"].extend(drivers)
+    return ev
+
+
+def build_r4_template(doc: dict[str, Any]) -> dict[str, Any]:
+    """The R4 (EV/NTM EBIT) underwrite template: the recipe's two axes, its bridge, its evidence.
+
+    WHAT IS THE MACHINE'S, AND WHAT IS NOT. The facts are the machine's — the share count
+    (`resolve_shares`, as R1) and the bridge (`r4_bridge_fact`, the page's CIQ TEV claims held to
+    exit by the operator's rule). The legs are not: NTM EBIT at exit is the recipe's whole leg
+    driver (the R3 EPS rule) and no ruling anchors a forward EV/EBIT multiple, so all six cells
+    arrive EMPTY with their reasons, and `scenario-create` requires a derivation for each.
+
+    ONLY THE CELLS THE RECIPE READS. `_run_r4` refuses a revenue, margin or EPS on a leg and a D&A
+    fact, so none is emitted — a cell the recipe refuses is not a convenience but a trap.
+    """
+    ticker = str(doc.get("ticker") or "")
+    # THE BRIDGE FIRST: it is the input that makes this an R4 template at all, so a page without
+    # one is told that — not some other refusal that happens to be checked earlier (FUBO's share
+    # counts also disagree, and reporting that first hid the missing bridge).
+    bridge = r4_bridge_fact(doc)
+    shares, sh_basis, sh_source = resolve_shares(doc)
+    facts: dict[str, Any] = {
+        "diluted_shares": {"value": shares, "unit": "M shares", "basis": sh_basis,
+                           "source": sh_source, "quantity_kind": SHARES_QUANTITY_KIND},
+        "net_debt": bridge,
+    }
+    anchor_fy = _get(doc, "mechanical", "ev_gap", "anchor_fy")
+    multiple_why = _r4_multiple_why(doc)
+    scenarios: dict[str, Any] = {}
+    for leg in LEGS:
+        cell: dict[str, Any] = {
+            "ebit": None,
+            f"{COMMENTARY_PREFIX}ebit_why_no_anchor": R4_EBIT_WHY,
+            "ebit_derivation": "",                   # REQUIRED — where this number came from
+            "multiple": None,
+            f"{COMMENTARY_PREFIX}multiple_why_no_anchor": multiple_why,
+            "multiple_derivation": "",               # REQUIRED
+            "reason": "",
+        }
+        if leg == "base":
+            cell["years_to_terminal"] = None
+            cell[f"{COMMENTARY_PREFIX}years_to_terminal_why_no_anchor"] = HORIZON_WHY
+            # NOT PROPOSED, unlike R1's: R1 pre-fills the EV-gap's anchor year because its revenue
+            # anchor is struck there, BY CONSTRUCTION. R4 proposes no EBIT, so there is no year the
+            # proposal already chose — pre-filling one would be a guess dressed as a statement.
+            cell["leg_fy"] = None
+            cell[f"{COMMENTARY_PREFIX}leg_fy_why_not_proposed"] = (
+                "the fiscal year this leg's NTM EBIT is struck at — not proposed, because R4 "
+                "proposes no EBIT to strike it at"
+                + (f". A year other than the EV-gap's FY{anchor_fy} states why in `reason`"
+                   if anchor_fy else "") + ".")
+        if leg == "bear":
+            cell["bear_basis"] = ""
+        scenarios[leg] = cell
+    return {
+        "ticker": ticker,
+        "recipe_id": RECIPE_R4,
+        "multiple_basis": BASIS_EV_NTM_EBIT,
+        "entry_basis": "",
+        "entry_denominator": "",
+        "underwrite_date": "",
+        "analyst": "",
+        "spot": _get(doc, "mechanical", "stock_info", "price", "value"),
+        "spot_source": _get(doc, "mechanical", "stock_info", "price", "source_ref"),
+        "spot_as_of": _get(doc, "mechanical", "stock_info", "as_of"),
+        "facts": facts,
+        "scenarios": scenarios,
+        f"{COMMENTARY_PREFIX}evidence": r4_evidence(doc),
+        f"{COMMENTARY_PREFIX}note": (
+            "R4 — EV/NTM EBIT. No leg cell is pre-filled: NTM EBIT at exit is the recipe's whole "
+            "leg driver, and no ruling anchors a forward EV/EBIT multiple, so each cell states why "
+            "it is empty and needs a derivation. The two facts are the machine's: the share count, "
+            "and the bridge — CIQ's TEV claims less market cap, held to exit by the operator's "
+            "rule. Keys beginning '_' are commentary and are ignored on create."),
     }
 
 

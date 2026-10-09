@@ -2977,6 +2977,10 @@ def _surprise_line(rows: Rows, start: int, end: int, metric: str) -> dict[str, l
 _TEV_CLAIM_ROWS: tuple[tuple[str, Literal[1, -1]], ...] = (
     ("Net Debt", 1), ("Total Pref. Equity", 1), ("Total Minority Interest", 1),
 )
+#: The bridge AGREES with CIQ's own current TEV less market cap within this many $M — CIQ's
+#: rounding. ONE definition: the bridge's `DISAGREES` note and the R4 template's refusal to
+#: prefill from a flagged bridge (`propose.py`) both read it, so the two cannot drift apart.
+EV_BRIDGE_CIQ_TOL = 0.5
 #: A consensus net-debt year AGREES when it sits within this fraction of CIQ's balance-sheet Net
 #: Debt at that year-end (of the larger of |net debt| and total debt).
 CONSENSUS_SAME_BASIS_MAX = 0.005
@@ -3177,7 +3181,7 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
     if ciq is None:
         notes.append("CIQ's current TEV less market cap is unread (no comps export) — the bridge "
                      "is not checked against it")
-    elif abs(ciq[0] - claims) > 0.5:
+    elif abs(ciq[0] - claims) > EV_BRIDGE_CIQ_TOL:
         notes.append(f"DISAGREES with CIQ's current TEV less market cap (${ciq[0]:,.1f}M) by "
                      f"${claims - ciq[0]:,.1f}M — the Financials and comps exports sit on "
                      "different balance sheets; re-pull before an R4 record reads this")
