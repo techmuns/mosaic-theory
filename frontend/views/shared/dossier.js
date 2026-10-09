@@ -1296,11 +1296,14 @@ function anchorInner(a) {
     `<tr><td>${escapeHtml(label)}</td><td class="${prose ? "uw-screen-m" : "num mono"}">${val}</td><td class="muted">${note}</td></tr>`;
   const mg = a.margin, mu = a.multiple;
   const base = a.anchor_base_value_per_share;
-  const methodName = String(a.recipe_hint || "").startsWith("R1")
+  const isR1 = String(a.recipe_hint || "").startsWith("R1");
+  const methodName = isR1
     ? "mid-cycle margin × the median multiple of its own history" : (a.recipe_hint || "—");
+  // WHOSE BIT IS `applicable` (2026-10-09) — R1's, so beside any other tag it says so; beside an
+  // R1 tag the plain word stays. Twin of _screening_context_lines() in render.py.
+  const fit = a.applicable ? "applicable" : "NOT applicable";
   const rows = [
-    row("Method", escapeHtml(methodName), a.applicable ? "applicable" : "NOT applicable",
-        { prose: true }),
+    row("Method", escapeHtml(methodName), isR1 ? fit : `R1 screen: ${fit}`, { prose: true }),
     mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
              `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
     mu ? row("Median multiple, own history", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
