@@ -54,6 +54,11 @@ const EXTRACTION_VERSIONS = [
     "the non-operating read carries its count (`quality.nonoperating_quarters`: material " +
     "quarters of the trailing four), and the build proposes R4 when the operator's three " +
     "ratified conditions hold — shown beside a committed recipe, never written over one"],
+  ["2026-10-09.3",
+    "the active recipe's basis beside the page (`valuation_basis`: bases, formula, bridge, " +
+    "exit claims, share count, non-operating policy, conflicts) and its dates named " +
+    "(`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward " +
+    "history's latest close is `latest_observed_close`, never `current`"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

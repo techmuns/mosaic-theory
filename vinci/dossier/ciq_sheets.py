@@ -51,6 +51,7 @@ from vinci.dossier.schemas import (
     ForecastErrorObservation,
     ForecastErrorSeries,
     ForwardConsensus,
+    ForwardHistoryBand,
     ForwardMultiple,
     ForwardMultipleHistory,
     GuidanceRow,
@@ -2894,7 +2895,10 @@ def forward_multiple_history(bundle: CiqBundle) -> ForwardMultipleHistory | None
         series.append(MultipleHistorySeries(
             metric=metric, row_label=label, context_only=context_only,
             note=_CONTEXT_ONLY_NOTE if context_only else None, points=points,
-            band=band.model_copy(update={"series": []}) if band is not None else None))
+            # the trailing helper's band under the forward history's names: its `current` is
+            # the LATEST OBSERVED CLOSE, never today's multiple (2026-10-09)
+            band=(ForwardHistoryBand.from_own_history(band.model_copy(update={"series": []}))
+                  if band is not None else None)))
     if not series:
         return None
     dates = sorted({date.fromisoformat(pt.date) for sr in series for pt in sr.points})

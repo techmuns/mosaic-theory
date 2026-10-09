@@ -889,19 +889,23 @@ def _r4_multiple_why(doc: dict[str, Any]) -> str:
 
     NOT PROPOSED BECAUSE NOTHING IS RULED, and the page shows what an unruled default would do.
     R1's base anchor is a TRAILING EV/EBITDA median — a different multiple — and no ruling makes the
-    EV/NTM EBIT history its R4 counterpart. Measured on AMZN 2026-10-09: today's 22.59x sits BELOW
-    its own nine-year low (23.22x) and the median is 52.56x, so a median default would propose
-    2.3× today's multiple, struck on years when the EBIT it priced was a fraction of today's.
+    EV/NTM EBIT history its R4 counterpart. Measured on AMZN 2026-10-09: the latest observed close,
+    22.59x on 2026-09-16, sits BELOW its own nine-year low (23.22x) and the median is 52.56x, so a
+    median default would propose 2.3× that close, struck on years when the EBIT it priced was a
+    fraction of today's. THAT CLOSE IS NOT TODAY'S MULTIPLE (schema correction, 2026-10-09): the
+    sentence names it as the observation it is, with its date.
     """
     why = ("no ruled anchor for a forward EV/EBIT multiple — R1's own-history anchor is a TRAILING "
            "EV/EBITDA, a different multiple, and no ruling makes the page's EV/NTM EBIT history "
            "the base. That history is in the evidence")
     b = _ev_ntm_ebit_band(doc)
-    cur, lo, hi, med = ((b or {}).get(k) for k in ("current", "low", "high", "median"))
-    if all(isinstance(v, (int, float)) for v in (cur, lo, hi, med)) and cur and (
-            cur < lo or cur > hi):
-        why += (f"; today's {cur:.2f}x sits OUTSIDE it ({lo:.2f}x–{hi:.2f}x), so its median "
-                f"({med:.2f}x) would propose {med / cur:.1f}× today's multiple")
+    last, lo, hi, med = ((b or {}).get(k)
+                         for k in ("latest_observed_close", "low", "high", "median"))
+    if b and all(isinstance(v, (int, float)) for v in (last, lo, hi, med)) and last and (
+            last < lo or last > hi):
+        why += (f"; the latest observed close, {last:.2f}x on {b.get('latest_close_date')}, sits "
+                f"OUTSIDE it ({lo:.2f}x–{hi:.2f}x), so its median ({med:.2f}x) would propose "
+                f"{med / last:.1f}× that close")
     return why + "."
 
 
@@ -969,9 +973,10 @@ def r4_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
         rank = (f"{float(pct) * 100:.1f}th pctile of its own range"
                 if isinstance(pct, (int, float)) else "rank unknown")
         ev["multiple"].append(
-            f"own history EV/NTM EBIT (CIQ Financials→Multiples, quarter-end closes to "
-            f"{b.get('as_of')}): current {b.get('current')} ({rank}) · low {b.get('low')} · "
-            f"median {b.get('median')} · high {b.get('high')} · {b.get('n_closes')} closes over "
+            f"own history EV/NTM EBIT (CIQ Financials→Multiples): latest observed close "
+            f"{b.get('latest_observed_close')} on {b.get('latest_close_date')} ({rank}; not in the "
+            f"distribution) · low {b.get('low')} · median {b.get('median')} · high "
+            f"{b.get('high')} · {b.get('n_closes')} earlier closes over "
             f"{b.get('window_span_years')}y"
             + (" · CONTEXT ONLY" if b.get("context_only") else "")
             + (f" · {b['note']}" if b.get("note") else ""))
