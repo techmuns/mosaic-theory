@@ -1325,10 +1325,18 @@ def _cmd_scenario_propose(args: argparse.Namespace) -> int:
     out = Path(args.out) if args.out else Path(f"{t}-underwrite.json")
     out.write_text(json.dumps(tpl, indent=2, ensure_ascii=False) + "\n")
     scen: dict[str, Any] = tpl["scenarios"]
-    filled = sum(1 for c in scen.values()
-                 for a in ("revenue", "margin", "multiple") if c.get(a) is not None)
+    # THE CELLS THE TEMPLATE'S OWN RECIPE READS: an R4 template carries `ebit` and `multiple` and no
+    # revenue or margin, so counting R1's trio would report "0 of 9" against six real cells.
+    import vinci.scenarios as sc
+    from vinci.dossier.propose import AXIS_LEG_FIELD
+    axes = (sc.axes_for(sc.RECIPE_R4, tpl.get("multiple_basis")) or ()
+            if tpl.get("recipe_id") == sc.RECIPE_R4 else ("revenue", "margin", "multiple"))
+    fields = [AXIS_LEG_FIELD.get(a, a) for a in axes]
+    total = len(fields) * len(scen)
+    filled = sum(1 for c in scen.values() for f in fields if c.get(f) is not None)
     print(f"=== scenario-propose {t} -> {out} ===")
-    print(f"  {filled} of 9 pre-filled from computed anchors; {9 - filled} required from you")
+    print(f"  {filled} of {total} pre-filled from computed anchors; {total - filled} required "
+          "from you")
     print(f"  recipe: {tpl['recipe_id']}   spot: {tpl['spot']}")
     print("  every empty cell states why it has no anchor; `_evidence` carries the dossier's own "
           "frame for each axis")
