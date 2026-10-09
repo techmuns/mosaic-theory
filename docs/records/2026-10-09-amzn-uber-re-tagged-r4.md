@@ -51,6 +51,19 @@ UBER trades at 15.4x forward EBIT.
 - Each `dossier.md` moved two lines: the Method row and the reason.
 - The mirror is byte-identical for both pages.
 - The gate and template checks were run on the re-tagged pages (above).
+- **The re-tag turned nine tests red, as the artifact-pass rule anticipates.** They assumed the old
+  tags: AMZN as "the R3 page", each page's committed anchor standing in for R1's read, UBER
+  committed `R2_NEEDED`, and every template having a revenue axis. They were fixed in a test-only
+  commit, each keeping its invariant:
+  - GOOGL is now the R3 page;
+  - R1's stand-in is R1's own tag for its `applicable` bit;
+  - the pre-re-tag tags are constructed in a temp copy where the test needs disagreement;
+  - the driver no-truncation check reads every axis the template carries, so it now covers the
+    R4 template too.
+
+  New pins cover the committed state: the two R4 pages get the R4 template, and a committed R4
+  that the build also proposes draws no "recipe kept" caveat. Three proposal mutants were re-run
+  against the updated tests, and all were killed.
 - **Claim check:** open PRs #511, #611, #616 and #695 touch no dossier page. The claim branch was
   pushed before the edit.
 - **Suite:** the full offline suite ran on the committed artifacts; the counts are in the PR.
