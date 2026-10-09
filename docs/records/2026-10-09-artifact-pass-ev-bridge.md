@@ -31,13 +31,20 @@ step, `ev_bridge_transform` — #689's `ev_bridge`. `mirror_to_frontend()` then 
 
   | name | claims − Net Debt ($M) | why |
   |---|---:|---|
-  | GOOGL | +18,023 | CIQ's 'Total Pref. Equity' line — UNVERIFIED: Alphabet reports no preferred stock outstanding to our knowledge; what CIQ books there is not yet identified |
+  | GOOGL | +18,023 | convertible preferred, issued in Q2 2026 (verified against EDGAR, below) |
   | UBER | +1,083 | minority interest |
-  | V | +514 | preferred (CIQ 'Total Pref. Equity') |
+  | V | +514 | preferred (EDGAR tags $528M at 2026-03-31, the latest quarter it carries) |
   | WLK | +503 | minority interest |
   | PARR / WERN / NCNO / EPAM | +37 / +27 / +14 / +0.6 | minority interest (each equals its 'Total Minority Interest' line) |
 
   With FUBO (+1,826) and ORKA, both not landed, these are #689's 10 of 26.
+- **GOOGL's preferred is real, and new.** Alphabet's 10-Q for the quarter to 2026-06-30
+  (accession 0001652044-26-000071, filed 2026-07-23) reports 19,000,000 convertible preferred
+  shares outstanding, liquidation preference $1,000 each, carried at **$18,023M**
+  (`ConvertiblePreferredStockNonredeemableOrRedeemableIssuerOptionValue`), with $86M of preferred
+  dividends in the quarter. All three are nil at 2026-03-31. CIQ's 'Total Pref. Equity' is that
+  carrying value to the dollar. *The review of this PR first called the line unverified, "no
+  preferred stock outstanding to our knowledge"; one EDGAR read settled it.*
 - **Net Debt nets beyond cash** on LLY ($796M) and EPAM ($0.046M).
 - **Every exit is held:** 69 rows (3 fiscal years × 23), no consensus line same-basis.
   - 22 lines miss the balance sheet in at least one of their last three reported years;
@@ -50,8 +57,12 @@ step, `ev_bridge_transform` — #689's `ev_bridge`. `mirror_to_frontend()` then 
   - **What it shows** (|claims − EDGAR|, $M, the 21 pages, measured 2026-10-09): ≤ $1M on 4
     (EPAM, SMPL, ROST, CNXC); largest GOOGL 18,023 (the preferred line above), AMZN 9,640, UBER
     2,858, LLY 2,158, V 1,905, NKE 1,454, TGT 1,019. Relative to claims the widest is **VITL —
-    CIQ $2.8M vs EDGAR $87.0M** (EDGAR's cash $21M against CIQ's $51M cash and ST investments),
-    then AORT $202M vs $331M. Reported, not investigated in this pass.
+    CIQ $2.8M vs EDGAR $87.0M**. Both legs differ: EDGAR's debt and leases are $108M against CIQ's
+    total debt of $54M, and EDGAR's cash is $21M against CIQ's $51M of cash and ST investments.
+    Then AORT, $202M vs $331M. Reported, not investigated in this pass.
+  - **Part of some gaps is by construction.** EDGAR's figure is net debt, so it leaves out the
+    preferred and minority the claims carry: all of GOOGL's, WLK's and PARR's gaps, and $1,083M
+    of UBER's. V's preferred runs the other way: it narrows V's gap from $2,419M to $1,905M.
 - **Balance-sheet dates** run from 2026-03-29 (VITL) to 2026-08-01 (BURL, ROST, TGT); 12 pages are
   at 2026-06-30.
 
@@ -84,8 +95,15 @@ step, `ev_bridge_transform` — #689's `ev_bridge`. `mirror_to_frontend()` then 
   amended.
 - **The extraction stamp lags the field.** No page's `extraction_version` moved: 22 still stamp
   `2026-08-16.1` and AMZN `2026-10-07.1`, while the field they now carry is named by
-  `2026-10-08.4`. A refresh transform does not re-stamp; a reader comparing stamps will not see
-  that these pages carry the bridge.
+  `2026-10-08.4`. That is the standing rule, not an oversight: re-stamping on refresh was ruled
+  the WRONG fix on 2026-08-17 (`2026-08-17-extraction-vintage-residue-closed-2026-08-17-fix.md`),
+  because a new stamp would claim the whole page was re-extracted. The unlock that record names —
+  a field recording that a refresh ran, and at which vintage — is still unbuilt and has no §5.0
+  row; it is raised as a separate task. Meanwhile presence is visible: `ev_bridge` is absent
+  until built.
+- **GOOGL's preferred is convertible, so the R4 template must count it once.** It is a claim the
+  bridge subtracts; if a share count ever includes its as-converted shares, the same value is
+  counted twice. GOOGL is R3 today, so nothing computes on it yet.
 - **The page does not show the bridge yet.** It is in the JSON (machine-complete). The R4 card
   render is a layout change under the preview rule, due before any R4 record.
 - **The build-up is CONFIRMED as the bridge.** Asked after the pass, the operator answered "yes
