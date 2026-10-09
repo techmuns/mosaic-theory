@@ -46,6 +46,10 @@ const EXTRACTION_VERSIONS = [
     "interest at the latest balance-sheet column, checked against CIQ's own TEV less market " +
     "cap, the consensus net-debt line tested for basis over three years, and the exit " +
     "default per the operator's rule"],
+  ["2026-10-09.1",
+    "a page records each change made to it after assembly (`layer_refreshes`): the layers that " +
+    "moved, the extraction version that ran the writer, the date and the writer — printed " +
+    "beside the stamp, which still names the assembly"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -56,6 +60,13 @@ const declaredVersion = (v) => (String(v ?? "").trim() || null);
 // An absent stamp renders VISIBLY: "unstamped" and "I did not look" are different states, and only
 // one of them is honest that the vintage is unknown.
 const stampLabel = (v) => declaredVersion(v) || UNSTAMPED;
+// (2026-10-09) LAYER REFRESHES — the twins of refreshed_to() / refresh_line() in
+// extraction_version.py. Printed BESIDE the stamp, never in place of it: the stamp names what
+// assembled the page, these name each later change and the code vintage that made it.
+const refreshedTo = (entries) =>
+  entries && entries.length ? stampLabel(entries[entries.length - 1].extraction_version) : null;
+const refreshLine = (e) =>
+  `${e.date} · ${(e.layers || []).join(", ")} — ${e.writer} at ${stampLabel(e.extraction_version)}`;
 const stampDetail = (v) => {
   const c = declaredVersion(v);
   if (!c) return `${UNSTAMPED} — assembled before extraction versions were declared; vintage unknown`;
@@ -935,7 +946,9 @@ function recordAndReproduce(d, verdict, card = null, followed = {}) {
   return `<div class="card ds-section"><div class="ds-title">Record &amp; reproduce</div>
     <div class="subtitle muted ds-sub">Everything needed to date, audit, or regenerate this document.</div>
     ${row("Data window", `screened as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>`)}
-    ${row("Extraction", escapeHtml(stampDetail(d.extraction_version)))}
+    ${row("Extraction", escapeHtml(stampDetail(d.extraction_version)))}${
+      (d.layer_refreshes || []).length ? row("Refreshed since assembly",
+        d.layer_refreshes.map((e) => escapeHtml(refreshLine(e))).join("<br>")) : ""}
     ${(() => { const n = panelAgeNote(d.mechanical, d.assembled_at); return n ? row("Panel age", escapeHtml(n)) : ""; })()}
     ${row("Synthesis", d.synthesis
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
@@ -2806,7 +2819,8 @@ function header(d) {
   return `<div class="header-block ds-header">
     <div class="ds-header-main">
       <h1 class="page-h">${escapeHtml(d.name || d.ticker)} <span class="page-h-id">(${d.exchange ? `${escapeHtml(d.exchange)}: ` : ""}<span class="mono">${escapeHtml(d.ticker)}</span>)</span></h1>
-      <div class="ds-meta">${fmtDate(d.assembled_at)} · extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}</span></div>
+      <div class="ds-meta">${fmtDate(d.assembled_at)} · extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}</span>${
+        refreshedTo(d.layer_refreshes) ? ` · layers refreshed to <span class="mono">${escapeHtml(refreshedTo(d.layer_refreshes))}</span>` : ""}</div>
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"

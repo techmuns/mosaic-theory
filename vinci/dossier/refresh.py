@@ -332,6 +332,16 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
 
     model = Dossier.model_validate(doc)
     new_json = dossier_json(model)
+    # THE PAGE RECORDS THIS REFRESH, and the vintage that ran it (`layer_refresh`, the 2026-08-17
+    # ruling's unlock). Only when a LAYER moved: a no-op refresh, or one that only re-renders the
+    # page, leaves the JSON — and so the record — byte-identical.
+    original = path.read_text()
+    if new_json != original:
+        from vinci.dossier import layer_refresh
+
+        if moved := layer_refresh.moved_layers(json.loads(original), json.loads(new_json)):
+            model = layer_refresh.append(model, layer_refresh.entry("refresh", moved))
+            new_json = dossier_json(model)
     new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
                              dossiers_root=path.parent.parent)
     md_path = path.with_name("dossier.md")

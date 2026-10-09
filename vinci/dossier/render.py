@@ -22,7 +22,12 @@ from typing import TYPE_CHECKING, Any, ParamSpec
 from vinci.config import get_config
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
-from vinci.dossier.extraction_version import stamp_detail, stamp_label
+from vinci.dossier.extraction_version import (
+    refresh_line,
+    refreshed_to,
+    stamp_detail,
+    stamp_label,
+)
 from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
     Dossier,
@@ -4190,6 +4195,14 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # telemetry, and its "data as of <screen-date>" contradicted the body's own per-fact as-ofs.
     # The full vintage map + model + pivot mechanics live in Record & reproduce at the end.
     ident = f"({d.exchange}: {d.ticker})" if d.exchange else f"({d.ticker})"
+    stamp_line = f"_{d.assembled_at:%B %-d, %Y} · extraction {stamp_label(d.extraction_version)}_"
+    if d.layer_refreshes:
+        # (2026-10-09) beside the stamp, never replacing it: the newest code that changed part of
+        # the page since its assembly (`layer_refreshes`). The stamp line is built WHOLE above and
+        # extended inside its italics here, so a page no writer has touched stays byte-identical
+        # and the header's stamp literal stays where its parity pin looks for it.
+        stamp_line = (stamp_line[:-1]
+                      + f" · layers refreshed to {refreshed_to(d.layer_refreshes)}_")
     out: list[str] = [
         f"# Dossier — {d.name} {ident}",
         "",
@@ -4197,7 +4210,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         # this was built; the version says with what — and "are these two dossiers comparable?"
         # turns on the second. Deliberately NOT confined to Record & reproduce: a stamp a reader
         # never meets cannot stop them comparing two vintages, which is 17b's failure exactly.
-        f"_{d.assembled_at:%B %-d, %Y} · extraction {stamp_label(d.extraction_version)}_",
+        stamp_line,
         "",
     ]
     # BEFORE the brief: a known-wrong marker has to reach the reader before the numbers do.
@@ -4360,6 +4373,11 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # a reader meets it; this carries the meaning, which is audit-tier context by the three-tier
         # rule and print-expanded regardless.
         f"- **Extraction:** {stamp_detail(d.extraction_version)}",
+        # (2026-10-09) each change since assembly, ONE PER LINE, oldest first — which layers, which
+        # writer, at which extraction version. Absent when no writer has touched the page.
+        *(["- **Refreshed since assembly** (oldest first):",
+           *(f"  - {refresh_line(e)}" for e in d.layer_refreshes)]
+          if d.layer_refreshes else []),
         # (spot audit) WHICH STORE, beside with-what and when. Rendered on every dossier and not
         # only when it looks unusual: `data/` is per-worktree by design, so two pages built the
         # same day can be struck days apart, and a reader cannot infer that from anything else on

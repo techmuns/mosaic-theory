@@ -40,6 +40,9 @@ minus the ambiguity 26a removes.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+from typing import Any
+
 # APPEND-ONLY — with ONE recorded exception, 2026-08-17. The `2026-08-16.1` row was AMENDED, not
 # appended to: its second clause claimed "the multiples stamps name their close (`Close [ISO]`)",
 # and #460 REVERTED that (those source_refs are join keys quoted verbatim by sealed synthesis
@@ -105,6 +108,12 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "cap, the consensus net-debt line tested for basis over three years, and the exit "
         "default per the operator's rule",
     ),
+    (
+        "2026-10-09.1",
+        "a page records each change made to it after assembly (`layer_refreshes`): the layers that "
+        "moved, the extraction version that ran the writer, the date and the writer — printed "
+        "beside the stamp, which still names the assembly",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
@@ -133,6 +142,26 @@ def stamp_label(version: str | None) -> str:
     """The short stamp shown beside the assembly date. Legacy records (assembled before 26a) carry
     no version and say so, rather than rendering nothing and reading as "no divergence here"."""
     return _declared(version) or UNSTAMPED
+
+
+def _field(entry: Any, key: str) -> Any:
+    """A layer-refresh entry's field, from the model (render) or a dict (the JSON twin's shape)."""
+    return entry.get(key) if isinstance(entry, dict) else getattr(entry, key, None)
+
+
+def refreshed_to(entries: Sequence[Any] | None) -> str | None:
+    """The extraction version of the LAST change recorded on a page after its assembly, or None.
+
+    Printed BESIDE the stamp, never in place of it: the stamp names what assembled the page, this
+    names the newest code that changed part of it. Neither alone says what the page is."""
+    return stamp_label(_field(entries[-1], "extraction_version")) if entries else None
+
+
+def refresh_line(entry: Any) -> str:
+    """One recorded change, for the audit tier: when, what moved, which writer, at which version."""
+    layers = ", ".join(_field(entry, "layers") or [])
+    return (f"{_field(entry, 'date')} · {layers} — {_field(entry, 'writer')} at "
+            f"{stamp_label(_field(entry, 'extraction_version'))}")
 
 
 def stamp_detail(version: str | None) -> str:
