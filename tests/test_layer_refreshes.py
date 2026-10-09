@@ -51,10 +51,12 @@ def test_a_refresh_that_moves_a_layer_records_it(
     from vinci.dossier.refresh import refresh_dossier
 
     path = _copy("UBER", tmp_path)
+    had = json.loads(path.read_text()).get("layer_refreshes") or []   # UBER carries its history
     monkeypatch.chdir(tmp_path)
     assert refresh_dossier(path, top_level=_with_bridge_note("reworded for the test"))
     doc = json.loads(path.read_text())
-    [rec] = doc["layer_refreshes"]
+    assert doc["layer_refreshes"][:len(had)] == had, "the history already recorded is kept"
+    [rec] = doc["layer_refreshes"][len(had):]
     assert rec["writer"] == "refresh" and rec["layers"] == ["ev_bridge"]
     assert rec["extraction_version"] == EXTRACTION_VERSION
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", rec["date"])
@@ -66,10 +68,10 @@ def test_a_refresh_that_moves_a_layer_records_it(
 
     # a second change appends, in the order the writers ran
     assert refresh_dossier(path, top_level=_with_bridge_note("reworded again"))
-    assert len(json.loads(path.read_text())["layer_refreshes"]) == 2
+    assert len(json.loads(path.read_text())["layer_refreshes"]) == len(had) + 2
 
 
-@pytest.mark.parametrize("ticker", ["UBER", "SMPL"])
+@pytest.mark.parametrize("ticker", ["UBER", "SMPL", "AMZN"])
 def test_a_no_op_refresh_records_nothing(
     ticker: str, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -83,7 +85,7 @@ def test_a_no_op_refresh_records_nothing(
     # The JSON is the record's home. (`dossier.md` may re-render here: SMPL's page prints its
     # underwrite card, which this temp root does not carry — a page-render fact, not a layer move.)
     refresh_dossier(path)
-    assert path.read_text() == before and '"layer_refreshes"' not in before
+    assert path.read_text() == before, "a no-op wrote the page"
 
 
 def test_moved_layers_names_the_mechanical_section() -> None:
@@ -107,10 +109,13 @@ def test_the_text_splice_round_trips_on_every_committed_page() -> None:
         twice = lr.upsert_text(once, lr.entry("own-history-refresh", ["mechanical.valuation"]))
         for got in (once, twice):
             assert dossier_json(Dossier.model_validate_json(got)) == got, t
-        cut = text.rfind('\n  "anchor": {')
-        assert once[:cut] == text[:cut] and once.endswith(text[cut:]), t
+        anchor_at = text.rfind('\n  "anchor": {')
+        held = text.find('\n  "layer_refreshes": ')
+        cut = held if held != -1 else anchor_at
+        assert once[:cut] == text[:cut] and once.endswith(text[anchor_at:]), t
+        had = [e.writer for e in Dossier.model_validate_json(text).layer_refreshes or []]
         writers = [e.writer for e in Dossier.model_validate_json(twice).layer_refreshes or []]
-        assert writers == ["anchor-backfill", "own-history-refresh"], t
+        assert writers == [*had, "anchor-backfill", "own-history-refresh"], t
 
 
 def test_the_splice_refuses_a_layout_it_cannot_see() -> None:
