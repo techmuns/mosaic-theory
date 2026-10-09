@@ -162,10 +162,10 @@ def test_the_multiple_says_what_an_unruled_median_would_propose() -> None:
     doc = _page("AMZN")
     series = next(s for s in doc["forward_multiple_history"]["series"]
                   if s["metric"] == "EV/NTM EBIT")
-    series["band"].update(current=10.0, low=20.0, high=40.0, median=30.0)
+    series["band"].update(latest_observed_close=10.0, low=20.0, high=40.0, median=30.0)
     why = build_r4_template(copy.deepcopy(doc))["scenarios"]["base"]["_multiple_why_no_anchor"]
     assert "OUTSIDE" in why and "3.0×" in why
-    series["band"].update(current=25.0)
+    series["band"].update(latest_observed_close=25.0)
     why = build_r4_template(doc)["scenarios"]["base"]["_multiple_why_no_anchor"]
     assert "OUTSIDE" not in why
 

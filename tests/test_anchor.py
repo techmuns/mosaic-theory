@@ -617,7 +617,9 @@ def test_an_anchor_that_does_not_fire_serialises_without_the_key() -> None:
     """The field is additive: an anchor it does not apply to writes NO key, so the committed pages
     it does not fire on stay byte-identical — and one it fires on carries the whole block."""
     quiet = Anchor(recipe_hint=RECIPE_R1, applicable=True, computed_at=_now())
-    assert "midcycle_gap" not in insert_anchor_block('{\n  "ticker": "X"\n}\n', quiet)
+    # the KEY is absent — the anchor's `scenario_eligibility` now NAMES the field, as one of R1's
+    assert "midcycle_gap" not in json.loads(
+        insert_anchor_block('{\n  "ticker": "X"\n}\n', quiet))["anchor"]
     loud = quiet.model_copy(update={"midcycle_gap": _gap(_AMZN, basis=(2025, 0.112, 0.112))})
     assert '"midcycle_gap"' in insert_anchor_block('{\n  "ticker": "X"\n}\n', loud)
 
