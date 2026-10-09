@@ -16415,11 +16415,11 @@
     "estimates_sha256": "e10ed62223"
   },
   "anchor": {
-    "recipe_hint": "R3_forward_pe",
+    "recipe_hint": "R4_forward_ev_ebit",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-10-09T07:59:20.404225Z",
-    "reason": "OPERATOR RE-TAG 2026-10-07. The machine proposes R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite routes AMZN to R3 - EPS x forward P/E, an EQUITY basis, the recipe GOOGL is underwritten on. Both of R1's inputs are flagged on this page: the LTM operating margin (12.1%) sits 6.8 points above the 10-FY median R1 reverts to (5.3%), and the consensus EBITDA row adds back 3.14x the D&A in the actuals, so an EV/EBITDA leg mixes definitions. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+    "reason": "OPERATOR RE-TAG 2026-10-09. R3 -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 23.3x); R1 cannot anchor - the EBITDA basis is divergent (consensus-implied D&A 3.14x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. EBIT is the one earnings line with no GAAP/normalized fork. The bridge is CIQ's TEV claims less market cap (ev_bridge). The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": null,
     "data_quality_detail": [],
     "margin": {

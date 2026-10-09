@@ -74,12 +74,21 @@ def test_every_field_the_r4_recipe_reads_is_settable_from_the_template() -> None
             "ebit_derivation", "multiple_derivation"} <= settable
 
 
-@pytest.mark.parametrize("ticker", ["SMPL", "AMZN", "GOOGL"])
+@pytest.mark.parametrize("ticker", ["SMPL", "GOOGL"])
 def test_a_page_not_tagged_r4_keeps_its_template(ticker: str) -> None:
-    """The dispatch keys on the R4 tag alone: an R1 page (SMPL) and the two R3 pages keep the
+    """The dispatch keys on the R4 tag alone: an R1 page (SMPL) and an R3 page (GOOGL) keep the
     template they had — measured byte-identical on all 26 committed pages before this shipped."""
     tpl = build_template(_page(ticker, tag=None))
     assert tpl["multiple_basis"] == "EV/EBITDA" and "revenue" in tpl["scenarios"]["base"]
+
+
+@pytest.mark.parametrize("ticker", ["AMZN", "UBER"])
+def test_the_pages_tagged_r4_get_the_r4_template_as_committed(ticker: str) -> None:
+    """The committed re-tags (2026-10-09), unmodified: the page's OWN tag selects the R4 shape."""
+    doc = _page(ticker, tag=None)
+    assert doc["anchor"]["recipe_hint"] == sc.RECIPE_R4
+    tpl = build_template(doc)
+    assert tpl["recipe_id"] == sc.RECIPE_R4 and tpl["multiple_basis"] == sc.BASIS_EV_NTM_EBIT
 
 
 # --- the bridge ----------------------------------------------------------------------------------
