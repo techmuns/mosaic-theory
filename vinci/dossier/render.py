@@ -1840,6 +1840,12 @@ def _ref_value(value: float, unit: str) -> str:
     return f"${s}{unit[1:]}" if unit.startswith("$") else f"{s}{unit}"
 
 
+#: An axis whose heading is not its capitalised name. `ebit` would print "Ebit"; the card's twin
+#: (`uw-card.js` `axisLabel`) says "NTM EBIT at exit ($M)". Every other axis keeps `capitalize()`,
+#: so R1/R2/R3 pages stay byte-identical.
+_AXIS_HEADING: dict[str, str] = {"ebit": "NTM EBIT at exit"}
+
+
 def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
     """(addition #1, 2026-07-27) "How these numbers were set" — the per-AXIS methodology behind the
     underwrite: a method sentence and the SOURCE-BOUND reference points each leg was chosen
@@ -1863,7 +1869,7 @@ def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
         # twins disagree whenever only one of the pair was set. The date is shown when present.
         stamp = (f" · ratified{f' {a.ratified}' if a.ratified else ''}" if a.ratified_by
                  else " · **DRAFT — not ratified by the analyst**")
-        out += [f"### {axis.capitalize()}{stamp}", "", a.method, ""]
+        out += [f"### {_AXIS_HEADING.get(axis, axis.capitalize())}{stamp}", "", a.method, ""]
         if a.references:
             # The SOURCE is an ENDNOTE, not a third column. Main-body cites resolve to the Sources
             # list in this repo (frontend/lib/cites.js states the two sanctioned modes; inline is
@@ -3134,6 +3140,21 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
     return out
 
 
+def _card_thousands(v: float | None, emitted_places: int | None) -> str:
+    """A whole-$M figure EXACTLY as the card prints it — the md and web twins print one number.
+
+    The card shows `thousands(x)` = JS `Math.round` of the value the emitter sent, and the emitter
+    sends `round(v, places)` (`frontend/build.py` `_rd`) for `ev`/`equity` and the raw value for
+    `ebit` and the facts. `Math.round` takes .5 UP; Python's own `:,.0f` takes .5 to EVEN.
+    Formatting the raw value here split the twins by $1M on AMZN's R4 preview bull leg (EV
+    5,181,375 against the card's 5,181,376), so this applies the card's two roundings in the
+    card's order."""
+    if v is None:
+        return "—"
+    x = round(v, emitted_places) if emitted_places is not None else v
+    return f"{math.floor(x + 0.5):,}"
+
+
 def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     """(md/web parity) The bear/base/bull table + each scenario's recorded REASON — the web's
     'Scenario analysis' card. The assumptions ARE the argument on the buy side, so the reasons
@@ -3153,6 +3174,11 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     # carries its number. R1/R2 legs always carry both, so their tables stay byte-identical.
     any_rev = any(x.revenue is not None for x in card.scenarios.values())
     any_marg = any(x.margin is not None for x in card.scenarios.values())
+    # (R4) the EV/NTM EBIT leg's driver, and the bridge it is valued through — the card's
+    # `enterpriseRows`, as columns. Present only when a leg carries `ebit`, so every R1/R2/R3 table
+    # stays byte-identical. Every figure is the RECORD's (`ev`/`equity` per leg, `net_debt` fact).
+    any_ebit = any(x.ebit is not None for x in card.scenarios.values())
+    claims = card.facts["net_debt"].value if any_ebit and "net_debt" in card.facts else None
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         p = per.get(nm)
@@ -3171,8 +3197,13 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
         rev_cell = (f" {'—' if s.revenue is None else f'{s.revenue:,.0f}'} |") if any_rev else ""
         marg_cell = f" {marg} |" if any_marg else ""
         eps_cell = (f" {'—' if s.eps is None else f'${s.eps:,.3f}'} |") if any_eps else ""
-        rows.append(f"| {nm} |{rev_cell}{eps_cell}{marg_cell} {s.multiple:g}x | "
-                    f"{'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
+        ebit_cell = f" {_card_thousands(s.ebit, None)} |" if any_ebit else ""
+        bridge_cells = "".join(
+            f" {_card_thousands(v, places)} |" for v, places in ((p.ev, 1), (claims, None),
+                                                                 (p.equity, 1))
+        ) if any_ebit else ""
+        rows.append(f"| {nm} |{rev_cell}{eps_cell}{ebit_cell}{marg_cell} {s.multiple:g}x |"
+                    f"{bridge_cells} {'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
     if not rows:
         return []
     # (item 1e) the % column is computed against the record's FROZEN spot, not the live close that
@@ -3181,11 +3212,16 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     # it here would assert a vintage the record cannot support (see `_underwrite_lines`).
     rev_head, rev_rule = (" revenue $M |", " ---: |") if any_rev else ("", "")
     eps_head, eps_rule = (" EPS |", " ---: |") if any_eps else ("", "")
+    ebit_head, ebit_rule = (" NTM EBIT at exit $M |", " ---: |") if any_ebit else ("", "")
     marg_head, marg_rule = (" margin |", " ---: |") if any_marg else ("", "")
+    bridge_head, bridge_rule = (
+        (" EV $M | less TEV claims $M | equity $M |", " ---: | ---: | ---: |")
+        if any_ebit else ("", ""))
     out = [f"_{card.recipe_desc}_", "",
-           f"| scenario |{rev_head}{eps_head}{marg_head} multiple | value / sh | "
-           "vs entry-vintage spot |",
-           f"| --- |{rev_rule}{eps_rule}{marg_rule} ---: | ---: | ---: |", *rows, ""]
+           f"| scenario |{rev_head}{eps_head}{ebit_head}{marg_head} multiple |{bridge_head} "
+           "value / sh | vs entry-vintage spot |",
+           f"| --- |{rev_rule}{eps_rule}{ebit_rule}{marg_rule} ---: |{bridge_rule} ---: | ---: |",
+           *rows, ""]
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         if s is not None and s.reason:
