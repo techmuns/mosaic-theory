@@ -188,14 +188,14 @@ def _page(ticker: str) -> dict[str, Any]:
 
 
 def test_a_record_across_the_pages_forward_recipe_is_refused() -> None:
-    """AMZN's page carries the operator's R3 tag; an R4 record must not be written across it
-    until the page is re-tagged — the first cut let it through, because the gate only knew R1."""
+    """A page's forward recipe tag refuses a record on the OTHER one — the first cut let an R4
+    record through on AMZN's R3 page, because the gate only knew R1. GOOGL carries R3 and AMZN R4
+    (re-tagged 2026-10-09), so each refuses the other's recipe."""
     with pytest.raises(ProposalRefusedError, match="disagrees with record recipe"):
-        check_tier_agreement(_page("AMZN"), sc.RECIPE_R4)
-    doc = _page("AMZN")
-    doc["anchor"]["recipe_hint"] = sc.RECIPE_R4
+        check_tier_agreement(_page("GOOGL"), sc.RECIPE_R4)
+    assert _page("AMZN")["anchor"]["recipe_hint"] == sc.RECIPE_R4
     with pytest.raises(ProposalRefusedError, match="disagrees with record recipe"):
-        check_tier_agreement(doc, sc.RECIPE_R3)
+        check_tier_agreement(_page("AMZN"), sc.RECIPE_R3)
 
 
 def test_a_record_on_the_pages_own_recipe_passes() -> None:

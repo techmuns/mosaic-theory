@@ -407,7 +407,9 @@ def test_the_template_never_truncates_a_driver_value() -> None:
             ev = build_template(doc)["_evidence"]
         except Exception:                       # a name the proposer refuses is out of scope here
             continue
-        blob = "\n".join(ev["revenue"])
+        # EVERY AXIS, not just revenue: an R4 template files its drivers under `ebit`/`multiple`
+        # (AMZN and UBER since their 2026-10-09 re-tags); no-truncation covers both shapes
+        blob = "\n".join(line for lines in ev.values() for line in lines)
         for r in rows:
             val = str(r.get("value") or "")
             if val:

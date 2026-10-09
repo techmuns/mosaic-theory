@@ -66,8 +66,13 @@ def _with_count(t: str) -> dict[str, Any]:
 
 
 def _r1(doc: dict[str, Any]) -> Anchor:
-    """The page's own anchor as R1's stand-in — the conditions read only its `applicable` bit."""
-    return Anchor.model_validate(doc["anchor"])
+    """R1's OWN read, standing in for the build's fresh anchor: the page's anchor with its committed
+    TAG replaced by what R1's tagger says for that `applicable` bit. A committed tag is the
+    operator's (AMZN and UBER carry R4 since 2026-10-09), and the proposal is made on R1's read,
+    never on a tag — reading the tag would make "unchanged" look like "proposed"."""
+    a = Anchor.model_validate(doc["anchor"])
+    return a.model_copy(update={"recipe_hint": "R1_midcycle_margin_evebitda" if a.applicable
+                                else "R2_NEEDED"})
 
 
 # --- the count IS the prose's count -------------------------------------------------------------
@@ -195,7 +200,9 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
     for t, committed in (("AMZN", "R3_forward_pe"), ("UBER", "R2_NEEDED")):
         folder = tmp_path / t
         folder.mkdir()
-        shutil.copy(DOSS / t / "dossier.json", folder / "dossier.json")
+        page = _page(t)                     # CONSTRUCTED: the tags each page carried before the
+        page["anchor"]["recipe_hint"] = committed      # 2026-10-09 re-tags, so the copy disagrees
+        (folder / "dossier.json").write_text(json.dumps(page))
         doc = _with_count(t)
         doc["caveats"] = []
         fresh = Dossier.model_validate(
@@ -205,6 +212,18 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
         assert kept.anchor is not None and kept.anchor.recipe_hint == committed
         [cav] = [c for c in kept.caveats if c.startswith("Recipe kept")]
         assert f"proposes {rp.RECIPE_R4}" in cav and "R3 cannot price it cleanly" in cav
+    # the committed state today: R4 tagged, R4 proposed — agreement, so no "kept" caveat at all
+    for t in ("AMZN", "UBER"):
+        folder = tmp_path / f"{t}-now"
+        folder.mkdir()
+        shutil.copy(DOSS / t / "dossier.json", folder / "dossier.json")
+        doc = _with_count(t)
+        doc["caveats"] = []
+        fresh = Dossier.model_validate(
+            {**doc, "anchor": json.loads(rp.propose(doc, _r1(doc)).model_dump_json())})
+        kept = _keep_committed_recipe(fresh, folder)
+        assert kept.anchor is not None and kept.anchor.recipe_hint == rp.RECIPE_R4
+        assert not [c for c in kept.caveats if c.startswith("Recipe kept")], t
     new = tmp_path / "NEW"
     new.mkdir()
     assert _keep_committed_recipe(fresh, new).anchor.recipe_hint == rp.RECIPE_R4  # type: ignore[union-attr]
