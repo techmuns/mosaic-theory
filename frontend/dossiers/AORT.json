@@ -12806,6 +12806,106 @@
     "source_sha256": "528430a2ed",
     "source_ref": "CIQ Estimates→Surprise (Fiscal Years · Company Level: Actual, Estimate, Announced Date)"
   },
+  "ev_bridge": {
+    "balance_sheet_date": "2026-03-31",
+    "lines": [
+      {
+        "label": "Total Debt",
+        "sign": 1,
+        "value": 258.157,
+        "as_of": "2026-03-31",
+        "source": "CIQ Financials→Balance Sheet [Q1 Mar-31-2026]"
+      },
+      {
+        "label": "Total Cash & ST Investments",
+        "sign": -1,
+        "value": 55.764,
+        "as_of": "2026-03-31",
+        "source": "CIQ Financials→Balance Sheet [Q1 Mar-31-2026]"
+      },
+      {
+        "label": "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)",
+        "sign": -1,
+        "value": 0.0,
+        "as_of": "2026-03-31",
+        "source": "CIQ Financials→Balance Sheet [Q1 Mar-31-2026]: Total Debt − Total Cash & ST Investments − 'Net Debt'"
+      },
+      {
+        "label": "Total Pref. Equity",
+        "sign": 1,
+        "value": 0.0,
+        "as_of": "2026-03-31",
+        "source": "CIQ Financials→Balance Sheet [Q1 Mar-31-2026]"
+      },
+      {
+        "label": "Total Minority Interest",
+        "sign": 1,
+        "value": 0.0,
+        "as_of": "2026-03-31",
+        "source": "CIQ Financials→Balance Sheet [Q1 Mar-31-2026]"
+      }
+    ],
+    "claims": 202.393,
+    "net_debt": 202.393,
+    "ciq_tev_claims": 202.4,
+    "ciq_tev_claims_source": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
+    "edgar_net_debt": 330.651,
+    "edgar_source": "EDGAR: total debt 363 + finance leases 4 + operating leases 41 − cash 77 ($M)",
+    "consensus": {
+      "years": [
+        {
+          "fiscal_year": 2022,
+          "fiscal_year_end": "2022-12-31",
+          "reported": 272.577,
+          "balance_sheet": 317.478,
+          "balance_sheet_date": "2022-12-31",
+          "gap_ratio": 0.125833
+        },
+        {
+          "fiscal_year": 2021,
+          "fiscal_year_end": "2021-12-31",
+          "reported": 257.79,
+          "balance_sheet": 307.033,
+          "balance_sheet_date": "2021-12-31",
+          "gap_ratio": 0.136014
+        },
+        {
+          "fiscal_year": 2016,
+          "fiscal_year_end": "2016-12-31",
+          "reported": 14.932,
+          "balance_sheet": 14.943,
+          "balance_sheet_date": "2016-12-31",
+          "gap_ratio": 0.000154
+        }
+      ],
+      "same_basis": false,
+      "current": false,
+      "forward": {},
+      "note": null
+    },
+    "exit_claims": [
+      {
+        "fiscal_year": "FY 2026",
+        "value": 202.393,
+        "method": "held"
+      },
+      {
+        "fiscal_year": "FY 2027",
+        "value": 202.393,
+        "method": "held"
+      },
+      {
+        "fiscal_year": "FY 2028",
+        "value": 202.393,
+        "method": "held"
+      }
+    ],
+    "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "source_file": "Artivion Inc NYSE AORT Financials_Quarterly.xls",
+    "source_sha256": "b935655879",
+    "estimates_sha256": "528430a2ed"
+  },
   "anchor": {
     "recipe_hint": "R2_NEEDED",
     "applicable": true,
