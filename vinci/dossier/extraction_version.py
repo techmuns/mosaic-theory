@@ -100,9 +100,10 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
     ),
     (
         "2026-10-08.4",
-        "CIQ's TEV claims beside the page (`ev_bridge`): total debt, preferred, minority interest, "
-        "cash and long-term marketable securities as CIQ builds its enterprise value, the "
-        "consensus net-debt line tested for basis, and the exit default per the operator's rule",
+        "CIQ's current TEV claims beside the page (`ev_bridge`): Net Debt + preferred + minority "
+        "interest at the latest balance-sheet column, checked against CIQ's own TEV less market "
+        "cap, the consensus net-debt line tested for basis over three years, and the exit "
+        "default per the operator's rule",
     ),
 )
 

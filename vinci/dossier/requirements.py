@@ -120,7 +120,7 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         freq="quarterly",
         sheets=(
             "Multiples", "Income Statement", "Balance Sheet", "Cash Flow",
-            "Capital Structure Details", "Capital Structure Summary", "Historical Capitalization",
+            "Capital Structure Details", "Capital Structure Summary",
         ),
         used_for=(
             "valuation-range position / multiple percentiles (ev_ebitda_current, "
@@ -136,9 +136,7 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
             "sheet, declared because it is READ during selection even though it is almost never "
             "the one used: CIQ ships no quarterly capital detail, so this workbook repeats the "
             "annual sections under a newer workbook-level note, and _cs_details_freq rejects it "
-            "for exactly that reason (see the annual module below) — and HISTORICAL "
-            "CAPITALIZATION for the one line of CIQ's TEV build-up the balance sheet does not "
-            "carry, long-term marketable securities, at its last reported period (ev_bridge)"
+            "for exactly that reason (see the annual module below)"
         ),
         granularity=Granularity.QUARTERLY,
         lookback=(

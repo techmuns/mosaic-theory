@@ -639,31 +639,38 @@ class HistoricalForecastError(BaseModel, frozen=True):
 
 
 class ClaimLine(BaseModel, frozen=True):
-    """One line of CIQ's own TEV build-up — what it adds to market capitalisation, or subtracts,
-    to reach the enterprise value its multiples divide. `sign` is +1 for a claim (debt, preferred,
-    minority interest) and −1 for an offset (cash, long-term marketable securities)."""
+    """One line of CIQ's current TEV build-up — what it adds to market capitalisation, or nets, to
+    reach the enterprise value its multiples divide. `sign` is +1 for a claim (debt, preferred,
+    minority interest) and −1 for an offset (cash, and what CIQ's Net Debt nets beyond cash)."""
 
-    label: str                       # the CIQ row, verbatim
+    label: str                       # the CIQ row verbatim, or the derived line, named
     sign: Literal[1, -1]
-    value: float                     # $M, as CIQ prints it (≥ 0 for every line in the corpus)
-    as_of: str | None = None         # the balance-sheet date, or the filing date it was priced at
+    value: float                     # $M
+    as_of: str | None = None         # the balance-sheet date
     source: str
 
 
-class ConsensusNetDebtCheck(BaseModel, frozen=True):
-    """Is CIQ's consensus 'Net Debt' line on the balance sheet's basis? Its last REPORTED fiscal
-    year is set against CIQ's own Total Debt − Total Cash & ST Investments at that year-end. Brokers
-    define net debt their own way — AMZN's reported FY2025 is −$57,381M against +$55,518M on CIQ's
-    balance sheet — so the forward line is used only where the reported one matches."""
+class ConsensusYear(BaseModel, frozen=True):
+    """One reported year of CIQ's consensus 'Net Debt' line against the balance sheet's Net Debt."""
 
     fiscal_year: int
     fiscal_year_end: str             # the year-end the reported figure refers to
     reported: float                  # the consensus line's FY actual, $M
-    balance_sheet: float | None = None   # CIQ Total Debt − Total Cash & ST Investments there
+    balance_sheet: float | None = None   # CIQ's balance-sheet 'Net Debt' at that year-end
     balance_sheet_date: str | None = None
     gap_ratio: float | None = None   # |reported − balance_sheet| ÷ max(|balance_sheet|, total debt)
+
+
+class ConsensusNetDebtCheck(BaseModel, frozen=True):
+    """Is CIQ's consensus 'Net Debt' line on the balance sheet's basis? Each of its last reported
+    years is set against CIQ's balance-sheet Net Debt at that year-end. Brokers define net debt
+    their own way — AMZN's reported FY2025 is −$57,381M against +$55,518M on CIQ's balance sheet —
+    and ONE matching year is not evidence: NKE's matched in FY2026 (0.09%) after missing by 22–28%
+    in each of FY2020–25. `same_basis` needs every checked year to agree."""
+
+    years: list[ConsensusYear]       # the last reported years, newest first
     same_basis: bool
-    current: bool                    # the reported year is the latest completed one
+    current: bool                    # the newest reported year is the latest completed one
     forward: dict[str, float] = {}   # the line's forward consensus by fiscal year, $M
     note: str | None = None
 
@@ -680,12 +687,11 @@ class EvBridge(BaseModel, frozen=True):
     """(EV bridge) The claims between CIQ's enterprise value and equity — the bridge an enterprise
     recipe (R4) subtracts from TEV, read on THE MULTIPLE'S OWN BASIS.
 
-    CIQ STATES ITS BUILD-UP (Financials→Historical Capitalization): TEV = market cap − cash & ST
-    investments + total debt + preferred equity + minority interest − long-term marketable
-    securities. `claims` is that build-up less market cap. It equals Total Debt − Total Cash & ST
-    Investments (CIQ's 'Net Debt', the comps sheet's figure) only where the other three lines are
-    nil: on 2026-10-08 they differ on 11 of 26 names, among them UBER ($6,550M against $9,340M) and
-    GOOGL ($18,023M of preferred).
+    `claims` is CIQ's CURRENT TEV build-up less market cap: Net Debt + preferred + minority
+    interest, each at the latest balance-sheet column. CIQ's 'Net Debt' nets long-term marketable
+    securities when that column discloses them and nothing when it does not. It equals CIQ's own
+    current TEV less market cap (`ciq_tev_claims`, from the comps export) on 26 of 26 names on
+    2026-10-09; the page says so where it does not.
 
     THE EXIT DEFAULT FOLLOWS THE OPERATOR'S RULE (2026-10-08). A same-basis consensus is used where
     one exists, with the other claims held; otherwise today's claims are held. It is never derived
@@ -697,7 +703,9 @@ class EvBridge(BaseModel, frozen=True):
     balance_sheet_date: str | None = None
     lines: list[ClaimLine]
     claims: float                    # TEV − market cap, $M
-    net_debt: float                  # Total Debt − Total Cash & ST Investments, $M, shown beside it
+    net_debt: float                  # CIQ's balance-sheet 'Net Debt' (the comps figure), $M
+    ciq_tev_claims: float | None = None      # CIQ's own current TEV − market cap, $M — a check
+    ciq_tev_claims_source: str | None = None
     edgar_net_debt: float | None = None  # the anchor's figure, a cross-check, $M
     edgar_source: str | None = None
     consensus: ConsensusNetDebtCheck | None = None

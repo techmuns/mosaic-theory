@@ -1,17 +1,23 @@
-"""`ev_bridge` — CIQ's TEV claims, the bridge an enterprise recipe (R4) subtracts from TEV.
+"""`ev_bridge` — CIQ's current TEV claims, the bridge an enterprise recipe (R4) subtracts from TEV.
 
-CIQ STATES ITS BUILD-UP (Financials→Historical Capitalization): TEV = market cap − cash & ST
-investments + total debt + preferred + minority interest − long-term marketable securities. `claims`
-is that less market cap. CIQ's 'Net Debt' (Total Debt − Total Cash & ST Investments, the comps
-figure) equals it only where the other three lines are nil: on 2026-10-08 they differ on 11 of 26
-names (UBER $6,550M against $9,340M; GOOGL $18,023M of preferred).
+CIQ's comps sheet builds TEV as market cap + Net Debt + preferred + minority interest. `claims` is
+that less market cap, every line read at ONE dated balance-sheet column, the latest. CIQ's 'Net
+Debt' nets long-term marketable securities when that column discloses them and nothing when it does
+not.
+On 2026-10-09 the claims equal CIQ's own current TEV less market cap on 26 of 26 names.
+
+THE FIRST CUT WAS WRONG ON UBER (2026-10-08): it carried Q1's long-term securities ($3,873M) into
+a Q2 press-release column, after Historical Capitalization's "last reported" footnote, and read
+$6,550M against the $10,423M CIQ's current TEV — and the multiple R4 anchors on — uses. Its 26/26
+check had validated the formula at filing dates, never the balance sheet the multiple uses. The pins
+below compare against CIQ's CURRENT figure.
 
 The exit default follows the operator's rule (2026-10-08): a same-basis, current consensus net-debt
-line with the other claims held, else today's claims held — never current − FCF, never manual.
+line — matching the balance sheet in each of its last three reported years — with preferred and
+minority held; else today's claims held. Never current − FCF, never manual.
 
 The pins run on frozen DERIVED values (`tests/fixtures/ev_bridge_cases.json`), so they gate in CI.
-The local pins re-read the exports and, the strongest test here, rebuild CIQ's own TEV − market cap
-from balance-sheet rows on every committed name.
+The local pins re-read the exports.
 """
 from __future__ import annotations
 
@@ -41,14 +47,24 @@ def _line(b: EvBridge, label: str) -> float:
 # --- the build-up -----------------------------------------------------------------------------
 
 @pytest.mark.parametrize("ticker", sorted(CASES))
-def test_claims_are_the_signed_sum_of_ciqs_build_up(ticker: str) -> None:
+def test_claims_are_ciqs_current_tev_less_market_cap(ticker: str) -> None:
+    """The quantity the multiple embeds: CIQ's own current TEV − market cap (comps export)."""
+    b = _bridge(ticker)
+    assert b.ciq_tev_claims is not None
+    assert b.claims == pytest.approx(b.ciq_tev_claims, abs=0.5)
+    assert b.note is None or "DISAGREES" not in b.note
+
+
+@pytest.mark.parametrize("ticker", sorted(CASES))
+def test_claims_are_the_signed_sum_of_the_lines(ticker: str) -> None:
     b = _bridge(ticker)
     assert b.claims == pytest.approx(sum(ln.sign * ln.value for ln in b.lines), abs=1e-3)
-    assert b.net_debt == pytest.approx(
-        _line(b, "Total Debt") - _line(b, "Total Cash & ST Investments"), abs=1e-3)
+    assert b.net_debt == pytest.approx(_line(b, "Total Debt") - _line(
+        b, "Total Cash & ST Investments") - _line(b, cs._NETTED_LABEL), abs=1e-3)
     assert {ln.label for ln in b.lines} == {
-        "Total Debt", "Total Pref. Equity", "Total Minority Interest",
-        "Total Cash & ST Investments", "Long Term Marketable Securities"}
+        "Total Debt", "Total Cash & ST Investments", cs._NETTED_LABEL, "Total Pref. Equity",
+        "Total Minority Interest"}
+    assert len({ln.as_of for ln in b.lines}) == 1, "every line at ONE balance-sheet column"
 
 
 def test_amzn_s_claims_are_its_net_debt() -> None:
@@ -56,16 +72,21 @@ def test_amzn_s_claims_are_its_net_debt() -> None:
     assert b.claims == b.net_debt == pytest.approx(128647.0)
 
 
-def test_uber_s_claims_are_not_its_net_debt() -> None:
-    """Minority interest is ADDED and long-term marketable securities SUBTRACTED, the second at its
-    last reported period (Q1) beside a Q2 press-release balance sheet — CIQ's own footnoted rule."""
+def test_uber_carries_no_securities_its_latest_column_does_not_disclose() -> None:
+    """THE REGRESSION. UBER's latest balance sheet is a Q2 press release that discloses no
+    long-term securities, so CIQ nets none: claims = Net Debt $9,340M + minority $1,083M =
+    $10,423M. The first cut subtracted Q1's $3,873M and read $6,550M."""
     b = _bridge("UBER")
+    assert _line(b, cs._NETTED_LABEL) == 0.0
     assert b.net_debt == pytest.approx(9340.0)
     assert _line(b, "Total Minority Interest") == pytest.approx(1083.0)
-    ltms = next(ln for ln in b.lines if ln.label == "Long Term Marketable Securities")
-    assert ltms.value == pytest.approx(3873.0) and ltms.sign == -1
-    assert ltms.as_of == "2026-03-31" and b.balance_sheet_date == "2026-06-30"
-    assert b.claims == pytest.approx(6550.0)
+    assert b.claims == pytest.approx(10423.0) and b.ciq_tev_claims == pytest.approx(10423.0)
+
+
+def test_lly_s_net_debt_nets_the_securities_its_column_discloses() -> None:
+    b = _bridge("LLY")
+    assert _line(b, cs._NETTED_LABEL) == pytest.approx(796.0)
+    assert b.claims == b.net_debt == pytest.approx(45162.0)
 
 
 def test_googl_carries_its_preferred() -> None:
@@ -91,37 +112,38 @@ def test_the_exit_default_follows_the_rule(ticker: str) -> None:
             assert e.method == "held" and e.value == pytest.approx(b.claims)
 
 
-def test_nke_s_same_basis_current_line_sets_the_exit() -> None:
-    """NKE's reported FY2026 net debt ($2,006M) sits 0.09% from CIQ's balance sheet ($2,016M)."""
+def test_one_matching_year_is_a_coincidence_not_a_basis() -> None:
+    """NKE's line matched in FY2026 (0.09%) after missing by 25–28% in FY2024–25. The first cut
+    tested the last year only, passed it, and set NKE's exit from broker forecasts."""
     c = _bridge("NKE").consensus
-    assert c is not None and c.same_basis and c.current
-    assert c.gap_ratio is not None and c.gap_ratio < cs.CONSENSUS_SAME_BASIS_MAX
-    assert {e.method for e in _bridge("NKE").exit_claims} == {"consensus"}
+    assert c is not None and len(c.years) == cs.CONSENSUS_SAME_BASIS_YEARS
+    assert c.years[0].gap_ratio is not None and c.years[0].gap_ratio < cs.CONSENSUS_SAME_BASIS_MAX
+    assert any(y.gap_ratio is not None and y.gap_ratio > 0.2 for y in c.years[1:])
+    assert not c.same_basis
+    assert {e.method for e in _bridge("NKE").exit_claims} == {"held"}
 
 
-def test_a_stale_same_basis_line_is_not_used() -> None:
-    """MVST's line matches (0.31%) — on FY2021. A same-basis line that stopped is not a forecast."""
+def test_a_line_checkable_on_one_year_is_not_a_basis() -> None:
     b = _bridge("MVST")
-    assert b.consensus is not None and b.consensus.same_basis and not b.consensus.current
+    assert b.consensus is not None and not b.consensus.same_basis
     assert {e.method for e in b.exit_claims} == {"held"}
+    assert b.note is not None and "checked on only 1 of its last 3" in b.note
 
 
 def test_a_stale_line_is_not_used_even_with_forward_values() -> None:
-    """CONSTRUCTED from MVST's REAL check — its stale line has no forward values, so on the corpus
-    the `current` guard changes nothing. Injected with one, the line must still not be used."""
+    """CONSTRUCTED from MVST's REAL check, marked same-basis and given a forward value: a line whose
+    newest reported year is not the latest completed one is not a forecast."""
     b = _bridge("MVST")
-    assert b.consensus is not None
-    check = b.consensus.model_copy(update={"forward": {"FY 2027": 50.0}})
+    assert b.consensus is not None and not b.consensus.current
+    check = b.consensus.model_copy(update={"same_basis": True, "forward": {"FY 2027": 50.0}})
     got, note = cs.exit_claims_for(b.claims, b.net_debt, check, ["FY 2027"])
     assert [e.method for e in got] == ["held"]
     assert note is not None and "stopped before the latest completed year" in note
 
 
-def test_a_consensus_exit_keeps_the_other_claims() -> None:
-    """CONSTRUCTED from UBER's REAL bridge — the one consensus name, NKE, has no preferred, minority
-    or long-term securities, so on the corpus "forward net debt" and "forward net debt + the other
-    claims" coincide. Marked usable, UBER's line must carry its −$2,790M of other claims (minority
-    +$1,083M, long-term marketable securities −$3,873M) into every exit year."""
+def test_a_consensus_exit_keeps_preferred_and_minority() -> None:
+    """CONSTRUCTED from UBER's REAL bridge — no committed line qualifies today. Marked usable, the
+    line's forward net debt must carry UBER's $1,083M of minority interest into every exit year."""
     b = _bridge("UBER")
     assert b.consensus is not None and b.consensus.forward
     usable = b.consensus.model_copy(update={"same_basis": True, "current": True})
@@ -129,21 +151,24 @@ def test_a_consensus_exit_keeps_the_other_claims() -> None:
     got, note = cs.exit_claims_for(b.claims, b.net_debt, usable, fys)
     assert note is None and [e.method for e in got] == ["consensus"] * len(fys)
     for e in got:
-        assert e.value == pytest.approx(usable.forward[e.fiscal_year] - 2790.0, abs=1e-3)
+        assert e.value == pytest.approx(usable.forward[e.fiscal_year] + 1083.0, abs=1e-3)
 
 
 def test_a_broker_basis_line_is_not_used() -> None:
     """AMZN's line reports −$57,381M for FY2025 against +$55,518M on CIQ's balance sheet."""
     c = _bridge("AMZN").consensus
     assert c is not None and not c.same_basis
-    assert c.reported == pytest.approx(-57381.0) and c.balance_sheet == pytest.approx(55518.0)
+    assert c.years[0].reported == pytest.approx(-57381.0)
+    assert c.years[0].balance_sheet == pytest.approx(55518.0)
 
 
 def test_a_52_53_week_year_end_still_finds_its_balance_sheet() -> None:
     """SMPL's year ends on a Saturday; matching the banner's date exactly found no column."""
     c = _bridge("SMPL").consensus
-    assert c is not None and c.balance_sheet is not None and c.balance_sheet_date is not None
-    assert c.balance_sheet_date != c.fiscal_year_end
+    assert c is not None
+    y = c.years[0]
+    assert y.balance_sheet is not None and y.balance_sheet_date is not None
+    assert y.balance_sheet_date != y.fiscal_year_end
 
 
 @pytest.mark.parametrize("cell,want", [("Q2\nJun-30-2026", "2026-06-30"),
@@ -192,10 +217,9 @@ def test_the_live_read_matches_the_frozen_case(ticker: str) -> None:
     assert got == _bridge(ticker)
 
 
-def test_the_build_up_reproduces_ciqs_own_tev_less_market_cap_on_every_name() -> None:
-    """THE INDEPENDENT CHECK. Historical Capitalization prints CIQ's TEV and market cap per filing.
-    Rebuilt from the balance-sheet rows at the quarter that filing priced, plus its long-term
-    marketable securities, the claims must equal TEV − market cap — on every committed name."""
+def test_claims_equal_ciqs_current_figure_on_every_committed_name() -> None:
+    """THE INDEPENDENT CHECK, on the quantity the multiple uses: CIQ's current TEV − market cap from
+    the comps export, on every committed name with an export on this machine."""
     from vinci.dossier.ciq import CiqBundle
 
     root = ROOT / "data" / "manual" / "ciq"
@@ -207,32 +231,27 @@ def test_the_build_up_reproduces_ciqs_own_tev_less_market_cap_on_every_name() ->
         if not folder.is_dir():
             continue
         b = CiqBundle.from_files(page.name, sorted(p for p in folder.iterdir() if p.is_file()))
-        hc = b.sheet("financials", "Historical Capitalization", freq="quarterly")
-        bs = b.sheet("financials", "Balance Sheet", freq="quarterly")
-        hh, bh = cs._dated_header(hc), cs._dated_header(bs)
-        assert hh is not None and bh is not None, page.name
-        j = max(k for k in range(1, len(hc[hh])) if cs._column_date(hc[hh][k]))
-        tev = cs._row_at(hc, "= Total Enterprise Value (TEV)", j)
-        mcap = cs._row_at(hc, "Market Capitalization", j)
-        debt = cs._row_at(hc, "+ Total Debt", j)
-        when = cs._column_date(hc[hh][j])
-        assert tev is not None and mcap is not None and when is not None, page.name
-        k = next(k for k in range(len(bs[bh]) - 1, 0, -1)
-                 if (d := cs._column_date(bs[bh][k])) and d <= when
-                 and cs._row_at(bs, "Total Debt", k) == debt)
-        rebuilt = (sum(s * (cs._row_at(bs, lbl, k) or 0.0) for lbl, s in cs._TEV_CLAIM_ROWS)
-                   - (cs._row_at(hc, cs._LTMS_ROW, j) or 0.0))
-        assert rebuilt == pytest.approx(tev - mcap, abs=0.5), page.name
+        got = cs.ev_bridge(b, fy_periods=[])
+        assert got is not None and got.ciq_tev_claims is not None, page.name
+        assert got.claims == pytest.approx(got.ciq_tev_claims, abs=0.5), page.name
         compared += 1
     assert compared >= 20, f"only {compared} names compared — near-vacuous"
+
+
+def test_a_bridge_off_ciqs_current_figure_says_so(monkeypatch: pytest.MonkeyPatch) -> None:
+    """CONSTRUCTED on AMZN's real exports: if the comps export sits on another balance sheet, the
+    bridge must flag it rather than pass a mismatched figure to R4 in silence."""
+    b = _bundle("AMZN")
+    monkeypatch.setattr(cs, "_ciq_tev_claims", lambda _b: (120000.0, "test"))
+    got = cs.ev_bridge(b, fy_periods=[])
+    assert got is not None and got.note is not None and "DISAGREES" in got.note
 
 
 def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     tmp_path: pathlib.Path,
 ) -> None:
-    """END TO END on AMZN: both exports are the page's, so the layer lands — equal to the
-    builder's — and nothing else moves. NEGATIVE: another Estimates export, or no stamped bands,
-    leaves the page alone."""
+    """END TO END on AMZN: both exports are the page's, so the layer lands — and nothing else moves.
+    NEGATIVE: another Estimates export, or no stamped bands, leaves the page alone."""
     from vinci.dossier.refresh import ev_bridge_transform, refresh_dossier
 
     _bundle("AMZN")
@@ -250,8 +269,7 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     unstamped = json.loads(json.dumps(before))
     unstamped["mechanical"]["valuation"]["own_history"]["value"] = []
     assert step(unstamped) == {}
-    landed = step(before)
-    if not landed:
+    if not step(before):
         pytest.skip("the on-disk AMZN exports are not the page's")
     refresh_dossier(path, top_level=step)
     after = json.loads(path.read_text())
