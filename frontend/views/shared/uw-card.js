@@ -597,8 +597,12 @@ function legsTable(c) {
           : ""}
         ${onRevenueBasis(c) || !hasLegField(c, "margin") ? "" :
           row(isR2(c) ? "Terminal op margin" : "Op margin", (l) => pct(l.margin))}
-        ${hasLegField(c, "eps") ? row("EPS ($)", (l) => money(l.eps)) : ""}
-        ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}
+        ${hasLegField(c, "eps") ? row("EPS ($)", (l) => money(l.eps)) : ""}${
+          // (R4) joined onto the line above, not a line of its own: an empty `${}` on its own
+          // line still emits a newline, which made every R1/R2/R3 card's HTML differ by whitespace
+          hasLegField(c, "ebit") ? row("NTM EBIT at exit ($M)", (l) => thousands(l.ebit)) : ""}
+        ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}${
+          hasLegField(c, "ebit") ? enterpriseRows(c, row) : ""}
       </tbody>
     </table></div>
     <div class="uw-note muted">bull is range context — never in the ratio${
@@ -609,6 +613,18 @@ function legsTable(c) {
       <div class="uw-sec-h">Scenarios <span class="basis">${escapeHtml(basis)}</span></div>
       ${tableHtml}</div>`;
   return rail ? `<div class="uw-split">${main}${rail}</div>` : main;
+}
+
+// (R4) THE BRIDGE, WALKED. An EV/NTM EBIT leg reaches equity through enterprise value, so the
+// card carries the two steps between the driver and the value: EV (EBIT × the multiple, as the
+// record computed it) and the claims the record subtracts, then equity. Every number is the
+// RECORD's — `ev`/`equity` per leg, `net_debt` the fact — none is re-derived here. Shown only on a
+// record whose legs carry `ebit`, so R1/R2/R3 cards stay byte-identical.
+function enterpriseRows(c, row) {
+  const claims = ((c.facts || []).find((f) => f.key === "net_debt") || {}).value;
+  return row("EV ($M)", (l) => thousands(l.ev))
+    + row("less TEV claims ($M)", () => thousands(claims), { mutedLabel: true })
+    + row("Equity ($M)", (l) => thousands(l.equity));
 }
 
 // The per-leg reasoning, full card width, placed AFTER the rationale + thesis-breaks: the read
@@ -641,13 +657,15 @@ function axisLabel(axis, basis) {
   return axis === "revenue" ? "Revenue ($M)"
     : axis === "margin" ? "Op margin"
     : axis === "multiple" ? `Exit ${basis}`
-    : axis === "horizon" ? "Years to terminal" : axis;
+    : axis === "horizon" ? "Years to terminal"
+    : axis === "ebit" ? "NTM EBIT at exit ($M)" : axis;
 }
 function axisFmt(axis) {
   return axis === "revenue" ? thousands
     : axis === "margin" ? pct
     : axis === "multiple" ? (v) => oneDp(v, "×")
-    : axis === "horizon" ? (v) => oneDp(v, "y") : (v) => String(v);
+    : axis === "horizon" ? (v) => oneDp(v, "y")
+    : axis === "ebit" ? thousands : (v) => String(v);
 }
 
 // An assumption AXIS is not always spelled the same as the LEG FIELD carrying its chosen value.
@@ -661,10 +679,14 @@ function axisFmt(axis) {
 // force-opens in every PDF. R3 records model earnings/multiple, so without this line the chosen
 // trio for a P/E underwrite prints undefined where its only driver belongs (review of #542).
 const AXIS_LEG_KEY = { horizon: "yearsToTerminal", earnings: "eps" };
+// An axis whose name in running prose is not its key. Only `ebit`: every other axis already reads
+// as a word ("earnings", "multiple"), so R1/R2/R3 summaries stay byte-identical.
+const AXIS_WORD = { ebit: "NTM EBIT" };
 const axisLegValue = (leg, axis) => leg[AXIS_LEG_KEY[axis] || axis];
 // R3's axes are appended, not interleaved: a record carries EITHER the R1/R2 trio or the R3 pair,
 // so ordering both in one list costs nothing and keeps this a single source of truth.
-const AXIS_ORDER = ["revenue", "margin", "earnings", "multiple", "horizon"];
+// R4's `ebit` takes the driver slot beside R3's `earnings` — a record carries one or the other.
+const AXIS_ORDER = ["revenue", "margin", "earnings", "ebit", "multiple", "horizon"];
 function orderedAssumptions(c) {
   const rank = (a) => { const i = AXIS_ORDER.indexOf(a.axis); return i < 0 ? 99 : i; };
   return [...(c.assumptions || [])].sort((x, y) => rank(x) - rank(y));
@@ -822,7 +844,8 @@ function methodFact(c) {
   // "revenue, margin and multiple" over an R3 card whose axes are earnings and multiple — a
   // heading contradicting the list beneath it. Naming the axes the record actually carries is
   // both correcter and shorter than another basis branch.
-  const named = orderedAssumptions(c).map((a) => a.axis);
+  // (R4) `ebit` reads as its quantity, not its key — "ebit and multiple" printed the field name.
+  const named = orderedAssumptions(c).map((a) => AXIS_WORD[a.axis] || a.axis);
   const axes = named.length
     ? named.slice(0, -1).join(", ") + (named.length > 1 ? " and " : "") + named[named.length - 1]
     : "each";
@@ -843,6 +866,10 @@ function crossChecks(c) {
   const order = ["bear", "base", "bull"];
   const legs = order.map((n) => (c.scenarios || []).find((s) => s.name === n)).filter(Boolean);
   if (!legs.length || !legs.some((l) => l.evEbit != null || l.normFcf != null)) return "";
+  // (R4) NOT A CROSS-CHECK THERE: on an EV/NTM EBIT record the leg's EV/EBIT IS its input
+  // multiple, and no normalized FCF is computed, so this block would "verify" a number against
+  // itself. The legs table above already walks EV → claims → equity.
+  if (hasLegField(c, "ebit")) return "";
   const row = (label, fn) => `<tr><td>${escapeHtml(label)}</td>${
     legs.map((l) => `<td class="num">${fn(l)}</td>`).join("")}</tr>`;
   // own class, NOT uw-method-h: cross-checks are verification math, not methodology, and the

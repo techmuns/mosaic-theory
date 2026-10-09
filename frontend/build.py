@@ -467,6 +467,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
              # R1/R2 cards stay byte-identical under the emit-determinism pin — and so a P/E card
              # stops showing every input EXCEPT the one that produced its value (review of #542).
              **({"eps": s["eps"]} if s.get("eps") is not None else {}),
+             # (R4) NTM EBIT at exit, the EV/NTM EBIT leg's only driver — emitted the same
+             # conditional way, so every R1/R2/R3 card stays byte-identical, and so an R4 card does
+             # not show every input except the one that produced its value (#688's record).
+             **({"ebit": s["ebit"]} if s.get("ebit") is not None else {}),
              **({"valuePerShare": _rd(o["value_per_share"], 2), "opIncome": _rd(o["op_income"], 1),
                  "ebitda": _rd(o["ebitda"], 1), "ev": _rd(o["ev"], 1),
                  "equity": _rd(o["equity"], 1), "evEbit": _rd(o.get("ev_ebit"), 1),
