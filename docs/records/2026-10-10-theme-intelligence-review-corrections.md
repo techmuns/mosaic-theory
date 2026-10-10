@@ -175,7 +175,10 @@ answers content-cached (a replay costs nothing). Worked output: `docs/theme_inte
   times in the 32 registries of this round's runs (27 REVIEW_UNSUPPORTED, 16
   NUMBER_NOT_IN_CITED_CLAIMS), because a line citing no verified claim is labelled MODEL INFERENCE
   by composition; 39 of 39 for this round's fixes (one more, a "third ask", was equivalent — the
-  loop raises on the second — and was replaced by a mutant of the raise itself). Gate: `ruff check vinci tests frontend` clean; `mypy --strict vinci` clean (176 files); `pytest -m "not network"` 4,575 passed, 507 skipped, 37 deselected, 0 failed — on the final tree (`5c9f3b9a` plus the worked output, fixtures and docs committed with it).
+  loop raises on the second — and was replaced by a mutant of the raise itself). Gate on the
+  merged tree (`048753db` = `5c9f3b9a`, the worked output / fixtures / docs, and main's #704):
+  `ruff check vinci tests frontend` clean; `mypy --strict vinci` clean (176 files);
+  `pytest -m "not network"` 4,576 passed, 507 skipped, 37 deselected, 0 failed.
 
 **BOUNDARY.** Runs: commit `5c9f3b9a`, 2026-10-10; model `claude-opus-4-8`; prompts
 `ti-extract-6` / `ti-complete-1` / `ti-review-4`; each article replayed AS OF the date shown.
