@@ -19,9 +19,22 @@ nothing here reads prices, returns, or any other package's outcomes):
           the last quarter — the model's horizon label is recorded, never decisive); a
           source-named EXPOSURE — a point-in-time-verified listed common equity OR a sector /
           theme the source names (a sector opportunity needs no ticker); a verified dislocation
-          or catalyst; the source ASSERTS the premise (not conditional / speculative / merely
-          reported); counter-evidence does not outweigh support; FULL retrieval; source
-          reliability not low; no verification hold
+          or catalyst — OR a NEAR-TERM FUNDAMENTAL INFLECTION (below); the source ASSERTS the
+          premise (not conditional / speculative / merely reported); counter-evidence does not
+          outweigh support; FULL retrieval; source reliability not low; no verification hold
+  INFLECTION — the narrow second route (review of PR #703, round 3). ALL of: (1) a verified
+          claim stating a CHANGE in a FUNDAMENTAL (its verbatim quote names a price / revenue /
+          margin / demand / supply / shipments … AND says rise / fall / grow / QoQ / YoY …, with
+          a figure; never a share-price or valuation move, never a technical metric) whose
+          window is inside the next 2-4 quarters or was measured in the last one; (2) CREDIBLE —
+          not a forecast alone: a corroborating MEASURED CHANGE (a measured observation whose
+          quote states a change, with a figure) in the thesis's verified evidence, or the
+          change is the publisher's OWN data in an industry data report (a
+          price tracker forecasting the price it tracks), never a commentator's projection;
+          (3) CLEAR ECONOMICS — a fundamental transmission step the source itself states; (4) a
+          CONCRETE RESEARCH QUESTION — a source-named exposure to ask it about, composed into
+          the decision trace ("do expectations for X already reflect Y in Z?"). A market-regime
+          record never takes this route (it argues no earnings mechanism).
   WATCH   everything else — the failed NOW conditions are listed as the reason
 
 Publication COUNT is not a factor anywhere: repeated articles about one origin add nothing,
@@ -31,6 +44,7 @@ tool holds no consensus, market-expectation or valuation data, and says so on ev
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import date
 
@@ -53,7 +67,7 @@ from vinci.theme_intelligence.schemas import (
     TransmissionStep,
 )
 from vinci.theme_intelligence.timewindow import timing_of
-from vinci.theme_intelligence.verify import EARNINGS_STEPS, claim_provenance
+from vinci.theme_intelligence.verify import EARNINGS_STEPS, claim_provenance, is_market_reaction
 
 VALUATION_STATUS = ("NOT_ASSESSED — the registry holds no consensus, market-expectation or "
                     "valuation data; an opportunity here is not valuation proof")
@@ -83,6 +97,48 @@ class ThesisState:
     as_of: date | None = None
     #: article id -> publication date (dates an observation that states no data date)
     published: tuple[tuple[str, date], ...] = ()
+    #: articles classed INDUSTRY DATA REPORT — a publisher reporting its own market data
+    data_report_articles: tuple[str, ...] = ()
+
+
+#: A claim states a CHANGE when its VERBATIM quote says so — read from the source, never from the
+#: model's wording.
+_CHANGE = re.compile(r"\b(?:increas|rise|rising|rose|grow|grew|growth|accelerat|decelerat|"
+                     r"declin|fall|fell|drop|jump|surg|plung|rebound|recover|expand|"
+                     r"contracted|contracting|contraction|"  # never the noun: "contract prices"
+                     r"QoQ|YoY|y-o-y|q-o-q|MoM|sequential)\w*", re.I)
+#: …and the changing variable is a FUNDAMENTAL: the verbatim quote names one (a price, revenue,
+#: margin, demand, supply, shipments, inventory, capex …). A technical or workload metric — "the
+#: share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%" (SemiAnalysis,
+#: 2026-09-28, observed qualifying in the 2026-10-10 run) — is not an earnings variable.
+_FUNDAMENTAL = re.compile(r"\b(?:prices?|pricing|ASPs?|revenues?|sales|margins?|earnings|EPS|"
+                          r"profits?|demand|shipments?|orders?|bookings?|backlog|capex|"
+                          r"capital expenditures?|spending|supply|inventor(?:y|ies)|volumes?|"
+                          r"utili[sz]ation|lead times?|costs?)\b", re.I)
+#: the publisher's own data, as the extractor records an unattributed figure
+_OWN = frozenset({"publisher_own", "publisher's own analysis", ""})
+
+
+def _fundamental_change(c: Claim) -> bool:
+    """A verified figure whose verbatim quote states a CHANGE in a FUNDAMENTAL — never a market
+    reaction (a share-price or valuation move)."""
+    return ((c.value is not None or any(ch.isdigit() for ch in (c.value_text or "")))
+            and c.number_verified is not False
+            and _CHANGE.search(c.quote) is not None
+            and _FUNDAMENTAL.search(c.quote) is not None
+            and not is_market_reaction(c.quote))
+
+
+def inflection_question(c: Claim, exposures: list[str]) -> str:
+    """The concrete research question an inflection poses — composed from the claim's STRUCTURED
+    fields and the source-named exposures, never written by a model."""
+    what = c.metric or "the change"
+    vt = c.value_text or ""
+    # the unit's words the figure does not already carry: "10–15%" + "% QoQ" → "10–15% QoQ"
+    unit = " ".join(w for w in (c.unit or "").split() if w not in vt)
+    fig = " ".join(x for x in (vt, unit) if x)
+    return (f"do current earnings estimates and market expectations for {', '.join(exposures)} "
+            f"already reflect {what} of {fig}" + (f" in {c.period}" if c.period else "") + "?")
 
 
 def _material(c: Claim) -> bool:
@@ -126,6 +182,23 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                 and claim_provenance(c) is Provenance.MEASURED_OBSERVATION)
             or (timing[c.claim_id][0] == "near_term" and c.kind is ClaimKind.EVENT)]
     not_counted = [c for c in offered if c not in disl]
+    # a NEAR-TERM FUNDAMENTAL INFLECTION (the narrow second route — see the module docstring)
+    candidates = [c for c in list({c.claim_id: c for c in st.supporting + st.dislocation
+                                   + st.catalyst}.values())
+                  if timing[c.claim_id][0] in ("near_term", "current")
+                  and claim_provenance(c) in (Provenance.FORECAST,
+                                              Provenance.MEASURED_OBSERVATION)
+                  and _fundamental_change(c)]
+    # corroboration is itself a MEASURED change in a fundamental, with a figure — an unrelated
+    # measured fact in the same thesis never vouches for a forecast
+    corroborating = [c for c in st.supporting + st.dislocation
+                     if claim_provenance(c) is Provenance.MEASURED_OBSERVATION
+                     and timing[c.claim_id][0] in ("current", "near_term")
+                     and _fundamental_change(c)]
+    primary = [c for c in candidates if c.article_id in st.data_report_articles
+               and (c.attributed_source_text or "").strip().lower() in _OWN]
+    credible = [c for c in candidates if c in primary
+                or any(m.claim_id != c.claim_id for m in corroborating)]
     # current MEASURED evidence of the thesis's own condition (the sell-off happened this week;
     # the regime is the market's state now) shows it can be investigated now
     current = [c for c in st.supporting if timing[c.claim_id][0] == "current"
@@ -147,6 +220,27 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
     windows = "; ".join(f"{c.claim_id}: {timing[c.claim_id][1]}" for c in near_claims[:4])
     exposures = ([f"{n} ({t})" for n, t in st.listed_exposures]
                  + [f"sector: {s}" for s in st.sector_exposures])
+    exposure_names = [n for n, _ in st.listed_exposures] + list(st.sector_exposures)
+    inflection_ok = bool(credible) and transmission == "source-shown" and bool(
+        exposure_names) and not regime
+    if not candidates:
+        inflection_note = "none — no verified near-term change in a fundamental"
+    elif regime:
+        inflection_note = "n/a — a market-regime record argues no earnings mechanism"
+    elif not credible:
+        inflection_note = (f"{len(candidates)} near-term change(s) but NOT credible — a forecast "
+                           f"alone: no corroborating measured observation, and not the "
+                           f"publisher's own data in an industry data report")
+    elif transmission != "source-shown":
+        inflection_note = "credible change but the source states no fundamental step"
+    elif not exposure_names:
+        inflection_note = "credible change but no source-named exposure to research"
+    else:
+        best = credible[0]
+        basis = ("the publisher's own data in an industry data report" if best in primary
+                 else "corroborated by a measured observation")
+        inflection_note = (f"{best.claim_id}: {timing[best.claim_id][1]} — {basis}; research "
+                           f"question: {inflection_question(best, exposure_names)}")
     factors = (
         PriorityFactor(factor_id="F1_source_reliability", value=st.reliability,
                        note="face-validity tier of the contributing channel(s)"),
@@ -190,6 +284,11 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                             + (f"; {len(not_counted)} offered but NOT counted (opinion, forecast "
                                f"figure or stale reading): {', '.join(ids(not_counted))}"
                                if not_counted else ""), claim_ids=ids(disl)),
+        PriorityFactor(factor_id="F12_fundamental_inflection",
+                       value="qualifies" if inflection_ok else
+                       "not credible" if candidates and not credible else
+                       "absent" if not candidates else "incomplete",
+                       note=inflection_note, claim_ids=ids(credible or candidates)),
         PriorityFactor(factor_id="F8_counterevidence", value=str(len(counter_mat)),
                        note=f"material counter-claims ({len(st.counter)} counter-claims in total)",
                        claim_ids=ids(list(st.counter))),
@@ -219,8 +318,10 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
         if not st.listed_exposures and not st.sector_exposures:
             unmet.append("no source-named exposure (no point-in-time-verified listed company, no "
                          "sector the source names)")
-        if not disl:
-            unmet.append("no verified dislocation or catalyst")
+        if not disl and not inflection_ok:
+            unmet.append("no verified dislocation or catalyst" + (
+                f", and the near-term inflection does not qualify ({inflection_note})"
+                if candidates else ""))
         if st.stance is not StanceInSource.ASSERTED:
             unmet.append(f"premise is {st.stance.value} in the source")
         if counter_mat and len(counter_mat) >= len(support_mat):
@@ -236,11 +337,13 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
             fired = ["WATCH (RESEARCH NOW unmet: " + "; ".join(unmet) + ")"]
         else:
             action = ResearchAction.RESEARCH_NOW
+            route = (f"verified dislocation/catalyst ({len(disl)} claim(s))" if disl else
+                     f"a near-term fundamental inflection — {inflection_note}")
             fired = ["NOW all conditions met — near-term window(s) " + windows
                      + "; source-named exposure(s): " + ", ".join(exposures)
-                     + f"; verified dislocation/catalyst ({len(disl)} claim(s)); premise "
-                       f"asserted; retrieval FULL; reliability {st.reliability}; no hold — an "
-                       f"INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"]
+                     + f"; {route}; premise asserted; retrieval FULL; reliability "
+                       f"{st.reliability}; no hold — an INVESTIGATION of the thesis, not a trade "
+                       f"(valuation NOT_ASSESSED)"]
 
     reason = f"initial assessment — {fired[0]}" if previous is None else (
         f"no change in action ({_diff_reason(previous_factors, factors)})"

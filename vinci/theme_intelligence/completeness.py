@@ -748,11 +748,20 @@ def _remap_hyp(h: XHypothesis, m: dict[str, str]) -> XHypothesis:
 def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
                  output: CompletenessOutput | None, article_version_id: str, run_id: str,
                  pass_ran: bool, note: str = "") -> CompletenessReport:
-    """Coverage re-derived from VERIFIED records, then the pass-1b verdicts for what is left."""
+    """Coverage re-derived from VERIFIED records, then the pass-1b verdicts for what is left.
+    Every gap left OPEN states its cause (`open_cause`), so an open gap is never mistaken for an
+    unexamined one — and never for a verified one."""
     local_of: dict[str, list[str]] = {}
     for lid, gid in ve.claim_map.items():
         local_of.setdefault(gid, []).append(lid)
     verified = ve.verified_claims
+
+    def linked(local_ids: list[str]) -> list[str]:
+        """The VERIFIED global claims a pass-1b account names (its local ids, renumbered by the
+        merge) — a claim that failed verification is never linked, so it cannot vouch."""
+        return _uniq([g for i in local_ids
+                      if (g := ve.claim_map.get(merged.renamed.get(i, i))) is not None])
+
     fig_reviews = {r.figure_id: r for r in (output.figure_reviews if output else [])}
     figures: list[FigureCheck] = []
     for f in ledger.figures:
@@ -761,6 +770,7 @@ def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
         p1b = [c.claim_id for c in cov
                if set(local_of.get(c.claim_id, [])) & merged.pass1b_claims]
         rv = fig_reviews.get(f.figure_id)
+        cause = ""
         if p1:
             status, ids, reason = "captured", p1, ""
         elif p1b:
@@ -769,12 +779,25 @@ def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
             status, ids, reason = "immaterial", [], rv.reason.strip()
         else:
             status, ids = "uncaptured", []
-            reason = ("the completeness pass did not run" if not pass_ran else
-                      "pass 1b claimed a capturing claim, but none verified" if rv is not None
-                      and rv.verdict == "captured_by_added_claim" else
-                      "no verified claim quotes it and no immaterial verdict was given")
+            # a claim quoting the figure exists but failed verification (its number or span):
+            # it stays out of every thesis, so the figure stays open
+            failed = [c.claim_id for c in ve.claims if c.block_id == f.block_id
+                      and c.claim_id not in local_of and quote_covers(c.quote, f.core)]
+            if not pass_ran:
+                cause, reason = "pass_not_run", "the completeness pass did not run"
+            elif failed:
+                cause = "verification_failed"
+                reason = (f"a claim quotes it ({', '.join(failed)}) but failed verification, so "
+                          f"it is never used as evidence")
+            elif rv is not None and rv.verdict == "captured_by_added_claim":
+                cause, reason = ("capture_not_verified",
+                                 "pass 1b claimed a capturing claim, but none verified")
+            else:
+                cause, reason = ("no_account", "no verified claim quotes it and no immaterial "
+                                               "verdict was given")
         figures.append(FigureCheck(block_id=f.block_id, figure=f.text, sentence=f.sentence[:240],
-                                   status=status, claim_ids=tuple(ids), reason=reason))
+                                   status=status, claim_ids=tuple(ids), reason=reason,
+                                   open_cause=cause))
     anchored_blocks = {c.block_id for c in verified} | {m.block_id for m in ve.mentions}
     for h in ve.hypotheses:
         anchored_blocks |= {s.block_id for s in h.sectors}
@@ -783,19 +806,32 @@ def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
     blocks: list[BlockCheck] = []
     for bid in ledger.argument_blocks:
         rv2 = blk_reviews.get(bid)
+        hids = [i for i in rv2.hypothesis_ids if i in hyp_ids] if rv2 is not None else []
+        cids = linked(rv2.claim_ids) if rv2 is not None else []
         if bid in anchored_blocks:
             blocks.append(BlockCheck(block_id=bid, status="anchored"))
         elif rv2 is not None and rv2.verdict == "immaterial" and rv2.reason.strip():
             blocks.append(BlockCheck(block_id=bid, status="immaterial", reason=rv2.reason.strip()))
-        elif rv2 is not None and (hids := [i for i in rv2.hypothesis_ids if i in hyp_ids]):
+        elif rv2 is not None and (hids or cids):
+            # an account is CHECKABLE when it names a verified hypothesis or verified claim
             blocks.append(BlockCheck(block_id=bid, status="covered" if rv2.verdict == "covered"
-                                     else "added", hypothesis_ids=tuple(hids),
+                                     else "added",
+                                     hypothesis_ids=tuple(hids), claim_ids=tuple(cids),
                                      reason=rv2.reason.strip()))
+        elif not pass_ran:
+            blocks.append(BlockCheck(block_id=bid, status="unreviewed",
+                                     reason="the completeness pass did not run",
+                                     open_cause="pass_not_run"))
+        elif rv2 is not None:
+            blocks.append(BlockCheck(
+                block_id=bid, status="unreviewed", open_cause="account_names_no_record",
+                reason=(f"pass 1b called it {rv2.verdict} — "
+                        f"{rv2.reason.strip() or 'no reason given'!r} — but named no verified "
+                        f"claim or hypothesis, so the account cannot be checked")))
         else:
             blocks.append(BlockCheck(
-                block_id=bid, status="unreviewed",
-                reason="the completeness pass did not run" if not pass_ran else
-                "no verified claim sits in it and pass 1b gave no verifiable account"))
+                block_id=bid, status="unreviewed", open_cause="no_account",
+                reason="no verified claim sits in it and pass 1b gave no account of it"))
     without = tuple(b for b in ledger.argument_blocks if b not in anchored_blocks)
     added_mentions = sum(1 for mm in ve.mentions
                          if mm.name_as_written.lower() in merged.pass1b_mentions)

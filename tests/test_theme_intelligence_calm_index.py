@@ -123,14 +123,24 @@ def test_both_authors_are_credited_and_the_disagreement_recorded(calm: Pipeline)
     assert issues and "Nick Roberts" in issues[0].detail
 
 
-def test_article_date_and_first_detected_are_apart(calm: Pipeline, tmp_path: Path) -> None:
-    _, v = _utilities(calm)
-    assert v.content.header.latest_article_date is not None
-    assert v.content.header.latest_article_date.isoformat() == "2026-10-02"
-    assert v.content.header.first_detected == CALM_AS_OF
+def test_three_dates_are_kept_apart(calm: Pipeline, tmp_path: Path) -> None:
+    """Review of PR #703, round 3, FIX 5: the publisher's date, the registry's ACTUAL first
+    ingestion (wall clock, UTC) and the analysis as-of are three fields, never conflated. Observed
+    2026-10-10: the card printed the run's AS-OF as "first detected by the registry" — in a
+    historical replay that is a simulated date, not a detection."""
+    t, v = _utilities(calm)
+    h = v.content.header
+    assert h.latest_article_date is not None
+    assert h.latest_article_date.isoformat() == "2026-10-02"
+    assert h.first_ingested_at == t.created_at  # the wall clock …
+    assert h.first_detected == t.created_at.date()
+    assert h.analysis_as_of == v.as_of == CALM_AS_OF  # … never the as-of
     out = write_run_outputs(calm.store, calm.store.runs()[-1].run_id, tmp_path / "out")
     html = (tmp_path / "out" / "dashboard.html").read_text()
-    assert "Article date 2026-10-02" in html and "first detected by the registry 2026-10-10" in html
+    assert "Published 2026-10-02" in html
+    assert f"first ingested by the registry {t.created_at:%Y-%m-%d %H:%M} UTC" in html
+    assert f"analysed as of {CALM_AS_OF.isoformat()}" in html
+    assert "first detected by the registry" not in html  # the conflating label is gone
     assert "not necessarily new to the market" in html
     assert len(out["cards"]) == 2
 
@@ -152,8 +162,9 @@ def test_the_card_opens_on_a_compact_decision_view_without_engine_codes(
     for el in soup.select(".aud, .auditbar, script, input, details.sec"):
         el.decompose()
     first = soup.get_text(" ", strip=True)
-    assert "Article date 2026-10-02" in first
-    assert "first detected by the registry 2026-10-10" in first
+    assert "Published 2026-10-02" in first
+    assert f"first ingested by this registry {t.created_at:%Y-%m-%d %H:%M} UTC" in first
+    assert f"analysed as of {CALM_AS_OF.isoformat()}" in first
     assert "SOURCE OPINION" in first and "MODEL INFERENCE" in first  # labels stay visible
     for code in (t.thesis_id, "C-", "novelty_unverified", "WATCH (RESEARCH NOW unmet", "NOW all",
                  "F5_", "F7_"):

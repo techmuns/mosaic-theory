@@ -70,6 +70,69 @@ RETRIEVAL_CAVEAT_CODES = frozenset({"RETRIEVAL_BLOCKED", "NO_BODY", "PARTIAL_RET
 COMPLETENESS_CAVEAT_CODES = frozenset({"FIGURE_UNCAPTURED", "ARGUMENT_UNACCOUNTED",
                                        "COMPLETENESS_PASS_NOT_RUN"})
 
+#: Research-verification statuses — how much of what a run READ is accounted for. Kept apart from
+#: the run's EXECUTION status (RunStatus): a scan can COMPLETE while what it read is not verified.
+VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLETE",
+                         "NOTHING_ANALYSED")
+
+
+def research_verification(store: Store, run: WeeklyRun) -> dict[str, Any]:
+    """The run's RESEARCH-VERIFICATION status, never folded into its execution status (review of
+    PR #703, round 3). Over the completeness ledgers THIS RUN recorded — one per analysed article
+    version:
+      FULLY_VERIFIED           every stated figure captured or judged immaterial, every argument
+                               paragraph accounted for, every completeness pass ran, full text read
+      VERIFIED_WITHIN_PREVIEW  as above, but at least one article was read only as a preview —
+                               its unread remainder is unread, not verified
+      INCOMPLETE               at least one figure or paragraph is OPEN, or a pass did not run
+      NOTHING_ANALYSED         the run recorded no ledger
+    Every open item is listed with its cause — never truncated. An unverified claim is never
+    linked to a thesis (QA checks it), so open material can hold a thesis back, never raise it."""
+    reps = store.completeness_for_run(run.run_id)
+    figures = [(r, f) for r in reps for f in r.figures]
+    blocks = [(r, b) for r in reps for b in r.blocks]
+    open_f = [(r, f) for r, f in figures if f.status == "uncaptured"]
+    open_b = [(r, b) for r, b in blocks if b.status == "unreviewed"]
+    not_run = sum(1 for r in reps if not r.pass_ran)
+    partial = run.counts.get("articles_partial", 0)
+    unreadable = run.counts.get("articles_blocked", 0) + run.counts.get("articles_no_body", 0)
+    causes: dict[str, int] = {}
+    for x in [f for _, f in open_f] + [b for _, b in open_b]:
+        causes[x.open_cause or "unclassified"] = causes.get(x.open_cause or "unclassified", 0) + 1
+    status = ("NOTHING_ANALYSED" if not reps else
+              "INCOMPLETE" if open_f or open_b or not_run else
+              "VERIFIED_WITHIN_PREVIEW" if partial else "FULLY_VERIFIED")
+    population = (f"over the {len(reps)} article(s) this run analysed: {len(open_f)} of "
+                  f"{len(figures)} stated figure(s) and {len(open_b)} of {len(blocks)} argument "
+                  f"paragraph(s) open")
+    summary = {
+        "FULLY_VERIFIED": f"every figure and argument paragraph accounted for, full text read "
+                          f"({population})",
+        "VERIFIED_WITHIN_PREVIEW": f"everything READ is accounted for, but {partial} article(s) "
+                                   f"were read only as a preview — the rest is unread, not "
+                                   f"verified ({population})",
+        "INCOMPLETE": f"NOT fully verified — {population}"
+                      + (f"; {not_run} completeness pass(es) did not run" if not_run else "")
+                      + ("; causes: " + ", ".join(f"{k} {v}" for k, v in sorted(causes.items()))
+                         if causes else "")
+                      + (f"; {partial} article(s) read only as a preview" if partial else "")
+                      + ". Open material is never used as evidence, so it can hold a thesis "
+                        "back but never raise its research action",
+        "NOTHING_ANALYSED": "no article was analysed in this run",
+    }[status] + (f"; {unreadable} article(s) unreadable — not analysed" if unreadable else "")
+    return {
+        "status": status, "summary": summary, "articles": len(reps),
+        "figures": len(figures), "figures_open": len(open_f),
+        "paragraphs": len(blocks), "paragraphs_open": len(open_b),
+        "passes_not_run": not_run, "articles_preview_only": partial,
+        "articles_unreadable": unreadable, "open_causes": causes,
+        "open_items": [f"{r.article_version_id} {f.block_id} figure {f.figure!r} — "
+                       f"{f.open_cause or 'unclassified'}: {f.reason}" for r, f in open_f]
+        + [f"{r.article_version_id} {b.block_id} paragraph — {b.open_cause or 'unclassified'}: "
+           f"{b.reason}" for r, b in open_b],
+    }
+
+
 CATEGORY_ORDER = (WeeklyCategory.NEW, WeeklyCategory.UPGRADED, WeeklyCategory.DOWNGRADED,
                   WeeklyCategory.CHALLENGED, WeeklyCategory.UNCHANGED_MATERIAL,
                   WeeklyCategory.ARCHIVED)
@@ -217,7 +280,10 @@ class DashRow:
     card: str
     kind: str = ThesisKind.INVESTMENT_THESIS.value
     article_date: str | None = None
-    first_detected: str | None = None
+    #: when this registry ACTUALLY first ingested the thesis (wall clock, UTC)
+    first_ingested: str | None = None
+    #: the ANALYSIS as-of date of this version — simulated in a historical replay
+    analysis_as_of: str | None = None
     sector_exposures: list[str] = field(default_factory=list)
     why_action: str = ""
     rule_trace: list[str] = field(default_factory=list)
@@ -249,6 +315,8 @@ class Dashboard:
     notes: list[str] = field(default_factory=list)
     #: the KPI strip, in the words a reader uses (see `kpis`)
     kpi: dict[str, Any] = field(default_factory=dict)
+    #: the RESEARCH-VERIFICATION status (see `research_verification`) — apart from run status
+    verification: dict[str, Any] = field(default_factory=dict)
 
 
 def _sources_line(store: Store, tid: str, run_id: str) -> list[str]:
@@ -357,7 +425,8 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             flags=sorted(set(flags)), version=cur.version,
             card=cards.get(tid, {}).get("html", ""), kind=hdr.kind.value,
             article_date=hdr.latest_article_date.isoformat() if hdr.latest_article_date else None,
-            first_detected=(hdr.first_detected or t.created_as_of).isoformat(),
+            first_ingested=f"{t.created_at:%Y-%m-%d %H:%M} UTC",
+            analysis_as_of=cur.as_of.isoformat(),
             sector_exposures=[f"{x.name} ({x.direction.value})" for x in av.sector_exposures],
             why_action=why_action(cur.priority.rules_fired),
             rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit)
@@ -425,6 +494,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         caveats=caveats, categories=cats, no_material_change=no_material, archive=archive,
         validation=val, generated=generated)
     d.kpi = kpis(d, store)
+    d.verification = research_verification(store, run)
     return d
 
 
@@ -470,6 +540,20 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     }
 
 
+def dates_line(r: DashRow) -> str:
+    """Three dates, never conflated: the publisher's, the registry's actual first ingestion (wall
+    clock, UTC) and the analysis as-of — which a historical replay sets BEFORE ingestion, so it is
+    never called a detection."""
+    replay = (r.analysis_as_of is not None and r.first_ingested is not None
+              and r.analysis_as_of < r.first_ingested[:10])
+    return (f"Published {r.article_date or 'UNKNOWN'} · first ingested by the registry "
+            f"{r.first_ingested or 'UNKNOWN'}"
+            + (" (new to the registry, not necessarily new to the market)"
+               if r.category == WeeklyCategory.NEW.value else "")
+            + f" · analysed as of {r.analysis_as_of or 'UNKNOWN'}"
+            + (" (a historical replay — a simulated date, not a detection)" if replay else ""))
+
+
 def why_action(rules: tuple[str, ...] | list[str]) -> str:
     """The deterministic rule that set the action, said plainly (the trace stays in the audit)."""
     if not rules:
@@ -479,6 +563,11 @@ def why_action(rules: tuple[str, ...] | list[str]) -> str:
     if m:
         return "Watch — not yet Research Now: " + m.group(1)
     if r.startswith("NOW "):
+        # the inflection route says WHY in the first view: its research question (no ids in it)
+        q = re.search(r"research question: (.*?\?)", r)
+        if "a near-term fundamental inflection" in r and q:
+            return ("Research Now — no dislocation or dated catalyst, but a credible near-term "
+                    f"change in a fundamental: {q.group(1)} (an investigation, not a trade)")
         return "Research Now — every condition met (an investigation, not a trade)"
     return re.sub(r"^SKIP-\d+ ", "Skip — ", r)
 
@@ -498,6 +587,8 @@ padding:10px 12px;border-radius:8px;font-weight:700;margin:0 0 12px}
 .kpi{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--card)}
 .kpi b{display:block;font-size:17px;line-height:1.3}
 .kpi small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.vstat{border:1px solid var(--line);border-left:4px solid var(--watch);border-radius:8px;
+padding:8px 12px;margin:0 0 12px}
 .kpi span{display:block;color:var(--muted);
 font-size:12px}
 .cat{margin:18px 0 6px;font:700 14px/1.3 ui-sans-serif,system-ui;text-transform:uppercase;
@@ -545,10 +636,7 @@ def _row_html(r: DashRow) -> str:
         f'<div class="row"><div class="meta"><span class="pill {pill}">{e(r.action)}</span>'
         f'<span class="pill dir">Evidence {e(r.evidence_direction)}</span>{kind}</div>'
         f'<h3><a href="{e(r.card)}">{e(r.title)}</a></h3>'
-        f'<div class="dates">Article date {e(r.article_date or "UNKNOWN")} · first detected by '
-        f'the registry {e(r.first_detected or "UNKNOWN")}'
-        + (" — new to the registry, not necessarily new to the market"
-           if r.category == WeeklyCategory.NEW.value else "") + "</div>"
+        f'<div class="dates">{e(dates_line(r))}</div>'
         f'<div class="k">What changed</div><ul>{li}</ul>{more}'
         f'<div class="k">Why this action</div><div>{e(r.why_action or change)}</div>'
         f'<div class="k">Exposure the source names</div><div>'
@@ -563,12 +651,22 @@ def _row_html(r: DashRow) -> str:
 def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                           embedded_cards: list[str] | None = None) -> str:
     run = d.run
+    v = d.verification or {}
     parts = [f'<div class="dash"><div class="id">Theme intelligence · weekly decision brief · '
-             f'run {e(run["run_id"])} · {e(run["status"])}</div><h1>What to research this week'
+             f'run {e(run["run_id"])} · scan execution {e(run["status"])} · research '
+             f'verification {e(v.get("status", "UNKNOWN"))}</div><h1>What to research this week'
              f'</h1><div class="note">Research attention only — no row is a purchase or sale. '
              f'Window {e(d.window)}.</div>']
     if d.banner:
         parts.append(f'<div class="banner">{e(d.banner)}</div>')
+    if v.get("status") != "FULLY_VERIFIED":
+        parts.append(f'<div class="vstat"><b>Research verification '
+                     f'{e(v.get("status", "UNKNOWN"))}</b> (the scan itself '
+                     f'{e(run["status"])}) — {e(v.get("summary", "not computed"))}.'
+                     + ('<details class="sec"' + (" open" if print_mode else "")
+                        + f'><summary>Open items ({len(v["open_items"])})</summary>'
+                        + "".join(f'<div class="s note">{e(x)}</div>' for x in v["open_items"])
+                        + "</details>" if v.get("open_items") else "") + "</div>")
     k = d.kpi or {}
     kp: list[tuple[str, ...]] = ([("Sources", "single article (manual URL) — no discovery")]
           if k.get("accessible_sources") is None else
@@ -589,6 +687,11 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     if k.get("figures_in_articles"):
         kp.append(("Reported figures not yet captured",
                    f"{k.get('figures_uncaptured', 0)} of {k['figures_in_articles']}"))
+    if v:
+        kp.append(("Research verification", str(v["status"]),
+                   f"{v['figures_open']} of {v['figures']} figures · {v['paragraphs_open']} of "
+                   f"{v['paragraphs']} paragraphs open — apart from the scan's "
+                   f"{run['status']}"))
     parts.append('<div class="kpis">' + "".join(
         f'<div class="kpi"><span>{e(t[0])}</span><b>{e(t[1])}</b>'
         + (f"<small>{e(t[2])}</small>" if len(t) > 2 else "") + "</div>" for t in kp)
@@ -669,8 +772,12 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
 
 def render_dashboard_md(d: Dashboard) -> str:
     run = d.run
-    md = [f"# What to research this week — run {run['run_id']} ({run['status']})", "",
+    v = d.verification or {}
+    md = [f"# What to research this week — run {run['run_id']}", "",
          "_Research attention only — no row is a purchase or sale._", "",
+         f"- Scan execution: {run['status']}",
+         f"- Research verification: {v.get('status', 'UNKNOWN')} — "
+         f"{v.get('summary', 'not computed')}",
          f"- Window: {d.window}"]
     if d.banner:
         md += ["", f"> **{d.banner}**", ""]
@@ -704,6 +811,9 @@ def render_dashboard_md(d: Dashboard) -> str:
                         or "—") + (f" ({s['truncation']})" if s.get("truncation") else "")
                      + " |")
         md.append("")
+    if v.get("open_items"):
+        md += [f"## Research verification — open items ({len(v['open_items'])})", ""] + [
+            f"- {x}" for x in v["open_items"]] + [""]
     if d.caveats:
         md += ["## Unresolved caveats", ""] + [f"- {c}" for c in d.caveats] + [""]
     for cat in CATEGORY_ORDER:
@@ -715,10 +825,7 @@ def render_dashboard_md(d: Dashboard) -> str:
             md += [f"### [{r.action}] {r.title}"
                    + (f" — {KIND_LABEL[ThesisKind(r.kind)]}"
                       if r.kind == ThesisKind.MARKET_REGIME.value else ""),
-                   f"- Article date {r.article_date or 'UNKNOWN'} · first detected by the registry "
-                   f"{r.first_detected or 'UNKNOWN'}"
-                   + (" (new to the registry, not necessarily new to the market)"
-                      if r.category == WeeklyCategory.NEW.value else ""),
+                   f"- {dates_line(r)}",
                    f"- Evidence direction: {r.evidence_direction}",
                    f"- Why this action: {r.why_action}", "- What changed:"]
             md += [f"  - {x}" for x in r.what_changed] or ["  - —"]
@@ -750,14 +857,16 @@ def render_dashboard_csv(d: Dashboard) -> str:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")  # LF: committed readouts stay diff-able
     w.writerow(["category", "research_action", "previous_action", "thesis_id", "version", "title",
-                "kind", "article_date", "first_detected", "evidence_direction", "what_changed",
+                "kind", "article_date", "first_ingested_utc", "analysis_as_of",
+                "evidence_direction", "what_changed",
                 "sources", "sector_exposures", "named_companies", "named_instruments",
                 "private_named", "other_named", "sectors", "next_action", "why_action",
                 "change_reason", "last_material_update", "status", "flags", "card"])
     for cat in CATEGORY_ORDER:
         for r in d.categories.get(cat.value, []):
             w.writerow([r.category, r.action, r.previous_action or "", r.thesis_id, r.version,
-                        r.title, r.kind, r.article_date or "", r.first_detected or "",
+                        r.title, r.kind, r.article_date or "", r.first_ingested or "",
+                        r.analysis_as_of or "",
                         r.evidence_direction, " | ".join(r.what_changed),
                         " | ".join(r.sources), " | ".join(r.sector_exposures),
                         " | ".join(r.named_companies),
@@ -821,6 +930,7 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
         "sources": [json.loads(sc.model_dump_json()) for sc in run.sources],
         "warnings": run.warnings,
         "verification": d.validation,
+        "research_verification": dict(d.verification),
         "theses_in_registry": len(d.archive),
         "outputs": sorted(str(p.relative_to(out)) for p in out.rglob("*") if p.is_file()),
         "output_dir": str(out),

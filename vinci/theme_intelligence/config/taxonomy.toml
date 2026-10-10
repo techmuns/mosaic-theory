@@ -180,3 +180,39 @@ label = "Low correlation / narrow breadth widens dispersion, so sector, theme or
 [[mechanism]]
 id = "other"
 label = "None of the above — the thesis is created REVIEW_NEEDED"
+
+# SEGMENTS — finer identity WITHIN a node, read from the VERBATIM quotes of a hypothesis's
+# verified evidence (never from the model's wording; never sent to the model). Two theses on the
+# same node, mechanism, direction and geography but naming different segments are DIFFERENT
+# theses, linked as SIBLINGS: evidence about enterprise SSD / NAND pricing does not confirm a
+# claim about DRAM / HBM capacity, and a fall in utility share prices says nothing direct about
+# demand for on-site generation. A hypothesis naming no segment term keeps the bare key.
+# Terms match whole words, case-insensitively. Adding a segment re-keys theses that name it.
+
+[[segment]]
+node = "ai_infrastructure.memory"
+id = "dram_hbm"
+label = "DRAM / HBM"
+terms = ["HBM", "high-bandwidth memory", "high bandwidth memory", "DRAM", "DDR4", "DDR5",
+         "LPDDR", "LPDDR5", "GDDR", "GDDR6", "GDDR7", "RDIMM", "host memory"]
+
+[[segment]]
+node = "ai_infrastructure.memory"
+id = "nand_ssd"
+label = "NAND / SSD"
+terms = ["NAND", "SSD", "SSDs", "flash", "QLC", "TLC", "eMMC", "UFS"]
+
+[[segment]]
+node = "ai_infrastructure.power_grid"
+id = "grid_utilities"
+label = "Grid-connected utilities"
+terms = ["utility", "utilities", "ratepayer", "ratepayers", "rate base", "grid-connected"]
+
+[[segment]]
+node = "ai_infrastructure.power_grid"
+id = "onsite_generation"
+label = "Behind-the-meter / on-site generation"
+terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
+         "onsite generation", "on-site power", "onsite power", "gas turbine", "gas turbines",
+         "fuel cell", "fuel cells", "reciprocating engine", "reciprocating engines"]
+

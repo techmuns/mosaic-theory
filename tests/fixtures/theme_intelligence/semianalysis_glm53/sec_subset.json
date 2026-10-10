@@ -1,0 +1,42 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC SEC data for the registrants this article names: ticker-map rows (company_tickers_exchange.json / _mf.json), submissions trimmed to periodic filings and 8-A12B registrations, and the inline-XBRL cover-page facts (dei:TradingSymbol / Security12bTitle / SecurityExchangeName) of the covers the as-of dates select",
+  "as_of_dates": [
+   "2026-09-28"
+  ],
+  "archive_url_template": "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
+ },
+ "exchange": {
+  "fields": [
+   "cik",
+   "name",
+   "ticker",
+   "exchange"
+  ],
+  "data": [
+   [
+    1045810,
+    "NVIDIA CORP",
+    "NVDA",
+    "Nasdaq"
+   ],
+   [
+    1759186,
+    "Z Squared Inc.",
+    "ZSQR",
+    "Nasdaq"
+   ]
+  ]
+ },
+ "mf": {
+  "fields": [
+   "cik",
+   "seriesId",
+   "classId",
+   "symbol"
+  ],
+  "data": []
+ },
+ "submissions": {},
+ "covers": {}
+}

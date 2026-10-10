@@ -191,7 +191,7 @@ def test_independent_evidence_next_week_versions_the_same_thesis(pipe: Pipeline)
     assert srcs == recorded
     html = render_html(v2.content, card_context(pipe.store, t, v2, generated="t"))
     table = html.split('data-field="s09_sources"', 1)[1].split("Version history", 1)[0]
-    assert table.count("Initial record") == 1 and table.count("New evidence") == 1
+    assert table.count("Initial record") == 1 and table.count("Direct confirmation") == 1
 
 
 # --- 4. later contradiction: a moved launch date -------------------------------------------------
@@ -264,14 +264,33 @@ def test_memory_optics_and_grid_are_siblings_never_merged(pipe: Pipeline) -> Non
     assert len(pipe.store.contributions()) == 3
 
 
-# --- 6. competing hypotheses ---------------------------------------------------------------------
+# --- 6. competing hypotheses: only a DIRECT contradiction challenges (review round 3, FIX 1) ----
 
-def test_bullish_recovery_and_bearish_disruption_are_linked_competitors(
+#: a direct contradiction of the JPM software thesis (software | valuation_dislocation | US, its
+#: evidence dated 2026): the same node, mechanism and geography, an overlapping window, the
+#: opposite outcome
+_DE_RATING = ("Software EV/sales multiples compressed a further 10% in 1Q26 as investors priced "
+              "in agent-driven seat losses.")
+
+
+def _de_rating_claim(cid: str = "c1", block: str = "b001") -> dict:
+    return claim(cid, block, _DE_RATING.rstrip("."), "Software EV/sales -10% in 1Q26",
+                 metric="software EV/sales multiple change", value=10, value_text="10%",
+                 unit="%", period="1Q26", scope="software sector")
+
+
+def test_bullish_recovery_and_bearish_seat_erosion_are_related_not_a_contradiction(
         tmp_path: Path) -> None:
+    """A bearish seat-erosion thesis on the same node as the bullish valuation thesis is a
+    DIFFERENT economic claim (another measured variable): linked as RELATED, never filed as
+    CONTRADICTS, never a WEAKER version, the incumbent's research action untouched."""
     pipe = make_pipeline(tmp_path)
     pipe.start_run("fixture", as_of=W1)
     ingest_jpm(pipe)
     bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
+    before = pipe.store.thesis_version(bull.thesis_id, 1)
+    assert before is not None
+    links_before = pipe.store.links(bull.thesis_id)  # the source's OWN counter-claims included
     bear = Hypo(slug="seat-compression", publisher="Hypo Research B", published=W1, blocks=[
         ("paragraph", "Seat counts at large SaaS vendors fell 8% in 4Q25 as coding agents "
                       "replaced junior developer licenses.")])
@@ -284,30 +303,59 @@ def test_bullish_recovery_and_bearish_disruption_are_linked_competitors(
     ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
     softs = [t for t in pipe.store.theses() if t.key_node == bull.key_node]
     assert len(softs) == 2  # NOT mashed into one thesis
+    rels = pipe.store.relations(bull.thesis_id)
+    assert [r.relation for r in rels if r.relation is RelationType.COMPETING] == []
+    related = [r for r in rels if r.relation is RelationType.RELATED]
+    assert len(related) == 1 and related[0].evidence_role == "RELATED"
+    assert (f"a different mechanism ({bull.key_mechanism} vs disruption_revenue_erosion)"
+            in related[0].reason)
+    inc = pipe.store.thesis(bull.thesis_id)
+    assert inc is not None and inc.current_version == 1  # never re-versioned, never WEAKER
+    assert pipe.store.links(bull.thesis_id) == links_before  # no CONTRADICTS evidence added
+    assert not [ev for ev in pipe.store.events(thesis_id=bull.thesis_id)
+                if ev.event_type in ("CHALLENGED", "DOWNGRADED")]
+    after = pipe.store.thesis_version(bull.thesis_id, inc.current_version)
+    assert after is not None and after.priority.research_action is \
+        before.priority.research_action
+
+
+def test_a_direct_contradiction_challenges_the_incumbent(tmp_path: Path) -> None:
+    """The positive pin: the same claim — node, mechanism, geography, an overlapping window —
+    predicted the opposite way IS a contradiction: COMPETING, its evidence filed as CONTRADICTS,
+    the incumbent re-versioned WEAKER and flagged challenged; never merged."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("fixture", as_of=W1)
+    ingest_jpm(pipe)
+    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
+    bear = Hypo(slug="de-rating", publisher="Hypo Research B", published=W1,
+                blocks=[("paragraph", _DE_RATING)])
+    x = extraction([_de_rating_claim()],
+                   [hyp("h1", "Software multiples keep compressing", node=bull.key_node,
+                        mechanism=bull.key_mechanism, direction="negative", supporting=["c1"])])
+    ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
+    softs = [t for t in pipe.store.theses() if t.key_node == bull.key_node]
+    assert len(softs) == 2  # never merged
     rel = [r for r in pipe.store.relations(bull.thesis_id)
            if r.relation is RelationType.COMPETING]
-    assert len(rel) == 1
+    assert len(rel) == 1 and rel[0].evidence_role == "CONTRADICTION"
     inc = pipe.store.thesis(bull.thesis_id)
     assert inc is not None and inc.current_version == 2  # the incumbent is challenged
     contra = [lk for lk in pipe.store.links(bull.thesis_id)
               if lk.role is LinkRole.CONTRADICTS and lk.first_version == 2]
     assert contra and all(lk.change_class is ChangeClass.CONTRADICTORY for lk in contra)
-    # the card says what the rule found (observed 2026-10-10: it claimed "same node and
-    # mechanism" for two different mechanisms)
     v2 = pipe.store.thesis_version(bull.thesis_id, 2)
-    assert v2 is not None
-    card = json.dumps(v2.content.model_dump(mode="json"))
-    assert "same node and mechanism" not in card
-    assert (f"different mechanisms ({bull.key_mechanism} vs disruption_revenue_erosion)"
-            in card)
+    assert v2 is not None and v2.evidence_direction is EvidenceDirection.WEAKER
+    # the card states the basis: the same claim, predicted the opposite way
+    card = json.dumps(v2.content.model_dump(mode="json"), ensure_ascii=False)
+    assert (f"a direct contradiction — the same claim (node {bull.key_node}, mechanism "
+            f"{bull.key_mechanism}") in card
     # the first view names no registry ids — they stay in the audit view and print (observed
     # 2026-10-10: "challenged by competing thesis TH-…", "⟨competing hypothesis TH-…, A-…⟩")
     import re
 
     from bs4 import BeautifulSoup
 
-    challenger = next(t.thesis_id for t in pipe.store.theses() if t.key_node == bull.key_node
-                      and t.thesis_id != bull.thesis_id)
+    challenger = next(t.thesis_id for t in softs if t.thesis_id != bull.thesis_id)
     rc = card_context(pipe.store, inc, v2, generated="t")
     soup = BeautifulSoup(render_html(v2.content, rc), "html.parser")
     for el in soup.select(".aud, .auditbar, script, input, style"):
@@ -316,7 +364,7 @@ def test_bullish_recovery_and_bearish_disruption_are_linked_competitors(
         if el.attrs is not None and el.get("open") is None:
             el.decompose()
     first = soup.get_text(" ", strip=True)
-    assert "challenged by competing thesis" in first and "competing hypothesis" in first
+    assert "challenged by competing thesis" in first and "Contradiction" in first
     assert not re.search(r"\b(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,})\b", first), first[:400]
     assert challenger in render_html(v2.content, rc, print_mode=True)
 
@@ -325,33 +373,40 @@ def test_one_article_challenging_a_thesis_twice_records_two_challenges(
         tmp_path: Path) -> None:
     """Observed 2026-10-10 in the weekly run: an article whose two new theses both compete with
     one existing thesis challenged it twice, and the second challenge reused the first one's
-    contribution id — the store's integrity guard stopped the run. One id per challenger."""
+    contribution id — the store's integrity guard stopped the run. One id per challenger. (Two
+    DIRECT contradictions since round 3: the same claim at the US and at a Global scope.)"""
     pipe = make_pipeline(tmp_path)
     pipe.start_run("fixture", as_of=W1)
     ingest_jpm(pipe)
     bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
-    bear = Hypo(slug="two-bears", publisher="Hypo Research B", published=W1, blocks=[
-        ("paragraph", "Seat counts at large SaaS vendors fell 8% in 4Q25 as coding agents "
-                      "replaced junior developer licenses."),
-        ("paragraph", "List prices for SaaS suites were cut 12% at renewal as buyers pushed "
-                      "back on per-seat pricing.")])
+    other = ("Global software EV/sales multiples compressed a further 10% in 1Q26 as agent "
+             "adoption spread.")
+    bear = Hypo(slug="two-bears", publisher="Hypo Research B", published=W1,
+                blocks=[("paragraph", _DE_RATING), ("paragraph", other)])
     x = extraction(
-        [claim("c1", "b001", "Seat counts at large SaaS vendors fell 8% in 4Q25",
-               "SaaS seat counts -8% in 4Q25", metric="SaaS seat count change", value=8,
-               value_text="8%", unit="%", period="4Q25", scope="large SaaS vendors"),
-         claim("c2", "b002", "List prices for SaaS suites were cut 12% at renewal",
-               "SaaS renewal list prices -12%", metric="SaaS renewal price change", value=12,
-               value_text="12%", unit="%", period="4Q25", scope="SaaS suites")],
-        [hyp("h1", "Agents erode SaaS seat revenue", node=bull.key_node,
-             mechanism="disruption_revenue_erosion", direction="negative", supporting=["c1"]),
-         hyp("h2", "SaaS renewal pricing comes under pressure", node=bull.key_node,
-             mechanism="pricing_cycle", direction="negative", supporting=["c2"])])
+        [_de_rating_claim(),
+         claim("c2", "b002", other.rstrip("."), "Global software EV/sales -10% in 1Q26",
+               metric="software EV/sales multiple change", value=10, value_text="10%",
+               unit="%", period="1Q26", scope="global software")],
+        [hyp("h1", "US software multiples keep compressing", node=bull.key_node,
+             mechanism=bull.key_mechanism, direction="negative", supporting=["c1"]),
+         hyp("h2", "Global software multiples keep compressing", node=bull.key_node,
+             mechanism=bull.key_mechanism, direction="negative", geography="Global",
+             supporting=["c2"])])
     ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
     inc = pipe.store.thesis(bull.thesis_id)
     assert inc is not None and inc.current_version == 3  # challenged once by each
     mine = [cb for cb in pipe.store.contributions(bull.thesis_id)
             if cb.contribution is ChangeClass.CONTRADICTORY]
     assert len(mine) == 2 and len({cb.contribution_id for cb in mine}) == 2
+    # the two challengers are the same claim at overlapping scopes: adjacent, never merged
+    bears = [t for t in pipe.store.theses() if t.key_node == bull.key_node
+             and t.thesis_id != bull.thesis_id]
+    assert len(bears) == 2
+    sib = [r for r in pipe.store.relations(bears[0].thesis_id)
+           if {r.from_thesis, r.to_thesis} == {bears[0].thesis_id, bears[1].thesis_id}]
+    assert [(r.relation, r.evidence_role) for r in sib] == [
+        (RelationType.SIBLING, "ADJACENT_SUPPORT")]
 
 
 def test_the_kpis_count_this_runs_theses_and_events(tmp_path: Path) -> None:
@@ -364,17 +419,14 @@ def test_the_kpis_count_this_runs_theses_and_events(tmp_path: Path) -> None:
     run = pipe.start_run("fixture", as_of=W1)
     ingest_jpm(pipe)  # three theses created this run
     bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
-    bear = Hypo(slug="bear-and-skip", publisher="Hypo Research B", published=W1, blocks=[
-        ("paragraph", "Seat counts at large SaaS vendors fell 8% in 4Q25 as coding agents "
-                      "replaced junior developer licenses.")])
+    bear = Hypo(slug="bear-and-skip", publisher="Hypo Research B", published=W1,
+                blocks=[("paragraph", _DE_RATING)])
     x = extraction(
-        [claim("c1", "b001", "Seat counts at large SaaS vendors fell 8% in 4Q25",
-               "SaaS seat counts -8% in 4Q25", metric="SaaS seat count change", value=8,
-               value_text="8%", unit="%", period="4Q25", scope="large SaaS vendors"),
+        [_de_rating_claim(),
          claim("c2", "b001", "a quote this article never prints", "unverifiable", value=5,
                value_text="5%", unit="%")],
-        [hyp("h1", "Agents erode SaaS seat revenue", node=bull.key_node,
-             mechanism="disruption_revenue_erosion", direction="negative", supporting=["c1"]),
+        [hyp("h1", "Software multiples keep compressing", node=bull.key_node,
+             mechanism=bull.key_mechanism, direction="negative", supporting=["c1"]),
          hyp("h2", "Optics demand rises", node="ai_infrastructure.optical_networking",
              mechanism="demand_volume_shift", supporting=["c2"])])
     ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)

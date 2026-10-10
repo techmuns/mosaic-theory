@@ -1,0 +1,325 @@
+{
+ "provenance": {
+  "what": "the FULL-ARTICLE completeness ledger persisted by the real run (derived analysis: figure as written, its sentence clipped to 240 characters, status and reason)",
+  "run_id": "R-20261010T190329Z-article"
+ },
+ "report": {
+  "article_version_id": "AV-52f13ebe82955750",
+  "run_id": "R-20261010T190329Z-article",
+  "figures": [
+   {
+    "block_id": "b005",
+    "figure": "80 basis points",
+    "sentence": "As 10-year Treasury yields have risen nearly 80 basis points over the course of the summer, the stock market hasn't felt the pain at the index level.",
+    "status": "captured",
+    "claim_ids": [
+     "C-0c90fdd613ed65"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "~6%",
+    "sentence": "The S&P 500 sits ~6% above its 200-day moving average and within about 2% of its record high, yet only ~43% of stocks in the benchmark are trading above their 200-day average.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1a1118b1172550"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "2%",
+    "sentence": "The S&P 500 sits ~6% above its 200-day moving average and within about 2% of its record high, yet only ~43% of stocks in the benchmark are trading above their 200-day average.",
+    "status": "captured",
+    "claim_ids": [
+     "C-f0d875af3b2b65"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "~43%",
+    "sentence": "The S&P 500 sits ~6% above its 200-day moving average and within about 2% of its record high, yet only ~43% of stocks in the benchmark are trading above their 200-day average.",
+    "status": "captured",
+    "claim_ids": [
+     "C-a97bbb9aa2d733"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "75%",
+    "sentence": "That figure is down from 75% in mid-August.",
+    "status": "captured",
+    "claim_ids": [
+     "C-a8e001324178a8"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "60 basis points",
+    "sentence": "At the same time, 10-year Treasury yields have risen over 60 basis points.",
+    "status": "captured",
+    "claim_ids": [
+     "C-8d0daa426f8a30"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "seven straight quarters",
+    "sentence": "Whereas the bond market has taken its cue first from hawkish monetary policy, global fiscal debt fears, higher energy prices and now the prospect of rapid economic growth , equities have been more focused on seven straight quarters of corpo",
+    "status": "captured",
+    "claim_ids": [
+     "C-651d24fcd2c927"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "10%",
+    "sentence": "S&P 500 Utilities start out strong, climbing to a peak above 10% in July before steadily falling and ending September around -10%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1b22bbfd754a6a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "-10%",
+    "sentence": "S&P 500 Utilities start out strong, climbing to a peak above 10% in July before steadily falling and ending September around -10%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1b22bbfd754a6a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "2%",
+    "sentence": "The S&P 500 stays close to zero throughout, dipping slightly negative in July and August but finishing September with a modest gain of about 2%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-8e029f760901b4"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "-12%",
+    "sentence": "The Mag 7 stocks drop sharply early in the summer, hitting lows near -12% in July, but then rebound steadily, ending September up about 7%.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-0fb979116c8443"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "7%",
+    "sentence": "The Mag 7 stocks drop sharply early in the summer, hitting lows near -12% in July, but then rebound steadily, ending September up about 7%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-ee51f07dcd0505"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "figure": "11.2",
+    "sentence": "The measure currently sits at 11.2, well below the long run average of 41.",
+    "status": "captured",
+    "claim_ids": [
+     "C-2a5ee12b031485"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "figure": "41",
+    "sentence": "The measure currently sits at 11.2, well below the long run average of 41.",
+    "status": "captured",
+    "claim_ids": [
+     "C-2a5ee12b031485"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "70",
+    "sentence": "The correlation started very high in 2020, peaking above 70, then quickly dropped and fluctuated between roughly 30 and 60 through 2021 and 2022.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-873c863e0186a0"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "30",
+    "sentence": "The correlation started very high in 2020, peaking above 70, then quickly dropped and fluctuated between roughly 30 and 60 through 2021 and 2022.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical 2021-2022 fluctuation range shown only as chart context for the current low reading.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "60",
+    "sentence": "The correlation started very high in 2020, peaking above 70, then quickly dropped and fluctuated between roughly 30 and 60 through 2021 and 2022.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical 2021-2022 fluctuation range shown only as chart context for the current low reading.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "40",
+    "sentence": "From 2023 onward, the correlation mostly stayed below the dashed line marking the 20-year average at about 40, with occasional brief spikes above that level.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-0e01fcdfe7d3c0"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "10-15",
+    "sentence": "In the most recent period, the correlation remains low, hovering in the 10-15 range.",
+    "status": "captured",
+    "claim_ids": [
+     "C-f3b6838cb01018"
+    ],
+    "reason": "",
+    "open_cause": ""
+   }
+  ],
+  "argument_blocks": [
+   "b003",
+   "b005",
+   "b009",
+   "b012",
+   "b017",
+   "b018",
+   "b019",
+   "b020",
+   "b024",
+   "b025"
+  ],
+  "blocks_without_claims": [
+   "b024"
+  ],
+  "added_claims": 3,
+  "added_mentions": 0,
+  "added_hypotheses": 0,
+  "added_risks": 0,
+  "prompt_version": "ti-complete-1",
+  "created_at": "2026-10-10T19:03:29.448465Z",
+  "blocks": [
+   {
+    "block_id": "b003",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b009",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b019",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b020",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1",
+     "h2"
+    ],
+    "reason": "States utilities encapsulate AI promise, political consequences and higher rates — the combined drivers behind both the dispersion regime (h1) and the utilities thesis (h2).",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b025",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   }
+  ],
+  "pass_ran": true,
+  "note": ""
+ }
+}

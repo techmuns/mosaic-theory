@@ -1,0 +1,1139 @@
+{
+ "provenance": {
+  "what": "the FULL-ARTICLE completeness ledger persisted by the real run (derived analysis: figure as written, its sentence clipped to 240 characters, status and reason)",
+  "run_id": "R-20261010T190328Z-article"
+ },
+ "report": {
+  "article_version_id": "AV-cfafd53bdd866f67",
+  "run_id": "R-20261010T190328Z-article",
+  "figures": [
+   {
+    "block_id": "b001",
+    "figure": "two months",
+    "sentence": "Four states have acted in under two months.",
+    "status": "captured",
+    "claim_ids": [
+     "C-d5a8d1eccb53ee"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b002",
+    "figure": "300",
+    "sentence": "Beyond the state level, more than 300 towns, cities and counties have voted to halt datacenters over the past year and a half.",
+    "status": "captured",
+    "claim_ids": [
+     "C-66a506ba149999"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "38GW",
+    "sentence": "Our Datacenter Industry Model forecasts +38GW of Datacenter IT capacity delivered in the US in 2027, more than double that of 2026.",
+    "status": "captured",
+    "claim_ids": [
+     "C-3d4eff14d2a06c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "22GW",
+    "sentence": "Of that total, 22GW is under vertical construction , while the remaining 16GW \"planned\" is, in majority, already financed, doing siteworks and preparing for vertical construction.",
+    "status": "captured",
+    "claim_ids": [
+     "C-c5fe4c8d5a701c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "16GW",
+    "sentence": "Of that total, 22GW is under vertical construction , while the remaining 16GW \"planned\" is, in majority, already financed, doing siteworks and preparing for vertical construction.",
+    "status": "captured",
+    "claim_ids": [
+     "C-20deb42ab7d615"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b006",
+    "figure": "6,000",
+    "sentence": "Our methodology tracks real-time and historical satellite imagery of 6,000+ datacenters .",
+    "status": "captured",
+    "claim_ids": [
+     "C-f5057c2cd4b5c0"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b006",
+    "figure": "12",
+    "sentence": "Our forecast has barely moved over the last 12 months, despite bi-weekly updates delivered to clients, as construction activity keeps accelerating across the country.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-b4ff70a617fa6d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b008",
+    "figure": "2.3 GW",
+    "sentence": "Today, we estimate that roughly 2.3 GW of planned capacity is genuinely delayed because of local moratoriums and New York's executive order , the two categories of policy intervention for which we can establish a direct project-level impact",
+    "status": "captured",
+    "claim_ids": [
+     "C-fdeb40dc094c08"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b009",
+    "figure": "20 GW",
+    "sentence": "At the local level (i.e., cities, townships, counties), of the roughly 20 GW sitting inside a restricted boundary, only 1,525 MW is delayed .",
+    "status": "captured",
+    "claim_ids": [
+     "C-4471c5f1fa2d35"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b009",
+    "figure": "1,525 MW",
+    "sentence": "At the local level (i.e., cities, townships, counties), of the roughly 20 GW sitting inside a restricted boundary, only 1,525 MW is delayed .",
+    "status": "captured",
+    "claim_ids": [
+     "C-4471c5f1fa2d35"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b010",
+    "figure": "1.4 GW",
+    "sentence": "New York's moratorium touches roughly 1.4 GW, but we estimate only about 0.8 GW faces a meaningful delay directly attributable to the order.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1c9ad7bac0cb9d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b010",
+    "figure": "0.8 GW",
+    "sentence": "New York's moratorium touches roughly 1.4 GW, but we estimate only about 0.8 GW faces a meaningful delay directly attributable to the order.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1c9ad7bac0cb9d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "40GW",
+    "sentence": "In June ( US Grid Constraints: Towards 40GW+ of Behind-The-Meter Datacenter by 2028? ), we showed BtM powering more than half of new US datacenter capacity from 2028.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-6748510e105285"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "75 GW",
+    "sentence": "Part 1 ) we counted 75 GW of firm BtM equipment orders, more of them bound for Texas than any other state.",
+    "status": "captured",
+    "claim_ids": [
+     "C-e2808185fc0a37"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "three-four months",
+    "sentence": "Texas adds perhaps three-four months of administrative delay for base-load projects in the ERCOT interconnection queue, but is offset by an acceleration of behind-the-meter demand.",
+    "status": "captured",
+    "claim_ids": [
+     "C-b6c7b6fa11f3b0"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "figure": "444",
+    "sentence": "But just days before approval, the city and Elon sneakily \"deannexed\" the 444 acres in Brownsville , bringing the project out of Brownsville's moratorium jursidiction.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-4b193c269151c5"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "100%",
+    "sentence": "To be 100% clear, we think moratoriums COULD delay the buildout, but they just aren't yet at scale.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "'100% clear' is rhetorical emphasis, not a data figure.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "400",
+    "sentence": "It covers more than 400 local instruments, actions, and proposals across 17 states, tracking each status from proposal through enactment, expiration, lifting, replacement, or rejection.",
+    "status": "captured",
+    "claim_ids": [
+     "C-d1880773744a4c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "17",
+    "sentence": "It covers more than 400 local instruments, actions, and proposals across 17 states, tracking each status from proposal through enactment, expiration, lifting, replacement, or rejection.",
+    "status": "captured",
+    "claim_ids": [
+     "C-d1880773744a4c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "6,000",
+    "sentence": "That pipeline, which forms the foundation of our Datacenter Industry Model , covers 6,000+ facilities, each tracked individually through property records, permits, power-usage data, FOIA requests, satellite imagery, and other primary source",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Duplicate of 6,000+ facilities already captured by c6.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b023",
+    "figure": "13",
+    "sentence": "More durable statewide restrictions remain much harder to enact: 13 bills died in 2026, with almost none reaching a floor vote, underscoring the political difficulty of turning temporary local action into lasting statewide policy.",
+    "status": "captured",
+    "claim_ids": [
+     "C-393609689db8e7"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "figure": "20 GW",
+    "sentence": "We then look at moratoriums adopted at the local level, showing how 20 GW of nominal exposure translates into just 1,525 MW of actual delays, which projects are affected, and why most restrictions never bind.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Preview restatement of 20 GW already captured by c8.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "figure": "1,525 MW",
+    "sentence": "We then look at moratoriums adopted at the local level, showing how 20 GW of nominal exposure translates into just 1,525 MW of actual delays, which projects are affected, and why most restrictions never bind.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Preview restatement of 1,525 MW already captured by c8/c15.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b027",
+    "figure": "100",
+    "sentence": "Many zoning codes were written before municipalities contemplated 100+ MW facilities with substantial power, water, noise, and land-use requirements.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-d43cb50ba8fa09"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b036",
+    "figure": "three to six months",
+    "sentence": "If delivery is 2028 or later and the moratorium lasts only three to six months, it may expire years before the project reaches that stage.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Illustrative example of moratorium duration within an argument, not a stated empirical figure.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b043",
+    "figure": "300",
+    "sentence": "The cumulative effect of these filters is substantial: 300+ local instruments translate into just ~1,525 MW of actual project delay in the US.",
+    "status": "captured",
+    "claim_ids": [
+     "C-154c978ec7737a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b043",
+    "figure": "~1,525 MW",
+    "sentence": "The cumulative effect of these filters is substantial: 300+ local instruments translate into just ~1,525 MW of actual project delay in the US.",
+    "status": "captured",
+    "claim_ids": [
+     "C-154c978ec7737a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b053",
+    "figure": "$165 million",
+    "sentence": "NorthPoint continues to pursue the project, including its proposed $165 million community benefits package.",
+    "status": "captured",
+    "claim_ids": [
+     "C-782539b4fde39f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "300",
+    "sentence": "As of September 2026, more than 300 local datacenter moratoriums and bans have been adopted nationwide across counties, municipalities, townships, and other local governments.",
+    "status": "captured",
+    "claim_ids": [
+     "C-f42d094cef95de"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "400",
+    "sentence": "Our database tracks 400+ local instruments in total, following each through its full lifecycle: proposed, enacted, expired, lifted, replaced, or rejected.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Duplicate of 400+ local instruments already captured by c17.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b061",
+    "figure": "45",
+    "sentence": "Michigan is currently the leading state for local datacenter moratoriums, with 45 enacted and 7 proposed, with the majority adopted in late 2025 and 2026 following a rapid influx of datacenter proposals.",
+    "status": "captured",
+    "claim_ids": [
+     "C-8922a4d09adbcd"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b061",
+    "figure": "7",
+    "sentence": "Michigan is currently the leading state for local datacenter moratoriums, with 45 enacted and 7 proposed, with the majority adopted in late 2025 and 2026 following a rapid influx of datacenter proposals.",
+    "status": "captured",
+    "claim_ids": [
+     "C-8922a4d09adbcd"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b061",
+    "figure": "six months",
+    "sentence": "In May 2026, its board voted to extend the moratorium for an additional six months.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-8494c2e630a0c1"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b062",
+    "figure": "40",
+    "sentence": "Ohio ranks second with 40 enacted moratoriums, with 83% adopted in 2026 alone.",
+    "status": "captured",
+    "claim_ids": [
+     "C-8cf5c2da3897e6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b062",
+    "figure": "83%",
+    "sentence": "Ohio ranks second with 40 enacted moratoriums, with 83% adopted in 2026 alone.",
+    "status": "captured",
+    "claim_ids": [
+     "C-8cf5c2da3897e6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b062",
+    "figure": "25.7%",
+    "sentence": "Much of this can be traced to the electricity-bill shock of mid-2025 , when datacenter-driven PJM capacity costs pushed the average Ohio residential bill up 25.7% year over year, and to hyperscale proposals spreading into townships with lit",
+    "status": "captured",
+    "claim_ids": [
+     "C-b64986b2decd80"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "figure": "46%",
+    "sentence": "We found that Americans were net-positive on AI broadly, but significantly more negative on datacenters specifically: 46% of voters view datacenters unfavorably, including 24% who view them very unfavorably, versus just 29% with a favorable",
+    "status": "captured",
+    "claim_ids": [
+     "C-806db5272bc92a",
+     "C-f819f7ffa9280a",
+     "C-d246c8e89001c8"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "figure": "24%",
+    "sentence": "We found that Americans were net-positive on AI broadly, but significantly more negative on datacenters specifically: 46% of voters view datacenters unfavorably, including 24% who view them very unfavorably, versus just 29% with a favorable",
+    "status": "captured",
+    "claim_ids": [
+     "C-806db5272bc92a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "figure": "29%",
+    "sentence": "We found that Americans were net-positive on AI broadly, but significantly more negative on datacenters specifically: 46% of voters view datacenters unfavorably, including 24% who view them very unfavorably, versus just 29% with a favorable",
+    "status": "captured",
+    "claim_ids": [
+     "C-806db5272bc92a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "figure": "30%",
+    "sentence": "Similarly, 46% would oppose a new datacenter in their own city or town, including 30% who would strongly oppose it.",
+    "status": "captured",
+    "claim_ids": [
+     "C-f819f7ffa9280a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "figure": "34%",
+    "sentence": "By comparison, 46% have a favorable opinion of AI and 34% an unfavorable opinion.",
+    "status": "captured",
+    "claim_ids": [
+     "C-d246c8e89001c8"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b076",
+    "figure": "300",
+    "sentence": "Mapping every one of the roughly 300 local datacenter moratoriums and permanent bans currently active across the US against our pipeline, we see that the direct impact is minimal.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Duplicate of ~300 local moratoriums already captured by c16/c15.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b076",
+    "figure": "1,525 MW",
+    "sentence": "Only 1,525 MW is directly delayed, which is 7.6% of the capacity sitting inside a restricted boundary .",
+    "status": "captured",
+    "claim_ids": [
+     "C-2e9c0d8416bcd9"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b076",
+    "figure": "7.6%",
+    "sentence": "Only 1,525 MW is directly delayed, which is 7.6% of the capacity sitting inside a restricted boundary .",
+    "status": "captured",
+    "claim_ids": [
+     "C-2e9c0d8416bcd9"
+    ],
+    "reason": "",
+    "open_cause": ""
+   }
+  ],
+  "argument_blocks": [
+   "b001",
+   "b002",
+   "b004",
+   "b005",
+   "b006",
+   "b008",
+   "b009",
+   "b010",
+   "b011",
+   "b012",
+   "b013",
+   "b014",
+   "b015",
+   "b016",
+   "b017",
+   "b018",
+   "b019",
+   "b020",
+   "b021",
+   "b022",
+   "b023",
+   "b024",
+   "b027",
+   "b028",
+   "b030",
+   "b031",
+   "b033",
+   "b034",
+   "b035",
+   "b036",
+   "b037",
+   "b038",
+   "b039",
+   "b040",
+   "b041",
+   "b042",
+   "b043",
+   "b044",
+   "b046",
+   "b047",
+   "b048",
+   "b049",
+   "b050",
+   "b051",
+   "b052",
+   "b053",
+   "b054",
+   "b055",
+   "b059",
+   "b060",
+   "b061",
+   "b062",
+   "b064",
+   "b065",
+   "b066",
+   "b068",
+   "b069",
+   "b070",
+   "b073",
+   "b074",
+   "b076"
+  ],
+  "blocks_without_claims": [
+   "b004",
+   "b013",
+   "b017",
+   "b018",
+   "b019",
+   "b020",
+   "b021",
+   "b022",
+   "b024",
+   "b028",
+   "b030",
+   "b031",
+   "b033",
+   "b035",
+   "b036",
+   "b037",
+   "b038",
+   "b039",
+   "b040",
+   "b041",
+   "b042",
+   "b044",
+   "b047",
+   "b048",
+   "b049",
+   "b050",
+   "b051",
+   "b052",
+   "b054",
+   "b055",
+   "b073"
+  ],
+  "added_claims": 7,
+  "added_mentions": 1,
+  "added_hypotheses": 0,
+  "added_risks": 1,
+  "prompt_version": "ti-complete-1",
+  "created_at": "2026-10-10T19:03:28.248971Z",
+  "blocks": [
+   {
+    "block_id": "b001",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b002",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b004",
+    "status": "unreviewed",
+    "hypothesis_ids": [],
+    "reason": "no verified claim sits in it and pass 1b gave no account of it",
+    "claim_ids": [],
+    "open_cause": "no_account"
+   },
+   {
+    "block_id": "b005",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b006",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b008",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b009",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b010",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b013",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "States the methodology that a moratorium only matters if it blocks a needed approval — supports h1's core argument.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Describes the parcel-level audit methodology underpinning h1's conclusion.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Introduces the four factors explaining low actual delay — h1 argument.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b019",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Factor 1 (county moratoriums stop at city lines) supports h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b020",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Factor 2 (freeze new applications not revoke) supports h1.",
+    "claim_ids": [
+     "C-d3861d26eb1c59"
+    ],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Factor 3 (shorter moratoriums expire) supports h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b022",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Factor 4 (other issues already gating schedule) supports h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b023",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Article roadmap/preview of sections, no new argument or figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b027",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b028",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Explains political low-cost nature of moratoriums, supporting h1 and the election risk.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b030",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Exposed vs delayed MW distinction is central to h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b031",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Development-cycle stage determines impact — h1 argument.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Lists the conjunctive conditions for a moratorium to bind — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b034",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b035",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "One of the binding conditions — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b036",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Timeline-overlap condition — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b037",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Covers-the-use condition — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b038",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Still-needs-approval condition — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b039",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1",
+     "h2"
+    ],
+    "reason": "Redesign-around condition, including BtM workaround — supports h1 and h2.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Project-still-active condition — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b041",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Existing-rights-bypass condition — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b042",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Carve-out condition — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b043",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b044",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Exposure must be measured project-by-project — core h1 methodology point.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b046",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b047",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint case study factor (reaches parcel) illustrating rare binding case for h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b048",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint case study factor (enacted) — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b049",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint timeline overlap — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b050",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint covers-use — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b051",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint still-needs-approval — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b052",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint cannot-redesign — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b053",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b054",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint no-alternative-pathway — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b055",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "NorthPoint on critical path, moratorium binding — h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b060",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b061",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b062",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b064",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b066",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b068",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b069",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b070",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b073",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Restriction count vs MW exposure distinction — central to h1.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b074",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b076",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   }
+  ],
+  "pass_ran": true,
+  "note": ""
+ }
+}

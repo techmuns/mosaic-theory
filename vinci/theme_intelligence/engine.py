@@ -55,6 +55,7 @@ from vinci.theme_intelligence.schemas import (
     EXPOSURE_ROLES,
     MATERIAL_CLASSES,
     Article,
+    ArticleClass,
     ArticleThesisContribution,
     ArticleVersion,
     CardContent,
@@ -65,7 +66,9 @@ from vinci.theme_intelligence.schemas import (
     Claim,
     ClaimKind,
     Direction,
+    Epistemic,
     EvidenceDirection,
+    EvidenceRole,
     FieldDiff,
     Horizon,
     InvestmentReadiness,
@@ -88,8 +91,10 @@ from vinci.theme_intelligence.schemas import (
     ThesisStatus,
     ThesisVersion,
     VerificationIssue,
+    identity_key,
 )
 from vinci.theme_intelligence.store import Store
+from vinci.theme_intelligence.timewindow import Window, window_of
 from vinci.theme_intelligence.verify import (
     ReviewOutcome,
     VerifiedExtraction,
@@ -128,13 +133,111 @@ def _sha(*parts: str) -> str:
     return h.hexdigest()
 
 
-def thesis_key(h: VerifiedHypothesis) -> str:
+def review_tag(h: VerifiedHypothesis) -> str:
+    """An unclassified (`other`) hypothesis never shares an identity with another by key alone."""
     raw = h.raw
-    key = f"{raw.value_chain_node}|{raw.mechanism}|{raw.direction.value}|{norm_geo(raw.geography)}"
     if raw.value_chain_node == "other" or raw.mechanism == "other":
-        # an unclassified hypothesis never shares an identity with another by key alone
-        key += "|review:" + _sha(raw.title.lower())[:8]
-    return key
+        return _sha(raw.title.lower())[:8]
+    return ""
+
+
+def segment_of(h: VerifiedHypothesis, claims: dict[str, Claim], taxonomy: Taxonomy) -> str:
+    """The segment(s) within the node that the hypothesis's VERIFIED evidence names — read from
+    the verbatim quotes of its supporting / dislocation / catalyst claims and its source-named
+    sector spans, never from the model's wording. "" when the node defines no segments or the
+    evidence names none."""
+    segs = taxonomy.segments_of(h.raw.value_chain_node)
+    if not segs:
+        return ""
+    texts = [claims[c].quote for c in (*h.supporting, *h.dislocation, *h.catalyst)
+             if c in claims and claims[c].span_verified]
+    texts += [x.quote for x in h.sectors]
+    blob = " ".join(texts)
+    found = [sg.id for sg in segs
+             if any(re.search(rf"(?<![\w-]){re.escape(term)}(?![\w-])", blob, re.I)
+                    for term in sg.terms)]
+    return "+".join(sorted(found))
+
+
+def thesis_key(h: VerifiedHypothesis, segment: str = "") -> str:
+    raw = h.raw
+    return identity_key(raw.value_chain_node, raw.mechanism, raw.direction.value,
+                        norm_geo(raw.geography), segment, review_tag(h))
+
+
+#: Regions a geography string names. "Global" overlaps every region; APAC contains its members.
+_REGION_WORDS = {"us": "US", "u.s.": "US", "u.s": "US", "united states": "US", "usa": "US",
+                 "america": "US", "north america": "US", "texas": "US", "china": "China",
+                 "europe": "Europe", "eu": "Europe", "japan": "Japan", "asia": "APAC",
+                 "apac": "APAC", "asia pacific": "APAC", "taiwan": "Taiwan", "korea": "Korea",
+                 "south korea": "Korea", "india": "India", "uk": "UK",
+                 "united kingdom": "UK"}
+_REGION_CONTAINS = {"APAC": {"China", "Japan", "Taiwan", "Korea", "India"}}
+
+
+def _regions(g: str) -> set[str]:
+    low = g.lower()
+    if re.search(r"\b(global|world|worldwide)\b", low):
+        return {"*"}
+    found = {v for k, v in _REGION_WORDS.items()
+             if re.search(rf"(?<![a-z]){re.escape(k)}(?![a-z])", low)}
+    return found or {low.strip() or "unspecified"}
+
+
+def geographies_overlap(a: str, b: str) -> bool:
+    """Whether two theses can be about the same place: equal or containing regions, or Global."""
+    ra, rb = _regions(a), _regions(b)
+    if "*" in ra or "*" in rb or ra & rb:
+        return True
+    return any(x in _REGION_CONTAINS.get(y, set()) for x in ra for y in rb) or any(
+        y in _REGION_CONTAINS.get(x, set()) for x in ra for y in rb)
+
+
+def evidence_windows(claims: list[Claim], ref: date) -> list[Window]:
+    """The calendar windows a thesis's verified evidence states (period first; a forecast or
+    event may state it in its quote)."""
+    out: list[Window] = []
+    for c in claims:
+        w = window_of(c.period, ref)
+        if w is None and (c.epistemic is Epistemic.FORECAST
+                          or c.kind in (ClaimKind.FORECAST, ClaimKind.EVENT)):
+            w = window_of(c.quote, ref)
+        if w is not None:
+            out.append(w)
+    return out
+
+
+def claim_differences(a: Thesis, b: Thesis, wa: list[Window], wb: list[Window],
+                      seg_label: dict[str, str]) -> list[str]:
+    """What separates two theses on ONE value-chain node from being the same economic claim —
+    the dimensions the review names: the business segment, the measured variable (the profit
+    mechanism), the geography and the timeframe. Empty = the same claim (a direct
+    contradiction when the directions oppose)."""
+    diffs: list[str] = []
+    if a.key_review or b.key_review:
+        diffs.append("an unclassified thesis (no taxonomy node or mechanism) — not comparable "
+                     "by key")
+    if a.key_mechanism != b.key_mechanism:
+        diffs.append(f"a different mechanism ({b.key_mechanism} vs {a.key_mechanism})")
+    sa = set(filter(None, a.key_segment.split("+")))
+    sb = set(filter(None, b.key_segment.split("+")))
+
+    def names(x: set[str]) -> str:
+        return " + ".join(seg_label.get(i, i) for i in sorted(x)) or "no named segment"
+
+    if sa != sb:
+        if not sa or not sb or not (sa & sb):
+            diffs.append(f"a different segment ({names(sb)} vs {names(sa)})")
+        else:
+            diffs.append(f"overlapping but different segments ({names(sb)} vs {names(sa)})")
+    if not geographies_overlap(a.key_geography, b.key_geography):
+        diffs.append(f"a different geography ({b.key_geography} vs {a.key_geography})")
+    if wa and wb:
+        if not any(x.start <= y.end and y.start <= x.end for x in wa for y in wb):
+            diffs.append("no overlapping timeframe")
+    elif wa or wb:
+        diffs.append("a timeframe only one of them states")
+    return diffs
 
 
 def thesis_id_for(key: str) -> str:
@@ -196,8 +299,12 @@ class Engine:
         mentions = {m.mention_id: m for m in ve.mentions}
 
         groups: dict[str, list[VerifiedHypothesis]] = {}
+        segments: dict[str, str] = {}
         for h in ve.hypotheses:
-            groups.setdefault(thesis_key(h), []).append(h)
+            seg = segment_of(h, claims, self.taxonomy)
+            key = thesis_key(h, seg)
+            groups.setdefault(key, []).append(h)
+            segments[key] = seg
         outcomes: list[ThesisOutcome] = []
         created_now: list[str] = []
         for key, hs in groups.items():
@@ -215,7 +322,8 @@ class Engine:
             risks = [r for r in ve.risks if not r.related or h.raw.local_id in r.related]
             existing = st.thesis_by_key(key)
             if existing is None:
-                out = self._create(ctx, key, h, claims, mentions, resolutions, risks)
+                out = self._create(ctx, key, h, claims, mentions, resolutions, risks,
+                                   segments[key])
                 created_now.append(out.thesis_id)
             else:
                 out = self._update(ctx, existing, h, claims, mentions, resolutions, risks)
@@ -229,7 +337,7 @@ class Engine:
     def _create(self, ctx: ArticleContext, key: str, h: VerifiedHypothesis,
                 claims: dict[str, Claim], mentions: dict[str, Mention],
                 resolutions: dict[str, SecurityResolution],
-                risks: list[VerifiedRisk]) -> ThesisOutcome:
+                risks: list[VerifiedRisk], segment: str = "") -> ThesisOutcome:
         raw = h.raw
         tid = thesis_id_for(key)
         other = raw.value_chain_node == "other" or raw.mechanism == "other"
@@ -245,14 +353,18 @@ class Engine:
             current_version=1, created_at=now, created_as_of=ctx.as_of,
             last_material_update=published,
             ancestry=self.taxonomy.ancestry(raw.value_chain_node),
-            stance=raw.stance_in_source, horizon=raw.horizon, kind=raw.kind)
+            stance=raw.stance_in_source, horizon=raw.horizon, kind=raw.kind,
+            key_segment=segment, key_review=review_tag(h))
+        assert thesis.identity == key, (thesis.identity, key)  # one identity, store and engine
         roles = self._roles(h, risks)
         links = [ThesisClaimLink(thesis_id=tid, claim_id=cid, role=role, first_version=1,
                                  change_class=ChangeClass.NOVELTY_UNVERIFIED,
                                  independence_group=claims[cid].origin_id or ctx.article.article_id)
                  for cid, role in roles.items()]
-        relations = self._relations_for(thesis, ctx)
-        rel_notes = [CardSentence(text=f"Registry link — {r.relation.value} with "
+        own = [claims[cid] for cid, role in roles.items() if cid in claims
+                and role in (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)]
+        relations = self._relations_for(thesis, ctx, own)
+        rel_notes = [CardSentence(text=f"Registry link — {relation_label(r)} "
                                        f"{r.to_thesis if r.from_thesis == tid else r.from_thesis}"
                                        f": {r.reason}", provenance=Provenance.MODEL_INFERENCE)
                      for r in relations]
@@ -264,8 +376,9 @@ class Engine:
                  for c in head]
         if n_evidence > len(head):
             items.append(_more_item(len(head), n_evidence, ctx.article.article_id))
-        vs_prior = (f"New to the registry — first recorded as of {ctx.as_of.isoformat()} from a "
-                    f"source dated {published.isoformat()}; not necessarily new to the market.")
+        vs_prior = (f"New to the registry — first ingested {now:%Y-%m-%d %H:%M} UTC, analysed as "
+                    f"of {ctx.as_of.isoformat()}, from a source published "
+                    f"{published.isoformat()}; not necessarily new to the market.")
         novelty = ("novelty_unverified — the registry held no earlier verified baseline, so this "
                    "is new TO THE REGISTRY, not demonstrated new to the market")
         version = self._build_version(
@@ -522,8 +635,8 @@ class Engine:
             f"challenged by competing thesis {challenger} — evidence linked as CONTRADICTS, "
             f"the two theses stay separate", "relative to the registry's prior version",
             EvidenceDirection.WEAKER, prev_v.priority.research_action, prev_v.priority.factors,
-            [], [CardSentence(text=f"Registry link — COMPETING hypothesis {challenger}: "
-                                   f"{_competing_basis(inc, st.thesis(challenger))}",
+            [], [CardSentence(text=f"Registry link — CONTRADICTION — competing hypothesis "
+                                   f"{challenger}: {_competing_basis(inc, st.thesis(challenger))}",
                               provenance=Provenance.MODEL_INFERENCE)],
             [claims[c] for c in add], change_summary=f"challenged by {challenger}",
             classes=classes, contribution=ChangeClass.CONTRADICTORY, prev_sha=prev_v.content_sha)
@@ -585,6 +698,8 @@ class Engine:
 
         published = tuple((s.article_id, s.published_at.date()) for s in sources
                           if s.published_at is not None)
+        data_reports = tuple(s.article_id for s in sources
+                             if s.article_class is ArticleClass.INDUSTRY_DATA_REPORT)
 
         def make(hold_extra: list[str]) -> tuple[CardContent, ResearchPriority]:
             holds = hold_reasons + hold_extra
@@ -630,7 +745,8 @@ class Engine:
                 if ctx.version.retrieval_state is not RetrievalState.BLOCKED
                 else RetrievalState.PARTIAL, kind=thesis.kind,
                 sector_exposures=tuple(s.name for s in affected.sector_exposures),
-                unverified_listings=unverified, as_of=ctx.as_of, published=published)
+                unverified_listings=unverified, as_of=ctx.as_of, published=published,
+                data_report_articles=data_reports)
             pr = compute_priority(state, previous=previous, evidence_direction=direction,
                                   previous_factors=prev_factors)  # type: ignore[arg-type]
             return compose_card(CardInputs(**{**stub.__dict__, "priority": pr})), pr
@@ -707,7 +823,13 @@ class Engine:
         out = self.reviewer(card, claims)
         issues, suggested = (out.issues, dict(out.anchors)) if isinstance(out, ReviewOutcome) \
             else (out, {})
-        pool = {cid: c for cid, c in claims.items() if c.span_verified}
+        # only a VERIFIED claim — span AND number — may vouch for a line, whoever proposes it.
+        # Observed 2026-10-10 (weekly sample, Nomura): the reviewer suggested two claims whose
+        # number checks had failed as anchors; they kept a decision-bearing line from being
+        # withheld, so unverified material reached the priority's hold test.
+        pool = {cid: c for cid, c in claims.items()
+                if c.span_verified and c.number_verified is not False}
+        suggested = {sid: [c for c in ids if c in pool] for sid, ids in suggested.items()}
         sents = card_sentences(card)
         anchors: dict[str, list[str]] = {}
         for i in issues:
@@ -839,32 +961,71 @@ class Engine:
                 out.append(f"{lk.claim_id} failed span verification")
         return out
 
-    def _relations_for(self, t: Thesis, ctx: ArticleContext) -> list[ThemeRelation]:
+    def _evidence_of(self, tid: str) -> list[Claim]:
+        out: list[Claim] = []
+        for lk in self.store.links(tid):
+            if lk.role in (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST):
+                c = self.store.claim(lk.claim_id)
+                if c is not None and c.span_verified:
+                    out.append(c)
+        return out
+
+    def _relations_for(self, t: Thesis, ctx: ArticleContext,
+                       own: list[Claim]) -> list[ThemeRelation]:
+        """How a new thesis relates to every other. COMPETING — the only relation whose evidence
+        is filed as CONTRADICTS — needs a DIRECT contradiction: the SAME claim (node, mechanism,
+        segment, geography, timeframe) predicted the opposite way. Opposite directions that
+        differ in any of those are RELATED: linked, never counter-evidence, never a weakening
+        (review of PR #703, round 3: a fall in utility share prices does not contradict rising
+        demand for on-site power). Same-direction theses that are not the same claim are
+        ADJACENT SUPPORT: context, never a strengthening."""
         rels: list[ThemeRelation] = []
         now = datetime.now(tz=UTC)
+        seg_label = {sg.id: sg.label for sg in self.taxonomy.segments}
+        t_windows = evidence_windows(own, ctx.as_of)
         for o in self.store.theses():
             if o.thesis_id == t.thesis_id:
                 continue
             rel: RelationType | None = None
+            role = ""
             why = ""
             opposite = {o.key_direction, t.key_direction} == {Direction.POSITIVE,
                                                               Direction.NEGATIVE}
-            if o.key_node == t.key_node and opposite:
-                rel, why = RelationType.COMPETING, (
-                    f"opposite investment directions on the same value-chain node "
-                    f"({o.key_mechanism} {o.key_direction.value} vs {t.key_mechanism} "
-                    f"{t.key_direction.value}) — linked, never merged")
-            elif o.key_node == t.key_node and o.key_mechanism == t.key_mechanism:
-                if o.key_geography != t.key_geography:
-                    rel, why = RelationType.SIBLING, (f"same economics, different geography "
-                                                      f"({o.key_geography} vs {t.key_geography})")
-            elif o.key_node == t.key_node:
-                rel, why = RelationType.SIBLING, (f"same value-chain node, different profit "
-                                                  f"mechanism ({o.key_mechanism} vs "
-                                                  f"{t.key_mechanism})")
+            same_dir = o.key_direction == t.key_direction
+            if o.key_node == t.key_node:
+                diffs = claim_differences(t, o, t_windows,
+                                          evidence_windows(self._evidence_of(o.thesis_id),
+                                                           ctx.as_of), seg_label)
+                if opposite and not diffs:
+                    rel, role = RelationType.COMPETING, EvidenceRole.CONTRADICTION.value
+                    why = (f"a direct contradiction — the same claim (node {t.key_node}, "
+                           f"mechanism {t.key_mechanism}"
+                           + (f", segment {t.key_segment}" if t.key_segment else "")
+                           + ", overlapping geography and timeframe) predicted the opposite "
+                             "way — linked, never merged")
+                elif opposite:
+                    rel, role = RelationType.RELATED, EvidenceRole.RELATED.value
+                    why = (f"the opposite direction on the same value-chain node, but not the "
+                           f"same claim — {'; '.join(diffs)} — related, never used as "
+                           f"counter-evidence")
+                elif diffs:
+                    rel = RelationType.SIBLING
+                    role = EvidenceRole.ADJACENT_SUPPORT.value if same_dir else ""
+                    why = (f"same value-chain node, not the same claim — {'; '.join(diffs)}"
+                           + (" — adjacent support: context, never a confirmation"
+                              if same_dir else ""))
+                elif same_dir:  # the same claim at an overlapping but different geography
+                    rel, role = RelationType.SIBLING, EvidenceRole.ADJACENT_SUPPORT.value
+                    why = (f"the same claim at an overlapping but different geography "
+                           f"({t.key_geography} vs {o.key_geography}) — a separate thesis, never "
+                           f"merged; adjacent support, never an automatic confirmation")
             elif o.key_node.startswith(t.key_node + ".") or t.key_node.startswith(o.key_node + "."):
-                rel, why = RelationType.PARENT_CHILD, (f"{o.key_node} and {t.key_node} are parent "
-                                                       f"and child economics — never merged")
+                rel = RelationType.PARENT_CHILD
+                role = (EvidenceRole.ADJACENT_SUPPORT.value if same_dir
+                        else EvidenceRole.RELATED.value if opposite else "")
+                why = (f"{o.key_node} and {t.key_node} are parent and child economics — never "
+                       f"merged" + (" — adjacent support, never a confirmation" if same_dir
+                                    else " — related, never counter-evidence" if opposite else ""))
             elif "." in o.key_node and "." in t.key_node and \
                     o.key_node.split(".")[0] == t.key_node.split(".")[0]:
                 rel, why = RelationType.SIBLING, (f"same parent sector "
@@ -883,7 +1044,7 @@ class Engine:
             rels.append(ThemeRelation(
                 relation_id="TR-" + _sha(*pair, rel.value)[:14], from_thesis=t.thesis_id,
                 to_thesis=o.thesis_id, relation=rel, reason=why, run_id=ctx.run_id,
-                created_at=now))
+                created_at=now, evidence_role=role))
         return rels
 
     def _event(self, ctx: ArticleContext, tid: str, version: int | None, etype: str,
@@ -1026,11 +1187,27 @@ _PLACEHOLDER = ResearchPriority(
 
 
 def _competing_basis(inc: Thesis, ch: Thesis | None) -> str:
-    """What made two theses COMPETING, as the rule found it: the opposite direction on the same
-    value-chain node — with the two mechanisms named, the same or not."""
+    """Why two theses are COMPETING: the same claim predicted the opposite way."""
     if ch is None:
-        return "the opposite direction on the same value-chain node"
-    mech = (f"the same mechanism ({inc.key_mechanism})" if inc.key_mechanism == ch.key_mechanism
-            else f"different mechanisms ({inc.key_mechanism} vs {ch.key_mechanism})")
-    return (f"the opposite direction on the same value-chain node ({inc.key_node}), {mech} — "
-            f"linked, never merged")
+        return "a direct contradiction of this thesis's claim"
+    return (f"a direct contradiction — the same claim (node {inc.key_node}, mechanism "
+            f"{inc.key_mechanism}" + (f", segment {inc.key_segment}" if inc.key_segment else "")
+            + ", overlapping geography and timeframe) predicted the opposite way — linked, never "
+              "merged")
+
+
+_RELATION_LABEL = {
+    (RelationType.COMPETING, EvidenceRole.CONTRADICTION.value):
+        "CONTRADICTION — competing hypothesis",
+    (RelationType.RELATED, EvidenceRole.RELATED.value): "RELATED, not a contradiction —",
+    (RelationType.SIBLING, EvidenceRole.ADJACENT_SUPPORT.value): "ADJACENT SUPPORT (sibling) —",
+    (RelationType.PARENT_CHILD, EvidenceRole.ADJACENT_SUPPORT.value):
+        "ADJACENT SUPPORT (parent / child) —",
+    (RelationType.PARENT_CHILD, EvidenceRole.RELATED.value):
+        "RELATED (parent / child), not a contradiction —",
+}
+
+
+def relation_label(r: ThemeRelation) -> str:
+    """The card's words for a registry link: its evidence role first, the structure after."""
+    return _RELATION_LABEL.get((r.relation, r.evidence_role), f"{r.relation.value} with")

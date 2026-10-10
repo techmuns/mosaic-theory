@@ -245,9 +245,44 @@ class LinkRole(StrEnum):
 
 class RelationType(StrEnum):
     SIBLING = "SIBLING"
+    #: a DIRECT contradiction: the same claim (node, mechanism, segment, geography, timeframe)
+    #: predicted the opposite way — the only relation that files evidence as CONTRADICTS
     COMPETING = "COMPETING"
     PARENT_CHILD = "PARENT_CHILD"
     REVIEW_NEEDED = "REVIEW_NEEDED"
+    #: the opposite direction on the same node WITHOUT a direct incompatibility (another
+    #: mechanism, segment, geography or timeframe) — linked, never used as counter-evidence
+    RELATED = "RELATED"
+
+
+class EvidenceRole(StrEnum):
+    """How one thesis's evidence bears on another (review of PR #703, round 3)."""
+
+    #: the SAME thesis identity, new or independently confirming claims — may strengthen it
+    DIRECT_CONFIRMATION = "DIRECT_CONFIRMATION"
+    #: same direction, related but not the same claim (another segment, mechanism or node) —
+    #: shown as context, never strengthens the thesis
+    ADJACENT_SUPPORT = "ADJACENT_SUPPORT"
+    #: a direct contradiction — the only role that can weaken a thesis
+    CONTRADICTION = "CONTRADICTION"
+    #: the same upstream origin repeated — attribution only
+    REPEATED_SOURCE = "REPEATED_SOURCE"
+    #: the opposite direction on related economics, not a contradiction
+    RELATED = "RELATED"
+
+
+def identity_key(node: str, mechanism: str, direction: str, geography: str,
+                 segment: str = "", review: str = "") -> str:
+    """The ONE thesis identity: node | mechanism | direction | geography, plus the SEGMENT within
+    the node when the taxonomy defines segments for it (evidence about NAND / SSD is not the same
+    claim as evidence about DRAM / HBM), plus a review tag for an unclassified (`other`) thesis.
+    Without a segment or review tag the key is exactly the first build's — its ids are kept."""
+    key = f"{node}|{mechanism}|{direction}|{geography}"
+    if segment:
+        key += f"|seg:{segment}"
+    if review:
+        key += f"|review:{review}"
+    return key
 
 
 class ThesisStatus(StrEnum):
@@ -477,10 +512,15 @@ class CardHeader(Frozen):
     status: ThesisStatus
     ancestry: tuple[str, ...]
     kind: ThesisKind = ThesisKind.INVESTMENT_THESIS
-    #: when THIS REGISTRY first recorded the thesis — "new to the registry", never "new to market"
+    #: the UTC DATE this registry actually first ingested the thesis (wall clock) — "new to the
+    #: registry", never "new to market"; never a simulated as-of date
     first_detected: date | None = None
     #: publication date of the latest contributing source article
     latest_article_date: date | None = None
+    #: the exact UTC time the registry first ingested the thesis (wall clock)
+    first_ingested_at: datetime | None = None
+    #: the ANALYSIS as-of date of this version — in a historical replay it precedes ingestion
+    analysis_as_of: date | None = None
 
 
 class ChangeItem(Frozen):
@@ -698,6 +738,15 @@ class Thesis(Mutable):
     stance: StanceInSource  # strongest stance any contributing source takes
     horizon: Horizon
     kind: ThesisKind = ThesisKind.INVESTMENT_THESIS
+    #: the segment(s) within the node the evidence names ("dram_hbm+nand_ssd"); "" = none defined
+    key_segment: str = ""
+    #: the review tag of an unclassified (`other`) thesis — part of its identity
+    key_review: str = ""
+
+    @property
+    def identity(self) -> str:
+        return identity_key(self.key_node, self.key_mechanism, self.key_direction.value,
+                            self.key_geography, self.key_segment, self.key_review)
 
 
 class ThesisVersion(Frozen):
@@ -745,6 +794,8 @@ class ThemeRelation(Frozen):
     claim_ids: tuple[str, ...] = ()
     run_id: str
     created_at: datetime
+    #: how the newer thesis's evidence bears on the other (EvidenceRole value); "" = structural only
+    evidence_role: str = ""
 
 
 class ChangeEvent(Frozen):
@@ -828,6 +879,9 @@ class FigureCheck(Frozen):
     status: str  # captured | added_by_completeness_pass | immaterial | uncaptured
     claim_ids: tuple[str, ...] = ()
     reason: str = ""
+    #: why an OPEN figure is open: verification_failed | capture_not_verified | no_account |
+    #: pass_not_run — "" when it is accounted for
+    open_cause: str = ""
 
 
 class BlockCheck(Frozen):
@@ -837,6 +891,10 @@ class BlockCheck(Frozen):
     status: str  # anchored | covered | added | immaterial | unreviewed
     hypothesis_ids: tuple[str, ...] = ()
     reason: str = ""
+    #: verified claims a covered / added account names (the account is checkable through them)
+    claim_ids: tuple[str, ...] = ()
+    #: why an OPEN block is open: account_names_no_record | no_account | pass_not_run — or ""
+    open_cause: str = ""
 
 
 class CompletenessReport(Frozen):

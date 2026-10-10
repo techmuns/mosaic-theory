@@ -460,8 +460,16 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
         notes.append(f"number check failed: value={value} value_text={vt!r} vs quote")
     u = (unit or "").lower()
     if "%" in vt and u and "%" not in u and "percent" not in u:
-        notes.append(f"unit {unit!r} disagrees with a % figure")
-        ok = False
+        # the rule binds the number the VALUE reads: "22 (52%)" read as 22 texts states a count,
+        # its % belongs to the parenthetical. With no value, or no number reading as it, any %
+        # in the figure binds (the strict reading).
+        reads = [m for m in _NUM.finditer(vt_n) if value is not None
+                 and not in_hyphenated_name(vt_n, m.start())
+                 and any(abs(float(m.group(0).replace(",", "")) * k - value)
+                         <= 1e-9 * max(1.0, abs(value)) for k in scales)]
+        if not reads or any(vt_n[m.end():].lstrip().startswith("%") for m in reads):
+            notes.append(f"unit {unit!r} disagrees with a % figure")
+            ok = False
     return ok, notes
 
 

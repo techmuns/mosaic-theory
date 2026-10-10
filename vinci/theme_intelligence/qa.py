@@ -126,11 +126,18 @@ def run_qa(store: Store, run_id: str) -> QaResult:
     linked: set[str] = set()
     for th0 in store.theses():
         linked |= {lk.claim_id for lk in store.links(th0.thesis_id)}
+    unverified_linked: list[str] = []
     for cid in sorted(linked):
         lc = store.claim(cid)
         if lc and lc.measured_as_of and lc.measured_as_of > run.as_of and \
                 lc.article_id in article_ids:
             look_bad.append(f"{cid} measured {lc.measured_as_of} > as-of {run.as_of}")
+        if lc is None or not lc.span_verified or lc.number_verified is False:
+            unverified_linked.append(cid)
+    # unverified material can never raise a research action: it is never linked to a thesis
+    add(QaCheck("no unverified claim is linked to a thesis", not unverified_linked,
+                _fail_list(unverified_linked)
+                or f"{len(linked)} linked claim(s) in the registry, all verified"))
     add(QaCheck("spans re-found in stored article text", not span_bad,
                 f"{n_claims} verified claim(s) in {len(article_ids)} article(s)"
                 + (f"; FAILED: {_fail_list(span_bad)}" if span_bad else "")))
@@ -256,8 +263,10 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 continue
             rep = reps[-1]
             n_figs += len(rep.figures)
-            open_figs += [f"{aid} {f.block_id} {f.figure!r}" for f in rep.uncaptured]
-            open_blocks += [f"{aid} {b.block_id}" for b in rep.unaccounted_blocks]
+            open_figs += [f"{aid} {f.block_id} {f.figure!r} [{f.open_cause or 'unclassified'}]"
+                          for f in rep.uncaptured]
+            open_blocks += [f"{aid} {b.block_id} [{b.open_cause or 'unclassified'}]"
+                            for b in rep.unaccounted_blocks]
     add(QaCheck("completeness ledger recorded for every analysed article", not no_ledger,
                 _fail_list(no_ledger) or f"{len(article_ids)} article(s)"))
     add(QaCheck("every reported figure captured or judged immaterial", not open_figs,

@@ -100,12 +100,15 @@ def cmd_article(a: argparse.Namespace) -> int:
     sid = a.source or source_for_url(a.url, sources)
     run, res = pipe.run_article(a.url, as_of=_iso(a.as_of), source_id=sid, html=html,
                                 fixture=fixture, publisher=a.publisher)
-    print(f"run {run.run_id}: {run.status.value} — article {res.status} {res.note}".rstrip())
+    print(f"run {run.run_id}: scan execution {run.status.value} — article {res.status} "
+          f"{res.note}".rstrip())
     for o in res.outcomes:
         prev = o.previous_action.value if o.previous_action else "—"
         print(f"  {o.thesis_id}  {o.action.value:<12} (was {prev:<12}) "
               f"{o.evidence_direction.value:<9} {o.contribution.value:<24} {o.title}")
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    v = out["dashboard"].verification
+    print(f"research verification {v['status']} — {v['summary']}")
     print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · tokens {run.tokens}")
     print(f"outputs: {out['dir']}")
     return _EXIT[run.status]
@@ -140,7 +143,8 @@ def cmd_scan(a: argparse.Namespace) -> int:
     run = pipe.run_scan(window_from=w_from, window_to=w_to, as_of=as_of,
                         max_articles=a.max_articles, resume_run_id=a.resume)
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
-    print(f"run {run.run_id}: {run.status.value} · window {w_from}..{w_to} · as-of {as_of}")
+    print(f"run {run.run_id}: scan execution {run.status.value} · window {w_from}..{w_to} · "
+          f"as-of {as_of}")
     for sc in run.sources:
         print(f"  {sc.source_id:<20} {sc.status:<8} discovered {sc.discovered:>3} · in window "
               f"{sc.in_window:>3} · undated {sc.undated:>3} · new {sc.new:>3} · known "
@@ -148,6 +152,8 @@ def cmd_scan(a: argparse.Namespace) -> int:
               f"out-of-window {sc.skipped_out_of_window:>3} · inaccessible {sc.inaccessible:>3} · "
               f"errors {len(sc.errors):>2}" + (f" — {sc.errors[0][:120]}" if sc.errors else ""))
     print(f"counts {run.counts}")
+    v = out["dashboard"].verification
+    print(f"research verification {v['status']} — {v['summary']}")
     print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · tokens {run.tokens}")
     print(f"outputs: {out['dir']}")
     return _EXIT[run.status]
@@ -178,6 +184,7 @@ def cmd_report(a: argparse.Namespace) -> int:
 
 def cmd_qa(a: argparse.Namespace) -> int:
     from vinci.theme_intelligence.qa import run_qa
+    from vinci.theme_intelligence.report import research_verification
 
     paths = Paths(Path(a.data_dir))
     st = Store(paths.db)
@@ -191,7 +198,9 @@ def cmd_qa(a: argparse.Namespace) -> int:
     res = run_qa(st, run.run_id)
     for c in res.checks:
         print(f"  [{'PASS' if c.ok else 'FAIL'}] {c.name}: {c.detail}")
-    print(f"QA {run.run_id}: {res.passed}/{len(res.checks)} passed")
+    v = research_verification(st, run)
+    print(f"QA {run.run_id}: {res.passed}/{len(res.checks)} passed · scan execution "
+          f"{run.status.value} · research verification {v['status']} — {v['summary']}")
     return 0 if res.ok else 1
 
 

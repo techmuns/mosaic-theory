@@ -260,7 +260,8 @@ def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_cod
     for el in soup.select(".aud, .auditbar, script, input"):
         el.decompose()
     first = soup.get_text(" ", strip=True)
-    assert "Article date 2026-10-02" in first and "first detected by the registry" in first
+    assert "Published 2026-10-02" in first and "first ingested by the registry" in first
+    assert "first detected by the registry" not in first
     for code in ("TH-", "novelty_unverified", "WATCH (RESEARCH NOW unmet", "SKIP-", "C-",
                  "F5_", "F7_"):
         assert code not in first, code

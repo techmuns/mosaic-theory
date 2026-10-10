@@ -1,0 +1,180 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1b completeness model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-complete-1",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 18348,
+   "output_tokens": 1679
+  },
+  "parts": 1,
+  "notes": [],
+  "registry_after_runs": 1,
+  "registry_theses": [
+   "ai_infrastructure.power_grid|demand_volume_shift|positive|United States (esp. Texas)",
+   "ai_infrastructure.datacenter_physical|policy_regulation|positive|US"
+  ]
+ },
+ "output": {
+  "figure_reviews": [
+   {
+    "figure_id": "b011#-12%",
+    "verdict": "captured_by_added_claim",
+    "claim_ids": [
+     "k1"
+    ],
+    "reason": "Mag 7 summer low near -12% is part of the article's argument that heavyweight tech drove the rebound while breadth narrowed."
+   },
+   {
+    "figure_id": "b015#70",
+    "verdict": "captured_by_added_claim",
+    "claim_ids": [
+     "k2"
+    ],
+    "reason": "2020 peak above 70 shown as the historical high end of the correlation range."
+   },
+   {
+    "figure_id": "b015#30",
+    "verdict": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical 2021-2022 fluctuation range shown only as chart context for the current low reading."
+   },
+   {
+    "figure_id": "b015#60",
+    "verdict": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical 2021-2022 fluctuation range shown only as chart context for the current low reading."
+   },
+   {
+    "figure_id": "b015#40",
+    "verdict": "captured_by_added_claim",
+    "claim_ids": [
+     "k3"
+    ],
+    "reason": "20-year average of about 40 is the benchmark the article uses to argue correlation is currently unusually low."
+   }
+  ],
+  "block_reviews": [
+   {
+    "block_id": "b017",
+    "verdict": "covered",
+    "hypothesis_ids": [
+     "h2"
+    ],
+    "claim_ids": [],
+    "reason": "Describes utilities as a traditionally defensive sector now playing a different role, which is the setup for the h2 utilities-under-pressure thesis."
+   },
+   {
+    "block_id": "b024",
+    "verdict": "covered",
+    "hypothesis_ids": [
+     "h1",
+     "h2"
+    ],
+    "claim_ids": [],
+    "reason": "States utilities encapsulate AI promise, political consequences and higher rates — the combined drivers behind both the dispersion regime (h1) and the utilities thesis (h2)."
+   }
+  ],
+  "added_claims": [
+   {
+    "local_id": "k1",
+    "block_id": "b011",
+    "quote": "The Mag 7 stocks drop sharply early in the summer, hitting lows near –12% in July",
+    "statement": "The Mag 7 basket fell to lows near -12% in July before rebounding",
+    "kind": "metric",
+    "epistemic": "actual",
+    "metric": "price return since May",
+    "value": -12.0,
+    "value_text": "–12%",
+    "unit": "%",
+    "comparator": null,
+    "period": "since May 2026",
+    "measured_as_of": "2026-09-30",
+    "as_of_block_id": "b008",
+    "geography": "US",
+    "scope": "Mag 7 basket",
+    "attributed_source": "Bloomberg Finance L.P.",
+    "qualifiers": [
+     "near",
+     "lows in July"
+    ],
+    "approximate": true,
+    "chart_derived": true,
+    "confidence": "medium"
+   },
+   {
+    "local_id": "k2",
+    "block_id": "b015",
+    "quote": "The correlation started very high in 2020, peaking above 70",
+    "statement": "S&P 500 3-month implied correlation peaked above 70 in 2020",
+    "kind": "metric",
+    "epistemic": "actual",
+    "metric": "S&P 500 3-month implied correlation",
+    "value": 70.0,
+    "value_text": "70",
+    "unit": "index level",
+    "comparator": null,
+    "period": "2020",
+    "measured_as_of": null,
+    "as_of_block_id": null,
+    "geography": "US",
+    "scope": "S&P 500 3-month implied correlation",
+    "attributed_source": null,
+    "qualifiers": [
+     "peaking above",
+     "historical high"
+    ],
+    "approximate": true,
+    "chart_derived": true,
+    "confidence": "medium"
+   },
+   {
+    "local_id": "k3",
+    "block_id": "b015",
+    "quote": "the dashed line marking the 20-year average at about 40",
+    "statement": "The 20-year average of the S&P 500 3-month implied correlation is about 40",
+    "kind": "metric",
+    "epistemic": "actual",
+    "metric": "S&P 500 3-month implied correlation 20-year average",
+    "value": 40.0,
+    "value_text": "about 40",
+    "unit": "index level",
+    "comparator": null,
+    "period": "20-year average",
+    "measured_as_of": null,
+    "as_of_block_id": null,
+    "geography": "US",
+    "scope": "S&P 500 3-month implied correlation",
+    "attributed_source": null,
+    "qualifiers": [
+     "about",
+     "20-year average"
+    ],
+    "approximate": true,
+    "chart_derived": true,
+    "confidence": "medium"
+   }
+  ],
+  "added_mentions": [],
+  "hypothesis_additions": [
+   {
+    "hypothesis_id": "h1",
+    "supporting_claim_ids": [
+     "k2",
+     "k3"
+    ],
+    "dislocation_claim_ids": [
+     "k3"
+    ],
+    "counter_claim_ids": [],
+    "catalyst_claim_ids": [],
+    "affected_mentions": [],
+    "sector_exposures": []
+   }
+  ],
+  "added_hypotheses": [],
+  "added_risks": []
+ }
+}

@@ -1,0 +1,1197 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1 model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-extract-6",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 18710,
+   "max_tokens": 21333,
+   "output_tokens": 14033
+  }
+ },
+ "output": {
+  "article_classification": {
+   "article_class": "independent_research",
+   "basis": "Deep technical analysis of the GLM-5.3 model architecture and inference serving economics authored by a named SemiAnalysis research team, drawing on their own InferenceX benchmark platform.",
+   "basis_block_ids": [
+    "b009",
+    "b013",
+    "b022",
+    "b037"
+   ]
+  },
+  "attributed_authors": [
+   {
+    "block_id": "b029",
+    "name": "Kimbo Chen",
+    "quote": "Bryan Shan"
+   }
+  ],
+  "claims": [
+   {
+    "approximate": false,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b009",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c1",
+    "measured_as_of": null,
+    "metric": "serving cost ranking",
+    "period": null,
+    "qualifiers": [
+     "lowest modeled serving cost",
+     "modeled"
+    ],
+    "quote": "GB300 delivers the lowest modeled serving cost in our comparison at a response speed of 150 tokens per second",
+    "statement": "GB300 delivers the lowest modeled serving cost at 150 tokens per second response speed in SemiAnalysis's comparison.",
+    "unit": "tokens per second",
+    "value": 150,
+    "value_text": "150"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b011",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c2",
+    "measured_as_of": null,
+    "metric": "cost per million total tokens",
+    "period": null,
+    "qualifiers": [
+     "approximately",
+     "GB200",
+     "estimated from measured curves"
+    ],
+    "quote": "At 150 tokens per second, GB200 costs approximately $0.044 per million total tokens, compared with $0.049 for MI355X running ATOM.",
+    "statement": "At 150 tokens/sec, GB200 costs approximately $0.044 per million total tokens.",
+    "unit": "USD per million tokens",
+    "value": 0.044,
+    "value_text": "$0.044"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b011",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c3",
+    "measured_as_of": null,
+    "metric": "cost per million total tokens",
+    "period": null,
+    "qualifiers": [
+     "MI355X running ATOM",
+     "estimated from measured curves"
+    ],
+    "quote": "compared with $0.049 for MI355X running ATOM",
+    "statement": "At 150 tokens/sec, MI355X running ATOM costs $0.049 per million total tokens.",
+    "unit": "USD per million tokens",
+    "value": 0.049,
+    "value_text": "$0.049"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b011",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c4",
+    "measured_as_of": null,
+    "metric": "cost advantage",
+    "period": null,
+    "qualifiers": [
+     "about",
+     "GB200 vs MI355X"
+    ],
+    "quote": "That is about 12% lower cost at the same streaming-speed target.",
+    "statement": "GB200 is about 12% lower cost than MI355X ATOM at the 150 tokens/sec target.",
+    "unit": "%",
+    "value": 12,
+    "value_text": "about 12%"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b014",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c5",
+    "measured_as_of": null,
+    "metric": "throughput per GPU",
+    "period": null,
+    "qualifiers": [
+     "roughly",
+     "Dynamo-SGLang"
+    ],
+    "quote": "GB300 serves roughly 13950 total tokens per second per GPU here, a 17.5% throughput advantage versus 11873 total tokens for GB200",
+    "statement": "GB300 serves roughly 13,950 total tokens per second per GPU, a 17.5% throughput advantage over GB200.",
+    "unit": "tokens per second per GPU",
+    "value": 13950,
+    "value_text": "13950"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b014",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c6",
+    "measured_as_of": null,
+    "metric": "throughput advantage",
+    "period": null,
+    "qualifiers": [
+     "GB300 vs GB200",
+     "Dynamo-SGLang"
+    ],
+    "quote": "a 17.5% throughput advantage versus 11873 total tokens for GB200",
+    "statement": "GB300 has a 17.5% throughput advantage versus GB200's 11,873 total tokens per second.",
+    "unit": "%",
+    "value": 17.5,
+    "value_text": "17.5%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b014",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c7",
+    "measured_as_of": null,
+    "metric": "GPU hourly cost assumption",
+    "period": null,
+    "qualifiers": [
+     "assumed",
+     "GB300"
+    ],
+    "quote": "we assume $2.31 per GB300 GPU hour versus $1.86 for GB200",
+    "statement": "SemiAnalysis assumes $2.31 per GB300 GPU hour versus $1.86 for GB200.",
+    "unit": "USD per GPU hour",
+    "value": 2.31,
+    "value_text": "$2.31"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b015",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c8",
+    "measured_as_of": null,
+    "metric": "cost advantage at 100 tps",
+    "period": null,
+    "qualifiers": [
+     "about",
+     "ATOM vs GB200 at 100 tps"
+    ],
+    "quote": "ATOM costs about 13% less than GB200 at 100 tokens per second. GB200 costs about 5% less at 125 and 12% less at 150.",
+    "statement": "ATOM costs about 13% less than GB200 at 100 tokens/sec; GB200 costs about 5% less at 125 and 12% less at 150.",
+    "unit": "%",
+    "value": 13,
+    "value_text": "about 13%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b016",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c9",
+    "measured_as_of": null,
+    "metric": "cost per million output tokens",
+    "period": null,
+    "qualifiers": [
+     "GB200",
+     "output tokens only"
+    ],
+    "quote": "GB200 costs $5.92 per million output tokens at a response speed of 150 tokens per second, which is about 11% less than $6.68 for MI355X ATOM",
+    "statement": "GB200 costs $5.92 per million output tokens at 150 tokens/sec, about 11% less than MI355X ATOM's $6.68.",
+    "unit": "USD per million output tokens",
+    "value": 5.92,
+    "value_text": "$5.92"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b017",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c10",
+    "measured_as_of": null,
+    "metric": "p90 TTFT",
+    "period": null,
+    "qualifiers": [
+     "p90",
+     "GB200"
+    ],
+    "quote": "The GB200 measurements on either side of the 150-token-per-second target have p90 TTFT (time to first token) of roughly 14–19 seconds, compared with about 1.1–1.2 seconds for MI355X ATOM.",
+    "statement": "GB200 p90 TTFT near 150 tps is roughly 14-19 seconds vs about 1.1-1.2 seconds for MI355X ATOM.",
+    "unit": "seconds",
+    "value": null,
+    "value_text": "roughly 14–19 seconds"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b018",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c11",
+    "measured_as_of": null,
+    "metric": "cost per million total tokens (2s TTFT limit)",
+    "period": null,
+    "qualifiers": [
+     "MI355X ATOM",
+     "two-second first-token limit"
+    ],
+    "quote": "MI355X with ATOM at $0.0607 per million total tokens versus $0.0666 for B200 with Dynamo-SGLang. ATOM costs about 9% less with the two-second first-token limit.",
+    "statement": "Under a two-second TTFT limit, MI355X ATOM costs $0.0607 per million total tokens vs $0.0666 for B200, about 9% less.",
+    "unit": "USD per million tokens",
+    "value": 0.0607,
+    "value_text": "$0.0607"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "InferenceX | SemiAnalysis",
+    "block_id": "b018",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "mixed",
+    "kind": "metric",
+    "local_id": "c12",
+    "measured_as_of": null,
+    "metric": "cost per million total tokens (10s TTFT limit)",
+    "period": null,
+    "qualifiers": [
+     "GB300 Dynamo-TRT-LLM",
+     "ten-second limit",
+     "about 26% below ATOM"
+    ],
+    "quote": "If the limit is relaxed to ten seconds, GB300 with Dynamo-TRT-LLM becomes eligible at $0.0451, about 26% below ATOM’s $0.0607.",
+    "statement": "With a ten-second TTFT limit, GB300 with Dynamo-TRT-LLM costs $0.0451, about 26% below ATOM's $0.0607.",
+    "unit": "USD per million tokens",
+    "value": 0.0451,
+    "value_text": "$0.0451"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "SemiAnalysis InferenceX",
+    "block_id": "b021",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c13",
+    "measured_as_of": null,
+    "metric": "share of prompt tokens reused from GPU memory",
+    "period": null,
+    "qualifiers": [
+     "B200",
+     "concurrency 8 to 16"
+    ],
+    "quote": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%.",
+    "statement": "On B200, as concurrency rises from 8 to 16 requests, prompt tokens reused from GPU memory fall from 90.3% to 54.8%.",
+    "unit": "%",
+    "value": null,
+    "value_text": "90.3% to 54.8%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "SemiAnalysis InferenceX",
+    "block_id": "b021",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c14",
+    "measured_as_of": null,
+    "metric": "share of prompt tokens reused from host memory",
+    "period": null,
+    "qualifiers": [
+     "B200",
+     "concurrency 8 to 16"
+    ],
+    "quote": "Much of that reuse shifts to host memory, which rose from 6.0% to 40.3%.",
+    "statement": "Prompt token reuse from host memory rose from 6.0% to 40.3% as concurrency increased from 8 to 16.",
+    "unit": "%",
+    "value": null,
+    "value_text": "6.0% to 40.3%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "SemiAnalysis InferenceX",
+    "block_id": "b021",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c15",
+    "measured_as_of": null,
+    "metric": "overall cache hit rate",
+    "period": null,
+    "qualifiers": [
+     "above",
+     "all concurrency levels"
+    ],
+    "quote": "keeping the overall cache hit rate above 95% at all concurrency levels",
+    "statement": "Overall cache hit rate stayed above 95% at all concurrency levels on B200.",
+    "unit": "%",
+    "value": 95,
+    "value_text": "above 95%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b002",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "c16",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "the top-k selection operation typically requires the full context to be in HBM, so sparse attention doesn’t eliminate the memory capacity bottleneck",
+    "statement": "Sparse attention does not eliminate the memory capacity bottleneck because top-k selection typically requires the full context in HBM.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b007",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "c17",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "Sparse attention reduces KV cache memory and bandwidth requirements at the SDPA operation, but it does not reduce the overall memory capacity usage.",
+    "statement": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b033",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c18",
+    "measured_as_of": null,
+    "metric": "model parameters",
+    "period": null,
+    "qualifiers": [
+     "total parameters",
+     "40B active"
+    ],
+    "quote": "GLM-5 (and GLM-5.x models) is a 744B total, 40B active-parameter mixture-of-experts model.",
+    "statement": "GLM-5 is a 744B total, 40B active-parameter mixture-of-experts model.",
+    "unit": "billion parameters",
+    "value": 744,
+    "value_text": "744B"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "AgentX",
+    "block_id": "b030",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c19",
+    "measured_as_of": null,
+    "metric": "P90 interactivity uplift",
+    "period": null,
+    "qualifiers": [
+     "vs GB300 NVL72",
+     "FP8 TileRT MI355X"
+    ],
+    "quote": "FP8 TileRT MI355X achieves 2x the P90 interactivity than the best FP4 MI335X config. Comparing to GB300 NVL72, it brings a 40% uplift in interactivity.",
+    "statement": "FP8 TileRT MI355X achieves 2x the P90 interactivity of the best FP4 MI335X config and a 40% interactivity uplift vs GB300 NVL72.",
+    "unit": "%",
+    "value": 40,
+    "value_text": "40%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "IndexCache",
+    "block_id": "b067",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c20",
+    "measured_as_of": null,
+    "metric": "indexer cache reduction",
+    "period": null,
+    "qualifiers": [
+     "IndexShare design",
+     "throughput 1.5x-1.8x"
+    ],
+    "quote": "This design reduces indexer cache by 75%, reduces indexer FLOPs by 75%, and boosts throughput by 1.5x to 1.8x at different context lengths",
+    "statement": "IndexShare reduces indexer cache by 75%, reduces indexer FLOPs by 75%, and boosts throughput 1.5x-1.8x.",
+    "unit": "%",
+    "value": 75,
+    "value_text": "75%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b040",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c21",
+    "measured_as_of": null,
+    "metric": "MHA vs MQA memory cost",
+    "period": null,
+    "qualifiers": [
+     "MHA mode",
+     "memory cost"
+    ],
+    "quote": "MHA mode has lower FLOPs but 42x higher memory cost, MQA mode has lower memory cost but up to 3.4x higher FLOPs.",
+    "statement": "MHA mode has 42x higher memory cost; MQA mode has up to 3.4x higher FLOPs.",
+    "unit": "x",
+    "value": 42,
+    "value_text": "42x"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "publisher_own",
+    "block_id": "b059",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "c22",
+    "measured_as_of": null,
+    "metric": "arithmetic intensity",
+    "period": null,
+    "qualifiers": [
+     "suspect",
+     "Moore Threads MTT S4000"
+    ],
+    "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000, which is about 128 FLOP/B. Moore Threads’ collaboration with Z.ai, such as GLM-5.3-Flash day 0 support , corroborates our theory.",
+    "statement": "SemiAnalysis suspects GLM-5 is optimized for Moore Threads MTT S4000 (~128 FLOP/B), supported by Moore Threads' collaboration with Z.ai.",
+    "unit": "FLOP/B",
+    "value": 128,
+    "value_text": "about 128 FLOP/B"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b059",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "c23",
+    "measured_as_of": null,
+    "metric": "number of query heads",
+    "period": null,
+    "qualifiers": [
+     "half the number",
+     "may be designed for different hardware"
+    ],
+    "quote": "The fact that GLM-5 has H = 64, half the number of query heads, implies that GLM-5 may be designed for different hardware.",
+    "statement": "GLM-5's H=64 (half DeepSeek V3.2's query heads) implies it may be designed for different hardware than H800.",
+    "unit": "heads",
+    "value": 64,
+    "value_text": "64"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b025",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c24",
+    "measured_as_of": null,
+    "metric": "total throughput increase",
+    "period": null,
+    "qualifiers": [
+     "8 MI355X long context workload",
+     "median TTFT 28.6 to 8.7s"
+    ],
+    "quote": "ATOM engine processing prefill in chunks across pipeline stages delivered 98% higher total throughput and reduced median TTFT from 28.6 to 8.7 seconds",
+    "statement": "ATOM chunked prefill across pipeline stages delivered 98% higher total throughput and reduced median TTFT from 28.6 to 8.7 seconds on an 8 MI355X long-context workload.",
+    "unit": "%",
+    "value": 98,
+    "value_text": "98%"
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b024",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c25",
+    "measured_as_of": null,
+    "metric": "average TPOT",
+    "period": null,
+    "qualifiers": [
+     "NVFP4 study",
+     "vLLM"
+    ],
+    "quote": "vLLM keeping the first decoding step on a consistent CUDA graph execution path reduced average TPOT (time per output token) from about 40 ms to 22 ms in an NVFP4 study",
+    "statement": "A vLLM NVFP4 study reduced average TPOT from about 40 ms to 22 ms by keeping the first decoding step on a consistent CUDA graph path.",
+    "unit": "ms",
+    "value": null,
+    "value_text": "about 40 ms to 22 ms"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "Z.ai",
+    "block_id": "b099",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c26",
+    "measured_as_of": null,
+    "metric": "concurrent rollouts",
+    "period": null,
+    "qualifiers": [
+     "Z.ai claims"
+    ],
+    "quote": "Z.ai claims the orchestrator supports 1000 concurrent rollouts when training GLM-5.",
+    "statement": "Z.ai claims its multi-task rollout orchestrator supports 1000 concurrent rollouts when training GLM-5.",
+    "unit": "rollouts",
+    "value": 1000,
+    "value_text": "1000"
+   }
+  ],
+  "hypotheses": [
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "InferenceX",
+      "role": "data_source"
+     },
+     {
+      "name_as_written": "SGLang",
+      "role": "context"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c16",
+      "c17"
+     ],
+     "provenance": "source_stated",
+     "text": "The article argues sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage, because top-k selection requires the full context in HBM, and system optimizations like HiSparse offload KV cache to host DRAM rather than eliminating it."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c13",
+      "c14",
+      "c15"
+     ],
+     "provenance": "model_inference",
+     "text": "If sparse attention does not shrink memory capacity needs and instead shifts reuse to host DRAM, demand for HBM, DRAM and NAND in AI serving infrastructure is unlikely to be eroded by this efficiency technique, supporting the memory TAM."
+    },
+    "catalyst": {
+     "claim_ids": [],
+     "provenance": "model_inference",
+     "window_text": null
+    },
+    "cited_baskets": [],
+    "counter_claim_ids": [
+     "c17"
+    ],
+    "direction": "positive",
+    "disconfirming_observables": [
+     "Evidence that sparse attention deployments materially cut aggregate HBM/DRAM provisioning per model",
+     "Memory suppliers guiding to softer AI inference demand"
+    ],
+    "dislocation_claim_ids": [],
+    "geography": "Global",
+    "horizon": "longer_term",
+    "kind": "investment_thesis",
+    "local_id": "h1",
+    "lower_priority_if": [
+     "Evidence sparse attention materially reduces aggregate memory provisioning",
+     "Shift of KV cache to non-DRAM storage tiers at scale"
+    ],
+    "mechanism": "demand_volume_shift",
+    "near_term_view": {
+     "claim_ids": [
+      "c13",
+      "c14"
+     ],
+     "provenance": "source_stated",
+     "text": "The article provides a September 28 benchmark snapshot showing host-memory reuse rising sharply with concurrency, but draws a structural conclusion about memory TAM rather than a near-term trading view."
+    },
+    "next_research_step": "Check whether listed memory suppliers (HBM/DRAM/NAND) quantify AI inference memory demand and whether sparse-attention adoption is factored into their TAM guidance.",
+    "opposing_explanations": [
+     {
+      "claim_ids": [
+       "c17"
+      ],
+      "provenance": "source_stated",
+      "text": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation, which a naive reading could interpret as reducing memory demand and memory TAM."
+     }
+    ],
+    "premise_condition": null,
+    "raise_priority_if": [
+     "Memory makers cite inference KV-cache offload to host DRAM as a demand driver",
+     "Broader adoption of DSA-style models in production serving"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b001",
+      "claim_ids": [
+       "c16",
+       "c17"
+      ],
+      "direction": "positive",
+      "name": "HBM and NAND Memory",
+      "quote": "How Sparse Attention Affects DRAM/NAND Memory"
+     },
+     {
+      "block_id": "b004",
+      "claim_ids": [
+       "c14"
+      ],
+      "direction": "positive",
+      "name": "DRAM",
+      "quote": "proactively offloads KV cache entries from device HBM to host DRAM"
+     }
+    ],
+    "sectors": [
+     "memory semiconductors",
+     "HBM",
+     "DRAM",
+     "NAND"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c16",
+      "c17",
+      "c14"
+     ],
+     "provenance": "source_stated",
+     "text": "The article frames the question as how sparse attention affects memory TAM including HBM and NAND, and concludes the sparse attention memory profile alone cannot portray KV cache efficiency; system optimizations keep memory capacity in play and shift reuse to host DRAM."
+    },
+    "stance_in_source": "asserted",
+    "strongest_evidence_claim_ids": [
+     "c13",
+     "c14",
+     "c15"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c16",
+      "c17",
+      "c14"
+     ],
+     "provenance": "source_stated",
+     "text": "Efficiency techniques like sparse attention shift where the memory sits (HBM to host DRAM) rather than eliminating capacity needs, so the memory TAM is more resilient than a naive reading of sparse attention would suggest."
+    },
+    "supporting_claim_ids": [
+     "c16",
+     "c17",
+     "c13",
+     "c14",
+     "c15"
+    ],
+    "title": "Sparse attention does not reduce overall AI memory capacity demand",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c16",
+       "c17"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "Sparse attention and KV compression reduce per-operation KV cache reads but top-k selection still needs the full context in HBM."
+     },
+     {
+      "claim_ids": [
+       "c13",
+       "c14",
+       "c15"
+      ],
+      "provenance": "source_stated",
+      "step": "volumes",
+      "text": "Serving systems offload KV cache from HBM to host DRAM and keep cache hit rates above 95%, sustaining demand for both HBM capacity and host DRAM."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "model_inference",
+      "step": "listed_earnings",
+      "text": "Sustained memory capacity demand would support revenue of HBM/DRAM/NAND suppliers, but the article does not quantify any earnings or revenue effect for listed memory makers."
+     }
+    ],
+    "unknowns": [
+     "Whether reduced per-operation memory reads eventually translate into lower aggregate memory purchases as techniques mature",
+     "Whether listed memory makers' earnings or guidance reflect this dynamic",
+     "The magnitude of the net memory TAM effect, which the article does not quantify"
+    ],
+    "value_chain_node": "ai_infrastructure.memory"
+   },
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "GB300",
+      "role": "potential_beneficiary"
+     },
+     {
+      "name_as_written": "GB200",
+      "role": "potential_beneficiary"
+     },
+     {
+      "name_as_written": "MI355X",
+      "role": "potential_beneficiary"
+     },
+     {
+      "name_as_written": "AMD",
+      "role": "potential_beneficiary"
+     },
+     {
+      "name_as_written": "NVIDIA GPUs",
+      "role": "potential_beneficiary"
+     },
+     {
+      "name_as_written": "InferenceX",
+      "role": "data_source"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c1",
+      "c2",
+      "c3",
+      "c4",
+      "c8",
+      "c11",
+      "c12"
+     ],
+     "provenance": "source_stated",
+     "text": "In SemiAnalysis's InferenceX GLM-5.3 serving benchmark, NVIDIA GB300/GB200 lead on modeled cost at 150 tokens/sec (GB200 ~12% cheaper than MI355X on total tokens), but AMD MI355X ATOM leads at 100 tps and, under a two-second TTFT limit, is about 9% cheaper than B200; GB300 becomes cheapest only when the TTFT limit is relaxed to ten seconds."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c8",
+      "c11",
+      "c12"
+     ],
+     "provenance": "model_inference",
+     "text": "No vendor has a uniform cost advantage across streaming-speed targets and latency constraints, so competitive positioning between NVIDIA and AMD in inference serving is workload- and constraint-dependent rather than decisively won by one side."
+    },
+    "catalyst": {
+     "claim_ids": [],
+     "provenance": "model_inference",
+     "window_text": null
+    },
+    "cited_baskets": [],
+    "counter_claim_ids": [],
+    "direction": "positive",
+    "disconfirming_observables": [
+     "Hyperscalers standardizing on one vendor for GLM-class serving regardless of latency constraint",
+     "Changes in assumed GPU hourly costs that remove the flip in cost leadership"
+    ],
+    "dislocation_claim_ids": [],
+    "geography": "Global",
+    "horizon": "next_2_4_quarters",
+    "kind": "investment_thesis",
+    "local_id": "h2",
+    "lower_priority_if": [
+     "Benchmark assumptions (GPU hourly cost) shown to be unrepresentative",
+     "One vendor demonstrably dominates across all latency targets"
+    ],
+    "mechanism": "competitive_share_shift",
+    "near_term_view": {
+     "claim_ids": [
+      "c11",
+      "c12"
+     ],
+     "provenance": "source_stated",
+     "text": "Using the September 28 AgentX snapshot, the article shows the vendor cost ranking flips with the latency constraint, a current and research-relevant comparison for inference hardware selection."
+    },
+    "next_research_step": "Investigate whether AMD MI355X's low-TTFT cost advantage and NVIDIA's high-throughput advantage map to actual accelerator procurement mix at hyperscalers serving agentic LLM workloads.",
+    "opposing_explanations": [
+     {
+      "claim_ids": [
+       "c1",
+       "c4"
+      ],
+      "provenance": "source_stated",
+      "text": "At a single 150 tps target on total tokens, GB200/GB300 appear to clearly lead on cost, which in isolation would favor NVIDIA."
+     }
+    ],
+    "premise_condition": "Which hardware wins on serving cost depends on the chosen streaming-speed target and the time-to-first-token latency constraint applied.",
+    "raise_priority_if": [
+     "Hyperscalers disclose GLM-class or agentic serving hardware mix",
+     "AMD or NVIDIA guidance references inference serving cost competitiveness"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b015",
+      "claim_ids": [
+       "c8"
+      ],
+      "direction": "unclear",
+      "name": "AI accelerators / GPUs",
+      "quote": "In comparison with AMD"
+     }
+    ],
+    "sectors": [
+     "AI accelerators",
+     "GPUs",
+     "datacenter compute"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c8",
+      "c6",
+      "c7"
+     ],
+     "provenance": "source_stated",
+     "text": "The article states that across the three streaming-speed targets neither system has a uniform cost advantage and that GB300's throughput lead is more than offset by its higher assumed hourly cost at the 150 tps target."
+    },
+    "stance_in_source": "conditional",
+    "strongest_evidence_claim_ids": [
+     "c4",
+     "c8",
+     "c11",
+     "c12"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c8",
+      "c10",
+      "c11"
+     ],
+     "provenance": "source_stated",
+     "text": "Serving-cost competitiveness between NVIDIA and AMD accelerators is not uniform and depends heavily on interactivity and TTFT constraints, making headline cost-per-token comparisons misleading without the latency context."
+    },
+    "supporting_claim_ids": [
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "c5",
+     "c6",
+     "c7",
+     "c8",
+     "c9",
+     "c11",
+     "c12"
+    ],
+    "title": "GB300/GB200 vs AMD MI355X serving-cost leadership depends on latency constraints",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c1",
+       "c3"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "GLM-5.3 agentic serving is benchmarked across NVIDIA GB300/GB200 and AMD MI355X using different inference engines and latency targets."
+     },
+     {
+      "claim_ids": [
+       "c4",
+       "c8",
+       "c11"
+      ],
+      "provenance": "source_stated",
+      "step": "pricing",
+      "text": "Modeled serving cost per million tokens shifts between vendors with the streaming-speed target and TTFT limit; GB200 ~12% cheaper at 150 tps, MI355X ~13% cheaper at 100 tps."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "model_inference",
+      "step": "listed_earnings",
+      "text": "Relative serving-cost competitiveness could influence accelerator demand and vendor share, but the article does not quantify any effect on NVIDIA's or AMD's earnings."
+     }
+    ],
+    "unknowns": [
+     "Whether these modeled serving costs translate into realized hardware purchasing decisions and vendor revenue share",
+     "Whether the assumed GPU hourly costs reflect actual market pricing",
+     "Whether NVIDIA's or AMD's earnings reflect this competitive dynamic"
+    ],
+    "value_chain_node": "ai_infrastructure.compute_semis"
+   }
+  ],
+  "market_risks": [],
+  "mentions": [
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c1",
+     "c5",
+     "c7",
+     "c12",
+     "c19"
+    ],
+    "direction": "positive",
+    "entity_type": "product",
+    "issuer_name_hint": "NVIDIA Corporation",
+    "name_as_written": "GB300",
+    "quote": "GB300 delivers the lowest modeled serving cost",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "NVIDIA GPU system benchmarked as lowest-cost at 150 tps in InferenceX",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c2",
+     "c4",
+     "c6",
+     "c7",
+     "c9",
+     "c10"
+    ],
+    "direction": "positive",
+    "entity_type": "product",
+    "issuer_name_hint": "NVIDIA Corporation",
+    "name_as_written": "GB200",
+    "quote": "still leaves it ahead of GB200 on cost efficiency",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "NVIDIA GPU system benchmarked in InferenceX serving-cost comparison",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "block_id": "b011",
+    "claim_ids": [
+     "c3",
+     "c9",
+     "c10",
+     "c11",
+     "c19",
+     "c24"
+    ],
+    "direction": "unclear",
+    "entity_type": "product",
+    "issuer_name_hint": "Advanced Micro Devices, Inc.",
+    "name_as_written": "MI355X",
+    "quote": "compared with $0.049 for MI355X running ATOM",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "AMD GPU benchmarked against NVIDIA in serving-cost comparison",
+    "ticker_hint": "AMD"
+   },
+   {
+    "block_id": "b015",
+    "claim_ids": [
+     "c8"
+    ],
+    "direction": "unclear",
+    "entity_type": "company",
+    "issuer_name_hint": "Advanced Micro Devices, Inc.",
+    "name_as_written": "AMD",
+    "quote": "In comparison with AMD",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "hardware vendor whose MI355X is compared against NVIDIA systems",
+    "ticker_hint": "AMD"
+   },
+   {
+    "block_id": "b029",
+    "claim_ids": [],
+    "direction": "positive",
+    "entity_type": "company",
+    "issuer_name_hint": "NVIDIA Corporation",
+    "name_as_written": "NVIDIA GPUs",
+    "quote": "Ultra-High Interactivity on NVIDIA GPUs?",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "GPU maker referenced in TileRT interactivity analysis",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "block_id": "b007",
+    "claim_ids": [
+     "c18",
+     "c26"
+    ],
+    "direction": "neutral",
+    "entity_type": "private_company",
+    "issuer_name_hint": null,
+    "name_as_written": "Z.ai",
+    "quote": "here we explain the design of Z.ai’s GLM-5 model series",
+    "recommendation_status": "not_a_recommendation",
+    "role": "disruptor",
+    "role_detail": "developer of the GLM-5 model series analyzed in the article",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b034",
+    "claim_ids": [
+     "c23"
+    ],
+    "direction": "neutral",
+    "entity_type": "private_company",
+    "issuer_name_hint": null,
+    "name_as_written": "DeepSeek",
+    "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "developer of DeepSeek Sparse Attention and V3.2 compared against GLM-5",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b059",
+    "claim_ids": [
+     "c22"
+    ],
+    "direction": "positive",
+    "entity_type": "product",
+    "issuer_name_hint": "Moore Threads Technology Co., Ltd.",
+    "name_as_written": "Moore Threads MTT S4000",
+    "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000",
+    "recommendation_status": "not_a_recommendation",
+    "role": "potential_beneficiary",
+    "role_detail": "Chinese GPU suspected as GLM-5's target hardware",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b059",
+    "claim_ids": [
+     "c22"
+    ],
+    "direction": "positive",
+    "entity_type": "private_company",
+    "issuer_name_hint": "Moore Threads Technology Co., Ltd.",
+    "name_as_written": "Moore Threads",
+    "quote": "Moore Threads’ collaboration with Z.ai",
+    "recommendation_status": "not_a_recommendation",
+    "role": "potential_beneficiary",
+    "role_detail": "Chinese GPU vendor collaborating with Z.ai, suspected target hardware for GLM-5",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b044",
+    "claim_ids": [
+     "c23"
+    ],
+    "direction": "neutral",
+    "entity_type": "product",
+    "issuer_name_hint": "NVIDIA Corporation",
+    "name_as_written": "H800",
+    "quote": "MLA’s SDPA arithmetic intensity during decode is roughly at the ridge point of H800",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "NVIDIA GPU whose roofline DeepSeek designed around",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "block_id": "b004",
+    "claim_ids": [],
+    "direction": "neutral",
+    "entity_type": "other_organization",
+    "issuer_name_hint": null,
+    "name_as_written": "SGLang",
+    "quote": "the SGLang team designed HiSparse",
+    "recommendation_status": "not_a_recommendation",
+    "role": "context",
+    "role_detail": "team/engine behind HiSparse hierarchical memory system",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b024",
+    "claim_ids": [
+     "c25"
+    ],
+    "direction": "neutral",
+    "entity_type": "product",
+    "issuer_name_hint": null,
+    "name_as_written": "vLLM",
+    "quote": "vLLM keeping the first decoding step on a consistent CUDA graph execution path",
+    "recommendation_status": "not_a_recommendation",
+    "role": "context",
+    "role_detail": "open-source inference engine referenced for optimizations",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b013",
+    "claim_ids": [],
+    "direction": "neutral",
+    "entity_type": "publisher",
+    "issuer_name_hint": null,
+    "name_as_written": "SemiAnalysis",
+    "quote": "Source: InferenceX | SemiAnalysis",
+    "recommendation_status": "not_a_recommendation",
+    "role": "publisher",
+    "role_detail": "publisher of the article and owner of InferenceX benchmark platform",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c1",
+     "c2",
+     "c13"
+    ],
+    "direction": "neutral",
+    "entity_type": "product",
+    "issuer_name_hint": null,
+    "name_as_written": "InferenceX",
+    "quote": "In our realtime benchmark board InferenceX",
+    "recommendation_status": "not_a_recommendation",
+    "role": "data_source",
+    "role_detail": "SemiAnalysis's realtime benchmark platform used for serving-cost estimates",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b011",
+    "claim_ids": [
+     "c3",
+     "c8",
+     "c11"
+    ],
+    "direction": "neutral",
+    "entity_type": "product",
+    "issuer_name_hint": null,
+    "name_as_written": "ATOM",
+    "quote": "$0.049 for MI355X running ATOM",
+    "recommendation_status": "not_a_recommendation",
+    "role": "context",
+    "role_detail": "inference engine for AMD MI355X in benchmarks",
+    "ticker_hint": null
+   }
+  ]
+ }
+}

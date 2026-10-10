@@ -109,9 +109,23 @@ class TaxonomyItem:
 
 
 @dataclass(frozen=True)
+class Segment:
+    """A segment within a node — identity read from the verbatim evidence (taxonomy.toml)."""
+
+    node: str
+    id: str
+    label: str
+    terms: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class Taxonomy:
     nodes: tuple[TaxonomyItem, ...]
     mechanisms: tuple[TaxonomyItem, ...]
+    segments: tuple[Segment, ...] = ()
+
+    def segments_of(self, node_id: str) -> tuple[Segment, ...]:
+        return tuple(sg for sg in self.segments if sg.node == node_id)
 
     @property
     def node_ids(self) -> frozenset[str]:
@@ -171,7 +185,13 @@ def load_taxonomy(path: Path | None = None) -> Taxonomy:
         parent = n.id.rsplit(".", 1)[0] if "." in n.id else None
         if parent and parent not in node_ids:
             raise ConfigError(f"node {n.id} has no parent node {parent}")
-    return Taxonomy(nodes=nodes, mechanisms=mechs)
+    segments = tuple(Segment(str(sg["node"]), str(sg["id"]), str(sg["label"]),
+                             tuple(str(x) for x in sg["terms"]))
+                     for sg in raw.get("segment", []))
+    for sg in segments:
+        if sg.node not in node_ids or not sg.terms or "+" in sg.id:
+            raise ConfigError(f"segment {sg.id}: unknown node, no terms or a '+' in its id")
+    return Taxonomy(nodes=nodes, mechanisms=mechs, segments=segments)
 
 
 @dataclass(frozen=True)

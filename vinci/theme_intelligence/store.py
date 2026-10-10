@@ -364,7 +364,7 @@ class Store:
 
     # -- theses -----------------------------------------------------------------------------------
     def thesis_key(self, t: Thesis) -> str:
-        return f"{t.key_node}|{t.key_mechanism}|{t.key_direction.value}|{t.key_geography}"
+        return t.identity  # the engine's identity, segment and review tag included
 
     def upsert_thesis(self, t: Thesis) -> None:
         self.conn.execute(
@@ -493,6 +493,10 @@ class Store:
     def completeness(self, article_version_id: str) -> list[CompletenessReport]:
         return self._rows("SELECT payload FROM completeness WHERE article_version_id=? ORDER BY "
                           "run_id", [article_version_id], CompletenessReport)
+
+    def completeness_for_run(self, run_id: str) -> list[CompletenessReport]:
+        return self._rows("SELECT payload FROM completeness WHERE run_id=? ORDER BY "
+                          "article_version_id", [run_id], CompletenessReport)
 
     def add_llm_call(self, call_id: str, run_id: str, purpose: str,
                      record: dict[str, Any]) -> None:

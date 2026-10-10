@@ -230,7 +230,8 @@ def compose_card(ci: CardInputs) -> CardContent:
         evidence_direction=ci.evidence_direction, horizon=horizon,
         last_material_update=ci.last_material_update, status=ci.thesis.status,
         ancestry=ci.thesis.ancestry, kind=ci.thesis.kind,
-        first_detected=ci.thesis.created_as_of,
+        first_detected=ci.thesis.created_at.date(),
+        first_ingested_at=ci.thesis.created_at, analysis_as_of=ci.as_of,
         latest_article_date=max(dates) if dates else None)
 
     # 01 bottom line ----------------------------------------------------------------------------
@@ -588,11 +589,13 @@ _PILL = {"RESEARCH NOW": "now", "WATCH": "watch", "SKIP": "skip"}
 _FOLDED = {"s03_transmission", "s04_key_evidence", "s05_affected", "s07_what_could_go_wrong",
            "s09_sources"}
 #: change classes as a reader says them; `novelty_unverified` needs no per-line tag — section 02
-#: says once that a new thesis is new TO THE REGISTRY, not necessarily new to the market
-_CHANGE_TAG = {ChangeClass.NEW: "New evidence",
-               ChangeClass.INDEPENDENT_CONFIRMATION: "Independent confirmation",
-               ChangeClass.REPEATED: "Repeats evidence already held",
-               ChangeClass.CONTRADICTORY: "Contradicts the thesis",
+#: says once that a new thesis is new TO THE REGISTRY, not necessarily new to the market. Evidence
+#: reaching a thesis's own history is DIRECT (the same identity — node, mechanism, segment,
+#: geography); adjacent support and related opposite reads stay in the registry links, never here.
+_CHANGE_TAG = {ChangeClass.NEW: "Direct confirmation — new evidence",
+               ChangeClass.INDEPENDENT_CONFIRMATION: "Direct confirmation — independent source",
+               ChangeClass.REPEATED: "Repeated source — attribution only",
+               ChangeClass.CONTRADICTORY: "Contradiction — evidence against this thesis",
                ChangeClass.CORRECTION: "Correction", ChangeClass.TIMING_CHANGE: "Timing change",
                ChangeClass.NO_MATERIAL_CHANGE: "No material change",
                ChangeClass.NOVELTY_UNVERIFIED: ""}
@@ -633,12 +636,20 @@ def clip(text: str, n: int) -> str:
 
 
 def first_detected_line(h: CardHeader) -> str:
-    """Article date and registry date, kept apart — new to the registry is not new to market."""
+    """Three dates, never conflated (review of PR #703, round 3): the publisher's (the latest
+    contributing source), the moment this registry ACTUALLY first ingested the thesis (wall
+    clock, UTC) and the analysis as-of. A historical replay sets the as-of BEFORE ingestion — a
+    simulated date is never called a detection."""
     art = (h.latest_article_date.isoformat() if h.latest_article_date else "UNKNOWN")
-    det = h.first_detected.isoformat() if h.first_detected else "UNKNOWN"
-    return (f"Article date {art} · first detected by the registry {det} (new to the registry "
-            f"does not mean new to the market) · last material update "
-            f"{h.last_material_update.isoformat()}")
+    ing = (f"{h.first_ingested_at:%Y-%m-%d %H:%M} UTC" if h.first_ingested_at else
+           f"{h.first_detected.isoformat()} (UTC date)" if h.first_detected else "UNKNOWN")
+    replay = (h.analysis_as_of is not None and h.first_ingested_at is not None
+              and h.analysis_as_of < h.first_ingested_at.date())
+    return (f"Published {art} (latest source) · first ingested by this registry {ing} (new to "
+            f"the registry, not necessarily to the market) · analysed as of "
+            f"{h.analysis_as_of.isoformat() if h.analysis_as_of else 'UNKNOWN'}"
+            + (" (a historical replay — a simulated date, not a detection)" if replay else "")
+            + f" · last material update {h.last_material_update.isoformat()}")
 
 
 @dataclass
