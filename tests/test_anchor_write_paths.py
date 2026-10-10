@@ -7,8 +7,11 @@ anchor. Neither is caught by testing `compute_anchor` alone, because both live o
 from __future__ import annotations
 
 import inspect
+import pathlib
 
 from vinci.dossier.anchor import DQ_VENDOR_BRIDGE, _with_bridge
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 class _A:
@@ -68,8 +71,11 @@ def test_the_backfill_re_renders_the_page_it_invalidates() -> None:
     assert "_rerender_only(path)" in src, (
         "the backfill must re-render dossier.md — writing one committed artifact of two leaves the "
         "page contradicting the record")
-    assert "replace_anchor_block(original, anchor)" in src, (
-        "the JSON write must remain byte-preserving")
+    # THROUGH THE ONE WRITE (2026-10-10, #702): the splice left the derived blocks describing the
+    # old anchor. Byte preservation of every other field is now the one write's property, proven
+    # on every committed page by `test_the_backfill_write_moves_nothing_but_the_anchor` below.
+    assert "layer_refresh.write_recorded(" in src and '"anchor-backfill"' in src, (
+        "the JSON write must go through the one write, recording itself")
     assert "the UI ignores it" not in src, (
         "the docstring still claims the page ignores the anchor — it prints its base and reason")
 
@@ -106,3 +112,30 @@ def test_the_docstring_no_longer_claims_the_page_ignores_the_anchor() -> None:
     assert "UI ignores it" not in doc, "the false data-only claim is still in the docstring"
     assert "prints the base value and the reason" in doc, (
         "the docstring should say what the page actually does with the block")
+
+
+def test_the_backfill_write_moves_nothing_but_the_anchor(tmp_path: pathlib.Path) -> None:
+    """BYTE PRESERVATION, AS BEHAVIOUR (2026-10-10). The backfill once spliced the anchor into the
+    text so no other field's bytes could move. It now writes through the one write
+    (`layer_refresh.write_recorded`), and this proves the same property on EVERY committed page: an
+    anchor edit moves the anchor, the blocks derived from it, and the refresh record — every other
+    top-level key is unchanged, and an unchanged anchor writes the page's own bytes."""
+    import json as _json
+
+    from vinci.dossier import layer_refresh
+    from vinci.dossier.schemas import Dossier
+
+    derived = {"anchor", "valuation_basis", "date_semantics", "qa_flags", "layer_refreshes"}
+    for src in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        original = src.read_text()
+        path = tmp_path / f"{src.parent.name}.json"
+        d = Dossier.model_validate_json(original)
+        assert d.anchor is not None
+        assert layer_refresh.write_recorded(path, original, d, "anchor-backfill") == original
+        edited = d.model_copy(update={"anchor": d.anchor.model_copy(update={"reason": "edited"})})
+        after = _json.loads(layer_refresh.write_recorded(path, original, edited,
+                                                         "anchor-backfill"))
+        before = _json.loads(original)
+        assert {k: v for k, v in after.items() if k not in derived} == {
+            k: v for k, v in before.items() if k not in derived}, src.parent.name
+        assert after["layer_refreshes"][-1]["layers"] == ["anchor"], src.parent.name

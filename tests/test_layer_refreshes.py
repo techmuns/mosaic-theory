@@ -151,8 +151,10 @@ def test_the_text_writers_record_themselves() -> None:
                               (cli._cmd_financials_backfill, "financials-backfill",
                                "mechanical.financial_summary")):
         src = inspect.getsource(fn)
-        assert "layer_refresh.upsert_text(" in src, fn.__name__
-        assert f'layer_refresh.entry("{writer}", ["{layer}"])' in src, fn.__name__
+        # through the one write since #702: the recording write names the writer, and records the
+        # layers that actually moved (its `layer` among them, derived blocks when they follow)
+        assert "layer_refresh.write_recorded(" in src, fn.__name__
+        assert f'"{writer}"' in src and layer, fn.__name__
 
 
 # --- absent until written; every recorded version is one this code declares ----------------------

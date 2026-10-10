@@ -328,7 +328,8 @@ def test_the_precondition_is_wired_into_the_write() -> None:
 
     src = inspect.getsource(asm._write)
     assert "_refuse_synthesis_overwrite(dossier, folder)" in src
-    assert src.index("_refuse_synthesis_overwrite") < src.index('"dossier.json").write_text')
+    write = src.index('write_dossier(folder / "dossier.json"')
+    assert src.index("_refuse_synthesis_overwrite") < write
 
 
 def test_refresh_refuses_before_it_writes(tmp_path: pathlib.Path) -> None:
@@ -503,7 +504,7 @@ def test_the_degraded_precondition_is_wired_into_the_write() -> None:
     src = inspect.getsource(asm._write)
     assert "_refuse_degraded_drawdown_overwrite(dossier, folder)" in src
     guard = src.index("_refuse_degraded_drawdown_overwrite")
-    assert guard < src.index('"dossier.json").write_text')
+    assert guard < src.index('write_dossier(folder / "dossier.json"')
 
 
 def test_one_serializer_writes_the_dossier_and_a_tiny_float_stays_decimal() -> None:
@@ -536,5 +537,6 @@ def test_one_serializer_writes_the_dossier_and_a_tiny_float_stays_decimal() -> N
     assert "e-05" not in text
 
     src = (ROOT / "vinci" / "dossier" / "assemble.py").read_text()
-    assert "write_text(dossier_json(dossier))" in src, "the assembler stopped sharing the writer"
+    assert 'write_dossier(folder / "dossier.json", dossier)' in src, (
+        "the assembler stopped sharing the one write")
     assert "dossier.model_dump_json(" not in src, "a second dossier serializer is back"
