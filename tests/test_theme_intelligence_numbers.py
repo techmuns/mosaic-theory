@@ -98,6 +98,9 @@ def test_the_ledger_reads_unit_figures_ranges_and_percentiles_and_skips_names() 
                       "the top ten sat in the 99th percentile."),
         ("paragraph", "Texas adds perhaps three-four months of delay and new lines take "
                       "twenty-four months to energise."),
+        ("paragraph", "They demand (1) registration of training runs above compute thresholds, "
+                      "(2) safety cases before release, and (3) audits. None of the 13 got what "
+                      "it asked for."),
     ]).doc()
     by_block: dict[str, list[str]] = {}
     for f in scan_article(doc).figures:
@@ -105,6 +108,7 @@ def test_the_ledger_reads_unit_figures_ranges_and_percentiles_and_skips_names() 
     assert by_block["b001"] == ["40%", "744B", "77K"]  # no "5.3", no "5", nothing from "B200"
     assert by_block["b002"] == ["75 GW", "1.5GW", "930MW", "99th percentile"]
     assert by_block["b003"] == ["three-four months", "twenty-four months"]
+    assert by_block["b004"] == ["13"]  # "(1)" … "(3)" mark a list (observed in a weekly run)
 
 
 # --- the card-line check, end to end ----------------------------------------------------------

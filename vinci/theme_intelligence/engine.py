@@ -272,7 +272,8 @@ class Engine:
             ctx, thesis, 1, h, None, links, claims, mentions, resolutions, items, vs_prior,
             novelty, EvidenceDirection.NEW, None, (), self._risk_sentences(risks, claims),
             rel_notes, [claims[c] for c in h.counter if c in claims], change_summary=(
-                "Initial record — created from " + ctx.article.article_id), classes={})
+                "Initial record — created from " + ctx.article.article_id), classes={},
+            contribution=ChangeClass.NOVELTY_UNVERIFIED)
         contribution = ArticleThesisContribution(
             contribution_id="AC-" + _sha(ctx.version.version_id, tid)[:14],
             article_id=ctx.article.article_id, thesis_id=tid, version=1,
@@ -394,7 +395,7 @@ class Engine:
             prev_v.priority.factors, self._risk_sentences(risks, claims), [], counter,
             change_summary=f"{ctx.article.article_id}: " + ", ".join(
                 f"{k} ×{v}" for k, v in sorted(counts.items())), classes=classes,
-            prev_sha=prev_v.content_sha)
+            contribution=dominant_class(classes), prev_sha=prev_v.content_sha)
         etype = event_type(prev_v.priority.research_action, version.priority.research_action,
                            classes)
         contribution = ArticleThesisContribution(
@@ -521,13 +522,16 @@ class Engine:
             f"challenged by competing thesis {challenger} — evidence linked as CONTRADICTS, "
             f"the two theses stay separate", "relative to the registry's prior version",
             EvidenceDirection.WEAKER, prev_v.priority.research_action, prev_v.priority.factors,
-            [], [CardSentence(text=f"Registry link — COMPETING hypothesis {challenger} "
-                                   f"(opposite direction, same node and mechanism)",
+            [], [CardSentence(text=f"Registry link — COMPETING hypothesis {challenger}: "
+                                   f"{_competing_basis(inc, st.thesis(challenger))}",
                               provenance=Provenance.MODEL_INFERENCE)],
             [claims[c] for c in add], change_summary=f"challenged by {challenger}",
-            classes=classes, prev_sha=prev_v.content_sha)
+            classes=classes, contribution=ChangeClass.CONTRADICTORY, prev_sha=prev_v.content_sha)
         contribution = ArticleThesisContribution(
-            contribution_id="AC-" + _sha(ctx.version.version_id, inc.thesis_id, "challenge")[:14],
+            # one id per CHALLENGER: an article whose two new theses both compete with this one
+            # challenges it twice (observed 2026-10-10 — the shared id stopped the weekly run)
+            contribution_id="AC-" + _sha(ctx.version.version_id, inc.thesis_id, "challenge",
+                                         challenger)[:14],
             article_id=ctx.article.article_id, thesis_id=inc.thesis_id, version=next_v,
             contribution=ChangeClass.CONTRADICTORY, claim_ids=tuple(add), run_id=ctx.run_id,
             as_of=ctx.as_of)
@@ -556,7 +560,7 @@ class Engine:
                        prev_factors: tuple[object, ...], risk_sents: list[CardSentence],
                        rel_notes: list[CardSentence], counter: list[Claim], *,
                        change_summary: str, classes: dict[str, ChangeClass],
-                       prev_sha: str | None = None) -> ThesisVersion:
+                       contribution: ChangeClass, prev_sha: str | None = None) -> ThesisVersion:
         all_claims = dict(claims)
         for lk in links:
             if lk.claim_id not in all_claims and (c := self.store.claim(lk.claim_id)):
@@ -576,7 +580,7 @@ class Engine:
             sector_exposures=sector_exposures_from(
                 h.sectors if h else [], all_claims, ctx.article.article_id,
                 prev.s05_affected if prev else None))
-        sources = self._sources(thesis.thesis_id, ctx, links, all_claims)
+        sources = self._sources(thesis.thesis_id, ctx, links, all_claims, contribution)
         hold_reasons = self._hold_reasons(links, all_claims)
 
         published = tuple((s.article_id, s.published_at.date()) for s in sources
@@ -794,7 +798,11 @@ class Engine:
         return out
 
     def _sources(self, tid: str, ctx: ArticleContext, links: list[ThesisClaimLink],
-                 claims: dict[str, Claim]) -> list[SourceRef]:
+                 claims: dict[str, Claim], current: ChangeClass) -> list[SourceRef]:
+        """One line per contributing article. The article building THIS version shows the
+        contribution it makes now — its contribution row is written only after the card is
+        built, and the fallback had shown every update as an initial record (observed
+        2026-10-10: TrendForce's independent confirmation of a SemiAnalysis thesis)."""
         contribs = {c.article_id: c for c in self.store.contributions(tid)}
         art_ids = list(dict.fromkeys([*contribs, ctx.article.article_id]))
         out: list[SourceRef] = []
@@ -807,7 +815,8 @@ class Engine:
             origins = sorted({origin_label(claims[c].attributed_source_text) for c in cids})
             vers = self.store.article_versions(aid)
             state = vers[-1].retrieval_state if vers else ctx.version.retrieval_state
-            contrib = (contribs[aid].contribution if aid in contribs
+            contrib = (current if aid == ctx.article.article_id
+                       else contribs[aid].contribution if aid in contribs
                        else ChangeClass.NOVELTY_UNVERIFIED)
             out.append(SourceRef(
                 article_id=aid, title=a.title, authors=tuple(
@@ -1014,3 +1023,14 @@ _PLACEHOLDER = ResearchPriority(
     investment_readiness=InvestmentReadiness.NOT_ASSESSED, factors=(),
     rules_fired=("placeholder — replaced before persisting",), previous_action=None,
     change_reason="", valuation_status="")
+
+
+def _competing_basis(inc: Thesis, ch: Thesis | None) -> str:
+    """What made two theses COMPETING, as the rule found it: the opposite direction on the same
+    value-chain node — with the two mechanisms named, the same or not."""
+    if ch is None:
+        return "the opposite direction on the same value-chain node"
+    mech = (f"the same mechanism ({inc.key_mechanism})" if inc.key_mechanism == ch.key_mechanism
+            else f"different mechanisms ({inc.key_mechanism} vs {ch.key_mechanism})")
+    return (f"the opposite direction on the same value-chain node ({inc.key_node}), {mech} — "
+            f"linked, never merged")

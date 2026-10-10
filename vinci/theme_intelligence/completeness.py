@@ -143,6 +143,8 @@ def _skip_number(text: str, m: re.Match[str]) -> bool:
     prev = re.search(r"([A-Za-z&][\w&.'-]*)[\s-]?$", before)
     if prev and (prev.group(1)[0].isupper() or "&" in prev.group(1)) and "." not in num:
         return True  # part of a name: "S&P 500", "Mag 7", "Russell 2000", "GPT-5"
+    if before.endswith("(") and after.startswith(")") and len(num) <= 2:
+        return True  # an inline enumeration marker: "demand (1) registration …, (2) …"
     return bool(not before and re.match(r"^[.)]", after))  # list numbering "1." / "2)"
 
 

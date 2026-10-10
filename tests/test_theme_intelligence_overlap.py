@@ -154,7 +154,7 @@ def test_two_publishers_repeating_one_source_are_one_origin(pipe: Pipeline) -> N
 
 def test_independent_evidence_next_week_versions_the_same_thesis(pipe: Pipeline) -> None:
     a = _memory_article("dram-a", "Hypo Research A", W1)
-    ingest(pipe, a.doc(), _memory_extraction(), as_of=W1, publisher=a.publisher)
+    ra = ingest(pipe, a.doc(), _memory_extraction(), as_of=W1, publisher=a.publisher)
     tid = _memory_thesis(pipe).thesis_id
     c = Hypo(slug="hbm-orders", publisher="Hypo Wire C", published=W2, blocks=[
         ("paragraph", "Samsung Electronics said it received orders worth $2 billion for HBM "
@@ -182,6 +182,16 @@ def test_independent_evidence_next_week_versions_the_same_thesis(pipe: Pipeline)
                                  "s05_affected.companies"}  # a NARROW diff
     assert "s05_affected.companies" not in fields  # Micron was already there
     assert v2.priority.change_reason  # any priority change is explained
+    # each publisher's contribution, as recorded — the updating article included (observed
+    # 2026-10-10: the update's own line fell back to "novelty_unverified" / "Initial record")
+    srcs = {sr.article_id: sr.contribution for sr in v2.content.s09_sources}
+    assert srcs == {ra.article_id: ChangeClass.NOVELTY_UNVERIFIED,
+                    res.article_id: ChangeClass.NEW}
+    recorded = {cb.article_id: cb.contribution for cb in pipe.store.contributions(tid)}
+    assert srcs == recorded
+    html = render_html(v2.content, card_context(pipe.store, t, v2, generated="t"))
+    table = html.split('data-field="s09_sources"', 1)[1].split("Version history", 1)[0]
+    assert table.count("Initial record") == 1 and table.count("New evidence") == 1
 
 
 # --- 4. later contradiction: a moved launch date -------------------------------------------------
@@ -282,6 +292,47 @@ def test_bullish_recovery_and_bearish_disruption_are_linked_competitors(
     contra = [lk for lk in pipe.store.links(bull.thesis_id)
               if lk.role is LinkRole.CONTRADICTS and lk.first_version == 2]
     assert contra and all(lk.change_class is ChangeClass.CONTRADICTORY for lk in contra)
+    # the card says what the rule found (observed 2026-10-10: it claimed "same node and
+    # mechanism" for two different mechanisms)
+    v2 = pipe.store.thesis_version(bull.thesis_id, 2)
+    assert v2 is not None
+    card = json.dumps(v2.content.model_dump(mode="json"))
+    assert "same node and mechanism" not in card
+    assert (f"different mechanisms ({bull.key_mechanism} vs disruption_revenue_erosion)"
+            in card)
+
+
+def test_one_article_challenging_a_thesis_twice_records_two_challenges(
+        tmp_path: Path) -> None:
+    """Observed 2026-10-10 in the weekly run: an article whose two new theses both compete with
+    one existing thesis challenged it twice, and the second challenge reused the first one's
+    contribution id — the store's integrity guard stopped the run. One id per challenger."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("fixture", as_of=W1)
+    ingest_jpm(pipe)
+    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
+    bear = Hypo(slug="two-bears", publisher="Hypo Research B", published=W1, blocks=[
+        ("paragraph", "Seat counts at large SaaS vendors fell 8% in 4Q25 as coding agents "
+                      "replaced junior developer licenses."),
+        ("paragraph", "List prices for SaaS suites were cut 12% at renewal as buyers pushed "
+                      "back on per-seat pricing.")])
+    x = extraction(
+        [claim("c1", "b001", "Seat counts at large SaaS vendors fell 8% in 4Q25",
+               "SaaS seat counts -8% in 4Q25", metric="SaaS seat count change", value=8,
+               value_text="8%", unit="%", period="4Q25", scope="large SaaS vendors"),
+         claim("c2", "b002", "List prices for SaaS suites were cut 12% at renewal",
+               "SaaS renewal list prices -12%", metric="SaaS renewal price change", value=12,
+               value_text="12%", unit="%", period="4Q25", scope="SaaS suites")],
+        [hyp("h1", "Agents erode SaaS seat revenue", node=bull.key_node,
+             mechanism="disruption_revenue_erosion", direction="negative", supporting=["c1"]),
+         hyp("h2", "SaaS renewal pricing comes under pressure", node=bull.key_node,
+             mechanism="pricing_cycle", direction="negative", supporting=["c2"])])
+    ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
+    inc = pipe.store.thesis(bull.thesis_id)
+    assert inc is not None and inc.current_version == 3  # challenged once by each
+    mine = [cb for cb in pipe.store.contributions(bull.thesis_id)
+            if cb.contribution is ChangeClass.CONTRADICTORY]
+    assert len(mine) == 2 and len({cb.contribution_id for cb in mine}) == 2
 
 
 # --- 7. a sector-only paper ----------------------------------------------------------------------
