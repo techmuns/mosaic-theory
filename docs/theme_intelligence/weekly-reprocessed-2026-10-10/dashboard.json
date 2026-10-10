@@ -124,7 +124,7 @@
    "action": "WATCH",
    "card": "cards/TH-EBC230CDDD.html",
    "direction": "negative",
-   "evidence_direction": "WEAKER",
+   "evidence_direction": "NEW",
    "last_material_update": "2026-10-08",
    "mechanism": "competitive_share_shift",
    "node": "ai_models_platforms",
@@ -133,7 +133,7 @@
    "status": "ACTIVE",
    "thesis_id": "TH-EBC230CDDD",
    "title": "China's frontier labs race ahead without safety gating, intensifying competition for US labs",
-   "versions": 3
+   "versions": 1
   },
   {
    "action": "SKIP",
@@ -161,12 +161,13 @@
   "ARCHIVED": [
    {
     "action": "SKIP",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-08",
     "card": "cards/TH-921772E86C.html",
     "category": "ARCHIVED",
     "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [
      "ARCHIVED"
     ],
@@ -229,12 +230,13 @@
   "NEW": [
    {
     "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-02",
     "card": "cards/TH-4BC577D53A.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-88f388db8c7f04: measured 2026-10-02 (8 days before the as-of); C-91f359d4567e78: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-32ea139ac5c55b: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "market_regime",
     "last_material_update": "2026-10-02",
@@ -276,7 +278,7 @@
     ],
     "what_changed_audit": [
      "[novelty_unverified] The Cboe 3-month implied correlation index sits at 11.2, well below its long-run average of 41. [C-88f388db8c7f04]",
-     "[novelty_unverified] The S&P 500 3-month implied correlation most recently hovers in the 10-15 range, below the ~40 20-year average. \u27e8cited figures: approximate, read from a chart\u27e9 [C-bdeeb3028aa31f]",
+     "[novelty_unverified] The S&P 500 3-month implied correlation most recently hovers in the 10-15 range, below the ~40 20-year average. \u27e8cited figures: approximate, read from a chart\u27e9 [C-bdeeb3028aa31f, C-91f359d4567e78]",
      "[novelty_unverified] The S&P 500 3-month implied correlation's 20-year average is about 40 \u27e8cited figures: approximate, read from a chart\u27e9 [C-91f359d4567e78]",
      "[novelty_unverified] Only about 43% of S&P 500 stocks are trading above their 200-day average. \u27e8cited figures: approximate\u27e9 [C-a97bbb9aa2d733]",
      "[novelty_unverified] The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August. [C-32ea139ac5c55b]",
@@ -287,12 +289,13 @@
    },
    {
     "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-02",
     "card": "cards/TH-588B6416E4.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-90533479f480e9: measured 2026-10-02 (8 days before the as-of); C-15345e9a075e87: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: utilities, sector: S&P 500 Utilities sector; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "investment_thesis",
     "last_material_update": "2026-10-02",
@@ -340,12 +343,13 @@
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-08",
     "card": "cards/TH-07643AD5F6.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "investment_thesis",
     "last_material_update": "2026-10-08",
@@ -383,19 +387,20 @@
      "[novelty_unverified] Global notebook production outside China is estimated at approximately 24% in 2025. \u27e8cited figures: approximate\u27e9 [C-abf827b04b9897]",
      "[novelty_unverified] Global notebook production outside China is estimated to decline to 21% in 2026. \u27e8cited figures: forecast\u27e9 [C-292593edac0b2c]",
      "[novelty_unverified] Global notebook production outside China could fall below 20% in 2027. \u27e8cited figures: forecast\u27e9 [C-a34b7669f1921d]",
-     "[novelty_unverified] Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China [C-b02cc246690d1d]",
+     "[novelty_unverified] Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China [C-b02cc246690d1d, C-116467c3e6297e]",
      "[novelty_unverified] If tariff pressures do not intensify, notebook manufacturing location decisions shift from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency [C-cdb369405a22bf]"
     ],
     "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst; premise is conditional in the source"
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-08",
     "card": "cards/TH-4BC0244112.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "investment_thesis",
     "last_material_update": "2026-10-08",
@@ -444,15 +449,14 @@
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-08",
     "card": "cards/TH-EBC230CDDD.html",
     "category": "NEW",
-    "change_reason": "no change in action (F8_counterevidence 10\u219213)",
-    "evidence_direction": "WEAKER",
-    "first_detected": "2026-10-10",
-    "flags": [
-     "CHALLENGED"
-    ],
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-10 19:15 UTC",
+    "flags": [],
     "kind": "investment_thesis",
     "last_material_update": "2026-10-08",
     "named_companies": [
@@ -469,7 +473,7 @@
      "MoonShot [private company]"
     ],
     "rule_trace": [
-     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)"
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))"
     ],
     "sector_exposures": [],
     "sectors": [
@@ -477,14 +481,12 @@
      "AI model developers"
     ],
     "sources": [
-     "SemiAnalysis \u2014 Andrew Megalaa; Max Kan; Dylan Patel \u2014 \u201cAnthropic Subscriptions Offer 5x+ More Value Than OpenAI\u201d (article date 2026-10-05) \u2014 contradicts the thesis",
-     "SemiAnalysis \u2014 Mark Chen; Doug; Dylan Patel \u2014 \u201cBeijing Will Not Pace the Frontier: China\u2019s Speed-First AI Safety Regime\u201d (article date 2026-10-08) \u2014 first record of this thesis",
-     "SemiAnalysis \u2014 Andrew Megalaa; Max Kan; Dylan Patel \u2014 \u201cAnthropic Subscriptions Offer 5x+ More Value Than OpenAI\u201d (article date 2026-10-05) \u2014 contradicts the thesis"
+     "SemiAnalysis \u2014 Mark Chen; Doug; Dylan Patel \u2014 \u201cBeijing Will Not Pace the Frontier: China\u2019s Speed-First AI Safety Regime\u201d (article date 2026-10-08) \u2014 first record of this thesis"
     ],
     "status": "ACTIVE",
     "thesis_id": "TH-EBC230CDDD",
     "title": "China's frontier labs race ahead without safety gating, intensifying competition for US labs",
-    "version": 3,
+    "version": 1,
     "what_changed": [
      "813 releases (94.9%) have no safety disclosure at all.",
      "Release cadence rose from 3 in Q1 2023 to 101 in Q3 2025, a roughly thirty-fold rise.",
@@ -492,21 +494,7 @@
      "Open-weight releases make up more than half of every quarter since mid-2023.",
      "Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China.",
      "China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment.",
-     "showing 6 of 20 pieces of evidence from A-5bfa8fff567e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger",
-     "Contradicts the thesis: Opus 5.5 on any Claude subscription offers far better value than anything from OpenAI",
-     "Contradicts the thesis: Opus 5.5 on Claude plans offers ~4x higher API-equivalent value",
-     "Contradicts the thesis: SemiAnalysis tracking confirmed a 50% value reduction for OpenAI's $200 plan",
-     "Contradicts the thesis: OpenAI introduced a new $500 subscription plan alongside a massive limit reduction.",
-     "Contradicts the thesis: OpenAI halved the API-equivalent value for its $200 plan and introduced a new $500 tier last week",
-     "Contradicts the thesis: OpenAI cut subscription limits to Fable-level across the board as its margin-improvement strategy",
-     "Contradicts the thesis: After the cut, OpenAI's Pro 100, 200, and 500 plans all offer the same tokens per dollar for every model.",
-     "Contradicts the thesis: OpenAI $200 plans purchased before the cut keep old higher limits until October 29th",
-     "Contradicts the thesis: A $200 Anthropic plan retains 50% after $2,485 of Fable 5.1, while the equivalent OpenAI plan is exhausted after $2,897 of Astra",
-     "Contradicts the thesis: Anthropic's extra 50% of limit (Fable usage capped at 50%) becomes especially relevant in the Opus 5.5 vs GPT 6.1 Sol comparison.",
-     "showing 10 of 14 pieces of evidence from A-291cb465969d \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger",
-     "Contradicts the thesis: Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut",
-     "Contradicts the thesis: Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut.",
-     "Contradicts the thesis: OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30%"
+     "showing 6 of 20 pieces of evidence from A-5bfa8fff567e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
     ],
     "what_changed_audit": [
      "[novelty_unverified] 813 releases (94.9%) have no safety disclosure at all. [C-2e352ca16a7e09]",
@@ -515,32 +503,19 @@
      "[novelty_unverified] Open-weight releases make up more than half of every quarter since mid-2023. [C-00088b169237b8]",
      "[novelty_unverified] Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China. [C-1bcfbfc203fc1c]",
      "[novelty_unverified] China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment. [C-b344f1ae454450]",
-     "[novelty_unverified] showing 6 of 20 pieces of evidence from A-5bfa8fff567e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 Opus 5.5 on any Claude subscription offers far better value than anything from OpenAI [C-0b27e60d2ff264]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 Opus 5.5 on Claude plans offers ~4x higher API-equivalent value \u27e8cited figures: approximate\u27e9 [C-0bc76b8cbfda46]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 SemiAnalysis tracking confirmed a 50% value reduction for OpenAI's $200 plan [C-37ade4ed06f630]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 OpenAI introduced a new $500 subscription plan alongside a massive limit reduction. [C-3b9b43a65df5d2]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 OpenAI halved the API-equivalent value for its $200 plan and introduced a new $500 tier last week [C-3fcde43a6c676d]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 OpenAI cut subscription limits to Fable-level across the board as its margin-improvement strategy [C-58dabbec41c6ca]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 After the cut, OpenAI's Pro 100, 200, and 500 plans all offer the same tokens per dollar for every model. [C-61f3ac428777db]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 OpenAI $200 plans purchased before the cut keep old higher limits until October 29th [C-704c8107dfbd26]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 A $200 Anthropic plan retains 50% after $2,485 of Fable 5.1, while the equivalent OpenAI plan is exhausted after $2,897 of Astra [C-74972600f9eeab]",
-     "[contradictory] \u27e8competing hypothesis TH-6BDD0881AD, A-291cb465969d\u27e9 Anthropic's extra 50% of limit (Fable usage capped at 50%) becomes especially relevant in the Opus 5.5 vs GPT 6.1 Sol comparison. [C-a8b79045241e95]",
-     "[novelty_unverified] showing 10 of 14 pieces of evidence from A-291cb465969d \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger",
-     "[contradictory] \u27e8competing hypothesis TH-70E56311B3, A-291cb465969d\u27e9 Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut \u27e8cited figures: approximate\u27e9 [C-7566dcc31cf5b2]",
-     "[contradictory] \u27e8competing hypothesis TH-70E56311B3, A-291cb465969d\u27e9 Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut. [C-7997c02b9804b8]",
-     "[contradictory] \u27e8competing hypothesis TH-70E56311B3, A-291cb465969d\u27e9 OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30% \u27e8cited figures: approximate\u27e9 [C-82ebca68615b63]"
+     "[novelty_unverified] showing 6 of 20 pieces of evidence from A-5bfa8fff567e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
     ],
-    "why_action": "Watch \u2014 not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL"
+    "why_action": "Watch \u2014 not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names)"
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-07",
     "card": "cards/TH-4FC37DBE69.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "investment_thesis",
     "last_material_update": "2026-10-07",
@@ -582,12 +557,13 @@
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-07",
     "card": "cards/TH-C619388BB6.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [
      "REVIEW_NEEDED"
     ],
@@ -643,12 +619,13 @@
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-05",
     "card": "cards/TH-6BDD0881AD.html",
     "category": "NEW",
     "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "investment_thesis",
     "last_material_update": "2026-10-05",
@@ -698,12 +675,13 @@
    },
    {
     "action": "WATCH",
+    "analysis_as_of": "2026-10-10",
     "article_date": "2026-10-05",
     "card": "cards/TH-70E56311B3.html",
     "category": "NEW",
-    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)",
     "evidence_direction": "NEW",
-    "first_detected": "2026-10-10",
+    "first_ingested": "2026-10-10 19:15 UTC",
     "flags": [],
     "kind": "market_regime",
     "last_material_update": "2026-10-05",
@@ -717,7 +695,7 @@
      "Anthropic [private company]"
     ],
     "rule_trace": [
-     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
     ],
     "sector_exposures": [],
     "sectors": [
@@ -740,28 +718,23 @@
      "[novelty_unverified] Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut \u27e8cited figures: approximate\u27e9 [C-7566dcc31cf5b2]",
      "[novelty_unverified] Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut. [C-7997c02b9804b8]"
     ],
-    "why_action": "Watch \u2014 not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL"
+    "why_action": "Watch \u2014 not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL"
    }
   ],
   "UNCHANGED BUT MATERIAL": [],
   "UPGRADED": []
  },
  "caveats": [
-  "FIGURE_UNCAPTURED A-5bfa8fff567e: b034: '42' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'We find that 42 are written by people with a technical background.'",
+  "ARGUMENT_UNACCOUNTED A-291cb465969d: b008: pass 1b called it covered \u2014 'States providers can silently change limits; carried by first-pass market risk on silent limit changes.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
   "NUMBER_NOT_IN_SPAN C-35807dbb656ad7: c21: number check failed: value=0.0 value_text='no cuts' vs quote \u2014 quote 'we maintain our forecast for no cuts to the Reserve Requirement Ratio (the perce'",
-  "PARTIAL_RETRIEVAL A-291cb465969d: only part of the article was retrieved \u2014 no claim of full-text verification is made",
-  "ARGUMENT_UNACCOUNTED A-291cb465969d: b008: no verified claim sits in it and pass 1b gave no verifiable account",
-  "FIGURE_UNCAPTURED A-5bfa8fff567e: b034: '52%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Of those 42, 22 (52%) argue that safety must precede or gate development.'",
-  "FIGURE_UNCAPTURED A-5bfa8fff567e: b034: '22' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Of those 42, 22 (52%) argue that safety must precede or gate development.'",
-  "UNSUPPORTED_ENTITY J.P. Morgan Private Bank: 'J.P. Morgan Private Bank' does not occur in the article text \u2014 dropped (no unnamed entity may be source-mentioned)",
-  "NUMBER_NOT_IN_SPAN C-9a4381e4e26507: b2.k2_4: unit 'texts' disagrees with a % figure \u2014 quote 'Of those 42, 22 (52%) argue that safety must precede or gate development. Only f'",
   "NUMBER_NOT_IN_SPAN C-c15dfdcdeb09c3: c3: number check failed: value=1.0 value_text='A hike' vs quote \u2014 quote 'A hike in December by the US Federal Reserve followed by an extended hold throug'",
-  "ARGUMENT_UNACCOUNTED A-291cb465969d: b002: no verified claim sits in it and pass 1b gave no verifiable account",
   "NUMBER_NOT_IN_SPAN C-6e09009a9ea4ff: c6: number check failed: value=0.0 value_text='None' vs quote \u2014 quote 'None for the Bank of England and Bank of Canada against market pricing of around'",
+  "UNSUPPORTED_ENTITY J.P. Morgan Private Bank: 'J.P. Morgan Private Bank' does not occur in the article text \u2014 dropped (no unnamed entity may be source-mentioned)",
+  "PARTIAL_RETRIEVAL A-291cb465969d: only part of the article was retrieved \u2014 no claim of full-text verification is made",
   "source ms_research BLOCKED: https://www.morganstanley.com/what-we-do/research: robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com",
   "source gs_research BLOCKED: https://www.goldmansachs.com/insights/goldman-sachs-research/: HTTP 403"
  ],
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "kpi": {
   "accessible_sources": "6 of 8",
   "archived": 1,
@@ -769,10 +742,10 @@
   "articles_full": 5,
   "articles_partial": 1,
   "blocked_sources": "Morgan Stanley, Goldman Sachs",
-  "challenged": 1,
+  "challenged": 0,
   "downgraded": 0,
   "figures_in_articles": 228,
-  "figures_uncaptured": 3,
+  "figures_uncaptured": 0,
   "new": 10,
   "queued": 0,
   "research_now": 2,
@@ -800,42 +773,42 @@
    "articles_processed": 6,
    "articles_queued": 0,
    "attributions_only": 0,
-   "claims_added_by_completeness": 61,
+   "claims_added_by_completeness": 62,
    "claims_extracted": 192,
    "claims_verified": 192,
    "figures_in_articles": 228,
-   "figures_uncaptured": 3,
+   "figures_uncaptured": 0,
    "http_cache_hits": 42,
    "http_requests": 2,
-   "llm_calls": 34,
-   "llm_calls_cached": 34,
+   "llm_calls": 32,
+   "llm_calls_cached": 32,
    "mentions": 74,
    "replayed_from_cache_cache_creation_input_tokens": 0,
    "replayed_from_cache_cache_read_input_tokens": 0,
-   "replayed_from_cache_input_tokens": 454557,
-   "replayed_from_cache_output_tokens": 122441,
+   "replayed_from_cache_input_tokens": 416545,
+   "replayed_from_cache_output_tokens": 118862,
    "theses_added_by_completeness": 1,
    "theses_created": 10,
-   "theses_updated": 2
+   "theses_updated": 0
   },
   "db_schema_version": 2,
   "engine_version": "ti-engine-2",
   "extract_prompt_version": "ti-extract-6",
-  "fetch_seconds": 10.0,
-  "finished_at": "2026-10-10T16:56:42.555675Z",
+  "fetch_seconds": 9.9,
+  "finished_at": "2026-10-10T19:15:44.699298Z",
   "llm_model": "claude-opus-4-8",
   "llm_provider": "anthropic",
   "llm_seconds": 0.0,
   "mode": "scan",
-  "output_dir": "data/theme_intelligence/v2/weekly-12/runs/R-20261010T165611Z-scan",
+  "output_dir": "data/theme_intelligence/v2/weekly-16/runs/R-20261010T191513Z-scan",
   "parser_version": "ti-parse-4",
   "review_prompt_version": "ti-review-4",
-  "run_id": "R-20261010T165611Z-scan",
+  "run_id": "R-20261010T191513Z-scan",
   "sources": [
    {
     "already_known": 0,
     "channel": "Citi Must C (Citi Research public insights)",
-    "checked_at": "2026-10-10T16:56:11.722698Z",
+    "checked_at": "2026-10-10T19:15:13.903149Z",
     "discovered": 20,
     "entry_points": [
      "https://www.citigroup.com/global/insights/must-c"
@@ -858,7 +831,7 @@
    {
     "already_known": 0,
     "channel": "BofA institutional investing insights",
-    "checked_at": "2026-10-10T16:56:11.739242Z",
+    "checked_at": "2026-10-10T19:15:13.919157Z",
     "discovered": 16,
     "entry_points": [
      "https://business.bofa.com/en-us/content/institutional-investing-insights.html"
@@ -883,7 +856,7 @@
    {
     "already_known": 0,
     "channel": "J.P. Morgan Top Market Takeaways",
-    "checked_at": "2026-10-10T16:56:12.283488Z",
+    "checked_at": "2026-10-10T19:15:14.450846Z",
     "discovered": 51,
     "entry_points": [
      "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
@@ -906,7 +879,7 @@
    {
     "already_known": 0,
     "channel": "Morgan Stanley Research",
-    "checked_at": "2026-10-10T16:56:12.426536Z",
+    "checked_at": "2026-10-10T19:15:14.593788Z",
     "discovered": 0,
     "entry_points": [
      "https://www.morganstanley.com/what-we-do/research"
@@ -933,7 +906,7 @@
    {
     "already_known": 0,
     "channel": "Nomura Connects",
-    "checked_at": "2026-10-10T16:56:30.566328Z",
+    "checked_at": "2026-10-10T19:15:32.737366Z",
     "discovered": 14,
     "entry_points": [
      "https://www.nomuraconnects.com/articles/"
@@ -958,7 +931,7 @@
    {
     "already_known": 0,
     "channel": "TrendForce press center news",
-    "checked_at": "2026-10-10T16:56:30.805984Z",
+    "checked_at": "2026-10-10T19:15:32.967775Z",
     "discovered": 5,
     "entry_points": [
      "https://www.trendforce.com/presscenter/news"
@@ -981,7 +954,7 @@
    {
     "already_known": 0,
     "channel": "SemiAnalysis (site + its newsletter feed)",
-    "checked_at": "2026-10-10T16:56:30.817981Z",
+    "checked_at": "2026-10-10T19:15:32.980677Z",
     "discovered": 20,
     "entry_points": [
      "https://newsletter.semianalysis.com/feed"
@@ -1004,7 +977,7 @@
    {
     "already_known": 0,
     "channel": "Goldman Sachs Research insights",
-    "checked_at": "2026-10-10T16:56:30.828004Z",
+    "checked_at": "2026-10-10T19:15:32.991184Z",
     "discovered": 0,
     "entry_points": [
      "https://www.goldmansachs.com/insights/goldman-sachs-research/"
@@ -1029,7 +1002,7 @@
     ]
    }
   ],
-  "started_at": "2026-10-10T16:56:11.722516Z",
+  "started_at": "2026-10-10T19:15:13.902942Z",
   "status": "SUCCEEDED",
   "tokens": {},
   "warnings": [],
@@ -1040,7 +1013,7 @@
   {
    "already_known": 0,
    "channel": "Citi Must C (Citi Research public insights)",
-   "checked_at": "2026-10-10T16:56:11.722698Z",
+   "checked_at": "2026-10-10T19:15:13.903149Z",
    "discovered": 20,
    "entry_points": [
     "https://www.citigroup.com/global/insights/must-c"
@@ -1063,7 +1036,7 @@
   {
    "already_known": 0,
    "channel": "BofA institutional investing insights",
-   "checked_at": "2026-10-10T16:56:11.739242Z",
+   "checked_at": "2026-10-10T19:15:13.919157Z",
    "discovered": 16,
    "entry_points": [
     "https://business.bofa.com/en-us/content/institutional-investing-insights.html"
@@ -1088,7 +1061,7 @@
   {
    "already_known": 0,
    "channel": "J.P. Morgan Top Market Takeaways",
-   "checked_at": "2026-10-10T16:56:12.283488Z",
+   "checked_at": "2026-10-10T19:15:14.450846Z",
    "discovered": 51,
    "entry_points": [
     "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
@@ -1111,7 +1084,7 @@
   {
    "already_known": 0,
    "channel": "Morgan Stanley Research",
-   "checked_at": "2026-10-10T16:56:12.426536Z",
+   "checked_at": "2026-10-10T19:15:14.593788Z",
    "discovered": 0,
    "entry_points": [
     "https://www.morganstanley.com/what-we-do/research"
@@ -1138,7 +1111,7 @@
   {
    "already_known": 0,
    "channel": "Nomura Connects",
-   "checked_at": "2026-10-10T16:56:30.566328Z",
+   "checked_at": "2026-10-10T19:15:32.737366Z",
    "discovered": 14,
    "entry_points": [
     "https://www.nomuraconnects.com/articles/"
@@ -1163,7 +1136,7 @@
   {
    "already_known": 0,
    "channel": "TrendForce press center news",
-   "checked_at": "2026-10-10T16:56:30.805984Z",
+   "checked_at": "2026-10-10T19:15:32.967775Z",
    "discovered": 5,
    "entry_points": [
     "https://www.trendforce.com/presscenter/news"
@@ -1186,7 +1159,7 @@
   {
    "already_known": 0,
    "channel": "SemiAnalysis (site + its newsletter feed)",
-   "checked_at": "2026-10-10T16:56:30.817981Z",
+   "checked_at": "2026-10-10T19:15:32.980677Z",
    "discovered": 20,
    "entry_points": [
     "https://newsletter.semianalysis.com/feed"
@@ -1209,7 +1182,7 @@
   {
    "already_known": 0,
    "channel": "Goldman Sachs Research insights",
-   "checked_at": "2026-10-10T16:56:30.828004Z",
+   "checked_at": "2026-10-10T19:15:32.991184Z",
    "discovered": 0,
    "entry_points": [
     "https://www.goldmansachs.com/insights/goldman-sachs-research/"
@@ -1240,17 +1213,35 @@
   "gs_research"
  ],
  "themes_created": 10,
- "themes_updated": 2,
+ "themes_updated": 0,
  "totals_active": {
   "RESEARCH NOW": 2,
   "SKIP": 0,
   "WATCH": 7
  },
  "validation": {
-  "BLOCK": 12,
+  "BLOCK": 9,
   "HOLD": 0,
-  "INFO": 31,
-  "WARN": 48
+  "INFO": 34,
+  "WARN": 41
+ },
+ "verification": {
+  "articles": 6,
+  "articles_preview_only": 1,
+  "articles_unreadable": 0,
+  "figures": 228,
+  "figures_open": 0,
+  "open_causes": {
+   "account_names_no_record": 1
+  },
+  "open_items": [
+   "AV-f45a634144cbefaa b008 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'States providers can silently change limits; carried by first-pass market risk on silent limit changes.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked"
+  ],
+  "paragraphs": 170,
+  "paragraphs_open": 1,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 6 article(s) this run analysed: 0 of 228 stated figure(s) and 1 of 170 argument paragraph(s) open; causes: account_names_no_record 1; 1 article(s) read only as a preview. Open material is never used as evidence, so it can hold a thesis back but never raise its research action"
  },
  "window": "2026-10-01 \u2192 2026-10-10 (as of 2026-10-10, mode scan)"
 }

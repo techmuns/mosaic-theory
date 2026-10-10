@@ -2,12 +2,14 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-09-28",
    "ancestry": [
     "ai_infrastructure",
     "ai_infrastructure.compute_semis"
    ],
    "evidence_direction": "NEW",
-   "first_detected": "2026-09-28",
+   "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:09.094651Z",
    "horizon": "Longer term (beyond 4 quarters)",
    "kind": "investment_thesis",
    "last_material_update": "2026-09-28",
@@ -124,7 +126,7 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-09-28 from a source dated 2026-09-28; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market."
   },
   "s03_transmission": [
    {
@@ -737,12 +739,12 @@
     {
      "claim_ids": [],
      "provenance": "MODEL INFERENCE",
-     "text": "Registry link \u2014 SIBLING with TH-91CA483676: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)"
+     "text": "Registry link \u2014 SIBLING with TH-B931F456C4: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)"
     },
     {
      "claim_ids": [],
      "provenance": "MODEL INFERENCE",
-     "text": "Registry link \u2014 SIBLING with TH-F2CD2F7AFC: same economics, different geography (Global vs China)"
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
     }
    ],
    "counter_evidence": [],
@@ -857,19 +859,21 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165608Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191509Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-09-28",
    "change_summary": "Initial record \u2014 created from A-c051303aa7e1",
    "content": {
     "header": {
+     "analysis_as_of": "2026-09-28",
      "ancestry": [
       "ai_infrastructure",
       "ai_infrastructure.compute_semis"
      ],
      "evidence_direction": "NEW",
-     "first_detected": "2026-09-28",
+     "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:09.094651Z",
      "horizon": "Longer term (beyond 4 quarters)",
      "kind": "investment_thesis",
      "last_material_update": "2026-09-28",
@@ -986,7 +990,7 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-09-28 from a source dated 2026-09-28; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market."
     },
     "s03_transmission": [
      {
@@ -1599,12 +1603,12 @@
       {
        "claim_ids": [],
        "provenance": "MODEL INFERENCE",
-       "text": "Registry link \u2014 SIBLING with TH-91CA483676: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)"
+       "text": "Registry link \u2014 SIBLING with TH-B931F456C4: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)"
       },
       {
        "claim_ids": [],
        "provenance": "MODEL INFERENCE",
-       "text": "Registry link \u2014 SIBLING with TH-F2CD2F7AFC: same economics, different geography (Global vs China)"
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
       }
      ],
      "counter_evidence": [],
@@ -1719,8 +1723,8 @@
      }
     ]
    },
-   "content_sha": "30d4a9195607f397a33565ace06615af73e011890b1c423fa537af3a3a9e40b4",
-   "created_at": "2026-10-10T16:56:07.788809Z",
+   "content_sha": "246c4c014e1240972c73e788d0a5d672e31ad6f29c394da9c2568c33fab6a92f",
+   "created_at": "2026-10-10T19:15:09.098828Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
@@ -1787,6 +1791,12 @@
      },
      {
       "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
       "value": "0"
@@ -1818,7 +1828,7 @@
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165607Z-article",
+   "run_id": "R-20261010T191508Z-article",
    "thesis_id": "TH-B121174B17",
    "version": 1
   }

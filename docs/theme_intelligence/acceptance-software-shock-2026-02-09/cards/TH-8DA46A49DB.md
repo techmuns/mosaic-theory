@@ -2,7 +2,7 @@
 
 **WATCH** · Investment thesis · evidence NEW · Software industry (broad) · US · horizon Next 2-4 quarters · status ACTIVE
 
-Article date 2026-02-09 · first detected by the registry 2026-02-09 (new to the registry does not mean new to the market) · last material update 2026-02-09
+Published 2026-02-09 (latest source) · first ingested by this registry 2026-10-10 19:15 UTC (new to the registry, not necessarily to the market) · analysed as of 2026-02-09 (a historical replay — a simulated date, not a detection) · last material update 2026-02-09
 
 `TH-8DA46A49DB` · software
 
@@ -14,7 +14,7 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - **MODEL INFERENCE:** If the AI-disruption fear is overdone, the extreme oversold and valuation readings in software could represent an entry point, but the article does not quantify what growth/terminal-value impairment the price already discounts.
 
 ## 02 WHAT CHANGED?
-- New to the registry — first recorded as of 2026-02-09 from a source dated 2026-02-09; not necessarily new to the market.
+- New to the registry — first ingested 2026-10-10 19:15 UTC, analysed as of 2026-02-09, from a source published 2026-02-09; not necessarily new to the market.
 - novelty: novelty_unverified — the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market
 - **MEASURED OBSERVATION:** The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990. ⟨cited figures: data as of 2026-02-05⟩ (article date 2026-02-09) [C-79ada2c20447c0]
 - **MEASURED OBSERVATION:** IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash. (article date 2026-02-09) [C-3f193c5f0fcc97]
@@ -115,4 +115,4 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 **Version history:**
 - v1 as of 2026-02-09 — WATCH — evidence NEW — Initial record — created from A-332d3da6f3ac (initial assessment — WATCH (RESEARCH NOW unmet: premise is conditional in the source))
 
-_Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165605Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191506Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._

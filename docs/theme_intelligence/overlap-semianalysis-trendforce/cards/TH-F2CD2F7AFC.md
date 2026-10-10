@@ -2,7 +2,7 @@
 
 **WATCH** · Investment thesis · evidence NEW · AI accelerators, GPUs, custom silicon and their direct supply chain · Global · horizon Next 2-4 quarters · status ACTIVE
 
-Article date 2026-09-28 · first detected by the registry 2026-09-28 (new to the registry does not mean new to the market) · last material update 2026-09-28
+Published 2026-09-28 (latest source) · first ingested by this registry 2026-10-10 19:15 UTC (new to the registry, not necessarily to the market) · analysed as of 2026-09-28 (a historical replay — a simulated date, not a detection) · last material update 2026-09-28
 
 `TH-F2CD2F7AFC` · ai_infrastructure › ai_infrastructure.compute_semis
 
@@ -14,7 +14,7 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - **MODEL INFERENCE:** No vendor has a uniform cost advantage across streaming-speed targets and latency constraints, so competitive positioning between NVIDIA and AMD in inference serving is workload- and constraint-dependent rather than decisively won by one side.
 
 ## 02 WHAT CHANGED?
-- New to the registry — first recorded as of 2026-09-28 from a source dated 2026-09-28; not necessarily new to the market.
+- New to the registry — first ingested 2026-10-10 19:15 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market.
 - novelty: novelty_unverified — the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market
 - **SOURCE OPINION:** GB200 is about 12% lower cost than MI355X ATOM at the 150 tokens/sec target. ⟨cited figures: approximate⟩ (article date 2026-09-28) [C-b2f0fd1d0aed55]
 - **SOURCE OPINION:** ATOM costs about 13% less than GB200 at 100 tokens/sec; GB200 costs about 5% less at 125 and 12% less at 150. ⟨cited figures: approximate⟩ (article date 2026-09-28) [C-4cf472eaf9937f]
@@ -95,7 +95,7 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - none in the sources so far
 **Alternative mechanisms / competing hypotheses:**
 - **SOURCE OPINION:** At a single 150 tps target on total tokens, GB200/GB300 appear to clearly lead on cost, which in isolation would favor NVIDIA. [C-c7bd056b369e12, C-b2f0fd1d0aed55]
-- **MODEL INFERENCE:** Registry link — SIBLING with TH-91CA483676: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)
+- **MODEL INFERENCE:** Registry link — SIBLING with TH-B931F456C4: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)
 **Market-level risks:**
 - none
 **Disconfirming signals:**
@@ -125,4 +125,4 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 **Version history:**
 - v1 as of 2026-09-28 — WATCH — evidence NEW — Initial record — created from A-c051303aa7e1 (initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL))
 
-_Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165608Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191509Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._

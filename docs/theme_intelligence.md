@@ -114,11 +114,55 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   numbers or words, or — only when an LLM reviewer will judge it again — the verbatim passage
   that carries it (minted as SOURCE OPINION evidence). It is then reviewed once more; only a line
   still unsupported is withheld. A MODEL INFERENCE line is never re-anchored into a source label.
+  Only a claim verified on BOTH its span and its number may vouch for a line — whoever proposes
+  it, the reviewer included (round 3).
 - **Authors.** The union of every place the page credits one — JSON-LD, schema.org/Person
   microdata, meta author, the visible byline (multi-line titles joined) — plus people the article
   TEXT credits ("team led by …") as verified spans. A JSON-LD list that omits an author credited
   elsewhere on the page is recorded as AUTHOR_METADATA_DISCREPANCY; declared alternate language
   versions (hreflang) are recorded (none of the eight channels' article pages declares one).
+
+### Evidence roles, inflections, verification status and dates (review round 3)
+
+Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
+
+- **Thesis identity includes the SEGMENT.** node | mechanism | direction | geography, plus the
+  segment(s) within the node that the verified evidence's VERBATIM quotes name (configured in
+  `taxonomy.toml` `[[segment]]`: DRAM / HBM vs NAND / SSD on memory; grid-connected utilities vs
+  behind-the-meter / on-site generation on power). Never read from the model's wording.
+- **Evidence roles.** Only evidence of the SAME identity reaches a thesis's own history —
+  *Direct confirmation* (new evidence, or an independent source) or *Repeated source*
+  (attribution only). A related thesis is a registry LINK with a role, never evidence:
+  *Adjacent support* (same direction, another segment / mechanism / node, or the same claim at an
+  overlapping but different geography — context, never a strengthening) or *Related* (the
+  opposite direction on related economics — never counter-evidence).
+- **A contradiction needs the same claim.** A challenge (COMPETING: evidence filed as CONTRADICTS,
+  the incumbent re-versioned WEAKER) needs the same node, mechanism and segment, overlapping
+  geography and timeframe, and the opposite outcome. Any difference — named on the link — makes it
+  RELATED: no CONTRADICTS evidence, no WEAKER version, no downgrade. A falling utility share price
+  does not contradict rising demand for on-site generation.
+- **The near-term inflection route to RESEARCH NOW (F12).** Without a dislocation or dated
+  catalyst, a thesis can still be RESEARCH NOW when ALL hold: a verified claim states a CHANGE in
+  a FUNDAMENTAL (price, revenue, margin, demand, supply, shipments …; never a share-price move or a
+  technical metric) within the next 2-4 quarters or measured in the last; it is CREDIBLE — the
+  publisher's own data in an industry data report (by channel, never by the model's say-so), or
+  corroborated by a measured change in the thesis's evidence — never a forecast alone; the source
+  states the fundamental step itself; and a source-named exposure turns it into a concrete question
+  in the trace: "do current earnings estimates and market expectations for X already reflect Y?".
+  Every other RESEARCH NOW condition still applies (full retrieval, asserted premise, no hold …).
+- **Scan execution vs research verification.** The run's status (SUCCEEDED / PARTIAL / FAILED)
+  says whether it EXECUTED. The research-verification status says how much of what it READ is
+  accounted for: FULLY_VERIFIED, VERIFIED_WITHIN_PREVIEW (a paywalled preview's unread remainder is
+  unread, not verified), INCOMPLETE (a figure or paragraph open, or a pass not run) or
+  NOTHING_ANALYSED. Both show on the dashboard header and a tile, in `dashboard.md` / `.json`, the
+  manifest, the CLI and the QA summary. Every open item states its cause — `verification_failed`,
+  `capture_not_verified`, `account_names_no_record`, `no_account`, `pass_not_run`. An account that
+  names verified claims closes its paragraph; QA fails if any unverified claim is ever linked to a
+  thesis.
+- **Three dates.** *Published* (the latest contributing source's date), *first ingested by the
+  registry* (the actual wall-clock UTC time) and *analysed as of*. When the as-of precedes
+  ingestion the run is a historical replay and says so — a simulated date is never called a
+  detection.
 
 ## The eight channels (editable: `vinci/theme_intelligence/config/sources.toml`)
 

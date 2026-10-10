@@ -1,4 +1,5 @@
   [PASS] run status recorded: status SUCCEEDED; counts {'figures_in_articles': 34, 'figures_uncaptured': 0, 'claims_added_by_completeness': 1, 'theses_added_by_completeness': 0, 'articles_processed': 1, 'claims_extracted': 26, 'claims_verified': 26, 'mentions': 14, 'theses_created': 3, 'theses_updated': 0, 'attributions_only': 0, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 74672, 'replayed_from_cache_output_tokens': 23015, 'llm_calls': 7, 'llm_calls_cached': 7, 'http_requests': 0, 'http_cache_hits': 1}
+  [PASS] no unverified claim is linked to a thesis: 25 linked claim(s) in the registry, all verified
   [PASS] spans re-found in stored article text: 27 verified claim(s) in 1 article(s)
   [PASS] figures re-found in their quotes: every number-bearing claim checked
   [PASS] no look-ahead past the run's as-of: as-of 2026-02-09
@@ -16,5 +17,5 @@
   [PASS] every argument block accounted for: ok
   [PASS] every analysed article names its author(s): 1 article(s)
   [PASS] append-only triggers present: 14 history tables
-  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/software-shock-12/runs/R-20261010T165605Z-article
-QA R-20261010T165605Z-article: 19/19 passed
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/software-shock-16/runs/R-20261010T191506Z-article
+QA R-20261010T191506Z-article: 20/20 passed · scan execution SUCCEEDED · research verification FULLY_VERIFIED — every figure and argument paragraph accounted for, full text read (over the 1 article(s) this run analysed: 0 of 34 stated figure(s) and 0 of 12 argument paragraph(s) open)

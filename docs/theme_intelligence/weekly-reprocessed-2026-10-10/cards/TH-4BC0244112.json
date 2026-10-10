@@ -2,11 +2,13 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-10-10",
    "ancestry": [
     "consumer_electronics"
    ],
    "evidence_direction": "NEW",
    "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:43.132830Z",
    "horizon": "Longer term (beyond 4 quarters)",
    "kind": "investment_thesis",
    "last_material_update": "2026-10-08",
@@ -124,7 +126,7 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-08; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
   },
   "s03_transmission": [
    {
@@ -572,18 +574,20 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-10-10",
    "change_summary": "Initial record \u2014 created from A-19eb305b208e",
    "content": {
     "header": {
+     "analysis_as_of": "2026-10-10",
      "ancestry": [
       "consumer_electronics"
      ],
      "evidence_direction": "NEW",
      "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:43.132830Z",
      "horizon": "Longer term (beyond 4 quarters)",
      "kind": "investment_thesis",
      "last_material_update": "2026-10-08",
@@ -701,7 +705,7 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-08; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
     },
     "s03_transmission": [
      {
@@ -1149,8 +1153,8 @@
      }
     ]
    },
-   "content_sha": "5e1f9ff300c20048ba383ab67767c9fcfbb646443e22011d99252a41a0a9bb91",
-   "created_at": "2026-10-10T16:56:41.051248Z",
+   "content_sha": "ce5ebb2289375e1d9a44e9df6ead1e105a57707b77f99adfcf59422325834817",
+   "created_at": "2026-10-10T19:15:43.138329Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
@@ -1217,6 +1221,12 @@
      },
      {
       "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
       "value": "0"
@@ -1248,7 +1258,7 @@
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165611Z-scan",
+   "run_id": "R-20261010T191513Z-scan",
    "thesis_id": "TH-4BC0244112",
    "version": 1
   }

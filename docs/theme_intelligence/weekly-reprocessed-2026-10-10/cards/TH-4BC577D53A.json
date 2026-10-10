@@ -2,11 +2,13 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-10-10",
    "ancestry": [
     "macro_market"
    ],
    "evidence_direction": "NEW",
    "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:44.686247Z",
    "horizon": "Next 2-4 quarters",
    "kind": "market_regime",
    "last_material_update": "2026-10-02",
@@ -60,7 +62,8 @@
      "article_id": "A-46796449712e",
      "change_class": "novelty_unverified",
      "claim_ids": [
-      "C-bdeeb3028aa31f"
+      "C-bdeeb3028aa31f",
+      "C-91f359d4567e78"
      ],
      "original_date": "2026-10-02",
      "period": "2020 through 2026",
@@ -122,7 +125,7 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-02; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
   },
   "s03_transmission": [
    {
@@ -836,7 +839,7 @@
     {
      "claim_ids": [],
      "provenance": "MODEL INFERENCE",
-     "text": "Registry link \u2014 SIBLING with TH-C619388BB6: same value-chain node, different profit mechanism (other vs dispersion_selection)"
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C619388BB6: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection) \u2014 adjacent support: context, never a confirmation"
     }
    ],
    "counter_evidence": [],
@@ -962,18 +965,20 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-10-10",
    "change_summary": "Initial record \u2014 created from A-46796449712e",
    "content": {
     "header": {
+     "analysis_as_of": "2026-10-10",
      "ancestry": [
       "macro_market"
      ],
      "evidence_direction": "NEW",
      "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:44.686247Z",
      "horizon": "Next 2-4 quarters",
      "kind": "market_regime",
      "last_material_update": "2026-10-02",
@@ -1027,7 +1032,8 @@
        "article_id": "A-46796449712e",
        "change_class": "novelty_unverified",
        "claim_ids": [
-        "C-bdeeb3028aa31f"
+        "C-bdeeb3028aa31f",
+        "C-91f359d4567e78"
        ],
        "original_date": "2026-10-02",
        "period": "2020 through 2026",
@@ -1089,7 +1095,7 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-02; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
     },
     "s03_transmission": [
      {
@@ -1803,7 +1809,7 @@
       {
        "claim_ids": [],
        "provenance": "MODEL INFERENCE",
-       "text": "Registry link \u2014 SIBLING with TH-C619388BB6: same value-chain node, different profit mechanism (other vs dispersion_selection)"
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C619388BB6: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection) \u2014 adjacent support: context, never a confirmation"
       }
      ],
      "counter_evidence": [],
@@ -1929,8 +1935,8 @@
      }
     ]
    },
-   "content_sha": "4b1267762fb1a0ce60c291a8aae3c06704f68d34ca337109aaa3cd2e59a74b51",
-   "created_at": "2026-10-10T16:56:42.549565Z",
+   "content_sha": "e21857660169fea26096cc6e53c5c9466af2ffdb30e2e04eca80a1c89fb26866",
+   "created_at": "2026-10-10T19:15:44.694142Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
@@ -1998,6 +2004,12 @@
      },
      {
       "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
       "value": "0"
@@ -2029,7 +2041,7 @@
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165611Z-scan",
+   "run_id": "R-20261010T191513Z-scan",
    "thesis_id": "TH-4BC577D53A",
    "version": 1
   }

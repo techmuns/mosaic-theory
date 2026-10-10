@@ -2,11 +2,13 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-10-10",
    "ancestry": [
     "consumer_electronics"
    ],
    "evidence_direction": "NEW",
    "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:43.138739Z",
    "horizon": "Longer term (beyond 4 quarters)",
    "kind": "investment_thesis",
    "last_material_update": "2026-10-08",
@@ -23,7 +25,8 @@
     "claim_ids": [
      "C-abf827b04b9897",
      "C-292593edac0b2c",
-     "C-a34b7669f1921d"
+     "C-a34b7669f1921d",
+     "C-cdb369405a22bf"
     ],
     "provenance": "SOURCE OPINION",
     "text": "TrendForce estimates the share of global notebook production outside China falling from ~24% in 2025 to 21% in 2026 and potentially below 20% in 2027 as cost and efficiency outweigh policy-risk diversification. \u27e8cited figures: approximate; forecast\u27e9"
@@ -31,8 +34,8 @@
    {
     "claim_ids": [
      "C-a34b7669f1921d",
-     "C-cdb369405a22bf",
-     "C-b02cc246690d1d"
+     "C-b02cc246690d1d",
+     "C-cdb369405a22bf"
     ],
     "provenance": "SOURCE OPINION",
     "text": "If tariffs don't intensify, brands may relocate some capacity established outside China back to the country, reassessing diversification vs manufacturing efficiency. \u27e8cited figures: forecast\u27e9"
@@ -82,11 +85,12 @@
      "article_id": "A-19eb305b208e",
      "change_class": "novelty_unverified",
      "claim_ids": [
-      "C-b02cc246690d1d"
+      "C-b02cc246690d1d",
+      "C-116467c3e6297e"
      ],
      "original_date": "2026-10-08",
      "period": "2027",
-     "provenance": "FORECAST",
+     "provenance": "SOURCE OPINION",
      "text": "Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China"
     },
     {
@@ -102,7 +106,7 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-08; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
   },
   "s03_transmission": [
    {
@@ -325,7 +329,7 @@
     {
      "claim_ids": [],
      "provenance": "MODEL INFERENCE",
-     "text": "Registry link \u2014 SIBLING with TH-4BC0244112: same value-chain node, different profit mechanism (cost_inflation vs policy_regulation)"
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-4BC0244112: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
     }
    ],
    "counter_evidence": [],
@@ -425,18 +429,20 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-10-10",
    "change_summary": "Initial record \u2014 created from A-19eb305b208e",
    "content": {
     "header": {
+     "analysis_as_of": "2026-10-10",
      "ancestry": [
       "consumer_electronics"
      ],
      "evidence_direction": "NEW",
      "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:43.138739Z",
      "horizon": "Longer term (beyond 4 quarters)",
      "kind": "investment_thesis",
      "last_material_update": "2026-10-08",
@@ -453,7 +459,8 @@
       "claim_ids": [
        "C-abf827b04b9897",
        "C-292593edac0b2c",
-       "C-a34b7669f1921d"
+       "C-a34b7669f1921d",
+       "C-cdb369405a22bf"
       ],
       "provenance": "SOURCE OPINION",
       "text": "TrendForce estimates the share of global notebook production outside China falling from ~24% in 2025 to 21% in 2026 and potentially below 20% in 2027 as cost and efficiency outweigh policy-risk diversification. \u27e8cited figures: approximate; forecast\u27e9"
@@ -461,8 +468,8 @@
      {
       "claim_ids": [
        "C-a34b7669f1921d",
-       "C-cdb369405a22bf",
-       "C-b02cc246690d1d"
+       "C-b02cc246690d1d",
+       "C-cdb369405a22bf"
       ],
       "provenance": "SOURCE OPINION",
       "text": "If tariffs don't intensify, brands may relocate some capacity established outside China back to the country, reassessing diversification vs manufacturing efficiency. \u27e8cited figures: forecast\u27e9"
@@ -512,11 +519,12 @@
        "article_id": "A-19eb305b208e",
        "change_class": "novelty_unverified",
        "claim_ids": [
-        "C-b02cc246690d1d"
+        "C-b02cc246690d1d",
+        "C-116467c3e6297e"
        ],
        "original_date": "2026-10-08",
        "period": "2027",
-       "provenance": "FORECAST",
+       "provenance": "SOURCE OPINION",
        "text": "Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China"
       },
       {
@@ -532,7 +540,7 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-08; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
     },
     "s03_transmission": [
      {
@@ -755,7 +763,7 @@
       {
        "claim_ids": [],
        "provenance": "MODEL INFERENCE",
-       "text": "Registry link \u2014 SIBLING with TH-4BC0244112: same value-chain node, different profit mechanism (cost_inflation vs policy_regulation)"
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-4BC0244112: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
       }
      ],
      "counter_evidence": [],
@@ -855,8 +863,8 @@
      }
     ]
    },
-   "content_sha": "5924d369bbac14bf295a79dc470031ec56e0d558817e65cf613ac9f4312e18ad",
-   "created_at": "2026-10-10T16:56:41.055438Z",
+   "content_sha": "2413f025e7eefd5ddec145e4e55150cf94802abd0ff77276fb0c4d3a87efad9c",
+   "created_at": "2026-10-10T19:15:43.143473Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
@@ -918,6 +926,12 @@
      },
      {
       "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
       "value": "0"
@@ -949,7 +963,7 @@
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165611Z-scan",
+   "run_id": "R-20261010T191513Z-scan",
    "thesis_id": "TH-07643AD5F6",
    "version": 1
   }
@@ -966,7 +980,5 @@
   "s09_sources"
  ],
  "status_note": null,
- "withheld_sentences": {
-  "s07.0": "REVIEW_UNSUPPORTED \u2014 s07.0: UNSUPPORTED \u2014 Cited span only states what happens if tariffs do NOT intensify; it does not state the converse that intensifying tariffs would continue the shift away from China. No pool span supports this converse claim. | 'If tariff pressures intensify further, the shift away from China for risk diversification could cont'"
- }
+ "withheld_sentences": {}
 }

@@ -1,7 +1,9 @@
-# What to research this week — run R-20261010T165605Z-article (SUCCEEDED)
+# What to research this week — run R-20261010T191506Z-article
 
 _Research attention only — no row is a purchase or sale._
 
+- Scan execution: SUCCEEDED
+- Research verification: FULLY_VERIFIED — every figure and argument paragraph accounted for, full text read (over the 1 article(s) this run analysed: 0 of 34 stated figure(s) and 0 of 12 argument paragraph(s) open)
 - Window: 2026-02-09 → 2026-02-09 (as of 2026-02-09, mode article)
 - Sources: single article (manual URL) — no source discovery
 - Articles analyzed: 1 full · 0 partial
@@ -12,7 +14,7 @@ _Research attention only — no row is a purchase or sale._
 ## NEW (3) — first recorded this run — new to the registry, not necessarily new to the market
 
 ### [WATCH] Hyperscalers, chipmakers and materials mispriced after being swept into software rout
-- Article date 2026-02-09 · first detected by the registry 2026-02-09 (new to the registry, not necessarily new to the market)
+- Published 2026-02-09 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-02-09 (a historical replay — a simulated date, not a detection)
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no verified dislocation or catalyst
 - What changed:
@@ -28,7 +30,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-04140F1CA8` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst) · card: cards/TH-04140F1CA8.html
 
 ### [WATCH] Indiscriminate software sell-off oversold the whole software sector
-- Article date 2026-02-09 · first detected by the registry 2026-02-09 (new to the registry, not necessarily new to the market)
+- Published 2026-02-09 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-02-09 (a historical replay — a simulated date, not a detection)
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: premise is conditional in the source
 - What changed:
@@ -45,7 +47,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-8DA46A49DB` v1 · initial assessment — WATCH (RESEARCH NOW unmet: premise is conditional in the source) · card: cards/TH-8DA46A49DB.html
 
 ### [WATCH] AI adopters show measurable margin expansion versus non-adopters
-- Article date 2026-02-09 · first detected by the registry 2026-02-09 (new to the registry, not necessarily new to the market)
+- Published 2026-02-09 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-02-09 (a historical replay — a simulated date, not a detection)
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no verified dislocation or catalyst
 - What changed:
@@ -88,4 +90,4 @@ _None this run._
 | Indiscriminate software sell-off oversold the whole software sector (`TH-8DA46A49DB`) | WATCH | NEW | ACTIVE | Software industry (broad) | 1 | 2026-02-09 |
 | AI adopters show measurable margin expansion versus non-adopters (`TH-A56902FFB6`) | WATCH | NEW | ACTIVE | Productivity and margin effects at companies adopting AI | 1 | 2026-02-09 |
 
-_Verification log: 0 blocked · 0 held · 7 warnings · 7 info. Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165605Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Verification log: 0 blocked · 0 held · 7 warnings · 7 info. Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191506Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._

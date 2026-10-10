@@ -2,11 +2,13 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-10-10",
    "ancestry": [
     "utilities"
    ],
    "evidence_direction": "NEW",
    "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:44.694625Z",
    "horizon": "Next 2-4 quarters",
    "kind": "investment_thesis",
    "last_material_update": "2026-10-02",
@@ -103,7 +105,7 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-02; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
   },
   "s03_transmission": [
    {
@@ -852,18 +854,20 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-10-10",
    "change_summary": "Initial record \u2014 created from A-46796449712e",
    "content": {
     "header": {
+     "analysis_as_of": "2026-10-10",
      "ancestry": [
       "utilities"
      ],
      "evidence_direction": "NEW",
      "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:44.694625Z",
      "horizon": "Next 2-4 quarters",
      "kind": "investment_thesis",
      "last_material_update": "2026-10-02",
@@ -960,7 +964,7 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-02; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
     },
     "s03_transmission": [
      {
@@ -1709,8 +1713,8 @@
      }
     ]
    },
-   "content_sha": "c4eedd93137684932f27b9813edbeebdfa283bccabaec0257651ef940717e076",
-   "created_at": "2026-10-10T16:56:42.552448Z",
+   "content_sha": "c9e13b86e196256508433ef381ae46411f7397531363adeec44a85090749da27",
+   "created_at": "2026-10-10T19:15:44.696800Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
@@ -1774,6 +1778,12 @@
      },
      {
       "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
       "value": "0"
@@ -1805,7 +1815,7 @@
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165611Z-scan",
+   "run_id": "R-20261010T191513Z-scan",
    "thesis_id": "TH-588B6416E4",
    "version": 1
   }

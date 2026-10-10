@@ -2,11 +2,13 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-10-10",
    "ancestry": [
     "ai_models_platforms"
    ],
    "evidence_direction": "NEW",
    "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:44.408098Z",
    "horizon": "Next 2-4 quarters",
    "kind": "market_regime",
    "last_material_update": "2026-10-05",
@@ -80,14 +82,17 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-05; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-05; not necessarily new to the market."
   },
   "s03_transmission": [
    {
     "claim_ids": [
      "C-82ebca68615b63",
      "C-7566dcc31cf5b2",
-     "C-7997c02b9804b8"
+     "C-7997c02b9804b8",
+     "C-ca99bfc56e35e5",
+     "C-fb16f5b0206efb",
+     "C-d1497cca0714f5"
     ],
     "provenance": "SOURCE OPINION",
     "step": "pricing",
@@ -569,12 +574,12 @@
     {
      "claim_ids": [],
      "provenance": "MODEL INFERENCE",
-     "text": "Registry link \u2014 SIBLING with TH-6BDD0881AD: same value-chain node, different profit mechanism (competitive_share_shift vs pricing_cycle)"
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6BDD0881AD: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
     },
     {
      "claim_ids": [],
      "provenance": "MODEL INFERENCE",
-     "text": "Registry link \u2014 COMPETING with TH-EBC230CDDD: opposite investment directions on the same value-chain node (competitive_share_shift negative vs pricing_cycle positive) \u2014 linked, never merged"
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-EBC230CDDD: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle); a timeframe only one of them states \u2014 related, never used as counter-evidence"
     }
    ],
    "counter_evidence": [],
@@ -633,7 +638,7 @@
    "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
    "research_action": "WATCH",
    "rule_trace": [
-    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
    ]
   },
   "s09_sources": [
@@ -665,18 +670,20 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-10-10",
    "change_summary": "Initial record \u2014 created from A-291cb465969d",
    "content": {
     "header": {
+     "analysis_as_of": "2026-10-10",
      "ancestry": [
       "ai_models_platforms"
      ],
      "evidence_direction": "NEW",
      "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:44.408098Z",
      "horizon": "Next 2-4 quarters",
      "kind": "market_regime",
      "last_material_update": "2026-10-05",
@@ -750,14 +757,17 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-05; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-05; not necessarily new to the market."
     },
     "s03_transmission": [
      {
       "claim_ids": [
        "C-82ebca68615b63",
        "C-7566dcc31cf5b2",
-       "C-7997c02b9804b8"
+       "C-7997c02b9804b8",
+       "C-ca99bfc56e35e5",
+       "C-fb16f5b0206efb",
+       "C-d1497cca0714f5"
       ],
       "provenance": "SOURCE OPINION",
       "step": "pricing",
@@ -1239,12 +1249,12 @@
       {
        "claim_ids": [],
        "provenance": "MODEL INFERENCE",
-       "text": "Registry link \u2014 SIBLING with TH-6BDD0881AD: same value-chain node, different profit mechanism (competitive_share_shift vs pricing_cycle)"
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6BDD0881AD: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
       },
       {
        "claim_ids": [],
        "provenance": "MODEL INFERENCE",
-       "text": "Registry link \u2014 COMPETING with TH-EBC230CDDD: opposite investment directions on the same value-chain node (competitive_share_shift negative vs pricing_cycle positive) \u2014 linked, never merged"
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-EBC230CDDD: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle); a timeframe only one of them states \u2014 related, never used as counter-evidence"
       }
      ],
      "counter_evidence": [],
@@ -1303,7 +1313,7 @@
      "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
      "research_action": "WATCH",
      "rule_trace": [
-      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
      ]
     },
     "s09_sources": [
@@ -1335,14 +1345,14 @@
      }
     ]
    },
-   "content_sha": "c9491b2ef6ab9b68eb63f6bdfa20513a3b3093a54b6c97d4e55bbac55a3eac93",
-   "created_at": "2026-10-10T16:56:42.272506Z",
+   "content_sha": "1298c01e2a7f8668e0e700e892cb8605825e85c01e7f9cb3d802a2315ad6d1d3",
+   "created_at": "2026-10-10T19:15:44.414620Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
    "prior_content_sha": null,
    "priority": {
-    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)",
     "evidence_direction": "NEW",
     "factors": [
      {
@@ -1395,6 +1405,14 @@
       "value": "absent"
      },
      {
+      "claim_ids": [
+       "C-7566dcc31cf5b2"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "n/a \u2014 a market-regime record argues no earnings mechanism",
+      "value": "not credible"
+     },
+     {
       "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
@@ -1423,11 +1441,11 @@
     "previous_action": null,
     "research_action": "WATCH",
     "rules_fired": [
-     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165611Z-scan",
+   "run_id": "R-20261010T191513Z-scan",
    "thesis_id": "TH-70E56311B3",
    "version": 1
   }

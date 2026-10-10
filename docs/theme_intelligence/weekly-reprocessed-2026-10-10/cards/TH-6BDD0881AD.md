@@ -2,7 +2,7 @@
 
 **WATCH** · Investment thesis · evidence NEW · AI model developers and AI platforms / applications · Global · horizon Next 2-4 quarters · status ACTIVE
 
-Article date 2026-10-05 · first detected by the registry 2026-10-10 (new to the registry does not mean new to the market) · last material update 2026-10-05
+Published 2026-10-05 (latest source) · first ingested by this registry 2026-10-10 19:15 UTC (new to the registry, not necessarily to the market) · analysed as of 2026-10-10 · last material update 2026-10-05
 
 `TH-6BDD0881AD` · ai_models_platforms
 
@@ -14,7 +14,7 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - **MODEL INFERENCE:** The value gap reflects divergent subsidy strategies rather than any disclosed profit metric for listed equities; it bears on private labs' unit economics and consumer goodwill, not directly on a public stock earnings line the article quantifies.
 
 ## 02 WHAT CHANGED?
-- New to the registry — first recorded as of 2026-10-10 from a source dated 2026-10-05; not necessarily new to the market.
+- New to the registry — first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-05; not necessarily new to the market.
 - novelty: novelty_unverified — the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market
 - **MEASURED OBSERVATION:** For mid-tier models (Opus 5.5 vs GPT 6.1 Sol), Anthropic offers ~5x the API-equivalent value ⟨cited figures: approximate⟩ (article date 2026-10-05) [C-f1c6dd541b6ea6]
 - **MEASURED OBSERVATION:** A $200 Anthropic plan retains 50% after $2,485 of Fable 5.1, while the equivalent OpenAI plan is exhausted after $2,897 of Astra (article date 2026-10-05) [C-74972600f9eeab]
@@ -96,7 +96,7 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - none in the sources so far
 **Alternative mechanisms / competing hypotheses:**
 - **SOURCE OPINION:** OpenAI could be favored because 6.1 Sol is much cheaper per token than Opus 5.5 and none of OpenAI's Pro plans have a 5-hour limit, making it easier to consume more of the monthly limit. ⟨cited figures: approximate⟩ [C-0bc76b8cbfda46, C-badac9f516a6d7, C-fb16f5b0206efb]
-- **MODEL INFERENCE:** Registry link — COMPETING with TH-EBC230CDDD: opposite investment directions on the same value-chain node (competitive_share_shift negative vs competitive_share_shift positive) — linked, never merged
+- **MODEL INFERENCE:** Registry link — RELATED, not a contradiction — TH-EBC230CDDD: the opposite direction on the same value-chain node, but not the same claim — a timeframe only one of them states — related, never used as counter-evidence
 **Market-level risks:**
 - **SOURCE OPINION:** Subscription plans carry gross margins far below API and meaningfully reduce revenue per MW for both OpenAI and Anthropic, because they are heavily subsidized and consume a disproportionate share of inference compute relative to revenue. (scope: Applies to private AI labs OpenAI and Anthropic; based on SemiAnalysis's own Tokenomics Model rough numbers and utilization assumptions, not audited financials; no listed-equity impact quantified.) [C-18bd5cbe97f0f5, C-c09c7d5e53fe63, C-d9d12e8f620d27, C-b6b91272389aa3, C-fe61c0195c9167, C-a7c3ab2a00ab8f]
 - **MEASURED OBSERVATION:** Providers can silently change subscription limits at any time by tweaking credit costs, so measured value can shift without notice. (scope: Demonstrated via a detected A/B test showing ~20% lower limits on one account; applies to subscription-value measurement reliability.) [C-3edd8258a8ff2d]
@@ -128,4 +128,4 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 **Version history:**
 - v1 as of 2026-10-10 — WATCH — evidence NEW — Initial record — created from A-291cb465969d (initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL))
 
-_Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._

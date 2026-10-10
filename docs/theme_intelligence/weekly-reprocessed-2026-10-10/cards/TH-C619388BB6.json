@@ -2,11 +2,13 @@
  "attributions_without_version": [],
  "card": {
   "header": {
+   "analysis_as_of": "2026-10-10",
    "ancestry": [
     "macro_market"
    ],
    "evidence_direction": "NEW",
    "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:44.011220Z",
    "horizon": "Next 2-4 quarters",
    "kind": "market_regime",
    "last_material_update": "2026-10-07",
@@ -26,9 +28,7 @@
      "C-d647b287b5c3ea",
      "C-b7c453657464af",
      "C-3d0f18b36f90a0",
-     "C-90bdc1b9bb0c82",
-     "C-c15dfdcdeb09c3",
-     "C-6e09009a9ea4ff"
+     "C-90bdc1b9bb0c82"
     ],
     "provenance": "FORECAST",
     "text": "Nomura forecasts a resumption of rate hikes (Fed one hike in December then hold through 2027; ECB two hikes to 3.00%; BOJ two hikes to 1.75%; none for BoE/BoC) but significantly fewer than markets price. \u27e8cited figures: forecast\u27e9"
@@ -126,7 +126,7 @@
     }
    ],
    "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-07; not necessarily new to the market."
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market."
   },
   "s03_transmission": [
    {
@@ -684,12 +684,10 @@
    "alternative_mechanisms": [
     {
      "claim_ids": [
-      "C-d647b287b5c3ea",
-      "C-c15dfdcdeb09c3",
-      "C-6e09009a9ea4ff"
+      "C-d647b287b5c3ea"
      ],
      "provenance": "FORECAST",
-     "text": "Markets are pricing materially more hikes (three more from the Fed, four or more from the BOJ, around four each for BoE/BoC). \u27e8cited figures: forecast\u27e9"
+     "text": "Markets are pricing materially more hikes (three more from the Fed, four or more from the BOJ, around four each for BoE/BoC)."
     }
    ],
    "counter_evidence": [],
@@ -830,18 +828,20 @@
    }
   ]
  },
- "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
  "history": [
   {
    "as_of": "2026-10-10",
    "change_summary": "Initial record \u2014 created from A-131d13deb534",
    "content": {
     "header": {
+     "analysis_as_of": "2026-10-10",
      "ancestry": [
       "macro_market"
      ],
      "evidence_direction": "NEW",
      "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:44.011220Z",
      "horizon": "Next 2-4 quarters",
      "kind": "market_regime",
      "last_material_update": "2026-10-07",
@@ -861,9 +861,7 @@
        "C-d647b287b5c3ea",
        "C-b7c453657464af",
        "C-3d0f18b36f90a0",
-       "C-90bdc1b9bb0c82",
-       "C-c15dfdcdeb09c3",
-       "C-6e09009a9ea4ff"
+       "C-90bdc1b9bb0c82"
       ],
       "provenance": "FORECAST",
       "text": "Nomura forecasts a resumption of rate hikes (Fed one hike in December then hold through 2027; ECB two hikes to 3.00%; BOJ two hikes to 1.75%; none for BoE/BoC) but significantly fewer than markets price. \u27e8cited figures: forecast\u27e9"
@@ -961,7 +959,7 @@
       }
      ],
      "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
-     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-07; not necessarily new to the market."
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market."
     },
     "s03_transmission": [
      {
@@ -1519,12 +1517,10 @@
      "alternative_mechanisms": [
       {
        "claim_ids": [
-        "C-d647b287b5c3ea",
-        "C-c15dfdcdeb09c3",
-        "C-6e09009a9ea4ff"
+        "C-d647b287b5c3ea"
        ],
        "provenance": "FORECAST",
-       "text": "Markets are pricing materially more hikes (three more from the Fed, four or more from the BOJ, around four each for BoE/BoC). \u27e8cited figures: forecast\u27e9"
+       "text": "Markets are pricing materially more hikes (three more from the Fed, four or more from the BOJ, around four each for BoE/BoC)."
       }
      ],
      "counter_evidence": [],
@@ -1665,8 +1661,8 @@
      }
     ]
    },
-   "content_sha": "38910edf7ae0178b715d78f8813ac648a06378307c2b91f287b330129d2cb758",
-   "created_at": "2026-10-10T16:56:41.897081Z",
+   "content_sha": "8b05730ac8f63c4567e72f2fc0c8fdd9e8129cd086be5ed04ab5d8d0ba327ffd",
+   "created_at": "2026-10-10T19:15:44.015879Z",
    "diffs": [],
    "engine_version": "ti-engine-2",
    "evidence_direction": "NEW",
@@ -1743,6 +1739,12 @@
      },
      {
       "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
       "factor_id": "F8_counterevidence",
       "note": "material counter-claims (0 counter-claims in total)",
       "value": "0"
@@ -1774,7 +1776,7 @@
     ],
     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
    },
-   "run_id": "R-20261010T165611Z-scan",
+   "run_id": "R-20261010T191513Z-scan",
    "thesis_id": "TH-C619388BB6",
    "version": 1
   }

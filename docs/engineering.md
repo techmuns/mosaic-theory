@@ -320,6 +320,20 @@ PR (CLAUDE.md: coin-time translation).
   read in full: a shorter, declared extraction, then the gap review split into parts of at most 50
   gaps, each shown what the earlier parts added*. A part that still overruns is split once, then
   fails loud.
+- **Segment** (theme intelligence, `taxonomy.toml` `[[segment]]`) — plain words: *the part of a
+  value-chain node the evidence is about (DRAM / HBM vs NAND / SSD), read from verbatim quotes and
+  made part of thesis identity*, so evidence about one segment never confirms another.
+- **Evidence role** (theme intelligence, `EvidenceRole`) — plain words: *how one thesis's evidence
+  bears on another*: DIRECT_CONFIRMATION (the same claim — may strengthen it), ADJACENT_SUPPORT
+  (related, same direction — context only), CONTRADICTION (the same claim, opposite outcome — the
+  only thing that weakens), REPEATED_SOURCE (the same origin again — attribution only), RELATED
+  (opposite direction, not the same claim — never counter-evidence).
+- **Near-term fundamental inflection / F12** (theme intelligence, `priority.py`) — plain words:
+  *the second road to RESEARCH NOW: a credible, source-explained change in a fundamental within
+  2-4 quarters, plus the question "is it already in estimates?"* — never a forecast alone.
+- **Research-verification status** (theme intelligence, `report.research_verification`) — plain
+  words: *how much of what a run read is accounted for*, shown apart from whether the run
+  executed; a completed scan with open gaps reads INCOMPLETE, never verified.
 
 ## Local setup (every laptop, every contributor)
 

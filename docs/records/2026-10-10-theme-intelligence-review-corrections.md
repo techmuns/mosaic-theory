@@ -217,3 +217,14 @@ billed call, a replay writes none — plus the calls listed below as leaving no 
 - Numbers written as version strings in prose ("GLM's 5.2 / 5.3 model") remain ledger figures:
   telling them from figures needs judgement, so they stay open and visible rather than skipped by
   a guess.
+
+## Amendments
+
+**2026-10-11 — two results above were REVERSED by the round-3 review; do not cite them as
+current.** (1) The "two publishers, one thesis" merge: TrendForce's enterprise-SSD / NAND pricing
+evidence no longer confirms SemiAnalysis's sparse-attention DRAM / HBM thesis — the segment is now
+part of identity, and they are separate theses linked as ADJACENT SUPPORT. (2) The SemiAnalysis vs
+J.P. Morgan challenge: the two power theses are RELATED, never a contradiction — a challenge now
+needs the same claim. Operator decision (8)(b) is closed by that review. Of the weekly sample's
+three open figures and two open paragraphs, all three figures and paragraph b002 are resolved;
+paragraph b008 stays open, its cause stated. `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.

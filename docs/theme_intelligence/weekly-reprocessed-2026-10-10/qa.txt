@@ -1,21 +1,22 @@
-  [PASS] run status recorded: status SUCCEEDED; counts {'figures_in_articles': 228, 'figures_uncaptured': 3, 'claims_added_by_completeness': 61, 'theses_added_by_completeness': 1, 'articles_processed': 6, 'claims_extracted': 192, 'claims_verified': 192, 'mentions': 74, 'theses_created': 10, 'theses_updated': 2, 'attributions_only': 0, 'articles_partial': 1, 'articles_queued': 0, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 454557, 'replayed_from_cache_output_tokens': 122441, 'llm_calls': 34, 'llm_calls_cached': 34, 'http_requests': 2, 'http_cache_hits': 42}
-  [PASS] spans re-found in stored article text: 196 verified claim(s) in 6 article(s)
+  [PASS] run status recorded: status SUCCEEDED; counts {'figures_in_articles': 228, 'figures_uncaptured': 0, 'claims_added_by_completeness': 62, 'theses_added_by_completeness': 1, 'articles_processed': 6, 'claims_extracted': 192, 'claims_verified': 192, 'mentions': 74, 'theses_created': 10, 'theses_updated': 0, 'attributions_only': 0, 'articles_partial': 1, 'articles_queued': 0, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 416545, 'replayed_from_cache_output_tokens': 118862, 'llm_calls': 32, 'llm_calls_cached': 32, 'http_requests': 2, 'http_cache_hits': 42}
+  [PASS] no unverified claim is linked to a thesis: 135 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 195 verified claim(s) in 6 article(s)
   [PASS] figures re-found in their quotes: every number-bearing claim checked
   [PASS] no look-ahead past the run's as-of: as-of 2026-10-10
-  [PASS] cards keep the nine sections in order: 12 version(s) created by this run
+  [PASS] cards keep the nine sections in order: 10 version(s) created by this run
   [PASS] version content hashes recompute: ok
   [PASS] version chain links to the prior version: ok
   [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
   [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
   [PASS] source-explicit companies are named in the article text: ok
-  [PASS] source-labelled lines carry the weakest label of their claims: 12 version(s) checked
+  [PASS] source-labelled lines carry the weakest label of their claims: 10 version(s) checked
   [PASS] no share-price / valuation move filed as an earnings step: ok
   [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-10
   [PASS] completeness ledger recorded for every analysed article: 6 article(s)
-  [FAIL] every reported figure captured or judged immaterial: OPEN — 3 of 228 figure(s): A-5bfa8fff567e b034 '42'; A-5bfa8fff567e b034 '22'; A-5bfa8fff567e b034 '52%'
-  [FAIL] every argument block accounted for: OPEN — 2 block(s): A-291cb465969d b002; A-291cb465969d b008
+  [PASS] every reported figure captured or judged immaterial: 228 figure(s) accounted for
+  [FAIL] every argument block accounted for: OPEN — 1 block(s): A-291cb465969d b008 [account_names_no_record]
   [PASS] every analysed article names its author(s): 6 article(s)
   [PASS] append-only triggers present: 14 history tables
   [PASS] every configured source reported with consistent counts: 8 sources
-  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/weekly-12/runs/R-20261010T165611Z-scan
-QA R-20261010T165611Z-scan: 18/20 passed
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/weekly-16/runs/R-20261010T191513Z-scan
+QA R-20261010T191513Z-scan: 20/21 passed · scan execution SUCCEEDED · research verification INCOMPLETE — NOT fully verified — over the 6 article(s) this run analysed: 0 of 228 stated figure(s) and 1 of 170 argument paragraph(s) open; causes: account_names_no_record 1; 1 article(s) read only as a preview. Open material is never used as evidence, so it can hold a thesis back but never raise its research action

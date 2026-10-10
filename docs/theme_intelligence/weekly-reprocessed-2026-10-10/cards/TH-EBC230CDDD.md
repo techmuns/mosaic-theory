@@ -1,8 +1,8 @@
 # China's frontier labs race ahead without safety gating, intensifying competition for US labs
 
-**WATCH** · Investment thesis · evidence WEAKER · AI model developers and AI platforms / applications · Global · horizon Next 2-4 quarters · status ACTIVE
+**WATCH** · Investment thesis · evidence NEW · AI model developers and AI platforms / applications · Global · horizon Next 2-4 quarters · status ACTIVE
 
-Article date 2026-10-08 · first detected by the registry 2026-10-10 (new to the registry does not mean new to the market) · last material update 2026-10-08
+Published 2026-10-08 (latest source) · first ingested by this registry 2026-10-10 19:15 UTC (new to the registry, not necessarily to the market) · analysed as of 2026-10-10 · last material update 2026-10-08
 
 `TH-EBC230CDDD` · ai_models_platforms
 
@@ -11,19 +11,24 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 ## 01 BOTTOM LINE
 - **SOURCE OPINION:** SemiAnalysis documents that 9 leading Chinese labs ship models at thirty-fold-higher cadence with no frontier-safety gating (94.9% of 857 releases have no safety disclosure), remaining in a release and price war with cheap open-weight models, while US labs that called for pacing (Anthropic) still shipped new models framed as staying competitive with China. [C-2e352ca16a7e09, C-c4a988d866ab2d, C-e177d992ccf6e5, C-1bcfbfc203fc1c, C-f4e8ccaec3d482, C-2d514b8231bfc3]
 - **SOURCE OPINION:** The article argues no one, including Anthropic, can unilaterally pace the frontier when Chinese labs will not slow, so pacing collapses into 'remaining competitive with China.' [C-1bcfbfc203fc1c, C-955bd8daad0275]
+- **MODEL INFERENCE:** The absence of any Chinese slowdown and the proliferation of cheap Chinese open-weight models is a competitive and pricing headwind for Western frontier labs like Anthropic, but the article quantifies no revenue, margin or valuation impact on listed equities.
 
 ## 02 WHAT CHANGED?
-- challenged by competing thesis TH-70E56311B3 — evidence linked as CONTRADICTS, the two theses stay separate
-- novelty: relative to the registry's prior version
-- [Contradicts the thesis] **MEASURED OBSERVATION:** ⟨competing hypothesis TH-70E56311B3, A-291cb465969d⟩ Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut ⟨cited figures: approximate⟩ (article date 2026-10-05) [C-7566dcc31cf5b2]
-- [Contradicts the thesis] **SOURCE OPINION:** ⟨competing hypothesis TH-70E56311B3, A-291cb465969d⟩ Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut. (article date 2026-10-05) [C-7997c02b9804b8]
-- [Contradicts the thesis] **MEASURED OBSERVATION:** ⟨competing hypothesis TH-70E56311B3, A-291cb465969d⟩ OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30% ⟨cited figures: approximate⟩ (article date 2026-10-05) [C-82ebca68615b63]
+- New to the registry — first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market.
+- novelty: novelty_unverified — the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market
+- **MEASURED OBSERVATION:** 813 releases (94.9%) have no safety disclosure at all. (article date 2026-10-08; period 2021 to 15 September 2026) [C-2e352ca16a7e09]
+- **MEASURED OBSERVATION:** Release cadence rose from 3 in Q1 2023 to 101 in Q3 2025, a roughly thirty-fold rise. (article date 2026-10-08; period Q3 2025) [C-c4a988d866ab2d]
+- **SOURCE OPINION:** Anthropic was reported weighing a new model before its IPO as cheap open-weight rivals, especially in China, squeezed the economics. (article date 2026-10-08; period September 2026) [C-f4e8ccaec3d482]
+- **MEASURED OBSERVATION:** Open-weight releases make up more than half of every quarter since mid-2023. (article date 2026-10-08; period since mid-2023) [C-00088b169237b8]
+- **MEASURED OBSERVATION:** Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China. (article date 2026-10-08; period September 2026) [C-1bcfbfc203fc1c]
+- **MEASURED OBSERVATION:** China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment. (article date 2026-10-08; period 2025) [C-b344f1ae454450]
+- **UNKNOWN:** showing 6 of 20 pieces of evidence from A-5bfa8fff567e — the rest are in 04 KEY EVIDENCE and the evidence ledger
 
 ## 03 WHY COULD STOCKS BENEFIT OR SUFFER?
 - _Industry shift_ **MEASURED OBSERVATION:** Chinese frontier labs accelerate releases (101 in Q3 2025 vs 3 in Q1 2023) with majority open-weight and no safety gating. [C-c4a988d866ab2d, C-00088b169237b8, C-2e352ca16a7e09]
 - _Pricing_ **SOURCE OPINION:** Cheap open-weight Chinese rivals squeeze the economics of Western model developers. [C-f4e8ccaec3d482]
 - _Listed-company earnings_ **MODEL INFERENCE:** Any effect on listed-company revenue or margins would flow through model pricing and share, but the article does not quantify it and most named Chinese labs and Anthropic are private. [C-f4e8ccaec3d482]
-- _Market reaction — a price / valuation move, NOT an earnings mechanism_ **SOURCE OPINION:** Anthropic frames its new release as 'remaining competitive with China' rather than pacing. [C-1bcfbfc203fc1c, C-8d0b3b84aa0c3b]
+- _Market reaction — a price / valuation move, NOT an earnings mechanism_ **WITHHELD — failed source verification:** REVIEW_UNSUPPORTED — s03.3: UNSUPPORTED — Cited span only says Anthropic calls Opus 5.5 its first release since calling for pacing; it does not support that Anthropic frames the release as 'remaining competitive with China' rather than pacing. No pool span supports this framing. | "Anthropic frames its new release as 'remaining competitive with China' rather than pacing."
 
 ## 04 KEY EVIDENCE & NUMBERS
 | Evidence | Value | Period / as-of | Type | Upstream origin | Anchor |
@@ -104,31 +109,12 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - **MEASURED OBSERVATION:** On 12 September 2026 Dario Amodei published an essay arguing frontier labs must deliberately slow model-capability improvement. [C-ac7dd11a39dce7]
 - **SOURCE OPINION:** Beijing's stated AI-safety position is the most safety-forward of any major AI power outside Europe (per the article, in contrast to its speed-first practice). [C-3f657d5da2c868]
 - **SOURCE OPINION:** Zhipu (Z.ai) is the only Chinese frontier lab where safety is a named strategic commitment. [C-afcdf8c2aec4f2]
-- **SOURCE OPINION:** Opus 5.5 on any Claude subscription offers far better value than anything from OpenAI [C-0b27e60d2ff264]
-- **SOURCE OPINION:** Opus 5.5 on Claude plans offers ~4x higher API-equivalent value ⟨cited figures: approximate⟩ [C-0bc76b8cbfda46]
-- **MEASURED OBSERVATION:** SemiAnalysis tracking confirmed a 50% value reduction for OpenAI's $200 plan [C-37ade4ed06f630]
-- **MEASURED OBSERVATION:** OpenAI introduced a new $500 subscription plan alongside a massive limit reduction. [C-3b9b43a65df5d2]
-- **MEASURED OBSERVATION:** OpenAI halved the API-equivalent value for its $200 plan and introduced a new $500 tier last week [C-3fcde43a6c676d]
-- **SOURCE OPINION:** OpenAI cut subscription limits to Fable-level across the board as its margin-improvement strategy [C-58dabbec41c6ca]
-- **SOURCE OPINION:** After the cut, OpenAI's Pro 100, 200, and 500 plans all offer the same tokens per dollar for every model. [C-61f3ac428777db]
-- **MEASURED OBSERVATION:** OpenAI $200 plans purchased before the cut keep old higher limits until October 29th [C-704c8107dfbd26]
-- **MEASURED OBSERVATION:** A $200 Anthropic plan retains 50% after $2,485 of Fable 5.1, while the equivalent OpenAI plan is exhausted after $2,897 of Astra [C-74972600f9eeab]
-- **SOURCE OPINION:** Anthropic's extra 50% of limit (Fable usage capped at 50%) becomes especially relevant in the Opus 5.5 vs GPT 6.1 Sol comparison. [C-a8b79045241e95]
-- **MEASURED OBSERVATION:** The equivalent $200 OpenAI plan is fully exhausted after $2,897 of Astra (GPT-6 Astra) [C-cf4a67707cff9e]
-- **SOURCE OPINION:** Anthropic offers the same per-dollar value across all subscription tiers and currently outcompetes OpenAI on subscription value. [C-cf87c7652453d4]
-- **MEASURED OBSERVATION:** For mid-tier models (Opus 5.5 vs GPT 6.1 Sol), Anthropic offers ~5x the API-equivalent value ⟨cited figures: approximate⟩ [C-f1c6dd541b6ea6]
-- **SOURCE OPINION:** Anthropic lowers the API-equivalent value of a plan for more premium models; the drop-off is small between Sonnet 5.5 and Opus 5.5 but meaningful with Fable 5.1. [C-f3736a4044936d]
-- **MEASURED OBSERVATION:** Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut ⟨cited figures: approximate⟩ [C-7566dcc31cf5b2]
-- **SOURCE OPINION:** Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut. [C-7997c02b9804b8]
-- **MEASURED OBSERVATION:** OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30% ⟨cited figures: approximate⟩ [C-82ebca68615b63]
 **Alternative mechanisms / competing hypotheses:**
 - **SOURCE OPINION:** Dario Amodei's view that export controls and security could preserve a US lead and create room to slow down. [C-ac7dd11a39dce7, C-720296d85e0cc1]
-- **MODEL INFERENCE:** Registry link — COMPETING hypothesis TH-6BDD0881AD: the opposite direction on the same value-chain node (ai_models_platforms), the same mechanism (competitive_share_shift) — linked, never merged
-- **MODEL INFERENCE:** Registry link — COMPETING hypothesis TH-70E56311B3: the opposite direction on the same value-chain node (ai_models_platforms), different mechanisms (competitive_share_shift vs pricing_cycle) — linked, never merged
 **Market-level risks:**
 - **SOURCE OPINION:** The article documents a market-structure/safety risk that China's most-capable frontier models ship with essentially no dangerous-capability evaluations (94.9% of releases have no safety disclosure; no Chinese frontier text model shipped with a dangerous-capability evaluation), while frameworks and evaluators have no power to compel compliance. (scope: Applies to frontier AI governance risk across the 9 leading Chinese developers as assessed by SemiAnalysis through 15 September 2026; a geopolitical/technology-governance risk, not tied by the article to a specific listed-equity profit mechanism.) [C-2e352ca16a7e09, C-8d9361f85cb0ce, C-c2b5064b42fba5, C-cb2a14c94e353e, C-5fba39f3053690, C-4b0336041f2273]
 - **SOURCE OPINION:** Chinese experts and officials argue America's safety emphasis is 'Oppenheimer-style marketing' and cognitive-domain shaping, suggesting cross-border AI-governance coordination risk that could keep both sides racing. (scope: Reported views of named Chinese figures (Zhu Songchun, Zhi Zhenfeng) and the publisher's framing; geopolitical/narrative risk, not a quantified market risk.) [C-fcafe17c4142e5, C-c3aca662c0f6ff, C-7a92aefbdcb95d]
-- **WITHHELD — failed source verification:** NUMBER_NOT_IN_CITED_CLAIMS — s07.25 prints '32', which none of its cited claims carry: "China's technical scientists and its legal-policy scholars operate in two separate governance debate"
+- **WITHHELD — failed source verification:** NUMBER_NOT_IN_CITED_CLAIMS — s07.6 prints '32', which none of its cited claims carry: "China's technical scientists and its legal-policy scholars operate in two separate governance debate"
 - **SOURCE OPINION:** In Chinese official texts AI 安全 is shifting from 'safety' to 'security', with Framework 3.0 framing US export controls as a supply-chain security risk and Chinese experts characterizing US safety emphasis as 'cognitive-domain shaping' — a cross-border governance-coordination risk that could keep both sides racing. (scope: US-China AI governance relationship; publisher interpretation plus cited expert statements (Zhi Zhenfeng, Zhu Songchun).) [C-a73c40748d892b, C-7a92aefbdcb95d]
 **Disconfirming signals:**
 - Chinese labs begin routinely gating releases with dangerous-capability evaluations
@@ -150,32 +136,11 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - Open-weight competition shown not to affect commercial model pricing
 **Investment readiness:** NOT_ASSESSED — the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof
 **Decision trace (audit):**
-- WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)
+- WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))
 
 ## 09 SOURCES & CHANGE HISTORY
-- [Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime](https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier) — Mark Chen; Doug; Dylan Patel — SemiAnalysis — article date 2026-10-08 — independent_research — retrieval FULL — origins: Anthropic, Liu Shengyu, Zhi Zhenfeng, not attributed by the source, publisher's own analysis — novelty_unverified (40 claim refs; A-5bfa8fff567e)
-- [Anthropic Subscriptions Offer 5x+ More Value Than OpenAI](https://newsletter.semianalysis.com/p/anthropic-subscriptions-offer-5x) — Andrew Megalaa; Max Kan; Dylan Patel — SemiAnalysis — article date 2026-10-05 — independent_research — retrieval PARTIAL — origins: SemiAnalysis Tokenomics Model, publisher's own analysis — contradictory (17 claim refs; A-291cb465969d)
+- [Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime](https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier) — Mark Chen; Doug; Dylan Patel — SemiAnalysis — article date 2026-10-08 — independent_research — retrieval FULL — origins: Anthropic, Liu Shengyu, Zhi Zhenfeng, not attributed by the source, publisher's own analysis — novelty_unverified (34 claim refs; A-5bfa8fff567e)
 **Version history:**
 - v1 as of 2026-10-10 — WATCH — evidence NEW — Initial record — created from A-5bfa8fff567e (initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names)))
-- v2 as of 2026-10-10 — WATCH — evidence WEAKER — challenged by TH-6BDD0881AD (no change in action (F8_counterevidence 1→10; F11_retrieval FULL→PARTIAL))
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Opus 5.5 on any Claude subscription offers far better value than anything from OpenAI
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Opus 5.5 on Claude plans offers ~4x higher API-equivalent value ⟨cited figures: approximate⟩
-  - s07_what_could_go_wrong.counter_evidence: contradictory — SemiAnalysis tracking confirmed a 50% value reduction for OpenAI's $200 plan
-  - s07_what_could_go_wrong.counter_evidence: contradictory — OpenAI introduced a new $500 subscription plan alongside a massive limit reduction.
-  - s07_what_could_go_wrong.counter_evidence: contradictory — OpenAI halved the API-equivalent value for its $200 plan and introduced a new $500 tier last week
-  - s07_what_could_go_wrong.counter_evidence: contradictory — OpenAI cut subscription limits to Fable-level across the board as its margin-improvement strategy
-  - s07_what_could_go_wrong.counter_evidence: contradictory — After the cut, OpenAI's Pro 100, 200, and 500 plans all offer the same tokens per dollar for every model.
-  - s07_what_could_go_wrong.counter_evidence: contradictory — OpenAI $200 plans purchased before the cut keep old higher limits until October 29th
-  - s07_what_could_go_wrong.counter_evidence: contradictory — A $200 Anthropic plan retains 50% after $2,485 of Fable 5.1, while the equivalent OpenAI plan is exhausted after $2,897 of Astra
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Anthropic's extra 50% of limit (Fable usage capped at 50%) becomes especially relevant in the Opus 5.5 vs GPT 6.1 Sol comparison.
-  - s07_what_could_go_wrong.counter_evidence: contradictory — The equivalent $200 OpenAI plan is fully exhausted after $2,897 of Astra (GPT-6 Astra)
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Anthropic offers the same per-dollar value across all subscription tiers and currently outcompetes OpenAI on subscription value.
-  - s07_what_could_go_wrong.counter_evidence: contradictory — For mid-tier models (Opus 5.5 vs GPT 6.1 Sol), Anthropic offers ~5x the API-equivalent value ⟨cited figures: approximate⟩
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Anthropic lowers the API-equivalent value of a plan for more premium models; the drop-off is small between Sonnet 5.5 and Opus 5.5 but meaningful with Fable 5.1… [+1 chars — full text in the JSON export]
-  - s01_bottom_line: no material change — The article argues no one, including Anthropic, can unilaterally pace the frontier when Chinese labs will not slow, so pacing collapses into 'remaining competit… [+16 chars — full text in the JSON export]
-- v3 as of 2026-10-10 — WATCH — evidence WEAKER — challenged by TH-70E56311B3 (no change in action (F8_counterevidence 10→13))
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut ⟨cited figures: approximate⟩
-  - s07_what_could_go_wrong.counter_evidence: contradictory — Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut.
-  - s07_what_could_go_wrong.counter_evidence: contradictory — OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30% ⟨cited figures: approximate⟩
 
-_Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._

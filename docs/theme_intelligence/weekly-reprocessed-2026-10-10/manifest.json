@@ -7,29 +7,29 @@
   "articles_processed": 6,
   "articles_queued": 0,
   "attributions_only": 0,
-  "claims_added_by_completeness": 61,
+  "claims_added_by_completeness": 62,
   "claims_extracted": 192,
   "claims_verified": 192,
   "figures_in_articles": 228,
-  "figures_uncaptured": 3,
+  "figures_uncaptured": 0,
   "http_cache_hits": 42,
   "http_requests": 2,
-  "llm_calls": 34,
-  "llm_calls_cached": 34,
+  "llm_calls": 32,
+  "llm_calls_cached": 32,
   "mentions": 74,
   "replayed_from_cache_cache_creation_input_tokens": 0,
   "replayed_from_cache_cache_read_input_tokens": 0,
-  "replayed_from_cache_input_tokens": 454557,
-  "replayed_from_cache_output_tokens": 122441,
+  "replayed_from_cache_input_tokens": 416545,
+  "replayed_from_cache_output_tokens": 118862,
   "theses_added_by_completeness": 1,
   "theses_created": 10,
-  "theses_updated": 2
+  "theses_updated": 0
  },
  "db_schema_version": 2,
  "engine_version": "ti-engine-2",
- "fetch_seconds": 10.0,
- "finished_at": "2026-10-10T16:56:42.555675+00:00",
- "generated_at": "2026-10-10T16:57:15.448773+00:00",
+ "fetch_seconds": 9.9,
+ "finished_at": "2026-10-10T19:15:44.699298+00:00",
+ "generated_at": "2026-10-10T19:19:37.307386+00:00",
  "llm": {
   "extract_prompt_version": "ti-extract-6",
   "model": "claude-opus-4-8",
@@ -38,7 +38,7 @@
  },
  "llm_seconds": 0.0,
  "mode": "scan",
- "output_dir": "data/theme_intelligence/v2/weekly-12/runs/R-20261010T165611Z-scan",
+ "output_dir": "data/theme_intelligence/v2/weekly-16/runs/R-20261010T191513Z-scan",
  "outputs": [
   "cards/TH-07643AD5F6.html",
   "cards/TH-07643AD5F6.json",
@@ -89,13 +89,31 @@
   "validation_log.json"
  ],
  "parser_version": "ti-parse-4",
- "run_id": "R-20261010T165611Z-scan",
+ "research_verification": {
+  "articles": 6,
+  "articles_preview_only": 1,
+  "articles_unreadable": 0,
+  "figures": 228,
+  "figures_open": 0,
+  "open_causes": {
+   "account_names_no_record": 1
+  },
+  "open_items": [
+   "AV-f45a634144cbefaa b008 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'States providers can silently change limits; carried by first-pass market risk on silent limit changes.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked"
+  ],
+  "paragraphs": 170,
+  "paragraphs_open": 1,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 6 article(s) this run analysed: 0 of 228 stated figure(s) and 1 of 170 argument paragraph(s) open; causes: account_names_no_record 1; 1 article(s) read only as a preview. Open material is never used as evidence, so it can hold a thesis back but never raise its research action"
+ },
+ "run_id": "R-20261010T191513Z-scan",
  "runtime_seconds": 30.8,
  "sources": [
   {
    "already_known": 0,
    "channel": "Citi Must C (Citi Research public insights)",
-   "checked_at": "2026-10-10T16:56:11.722698Z",
+   "checked_at": "2026-10-10T19:15:13.903149Z",
    "discovered": 20,
    "entry_points": [
     "https://www.citigroup.com/global/insights/must-c"
@@ -118,7 +136,7 @@
   {
    "already_known": 0,
    "channel": "BofA institutional investing insights",
-   "checked_at": "2026-10-10T16:56:11.739242Z",
+   "checked_at": "2026-10-10T19:15:13.919157Z",
    "discovered": 16,
    "entry_points": [
     "https://business.bofa.com/en-us/content/institutional-investing-insights.html"
@@ -143,7 +161,7 @@
   {
    "already_known": 0,
    "channel": "J.P. Morgan Top Market Takeaways",
-   "checked_at": "2026-10-10T16:56:12.283488Z",
+   "checked_at": "2026-10-10T19:15:14.450846Z",
    "discovered": 51,
    "entry_points": [
     "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
@@ -166,7 +184,7 @@
   {
    "already_known": 0,
    "channel": "Morgan Stanley Research",
-   "checked_at": "2026-10-10T16:56:12.426536Z",
+   "checked_at": "2026-10-10T19:15:14.593788Z",
    "discovered": 0,
    "entry_points": [
     "https://www.morganstanley.com/what-we-do/research"
@@ -193,7 +211,7 @@
   {
    "already_known": 0,
    "channel": "Nomura Connects",
-   "checked_at": "2026-10-10T16:56:30.566328Z",
+   "checked_at": "2026-10-10T19:15:32.737366Z",
    "discovered": 14,
    "entry_points": [
     "https://www.nomuraconnects.com/articles/"
@@ -218,7 +236,7 @@
   {
    "already_known": 0,
    "channel": "TrendForce press center news",
-   "checked_at": "2026-10-10T16:56:30.805984Z",
+   "checked_at": "2026-10-10T19:15:32.967775Z",
    "discovered": 5,
    "entry_points": [
     "https://www.trendforce.com/presscenter/news"
@@ -241,7 +259,7 @@
   {
    "already_known": 0,
    "channel": "SemiAnalysis (site + its newsletter feed)",
-   "checked_at": "2026-10-10T16:56:30.817981Z",
+   "checked_at": "2026-10-10T19:15:32.980677Z",
    "discovered": 20,
    "entry_points": [
     "https://newsletter.semianalysis.com/feed"
@@ -264,7 +282,7 @@
   {
    "already_known": 0,
    "channel": "Goldman Sachs Research insights",
-   "checked_at": "2026-10-10T16:56:30.828004Z",
+   "checked_at": "2026-10-10T19:15:32.991184Z",
    "discovered": 0,
    "entry_points": [
     "https://www.goldmansachs.com/insights/goldman-sachs-research/"
@@ -289,15 +307,15 @@
    ]
   }
  ],
- "started_at": "2026-10-10T16:56:11.722516+00:00",
+ "started_at": "2026-10-10T19:15:13.902942+00:00",
  "status": "SUCCEEDED",
  "theses_in_registry": 10,
  "tokens": {},
  "verification": {
-  "BLOCK": 12,
+  "BLOCK": 9,
   "HOLD": 0,
-  "INFO": 31,
-  "WARN": 48
+  "INFO": 34,
+  "WARN": 41
  },
  "warnings": [],
  "window_from": "2026-10-01",

@@ -2,7 +2,7 @@
 
 **WATCH** · Investment thesis · evidence NEW · AI adoption by end users (broad) · Asia ex-Japan · horizon Next 2-4 quarters · status ACTIVE
 
-Article date 2026-10-07 · first detected by the registry 2026-10-10 (new to the registry does not mean new to the market) · last material update 2026-10-07
+Published 2026-10-07 (latest source) · first ingested by this registry 2026-10-10 19:15 UTC (new to the registry, not necessarily to the market) · analysed as of 2026-10-10 · last material update 2026-10-07
 
 `TH-4FC37DBE69` · ai_adoption
 
@@ -14,7 +14,7 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 - **MODEL INFERENCE:** Tech/AI-driven demand spillovers in ASEAN could benefit regional equities and tech supply chains, but the article does not quantify any listed-company earnings effect.
 
 ## 02 WHAT CHANGED?
-- New to the registry — first recorded as of 2026-10-10 from a source dated 2026-10-07; not necessarily new to the market.
+- New to the registry — first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market.
 - novelty: novelty_unverified — the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market
 - **FORECAST:** Nomura expects Singapore to benefit from tech boom spillovers and strong demand, lifting core inflation above 2.0%. ⟨cited figures: forecast⟩ (article date 2026-10-07) [C-cdae08f4f73f0a]
 - **FORECAST:** Nomura expects Japan's economy to stay on a recovery path driven by capital spending on software, digitalization and automation to address labor shortages. (article date 2026-10-07; period FY27) [C-aed8402ebdba57]
@@ -100,4 +100,4 @@ _Labels: MEASURED OBSERVATION — a figure or dated event the source reports · 
 **Version history:**
 - v1 as of 2026-10-10 — WATCH — evidence NEW — Initial record — created from A-131d13deb534 (initial assessment — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold))
 
-_Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._

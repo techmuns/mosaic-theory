@@ -1,14 +1,16 @@
-# What to research this week — run R-20261010T165611Z-scan (SUCCEEDED)
+# What to research this week — run R-20261010T191513Z-scan
 
 _Research attention only — no row is a purchase or sale._
 
+- Scan execution: SUCCEEDED
+- Research verification: INCOMPLETE — NOT fully verified — over the 6 article(s) this run analysed: 0 of 228 stated figure(s) and 1 of 170 argument paragraph(s) open; causes: account_names_no_record 1; 1 article(s) read only as a preview. Open material is never used as evidence, so it can hold a thesis back but never raise its research action
 - Window: 2026-10-01 → 2026-10-10 (as of 2026-10-10, mode scan)
 - Accessible sources: 6 of 8
 - Blocked sources: Morgan Stanley, Goldman Sachs
 - Articles analyzed: 5 full · 1 partial
 - Research Now / Watch / Skip: 2 / 7 / 1 — of the 10 theses this run created or changed (archived in the registry: 1)
-- New / upgraded / downgraded / challenged theses: 10 / 0 / 0 / 1 — this run's events; a thesis new this run can also be challenged in it
-- Reported figures not yet captured: 3 of 228
+- New / upgraded / downgraded / challenged theses: 10 / 0 / 0 / 0 — this run's events; a thesis new this run can also be challenged in it
+- Reported figures not yet captured: 0 of 228
 
 ## Source coverage
 
@@ -23,26 +25,25 @@ _Research attention only — no row is a purchase or sale._
 | semianalysis | OK | 20 | 2 | 0 | 2 | 2 | 0 | 0 | — |
 | gs_research | BLOCKED | 0 | 0 | 0 | 0 | 0 | 0 | 0 | https://www.goldmansachs.com/insights/goldman-sachs-research/: HTTP 403; standing access limitation recorded in sources.toml — this channel refuses the honest research User-Agent; it is reported every run, never bypassed |
 
+## Research verification — open items (1)
+
+- AV-f45a634144cbefaa b008 paragraph — account_names_no_record: pass 1b called it covered — 'States providers can silently change limits; carried by first-pass market risk on silent limit changes.' — but named no verified claim or hypothesis, so the account cannot be checked
+
 ## Unresolved caveats
 
-- FIGURE_UNCAPTURED A-5bfa8fff567e: b034: '42' — pass 1b claimed a capturing claim, but none verified — sentence 'We find that 42 are written by people with a technical background.'
+- ARGUMENT_UNACCOUNTED A-291cb465969d: b008: pass 1b called it covered — 'States providers can silently change limits; carried by first-pass market risk on silent limit changes.' — but named no verified claim or hypothesis, so the account cannot be checked
 - NUMBER_NOT_IN_SPAN C-35807dbb656ad7: c21: number check failed: value=0.0 value_text='no cuts' vs quote — quote 'we maintain our forecast for no cuts to the Reserve Requirement Ratio (the perce'
-- PARTIAL_RETRIEVAL A-291cb465969d: only part of the article was retrieved — no claim of full-text verification is made
-- ARGUMENT_UNACCOUNTED A-291cb465969d: b008: no verified claim sits in it and pass 1b gave no verifiable account
-- FIGURE_UNCAPTURED A-5bfa8fff567e: b034: '52%' — pass 1b claimed a capturing claim, but none verified — sentence 'Of those 42, 22 (52%) argue that safety must precede or gate development.'
-- FIGURE_UNCAPTURED A-5bfa8fff567e: b034: '22' — pass 1b claimed a capturing claim, but none verified — sentence 'Of those 42, 22 (52%) argue that safety must precede or gate development.'
-- UNSUPPORTED_ENTITY J.P. Morgan Private Bank: 'J.P. Morgan Private Bank' does not occur in the article text — dropped (no unnamed entity may be source-mentioned)
-- NUMBER_NOT_IN_SPAN C-9a4381e4e26507: b2.k2_4: unit 'texts' disagrees with a % figure — quote 'Of those 42, 22 (52%) argue that safety must precede or gate development. Only f'
 - NUMBER_NOT_IN_SPAN C-c15dfdcdeb09c3: c3: number check failed: value=1.0 value_text='A hike' vs quote — quote 'A hike in December by the US Federal Reserve followed by an extended hold throug'
-- ARGUMENT_UNACCOUNTED A-291cb465969d: b002: no verified claim sits in it and pass 1b gave no verifiable account
 - NUMBER_NOT_IN_SPAN C-6e09009a9ea4ff: c6: number check failed: value=0.0 value_text='None' vs quote — quote 'None for the Bank of England and Bank of Canada against market pricing of around'
+- UNSUPPORTED_ENTITY J.P. Morgan Private Bank: 'J.P. Morgan Private Bank' does not occur in the article text — dropped (no unnamed entity may be source-mentioned)
+- PARTIAL_RETRIEVAL A-291cb465969d: only part of the article was retrieved — no claim of full-text verification is made
 - source ms_research BLOCKED: https://www.morganstanley.com/what-we-do/research: robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com
 - source gs_research BLOCKED: https://www.goldmansachs.com/insights/goldman-sachs-research/: HTTP 403
 
 ## NEW (9) — first recorded this run — new to the registry, not necessarily new to the market
 
 ### [RESEARCH NOW] Low implied correlation makes equity sector and theme selection the key diversifier — Market-regime record
-- Article date 2026-10-02 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-02 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Research Now — every condition met (an investigation, not a trade)
 - What changed:
@@ -60,7 +61,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-4BC577D53A` v1 · initial assessment — NOW all conditions met — near-term window(s) C-88f388db8c7f04: measured 2026-10-02 (8 days before the as-of); C-91f359d4567e78: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-32ea139ac5c55b: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold — an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED) · card: cards/TH-4BC577D53A.html
 
 ### [RESEARCH NOW] Rate, political and AI-power forces have pressured utilities as an AI enabler
-- Article date 2026-10-02 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-02 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Research Now — every condition met (an investigation, not a trade)
 - What changed:
@@ -76,7 +77,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-588B6416E4` v1 · initial assessment — NOW all conditions met — near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-90533479f480e9: measured 2026-10-02 (8 days before the as-of); C-15345e9a075e87: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: utilities, sector: S&P 500 Utilities sector; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold — an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED) · card: cards/TH-588B6416E4.html
 
 ### [WATCH] Cost pressures prompt notebook production to reshore from emerging locations back to China
-- Article date 2026-10-08 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-08 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no verified dislocation or catalyst; premise is conditional in the source
 - What changed:
@@ -92,7 +93,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-07643AD5F6` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source) · card: cards/TH-07643AD5F6.html
 
 ### [WATCH] Rising component costs threaten 2027 notebook shipments and brand margins
-- Article date 2026-10-08 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-08 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no verified dislocation or catalyst; premise is conditional in the source
 - What changed:
@@ -110,9 +111,9 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-4BC0244112` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source) · card: cards/TH-4BC0244112.html
 
 ### [WATCH] China's frontier labs race ahead without safety gating, intensifying competition for US labs
-- Article date 2026-10-08 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
-- Evidence direction: WEAKER
-- Why this action: Watch — not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL
+- Published 2026-10-08 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
+- Evidence direction: NEW
+- Why this action: Watch — not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names)
 - What changed:
   - 813 releases (94.9%) have no safety disclosure at all.
   - Release cadence rose from 3 in Q1 2023 to 101 in Q3 2025, a roughly thirty-fold rise.
@@ -121,30 +122,14 @@ _Research attention only — no row is a purchase or sale._
   - Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China.
   - China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment.
   - showing 6 of 20 pieces of evidence from A-5bfa8fff567e — the rest are in 04 KEY EVIDENCE and the evidence ledger
-  - Contradicts the thesis: Opus 5.5 on any Claude subscription offers far better value than anything from OpenAI
-  - Contradicts the thesis: Opus 5.5 on Claude plans offers ~4x higher API-equivalent value
-  - Contradicts the thesis: SemiAnalysis tracking confirmed a 50% value reduction for OpenAI's $200 plan
-  - Contradicts the thesis: OpenAI introduced a new $500 subscription plan alongside a massive limit reduction.
-  - Contradicts the thesis: OpenAI halved the API-equivalent value for its $200 plan and introduced a new $500 tier last week
-  - Contradicts the thesis: OpenAI cut subscription limits to Fable-level across the board as its margin-improvement strategy
-  - Contradicts the thesis: After the cut, OpenAI's Pro 100, 200, and 500 plans all offer the same tokens per dollar for every model.
-  - Contradicts the thesis: OpenAI $200 plans purchased before the cut keep old higher limits until October 29th
-  - Contradicts the thesis: A $200 Anthropic plan retains 50% after $2,485 of Fable 5.1, while the equivalent OpenAI plan is exhausted after $2,897 of Astra
-  - Contradicts the thesis: Anthropic's extra 50% of limit (Fable usage capped at 50%) becomes especially relevant in the Opus 5.5 vs GPT 6.1 Sol comparison.
-  - showing 10 of 14 pieces of evidence from A-291cb465969d — the rest are in 04 KEY EVIDENCE and the evidence ledger
-  - Contradicts the thesis: Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut
-  - Contradicts the thesis: Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut.
-  - Contradicts the thesis: OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30%
 - Sources:
-  - SemiAnalysis — Andrew Megalaa; Max Kan; Dylan Patel — “Anthropic Subscriptions Offer 5x+ More Value Than OpenAI” (article date 2026-10-05) — contradicts the thesis
   - SemiAnalysis — Mark Chen; Doug; Dylan Patel — “Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime” (article date 2026-10-08) — first record of this thesis
-  - SemiAnalysis — Andrew Megalaa; Max Kan; Dylan Patel — “Anthropic Subscriptions Offer 5x+ More Value Than OpenAI” (article date 2026-10-05) — contradicts the thesis
 - Exposure the source names: Anthropic (UNRESOLVED); Alibaba (UNRESOLVED); DeepSeek [private company]; Zhipu Z.ai [private company]; MoonShot [private company]
 - Next research step: Assess whether cheap Chinese open-weight model proliferation is measurably compressing API/model pricing and margins for listed AI-exposed companies (e.g. cloud/model providers) versus private labs.
-- Audit: `TH-EBC230CDDD` v3 · flags CHALLENGED · no change in action (F8_counterevidence 10→13) · card: cards/TH-EBC230CDDD.html
+- Audit: `TH-EBC230CDDD` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names)) · card: cards/TH-EBC230CDDD.html
 
 ### [WATCH] Asian tech/AI boom and energy normalization support Singapore, Malaysia region equities
-- Article date 2026-10-07 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-07 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no verified dislocation or catalyst; verification hold
 - What changed:
@@ -158,7 +143,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-4FC37DBE69` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold) · card: cards/TH-4FC37DBE69.html
 
 ### [WATCH] Global central banks resume hiking but Nomura sees far fewer hikes than markets price — Market-regime record
-- Article date 2026-10-07 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-07 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst
 - What changed:
@@ -177,7 +162,7 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-C619388BB6` v1 · flags REVIEW_NEEDED · initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst) · card: cards/TH-C619388BB6.html
 
 ### [WATCH] Anthropic subscriptions outvalue OpenAI's, signaling differing lab unit economics
-- Article date 2026-10-05 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-05 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Watch — not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL
 - What changed:
@@ -195,9 +180,9 @@ _Research attention only — no row is a purchase or sale._
 - Audit: `TH-6BDD0881AD` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL) · card: cards/TH-6BDD0881AD.html
 
 ### [WATCH] Labs can silently cut subscription value by not raising limits after price cuts — Market-regime record
-- Article date 2026-10-05 · first detected by the registry 2026-10-10 (new to the registry, not necessarily new to the market)
+- Published 2026-10-05 · first ingested by the registry 2026-10-10 19:15 UTC (new to the registry, not necessarily new to the market) · analysed as of 2026-10-10
 - Evidence direction: NEW
-- Why this action: Watch — not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL
+- Why this action: Watch — not yet Research Now: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a — a market-regime record argues no earnings mechanism); retrieval PARTIAL
 - What changed:
   - OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30%
   - Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut
@@ -206,7 +191,7 @@ _Research attention only — no row is a purchase or sale._
   - SemiAnalysis — Andrew Megalaa; Max Kan; Dylan Patel — “Anthropic Subscriptions Offer 5x+ More Value Than OpenAI” (article date 2026-10-05) — first record of this thesis
 - Exposure the source names: OpenAI [private company]; Anthropic [private company]
 - Next research step: Use the SemiAnalysis Subscriptions Dashboard to track per-(plan, model, token) API-equivalent value over time and quantify how silent limit/price changes flow through to each lab's subscription revenue and margins.
-- Audit: `TH-70E56311B3` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL) · card: cards/TH-70E56311B3.html
+- Audit: `TH-70E56311B3` v1 · initial assessment — WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a — a market-regime record argues no earnings mechanism); retrieval PARTIAL) · card: cards/TH-70E56311B3.html
 
 ## UPGRADED (0) — research action raised on material evidence
 
@@ -227,7 +212,7 @@ _None this run._
 ## ARCHIVED (1) — moved off the active list (SKIP, or no material evidence for a quarter) — still searchable below
 
 ### [SKIP] AI datacenter optical shift drives VCSEL NPO suppliers' unit demand to 2031
-- Article date 2026-10-08 · first detected by the registry 2026-10-10
+- Published 2026-10-08 · first ingested by the registry 2026-10-10 19:15 UTC · analysed as of 2026-10-10
 - Evidence direction: NEW
 - Why this action: Skip — longer-term only — no dated window inside the next 2-4 quarters
 - What changed:
@@ -257,7 +242,7 @@ _None this run._
 | Anthropic subscriptions outvalue OpenAI's, signaling differing lab unit economics (`TH-6BDD0881AD`) | WATCH | NEW | ACTIVE | AI model developers and AI platforms / applications | 1 | 2026-10-05 |
 | Labs can silently cut subscription value by not raising limits after price cuts (`TH-70E56311B3`) | WATCH | NEW | ACTIVE | AI model developers and AI platforms / applications | 1 | 2026-10-05 |
 | Global central banks resume hiking but Nomura sees far fewer hikes than markets price (`TH-C619388BB6`) | WATCH | NEW | REVIEW_NEEDED | Market-wide / multi-sector (index level, concentration, correlation, rates) | 1 | 2026-10-07 |
-| China's frontier labs race ahead without safety gating, intensifying competition for US labs (`TH-EBC230CDDD`) | WATCH | WEAKER | ACTIVE | AI model developers and AI platforms / applications | 3 | 2026-10-08 |
+| China's frontier labs race ahead without safety gating, intensifying competition for US labs (`TH-EBC230CDDD`) | WATCH | NEW | ACTIVE | AI model developers and AI platforms / applications | 1 | 2026-10-08 |
 | AI datacenter optical shift drives VCSEL NPO suppliers' unit demand to 2031 (`TH-921772E86C`) | SKIP | NEW | ARCHIVED | Optical interconnects, transceivers and datacenter networking | 1 | 2026-10-08 |
 
-_Verification log: 12 blocked · 0 held · 48 warnings · 31 info. Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+_Verification log: 9 blocked · 0 held · 41 warnings · 34 info. Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
