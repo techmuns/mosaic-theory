@@ -626,6 +626,28 @@ class ExtractionResult:
     truncated_usage: dict[str, int] | None = None
     #: items of the answer that failed their schema and were DROPPED (path: error) — never coerced
     dropped: list[str] = field(default_factory=list)
+    #: answers SET ASIDE because their top level failed the schema, the request then asked once
+    #: more: (what happened, usage — None when an earlier run paid for it)
+    set_aside: list[tuple[str, dict[str, int] | None]] = field(default_factory=list)
+
+
+class InvalidAnswerError(ValueError):
+    """A model answer that fails its schema at the TOP level even item by item — for an
+    extraction, on the one re-ask too. Carries the usage of every call it billed THIS run, so
+    the run records the spend instead of reporting $0."""
+
+    def __init__(self, what: str, exc: ValidationError, *,
+                 usages: list[dict[str, int] | None], model: str, prompt_version: str) -> None:
+        super().__init__(f"{what}: the model's answer fails its schema at the top level — "
+                         f"{first_error(exc)}")
+        self.usages = usages
+        self.model = model
+        self.prompt_version = prompt_version
+
+
+def first_error(exc: ValidationError) -> str:
+    err = exc.errors()[0]
+    return f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
 
 
 def _model_spec(ann: Any) -> tuple[str, type[BaseModel]] | None:
@@ -673,9 +695,59 @@ def validate_items(cls: type[BaseModel], out: dict[str, Any]) -> tuple[Any, list
     sector span …) that fails its schema is DROPPED and reported — never coerced into a guessed
     value; every valid item is kept. Observed 2026-10-10: one mention typed "other" (not an
     allowed entity type) made the whole-answer check discard a paid extraction. A malformed TOP
-    level still fails loud."""
+    level still fails loud (ValidationError)."""
     dropped: list[str] = []
     return cls.model_validate(_clean(cls, out, "", dropped)), dropped
+
+
+def _keep(path: Path, model: str, prompt_version: str, usage: dict[str, int] | None,
+          seconds: float, out: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)  # the paid answer is kept FIRST
+    path.write_text(json.dumps({"model": model, "prompt_version": prompt_version, "usage": usage,
+                                "seconds": seconds, "output": out}, sort_keys=True, indent=1))
+
+
+def set_aside_answer(path: Path) -> Path:
+    """Move a cached answer that fails its schema to `<key>.invalid-N.json` — kept for the record,
+    out of the cache — so the request is asked again instead of failing on every replay."""
+    n = 1
+    while (dest := path.with_name(f"{path.stem}.invalid-{n}.json")).exists():
+        n += 1
+    path.rename(dest)
+    return dest
+
+
+def _ask(client: ToolClient, *, system: str, user: str, tool: dict[str, Any], path: Path,
+         model: str, prompt_version: str, what: str,
+         set_aside: list[tuple[str, dict[str, int] | None]],
+         ) -> tuple[Extraction, list[str], dict[str, Any], dict[str, int] | None, float]:
+    """Ask; keep the paid answer FIRST; validate item by item. An answer whose TOP level fails is
+    set aside and the identical request asked ONCE more — a malformed answer is a slip of the
+    model, not a property of the article (observed 2026-10-10: a `hypotheses` list written out
+    as broken JSON text). A second failure raises InvalidAnswerError with both calls' usage; an
+    overrun (LlmError) propagates to the caller."""
+    billed: list[dict[str, int] | None] = []
+    for attempt in (1, 2):
+        t0 = time.monotonic()
+        out = client.extract(system=system, user=user, tool=tool)
+        seconds = time.monotonic() - t0
+        usage = getattr(client, "last_usage", None)
+        _keep(path, model, prompt_version, usage, seconds, out)
+        try:
+            parsed, dropped = validate_items(Extraction, out)
+        except ValidationError as exc:
+            billed.append(usage)
+            aside = set_aside_answer(path)
+            set_aside.append((f"{what}: the answer failed its schema at the top level "
+                              f"({first_error(exc)}) — set aside as {aside.name}"
+                              + ("; the request was asked once more" if attempt == 1 else ""),
+                              usage))
+            if attempt == 2:
+                raise InvalidAnswerError(what, exc, usages=billed, model=model,
+                                         prompt_version=prompt_version) from exc
+            continue
+        return parsed, dropped, out, usage, seconds
+    raise AssertionError("unreachable")
 
 
 #: A full extraction that overruns the output cap is retried ONCE in this declared compact mode.
@@ -730,24 +802,38 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
     cversion = prompt_version + "+compact"
     ckey = cache_key(model, cversion, ctool, csystem, user)
     cpath = cache_dir / "extract" / f"{ckey}.json"
+    set_aside: list[tuple[str, dict[str, int] | None]] = []
     for p, k, compact in ((path, key, False),
                           (cpath, ckey, True)):
-        if p.exists():  # a truncation marker means the full answer never fits: go to compact
-            rec = json.loads(p.read_text())
-            trunc = json.loads(marker.read_text()).get("usage") if marker.exists() else None
+        if not p.exists():  # a truncation marker means the full answer never fits: go to compact
+            continue
+        rec = json.loads(p.read_text())
+        try:
             parsed, dropped = validate_items(Extraction, rec["output"])
-            return ExtractionResult(parsed, rec["output"], f"X-{k[:16]}", rec["model"],
-                                    rec["prompt_version"], True, rec.get("usage"), 0.0, 0.0,
-                                    compact=compact, truncated_usage=trunc if compact else None,
-                                    dropped=dropped)
+        except ValidationError as exc:
+            if client is None:
+                raise InvalidAnswerError("cached extraction", exc, usages=[],
+                                         model=rec["model"],
+                                         prompt_version=rec["prompt_version"]) from exc
+            aside = set_aside_answer(p)  # paid by an earlier run: asked again below
+            set_aside.append((f"a cached extraction failed its schema at the top level "
+                              f"({first_error(exc)}) — set aside as {aside.name}; the request "
+                              f"was asked again", None))
+            continue
+        trunc = json.loads(marker.read_text()).get("usage") if marker.exists() else None
+        return ExtractionResult(parsed, rec["output"], f"X-{k[:16]}", rec["model"],
+                                rec["prompt_version"], True, rec.get("usage"), 0.0, 0.0,
+                                compact=compact, truncated_usage=trunc if compact else None,
+                                dropped=dropped, set_aside=set_aside)
     if client is None:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")
     trunc_usage: dict[str, int] | None = None
     if not marker.exists():
-        t0 = time.monotonic()
         try:
-            out = client.extract(system=system, user=user, tool=tool)
+            parsed, dropped, out, usage, seconds = _ask(
+                client, system=system, user=user, tool=tool, path=path, model=model,
+                prompt_version=prompt_version, what="extraction", set_aside=set_aside)
         except LlmError as exc:
             if not _truncated(exc):
                 raise
@@ -757,26 +843,15 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                                           "usage": trunc_usage, "error": str(exc)},
                                          sort_keys=True, indent=1))
         else:
-            seconds = time.monotonic() - t0
-            usage = getattr(client, "last_usage", None)
-            path.parent.mkdir(parents=True, exist_ok=True)  # the paid answer is kept FIRST
-            path.write_text(json.dumps({"model": model, "prompt_version": prompt_version,
-                                        "usage": usage, "seconds": seconds, "output": out},
-                                       sort_keys=True, indent=1))
-            parsed, dropped = validate_items(Extraction, out)
             return ExtractionResult(parsed, out, f"X-{key[:16]}", model, prompt_version, False,
-                                    usage, cost_of(model, usage), seconds, dropped=dropped)
+                                    usage, cost_of(model, usage), seconds, dropped=dropped,
+                                    set_aside=set_aside)
     else:
         trunc_usage = json.loads(marker.read_text()).get("usage")
     # the declared COMPACT retry — a second truncation fails loud (LlmError), never half-kept
-    t0 = time.monotonic()
-    out = client.extract(system=csystem, user=user, tool=ctool)
-    seconds = time.monotonic() - t0
-    usage = getattr(client, "last_usage", None)
-    cpath.parent.mkdir(parents=True, exist_ok=True)
-    cpath.write_text(json.dumps({"model": model, "prompt_version": cversion, "usage": usage,
-                                 "seconds": seconds, "output": out}, sort_keys=True, indent=1))
-    parsed, dropped = validate_items(Extraction, out)
+    parsed, dropped, out, usage, seconds = _ask(
+        client, system=csystem, user=user, tool=ctool, path=cpath, model=model,
+        prompt_version=cversion, what="compact extraction", set_aside=set_aside)
     return ExtractionResult(parsed, out, f"X-{ckey[:16]}", model, cversion, False, usage,
                             cost_of(model, usage), seconds, compact=True,
-                            truncated_usage=trunc_usage, dropped=dropped)
+                            truncated_usage=trunc_usage, dropped=dropped, set_aside=set_aside)

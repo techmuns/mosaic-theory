@@ -40,7 +40,12 @@ from vinci.theme_intelligence import completeness as completeness_mod
 from vinci.theme_intelligence.__main__ import main, source_for_url
 from vinci.theme_intelligence.completeness import run_completeness, scan_article
 from vinci.theme_intelligence.config import load_sources, load_taxonomy
-from vinci.theme_intelligence.extract import Extraction, validate_items
+from vinci.theme_intelligence.extract import (
+    Extraction,
+    InvalidAnswerError,
+    run_extraction,
+    validate_items,
+)
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.schemas import IssueSeverity
 from vinci.theme_intelligence.securities import SecResolver
@@ -94,9 +99,12 @@ class FakeLlm:
 
     model = "claude-opus-4-8"
 
-    def __init__(self, pass1: dict[str, Any], *, truncate: frozenset[str] = frozenset()) -> None:
-        self.pass1 = pass1
+    def __init__(self, pass1: dict[str, Any] | list[dict[str, Any]], *,
+                 truncate: frozenset[str] = frozenset(),
+                 invalid: frozenset[str] = frozenset()) -> None:
+        self.pass1 = pass1 if isinstance(pass1, list) else [pass1]
         self.truncate = truncate
+        self.invalid = invalid  # parts ("" = the single call) answered with a broken top level
         self.calls: list[str] = []
         self.users: dict[str, str] = {}
         self.last_usage: dict[str, int] | None = None
@@ -106,7 +114,7 @@ class FakeLlm:
         self.last_usage = {"input_tokens": 1000, "output_tokens": 400}
         if tool["name"] == "record_article_evidence":
             self.calls.append("extract")
-            return self.pass1
+            return self.pass1.pop(0) if len(self.pass1) > 1 else self.pass1[0]
         m = re.search(r"This is part (\w+):", user)
         label = m.group(1) if m else ""
         self.calls.append("complete" + (f"-{label}" if label else ""))
@@ -114,6 +122,10 @@ class FakeLlm:
         if label in self.truncate:
             self.last_usage = {"input_tokens": 1000, "output_tokens": 21333}
             raise LlmError(TRUNCATED)
+        if label in self.invalid:
+            return {"figure_reviews": "not a list", "block_reviews": [], "added_claims": [],
+                    "added_mentions": [], "hypothesis_additions": [], "added_hypotheses": [],
+                    "added_risks": []}
         gaps = _listed(user)
         out: dict[str, Any] = {
             "figure_reviews": [{"figure_id": g, "verdict": "immaterial", "claim_ids": [],
@@ -163,6 +175,65 @@ def test_a_clean_answer_drops_nothing_and_a_malformed_top_level_still_fails_loud
     broken["claims"] = "c1"  # not a list: nothing item-level to keep — the answer is refused
     with pytest.raises(ValidationError):
         validate_items(Extraction, broken)
+
+
+def _broken_like_live() -> dict[str, Any]:
+    """The live failure's shape (2026-10-10, a SemiAnalysis extraction): `hypotheses` came back as
+    TEXT — and broken JSON at that (a stray "{" where a property name belongs), so nothing can
+    decode it without guessing."""
+    ans = _pass1(bad_items=False)
+    ans["hypotheses"] = ('[{"local_id": "h1", "bottom_line_fact": {"text": "t", "claim_ids": '
+                         '["c1"]}, {"bottom_line_inference": {"text": "i"}}]')
+    return ans
+
+
+def test_an_answer_failing_at_the_top_level_is_set_aside_and_asked_once_more(
+        tmp_path: Path) -> None:
+    fake = FakeLlm([_broken_like_live(), _pass1(bad_items=False)])
+    got = run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                         taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
+    assert fake.calls == ["extract", "extract"] and not got.cached
+    assert len(got.extraction.hypotheses) == 1  # the re-ask's answer, never a repaired one
+    assert len(got.set_aside) == 1
+    note, usage = got.set_aside[0]
+    assert "set aside as" in note and "asked once more" in note and usage is not None
+    kept = sorted(x.name for x in (tmp_path / "extract").iterdir())
+    assert len(kept) == 2 and any(".invalid-1.json" in k for k in kept)  # kept for the record
+    again = FakeLlm(_broken_like_live())  # a replay reads the good answer: nothing re-paid
+    replay = run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                            taxonomy=load_taxonomy(), client=again, cache_dir=tmp_path)
+    assert again.calls == [] and replay.cached and replay.set_aside == []
+
+
+def test_a_second_failure_fails_loud_with_both_calls_costed(tmp_path: Path) -> None:
+    fake = FakeLlm(_broken_like_live())
+    with pytest.raises(InvalidAnswerError) as err:
+        run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                       taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
+    assert fake.calls == ["extract", "extract"]  # asked once more, never a third time
+    assert len(err.value.usages) == 2 and all(u for u in err.value.usages)
+    assert len(list((tmp_path / "extract").glob("*.invalid-*.json"))) == 2
+
+
+def test_a_cached_invalid_answer_is_set_aside_and_asked_again(tmp_path: Path) -> None:
+    """An answer cached by a run before this fix (written before validation) must not fail the
+    article on every replay: it is set aside — paid earlier, so no cost this run — and asked
+    again; with no model client the refusal is loud."""
+    fake = FakeLlm(_broken_like_live())
+    with pytest.raises(InvalidAnswerError):
+        run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                       taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
+    for f in (tmp_path / "extract").glob("*.invalid-2.json"):  # restore one as a plain cache entry
+        f.rename(f.with_name(f.name.replace(".invalid-2.json", ".json")))
+    with pytest.raises(InvalidAnswerError) as no_client:
+        run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                       taxonomy=load_taxonomy(), client=None, cache_dir=tmp_path)
+    assert no_client.value.usages == []
+    good = FakeLlm(_pass1(bad_items=False))
+    got = run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                         taxonomy=load_taxonomy(), client=good, cache_dir=tmp_path)
+    assert good.calls == ["extract"] and len(got.extraction.hypotheses) == 1
+    assert [u for _, u in got.set_aside] == [None]  # paid by the earlier run
 
 
 # --- 2. the completeness pass in parts --------------------------------------------------------
@@ -315,3 +386,68 @@ def test_a_feed_host_article_is_filed_under_its_channels_publisher_end_to_end(
     card = next((data / "runs").rglob("cards/TH-*.json"))
     assert "UNKNOWN publisher" not in card.read_text()
     assert "SemiAnalysis" in card.read_text()
+
+
+# --- 5. end to end: a set-aside answer is costed and the article processed ---------------------
+
+def _pipe_with(tmp_path: Path, fake: FakeLlm) -> Pipeline:
+    resolver = SecResolver(tmp_path / "sec", http=FrozenSecHttp(JPM_DIR))  # type: ignore[arg-type]
+    return Pipeline(tmp_path / "ti", sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=fake, resolver=resolver, review=False)  # type: ignore[arg-type]
+
+
+def test_a_set_aside_answer_is_costed_and_the_article_processed_end_to_end(
+        tmp_path: Path) -> None:
+    pipe = _pipe_with(tmp_path, FakeLlm([_broken_like_live(), _pass1(bad_items=False)]))
+    run = pipe.start_run("article", as_of=AS_OF)
+    doc = LONG.doc()
+    pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
+                          as_of=AS_OF, publisher_override=LONG.publisher)
+    assert len(pipe.store.theses()) == 1
+    issues = [i for i in pipe.store.issues(run_id=run.run_id) if i.code == "ANSWER_SET_ASIDE"]
+    assert len(issues) == 1 and issues[0].severity is IssueSeverity.WARN
+    calls = pipe.store.llm_calls(run.run_id)
+    assert sorted(c["purpose"] for c in calls) == ["complete", "extract", "extract-invalid"]
+    assert next(c for c in calls if c["purpose"] == "extract-invalid")["cost_usd"] > 0
+
+
+def test_an_unusable_paid_answer_fails_loud_with_its_cost_recorded(tmp_path: Path) -> None:
+    pipe = _pipe_with(tmp_path, FakeLlm(_broken_like_live()))
+    run = pipe.start_run("article", as_of=AS_OF)
+    doc = LONG.doc()
+    with pytest.raises(InvalidAnswerError):
+        pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
+                              as_of=AS_OF, publisher_override=LONG.publisher)
+    calls = pipe.store.llm_calls(run.run_id)
+    assert [c["purpose"] for c in calls] == ["extract-invalid", "extract-invalid"]
+    assert all(c["cost_usd"] > 0 and not c["cached"] for c in calls)
+
+
+def test_an_unusable_completeness_answer_leaves_the_pass_not_run_and_costed(
+        tmp_path: Path) -> None:
+    pipe = _pipe_with(tmp_path, FakeLlm(_pass1(bad_items=False), invalid=frozenset({""})))
+    run = pipe.start_run("article", as_of=AS_OF)
+    doc = LONG.doc()
+    pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
+                          as_of=AS_OF, publisher_override=LONG.publisher)
+    calls = {c["purpose"]: c for c in pipe.store.llm_calls(run.run_id)}
+    assert set(calls) == {"extract", "complete-invalid"}
+    assert calls["complete-invalid"]["cost_usd"] > 0
+    assert [i.code for i in pipe.store.issues(run_id=run.run_id)
+            if i.code == "COMPLETENESS_PASS_NOT_RUN"] == ["COMPLETENESS_PASS_NOT_RUN"]
+
+
+def test_an_unusable_part_is_dropped_whole_and_its_gaps_stay_open(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    x = Extraction.model_validate(_pass1(bad_items=False))
+    fake = FakeLlm(_pass1(bad_items=False), invalid=frozenset({"3"}))
+    res = run_completeness(doc, x, scan_article(doc), publisher="P", as_of=AS_OF.isoformat(),
+                           taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
+    assert [c.label for c in res.calls] == ["1", "2", "3"]  # the bad part's call is costed
+    assert [d for d in res.dropped if d.startswith("part 3:")] == [
+        "part 3: the whole answer dropped — figure_reviews: Input should be a valid list; its "
+        "2 gaps stay open"]
+    reviewed = {r.figure_id for r in res.output.figure_reviews}
+    assert "b008#9%" not in reviewed  # part 3's figure keeps no verdict

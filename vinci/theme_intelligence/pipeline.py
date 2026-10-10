@@ -56,6 +56,7 @@ from vinci.theme_intelligence.extract import (
     COMPACT_MAX_CLAIMS,
     Extraction,
     ExtractionResult,
+    InvalidAnswerError,
     ToolClient,
     cost_of,
     run_extraction,
@@ -344,7 +345,13 @@ class Pipeline:
             return ArticleResult(url, "ALREADY_INGESTED", aid, version.version_id,
                                  note="this article version was already applied — no new records")
 
-        xres = self._extract(doc, publisher, as_of, fixture, self._registry_context())
+        try:
+            xres = self._extract(doc, publisher, as_of, fixture, self._registry_context())
+        except InvalidAnswerError as exc:  # paid and unusable: record the spend, then fail loud
+            for u in exc.usages:
+                self._llm_call("extract-invalid", aid, False, u, cost_of(exc.model, u), 0.0,
+                               exc.model, exc.prompt_version)
+            raise
         if xres.truncated_usage is not None and not xres.cached:  # the billed, discarded attempt
             self._llm_call("extract-truncated", aid, False, xres.truncated_usage,
                            cost_of(xres.model, xres.truncated_usage), 0.0, xres.model,
@@ -354,6 +361,11 @@ class Pipeline:
         for d in xres.dropped:
             self._issue("article", aid, IssueSeverity.WARN, "MALFORMED_ITEM_DROPPED",
                         f"extraction: {d}")
+        for note, u in xres.set_aside:
+            if u is not None:  # billed this run, discarded
+                self._llm_call("extract-invalid", aid, False, u, cost_of(xres.model, u), 0.0,
+                               xres.model, xres.prompt_version)
+            self._issue("article", aid, IssueSeverity.WARN, "ANSWER_SET_ASIDE", note)
         if xres.compact:
             out_t = (xres.truncated_usage or {}).get("output_tokens")
             self._issue("article", aid, IssueSeverity.WARN, "EXTRACTION_COMPACT",
@@ -468,6 +480,13 @@ class Pipeline:
             res = run_completeness(doc, xres.extraction, ledger, publisher=publisher,
                                    as_of=as_of.isoformat(), taxonomy=self.taxonomy,
                                    client=self.client, cache_dir=self.paths.llm_cache)
+        except InvalidAnswerError as exc:  # paid, unusable: spend recorded, gap reported
+            for u in exc.usages:
+                self._llm_call("complete-invalid", aid, False, u, cost_of(exc.model, u), 0.0,
+                               exc.model, exc.prompt_version)
+            self._issue("article", aid, IssueSeverity.WARN, "COMPLETENESS_PASS_NOT_RUN",
+                        str(exc))
+            return None, str(exc)
         except (RuntimeError, LlmError) as exc:  # no client / no cache / an overrun: the gap
             self._issue("article", aid, IssueSeverity.WARN,  # is reported, never hidden
                         "COMPLETENESS_PASS_NOT_RUN", str(exc))

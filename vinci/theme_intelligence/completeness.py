@@ -34,13 +34,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, ValidationError
 
 from vinci.graph.llm import LlmError
 from vinci.theme_intelligence.config import COMPLETE_PROMPT_VERSION, LLM_MODEL, Taxonomy
 from vinci.theme_intelligence.extract import (
     _X,
     Extraction,
+    InvalidAnswerError,
     ToolClient,
     XAffected,
     XClaim,
@@ -51,6 +52,7 @@ from vinci.theme_intelligence.extract import (
     _truncated,
     cache_key,
     cost_of,
+    first_error,
     system_prompt,
     tool_parts,
     validate_items,
@@ -591,7 +593,18 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                                         "usage": usage, "seconds": seconds, "output": out},
                                        sort_keys=True, indent=1))
             calls.append(CompletenessCall(label, usage, cost_of(model, usage), seconds, False))
-        parsed, bad = validate_items(CompletenessOutput, out)
+        try:
+            parsed, bad = validate_items(CompletenessOutput, out)
+        except ValidationError as exc:
+            last = calls[-1]
+            if b is None:  # the single call: the pass did not run; its cost is recorded
+                raise InvalidAnswerError("completeness pass", exc,
+                                         usages=[] if last.cached else [last.usage],
+                                         model=model,
+                                         prompt_version=COMPLETE_PROMPT_VERSION) from exc
+            dropped.append(f"part {b.label}: the whole answer dropped — {first_error(exc)}; "
+                           f"its {len(b.gaps)} gaps stay open")
+            continue
         if b is not None:
             parsed, off = _own_reviews(parsed, b)
             parsed = _prefixed(parsed, f"b{b.label}.")
