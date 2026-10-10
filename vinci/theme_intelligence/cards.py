@@ -659,6 +659,19 @@ def _refs(ids: Iterable[str]) -> str:
                                              for c in ids) + "</span>")
 
 
+#: A run of registry ids inside a line — a challenger thesis, an article ("TH-98FD8D046C,
+#: A-46796449712e"). They belong in the audit view, not the first view (review P2.12): the line
+#: reads "⟨competing hypothesis⟩" and the ids show behind the toggle and in print. Observed
+#: 2026-10-10 on the first challenged cards.
+_ID_RUN = re.compile(r"(\s*(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,})"
+                     r"(?:,\s*(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,}))*)")
+
+
+def ids_to_audit(escaped: str) -> str:
+    """Escaped card text with every run of registry ids wrapped in an audit span."""
+    return _ID_RUN.sub(lambda m: f'<span class="aud">{m.group(1)}</span>', escaped)
+
+
 def _sent(s: CardSentence, sid: str, rc: RenderContext) -> str:
     if sid in rc.blocked:
         return (f'<div class="s"><span class="withheld">WITHHELD — failed source verification'
@@ -666,7 +679,7 @@ def _sent(s: CardSentence, sid: str, rc: RenderContext) -> str:
                 f'class="note">audit text</summary><span class="q">{e(s.text)}</span></details>'
                 f'</div>')
     return (f'<div class="s"><span class="b {_BADGE[s.provenance]}">{e(s.provenance.value)}'
-            f'</span>{e(s.text)}{_refs(s.claim_ids)}</div>')
+            f'</span>{ids_to_audit(e(s.text))}{_refs(s.claim_ids)}</div>')
 
 
 def _section(fid: str, title: str, body: str, *, print_mode: bool, summary: str = "") -> str:
@@ -738,7 +751,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
         body = (f'<span class="withheld">WITHHELD — failed source verification</span>'
                 f'<span class="aud"> {e(rc.blocked[f"s02.{i}"])}</span>'
-                if f"s02.{i}" in rc.blocked else e(it.text))
+                if f"s02.{i}" in rc.blocked else ids_to_audit(e(it.text)))
         return ('<div class="s">' + (f'<span class="tag">{e(tag)}</span>' if tag else "")
                 + f'<span class="b {_BADGE[it.provenance]}">{e(it.provenance.value)}</span>'
                 + body
@@ -750,7 +763,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     first = [item(i, it) for i, it in enumerate(wc.items)]
     shown, rest = first[:3], first[3:]
     bodies["s02_what_changed"] = (
-        f'<div class="note">{e(wc.vs_prior)}</div>'
+        f'<div class="note">{ids_to_audit(e(wc.vs_prior))}</div>'
         f'<div class="note aud">novelty: {e(wc.novelty)}</div>' + "".join(shown)
         + (('<details' + (" open" if print_mode else "") + f'><summary class="note">show the '
             f'other {len(rest)} of {len(first)}</summary>' + "".join(rest) + "</details>")

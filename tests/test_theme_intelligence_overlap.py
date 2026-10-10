@@ -300,6 +300,25 @@ def test_bullish_recovery_and_bearish_disruption_are_linked_competitors(
     assert "same node and mechanism" not in card
     assert (f"different mechanisms ({bull.key_mechanism} vs disruption_revenue_erosion)"
             in card)
+    # the first view names no registry ids — they stay in the audit view and print (observed
+    # 2026-10-10: "challenged by competing thesis TH-…", "⟨competing hypothesis TH-…, A-…⟩")
+    import re
+
+    from bs4 import BeautifulSoup
+
+    challenger = next(t.thesis_id for t in pipe.store.theses() if t.key_node == bull.key_node
+                      and t.thesis_id != bull.thesis_id)
+    rc = card_context(pipe.store, inc, v2, generated="t")
+    soup = BeautifulSoup(render_html(v2.content, rc), "html.parser")
+    for el in soup.select(".aud, .auditbar, script, input, style"):
+        el.decompose()
+    for el in soup.select("details"):
+        if el.attrs is not None and el.get("open") is None:
+            el.decompose()
+    first = soup.get_text(" ", strip=True)
+    assert "challenged by competing thesis" in first and "competing hypothesis" in first
+    assert not re.search(r"\b(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,})\b", first), first[:400]
+    assert challenger in render_html(v2.content, rc, print_mode=True)
 
 
 def test_one_article_challenging_a_thesis_twice_records_two_challenges(
