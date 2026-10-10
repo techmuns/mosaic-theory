@@ -136,3 +136,29 @@ def test_a_model_version_in_a_card_line_is_not_a_figure_its_claims_must_carry(
 def test_a_real_figure_its_claims_lack_still_blocks_the_line(tmp_path: Path) -> None:
     got = _card_number_blocks(tmp_path, "DRAM prices up 5.3% on GLM-5.3 serving")
     assert got and all("'5.3'" in d for d in got)
+
+
+def test_a_compound_unit_prints_after_the_value_once_end_to_end(tmp_path: Path) -> None:
+    """Observed 2026-10-10 on TrendForce cards: "15–20%" with unit "% QoQ" printed "15–20% % QoQ".
+    Rendered end to end (Markdown and HTML); the stored claim keeps value and unit apart."""
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("fixture", as_of=AS_OF)
+    art = Hypo(slug="compound-unit", publisher="Hypo Research A", published=AS_OF,
+               blocks=[("paragraph", "NAND Flash contract prices are projected to increase "
+                                     "15–20% QoQ in 4Q26 as AI inference demand absorbs supply.")])
+    ingest(pipe, art.doc(), extraction(
+        [claim("c1", "b001", "NAND Flash contract prices are projected to increase 15–20% QoQ",
+               "NAND contract prices +15–20% QoQ", epistemic="forecast", value=15,
+               value_text="15–20%", unit="% QoQ", period="4Q26")],
+        [hyp("h1", "NAND contract prices keep rising", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"])]), as_of=AS_OF,
+        publisher=art.publisher)
+    write_run_outputs(pipe.store, run.run_id, tmp_path / "out")
+    texts = [f.read_text() for f in (tmp_path / "out" / "cards").iterdir()
+             if f.suffix in (".md", ".html")]
+    assert texts
+    joined = "\n".join(texts)
+    assert "% %" not in joined and "%</b> %" not in joined
+    assert "15–20% QoQ" in joined or "15–20%</b> QoQ" in joined

@@ -434,18 +434,22 @@ _PERCENT_UNITS = frozenset({"%", "percent", "per cent", "pct"})
 
 
 def unit_shown(value_text: str | None, unit: str | None) -> str:
-    """The unit to print after a figure — empty when the written value already carries it, so
-    "~43%" with unit "%" prints "~43%", never "~43% %" (observed 2026-10-10 on the calm-index
-    card's 43% and 75%). Display only: the card keeps value and unit as separate fields."""
+    """The unit to print after a figure — without what the written value already carries, so
+    "~43%" with unit "%" prints "~43%", never "~43% %", and "15–20%" with unit "% QoQ" prints
+    "15–20% QoQ" (both observed 2026-10-10). Display only: the card keeps value and unit as
+    separate fields."""
     u = (unit or "").strip()
     v = value_text or ""
-    if not u:
+
+    def carried(token: str) -> bool:
+        if token.lower() in _PERCENT_UNITS:
+            return re.search(r"%|percent|per cent", v, re.I) is not None
+        return re.search(rf"(?<![A-Za-z]){re.escape(token)}(?![A-Za-z])", v, re.I) is not None
+
+    if not u or carried(u):
         return ""
-    if u.lower() in _PERCENT_UNITS and re.search(r"%|percent|per cent", v, re.I):
-        return ""
-    if re.search(rf"(?<![A-Za-z]){re.escape(u)}(?![A-Za-z])", v, re.I):
-        return ""
-    return u
+    head, _, rest = u.partition(" ")
+    return rest.strip() if rest and carried(head) else u
 
 
 def value_with_unit(value_text: str | None, unit: str | None) -> str:
