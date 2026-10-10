@@ -1,0 +1,2061 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "ancestry": [
+    "ai_infrastructure"
+   ],
+   "evidence_direction": "STRONGER",
+   "horizon": "Next 2-4 quarters",
+   "last_material_update": "2026-02-20",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-04140F1CA8",
+   "title": "Hyperscalers, chipmakers and AI materials swept up in software sell-off may be mispriced winners"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-52c82483e4ac77",
+     "C-e7dd0e506a16d8"
+    ],
+    "provenance": "ARTICLE FACT",
+    "text": "Hyperscalers, chipmakers and AI-related materials players have been sold off alongside software despite being beneficiaries of the AI build; the author calls this indiscriminate selling and broken logic."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The AI infrastructure names swept up in the software rout may be mispriced and are most likely to benefit long term, though the article quantifies no valuation gap for them."
+   },
+   {
+    "claim_ids": [
+     "C-6482558a08e917"
+    ],
+    "provenance": "ARTICLE FACT",
+    "text": "\u27e8update 2026-02-20 \u00b7 Hypo Wire (HYPOTHETICAL TEST FIXTURE)\u27e9 Microsoft reaffirmed 25% FY2027 capex growth while AI infrastructure shares stayed near their lows. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-c8560b6dde15",
+     "change_class": "new",
+     "claim_ids": [
+      "C-6482558a08e917"
+     ],
+     "original_date": "2026-02-20",
+     "period": "FY2027",
+     "provenance": "ARTICLE FACT",
+     "text": "Microsoft reaffirmed FY2027 capex growth of 25% (company statement) \u2014 new evidence from an origin the thesis did not yet hold \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 5 claim(s); this source adds: new \u00d71"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-52c82483e4ac77"
+    ],
+    "provenance": "ARTICLE FACT",
+    "step": "industry_shift",
+    "text": "Agentic AI disruption fear triggers broad tech sell-off."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Reaffirmed capex sustains AI infrastructure volumes."
+   },
+   {
+    "claim_ids": [
+     "C-52c82483e4ac77",
+     "C-85c70adb2c6571"
+    ],
+    "provenance": "ARTICLE FACT",
+    "step": "pricing",
+    "text": "Hyperscalers, chipmakers and materials sold indiscriminately despite benefiting from AI build-out."
+   },
+   {
+    "claim_ids": [
+     "C-e7dd0e506a16d8"
+    ],
+    "provenance": "ARTICLE FACT",
+    "step": "listed_earnings",
+    "text": "AI compute demand and capex continue, supporting these companies' long-term earnings."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c8560b6dde15",
+    "block_id": "b002",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-6482558a08e917",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Microsoft \u2014 capex growth guidance",
+    "measured_as_of": null,
+    "origin": "Microsoft",
+    "period": "FY2027",
+    "qualifiers": [],
+    "quote": "Microsoft reaffirmed that its fiscal 2027 capital expenditure will grow 25%",
+    "role": "supports",
+    "unit": "%",
+    "value": 25.0,
+    "value_text": "25%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-52c82483e4ac77",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The author argues the market is selling indiscriminately, which is the broken logic.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "And therein lies the broken logic. The market is selling indiscriminately.",
+    "role": "dislocation",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-85c70adb2c6571",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Capital expenditure forecasts, as one example, from the likes of Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e7dd0e506a16d8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The author recommends focusing on large-cap AI leaders, chipmakers and commodity-related AI supply chain players.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "negative",
+     "listings": [],
+     "mention_id": "M-fe7a4759e066e0",
+     "name_as_written": "S&P 500 Software Index",
+     "quote": "The S&P 500 Software Index has fallen into a bear market.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "cited_basket",
+     "role_detail": "Index at center of the software sell-off discussion"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-044e66606f1460",
+     "name_as_written": "Anthropic",
+     "quote": "Anthropic has released several new models and features",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "AI model developer whose releases threaten software businesses"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001100663",
+     "direction": "negative",
+     "listings": [
+      {
+       "exchange": null,
+       "note": "fund/ETF share class",
+       "ticker": "IGV"
+      }
+     ],
+     "mention_id": "M-df393322c882c5",
+     "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+     "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "FUND",
+     "role": "market_instrument",
+     "role_detail": "ETF cited to illustrate software sell-off severity"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-b0ebfbcb527745",
+     "name_as_written": "S&P 500",
+     "quote": "Tech\u2019s heavy presence in the S&P 500",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "context",
+     "role_detail": "Benchmark index with concentration/correlation risk discussed"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-c855e68f7fc77c",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "quote": "Source: Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for RSI and EV/sales chart data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-467a36fed1a979",
+     "name_as_written": "22V",
+     "quote": "Sources: 22V, FactSet.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for NTM net margin data and AI Usage basket"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001013237",
+     "direction": "neutral",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "note": null,
+       "ticker": "FDS"
+      }
+     ],
+     "mention_id": "M-3ccdf62271db30",
+     "name_as_written": "FactSet",
+     "quote": "Sources: 22V, FactSet.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "Source for NTM net margin data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "positive",
+     "listings": [],
+     "mention_id": "M-6b316f38efe210",
+     "name_as_written": "S&P 500 AI Usage",
+     "quote": "S&P 500 AI Usage (teal)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "cited_basket",
+     "role_detail": "Basket of 145 AI-adopting S&P 500 companies with higher margins"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-f04e5de7b60fa2",
+     "name_as_written": "Claude Code",
+     "quote": "if you believe Claude Code is just another DeepSeek moment",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Anthropic product cited as potential software disruptor"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-9fc728a2e96d81",
+     "name_as_written": "DeepSeek",
+     "quote": "Unlike the DeepSeek episode",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Prior AI episode used as comparator"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "listings": [],
+     "mention_id": "M-4339911083201a",
+     "name_as_written": "J.P. Morgan Private Bank",
+     "quote": "Please read the Legal Disclaimer for J.P. Morgan Private Bank regional affiliates and other important information in conj",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher of the commentary"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001326801",
+     "direction": "positive",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "note": null,
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-805237c8f68cdc",
+     "name_as_written": "Meta",
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001018724",
+     "direction": "positive",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "note": null,
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-5262aa55c095e0",
+     "name_as_written": "Amazon",
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001652044",
+     "direction": "positive",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+       "ticker": "GOOG"
+      },
+      {
+       "exchange": "Nasdaq",
+       "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+       "ticker": "GOOGL"
+      },
+      {
+       "exchange": "Nasdaq",
+       "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+       "ticker": "GOOGM"
+      },
+      {
+       "exchange": "Nasdaq",
+       "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+       "ticker": "GOOGN"
+      }
+     ],
+     "mention_id": "M-0bdb986c38cf4a",
+     "name_as_written": "Alphabet",
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0000789019",
+     "direction": "positive",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "note": null,
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-5320319dd93435",
+     "name_as_written": "Microsoft",
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sectors": [
+    "Information Technology",
+    "Semiconductors",
+    "Materials"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Continued hyperscaler capex and compute demand validating the build-out [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-e7dd0e506a16d8"
+     ],
+     "provenance": "ARTICLE FACT",
+     "text": "These names were swept up in the software sell-off for now but are most likely to benefit long term."
+    },
+    {
+     "claim_ids": [
+      "C-52c82483e4ac77"
+     ],
+     "provenance": "ARTICLE FACT",
+     "text": "Dislocation evidence: The author argues the market is selling indiscriminately, which is the broken logic."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-cd2ab32d28c253"
+     ],
+     "provenance": "ARTICLE FACT",
+     "text": "If AI disruption is real, hyperscalers or private AI model companies must invest in physical inputs (semis, power, cooling, networking), supporting infrastructure players."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-85c70adb2c6571"
+     ],
+     "provenance": "ARTICLE FACT",
+     "text": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors, who may doubt returns on AI spending."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers cutting AI capex guidance"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Weakening AI compute/semiconductor demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued correlated sell-off decoupling from fundamentals permanently"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-ac5cc8813d7f48"
+     ],
+     "provenance": "ARTICLE FACT",
+     "text": "Tech's heavy S&P 500 weight and the top 10 stocks' 99th-percentile pairwise correlation mean a faltering AI narrative could cause a simultaneous index-wide drawdown. (scope: Concentration/correlation risk at the S&P 500 index level; top 10 stocks correlation measured versus random 10-stock samples.)"
+    },
+    {
+     "claim_ids": [
+      "C-0949f685aa48e9"
+     ],
+     "provenance": "ARTICLE FACT",
+     "text": "Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts of volatility are likely. (scope: Portfolio-level risk from tech concentration; author's judgment.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether hyperscaler AI capex earns an adequate return"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether chipmaker and materials valuations already price the build-out"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Magnitude of any valuation dislocation for these specific names"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the spending earns an adequate return"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers cut AI capex"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI compute demand signals weaken"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Compare reaffirmed hyperscaler capex with the AI infrastructure names' price moves since 2026-02-09."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers reaffirm or raise AI capex despite sell-off"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chip/materials demand data remains strong"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term relevance; source-named listed exposure(s): Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT); verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-332d3da6f3ac",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0949f685aa48e9",
+     "C-52c82483e4ac77",
+     "C-85c70adb2c6571",
+     "C-ac5cc8813d7f48",
+     "C-e7dd0e506a16d8"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-02-09T10:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "Software Shock: AI\u2019s Broken Logic",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+   },
+   {
+    "article_class": "other",
+    "article_id": "A-c8560b6dde15",
+    "authors": [
+     "Test Author"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-6482558a08e917"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-02-20T09:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Hypo Wire (HYPOTHETICAL TEST FIXTURE)",
+    "retrieval_state": "FULL",
+    "title": "[HYPOTHETICAL TEST FIXTURE] Capex reaffirmed while AI infrastructure stays sold",
+    "upstream_origins": [
+     "Microsoft"
+    ],
+    "url": "https://example.test/hypothetical/capex-reaffirmed-2026-02-20"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 12:27 UTC from the registry (ti-engine-1; run R-20261010T122404Z-article, extract ti-extract-5, review ti-review-3, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-02-09",
+   "change_summary": "Initial record \u2014 created from A-332d3da6f3ac",
+   "content": {
+    "header": {
+     "ancestry": [
+      "ai_infrastructure"
+     ],
+     "evidence_direction": "NEW",
+     "horizon": "Next 2-4 quarters",
+     "last_material_update": "2026-02-09",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-04140F1CA8",
+     "title": "Hyperscalers, chipmakers and AI materials swept up in software sell-off may be mispriced winners"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-e7dd0e506a16d8"
+      ],
+      "provenance": "ARTICLE FACT",
+      "text": "Hyperscalers, chipmakers and AI-related materials players have been sold off alongside software despite being beneficiaries of the AI build; the author calls this indiscriminate selling and broken logic."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The AI infrastructure names swept up in the software rout may be mispriced and are most likely to benefit long term, though the article quantifies no valuation gap for them."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-85c70adb2c6571"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "ARTICLE FACT",
+       "text": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors."
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-52c82483e4ac77"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "ARTICLE FACT",
+       "text": "The author argues the market is selling indiscriminately, which is the broken logic."
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-e7dd0e506a16d8"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "ARTICLE FACT",
+       "text": "The author recommends focusing on large-cap AI leaders, chipmakers and commodity-related AI supply chain players."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "No prior thesis with this identity in the registry as of 2026-02-09 \u2014 initial record (NEW)."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77"
+      ],
+      "provenance": "ARTICLE FACT",
+      "step": "industry_shift",
+      "text": "Agentic AI disruption fear triggers broad tech sell-off."
+     },
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-85c70adb2c6571"
+      ],
+      "provenance": "ARTICLE FACT",
+      "step": "pricing",
+      "text": "Hyperscalers, chipmakers and materials sold indiscriminately despite benefiting from AI build-out."
+     },
+     {
+      "claim_ids": [
+       "C-e7dd0e506a16d8"
+      ],
+      "provenance": "ARTICLE FACT",
+      "step": "listed_earnings",
+      "text": "AI compute demand and capex continue, supporting these companies' long-term earnings."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-52c82483e4ac77",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author argues the market is selling indiscriminately, which is the broken logic.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "And therein lies the broken logic. The market is selling indiscriminately.",
+      "role": "dislocation",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-85c70adb2c6571",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Capital expenditure forecasts, as one example, from the likes of Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e7dd0e506a16d8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author recommends focusing on large-cap AI leaders, chipmakers and commodity-related AI supply chain players.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "negative",
+       "listings": [],
+       "mention_id": "M-fe7a4759e066e0",
+       "name_as_written": "S&P 500 Software Index",
+       "quote": "The S&P 500 Software Index has fallen into a bear market.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "cited_basket",
+       "role_detail": "Index at center of the software sell-off discussion"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-044e66606f1460",
+       "name_as_written": "Anthropic",
+       "quote": "Anthropic has released several new models and features",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "AI model developer whose releases threaten software businesses"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001100663",
+       "direction": "negative",
+       "listings": [
+        {
+         "exchange": null,
+         "note": "fund/ETF share class",
+         "ticker": "IGV"
+        }
+       ],
+       "mention_id": "M-df393322c882c5",
+       "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+       "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "FUND",
+       "role": "market_instrument",
+       "role_detail": "ETF cited to illustrate software sell-off severity"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-b0ebfbcb527745",
+       "name_as_written": "S&P 500",
+       "quote": "Tech\u2019s heavy presence in the S&P 500",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "context",
+       "role_detail": "Benchmark index with concentration/correlation risk discussed"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-c855e68f7fc77c",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for RSI and EV/sales chart data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-467a36fed1a979",
+       "name_as_written": "22V",
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for NTM net margin data and AI Usage basket"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001013237",
+       "direction": "neutral",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "note": null,
+         "ticker": "FDS"
+        }
+       ],
+       "mention_id": "M-3ccdf62271db30",
+       "name_as_written": "FactSet",
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Source for NTM net margin data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "positive",
+       "listings": [],
+       "mention_id": "M-6b316f38efe210",
+       "name_as_written": "S&P 500 AI Usage",
+       "quote": "S&P 500 AI Usage (teal)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "cited_basket",
+       "role_detail": "Basket of 145 AI-adopting S&P 500 companies with higher margins"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-f04e5de7b60fa2",
+       "name_as_written": "Claude Code",
+       "quote": "if you believe Claude Code is just another DeepSeek moment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Anthropic product cited as potential software disruptor"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-9fc728a2e96d81",
+       "name_as_written": "DeepSeek",
+       "quote": "Unlike the DeepSeek episode",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Prior AI episode used as comparator"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-4339911083201a",
+       "name_as_written": "J.P. Morgan Private Bank",
+       "quote": "Please read the Legal Disclaimer for J.P. Morgan Private Bank regional affiliates and other important information in conj",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001326801",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": null,
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-805237c8f68cdc",
+       "name_as_written": "Meta",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001018724",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": null,
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-5262aa55c095e0",
+       "name_as_written": "Amazon",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001652044",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOG"
+        },
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOGL"
+        },
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOGM"
+        },
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOGN"
+        }
+       ],
+       "mention_id": "M-0bdb986c38cf4a",
+       "name_as_written": "Alphabet",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0000789019",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": null,
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-5320319dd93435",
+       "name_as_written": "Microsoft",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sectors": [
+      "Information Technology",
+      "Semiconductors",
+      "Materials"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Continued hyperscaler capex and compute demand validating the build-out [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-e7dd0e506a16d8"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "These names were swept up in the software sell-off for now but are most likely to benefit long term."
+      },
+      {
+       "claim_ids": [
+        "C-52c82483e4ac77"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Dislocation evidence: The author argues the market is selling indiscriminately, which is the broken logic."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-cd2ab32d28c253"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "If AI disruption is real, hyperscalers or private AI model companies must invest in physical inputs (semis, power, cooling, networking), supporting infrastructure players."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-85c70adb2c6571"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors, who may doubt returns on AI spending."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers cutting AI capex guidance"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weakening AI compute/semiconductor demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued correlated sell-off decoupling from fundamentals permanently"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ac5cc8813d7f48"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Tech's heavy S&P 500 weight and the top 10 stocks' 99th-percentile pairwise correlation mean a faltering AI narrative could cause a simultaneous index-wide drawdown. (scope: Concentration/correlation risk at the S&P 500 index level; top 10 stocks correlation measured versus random 10-stock samples.)"
+      },
+      {
+       "claim_ids": [
+        "C-0949f685aa48e9"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts of volatility are likely. (scope: Portfolio-level risk from tech concentration; author's judgment.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether hyperscaler AI capex earns an adequate return"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether chipmaker and materials valuations already price the build-out"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Magnitude of any valuation dislocation for these specific names"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers cut AI capex"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI compute demand signals weaken"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether hyperscaler, semiconductor and AI-materials valuations have de-rated below fundamentals and whether AI capex guidance remains intact."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers reaffirm or raise AI capex despite sell-off"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chip/materials demand data remains strong"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term relevance; source-named listed exposure(s): Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT); verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-332d3da6f3ac",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-85c70adb2c6571",
+       "C-e7dd0e506a16d8",
+       "C-ac5cc8813d7f48",
+       "C-0949f685aa48e9"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-02-09T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "Software Shock: AI\u2019s Broken Logic",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+     }
+    ]
+   },
+   "content_sha": "ef2ecd7f2633d4501348c76425a303168eb542268b5983ddada7c958ec2f7c25",
+   "created_at": "2026-10-10T12:13:03.762570Z",
+   "diffs": [],
+   "engine_version": "ti-engine-1",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term relevance; source-named listed exposure(s): Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT); verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-85c70adb2c6571"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-fc428945cc0a",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 step(s) shown by the source, 2 beyond the industry shift in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-85c70adb2c6571"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "horizon next_2_4_quarters; 1 forward/near-term claim(s); 3 dislocation/catalyst claim(s)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_listed_exposures",
+      "note": "source-named, SEC-resolved listed companies with an exposure role: Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-85c70adb2c6571",
+       "C-e7dd0e506a16d8"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "verified dislocation / dated catalyst evidence",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term relevance; source-named listed exposure(s): Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT); verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T121233Z-article",
+   "thesis_id": "TH-04140F1CA8",
+   "version": 1
+  },
+  {
+   "as_of": "2026-02-20",
+   "change_summary": "A-c8560b6dde15: new \u00d71",
+   "content": {
+    "header": {
+     "ancestry": [
+      "ai_infrastructure"
+     ],
+     "evidence_direction": "STRONGER",
+     "horizon": "Next 2-4 quarters",
+     "last_material_update": "2026-02-20",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-04140F1CA8",
+     "title": "Hyperscalers, chipmakers and AI materials swept up in software sell-off may be mispriced winners"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-e7dd0e506a16d8"
+      ],
+      "provenance": "ARTICLE FACT",
+      "text": "Hyperscalers, chipmakers and AI-related materials players have been sold off alongside software despite being beneficiaries of the AI build; the author calls this indiscriminate selling and broken logic."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The AI infrastructure names swept up in the software rout may be mispriced and are most likely to benefit long term, though the article quantifies no valuation gap for them."
+     },
+     {
+      "claim_ids": [
+       "C-6482558a08e917"
+      ],
+      "provenance": "ARTICLE FACT",
+      "text": "\u27e8update 2026-02-20 \u00b7 Hypo Wire (HYPOTHETICAL TEST FIXTURE)\u27e9 Microsoft reaffirmed 25% FY2027 capex growth while AI infrastructure shares stayed near their lows. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-c8560b6dde15",
+       "change_class": "new",
+       "claim_ids": [
+        "C-6482558a08e917"
+       ],
+       "original_date": "2026-02-20",
+       "period": "FY2027",
+       "provenance": "ARTICLE FACT",
+       "text": "Microsoft reaffirmed FY2027 capex growth of 25% (company statement) \u2014 new evidence from an origin the thesis did not yet hold \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 5 claim(s); this source adds: new \u00d71"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77"
+      ],
+      "provenance": "ARTICLE FACT",
+      "step": "industry_shift",
+      "text": "Agentic AI disruption fear triggers broad tech sell-off."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Reaffirmed capex sustains AI infrastructure volumes."
+     },
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-85c70adb2c6571"
+      ],
+      "provenance": "ARTICLE FACT",
+      "step": "pricing",
+      "text": "Hyperscalers, chipmakers and materials sold indiscriminately despite benefiting from AI build-out."
+     },
+     {
+      "claim_ids": [
+       "C-e7dd0e506a16d8"
+      ],
+      "provenance": "ARTICLE FACT",
+      "step": "listed_earnings",
+      "text": "AI compute demand and capex continue, supporting these companies' long-term earnings."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c8560b6dde15",
+      "block_id": "b002",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-6482558a08e917",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Microsoft \u2014 capex growth guidance",
+      "measured_as_of": null,
+      "origin": "Microsoft",
+      "period": "FY2027",
+      "qualifiers": [],
+      "quote": "Microsoft reaffirmed that its fiscal 2027 capital expenditure will grow 25%",
+      "role": "supports",
+      "unit": "%",
+      "value": 25.0,
+      "value_text": "25%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-52c82483e4ac77",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author argues the market is selling indiscriminately, which is the broken logic.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "And therein lies the broken logic. The market is selling indiscriminately.",
+      "role": "dislocation",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-85c70adb2c6571",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Capital expenditure forecasts, as one example, from the likes of Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e7dd0e506a16d8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author recommends focusing on large-cap AI leaders, chipmakers and commodity-related AI supply chain players.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "negative",
+       "listings": [],
+       "mention_id": "M-fe7a4759e066e0",
+       "name_as_written": "S&P 500 Software Index",
+       "quote": "The S&P 500 Software Index has fallen into a bear market.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "cited_basket",
+       "role_detail": "Index at center of the software sell-off discussion"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-044e66606f1460",
+       "name_as_written": "Anthropic",
+       "quote": "Anthropic has released several new models and features",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "AI model developer whose releases threaten software businesses"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001100663",
+       "direction": "negative",
+       "listings": [
+        {
+         "exchange": null,
+         "note": "fund/ETF share class",
+         "ticker": "IGV"
+        }
+       ],
+       "mention_id": "M-df393322c882c5",
+       "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+       "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "FUND",
+       "role": "market_instrument",
+       "role_detail": "ETF cited to illustrate software sell-off severity"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-b0ebfbcb527745",
+       "name_as_written": "S&P 500",
+       "quote": "Tech\u2019s heavy presence in the S&P 500",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "context",
+       "role_detail": "Benchmark index with concentration/correlation risk discussed"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-c855e68f7fc77c",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for RSI and EV/sales chart data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-467a36fed1a979",
+       "name_as_written": "22V",
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for NTM net margin data and AI Usage basket"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001013237",
+       "direction": "neutral",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "note": null,
+         "ticker": "FDS"
+        }
+       ],
+       "mention_id": "M-3ccdf62271db30",
+       "name_as_written": "FactSet",
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Source for NTM net margin data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "positive",
+       "listings": [],
+       "mention_id": "M-6b316f38efe210",
+       "name_as_written": "S&P 500 AI Usage",
+       "quote": "S&P 500 AI Usage (teal)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "cited_basket",
+       "role_detail": "Basket of 145 AI-adopting S&P 500 companies with higher margins"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-f04e5de7b60fa2",
+       "name_as_written": "Claude Code",
+       "quote": "if you believe Claude Code is just another DeepSeek moment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Anthropic product cited as potential software disruptor"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-9fc728a2e96d81",
+       "name_as_written": "DeepSeek",
+       "quote": "Unlike the DeepSeek episode",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Prior AI episode used as comparator"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "listings": [],
+       "mention_id": "M-4339911083201a",
+       "name_as_written": "J.P. Morgan Private Bank",
+       "quote": "Please read the Legal Disclaimer for J.P. Morgan Private Bank regional affiliates and other important information in conj",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001326801",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": null,
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-805237c8f68cdc",
+       "name_as_written": "Meta",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001018724",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": null,
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-5262aa55c095e0",
+       "name_as_written": "Amazon",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001652044",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOG"
+        },
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOGL"
+        },
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOGM"
+        },
+        {
+         "exchange": "Nasdaq",
+         "note": "one of 4 tickers the SEC map lists for this registrant \u2014 the map does not state the security type (share class, note or other listed security)",
+         "ticker": "GOOGN"
+        }
+       ],
+       "mention_id": "M-0bdb986c38cf4a",
+       "name_as_written": "Alphabet",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0000789019",
+       "direction": "positive",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "note": null,
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-5320319dd93435",
+       "name_as_written": "Microsoft",
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft were scorned",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned; potential long-term beneficiary \u2014 in this thesis: potential beneficiary"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sectors": [
+      "Information Technology",
+      "Semiconductors",
+      "Materials"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Continued hyperscaler capex and compute demand validating the build-out [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-e7dd0e506a16d8"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "These names were swept up in the software sell-off for now but are most likely to benefit long term."
+      },
+      {
+       "claim_ids": [
+        "C-52c82483e4ac77"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Dislocation evidence: The author argues the market is selling indiscriminately, which is the broken logic."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-cd2ab32d28c253"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "If AI disruption is real, hyperscalers or private AI model companies must invest in physical inputs (semis, power, cooling, networking), supporting infrastructure players."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-85c70adb2c6571"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors, who may doubt returns on AI spending."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers cutting AI capex guidance"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weakening AI compute/semiconductor demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued correlated sell-off decoupling from fundamentals permanently"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ac5cc8813d7f48"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Tech's heavy S&P 500 weight and the top 10 stocks' 99th-percentile pairwise correlation mean a faltering AI narrative could cause a simultaneous index-wide drawdown. (scope: Concentration/correlation risk at the S&P 500 index level; top 10 stocks correlation measured versus random 10-stock samples.)"
+      },
+      {
+       "claim_ids": [
+        "C-0949f685aa48e9"
+       ],
+       "provenance": "ARTICLE FACT",
+       "text": "Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts of volatility are likely. (scope: Portfolio-level risk from tech concentration; author's judgment.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether hyperscaler AI capex earns an adequate return"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether chipmaker and materials valuations already price the build-out"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Magnitude of any valuation dislocation for these specific names"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the spending earns an adequate return"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers cut AI capex"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI compute demand signals weaken"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Compare reaffirmed hyperscaler capex with the AI infrastructure names' price moves since 2026-02-09."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers reaffirm or raise AI capex despite sell-off"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chip/materials demand data remains strong"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term relevance; source-named listed exposure(s): Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT); verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-332d3da6f3ac",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0949f685aa48e9",
+       "C-52c82483e4ac77",
+       "C-85c70adb2c6571",
+       "C-ac5cc8813d7f48",
+       "C-e7dd0e506a16d8"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-02-09T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "Software Shock: AI\u2019s Broken Logic",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+     },
+     {
+      "article_class": "other",
+      "article_id": "A-c8560b6dde15",
+      "authors": [
+       "Test Author"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-6482558a08e917"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-02-20T09:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Hypo Wire (HYPOTHETICAL TEST FIXTURE)",
+      "retrieval_state": "FULL",
+      "title": "[HYPOTHETICAL TEST FIXTURE] Capex reaffirmed while AI infrastructure stays sold",
+      "upstream_origins": [
+       "Microsoft"
+      ],
+      "url": "https://example.test/hypothetical/capex-reaffirmed-2026-02-20"
+     }
+    ]
+   },
+   "content_sha": "a228b3ee2808a229fcf79959ae972ac86f29595a2c090a0c462599312ed58a61",
+   "created_at": "2026-10-10T12:24:06.297665Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-6482558a08e917"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Microsoft \u2014 capex growth guidance: 25% %",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-52c82483e4ac77",
+      "C-e7dd0e506a16d8",
+      "C-6482558a08e917"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-02-20 \u00b7 Hypo Wire (HYPOTHETICAL TEST FIXTURE)\u27e9 Microsoft reaffirmed 25% FY2027 capex growth while AI infrastructure shares stayed near their lows. \u27e8cited figures: forecast\u27e9",
+     "note": "",
+     "old": "The AI infrastructure names swept up in the software rout may be mispriced and are most likely to benefit long term, though the article quantifies no valuation gap for them."
+    }
+   ],
+   "engine_version": "ti-engine-1",
+   "evidence_direction": "STRONGER",
+   "prior_content_sha": "ef2ecd7f2633d4501348c76425a303168eb542268b5983ddada7c958ec2f7c25",
+   "priority": {
+    "change_reason": "no change in action (F2_material_evidence 1\u21922; F3_independent_origins 1\u21922)",
+    "evidence_direction": "STRONGER",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-6482558a08e917",
+       "C-85c70adb2c6571"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-4c406b82987d, ES-fc428945cc0a",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 step(s) shown by the source, 3 beyond the industry shift in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-6482558a08e917",
+       "C-85c70adb2c6571"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "horizon next_2_4_quarters; 2 forward/near-term claim(s); 3 dislocation/catalyst claim(s)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_listed_exposures",
+      "note": "source-named, SEC-resolved listed companies with an exposure role: Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [
+       "C-52c82483e4ac77",
+       "C-85c70adb2c6571",
+       "C-e7dd0e506a16d8"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "verified dislocation / dated catalyst evidence",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "RESEARCH NOW",
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term relevance; source-named listed exposure(s): Meta (META), Amazon (AMZN), Alphabet (GOOG/GOOGL/GOOGM/GOOGN), Microsoft (MSFT); verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T122404Z-article",
+   "thesis_id": "TH-04140F1CA8",
+   "version": 2
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {
+  "s03.0": "REVIEW_UNSUPPORTED \u2014 s03.0: UNSUPPORTED \u2014 The cited span mentions indiscriminate selling and broken logic but says nothing about 'agentic AI disruption fear' triggering the sell-off. | 'Agentic AI disruption fear triggers broad tech sell-off.'",
+  "s06.2": "REVIEW_UNSUPPORTED \u2014 s06.2: UNSUPPORTED \u2014 The cited span is about software valuation collapse signaling lower growth/terminal value; it does not support the claim about hyperscalers investing in physical inputs (semis, power, cooling, networking). | 'If AI disruption is real, hyperscalers or private AI model companies must invest in physical inputs '",
+  "s07.2": "REVIEW_UNSUPPORTED \u2014 s07.2: UNSUPPORTED \u2014 The cited span is about the macro AI thesis standing and companies being rewarded long run; it does not support 'tech selling has never been riskier' or 'more bouts of volatility are likely'. | 'Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts '"
+ }
+}

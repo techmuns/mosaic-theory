@@ -1,0 +1,207 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen extraction cites, and within paragraphs only the sentences a cited quote touches (verbatim; chart notes and source lines whole). Not the full article: the full text is not stored.",
+  "trimmed_blocks": [
+   "b003",
+   "b004",
+   "b005",
+   "b009",
+   "b011",
+   "b012",
+   "b013",
+   "b014",
+   "b017",
+   "b018",
+   "b019",
+   "b023",
+   "b024",
+   "b028"
+  ],
+  "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic",
+  "retrieved_at": "2026-10-09T16:25:51.841940+00:00",
+  "parser_version": "ti-parse-2",
+  "full_body_sha256": "3fd2d0c8917fa66e5254a40a8d418fcaa4ef91a0bdc496d0ef4902f346b540d4",
+  "full_body_word_count": 1146,
+  "blocks_total": 42,
+  "blocks_in_excerpt": 20,
+  "retrieval_state": "FULL",
+  "built_at": "2026-10-10T11:53:59.705916+00:00"
+ },
+ "canonical_url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic",
+ "title": "Software Shock: AI’s Broken Logic",
+ "title_source": "json-ld Article.headline",
+ "authors": [
+  {
+   "name": "Kriti Gupta",
+   "title": "Executive Director, Global Investment Strategist",
+   "source_field": "json-ld Article.author; title from byline block b041"
+  }
+ ],
+ "published_at": "2026-02-09T10:30:00+05:30",
+ "published_raw": "2026-02-09T10:30:00+05:30",
+ "published_source": "json-ld Article.datePublished",
+ "article_class_hint": "publisher_commentary",
+ "article_class_basis": "b032: page states it 'should not be regarded as a research report'",
+ "blocks": [
+  {
+   "block_id": "b003",
+   "kind": "paragraph",
+   "text": "Unlike the DeepSeek episode, when investors questioned the need to spend so much money to develop large language models, this week, the market is pricing in the potential impact that agentic AI will have on existing software businesses.",
+   "sha256": "3755fe8b7482a1825eecc2f6087101bfb12475083cfe94f6a4102fe3724b3931",
+   "section": "Software Shock: AI’s Broken Logic",
+   "order": 3
+  },
+  {
+   "block_id": "b004",
+   "kind": "paragraph",
+   "text": "Over the last few weeks, Anthropic has released several new models and features that have once again shaken up the AI landscape. The latest breakthrough allows a user to interact with their computer using natural language to generate code and achieve real outcomes: from data aggregation and analysis to formatting, to expense tracking—domains that traditional software-as-a-service firms dominate.",
+   "sha256": "43ab0a2d24eaa5cc11046d1da7d25a49cd44af27534dcd1212ef70dd4cb50dc5",
+   "section": "Software Shock: AI’s Broken Logic",
+   "order": 4
+  },
+  {
+   "block_id": "b005",
+   "kind": "paragraph",
+   "text": "The S&P 500 Software Index has fallen into a bear market. With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990. Historically, anything below 30 incentivizes inflows.",
+   "sha256": "8251365fe2b21c188b99616a505268be79915b6a0c348efddd1d1b0abf16566a",
+   "section": "Software Shock: AI’s Broken Logic",
+   "order": 5
+  },
+  {
+   "block_id": "b008",
+   "kind": "chart_source",
+   "text": "Source: Bloomberg Finance L.P. Data as of February 5, 2026.",
+   "sha256": "371d61d210ab1fd036153ae750420821ce6e78315da1b9f13411c23b4ef4ef46",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 8
+  },
+  {
+   "block_id": "b009",
+   "kind": "chart_description",
+   "text": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70–75 range from May through August, peaking near 77 in August. The latest reading is 18.",
+   "sha256": "8035ed4faccb2d58834355bac29656187c530981821fc6f01d3d750cbbe6714d",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 9
+  },
+  {
+   "block_id": "b010",
+   "kind": "paragraph",
+   "text": "To underscore the point, the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average, the widest spread since the tail end of the dotcom crash.",
+   "sha256": "d62dd2e1c158ac484fd3c133c0029f456c98596ed744eee0fe4b5c132842d6a0",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 10
+  },
+  {
+   "block_id": "b011",
+   "kind": "paragraph",
+   "text": "And therein lies the broken logic. The market is selling indiscriminately.",
+   "sha256": "7f0c238a2f83937e7a1abd93d2e03c1767f012ca3b17501ec634212a49bd3837",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 11
+  },
+  {
+   "block_id": "b012",
+   "kind": "paragraph",
+   "text": "Capital expenditure forecasts, as one example, from the likes of Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+   "sha256": "e61d24ff4001df1671d03f1fc7ccfb9f385b30a0e062780088ff8f679642daff",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 12
+  },
+  {
+   "block_id": "b013",
+   "kind": "paragraph",
+   "text": "Tech’s heavy presence in the S&P 500 and its top companies—most of whom have significant revenues tied to the AI theme—matters because it means a large part of the index is highly correlated with each other. In fact, after testing thousands of possible combinations of the top 10 stocks in today’s S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
+   "sha256": "3b58cc85534f61795cd2c6944de010341c2ec75566193bf1afab50ea105113cd",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 13
+  },
+  {
+   "block_id": "b014",
+   "kind": "paragraph",
+   "text": "Take a look at the sector’s enterprise value (EV) to sales ratio: It’s near levels seen in November of 2022, when the world was bracing for recession and reacting to an aggressive rate-hiking cycle. This valuation collapse could signal a structurally lower growth rate and terminal value for software companies due to AI disruption. However, if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look if you want to find an entry point.",
+   "sha256": "86d1a1f93cdbd9ee81243e17c5b04501fe91acc794ef10c0abf57acce661142a",
+   "section": "S&P 500 Software Index, Relative Strength Index",
+   "order": 14
+  },
+  {
+   "block_id": "b017",
+   "kind": "chart_description",
+   "text": "The multiple is near 6.5x in early 2019, rises to about 9–10x through 2020, and peaks around 11.8x in late 2021. It then falls to roughly 7.0x by mid 2022, rebounds into the 9–11x range through 2023–2024 with several peaks near 11.0–11.3x, and in 2025 reaches about 11.5–11.6x before a sharp decline. The latest reading is 8x.",
+   "sha256": "8c0de5da1ea4858f17c8836056e0240db8294103a0853f03f6a6376e12b50f8c",
+   "section": "S&P 500 Software Index, enterprise value/sales multiple",
+   "order": 17
+  },
+  {
+   "block_id": "b018",
+   "kind": "paragraph",
+   "text": "The macro thesis of AI stands. It’s going to change the productivity landscape, and the companies that lean into it will be rewarded in the long run.",
+   "sha256": "ed56289bb7c0e39e329da7ebd0d89f9497d4837ca7c75bc414aa18886a6dcefe",
+   "section": "S&P 500 Software Index, enterprise value/sales multiple",
+   "order": 18
+  },
+  {
+   "block_id": "b019",
+   "kind": "paragraph",
+   "text": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI by 2–3 percentage points.",
+   "sha256": "56ff37e406eb21ff19adfe4d7b5774346db7b00b36acb2f6bc40480db12a71db",
+   "section": "S&P 500 Software Index, enterprise value/sales multiple",
+   "order": 19
+  },
+  {
+   "block_id": "b022",
+   "kind": "chart_source",
+   "text": "Sources: 22V, FactSet. Data as of February 2, 2026. Note: AI Usage basket include 145 companies in the S&P 500.",
+   "sha256": "88e0efb632820b3d751424f326f3023f1c840d41b96b178e55029bf1cc37bd9d",
+   "section": "NTM Net Margins (NTM Net Income / NTM Revenue), %",
+   "order": 22
+  },
+  {
+   "block_id": "b023",
+   "kind": "chart_description",
+   "text": "The chart tracks NTM net margins (NTM net income divided by NTM revenue) from December 2023 to February 2026 for three groups: S&P 500 (dark blue), S&P 500 AI Usage (teal), and Ex AI Usage (orange). Approximate values: at Dec ’23, S&P 500 ~12.6%, AI Usage ~12.7–12.8%, Ex AI ~12.4–12.5%. At Feb ’26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+   "sha256": "4d64acae6e5be5d19b95a012d722d8419224e2079cf89d2f4f7e6720c185c00c",
+   "section": "NTM Net Margins (NTM Net Income / NTM Revenue), %",
+   "order": 23
+  },
+  {
+   "block_id": "b024",
+   "kind": "paragraph",
+   "text": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain.",
+   "sha256": "cad6187c45a0f6e6e640b1fe0b1e7db4058b489bfbf6385d1bf67b425a6a8e62",
+   "section": "NTM Net Margins (NTM Net Income / NTM Revenue), %",
+   "order": 24
+  },
+  {
+   "block_id": "b028",
+   "kind": "disclaimer",
+   "text": "This webpage content is for information/educational purposes only and may inform you of certain products and services offered by private banking businesses, part of JPMorgan Chase & Co.",
+   "sha256": "bb4ca1bff68dc08f943e8f3bc0d43b1b43bafd401243bb85861e104bdcfdde61",
+   "section": "Important Information",
+   "order": 28
+  },
+  {
+   "block_id": "b034",
+   "kind": "disclaimer",
+   "text": "Please read the Legal Disclaimer for J.P. Morgan Private Bank regional affiliates and other important information in conjunction with these pages.",
+   "sha256": "ac236f0c839309d811ae46c94bfa94410fd94fd885626cf37e2e8fe21b22117a",
+   "section": "Important Information",
+   "order": 34
+  },
+  {
+   "block_id": "b040",
+   "kind": "byline",
+   "text": "Kriti Gupta",
+   "sha256": "703683dd02476431819503af8768654575f7ff9b0bd9137327b117a640bd4ea6",
+   "section": "TAGS",
+   "order": 40
+  },
+  {
+   "block_id": "b041",
+   "kind": "byline",
+   "text": "Executive Director, Global Investment Strategist",
+   "sha256": "2358febb43430be54404de8068da18887f6a32fcfa83f6eba2be4d60baaa13cf",
+   "section": "TAGS",
+   "order": 41
+  }
+ ]
+}

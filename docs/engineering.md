@@ -299,6 +299,11 @@ PR (CLAUDE.md: coin-time translation).
   refuses to assemble (`vinci/dossier/assemble.py` `_finalist`); with one, the page says so in its
   main body. `log-verdict <screen candidate id>` refuses either way for a name followed under
   another book (`vinci/cli.py` `_screen_id_book_conflict`) — log it by ticker.
+- **Living Thesis Card** — theme intelligence's nine-section research card
+  (`vinci/theme_intelligence/`). Plain words: *a versioned, source-cited summary of one investable
+  idea that publisher articles support, and whether an analyst should look at it now* — RESEARCH
+  NOW / WATCH / SKIP is a call on ANALYST ATTENTION, never a buy. Not the operator-typed house theme
+  card (`vinci/themes/thesis.py`) and not on the decision path. Guide: `docs/theme_intelligence.md`.
 
 ## Local setup (every laptop, every contributor)
 

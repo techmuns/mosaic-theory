@@ -1,0 +1,651 @@
+{
+ "archive": [
+  {
+   "action": "WATCH",
+   "card": "cards/TH-4BC0244112.html",
+   "direction": "negative",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-10",
+   "mechanism": "cost_inflation",
+   "node": "consumer_electronics",
+   "region": "Global",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-4BC0244112",
+   "title": "Rising memory and CPU costs squeeze notebook brands' margins and shipments in 2027",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-921772E86C.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-10",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.optical_networking",
+   "region": "Global",
+   "sector": "Optical interconnects, transceivers and datacenter networking",
+   "status": "ACTIVE",
+   "thesis_id": "TH-921772E86C",
+   "title": "AI datacenter shift to VCSEL NPO optical interconnects lifts named VCSEL suppliers",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-EBC230CDDD.html",
+   "direction": "negative",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-08",
+   "mechanism": "competitive_share_shift",
+   "node": "ai_models_platforms",
+   "region": "Global",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-EBC230CDDD",
+   "title": "China's unconstrained AI release and price war pressures Western frontier lab economics",
+   "versions": 1
+  }
+ ],
+ "archived_total": 0,
+ "articles_blocked": 0,
+ "articles_partial": 0,
+ "articles_read": 3,
+ "attributions_only": 0,
+ "banner": null,
+ "categories": {
+  "ARCHIVED": [],
+  "CHALLENGED": [],
+  "DOWNGRADED": [],
+  "NEW": [
+   {
+    "action": "WATCH",
+    "card": "cards/TH-4BC0244112.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named listed company exposure; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "flags": [],
+    "last_material_update": "2026-10-10",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Check listed notebook OEM/ODM guidance and consensus margin/shipment estimates for 2027 against TrendForce's low- vs high-single-digit decline scenarios.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "sectors": [
+     "Consumer Electronics",
+     "Technology Hardware"
+    ],
+    "sources": [
+     "TrendForce \u2014 author UNKNOWN \u2014 \u201cRising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipment Declines and Price Increases, Says TrendForce\u201d (date UNKNOWN) [novelty_unverified]"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-4BC0244112",
+    "title": "Rising memory and CPU costs squeeze notebook brands' margins and shipments in 2027",
+    "version": 1,
+    "what_changed": [
+     "[novelty_unverified] If DRAM and CPU prices stay elevated and are passed to consumers, the full-year shipment decline could reach the high-single-digit range. \u27e8cited figures: forecast\u27e9",
+     "[novelty_unverified] For a US$900 MSRP mainstream notebook, CPU, DRAM and SSD made up about 68% of BOM cost in 3Q26. \u27e8cited figures: approximate\u27e9",
+     "[novelty_unverified] Global notebook shipments are projected to decline by a low-single-digit percentage in 2027. \u27e8cited figures: forecast\u27e9",
+     "[novelty_unverified] DRAM supply is likely to stay tight in 2027 as AI servers absorb capacity, with PC DRAM facing limited supply growth.",
+     "[novelty_unverified] The primary 2027 notebook market risk is expected to shift from supply constraints to rising costs hurting demand.",
+     "[novelty_unverified] Brands face a trade-off: raising prices weakens demand, absorbing costs squeezes gross margins."
+    ]
+   },
+   {
+    "action": "WATCH",
+    "card": "cards/TH-921772E86C.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: verification hold)",
+    "evidence_direction": "NEW",
+    "flags": [],
+    "last_material_update": "2026-10-10",
+    "named_companies": [
+     "Lumentum (LITE)",
+     "Furukawa Electric (UNRESOLVED)",
+     "Coherent (COHR)",
+     "Broadcom (AVGO)",
+     "ams OSRAM (UNRESOLVED)",
+     "HiSilicon (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Assess each named supplier's current VCSEL/optical revenue exposure and capacity plans to gauge how material a 38% VCSEL CAGR through 2031 could be to earnings.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "sectors": [
+     "Semiconductors",
+     "Technology Hardware"
+    ],
+    "sources": [
+     "TrendForce \u2014 author UNKNOWN \u2014 \u201cSix Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reach 650 Million Units by 2031, Says TrendForce\u201d (date UNKNOWN) [novelty_unverified]"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-921772E86C",
+    "title": "AI datacenter shift to VCSEL NPO optical interconnects lifts named VCSEL suppliers",
+    "version": 1,
+    "what_changed": [
+     "[novelty_unverified] VCSEL sales are projected to grow at a 38% CAGR from 2025 to 2031. \u27e8cited figures: forecast\u27e9",
+     "[novelty_unverified] Copper signal attenuation is expected to accelerate the transition to optical interconnect technologies including VCSEL NPO and Micro LED CPO.",
+     "[novelty_unverified] Several VCSEL NPO solutions are expected to launch between 2027 and 2028.",
+     "[novelty_unverified] Six major suppliers are investing heavily in VCSEL NPO R&D.",
+     "[novelty_unverified] Coherent, Broadcom, ams OSRAM and HiSilicon use mature 850nm VCSELs with photodiodes to achieve aggregate bandwidth up to 3.2 Tbps.",
+     "[novelty_unverified] Lumentum and Furukawa Electric adopted higher-cost 1,060nm VCSEL solutions; Coherent plans to adopt this approach.",
+     "[novelty_unverified] showing 6 of 9 pieces of evidence from A-5576af910bf8 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ]
+   },
+   {
+    "action": "WATCH",
+    "card": "cards/TH-EBC230CDDD.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named listed company exposure; verification hold)",
+    "evidence_direction": "NEW",
+    "flags": [],
+    "last_material_update": "2026-10-08",
+    "named_companies": [
+     "Alibaba (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Investigate whether cheap Chinese open-weight model availability is measurably compressing API pricing or share for publicly traded or investable AI model developers.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [
+     "Anthropic [private company]",
+     "DeepSeek [private company]",
+     "Zhipu Z.ai [private company]"
+    ],
+    "sectors": [
+     "Technology",
+     "Artificial Intelligence"
+    ],
+    "sources": [
+     "SemiAnalysis \u2014 Mark Chen; Doug; Dylan Patel \u2014 \u201cBeijing Will Not Pace the Frontier: China\u2019s Speed-First AI Safety Regime\u201d (2026-10-08) [novelty_unverified]"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-EBC230CDDD",
+    "title": "China's unconstrained AI release and price war pressures Western frontier lab economics",
+    "version": 1,
+    "what_changed": [
+     "[novelty_unverified] Quarterly releases rose from 3 in Q1 2023 to 101 in Q3 2025",
+     "[novelty_unverified] The dataset includes 857 counted model releases",
+     "[novelty_unverified] Open-weight releases make up more than half of every quarter since mid-2023",
+     "[novelty_unverified] Anthropic's economics are being squeezed by cheap open-weight rivals especially in China",
+     "[novelty_unverified] China's frontier labs are in a release and price war"
+    ]
+   }
+  ],
+  "UNCHANGED BUT MATERIAL": [],
+  "UPGRADED": []
+ },
+ "caveats": [
+  "NUMBER_NOT_IN_SPAN C-c3a65deab8471d: c1: number check failed: value=650000000.0 value_text='650 million units' vs quote \u2014 quote 'boost VCSEL sales to 650 million units by 2031'",
+  "source ms_research BLOCKED: https://www.morganstanley.com/what-we-do/research: robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com",
+  "source gs_research BLOCKED: https://www.goldmansachs.com/insights/goldman-sachs-research/: HTTP 403"
+ ],
+ "generated": "Generated 2026-10-10 12:27 UTC from the registry (ti-engine-1; run R-20261010T114919Z-scan, extract ti-extract-5, review ti-review-2, model claude-opus-4-8).",
+ "no_material_change": [],
+ "notes": [],
+ "run": {
+  "as_of": "2026-10-10",
+  "checkpoint": {
+   "https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier": "PROCESSED",
+   "https://www.trendforce.com/presscenter/news/20261008-13260.html": "PROCESSED",
+   "https://www.trendforce.com/presscenter/news/20261008-13264.html": "PROCESSED"
+  },
+  "cost_usd": 0.8397,
+  "counts": {
+   "articles_processed": 3,
+   "articles_queued": 3,
+   "attributions_only": 0,
+   "claims_extracted": 41,
+   "claims_verified": 41,
+   "http_cache_hits": 0,
+   "http_requests": 47,
+   "llm_calls": 6,
+   "llm_calls_cached": 0,
+   "mentions": 24,
+   "theses_created": 3,
+   "theses_updated": 0
+  },
+  "db_schema_version": 1,
+  "engine_version": "ti-engine-1",
+  "extract_prompt_version": "ti-extract-5",
+  "fetch_seconds": 195.5,
+  "finished_at": "2026-10-10T11:56:56.769350Z",
+  "llm_model": "claude-opus-4-8",
+  "llm_provider": "anthropic",
+  "llm_seconds": 234.4,
+  "mode": "scan",
+  "output_dir": "data/theme_intelligence/runs/R-20261010T114919Z-scan",
+  "parser_version": "ti-parse-2",
+  "review_prompt_version": "ti-review-2",
+  "run_id": "R-20261010T114919Z-scan",
+  "sources": [
+   {
+    "already_known": 0,
+    "channel": "Citi Must C (Citi Research public insights)",
+    "checked_at": "2026-10-10T11:49:19.627573Z",
+    "discovered": 20,
+    "entry_points": [
+     "https://www.citigroup.com/global/insights/must-c"
+    ],
+    "errors": [],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with CMS publishDate)",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Citi",
+    "queued": 0,
+    "skipped_out_of_window": 20,
+    "source_id": "citi_must_c",
+    "status": "OK",
+    "truncation": "the Must C page embeds its 20 linked series items; older items are not listed there",
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "BofA institutional investing insights",
+    "checked_at": "2026-10-10T11:49:24.894906Z",
+    "discovered": 16,
+    "entry_points": [
+     "https://business.bofa.com/en-us/content/institutional-investing-insights.html"
+    ],
+    "errors": [],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "insights page article cards (undated) \u2192 publication date from each page",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Bank of America",
+    "queued": 0,
+    "skipped_out_of_window": 4,
+    "source_id": "bofa_institutional",
+    "status": "OK",
+    "truncation": null,
+    "undated": 12,
+    "warnings": [
+     "12 candidate(s) carry no publication date the source states \u2014 counted UNDATED, never placed in a window (analyse one on demand with `article --url`)"
+    ]
+   },
+   {
+    "already_known": 0,
+    "channel": "J.P. Morgan Top Market Takeaways",
+    "checked_at": "2026-10-10T11:50:50.407239Z",
+    "discovered": 51,
+    "entry_points": [
+     "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
+    ],
+    "errors": [],
+    "in_window": 1,
+    "inaccessible": 0,
+    "method": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
+    "new": 1,
+    "processed": 0,
+    "publisher": "J.P. Morgan Private Bank",
+    "queued": 1,
+    "skipped_out_of_window": 50,
+    "source_id": "jpm_tmt",
+    "status": "OK",
+    "truncation": null,
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "Morgan Stanley Research",
+    "checked_at": "2026-10-10T11:51:01.567270Z",
+    "discovered": 0,
+    "entry_points": [
+     "https://www.morganstanley.com/what-we-do/research"
+    ],
+    "errors": [
+     "https://www.morganstanley.com/what-we-do/research: robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com"
+    ],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "entry page links matching the configured pattern \u2192 card or page date",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Morgan Stanley",
+    "queued": 0,
+    "skipped_out_of_window": 0,
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "truncation": null,
+    "undated": 0,
+    "warnings": [
+     "standing access limitation recorded in sources.toml \u2014 this channel refuses the honest research User-Agent; it is reported every run, never bypassed"
+    ]
+   },
+   {
+    "already_known": 0,
+    "channel": "Nomura Connects",
+    "checked_at": "2026-10-10T11:51:19.790799Z",
+    "discovered": 14,
+    "entry_points": [
+     "https://www.nomuraconnects.com/articles/"
+    ],
+    "errors": [],
+    "in_window": 1,
+    "inaccessible": 0,
+    "method": "/articles/ listing + pagination (undated) \u2192 publication date from each page",
+    "new": 1,
+    "processed": 0,
+    "publisher": "Nomura",
+    "queued": 1,
+    "skipped_out_of_window": 12,
+    "source_id": "nomura_connects",
+    "status": "OK",
+    "truncation": null,
+    "undated": 1,
+    "warnings": [
+     "1 candidate(s) carry no publication date the source states \u2014 counted UNDATED, never placed in a window (analyse one on demand with `article --url`)"
+    ]
+   },
+   {
+    "already_known": 0,
+    "channel": "TrendForce press center news",
+    "checked_at": "2026-10-10T11:52:35.600232Z",
+    "discovered": 5,
+    "entry_points": [
+     "https://www.trendforce.com/presscenter/news"
+    ],
+    "errors": [],
+    "in_window": 2,
+    "inaccessible": 0,
+    "method": "press-center listing pages ?page=N (date in the article URL)",
+    "new": 2,
+    "processed": 2,
+    "publisher": "TrendForce",
+    "queued": 0,
+    "skipped_out_of_window": 3,
+    "source_id": "trendforce",
+    "status": "OK",
+    "truncation": null,
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "SemiAnalysis (site + its newsletter feed)",
+    "checked_at": "2026-10-10T11:52:41.027698Z",
+    "discovered": 20,
+    "entry_points": [
+     "https://newsletter.semianalysis.com/feed"
+    ],
+    "errors": [],
+    "in_window": 2,
+    "inaccessible": 0,
+    "method": "newsletter RSS feed (item pubDate)",
+    "new": 2,
+    "processed": 1,
+    "publisher": "SemiAnalysis",
+    "queued": 1,
+    "skipped_out_of_window": 18,
+    "source_id": "semianalysis",
+    "status": "OK",
+    "truncation": null,
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "Goldman Sachs Research insights",
+    "checked_at": "2026-10-10T11:52:46.377241Z",
+    "discovered": 0,
+    "entry_points": [
+     "https://www.goldmansachs.com/insights/goldman-sachs-research/"
+    ],
+    "errors": [
+     "https://www.goldmansachs.com/insights/goldman-sachs-research/: HTTP 403"
+    ],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "entry page links matching the configured pattern \u2192 card or page date",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Goldman Sachs",
+    "queued": 0,
+    "skipped_out_of_window": 0,
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "truncation": null,
+    "undated": 0,
+    "warnings": [
+     "standing access limitation recorded in sources.toml \u2014 this channel refuses the honest research User-Agent; it is reported every run, never bypassed"
+    ]
+   }
+  ],
+  "started_at": "2026-10-10T11:49:19.627091Z",
+  "status": "SUCCEEDED",
+  "tokens": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 49958,
+   "output_tokens": 23597
+  },
+  "warnings": [
+   "budget: processed 3 of 6 candidate article(s) this run (max_articles=3); 3 QUEUED for the next run"
+  ],
+  "window_from": "2026-10-01",
+  "window_to": "2026-10-10"
+ },
+ "sources": [
+  {
+   "already_known": 0,
+   "channel": "Citi Must C (Citi Research public insights)",
+   "checked_at": "2026-10-10T11:49:19.627573Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://www.citigroup.com/global/insights/must-c"
+   ],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with CMS publishDate)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Citi",
+   "queued": 0,
+   "skipped_out_of_window": 20,
+   "source_id": "citi_must_c",
+   "status": "OK",
+   "truncation": "the Must C page embeds its 20 linked series items; older items are not listed there",
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "BofA institutional investing insights",
+   "checked_at": "2026-10-10T11:49:24.894906Z",
+   "discovered": 16,
+   "entry_points": [
+    "https://business.bofa.com/en-us/content/institutional-investing-insights.html"
+   ],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "insights page article cards (undated) \u2192 publication date from each page",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Bank of America",
+   "queued": 0,
+   "skipped_out_of_window": 4,
+   "source_id": "bofa_institutional",
+   "status": "OK",
+   "truncation": null,
+   "undated": 12,
+   "warnings": [
+    "12 candidate(s) carry no publication date the source states \u2014 counted UNDATED, never placed in a window (analyse one on demand with `article --url`)"
+   ]
+  },
+  {
+   "already_known": 0,
+   "channel": "J.P. Morgan Top Market Takeaways",
+   "checked_at": "2026-10-10T11:50:50.407239Z",
+   "discovered": 51,
+   "entry_points": [
+    "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
+   ],
+   "errors": [],
+   "in_window": 1,
+   "inaccessible": 0,
+   "method": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
+   "new": 1,
+   "processed": 0,
+   "publisher": "J.P. Morgan Private Bank",
+   "queued": 1,
+   "skipped_out_of_window": 50,
+   "source_id": "jpm_tmt",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Morgan Stanley Research",
+   "checked_at": "2026-10-10T11:51:01.567270Z",
+   "discovered": 0,
+   "entry_points": [
+    "https://www.morganstanley.com/what-we-do/research"
+   ],
+   "errors": [
+    "https://www.morganstanley.com/what-we-do/research: robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com"
+   ],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "entry page links matching the configured pattern \u2192 card or page date",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Morgan Stanley",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "ms_research",
+   "status": "BLOCKED",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "standing access limitation recorded in sources.toml \u2014 this channel refuses the honest research User-Agent; it is reported every run, never bypassed"
+   ]
+  },
+  {
+   "already_known": 0,
+   "channel": "Nomura Connects",
+   "checked_at": "2026-10-10T11:51:19.790799Z",
+   "discovered": 14,
+   "entry_points": [
+    "https://www.nomuraconnects.com/articles/"
+   ],
+   "errors": [],
+   "in_window": 1,
+   "inaccessible": 0,
+   "method": "/articles/ listing + pagination (undated) \u2192 publication date from each page",
+   "new": 1,
+   "processed": 0,
+   "publisher": "Nomura",
+   "queued": 1,
+   "skipped_out_of_window": 12,
+   "source_id": "nomura_connects",
+   "status": "OK",
+   "truncation": null,
+   "undated": 1,
+   "warnings": [
+    "1 candidate(s) carry no publication date the source states \u2014 counted UNDATED, never placed in a window (analyse one on demand with `article --url`)"
+   ]
+  },
+  {
+   "already_known": 0,
+   "channel": "TrendForce press center news",
+   "checked_at": "2026-10-10T11:52:35.600232Z",
+   "discovered": 5,
+   "entry_points": [
+    "https://www.trendforce.com/presscenter/news"
+   ],
+   "errors": [],
+   "in_window": 2,
+   "inaccessible": 0,
+   "method": "press-center listing pages ?page=N (date in the article URL)",
+   "new": 2,
+   "processed": 2,
+   "publisher": "TrendForce",
+   "queued": 0,
+   "skipped_out_of_window": 3,
+   "source_id": "trendforce",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "SemiAnalysis (site + its newsletter feed)",
+   "checked_at": "2026-10-10T11:52:41.027698Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://newsletter.semianalysis.com/feed"
+   ],
+   "errors": [],
+   "in_window": 2,
+   "inaccessible": 0,
+   "method": "newsletter RSS feed (item pubDate)",
+   "new": 2,
+   "processed": 1,
+   "publisher": "SemiAnalysis",
+   "queued": 1,
+   "skipped_out_of_window": 18,
+   "source_id": "semianalysis",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Goldman Sachs Research insights",
+   "checked_at": "2026-10-10T11:52:46.377241Z",
+   "discovered": 0,
+   "entry_points": [
+    "https://www.goldmansachs.com/insights/goldman-sachs-research/"
+   ],
+   "errors": [
+    "https://www.goldmansachs.com/insights/goldman-sachs-research/: HTTP 403"
+   ],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "entry page links matching the configured pattern \u2192 card or page date",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Goldman Sachs",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "gs_research",
+   "status": "BLOCKED",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "standing access limitation recorded in sources.toml \u2014 this channel refuses the honest research User-Agent; it is reported every run, never bypassed"
+   ]
+  }
+ ],
+ "sources_checked": 8,
+ "sources_failed": [
+  "ms_research",
+  "gs_research"
+ ],
+ "themes_created": 3,
+ "themes_updated": 0,
+ "totals_active": {
+  "RESEARCH NOW": 0,
+  "SKIP": 0,
+  "WATCH": 3
+ },
+ "validation": {
+  "BLOCK": 8,
+  "HOLD": 0,
+  "INFO": 1,
+  "WARN": 20
+ },
+ "window": "2026-10-01 \u2192 2026-10-10 (as of 2026-10-10, mode scan)"
+}

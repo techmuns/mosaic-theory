@@ -1,0 +1,309 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC SEC rows (company_tickers_exchange.json, company_tickers_mf.json, submissions form lists) for the registrants this article names, retrieved by the pipeline",
+  "retrieved_at_epoch": 1791563271.139792
+ },
+ "exchange": {
+  "fields": [
+   "cik",
+   "name",
+   "ticker",
+   "exchange"
+  ],
+  "data": [
+   [
+    1045810,
+    "NVIDIA CORP",
+    "NVDA",
+    "Nasdaq"
+   ],
+   [
+    1652044,
+    "Alphabet Inc.",
+    "GOOGL",
+    "Nasdaq"
+   ],
+   [
+    789019,
+    "MICROSOFT CORP",
+    "MSFT",
+    "Nasdaq"
+   ],
+   [
+    1018724,
+    "AMAZON COM INC",
+    "AMZN",
+    "Nasdaq"
+   ],
+   [
+    1326801,
+    "Meta Platforms, Inc.",
+    "META",
+    "Nasdaq"
+   ],
+   [
+    723125,
+    "MICRON TECHNOLOGY INC",
+    "MU",
+    "Nasdaq"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM",
+    "NYSE"
+   ],
+   [
+    64040,
+    "S&P Global Inc.",
+    "SPGI",
+    "NYSE"
+   ],
+   [
+    1013237,
+    "FACTSET RESEARCH SYSTEMS INC",
+    "FDS",
+    "NYSE"
+   ],
+   [
+    1652044,
+    "Alphabet Inc.",
+    "GOOG",
+    "Nasdaq"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM-PC",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "AMJB",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM-PD",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM-PJ",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM-PK",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM-PL",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "JPM-PM",
+    "NYSE"
+   ],
+   [
+    19617,
+    "JPMORGAN CHASE & CO",
+    "VYLD",
+    "NYSE"
+   ],
+   [
+    1652044,
+    "Alphabet Inc.",
+    "GOOGM",
+    "Nasdaq"
+   ],
+   [
+    1652044,
+    "Alphabet Inc.",
+    "GOOGN",
+    "Nasdaq"
+   ],
+   [
+    1999111,
+    "Meta Critical Minerals Inc.",
+    "MTTAF",
+    "OTC"
+   ]
+  ]
+ },
+ "mf": {
+  "fields": [
+   "cik",
+   "seriesId",
+   "classId",
+   "symbol"
+  ],
+  "data": [
+   [
+    1100663,
+    "S000004355",
+    "C000012085",
+    "IGV"
+   ]
+  ]
+ },
+ "submission_forms": {
+  "0001013237": [
+   "10-K",
+   "10-Q",
+   "144",
+   "144/A",
+   "3",
+   "305B2",
+   "4",
+   "4/A",
+   "424B5",
+   "5",
+   "5/A",
+   "8-K",
+   "8-K/A",
+   "ARS",
+   "CORRESP",
+   "CT ORDER",
+   "DEF 14A",
+   "DEFA14A",
+   "FWP",
+   "PRE 14A",
+   "S-3ASR",
+   "S-8",
+   "S-8 POS",
+   "SC 13G",
+   "SC 13G/A",
+   "SCHEDULE 13G",
+   "SCHEDULE 13G/A",
+   "UPLOAD"
+  ],
+  "0001018724": [
+   "10-K",
+   "10-Q",
+   "13F-HR",
+   "144",
+   "144/A",
+   "3",
+   "3/A",
+   "4",
+   "424B2",
+   "424B3",
+   "424B5",
+   "425",
+   "8-A12B",
+   "8-K",
+   "ARS",
+   "CERT",
+   "CORRESP",
+   "DEF 14A",
+   "DEFA14A",
+   "EFFECT",
+   "FWP",
+   "IRANNOTICE",
+   "N-PX",
+   "PRE 14A",
+   "PX14A6G",
+   "S-3ASR",
+   "S-4",
+   "S-4/A",
+   "S-8",
+   "SC 13G",
+   "SC 13G/A",
+   "SCHEDULE 13G",
+   "SCHEDULE 13G/A",
+   "SD",
+   "UPLOAD"
+  ],
+  "0001326801": [
+   "10-K",
+   "10-Q",
+   "144",
+   "144/A",
+   "3",
+   "4",
+   "424B2",
+   "8-K",
+   "ARS",
+   "DEF 14A",
+   "DEFA14A",
+   "FWP",
+   "PX14A6G",
+   "S-3ASR",
+   "S-8",
+   "S-8 POS",
+   "SCHEDULE 13G",
+   "SCHEDULE 13G/A",
+   "SD"
+  ],
+  "0001652044": [
+   "10-K",
+   "10-Q",
+   "13F-HR",
+   "144",
+   "144/A",
+   "3",
+   "4",
+   "4/A",
+   "424B2",
+   "424B5",
+   "5",
+   "8-A12B",
+   "8-K",
+   "ARS",
+   "CERT",
+   "DEF 14A",
+   "DEFA14A",
+   "FWP",
+   "IRANNOTICE",
+   "N-PX",
+   "PX14A6G",
+   "S-3ASR",
+   "S-8",
+   "SC 13G/A",
+   "SCHEDULE 13G",
+   "SCHEDULE 13G/A",
+   "SD"
+  ],
+  "0000789019": [
+   "10-K",
+   "10-Q",
+   "11-K",
+   "144",
+   "25-NSE",
+   "3",
+   "3/A",
+   "4",
+   "4/A",
+   "424B3",
+   "5",
+   "8-K",
+   "8-K/A",
+   "ARS",
+   "CORRESP",
+   "DEF 14A",
+   "DEFA14A",
+   "EFFECT",
+   "IRANNOTICE",
+   "PX14A6G",
+   "S-3ASR",
+   "S-4",
+   "S-4/A",
+   "S-8",
+   "S-8 POS",
+   "SC 13G/A",
+   "SCHEDULE 13G",
+   "SCHEDULE 13G/A",
+   "SD",
+   "UPLOAD"
+  ]
+ }
+}

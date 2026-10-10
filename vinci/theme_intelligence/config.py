@@ -1,0 +1,190 @@
+"""Pinned versions, paths and the two editable config files (sources, taxonomy).
+
+PINNED, AND RECORDED ON EVERY OUTPUT. The model, the extraction / review prompt versions, the parser
+version and the DB schema version are constants here and are written into every extraction, card
+version and run manifest — a reader can always say which machinery produced a line.
+
+WHY `claude-opus-4-8`. The brief requires the EXISTING configured LLM client
+(`vinci.graph.llm.AnthropicLlmClient`). That client forces the tool call with
+`tool_choice={"type": "tool"}`, which the newer Opus 5.5 / Fable 5.1 / Sonnet 5.5 models reject
+with a 400; changing the shared client would touch every fund LLM phase (dossier synthesis, graph,
+themes), which this package must not do. So the model is the repo's configured default, pinned here
+explicitly so a change to `graph_llm_model` cannot silently re-point this package.
+"""
+
+from __future__ import annotations
+
+import tomllib
+from dataclasses import dataclass
+from pathlib import Path
+
+from vinci.config import sec_user_agent
+
+PACKAGE_DIR = Path(__file__).resolve().parent
+CONFIG_DIR = PACKAGE_DIR / "config"
+
+#: Working state — git-ignored (`data/*`). The DB, raw fetches, LLM caches and readouts live here.
+DEFAULT_DATA_DIR = Path("data/theme_intelligence")
+
+LLM_PROVIDER = "anthropic"
+LLM_MODEL = "claude-opus-4-8"
+EXTRACT_PROMPT_VERSION = "ti-extract-5"
+REVIEW_PROMPT_VERSION = "ti-review-3"
+PARSER_VERSION = "ti-parse-3"
+ENGINE_VERSION = "ti-engine-1"
+
+#: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
+#: Cache writes bill 1.25x input and cache reads 0.1x input. Used for the run manifest's cost line;
+#: a model missing here makes the cost UNKNOWN, never zero.
+PRICE_PER_MTOK: dict[str, tuple[float, float]] = {"claude-opus-4-8": (5.0, 25.0)}
+
+#: Honest, identifying User-Agent. No browser spoofing: a site that refuses this is BLOCKED.
+USER_AGENT = (f"mosaic-theory-theme-intelligence/0.1 (research scanner; "
+              f"contact: {sec_user_agent().split()[-1]})")
+
+#: The brief's default scan window and our own politeness floor between requests to one host.
+DEFAULT_SCAN_DAYS = 10
+DEFAULT_MIN_CRAWL_DELAY_S = 5.0
+
+#: Budget caps. A cap is a TRUNCATION, and every truncation is printed with its population
+#: ("processed X of Y in-window articles") — never a silent drop. Unprocessed candidates stay
+#: QUEUED for the next run.
+DEFAULT_MAX_ARTICLES_PER_RUN = 25
+MAX_CLAIMS_PER_ARTICLE = 40
+
+#: Archive rule (face validity, never outcome-tuned): a card's horizon is the next 2-4 quarters,
+#: so a thesis with no material evidence for more than one quarter has lost its "why now" and
+#: moves to the searchable archive (an ARCHIVED event the weekly report shows). New material
+#: evidence re-activates it.
+STALE_AFTER_DAYS = 91
+
+#: Weekly-dashboard display collapse per category. NOT a cut: the rest of the category sits one
+#: click below, and the heading prints "showing X of Y".
+DASHBOARD_ROWS_PER_CATEGORY = 12
+
+
+@dataclass(frozen=True)
+class SourceConfig:
+    id: str
+    publisher: str
+    channel: str
+    entry_url: str
+    adapter: str
+    reliability: str
+    default_article_class: str
+    min_crawl_delay_s: float
+    sitemap_url: str | None = None
+    listing_url: str | None = None
+    link_pattern: str | None = None
+    max_listing_pages: int = 1
+    feed_url: str | None = None
+    #: undated candidates whose page is fetched to read its own publication date, per run
+    max_date_checks: int = 12
+    #: a standing, documented access refusal: still attempted and reported BLOCKED every run, but
+    #: it does not by itself turn the run PARTIAL (a NEW failure of any other channel does)
+    expect_blocked: bool = False
+
+
+@dataclass(frozen=True)
+class TaxonomyItem:
+    id: str
+    label: str
+
+
+@dataclass(frozen=True)
+class Taxonomy:
+    nodes: tuple[TaxonomyItem, ...]
+    mechanisms: tuple[TaxonomyItem, ...]
+
+    @property
+    def node_ids(self) -> frozenset[str]:
+        return frozenset(n.id for n in self.nodes)
+
+    @property
+    def mechanism_ids(self) -> frozenset[str]:
+        return frozenset(m.id for m in self.mechanisms)
+
+    def ancestry(self, node_id: str) -> tuple[str, ...]:
+        """`ai_infrastructure.memory` → (`ai_infrastructure`, `ai_infrastructure.memory`)."""
+        parts = node_id.split(".")
+        return tuple(".".join(parts[: i + 1]) for i in range(len(parts)))
+
+
+class ConfigError(ValueError):
+    """An editable config file is malformed — refuse rather than guess."""
+
+
+def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
+    raw = tomllib.loads((path or CONFIG_DIR / "sources.toml").read_text())
+    out: list[SourceConfig] = []
+    for s in raw.get("source", []):
+        try:
+            out.append(SourceConfig(
+                id=str(s["id"]), publisher=str(s["publisher"]), channel=str(s["channel"]),
+                entry_url=str(s["entry_url"]), adapter=str(s["adapter"]),
+                reliability=str(s["reliability"]),
+                default_article_class=str(s["default_article_class"]),
+                min_crawl_delay_s=float(s.get("min_crawl_delay_s", DEFAULT_MIN_CRAWL_DELAY_S)),
+                sitemap_url=s.get("sitemap_url"), listing_url=s.get("listing_url"),
+                link_pattern=s.get("link_pattern"),
+                max_listing_pages=int(s.get("max_listing_pages", 1)),
+                feed_url=s.get("feed_url"),
+                max_date_checks=int(s.get("max_date_checks", 12)),
+                expect_blocked=bool(s.get("expect_blocked", False)),
+            ))
+        except KeyError as exc:
+            raise ConfigError(f"source entry missing {exc}: {s}") from exc
+    ids = [s.id for s in out]
+    if len(ids) != len(set(ids)):
+        raise ConfigError(f"duplicate source ids: {ids}")
+    for s in out:
+        if s.reliability not in ("high", "medium", "low"):
+            raise ConfigError(f"{s.id}: reliability {s.reliability!r} not in high|medium|low")
+    return tuple(out)
+
+
+def load_taxonomy(path: Path | None = None) -> Taxonomy:
+    raw = tomllib.loads((path or CONFIG_DIR / "taxonomy.toml").read_text())
+    nodes = tuple(TaxonomyItem(str(n["id"]), str(n["label"])) for n in raw.get("node", []))
+    mechs = tuple(TaxonomyItem(str(m["id"]), str(m["label"])) for m in raw.get("mechanism", []))
+    if "other" not in {n.id for n in nodes} or "other" not in {m.id for m in mechs}:
+        raise ConfigError("taxonomy must define an `other` node and mechanism (the REVIEW route)")
+    node_ids = {n.id for n in nodes}
+    for n in nodes:
+        parent = n.id.rsplit(".", 1)[0] if "." in n.id else None
+        if parent and parent not in node_ids:
+            raise ConfigError(f"node {n.id} has no parent node {parent}")
+    return Taxonomy(nodes=nodes, mechanisms=mechs)
+
+
+@dataclass(frozen=True)
+class Paths:
+    root: Path
+
+    @property
+    def db(self) -> Path:
+        return self.root / "registry.db"
+
+    @property
+    def raw(self) -> Path:
+        return self.root / "raw"
+
+    @property
+    def llm_cache(self) -> Path:
+        return self.root / "llm_cache"
+
+    @property
+    def http_cache(self) -> Path:
+        return self.root / "http_cache"
+
+    @property
+    def runs(self) -> Path:
+        return self.root / "runs"
+
+    @property
+    def backups(self) -> Path:
+        return self.root / "backups"
+
+    def ensure(self) -> None:
+        for d in (self.root, self.raw, self.llm_cache, self.http_cache, self.runs, self.backups):
+            d.mkdir(parents=True, exist_ok=True)

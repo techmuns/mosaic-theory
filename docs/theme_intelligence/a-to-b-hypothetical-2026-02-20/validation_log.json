@@ -1,0 +1,92 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:24:06.297059Z",
+  "detail": "s01.2: The span supports 25% FY2027 capex growth reaffirmation, but 'AI infrastructure shares stayed near their lows' is not supported by the cited span. | '\u27e8update 2026-02-20 \u00b7 Hypo Wire (HYPOTHETICAL TEST FIXTURE)\u27e9 Microsoft reaffirmed 25% FY2027 capex gr'",
+  "issue_id": "VI-23fe81ac0354d6",
+  "ref_id": "TH-04140F1CA8:s01.2",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:24:06.297121Z",
+  "detail": "s07.2: UNSUPPORTED \u2014 The cited span is about the macro AI thesis standing and companies being rewarded long run; it does not support 'tech selling has never been riskier' or 'more bouts of volatility are likely'. | 'Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts '",
+  "issue_id": "VI-24adc4e8e65baa",
+  "ref_id": "TH-04140F1CA8:s07.2",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:24:06.297092Z",
+  "detail": "s03.2: Spans support indiscriminate selling and that capex forecasts from Meta, Amazon, Alphabet, Microsoft were scorned, but 'materials' and the explicit categorization of hyperscalers/chipmakers/materials benefiting from AI build-out is not in these two cited spans. | 'Hyperscalers, chipmakers and materials sold indiscriminately despite benefiting from AI build-out.'",
+  "issue_id": "VI-35c13892bd396c",
+  "ref_id": "TH-04140F1CA8:s03.2",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:24:06.297115Z",
+  "detail": "s07.1: Span supports top 10 having 99th-percentile pairwise correlation, but the S&P 500 heavy tech weight and the simultaneous index-wide drawdown conclusion are not in the cited span. | \"Tech's heavy S&P 500 weight and the top 10 stocks' 99th-percentile pairwise correlation mean a falte\"",
+  "issue_id": "VI-371aeaaf3f1a73",
+  "ref_id": "TH-04140F1CA8:s07.1",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:24:06.297098Z",
+  "detail": "s03.3: The span supports likely strong return on AI investments but does not state that AI compute demand and capex 'continue' or specifically support long-term earnings. | \"AI compute demand and capex continue, supporting these companies' long-term earnings.\"",
+  "issue_id": "VI-58cfd63506cffe",
+  "ref_id": "TH-04140F1CA8:s03.3",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-10-10T12:24:04.267918Z",
+  "detail": "model classifies publisher_commentary (HYPOTHETICAL test fixture); the record keeps other (channel default for manual)",
+  "issue_id": "VI-8a67cfbdcfadbf",
+  "ref_id": "A-c8560b6dde15",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:24:06.297110Z",
+  "detail": "s06.2: UNSUPPORTED \u2014 The cited span is about software valuation collapse signaling lower growth/terminal value; it does not support the claim about hyperscalers investing in physical inputs (semis, power, cooling, networking). | 'If AI disruption is real, hyperscalers or private AI model companies must invest in physical inputs '",
+  "issue_id": "VI-8c1b62894625d3",
+  "ref_id": "TH-04140F1CA8:s06.2",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:24:06.297103Z",
+  "detail": "s06.0: Span supports focus on leaders likely to benefit, but 'swept up in the software sell-off for now' is not in the cited span. | 'These names were swept up in the software sell-off for now but are most likely to benefit long term.'",
+  "issue_id": "VI-955aa7f4af2053",
+  "ref_id": "TH-04140F1CA8:s06.0",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:24:06.297085Z",
+  "detail": "s03.0: UNSUPPORTED \u2014 The cited span mentions indiscriminate selling and broken logic but says nothing about 'agentic AI disruption fear' triggering the sell-off. | 'Agentic AI disruption fear triggers broad tech sell-off.'",
+  "issue_id": "VI-b102e07762a4bc",
+  "ref_id": "TH-04140F1CA8:s03.0",
+  "run_id": "R-20261010T122404Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ }
+]

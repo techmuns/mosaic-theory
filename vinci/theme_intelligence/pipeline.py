@@ -1,0 +1,582 @@
+"""One shared, deterministic pipeline behind every entry point (scan / article / report / qa).
+
+PER ARTICLE: fetch → parse → (duplicate-content and look-ahead guards) → article + immutable
+version records → idempotency guard → extraction (LLM pass 1, cached by content) → deterministic
+verification → SEC security resolution → engine (match / version / prioritise) → pass-2 review.
+
+GUARANTEES
+- A BLOCKED fetch is RECORDED (article + BLOCKED version) and counted — never silently omitted.
+- Re-ingesting an article version that was already applied writes NOTHING: same version id, same
+  extraction, and the engine is not re-run (no new records, no priority change, no confirmation).
+- The same body under a changed URL is caught by its content hash and treated as one article.
+- Replay (`--as-of`): an article published after the as-of date is refused (look-ahead), and any
+  figure dated after it is blocked by verification.
+- A run that fails is marked FAILED with its error; a scan that processed nothing because sources
+  failed is never reported as a quiet week (the run status and coverage say what happened).
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import traceback
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime
+from pathlib import Path
+from typing import Any
+
+from vinci.theme_intelligence.config import (
+    ENGINE_VERSION,
+    EXTRACT_PROMPT_VERSION,
+    LLM_MODEL,
+    LLM_PROVIDER,
+    PARSER_VERSION,
+    REVIEW_PROMPT_VERSION,
+    Paths,
+    SourceConfig,
+    Taxonomy,
+)
+from vinci.theme_intelligence.discovery import Discovery, discover_source
+from vinci.theme_intelligence.engine import ArticleContext, Engine, ThesisOutcome
+from vinci.theme_intelligence.extract import (
+    Extraction,
+    ExtractionResult,
+    ToolClient,
+    run_extraction,
+)
+from vinci.theme_intelligence.fetch import FetchResult, PoliteFetcher
+from vinci.theme_intelligence.parse import ParsedDocument, parse_document
+from vinci.theme_intelligence.schemas import (
+    DB_SCHEMA_VERSION,
+    Article,
+    ArticleClass,
+    ArticleVersion,
+    CardContent,
+    Claim,
+    FieldStatus,
+    IssueSeverity,
+    RetrievalState,
+    RunStatus,
+    SecurityResolution,
+    Snapshot,
+    VerificationIssue,
+    WeeklyRun,
+)
+from vinci.theme_intelligence.securities import SecResolver
+from vinci.theme_intelligence.store import Store
+from vinci.theme_intelligence.verify import (
+    deterministic_card_checks,
+    review_card,
+    verify_extraction,
+)
+
+
+def _sha(*parts: str) -> str:
+    h = hashlib.sha256()
+    for p in parts:
+        h.update(p.encode())
+        h.update(b"\x00")
+    return h.hexdigest()
+
+
+def article_id_for(canonical_url: str) -> str:
+    return "A-" + _sha(canonical_url.rstrip("/").lower())[:12]
+
+
+@dataclass
+class ArticleResult:
+    url: str
+    status: str  # PROCESSED | BLOCKED | PARTIAL_PROCESSED | ALREADY_INGESTED | DUPLICATE_CONTENT
+    #              | LOOKAHEAD | NO_BODY | FAILED
+    article_id: str | None = None
+    version_id: str | None = None
+    outcomes: list[ThesisOutcome] = field(default_factory=list)
+    note: str = ""
+    extraction_cost: float | None = None
+
+
+class Pipeline:
+    def __init__(self, data_dir: Path, *, sources: tuple[SourceConfig, ...], taxonomy: Taxonomy,
+                 client: ToolClient | None, fetcher: PoliteFetcher | None = None,
+                 resolver: SecResolver | None = None, review: bool = True,
+                 store: Store | None = None) -> None:
+        self.paths = Paths(data_dir)
+        self.paths.ensure()
+        self.store = store or Store(self.paths.db)
+        self.sources = {s.id: s for s in sources}
+        self.taxonomy = taxonomy
+        self.client = client
+        self.fetcher = fetcher or PoliteFetcher(self.paths.http_cache)
+        for s in sources:
+            self.fetcher.set_host_floor(s.entry_url, s.min_crawl_delay_s)
+        self.resolver = resolver or SecResolver(self.paths.http_cache)
+        self.review = review
+        self.run: WeeklyRun | None = None
+        self._calls = 0
+        # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
+        # review, and says so in the validation log rather than passing silently
+        self.engine = Engine(self.store, taxonomy, reviewer=self._review)
+
+    # -- runs -----------------------------------------------------------------------------------
+    def start_run(self, mode: str, *, as_of: date, window_from: date | None = None,
+                  window_to: date | None = None, run_id: str | None = None) -> WeeklyRun:
+        now = datetime.now(tz=UTC)
+        rid = run_id or f"R-{now.strftime('%Y%m%dT%H%M%SZ')}-{mode}"
+        if run_id is None:  # two runs in one second must never share — and overwrite — an id
+            base, n = rid, 2
+            while self.store.run(rid) is not None:
+                rid, n = f"{base}-{n}", n + 1
+        elif self.store.run(rid) is not None:
+            raise ValueError(f"run {rid} already exists — resume it with --resume instead")
+        run = WeeklyRun(
+            run_id=rid, mode=mode, window_from=window_from, window_to=window_to, as_of=as_of,
+            started_at=now, status=RunStatus.RUNNING, llm_provider=LLM_PROVIDER,
+            llm_model=self.client.model if self.client is not None else LLM_MODEL,
+            extract_prompt_version=EXTRACT_PROMPT_VERSION,
+            review_prompt_version=REVIEW_PROMPT_VERSION, parser_version=PARSER_VERSION,
+            engine_version=ENGINE_VERSION, db_schema_version=DB_SCHEMA_VERSION,
+            output_dir=str(self.paths.runs / rid))
+        self.store.upsert_run(run)
+        self.run = run
+        return run
+
+    def finish_run(self, status: RunStatus, *, error: str | None = None) -> WeeklyRun:
+        assert self.run is not None
+        run = self.run
+        if error:
+            run.warnings.append(f"RUN ERROR: {error}")
+        calls = self.store.llm_calls(run.run_id)
+        tok: dict[str, int] = {}
+        replayed: dict[str, int] = {}
+        cost: float | None = 0.0
+        llm_s = 0.0
+        for c in calls:
+            bucket = replayed if c.get("cached") else tok  # a cache hit spends nothing now
+            for k, v in (c.get("usage") or {}).items():
+                if k != "max_tokens":
+                    bucket[k] = bucket.get(k, 0) + int(v)
+            if c.get("cost_usd") is None and not c.get("cached"):
+                cost = None
+            elif cost is not None:
+                cost += float(c.get("cost_usd") or 0.0)
+            llm_s += float(c.get("seconds") or 0.0)
+        run.tokens = tok
+        for k, v in replayed.items():
+            run.counts[f"replayed_from_cache_{k}"] = v
+        run.cost_usd = round(cost, 4) if cost is not None else None
+        run.llm_seconds = round(llm_s, 1)
+        run.fetch_seconds = round(self.fetcher.stats.seconds, 1)
+        run.counts["llm_calls"] = len(calls)
+        run.counts["llm_calls_cached"] = sum(1 for c in calls if c.get("cached"))
+        run.counts["http_requests"] = self.fetcher.stats.requests
+        run.counts["http_cache_hits"] = self.fetcher.stats.cache_hits
+        run.finished_at = datetime.now(tz=UTC)
+        run.status = status
+        self.store.upsert_run(run)
+        theses = self.store.theses()
+        snap = Snapshot(snapshot_id="SN-" + _sha(run.run_id, run.finished_at.isoformat())[:14],
+                        run_id=run.run_id,
+                        as_of=run.as_of,
+                        thesis_versions=tuple((t.thesis_id, t.current_version) for t in theses),
+                        created_at=datetime.now(tz=UTC), report_paths=())
+        self.store.add_snapshot(snap)
+        return run
+
+    def _count(self, key: str, n: int = 1) -> None:
+        assert self.run is not None
+        self.run.counts[key] = self.run.counts.get(key, 0) + n
+
+    def _llm_call(self, purpose: str, ref: str, res_cached: bool, usage: dict[str, int] | None,
+                  cost: float | None, seconds: float, model: str, prompt_version: str) -> None:
+        assert self.run is not None
+        self._calls += 1
+        self.store.add_llm_call(
+            "LC-" + _sha(self.run.run_id, purpose, ref, str(self._calls),
+                         datetime.now(tz=UTC).isoformat())[:14], self.run.run_id, purpose,
+            {"purpose": purpose, "ref": ref, "model": model, "prompt_version": prompt_version,
+             "cached": res_cached,
+             "usage": usage, "cost_usd": cost, "seconds": round(seconds, 2),
+             "at": datetime.now(tz=UTC).isoformat()})
+
+    # -- review hook ------------------------------------------------------------------------------
+    def _review(self, card: CardContent, claims: dict[str, Claim]) -> list[VerificationIssue]:
+        assert self.run is not None
+        issues = deterministic_card_checks(card, claims, self.run.run_id)
+        if not self.review:
+            issues.append(VerificationIssue(
+                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "review-off",
+                                      card.header.title)[:14],
+                run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
+                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
+                detail="pass-2 LLM review disabled for this run (--no-review); only the "
+                       "deterministic card checks ran", created_at=datetime.now(tz=UTC)))
+            return issues
+        try:
+            rr = review_card(card, claims, client=self.client, cache_dir=self.paths.llm_cache,
+                             run_id=self.run.run_id)
+        except RuntimeError as exc:  # no client and no cache: say so, never pretend reviewed
+            issues.append(VerificationIssue(
+                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "noreview")[:14],
+                run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
+                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN", detail=str(exc),
+                created_at=datetime.now(tz=UTC)))
+            return issues
+        self._llm_call("review", card.header.thesis_id + ":" + card.header.title[:40], rr.cached,
+                       rr.usage, rr.cost_usd, rr.seconds,
+                       self.client.model if self.client else LLM_MODEL, REVIEW_PROMPT_VERSION)
+        return issues + rr.issues
+
+    # -- one article ------------------------------------------------------------------------------
+    def process_url(self, url: str, *, source_id: str, as_of: date,
+                    html: str | None = None, fixture: dict[str, Any] | None = None,
+                    publisher_override: str | None = None,
+                    listed: tuple[date, str] | None = None) -> ArticleResult:
+        assert self.run is not None
+        src = self.sources.get(source_id)
+        publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
+        default_class = ArticleClass(src.default_article_class) if src else ArticleClass.OTHER
+        now = datetime.now(tz=UTC)
+        try:
+            if html is None:
+                fr = self.fetcher.fetch(url)
+            else:
+                body = html.encode()
+                fr = FetchResult(url=url, final_url=url, status=200,
+                                 state=RetrievalState.FULL, note="supplied fixture HTML",
+                                 content=body, content_type="text/html", fetched_at=now,
+                                 sha256=hashlib.sha256(body).hexdigest(), cache_path=None,
+                                 from_cache=False, seconds=0.0)
+        except Exception as exc:  # noqa: BLE001 — recorded, never swallowed into a quiet zero
+            fr = FetchResult(url, None, None, RetrievalState.BLOCKED,
+                             f"fetch error {type(exc).__name__}: {str(exc)[:160]}", None, None,
+                             now, None, None, False, 0.0)
+        if fr.state is RetrievalState.BLOCKED or fr.text is None:
+            return self._record_blocked(url, source_id, publisher, default_class, fr)
+        doc = parse_document(fr.text, url, fr.final_url)
+        if doc.published_at is None and listed is not None:
+            # the page states no date, but the publisher's own listing / URL / feed did
+            d, basis = listed
+            doc.published_at = datetime(d.year, d.month, d.day)
+            doc.published_raw = d.isoformat()
+            doc.published_source = f"publisher listing — {basis} (date only)"
+            doc.published_status = FieldStatus.KNOWN
+        return self.process_document(doc, fr, url=url, source_id=source_id, as_of=as_of,
+                                     fixture=fixture, publisher_override=publisher_override)
+
+    def process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,
+                         source_id: str, as_of: date, fixture: dict[str, Any] | None = None,
+                         publisher_override: str | None = None) -> ArticleResult:
+        """Everything after parsing. Tests and replays enter here with an already-parsed
+        document (e.g. an authentic excerpt) — the same code path the live fetch takes."""
+        assert self.run is not None
+        src = self.sources.get(source_id)
+        publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
+        reliability = src.reliability if src else "medium"
+        default_class = ArticleClass(src.default_article_class) if src else ArticleClass.OTHER
+        now = datetime.now(tz=UTC)
+        aid = article_id_for(doc.canonical_url)
+        # same body already registered under another URL → one article (changed URL)
+        if doc.retrieval_state is not RetrievalState.BLOCKED:
+            dup = self.store.conn.execute(
+                "SELECT article_id FROM article_versions WHERE content_sha256=? AND "
+                "article_id<>? LIMIT 1", (doc.content_sha256, aid)).fetchone()
+            if dup:
+                self._count("duplicate_content")
+                return ArticleResult(url, "DUPLICATE_CONTENT", str(dup[0]),
+                                     note=f"identical body already registered as {dup[0]} "
+                                          f"(URL changed or mirrored) — not re-counted")
+        state = (RetrievalState.PARTIAL if fr.state is RetrievalState.PARTIAL
+                 else doc.retrieval_state)
+        article = self._article_record(aid, doc, source_id, publisher, default_class, now)
+        version = ArticleVersion(
+            version_id="AV-" + doc.content_sha256[:16], article_id=aid,
+            retrieved_at=fr.fetched_at, http_status=fr.status, final_url=fr.final_url,
+            retrieval_state=state, retrieval_note="; ".join([fr.note, *doc.notes]),
+            raw_sha256=fr.sha256, content_sha256=doc.content_sha256,
+            modified_at=doc.modified_at, modified_source=doc.modified_source,
+            evidence_location=str(fr.cache_path) if fr.cache_path else None,
+            parser_version=PARSER_VERSION, body_word_count=doc.word_count, blocks=doc.blocks)
+        existing_v = self.store.version_by_content(aid, doc.content_sha256)
+        with self.store.tx():
+            self.store.upsert_article(article)
+            if existing_v is None:
+                self.store.add_article_version(version)
+        version = existing_v or version
+        if state is RetrievalState.BLOCKED:
+            self._issue("article", aid, IssueSeverity.WARN, "NO_BODY",
+                        f"{url} — page retrieved but no article body found "
+                        f"({version.retrieval_note}); not analysed")
+            self._count("articles_no_body")
+            return ArticleResult(url, "NO_BODY", aid, version.version_id,
+                                 note=version.retrieval_note)
+        if doc.published_at is not None and doc.published_at.date() > as_of:
+            self._issue("article", aid, IssueSeverity.BLOCK, "LOOKAHEAD",
+                        f"published {doc.published_at.date()} is after the run as-of {as_of} — "
+                        f"not analysed (publication-time replay)")
+            self._count("articles_lookahead_refused")
+            return ArticleResult(url, "LOOKAHEAD", aid, version.version_id)
+        if self._applied(aid, version.version_id):
+            self._count("articles_already_ingested")
+            return ArticleResult(url, "ALREADY_INGESTED", aid, version.version_id,
+                                 note="this article version was already applied — no new records")
+
+        xres = self._extract(doc, publisher, as_of, fixture)
+        self._llm_call("extract", aid, xres.cached, xres.usage, xres.cost_usd, xres.seconds,
+                       xres.model, xres.prompt_version)
+        if xres.extraction.article_classification.article_class != article.article_class:
+            self._issue("article", aid, IssueSeverity.INFO, "CLASS_DISAGREES",
+                        f"model classifies {xres.extraction.article_classification.article_class}"
+                        f" ({xres.extraction.article_classification.basis[:140]}); the record "
+                        f"keeps {article.article_class.value} ({article.article_class_basis})")
+        ve = verify_extraction(doc, xres.extraction, article_id=aid,
+                               article_version_id=version.version_id,
+                               extraction_id=xres.extraction_id, publisher=publisher,
+                               as_of=as_of, run_id=self.run.run_id)
+        if state is RetrievalState.PARTIAL:
+            ve.issues.append(VerificationIssue(
+                issue_id="VI-" + _sha(self.run.run_id, aid, "partial")[:14],
+                run_id=self.run.run_id, scope="article", ref_id=aid, severity=IssueSeverity.WARN,
+                code="PARTIAL_RETRIEVAL", detail="only part of the article was retrieved — no "
+                "claim of full-text verification is made", created_at=datetime.now(tz=UTC)))
+        resolutions: dict[str, SecurityResolution] = {}
+        for m in ve.mentions:
+            try:
+                resolutions[m.mention_id] = self.resolver.resolve(m, as_of=as_of)
+            except Exception as exc:  # noqa: BLE001 — resolution failure is UNRESOLVED, loudly
+                self._issue("mention", m.mention_id, IssueSeverity.WARN, "RESOLUTION_FAILED",
+                            f"{m.name_as_written}: {type(exc).__name__}: {str(exc)[:120]}")
+        ctx = ArticleContext(article=article, version=version, reliability=reliability,
+                             run_id=self.run.run_id, as_of=as_of)
+        outcomes = self.engine.apply(ctx, ve, resolutions)
+        # the extraction record is the "applied" marker — written only AFTER the engine succeeds,
+        # so a run that dies mid-article re-processes it (idempotently) instead of skipping it
+        self.store.add_extraction(xres.extraction_id, version.version_id, xres.model,
+                                  xres.prompt_version, xres.raw)
+        self._count("articles_processed")
+        if state is RetrievalState.PARTIAL:
+            self._count("articles_partial")
+        self._count("claims_extracted", len(ve.claims))
+        self._count("claims_verified", len(ve.verified_claims))
+        self._count("mentions", len(ve.mentions))
+        self._count("theses_created", sum(1 for o in outcomes if o.created))
+        self._count("theses_updated", sum(1 for o in outcomes if not o.created and o.new_version))
+        self._count("attributions_only", sum(1 for o in outcomes
+                                              if not o.created and not o.new_version))
+        return ArticleResult(url, "PARTIAL_PROCESSED" if state is RetrievalState.PARTIAL
+                             else "PROCESSED", aid, version.version_id, outcomes,
+                             extraction_cost=xres.cost_usd)
+
+    def _applied(self, aid: str, version_id: str) -> bool:
+        rows = self.store.conn.execute(
+            "SELECT COUNT(*) FROM extractions WHERE article_version_id=?", (version_id,)).fetchone()
+        return bool(rows and rows[0])
+
+    def _extract(self, doc: ParsedDocument, publisher: str, as_of: date,
+                 fixture: dict[str, Any] | None) -> ExtractionResult:
+        if fixture is not None:
+            ext = Extraction.model_validate(fixture)
+            key = _sha(json.dumps(fixture, sort_keys=True), doc.content_sha256)
+            return ExtractionResult(ext, fixture, f"X-FIXTURE-{key[:12]}", "fixture",
+                                    "fixture", True, None, 0.0, 0.0)
+        return run_extraction(doc, publisher=publisher, as_of=as_of.isoformat(),
+                              taxonomy=self.taxonomy, client=self.client,
+                              cache_dir=self.paths.llm_cache)
+
+    def _article_record(self, aid: str, doc: ParsedDocument, source_id: str, publisher: str,
+                        default_class: ArticleClass, now: datetime) -> Article:
+        prior = self.store.article(aid)
+        cls, basis = default_class, f"channel default for {source_id}"
+        if doc.article_class_hint is not None:
+            cls, basis = doc.article_class_hint, doc.article_class_basis or "page statement"
+        return Article(
+            article_id=aid, canonical_url=doc.canonical_url, source_id=source_id,
+            publisher=publisher, title=doc.title, title_source=doc.title_source,
+            authors=doc.authors, authors_status=doc.authors_status,
+            published_at=doc.published_at, published_raw=doc.published_raw,
+            published_source=doc.published_source, published_status=doc.published_status,
+            article_class=cls, article_class_basis=basis,
+            first_seen_at=prior.first_seen_at if prior else now)
+
+    def _record_blocked(self, url: str, source_id: str, publisher: str,
+                        default_class: ArticleClass, fr: FetchResult) -> ArticleResult:
+        aid = article_id_for(url)
+        now = datetime.now(tz=UTC)
+        prior = self.store.article(aid)
+        art = prior or Article(
+            article_id=aid, canonical_url=url, source_id=source_id, publisher=publisher,
+            title=None, title_source=None, authors=(), authors_status=FieldStatus.UNKNOWN,
+            published_at=None, published_raw=None, published_source=None,
+            published_status=FieldStatus.UNKNOWN, article_class=default_class,
+            article_class_basis="channel default (page not retrieved)", first_seen_at=now)
+        v = ArticleVersion(
+            version_id="AV-BLOCKED-" + _sha(url, fr.note, fr.fetched_at.isoformat())[:12],
+            article_id=aid,
+            retrieved_at=fr.fetched_at, http_status=fr.status, final_url=fr.final_url,
+            retrieval_state=RetrievalState.BLOCKED, retrieval_note=fr.note, raw_sha256=None,
+            content_sha256=None, modified_at=None, modified_source=None, evidence_location=None,
+            parser_version=PARSER_VERSION, body_word_count=0)
+        with self.store.tx():
+            self.store.upsert_article(art)
+            self.store.add_article_version(v)
+        self._issue("article", aid, IssueSeverity.WARN, "RETRIEVAL_BLOCKED",
+                    f"{url} — {fr.note} (kept as a BLOCKED record; not analysed)")
+        self._count("articles_blocked")
+        return ArticleResult(url, "BLOCKED", aid, v.version_id, note=fr.note)
+
+    def _issue(self, scope: str, ref: str, sev: IssueSeverity, code: str, detail: str) -> None:
+        assert self.run is not None
+        self.store.add_issue(VerificationIssue(
+            issue_id="VI-" + _sha(self.run.run_id, scope, ref, code, detail)[:14],
+            run_id=self.run.run_id,
+            scope=scope, ref_id=ref, severity=sev, code=code, detail=detail,
+            created_at=datetime.now(tz=UTC)))
+
+    # -- convenience ------------------------------------------------------------------------------
+    def run_article(self, url: str, *, as_of: date, source_id: str = "manual",
+                    publisher: str | None = None, html: str | None = None,
+                    fixture: dict[str, Any] | None = None) -> tuple[WeeklyRun, ArticleResult]:
+        self.start_run("article", as_of=as_of, window_from=as_of, window_to=as_of)
+        try:
+            res = self.process_url(url, source_id=source_id, as_of=as_of, html=html,
+                                   fixture=fixture, publisher_override=publisher)
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+        assert self.run is not None
+        self.engine.archive_pass(run_id=self.run.run_id, as_of=as_of)
+        status = RunStatus.SUCCEEDED if res.status in (
+            "PROCESSED", "ALREADY_INGESTED", "DUPLICATE_CONTENT") else RunStatus.PARTIAL
+        return self.finish_run(status), res
+
+    def run_scan(self, *, window_from: date, window_to: date, as_of: date, max_articles: int,
+                 resume_run_id: str | None = None) -> WeeklyRun:
+        """Discover every source's window, then process in-window candidates up to the budget.
+
+        RESUMABLE: after every article the run's checkpoint (url → outcome) is saved; `--resume`
+        reloads an interrupted run with its ORIGINAL window and as-of and skips what it already
+        did. BUDGETED: candidates past `max_articles` are QUEUED (persisted) and offered first next
+        run — the cap is printed as "processed X of Y", never a silent drop. HONEST STATUS: a run
+        is PARTIAL when any source failed that is not a documented standing refusal, or any
+        in-window article could not be read; FAILED/INTERRUPTED when it stopped."""
+        if resume_run_id:
+            prior = self.store.run(resume_run_id)
+            if prior is None:
+                raise ValueError(f"no run {resume_run_id} to resume")
+            if prior.status is RunStatus.SUCCEEDED or prior.mode != "scan":
+                raise ValueError(f"{resume_run_id} is {prior.status.value} ({prior.mode}) — "
+                                 f"nothing to resume")
+            assert prior.window_from is not None and prior.window_to is not None
+            window_from, window_to, as_of = prior.window_from, prior.window_to, prior.as_of
+            prior.status = RunStatus.RUNNING
+            prior.warnings.append(f"resumed at {datetime.now(tz=UTC).isoformat()} — "
+                                  f"{len(prior.checkpoint)} article(s) already done are skipped")
+            self.run = prior
+            self.store.upsert_run(prior)
+        else:
+            self.start_run("scan", as_of=as_of, window_from=window_from, window_to=window_to)
+        run = self.run
+        assert run is not None
+        try:
+            # what earlier runs QUEUED is read FIRST, before discovery touches the table, and
+            # it is offered ahead of this run's own candidates
+            carried = [(url, meta) for url, _st, meta in self.store.candidates("QUEUED")]
+            discoveries: list[Discovery] = []
+            for src in self.sources.values():
+                d = discover_source(src, self.fetcher, self.store, window_from=window_from,
+                                    window_to=window_to)
+                discoveries.append(d)
+                for c in d.candidates:
+                    queued_c = self.store.candidate(c.url)
+                    if queued_c is not None and queued_c[0] == "QUEUED":
+                        continue  # stays QUEUED until it is processed
+                    if c.status in ("IN_WINDOW", "INACCESSIBLE", "UNDATED"):
+                        self.store.upsert_candidate(c.url, src.id, c.status, {
+                            "source_id": src.id, "run_id": run.run_id, "title": c.title,
+                            "listed_date": c.listed_date, "date_basis": c.date_basis,
+                            "note": c.note})
+            run.sources = [d.coverage for d in discoveries]
+            self.store.upsert_run(run)
+            cov = {d.coverage.source_id: d.coverage for d in discoveries}
+            disc_status = {c.url: c.status for d in discoveries for c in d.candidates}
+            todo: list[tuple[str, str, str]] = []
+            seen: set[str] = set()
+            for url, meta in carried:
+                sid = str(meta.get("source_id", ""))
+                if url not in seen and sid in self.sources:
+                    todo.append((url, sid, f"carried over from {meta.get('run_id')}"))
+                    seen.add(url)
+            fresh = sorted((c for d in discoveries for c in d.selected),
+                           key=lambda c: c.listed_date or date.min, reverse=True)
+            for c in fresh:
+                if c.url not in seen:
+                    todo.append((c.url, c.source_id, c.date_basis))
+                    seen.add(c.url)
+            done = queued = failures = 0
+            for url, sid, why in todo:
+                if url in run.checkpoint:
+                    continue
+                if done >= max_articles:
+                    known = self.store.candidate(url)
+                    self.store.upsert_candidate(url, sid, "QUEUED", {
+                        **(known[1] if known else {}), "source_id": sid,
+                        "run_id": run.run_id, "reason": f"budget cap max_articles={max_articles}"})
+                    queued += 1
+                    if sid in cov:
+                        cov[sid].queued += 1
+                    continue
+                src = self.sources[sid]
+                if disc_status.get(url) == "INACCESSIBLE":
+                    note = next((c.note for d in discoveries for c in d.candidates
+                                 if c.url == url), "inaccessible during discovery")
+                    res = self._record_blocked(url, sid, src.publisher, ArticleClass(
+                        src.default_article_class), FetchResult(
+                        url, None, None, RetrievalState.BLOCKED, note, None, None,
+                        datetime.now(tz=UTC), None, None, False, 0.0))
+                else:
+                    cand = next((c for d in discoveries for c in d.candidates if c.url == url),
+                                None)
+                    res = self.process_url(url, source_id=sid, as_of=as_of, listed=(
+                        (cand.listed_date, cand.date_basis)
+                        if cand is not None and cand.listed_date is not None else None))
+                done += 1
+                run.checkpoint[url] = res.status
+                self.store.upsert_candidate(url, sid, res.status, {
+                    "source_id": sid, "run_id": run.run_id, "article_id": res.article_id,
+                    "why": why, "note": res.note[:240]})
+                c_ = cov.get(sid)
+                if res.status in ("PROCESSED", "PARTIAL_PROCESSED"):
+                    if c_:
+                        c_.processed += 1
+                elif res.status in ("BLOCKED", "NO_BODY", "FAILED"):
+                    failures += 1
+                    if c_ and disc_status.get(url) != "INACCESSIBLE":
+                        c_.inaccessible += 1
+                self.store.upsert_run(run)
+            if queued:
+                run.warnings.append(f"budget: processed {done} of {done + queued} candidate "
+                                    f"article(s) this run (max_articles={max_articles}); "
+                                    f"{queued} QUEUED for the next run")
+            self._count("articles_queued", queued)
+            self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
+            failing = [sc.source_id for sc in run.sources
+                       if sc.status in ("BLOCKED", "ERROR")
+                       and not self.sources[sc.source_id].expect_blocked]
+            degraded = [sc.source_id for sc in run.sources if sc.status == "PARTIAL"]
+            if failing:
+                run.warnings.append(f"source(s) failed this run: {', '.join(failing)}")
+            if degraded:
+                run.warnings.append(f"source(s) partially covered: {', '.join(degraded)}")
+            status = (RunStatus.PARTIAL if failing or degraded or failures
+                      else RunStatus.SUCCEEDED)
+            return self.finish_run(status)
+        except KeyboardInterrupt:
+            self.finish_run(RunStatus.INTERRUPTED,
+                            error=f"interrupted — resume with: scan --resume {run.run_id}")
+            raise
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+
+

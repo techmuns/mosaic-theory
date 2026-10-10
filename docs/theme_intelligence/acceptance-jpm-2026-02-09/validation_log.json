@@ -1,0 +1,292 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762124Z",
+  "detail": "s06.0: Span supports 'likely to benefit' / strong return for large-cap leaders and chipmakers, but does not state these names were 'swept up in the software sell-off.' The sell-off attribution is not in the cited span. | 'These names were swept up in the software sell-off for now but are most likely to benefit long term.'",
+  "issue_id": "VI-025b7b39c8c4dc",
+  "ref_id": "TH-04140F1CA8:s06.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762096Z",
+  "detail": "s01.0: The 'broken logic / selling indiscriminately' span and the 'keep focus on large-cap leaders, chipmakers, commodity players' span support the claim about beneficiaries being sold off and the author's framing. However the cited spans do not explicitly state that hyperscalers, chipmakers and materials were 'sold off alongside software'; the software link is inferred and not in these two spans. | 'Hyperscalers, chipmakers and AI-related materials players have been sold off alongside software desp'",
+  "issue_id": "VI-0d173e3e10030a",
+  "ref_id": "TH-04140F1CA8:s01.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:12:47.706424Z",
+  "detail": "s07.2: UNSUPPORTED \u2014 Cited span is about the macro AI thesis standing and companies being rewarded long run; it does not support claims about broad-based tech selling being riskier or more volatility likely. | 'Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts '",
+  "issue_id": "VI-10fb7aae5154c6",
+  "ref_id": "TH-370C515762:s07.2",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762109Z",
+  "detail": "s02.0: Span supports that capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors, but drops the 'as one example' qualifier. Minor scope narrowing. | 'Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors.'",
+  "issue_id": "VI-15437ebba860d9",
+  "ref_id": "TH-04140F1CA8:s02.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:12:47.706400Z",
+  "detail": "s03.0: UNSUPPORTED \u2014 Claim that market prices in agentic AI disrupting SaaS is not stated in cited spans; spans say market selling indiscriminately and collapse 'could signal' disruption, not that it is priced in. | 'Market prices in agentic AI disrupting SaaS businesses.'",
+  "issue_id": "VI-16acedb6589b93",
+  "ref_id": "TH-370C515762:s03.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116412Z",
+  "detail": "s02.3: Value 14.5% for S&P 500 at Feb 2026 is correct, but stated as definite while source is forecast/approximate; qualifiers dropped in sentence text. | 'At Feb 2026 NTM net margin for S&P 500 was 14.5%. \u27e8cited figures: forecast; approximate, read from a'",
+  "issue_id": "VI-1dc157e7e260f9",
+  "ref_id": "TH-A56902FFB6:s02.3",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:13:03.762114Z",
+  "detail": "s03.0: UNSUPPORTED \u2014 The cited span mentions indiscriminate selling and broken logic but says nothing about 'agentic AI disruption fear' triggering a broad tech sell-off. That causal claim is not in the span. | 'Agentic AI disruption fear triggers broad tech sell-off.'",
+  "issue_id": "VI-1eee139bd16139",
+  "ref_id": "TH-04140F1CA8:s03.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762135Z",
+  "detail": "s07.1: The cited span supports the top 10 stocks' 99th-percentile pairwise correlation. However the claims about tech's heavy S&P 500 weight and that a faltering AI narrative could cause a simultaneous index-wide drawdown are not in the cited span. | \"Tech's heavy S&P 500 weight and the top 10 stocks' 99th-percentile pairwise correlation mean a falte\"",
+  "issue_id": "VI-2e469f2a1c55cf",
+  "ref_id": "TH-04140F1CA8:s07.1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762121Z",
+  "detail": "s03.2: Span supports that leaders are likely to see strong return on AI investments, but the specific claims that 'AI compute demand and capex continue' and that this supports 'long-term earnings' are not in the cited span. | \"AI compute demand and capex continue, supporting these companies' long-term earnings.\"",
+  "issue_id": "VI-3ac0317cc571d2",
+  "ref_id": "TH-04140F1CA8:s03.2",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T12:12:33.411572Z",
+  "detail": "c14: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-483c9ce379961a",
+  "ref_id": "C-d87b727046973f",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762118Z",
+  "detail": "s03.1: Spans support indiscriminate selling and that capex forecasts of the four hyperscalers were scorned, but nothing in the cited spans mentions 'materials' being sold or 'benefiting from AI build-out.' Overstates the specific scope. | 'Hyperscalers, chipmakers and materials sold indiscriminately despite benefiting from AI build-out.'",
+  "issue_id": "VI-4a4e3f57138d18",
+  "ref_id": "TH-04140F1CA8:s03.1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:03.762131Z",
+  "detail": "s07.0: Span supports capex forecasts of the four names being scorned, but the added 'who may doubt returns on AI spending' is an interpretation not in the cited span; also drops 'as one example.' | 'Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors, who may doubt r'",
+  "issue_id": "VI-4db25503ad6ec5",
+  "ref_id": "TH-04140F1CA8:s07.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T12:12:33.411175Z",
+  "detail": "c4: forced chart_derived: the quote is in a chart description",
+  "issue_id": "VI-51cfde183010bc",
+  "ref_id": "C-28aea36bb74071",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116409Z",
+  "detail": "s02.2: Value 13.0% for Ex AI Usage at Feb 2026 is correct, but stated as definite while source is forecast/approximate; qualifiers dropped in sentence text. | 'At Feb 2026 NTM net margin for the Ex AI Usage group was 13.0%. \u27e8cited figures: forecast; approximat'",
+  "issue_id": "VI-61f1fe3c5009fc",
+  "ref_id": "TH-A56902FFB6:s02.2",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T12:12:33.411526Z",
+  "detail": "c13: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-62d336ac4dfd23",
+  "ref_id": "C-243c202ac46ff1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:13:03.762138Z",
+  "detail": "s07.2: UNSUPPORTED \u2014 The cited span is about the macro AI thesis standing and companies being rewarded long run. It does not support claims that broad tech selling 'has never been riskier' or that 'more bouts of volatility are likely.' | 'Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts '",
+  "issue_id": "VI-6edc84ab68cad8",
+  "ref_id": "TH-04140F1CA8:s07.2",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116390Z",
+  "detail": "s01.0: The margin figures (16.4%, 14.5%, 13.0%) are forecasts/NTM and approximate (read from chart), but the sentence presents them as definite net margins. Also, the 2-3pp claim is about margin expansion outpacing, which is separate \u2014 the sentence conflates NTM margin levels with margin expansion. The forecast/approximate qualifiers are dropped. | 'S&P 500 AI adopters show NTM net margins of 16.4% at Feb 2026 versus 14.5% for the index and 13.0% f'",
+  "issue_id": "VI-6fc75f17770255",
+  "ref_id": "TH-A56902FFB6:s01.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116417Z",
+  "detail": "s03.0: The source says companies leaning into AI will be rewarded and AI changes the productivity landscape; it does not state companies adopt AI specifically 'to drive productivity' as a motive. The claim is a loose paraphrase that overstates the span. | 'Companies adopt AI to drive productivity.'",
+  "issue_id": "VI-825d46a0fbe8f5",
+  "ref_id": "TH-A56902FFB6:s03.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T12:12:33.411305Z",
+  "detail": "c8: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-90ae5c57197367",
+  "ref_id": "C-9149308d45ce48",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T12:12:33.411182Z",
+  "detail": "c4: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-a350f8ff26aa1b",
+  "ref_id": "C-28aea36bb74071",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116404Z",
+  "detail": "s02.1: Value 16.4% at Feb 2026 is correct, but the sentence states it as a definite figure while the source is a forecast and approximate (read from chart); the card's system labels note this but the sentence text itself drops the qualifiers. | 'At Feb 2026 NTM net margin for the S&P 500 AI Usage basket was 16.4%. \u27e8cited figures: forecast; appr'",
+  "issue_id": "VI-a79e85c0228fa3",
+  "ref_id": "TH-A56902FFB6:s02.1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:12:47.706413Z",
+  "detail": "s06.0: Span says below 30 incentivizes inflows (an opinion/historical tendency); the claim about 'few are buying as disruption fears persist' is not supported by the cited spans. | 'Oversold technicals and compressed valuations may attract buyers, but few are buying as disruption f'",
+  "issue_id": "VI-b3b4047c8dc898",
+  "ref_id": "TH-370C515762:s06.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:13:18.116428Z",
+  "detail": "s07.1: UNSUPPORTED \u2014 The cited span is about the macro AI thesis standing and companies being rewarded; it says nothing about broad-based tech selling being risky, tech concentration, or future volatility. Not supported by the cited span. | 'Broad-based technology selling has never been riskier for portfolios skewed to tech, and more bouts '",
+  "issue_id": "VI-b57f61cdbdbdb5",
+  "ref_id": "TH-A56902FFB6:s07.1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116424Z",
+  "detail": "s06.0: The 2-3pp outpacing is supported, but 'already seeing positive margin impact' and the capex span (C-85c70adb2c6571 about capex forecasts scorned by investors) does not support positive margin impact; the capex citation is not relevant to the claim. | 'Corporate AI adopters are already seeing positive margin impact, outpacing non-adopters by 2-3 point'",
+  "issue_id": "VI-c10da1847b779c",
+  "ref_id": "TH-A56902FFB6:s06.0",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T12:12:33.411478Z",
+  "detail": "c12: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-d53fb4fbb21da1",
+  "ref_id": "C-f6298669bae3b5",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T12:13:03.762128Z",
+  "detail": "s06.2: UNSUPPORTED \u2014 The cited span only says valuation collapse could signal lower growth/terminal value for software due to AI disruption. It says nothing about hyperscalers or private AI companies investing in semis, power, cooling, networking, or supporting infrastructure players. | 'If AI disruption is real, hyperscalers or private AI model companies must invest in physical inputs '",
+  "issue_id": "VI-d9e98f61c19ec2",
+  "ref_id": "TH-04140F1CA8:s06.2",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:12:47.706418Z",
+  "detail": "s07.1: Span says collapse 'could signal' lower growth/terminal value; the added phrase 'making the de-rating permanent' overstates the hedged span. | 'The valuation collapse could signal a structurally lower growth rate and terminal value for software'",
+  "issue_id": "VI-ded60e4f688733",
+  "ref_id": "TH-370C515762:s07.1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-10T12:12:33.411909Z",
+  "detail": "h2 Hyperscalers, chipmakers and AI materials swept up cites ['C-85c70adb2c6571'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-e40280a14b8807",
+  "ref_id": "h2 Hyperscalers, chipmakers and AI materials swept up",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T12:13:18.116421Z",
+  "detail": "s03.1: Values 16.4% vs 13.0% are correct, but these are forecast/approximate NTM figures stated as definite; qualifiers dropped in sentence text. | 'AI adopters post NTM net margins of 16.4% vs 13.0% for non-adopters. \u27e8cited figures: forecast; appro'",
+  "issue_id": "VI-f13c5273f71478",
+  "ref_id": "TH-A56902FFB6:s03.1",
+  "run_id": "R-20261010T121233Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]
