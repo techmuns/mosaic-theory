@@ -1,6 +1,6 @@
 # Dossier — EPAM Systems, Inc. (NYSE: EPAM)
 
-_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
 
 # Brief — first cut
 
@@ -643,7 +643,6 @@ _Source §: latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm_
   - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
-  - 2026-10-09 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 41d old — 2026-08-07 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 39d old (2026-08-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -19,10 +19,17 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
-from vinci.dossier.schemas import LAYER_REFRESH_WRITERS, Dossier, LayerRefresh
+from vinci.dossier.schemas import (
+    LAYER_REFRESH_WRITERS,
+    Dossier,
+    LayerRefresh,
+    dossier_json,
+    write_dossier,
+)
 
 FIELD = "layer_refreshes"
 
@@ -93,3 +100,16 @@ def upsert_text(text: str, rec: LayerRefresh) -> str:
         raise ValueError("dossier.json is not a JSON object — refusing to splice")
     head = end[:-1].rstrip()
     return f"{head},\n{field}\n}}{text[len(end):]}"
+
+
+def write_recorded(path: Path, original: str, model: Dossier, writer: str) -> str:
+    """Write `model` through the one serializer (`schemas.write_dossier`), recording the layers that
+    moved against `original` — the page as the writer read it. The derived blocks
+    (`valuation_basis`, `date_semantics`) are named when they move with their inputs, so the record
+    says everything the write changed. Nothing moved, nothing recorded: a no-op stays
+    byte-identical.
+    Returns the text written."""
+    staged = dossier_json(model)
+    if staged != original and (moved := moved_layers(json.loads(original), json.loads(staged))):
+        model = append(model, entry(writer, moved))
+    return write_dossier(path, model)

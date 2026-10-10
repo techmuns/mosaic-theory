@@ -122,10 +122,12 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
     ),
     (
         "2026-10-09.3",
-        "the active recipe's basis beside the page (`valuation_basis`: bases, formula, bridge, "
-        "exit claims, share count, non-operating policy, conflicts) and its dates named "
-        "(`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward "
-        "history's latest close is `latest_observed_close`, never `current`",
+        "the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple "
+        "and the snapshot it is struck at, bridge, exit claims, the basic share count, "
+        "non-operating policy, conflicts — the template's share guard among them) and its dates "
+        "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the "
+        "forward history's latest close is `latest_observed_close`, never `current`; every writer "
+        "saves through one write",
     ),
 )
 

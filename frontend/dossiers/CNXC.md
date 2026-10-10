@@ -1,6 +1,6 @@
 # Dossier — Concentrix Corp (Nasdaq: CNXC)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
 
 # Brief — first cut
 
@@ -602,7 +602,6 @@ _Source §: 8-K 0001803599-21-000215 · exhibit101122721.htm_
   - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
-  - 2026-10-09 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 43d old (2026-07-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

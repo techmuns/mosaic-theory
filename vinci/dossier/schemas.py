@@ -17,6 +17,7 @@ from __future__ import annotations
 import enum
 from collections.abc import Callable
 from datetime import date, datetime
+from pathlib import Path
 from typing import Any, Generic, Literal, TypeVar
 
 from pydantic import (
@@ -748,13 +749,31 @@ class EvBridge(BaseModel, frozen=True):
 
 
 class CurrentMultipleRef(BaseModel, frozen=True):
-    """TODAY'S multiple for the active recipe — CIQ Estimates, never a history close."""
+    """TODAY'S multiple for the active recipe — CIQ Estimates, never a history close — and the
+    SNAPSHOT it is struck at, which is not the page's price (2026-10-10).
+
+    CIQ strikes the Estimates multiples at its own market cap on its own date; the page's price is
+    the EOD close, usually days later (21 of 22 pages on 2026-10-09; UBER six weeks). Paired with
+    the page's spot, the multiple is off by the price move. `snapshot_reconciles` tests that the
+    multiple IS struck at this snapshot — every FY TEV/EBIT row × that year's EBIT consensus equals
+    market cap + CIQ claims within 0.1% (20 of 23 pages did, to 0.005%; VRRM, NCNO and CNXC did not,
+    their Estimates and comps exports being different pulls). `value_at_page_price` is the multiple
+    a record at the page's price would carry, on the record's own share basis."""
 
     metric: str                      # CIQ's row label: 'TEV/EBIT'
     period: str                      # 'NTM'
     value: float
     as_of: str | None = None         # the Estimates export's as-of (a `≥` floor if unstamped)
     source: str
+    snapshot_as_of: str | None = None          # CIQ's market-cap date (comps)
+    snapshot_market_cap: float | None = None   # $M
+    snapshot_tev: float | None = None          # $M — market cap + CIQ's claims (EV multiples)
+    snapshot_reconciles: bool | None = None    # None where it cannot be tested
+    page_price: float | None = None
+    page_price_as_of: str | None = None
+    days_price_after_snapshot: int | None = None
+    value_at_page_price: float | None = None
+    value_at_page_price_basis: str | None = None
 
 
 class BridgeCrossCheck(BaseModel, frozen=True):
@@ -821,6 +840,11 @@ class ShareCountPolicy(BaseModel, frozen=True):
     current_value: float | None
     unit: str = "shares"
     current_source: str | None = None
+    # (2026-10-10) WHICH count: the BASIC point-in-time count, without the dilutive increment. Every
+    # committed record that states a basis uses the point-in-time DILUTED count instead (MVST
+    # +15.9%, AORT +3.4% over basic), so the override rule names that count.
+    count_basis: str = ""
+    includes_dilutive_increment: bool = False
     forecast_status: str = "assumption"
     override_allowed: bool = True
     override_rule: str
@@ -883,6 +907,11 @@ class DateSemantics(BaseModel, frozen=True):
     historical_multiple_history_through: str | None = None
     stock_performance_as_of: str | None = None
     assembled_at: str | None = None
+    # (2026-10-10) the date CIQ's market cap, TEV and current multiples are struck at, and how many
+    # days the page's price sits after it — `analysis_as_of` alone read UBER as current to 09-16
+    # while every valuation input was from 08-05
+    valuation_snapshot_as_of: str | None = None
+    price_days_after_valuation_snapshot: int | None = None
 
 
 class ForwardConsensus(BaseModel, frozen=True):
@@ -2544,3 +2573,20 @@ def dossier_json(doc: Dossier) -> str:
         if held is not None and getattr(held, key) is None:
             excl.setdefault(layer, set()).add(key)
     return doc.model_dump_json(indent=2, exclude=excl or None)
+
+
+def write_dossier(path: Path, doc: Dossier) -> str:
+    """THE ONE WRITE of a committed `dossier.json` — through :func:`dossier_json`, so every page
+    any writer saves carries derived blocks that describe it (2026-10-09). Returns the text written.
+
+    NINE WRITERS, THREE SERIALIZERS, BEFORE THIS. Assembly and the refresh path used
+    `dossier_json`; `anchor-backfill`, `own-history-refresh` and `financials-backfill` spliced JSON
+    text; `peerset-backfill` re-dumped the raw dict; `dossier --midcycle` and the two
+    `scripts/refresh_*` used pydantic's default dump — which, run on the committed corpus,
+    rewrote 25 of 26 pages with `null` where the schema says ABSENT. A splice also left
+    `valuation_basis` stale whenever it moved one of its inputs (an anchor flipped to applicable
+    kept a block saying its R1 fields were ineligible). `tests/test_valuation_basis.py` pins every
+    writer to this function."""
+    text = dossier_json(doc)
+    path.write_text(text)
+    return text

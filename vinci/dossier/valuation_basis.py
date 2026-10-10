@@ -49,9 +49,13 @@ CONFLICT_FLAG = "VALUATION_RECIPE_BASIS_CONFLICT"
 _EXIT_METHOD = {"held": ("HOLD_CURRENT_SAME_BASIS", "assumption"),
                 "consensus": ("SAME_BASIS_CONSENSUS", "forecast")}
 
-_SHARES_OVERRIDE = ("use a reliable, explicit forward share-count forecast only where one is "
-                    "available and on the same basis (point-in-time shares outstanding); never "
-                    "the diluted weighted average, which is a period average")
+_SHARES_BASIS = ("BASIC shares outstanding at the EDGAR cover date (point-in-time) — it EXCLUDES "
+                 "the dilutive increment (options, RSUs, convertibles)")
+_SHARES_OVERRIDE = ("replace with the point-in-time DILUTED count — this basic count plus the "
+                    "dilutive increment stated from the filing (options and RSUs by the "
+                    "treasury-stock method, convertibles if-converted) — or with a reliable, "
+                    "explicit forward share-count forecast on that basis; never the diluted "
+                    "weighted average, which is a period average")
 
 #: Non-operating assets on an ENTERPRISE recipe whose multiple is a vendor-TEV series — the
 #: operator's 2026-10-08 R4 ruling ("non-operating investments stay inside the multiple, for now"),
@@ -84,16 +88,64 @@ def _num(x: Any) -> float | None:
     return float(x) if isinstance(x, (int, float)) and not isinstance(x, bool) else None
 
 
+#: How close FY multiple × that year's consensus must come to the snapshot TEV for the multiple to
+#: be called struck at it. Face validity, not fitted: on 2026-10-09 the 20 pages whose exports are
+#: one pull agreed to 0.005% (rounding); the three that did not were off by 1.0%–8.3%.
+SNAPSHOT_TOL = 0.001
+
+
+def _with_snapshot(d: dict[str, Any], cur: dict[str, Any]) -> dict[str, Any]:
+    """The snapshot today's multiple is struck at, tested; and the multiple at the page's price."""
+    si = _get(d, "mechanical", "stock_info") or {}
+    fc = d.get("forward_consensus") or {}
+    mc, price = _num(_get(si, "market_cap", "value")), _num(_get(si, "price", "value"))
+    shares = _num(_get(si, "shares_out", "value"))
+    snap_day, price_day = _day(si.get("market_cap_as_of")), _day(si.get("as_of"))
+    out = dict(cur, snapshot_as_of=si.get("market_cap_as_of"), snapshot_market_cap=mc,
+               page_price=price, page_price_as_of=si.get("as_of"),
+               days_price_after_snapshot=((price_day - snap_day).days
+                                          if price_day and snap_day else None))
+    if cur["metric"] == "TEV/EBIT":
+        claims = _num(_get(d, "ev_bridge", "ciq_tev_claims"))
+        if mc is None or claims is None:
+            return out
+        tev = out["snapshot_tev"] = mc + claims
+        means = {s.get("period"): _num(s.get("mean")) for s in fc.get("spreads") or []
+                 if isinstance(s, dict) and s.get("metric") == "EBIT"}
+        fy = [(v, e) for m in fc.get("current_multiples") or []
+              if m.get("metric") == "TEV/EBIT" and str(m.get("period")).startswith("FY")
+              and (v := _num(m.get("value"))) and (e := means.get(m["period"]))]
+        if fy:
+            out["snapshot_reconciles"] = all(
+                abs(v * e - tev) / tev <= SNAPSHOT_TOL for v, e in fy)
+        if out.get("snapshot_reconciles") and price and shares:
+            ev_at_price = price * shares / 1e6 + claims
+            out["value_at_page_price"] = round(cur["value"] * ev_at_price / tev, 6)
+            out["value_at_page_price_basis"] = (
+                "(page price × point-in-time shares outstanding + CIQ claims) ÷ (snapshot TEV ÷ "
+                "the multiple) — the entry multiple an R4 record at the page's price carries")
+    elif cur["metric"] == "Price/Earnings":
+        eps = {round(e, 6) for f in _get(fc, "pe_eps_basis", "fits") or []
+               if isinstance(e := _num(f.get("ntm_implied_eps")), float)}
+        if price and len(eps) == 1:
+            out["value_at_page_price"] = round(price / eps.pop(), 6)
+            out["value_at_page_price_basis"] = ("page price ÷ the NTM EPS CIQ's NTM P/E implies "
+                                                "(forward_consensus.pe_eps_basis)")
+    return out
+
+
 def _current_multiple(d: dict[str, Any], metric: str) -> dict[str, Any] | None:
-    """TODAY'S NTM multiple from CIQ Estimates (`forward_consensus.current_multiples`)."""
+    """TODAY'S NTM multiple from CIQ Estimates (`forward_consensus.current_multiples`), with the
+    snapshot it is struck at."""
     fc = d.get("forward_consensus") or {}
     for m in fc.get("current_multiples") or []:
         if isinstance(m, dict) and m.get("metric") == metric and m.get("period") == "NTM":
             v = _num(m.get("value"))
             if v is None:
                 return None
-            return {"metric": metric, "period": "NTM", "value": v, "as_of": fc.get("as_of"),
-                    "source": "forward_consensus.current_multiples (CIQ Estimates→Multiples)"}
+            return _with_snapshot(d, {
+                "metric": metric, "period": "NTM", "value": v, "as_of": fc.get("as_of"),
+                "source": "forward_consensus.current_multiples (CIQ Estimates→Multiples)"})
     return None
 
 
@@ -107,6 +159,8 @@ def _share_count(d: dict[str, Any]) -> dict[str, Any]:
         "unit": "shares",
         "current_source": (f"mechanical.stock_info.shares_out ({so.get('source_ref')})"
                            if so else None),
+        "count_basis": _SHARES_BASIS,
+        "includes_dilutive_increment": False,
         "forecast_status": "assumption",
         "override_allowed": True,
         "override_rule": _SHARES_OVERRIDE,
@@ -117,13 +171,19 @@ def _share_count(d: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _shares_conflict(policy: dict[str, Any], conflicts: list[str]) -> None:
-    """An enterprise recipe divides equity by the point-in-time count — and only by that count."""
-    v = policy["current_value"]
-    if v is None or v <= 0:
-        conflicts.append("no point-in-time shares outstanding on the page "
-                         "(mechanical.stock_info.shares_out) — the diluted weighted average is "
-                         "NOT substituted for it")
+def _shares_conflict(d: dict[str, Any], conflicts: list[str]) -> None:
+    """THE TEMPLATE'S OWN SHARE GUARD (`propose.resolve_shares`), applied here so `priceable`
+    never says yes where `scenario-propose` refuses (2026-10-10). It refuses an absent
+    point-in-time count, and one more than 2% from the diluted weighted average — a conversion, a
+    raise or a split, not the buyback pace. IT (5.43%) and LLY (5.06%), both R1, were first called
+    priceable here; the
+    diluted weighted average is never substituted for the missing or disputed count."""
+    from vinci.dossier.propose import ProposalRefusedError, resolve_shares
+
+    try:
+        resolve_shares(d)
+    except ProposalRefusedError as exc:
+        conflicts.append(str(exc))
 
 
 def _r4_bridge(eb: dict[str, Any]) -> dict[str, Any]:
@@ -178,6 +238,11 @@ def _r4(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
     elif cur["value"] <= 0:
         conflicts.append(f"CIQ's NTM TEV/EBIT is not positive ({cur['value']}) — R4 prices a "
                          "positive forward operating profit")
+    if cur is not None and cur.get("snapshot_reconciles") is False:
+        conflicts.append(
+            "the NTM TEV/EBIT is not struck at the page's CIQ snapshot: FY TEV/EBIT × EBIT "
+            f"consensus differs from market cap + CIQ claims by more than {SNAPSHOT_TOL:.1%} — the "
+            "Estimates and comps exports are different pulls")
     eb = d.get("ev_bridge")
     out: dict[str, Any] = {
         "earnings_basis": "NTM EBIT", "multiple_basis": BASIS_EV_NTM_EBIT,
@@ -190,7 +255,7 @@ def _r4(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
         "non_operating_assets": _NON_OP_VENDOR_TEV,
         "exit_share_count": _share_count(d),
     }
-    _shares_conflict(out["exit_share_count"], conflicts)
+    _shares_conflict(d, conflicts)
     if not isinstance(eb, dict):
         conflicts.append("no CIQ TEV bridge on the page (ev_bridge) — the anchor's EDGAR net debt "
                          "is NOT substituted for it")
@@ -251,7 +316,7 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
         for key in ("multiple", "d_and_a", "net_debt"):
             if _num(_get(a, key, "value")) is None:
                 conflicts.append(f"R1 needs anchor.{key} and the page carries none")
-        _shares_conflict(out["exit_share_count"], conflicts)
+        _shares_conflict(d, conflicts)
     return out
 
 
@@ -342,6 +407,10 @@ def date_semantics(d: dict[str, Any]) -> DateSemantics:
                                                     "history_through"),
         "stock_performance_as_of": _get(m, "stock_performance", "as_of"),
         "assembled_at": d.get("assembled_at"),
+        "valuation_snapshot_as_of": named["market_cap_as_of"],
+        "price_days_after_valuation_snapshot": (
+            (p - s).days if (p := _day(named["price_as_of"]))
+            and (s := _day(named["market_cap_as_of"])) else None),
     })
 
 

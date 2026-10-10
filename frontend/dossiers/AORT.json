@@ -11992,7 +11992,7 @@
         ],
         "band": {
           "metric": "P/NTM EPS",
-          "latest_observed_close": 202.423263,
+          "current": 202.423263,
           "low": 58.80829,
           "high": 294.296951,
           "median": 130.68848,
@@ -12010,9 +12010,7 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "b935655879",
-          "source_mtime": "2026-09-01T17:49:32+00:00",
-          "latest_close_date": "2026-07-17",
-          "latest_observed_close_in_distribution": false
+          "source_mtime": "2026-09-01T17:49:32+00:00"
         }
       }
     ],
@@ -12908,40 +12906,6 @@
     "source_sha256": "b935655879",
     "estimates_sha256": "528430a2ed"
   },
-  "valuation_basis": {
-    "recipe": "R2_NEEDED",
-    "priceable": false,
-    "status_reason": "no machine-priceable recipe is tagged (R2_NEEDED) — no valuation basis is derived for it here; a record on this name states its own basis",
-    "earnings_basis": null,
-    "multiple_basis": null,
-    "current_multiple": null,
-    "history_series": null,
-    "ev_bridge_basis": null,
-    "scenario_formula": null,
-    "per_share_formula": null,
-    "formula_steps": [],
-    "ev_bridge": null,
-    "exit_claims": null,
-    "exit_share_count": null,
-    "non_operating_assets": null,
-    "anchor_fields_eligible": false,
-    "conflicts": []
-  },
-  "date_semantics": {
-    "screen_reference_date": "2026-08-14",
-    "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-08-17",
-    "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-08-17",
-    "market_cap_as_of": "2026-07-29",
-    "tev_as_of": "2026-07-29",
-    "consensus_as_of": "≥2026-06-30",
-    "balance_sheet_date": "2026-03-31",
-    "historical_multiple_latest_observation": "2026-07-17",
-    "historical_multiple_history_through": "2026-06-30",
-    "stock_performance_as_of": "2026-08-14",
-    "assembled_at": "2026-08-18T12:04:11.435990Z"
-  },
   "layer_refreshes": [
     {
       "date": "2026-10-07",
@@ -12984,17 +12948,6 @@
       "writer": "refresh",
       "layers": [
         "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-09",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "date_semantics",
-        "forward_multiple_history",
-        "valuation_basis"
       ]
     }
   ],
@@ -13054,23 +13007,6 @@
     "anchor_base_value_per_share": 19.7899,
     "anchor_ev_ebit": 72.7036,
     "overall_confidence": "firm",
-    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
-    "scenario_eligibility": {
-      "eligible_for_scenario_valuation": false,
-      "fields": [
-        "multiple_basis",
-        "margin",
-        "multiple",
-        "d_and_a",
-        "net_debt",
-        "diluted_shares",
-        "ltm_revenue",
-        "ltm_fcf",
-        "anchor_base_value_per_share",
-        "midcycle_gap",
-        "anchor_ev_ebit"
-      ],
-      "reason": "the active recipe is R2_NEEDED; these are R1's screen arithmetic, kept for audit and never an input to a R2_NEEDED valuation — the active basis is `valuation_basis`"
-    }
+    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

@@ -1,6 +1,6 @@
 # Dossier — NETFLIX INC (Nasdaq: NFLX)
 
-_October 7, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_October 7, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
 
 # Brief — first cut
 
@@ -625,7 +625,6 @@ _Source §: 8-K 0001193125-09-194962 · dex101.htm_
   - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
-  - 2026-10-09 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `wt-nflx → mosaic-theory-ta` · reaching 2026-10-06
 - **Panel age:** oldest panel 1d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-07 build
 - **Consensus age:** consensus 1d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

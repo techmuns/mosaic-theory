@@ -206,7 +206,7 @@ def test_a_bridge_off_ciqs_tev_is_a_conflict_on_both_sides_of_the_tolerance() ->
     (lambda d: d["ev_bridge"].update(exit_claims=[]), "no exit claims"),
     (lambda d: d["mechanical"]["stock_info"].update(
         shares_out={"value": None, "source_ref": None, "status": "missing", "note": "x"}),
-     "no point-in-time shares outstanding"),
+     "stock_info.shares_out is absent"),
 ])
 def test_each_missing_r4_input_is_a_named_conflict(break_it: Any, needle: str) -> None:
     doc = _page("AMZN")
@@ -313,3 +313,146 @@ def test_every_page_names_its_dates_from_its_layers() -> None:
                                  "balance_sheet_date", "historical_multiple_latest_observation")]
         days = [str(x).lstrip("≥")[:10] for x in named if x]
         assert ds["analysis_as_of"] == (max(days) if days else None), t
+
+
+# --- (2026-10-10) the four folded fixes -----------------------------------------------------------
+
+def test_every_dossier_writer_saves_through_the_one_write() -> None:
+    """A SOURCE PIN, AND ITS LIMIT STATED. Every function that names `dossier.json` and writes must
+    save the page through `write_dossier`/`dossier_json` — never pydantic's default dump (25 of 26
+    pages rewritten with nulls), a raw `json.dumps`, or a text splice written as-is (the derived
+    blocks left describing the old page). It finds writers by the literal `dossier.json`; one that
+    takes its path from a caller without naming the file escapes it, which is why the corpus
+    round-trip pin above stands beside it."""
+    import ast
+
+    bypass = ("model_dump_json", "json.dumps", "upsert_text", "replace_anchor_block",
+              "replace_valuation_fields", "insert_anchor_block")
+    not_pages = {("frontend/build.py", "main"),                       # index + snapshots
+                 ("scripts/build_companyfacts_fixture.py", "main"),   # a test fixture
+                 ("vinci/dossier/refresh.py", "_rerender_only")}      # markdown only
+    writers = set()
+    for f in sorted([*ROOT.joinpath("vinci").rglob("*.py"), *ROOT.joinpath("scripts").glob("*.py"),
+                     ROOT / "frontend" / "build.py"]):
+        src = f.read_text()
+        if "dossier.json" not in src:
+            continue
+        rel = str(f.relative_to(ROOT))
+        for node in ast.walk(ast.parse(src)):
+            if not isinstance(node, ast.FunctionDef):
+                continue
+            seg = ast.get_source_segment(src, node) or ""
+            if "dossier.json" not in seg or (rel, node.name) in not_pages:
+                continue
+            calls = [c for c in ast.walk(node) if isinstance(c, ast.Call)
+                     and isinstance(c.func, ast.Attribute) and c.func.attr == "write_text"]
+            for c in calls:
+                arg = ast.get_source_segment(src, c.args[0]) if c.args else ""
+                assert not any(b in (arg or "") for b in bypass), (rel, node.name, arg)
+            if calls or "write_dossier(" in seg or "write_recorded(" in seg:
+                writers.add((rel, node.name))
+                assert any(w in seg for w in ("write_dossier(", "write_recorded(",
+                                              "dossier_json(")), (rel, node.name)
+    assert len(writers) >= 9, f"found {len(writers)} page writers: {sorted(writers)}"
+
+
+def test_a_spliced_anchor_is_written_with_blocks_that_describe_it(tmp_path: pathlib.Path) -> None:
+    """The real failure shape, on NFLX: an anchor write that flips `applicable` left the stored
+    block saying the R1 fields were ineligible while the anchor's own tag said eligible. Written
+    through `write_recorded`, the block follows the anchor, and the page records that it moved."""
+    from vinci.dossier import layer_refresh
+
+    path = tmp_path / "dossier.json"
+    original = (DOSS / "NFLX" / "dossier.json").read_text()
+    path.write_text(original)
+    d = Dossier.model_validate_json(original)
+    assert d.anchor is not None
+    layer_refresh.write_recorded(
+        path, original, d.model_copy(update={"anchor": d.anchor.model_copy(
+            update={"applicable": True})}), "anchor-backfill")
+    doc = json.loads(path.read_text())
+    assert doc["anchor"]["scenario_eligibility"]["eligible_for_scenario_valuation"] is True
+    assert doc["valuation_basis"]["anchor_fields_eligible"] is True
+    rec = doc["layer_refreshes"][-1]
+    assert rec["writer"] == "anchor-backfill"
+    assert {"anchor", "valuation_basis"} <= set(rec["layers"])
+
+
+def test_the_gate_applies_the_templates_own_share_guard() -> None:
+    """Wherever the share count enters (R1, R4), the block's verdict IS `resolve_shares`'s — read
+    off the guard itself, on every page. IT and LLY (5.43%, 5.06%) are the live refusals."""
+    from vinci.dossier.propose import resolve_shares
+
+    refused = []
+    for t in PAGES:
+        doc = _page(t)
+        b, a = doc["valuation_basis"], doc["anchor"]
+        if not (b["recipe"] == sc.RECIPE_R4 or (b["recipe"].startswith("R1") and a["applicable"])):
+            continue
+        try:
+            resolve_shares(doc)
+            guard = None
+        except ProposalRefusedError as exc:
+            guard = str(exc)
+            refused.append(t)
+        share_conflicts = [c for c in b["conflicts"] if "share counts" in c or "shares_out" in c]
+        assert share_conflicts == ([guard] if guard else []), t
+        if guard:
+            assert b["priceable"] is False
+            assert f"{vb.CONFLICT_FLAG}: {guard}" in doc["qa_flags"], t
+    assert {"IT", "LLY"} <= set(refused), refused
+
+
+def test_todays_multiple_names_its_snapshot_and_its_value_at_the_page_price() -> None:
+    """Struck at CIQ's market cap on its own date, measured: every FY TEV/EBIT × that year's EBIT
+    consensus equals market cap + CIQ claims. At the page's price it is the entry multiple an R4
+    record carries, on the record's own share basis."""
+    for t in ("AMZN", "UBER"):
+        doc = _page(t)
+        cm, si = doc["valuation_basis"]["current_multiple"], doc["mechanical"]["stock_info"]
+        eb = doc["ev_bridge"]
+        assert (cm["snapshot_as_of"], cm["snapshot_market_cap"]) == (
+            si["market_cap_as_of"], si["market_cap"]["value"])
+        assert cm["snapshot_tev"] == pytest.approx(si["market_cap"]["value"] + eb["ciq_tev_claims"])
+        assert cm["snapshot_reconciles"] is True
+        ntm_ebit = cm["snapshot_tev"] / cm["value"]
+        at_price = (si["price"]["value"] * si["shares_out"]["value"] / 1e6
+                    + eb["ciq_tev_claims"]) / ntm_ebit
+        assert cm["value_at_page_price"] == pytest.approx(at_price, rel=1e-6)
+        assert cm["days_price_after_snapshot"] == doc["date_semantics"][
+            "price_days_after_valuation_snapshot"]
+    assert _page("UBER")["valuation_basis"]["current_multiple"]["days_price_after_snapshot"] > 30
+
+
+def test_a_multiple_off_its_snapshot_is_not_carried_to_the_page_price() -> None:
+    """CONSTRUCTED from AMZN (VRRM, NCNO and CNXC carry the real shape, on pages no EV recipe
+    prices): an FY row struck at another TEV breaks the reconciliation, the scaling is withheld,
+    and on R4 it is a conflict."""
+    doc = _page("AMZN")
+    fy = next(m for m in doc["forward_consensus"]["current_multiples"]
+              if m["metric"] == "TEV/EBIT" and m["period"] == "FY 2027")
+    fy["value"] *= 1.01
+    b = vb.derive(doc)
+    assert b.current_multiple is not None and b.current_multiple.snapshot_reconciles is False
+    assert b.current_multiple.value_at_page_price is None
+    assert any("not struck at the page's CIQ snapshot" in c for c in b.conflicts)
+
+
+def test_the_share_count_says_it_is_the_basic_count() -> None:
+    for t in ("AMZN", "UBER", "BRBR"):
+        sh = _page(t)["valuation_basis"]["exit_share_count"]
+        assert sh["count_basis"].startswith("BASIC") and sh["includes_dilutive_increment"] is False
+        assert "dilutive increment" in sh["override_rule"]
+        assert "never the diluted weighted average" in sh["override_rule"]
+
+
+def test_the_valuation_snapshot_date_is_named_beside_the_price() -> None:
+    for t in PAGES:
+        doc = _page(t)
+        ds, si = doc["date_semantics"], doc["mechanical"]["stock_info"]
+        assert ds["valuation_snapshot_as_of"] == si.get("market_cap_as_of"), t
+        if si.get("as_of") and si.get("market_cap_as_of"):
+            from datetime import date
+            gap = (date.fromisoformat(str(si["as_of"])[:10])
+                   - date.fromisoformat(str(si["market_cap_as_of"])[:10])).days
+            assert ds["price_days_after_valuation_snapshot"] == gap, t

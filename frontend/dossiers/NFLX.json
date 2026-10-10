@@ -11734,7 +11734,7 @@
         ],
         "band": {
           "metric": "EV/NTM Revenue",
-          "latest_observed_close": 5.784491,
+          "current": 5.784491,
           "low": 2.699811,
           "high": 12.618588,
           "median": 7.5909815,
@@ -11752,9 +11752,7 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "d162f709ec",
-          "source_mtime": "2026-09-22T08:40:45+00:00",
-          "latest_close_date": "2026-09-21",
-          "latest_observed_close_in_distribution": false
+          "source_mtime": "2026-09-22T08:40:45+00:00"
         }
       },
       {
@@ -11961,7 +11959,7 @@
         ],
         "band": {
           "metric": "EV/NTM EBITDA",
-          "latest_observed_close": 16.894269,
+          "current": 16.894269,
           "low": 12.827839,
           "high": 75.764399,
           "median": 35.813068,
@@ -11979,9 +11977,7 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "d162f709ec",
-          "source_mtime": "2026-09-22T08:40:45+00:00",
-          "latest_close_date": "2026-09-21",
-          "latest_observed_close_in_distribution": false
+          "source_mtime": "2026-09-22T08:40:45+00:00"
         }
       },
       {
@@ -12392,7 +12388,7 @@
         ],
         "band": {
           "metric": "P/NTM EPS",
-          "latest_observed_close": 21.191899,
+          "current": 21.191899,
           "low": 16.433605,
           "high": 136.393835,
           "median": 51.6484905,
@@ -12410,9 +12406,7 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "d162f709ec",
-          "source_mtime": "2026-09-22T08:40:45+00:00",
-          "latest_close_date": "2026-09-21",
-          "latest_observed_close_in_distribution": false
+          "source_mtime": "2026-09-22T08:40:45+00:00"
         }
       }
     ],
@@ -13570,89 +13564,6 @@
     "source_sha256": "d162f709ec",
     "estimates_sha256": "406592d103"
   },
-  "valuation_basis": {
-    "recipe": "R1_midcycle_margin_evebitda",
-    "priceable": false,
-    "status_reason": "tagged R1_midcycle_margin_evebitda, but R1's anchor declines (applicable=False) — the scenario gate refuses an R1 record on this page",
-    "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
-    "multiple_basis": "EV/EBITDA",
-    "current_multiple": null,
-    "history_series": "mechanical.valuation.own_history (trailing EV/EBITDA, TEV/LTM)",
-    "ev_bridge_basis": "EDGAR lease-inclusive net debt (the anchor's)",
-    "scenario_formula": "((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda - net_debt",
-    "per_share_formula": "exit_equity_value / exit_share_count",
-    "formula_steps": [
-      "EBIT = revenue × op margin",
-      "EBITDA = EBIT + D&A",
-      "EV = EBITDA × exit multiple (EV/EBITDA)",
-      "equity = EV − net debt",
-      "value/share = equity ÷ diluted shares"
-    ],
-    "ev_bridge": {
-      "primary_basis": "EDGAR lease-inclusive net debt (the anchor's)",
-      "current_claims": null,
-      "current_claims_source": "anchor.net_debt (EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ)",
-      "balance_sheet_date": null,
-      "components": [],
-      "ciq_tev_less_market_cap": 7526.8,
-      "reconciles_to_ciq_tev": null,
-      "cross_check": {
-        "basis": "CIQ TEV claims (ev_bridge)",
-        "value": 7526.751,
-        "source": "ev_bridge.claims",
-        "eligible_for_primary_bridge": false,
-        "reason": "R1's record subtracts the anchor's EDGAR net debt by its own rule; CIQ's claims are shown beside it, never substituted"
-      }
-    },
-    "exit_claims": {
-      "method": "HOLD_CURRENT_SAME_BASIS",
-      "forecast_status": "assumption",
-      "current_claims": null,
-      "by_year": [],
-      "fcf_rollforward_used": false,
-      "rule": "R1's record subtracts the anchor's net debt as given — today's figure, held",
-      "reason": null
-    },
-    "exit_share_count": {
-      "default_method": "HOLD_CURRENT_SHARES_OUTSTANDING",
-      "current_value": 4163939676.0,
-      "unit": "shares",
-      "current_source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)",
-      "forecast_status": "assumption",
-      "override_allowed": true,
-      "override_rule": "use a reliable, explicit forward share-count forecast only where one is available and on the same basis (point-in-time shares outstanding); never the diluted weighted average, which is a period average",
-      "diluted_weighted_average": {
-        "value": 4261300000.0,
-        "unit": "shares",
-        "source": "anchor.diluted_shares (diluted weighted-average (latest 10-Q); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding)",
-        "eligible_as_point_in_time_denominator": false
-      }
-    },
-    "non_operating_assets": {
-      "primary_treatment": "included_in_vendor_tev",
-      "carve_out": false,
-      "reason": "the primary current and historical EV multiple series use the vendor's TEV definition, which carries non-operating investments inside enterprise value; carving them out of the bridge alone would value a different enterprise than the one the multiple was struck on",
-      "adjusted_operating_ev_allowed": true,
-      "adjustment_condition": "only if BOTH the current and the historical valuation series are rebuilt consistently on the adjusted operating-EV basis — a separate, consistently rebased framework, never a carve-out in the bridge alone"
-    },
-    "anchor_fields_eligible": false,
-    "conflicts": []
-  },
-  "date_semantics": {
-    "screen_reference_date": "2026-09-22",
-    "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-10-06",
-    "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-10-06",
-    "market_cap_as_of": "2026-10-06",
-    "tev_as_of": "2026-10-06",
-    "consensus_as_of": "≥2026-10-06",
-    "balance_sheet_date": "2026-06-30",
-    "historical_multiple_latest_observation": "2026-09-21",
-    "historical_multiple_history_through": "2026-06-30",
-    "stock_performance_as_of": "2026-09-22",
-    "assembled_at": "2026-10-07T07:11:46.911437Z"
-  },
   "layer_refreshes": [
     {
       "date": "2026-10-07",
@@ -13695,17 +13606,6 @@
       "writer": "refresh",
       "layers": [
         "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-09",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "date_semantics",
-        "forward_multiple_history",
-        "valuation_basis"
       ]
     }
   ],
@@ -13779,23 +13679,6 @@
     },
     "anchor_ev_ebit": null,
     "overall_confidence": "firm",
-    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
-    "scenario_eligibility": {
-      "eligible_for_scenario_valuation": false,
-      "fields": [
-        "multiple_basis",
-        "margin",
-        "multiple",
-        "d_and_a",
-        "net_debt",
-        "diluted_shares",
-        "ltm_revenue",
-        "ltm_fcf",
-        "anchor_base_value_per_share",
-        "midcycle_gap",
-        "anchor_ev_ebit"
-      ],
-      "reason": "the page is tagged R1_midcycle_margin_evebitda but R1's anchor declines (applicable=False) — the scenario gate refuses an R1 record here, so these fields are audit only"
-    }
+    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }
