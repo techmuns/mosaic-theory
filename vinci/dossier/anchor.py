@@ -17,7 +17,7 @@ import statistics as st
 from datetime import date, datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
@@ -166,12 +166,55 @@ class AnchorInput(BaseModel, frozen=True):
     source: str
 
 
+#: The block's R1 VALUE fields — R1's screen arithmetic. `recipe_hint`, `applicable`, `reason` and
+#: the confidence/provenance fields are the block's identity, not R1's inputs.
+R1_VALUE_FIELDS: tuple[str, ...] = (
+    "multiple_basis", "margin", "multiple", "d_and_a", "net_debt", "diluted_shares", "ltm_revenue",
+    "ltm_fcf", "anchor_base_value_per_share", "midcycle_gap", "anchor_ev_ebit")
+
+
+class ScenarioEligibility(BaseModel, frozen=True):
+    """Whether the anchor's R1 value fields may feed a scenario valuation on THIS page."""
+
+    eligible_for_scenario_valuation: bool
+    fields: list[str]
+    reason: str
+
+
+def scenario_eligibility(recipe_hint: str | None, applicable: bool) -> ScenarioEligibility:
+    """THE SCENARIO GATE'S OWN RULE, stated on the block (operator's schema correction, 2026-10-09).
+
+    The anchor's value fields are R1's: an EV/EBITDA multiple, EDGAR net debt, a weighted-average
+    diluted share count. They feed a scenario only through an R1-family record, and the gate
+    (`propose.check_tier_agreement`) accepts one only where the tag is R1-family AND R1's anchor
+    applies. Everywhere else — AMZN's R4 page, whose anchor still reads `multiple_basis: EV/EBITDA`
+    beside `recipe_hint: R4_forward_ev_ebit` — they are audit, and say so here, so no consumer reads
+    an R1 field as the active recipe's."""
+    hint = recipe_hint or "unknown"
+    if hint.startswith("R1") and applicable:
+        why = (f"the active recipe is R1-family ({hint}) and R1's anchor applies — these fields "
+               "are an R1 record's inputs (its template reads `d_and_a` and `net_debt` from here)")
+        return ScenarioEligibility(eligible_for_scenario_valuation=True,
+                                   fields=list(R1_VALUE_FIELDS), reason=why)
+    if hint.startswith("R1"):
+        why = (f"the page is tagged {hint} but R1's anchor declines (applicable=False) — the "
+               "scenario gate refuses an R1 record here, so these fields are audit only")
+    else:
+        why = (f"the active recipe is {hint}; these are R1's screen arithmetic, kept for audit and "
+               f"never an input to a {hint} valuation — the active basis is `valuation_basis`")
+    return ScenarioEligibility(eligible_for_scenario_valuation=False,
+                               fields=list(R1_VALUE_FIELDS), reason=why)
+
+
 class Anchor(BaseModel, frozen=True):
     """The R1 anchor block — source-bound, spot-independent. Optional on the Dossier so committed
     JSON predating it round-trips byte-identically. The UI does NOT ignore it: the page prints
     the base value and the reason, which is why `anchor-backfill` re-renders `dossier.md` after
     writing the JSON. An earlier version of this line claimed otherwise, and that claim is what
-    left LLY's page reading $706.41 against a record saying 699.65 (review of #536)."""
+    left LLY's page reading $706.41 against a record saying 699.65 (review of #536).
+
+    `scenario_eligibility` is COMPUTED from `recipe_hint` and `applicable` at every serialisation,
+    so a hand re-tag that edits only the tag still writes a true tag (2026-10-09)."""
 
     recipe_hint: str                    # RECIPE_R1 | RECIPE_R2 | RECIPE_UNKNOWN | RECIPE_UNRESOLVED
     applicable: bool
@@ -202,6 +245,11 @@ class Anchor(BaseModel, frozen=True):
     anchor_ev_ebit: float | None = None
     overall_confidence: str | None = None  # firm | weak (the WEAKER of margin/multiple)
     note: str = _NOTE
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def scenario_eligibility(self) -> ScenarioEligibility:
+        return scenario_eligibility(self.recipe_hint, self.applicable)
 
 
 # --- committed-artifact readers (work on the mechanical layer as a dict) -----------------------

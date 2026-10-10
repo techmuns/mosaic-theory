@@ -1,6 +1,6 @@
 # Dossier — AMAZON COM INC (Nasdaq: AMZN)
 
-_October 9, 2026 · extraction 2026-10-09.2_
+_October 9, 2026 · extraction 2026-10-09.2 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -654,6 +654,8 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-09-22 · assembled 2026-10-09 13:36 UTC
 - **Extraction:** 2026-10-09.2 — the non-operating read carries its count (`quality.nonoperating_quarters`: material quarters of the trailing four), and the build proposes R4 when the operator's three ratified conditions hold — shown beside a committed recipe, never written over one
+- **Refreshed since assembly** (oldest first):
+  - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `wt-amzn3 → mosaic-theory-ta` · reaching 2026-10-08
 - **Panel age:** oldest panel 3d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-09 build
 - **Consensus age:** consensus 3d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

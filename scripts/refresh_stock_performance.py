@@ -23,7 +23,7 @@ import sys
 from vinci.config import get_config
 from vinci.dossier.mechanical import _stock_performance
 from vinci.dossier.render import render_markdown
-from vinci.dossier.schemas import Dossier
+from vinci.dossier.schemas import Dossier, write_dossier
 from vinci.store import Store
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -48,7 +48,8 @@ def main(argv: list[str]) -> int:
             sp = _stock_performance(ident, store, doss.reference_date)
             mech = doss.mechanical.model_copy(update={"stock_performance": sp})
             doss = doss.model_copy(update={"mechanical": mech})
-            (folder / "dossier.json").write_text(doss.model_dump_json(indent=2))
+            # the one write — pydantic's default dump wrote null where the schema says ABSENT
+            write_dossier(folder / "dossier.json", doss)
             (folder / "dossier.md").write_text(render_markdown(doss))
             pts = len(sp.points) if sp else 0
             ret = (

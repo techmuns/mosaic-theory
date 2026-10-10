@@ -185,8 +185,15 @@ def test_a_ciq_column_label_decodes_to_its_date(cell: Any, want: str | None) -> 
 def test_a_page_without_the_field_writes_no_null() -> None:
     doc = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
     doc.pop("ev_bridge", None)
-    out = dossier_json(Dossier.model_validate(doc))
-    assert '"ev_bridge"' not in out and json.loads(out) == doc
+    got = json.loads(dossier_json(Dossier.model_validate(doc)))
+    assert "ev_bridge" not in got
+    # nothing else moves but what is DERIVED from the page (valuation_basis, date_semantics, and the
+    # gate's flag) — and on this R4 page the missing bridge is that gate's conflict (2026-10-09)
+    derived = {"valuation_basis", "date_semantics", "qa_flags"}
+    assert {k: v for k, v in got.items() if k not in derived} == {
+        k: v for k, v in doc.items() if k not in derived}
+    assert any(f.startswith("VALUATION_RECIPE_BASIS_CONFLICT") and "no CIQ TEV bridge" in f
+               for f in got["qa_flags"])
 
 
 def test_assembly_builds_the_layer_through_the_one_builder() -> None:

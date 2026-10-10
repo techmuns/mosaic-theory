@@ -42,6 +42,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
     dossier_json,
+    write_dossier,
 )
 from vinci.dossier.synthesis import (
     SYNTHESIS_DRAWS,
@@ -699,7 +700,7 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Dossier:
     _refuse_degraded_drawdown_overwrite(dossier, folder)
     dossier = _keep_committed_recipe(dossier, folder)
     folder.mkdir(parents=True, exist_ok=True)
-    (folder / "dossier.json").write_text(dossier_json(dossier))
+    write_dossier(folder / "dossier.json", dossier)
     (folder / "dossier.md").write_text(
         render_markdown(dossier, card=_read_scenario_card(dossier.ticker),
                         dossiers_root=folder.parent))

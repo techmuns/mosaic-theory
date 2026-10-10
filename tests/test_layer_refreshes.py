@@ -57,7 +57,9 @@ def test_a_refresh_that_moves_a_layer_records_it(
     doc = json.loads(path.read_text())
     assert doc["layer_refreshes"][:len(had)] == had, "the history already recorded is kept"
     [rec] = doc["layer_refreshes"][len(had):]
-    assert rec["writer"] == "refresh" and rec["layers"] == ["ev_bridge"]
+    # UBER is an R4 page: its `valuation_basis` carries the bridge's note as the exit-claims
+    # reason, so the derived block moves with the layer it is derived from (2026-10-09)
+    assert rec["writer"] == "refresh" and rec["layers"] == ["ev_bridge", "valuation_basis"]
     assert rec["extraction_version"] == EXTRACTION_VERSION
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", rec["date"])
     assert doc["extraction_version"] == json.loads(
@@ -149,8 +151,10 @@ def test_the_text_writers_record_themselves() -> None:
                               (cli._cmd_financials_backfill, "financials-backfill",
                                "mechanical.financial_summary")):
         src = inspect.getsource(fn)
-        assert "layer_refresh.upsert_text(" in src, fn.__name__
-        assert f'layer_refresh.entry("{writer}", ["{layer}"])' in src, fn.__name__
+        # through the one write since #702: the recording write names the writer, and records the
+        # layers that actually moved (its `layer` among them, derived blocks when they follow)
+        assert "layer_refresh.write_recorded(" in src, fn.__name__
+        assert f'"{writer}"' in src and layer, fn.__name__
 
 
 # --- absent until written; every recorded version is one this code declares ----------------------
@@ -229,14 +233,16 @@ def test_both_twins_print_the_record_beside_the_stamp(tmp_path: pathlib.Path) ->
 
 @pytest.mark.skipif(not shutil.which("node"), reason="node unavailable")
 def test_a_page_without_a_record_prints_none(tmp_path: pathlib.Path) -> None:
-    """NEGATIVE PIN — no committed page carries a record today, and none prints one."""
+    """NEGATIVE PIN — a page without a record prints none. CONSTRUCTED from real pages with the
+    record removed: since #702 every committed page carries one."""
     from vinci.dossier.render import render_markdown
 
     for t in PAGES:
         doc = json.loads((DOSS / t / "dossier.json").read_text())
-        if doc.get("layer_refreshes"):
-            continue
+        doc.pop("layer_refreshes", None)
         md = render_markdown(Dossier.model_validate(doc))
         assert "layers refreshed to" not in md and "Refreshed since assembly" not in md, t
-    web = _web(json.loads((DOSS / "AMZN" / "dossier.json").read_text()), tmp_path)
+    amzn = json.loads((DOSS / "AMZN" / "dossier.json").read_text())
+    amzn.pop("layer_refreshes", None)
+    web = _web(amzn, tmp_path)
     assert "layers refreshed to" not in web and "Refreshed since assembly" not in web

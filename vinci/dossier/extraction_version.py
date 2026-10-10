@@ -120,6 +120,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "quarters of the trailing four), and the build proposes R4 when the operator's three "
         "ratified conditions hold — shown beside a committed recipe, never written over one",
     ),
+    (
+        "2026-10-09.3",
+        "the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple "
+        "and the snapshot it is struck at, bridge, exit claims, the basic share count, "
+        "non-operating policy, conflicts — the template's share guard among them) and its dates "
+        "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the "
+        "forward history's latest close is `latest_observed_close`, never `current`; every writer "
+        "saves through one write",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

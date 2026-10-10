@@ -568,8 +568,10 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
                                  scenarios=scenarios or None, spot=spot, net_debt_musd=net_debt,
                                  shares=shares)
     d2 = d.model_copy(update={"midcycle": block})
-    path.write_text(d2.model_dump_json(indent=2))
+    # the one write — pydantic's default dump wrote null where the schema says ABSENT
+    from vinci.dossier.schemas import write_dossier
     from vinci.scenarios import read_record as _read_rec
+    write_dossier(path, d2)
     try:  # ABSENT record = not underwritten (normal); a record that won't parse propagates LOUD
         _card = _read_rec(d2.ticker)
     except FileNotFoundError:
@@ -690,14 +692,12 @@ def _cmd_financials_backfill(args: argparse.Namespace) -> int:
             print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} "
                   f"(dry-run, nothing written)")
             continue
-        moved = (fs.get("annual"), fs.get("quarterly")) != (new_ann, new_qtr)
         fs["annual"], fs["quarterly"] = new_ann, new_qtr
-        out = _json.dumps(doc, indent=2, ensure_ascii=False)
-        if moved:   # the page records the refresh and its vintage (`layer_refresh`) — not a no-op
-            from vinci.dossier import layer_refresh
-            out = layer_refresh.upsert_text(
-                out, layer_refresh.entry("financials-backfill", ["mechanical.financial_summary"]))
-        jp.write_text(out)
+        # through the one write, and the page records what moved (`layer_refresh`) — a no-op
+        # writes the same bytes and records nothing
+        from vinci.dossier import layer_refresh
+        from vinci.dossier.schemas import Dossier
+        layer_refresh.write_recorded(jp, raw, Dossier.model_validate(doc), "financials-backfill")
         print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} → {jp}")
     return rc
 
@@ -814,7 +814,8 @@ def _cmd_peerset_backfill(args: argparse.Namespace) -> int:
             print(f"{t}: peer_set {old_len}→{new_len} chars (dry-run, nothing written)")
             continue
         ps["value"] = fresh.value
-        jp.write_text(_json.dumps(doc, indent=2, ensure_ascii=False))
+        from vinci.dossier.schemas import Dossier, write_dossier
+        write_dossier(jp, Dossier.model_validate(doc))   # the one write
         print(f"{t}: peer_set {old_len}→{new_len} chars → {jp}")
     return rc
 
@@ -833,7 +834,6 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         anchor_changed,
         compute_anchor,
         preserve_operator_tag,
-        replace_anchor_block,
     )
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.refresh import _rerender_only
@@ -892,12 +892,13 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         elif not moved:
             print(f"  {t}: anchor unchanged — not rewritten (artifact left byte-identical)")
         else:
-            # byte-preserving replace/insert (a model round-trip drifts older-schema fields), and
-            # the page records this refresh and the vintage that ran it (`layer_refresh`)
+            # THROUGH THE ONE WRITE (2026-10-09). This spliced the anchor into the text to keep
+            # older-schema bytes; every committed page now round-trips byte-identically
+            # (tests/test_valuation_basis.py), and the splice left `valuation_basis` describing the
+            # OLD anchor. The page records what moved — the derived blocks with it.
             from vinci.dossier import layer_refresh
-            path.write_text(layer_refresh.upsert_text(
-                replace_anchor_block(original, anchor),
-                layer_refresh.entry("anchor-backfill", ["anchor"])))
+            layer_refresh.write_recorded(
+                path, original, d.model_copy(update={"anchor": anchor}), "anchor-backfill")
             # AND THE PAGE, because the UI does NOT ignore the anchor (review of #534). This wrote
             # only dossier.json on the claim that the block is data-only; the renderer prints both
             # the base and the reason, so every backfill left the page asserting the PREVIOUS
@@ -1052,9 +1053,11 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         if changed and not args.dry_run:
             # the page records this refresh and the vintage that ran it (`layer_refresh`)
             from vinci.dossier import layer_refresh
-            path.write_text(layer_refresh.upsert_text(
-                replace_valuation_fields(original, updates),
-                layer_refresh.entry("own-history-refresh", ["mechanical.valuation"])))
+            from vinci.dossier.schemas import Dossier
+            layer_refresh.write_recorded(
+                path, original,
+                Dossier.model_validate_json(replace_valuation_fields(original, updates)),
+                "own-history-refresh")
     return 0
 
 

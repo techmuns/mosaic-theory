@@ -17,9 +17,18 @@ from __future__ import annotations
 import enum
 from collections.abc import Callable
 from datetime import date, datetime
+from pathlib import Path
 from typing import Any, Generic, Literal, TypeVar
 
-from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    Field,
+    computed_field,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.midcycle import MidCycle
@@ -733,6 +742,178 @@ class EvBridge(BaseModel, frozen=True):
     estimates_sha256: str | None = None  # the Estimates export the consensus check read
 
 
+# --- (valuation basis, 2026-10-09) the ACTIVE recipe's basis, derived from the page -------------
+# Built by `vinci.dossier.valuation_basis` — ONE function of the page, re-derived by
+# `dossier_json` on every write, so it cannot drift from the layers it names. It COPIES no
+# judgment: every value is read from a layer already on the page, and the layer is named beside it.
+
+
+class CurrentMultipleRef(BaseModel, frozen=True):
+    """TODAY'S multiple for the active recipe — CIQ Estimates, never a history close — and the
+    SNAPSHOT it is struck at, which is not the page's price (2026-10-10).
+
+    CIQ strikes the Estimates multiples at its own market cap on its own date; the page's price is
+    the EOD close, usually days later (21 of 22 pages on 2026-10-09; UBER six weeks). Paired with
+    the page's spot, the multiple is off by the price move. `snapshot_reconciles` tests that the
+    multiple IS struck at this snapshot — every FY TEV/EBIT row × that year's EBIT consensus equals
+    market cap + CIQ claims within 0.1% (20 of 23 pages did, to 0.005%; VRRM, NCNO and CNXC did not,
+    their Estimates and comps exports being different pulls). `value_at_page_price` is the multiple
+    a record at the page's price would carry, on the record's own share basis."""
+
+    metric: str                      # CIQ's row label: 'TEV/EBIT'
+    period: str                      # 'NTM'
+    value: float
+    as_of: str | None = None         # the Estimates export's as-of (a `≥` floor if unstamped)
+    source: str
+    snapshot_as_of: str | None = None          # CIQ's market-cap date (comps)
+    snapshot_market_cap: float | None = None   # $M
+    snapshot_tev: float | None = None          # $M — market cap + CIQ's claims (EV multiples)
+    snapshot_reconciles: bool | None = None    # None where it cannot be tested
+    page_price: float | None = None
+    page_price_as_of: str | None = None
+    days_price_after_snapshot: int | None = None
+    value_at_page_price: float | None = None
+    value_at_page_price_basis: str | None = None
+
+
+class BridgeCrossCheck(BaseModel, frozen=True):
+    """A claims figure on ANOTHER basis — shown, never substituted into the primary bridge."""
+
+    basis: str
+    value: float | None
+    source: str | None = None
+    eligible_for_primary_bridge: bool = False
+    reason: str
+
+
+class BridgeComponent(BaseModel, frozen=True):
+    label: str
+    sign: int
+    value: float | None
+
+
+class BridgeBasis(BaseModel, frozen=True):
+    """The EV-to-equity bridge the active recipe subtracts, on the multiple's own basis."""
+
+    primary_basis: str
+    current_claims: float | None
+    current_claims_source: str
+    balance_sheet_date: str | None = None
+    components: list[BridgeComponent] = []
+    ciq_tev_less_market_cap: float | None = None
+    reconciles_to_ciq_tev: bool | None = None   # None where the recipe's bridge is not CIQ's
+    cross_check: BridgeCrossCheck | None = None
+
+
+class ExitClaimsYear(BaseModel, frozen=True):
+    fiscal_year: str
+    value: float
+    method: str                      # HOLD_CURRENT_SAME_BASIS | SAME_BASIS_CONSENSUS
+    forecast_status: str             # assumption | forecast
+
+
+class ExitClaimsPolicy(BaseModel, frozen=True):
+    """How the claims at exit are set — automated, never a manual input (the operator's rule)."""
+
+    method: str                      # one method for every year, or PER_YEAR
+    forecast_status: str             # assumption | forecast | mixed
+    current_claims: float | None
+    by_year: list[ExitClaimsYear] = []
+    fcf_rollforward_used: bool = False   # never "current − FCF" (the operator's rule)
+    rule: str
+    reason: str | None = None        # why a forecast series was used or rejected
+
+
+class DilutedWeightedAverage(BaseModel, frozen=True):
+    """The EPS denominator — a period average, NOT a point-in-time equity denominator."""
+
+    value: float | None
+    unit: str = "shares"
+    source: str | None = None
+    eligible_as_point_in_time_denominator: bool = False
+
+
+class ShareCountPolicy(BaseModel, frozen=True):
+    """Which share count turns equity into a per-share value, and how it is carried to exit."""
+
+    default_method: str              # HOLD_CURRENT_SHARES_OUTSTANDING
+    current_value: float | None
+    unit: str = "shares"
+    current_source: str | None = None
+    # (2026-10-10) WHICH count: the BASIC point-in-time count, without the dilutive increment. Every
+    # committed record that states a basis uses the point-in-time DILUTED count instead (MVST
+    # +15.9%, AORT +3.4% over basic), so the override rule names that count.
+    count_basis: str = ""
+    includes_dilutive_increment: bool = False
+    forecast_status: str = "assumption"
+    override_allowed: bool = True
+    override_rule: str
+    diluted_weighted_average: DilutedWeightedAverage | None = None
+
+
+class NonOperatingAssets(BaseModel, frozen=True):
+    """How non-operating investments are treated — one policy, matched to the multiple's basis."""
+
+    primary_treatment: str           # included_in_vendor_tev | inside_eps
+    carve_out: bool = False
+    reason: str
+    adjusted_operating_ev_allowed: bool
+    adjustment_condition: str
+
+
+class ValuationBasis(BaseModel, frozen=True):
+    """(valuation basis) The ACTIVE recipe's basis in one block — what a scenario consumer reads, so
+    no consumer has to infer it from the anchor, whose value fields are R1's screen arithmetic.
+
+    `priceable` says whether the scenario gate would accept a record of `recipe` on this page AND
+    every input below is present; `status_reason` says why not. `conflicts` lists each input the
+    recipe requires that is missing or disagrees — written to `qa_flags` as
+    VALUATION_RECIPE_BASIS_CONFLICT, and never repaired by substituting another basis's field."""
+
+    recipe: str
+    priceable: bool
+    status_reason: str
+    earnings_basis: str | None = None
+    multiple_basis: str | None = None
+    current_multiple: CurrentMultipleRef | None = None
+    history_series: str | None = None   # where the multiple's own history sits on the page
+    ev_bridge_basis: str | None = None
+    scenario_formula: str | None = None
+    per_share_formula: str | None = None
+    formula_steps: list[str] = []
+    ev_bridge: BridgeBasis | None = None
+    exit_claims: ExitClaimsPolicy | None = None
+    exit_share_count: ShareCountPolicy | None = None
+    non_operating_assets: NonOperatingAssets | None = None
+    anchor_fields_eligible: bool
+    conflicts: list[str] = []
+
+
+class DateSemantics(BaseModel, frozen=True):
+    """(date semantics) Every date the page's inputs carry, NAMED — `reference_date` is the screen's
+    date, not the freshness of the page. Read from the layers; a date the page does not carry is
+    None, never inferred."""
+
+    screen_reference_date: str
+    reference_date_semantics: str
+    analysis_as_of: str | None
+    analysis_as_of_rule: str
+    price_as_of: str | None = None
+    market_cap_as_of: str | None = None
+    tev_as_of: str | None = None
+    consensus_as_of: str | None = None
+    balance_sheet_date: str | None = None
+    historical_multiple_latest_observation: str | None = None
+    historical_multiple_history_through: str | None = None
+    stock_performance_as_of: str | None = None
+    assembled_at: str | None = None
+    # (2026-10-10) the date CIQ's market cap, TEV and current multiples are struck at, and how many
+    # days the page's price sits after it — `analysis_as_of` alone read UBER as current to 09-16
+    # while every valuation input was from 08-05
+    valuation_snapshot_as_of: str | None = None
+    price_days_after_valuation_snapshot: int | None = None
+
+
 class ForwardConsensus(BaseModel, frozen=True):
     """(forward consensus) FY+0..FY+2 for the metrics a scenario reads: how each figure moved
     (`paths`), how far the street disagrees (`spreads`), and who revised (`revisions`).
@@ -773,20 +954,78 @@ class MultipleClose(BaseModel, frozen=True):
     cell: str | None = None
 
 
+class ForwardHistoryBand(BaseModel, frozen=True):
+    """A forward multiple's LATEST OBSERVED CLOSE against the closes before it (2026-10-09).
+
+    THE TRAILING BANDS' SHAPE WITH ONE FIELD RENAMED. Built by the same helper
+    (`_own_history_band`) and converted by :meth:`from_own_history`, so the statistics are the
+    trailing bands' own. What the trailing band calls `current` is here `latest_observed_close`:
+    it is the Financials export's latest column — AMZN's 22.588x on 2026-09-16, an EXPORT-DAY close
+    taken mid-quarter — and TODAY'S multiple is `forward_consensus.current_multiples` (AMZN's CIQ
+    Estimates NTM TEV/EBIT 23.338x, ≥2026-10-06). Labelled `current`, a reader took the one for the
+    other; the operator's schema correction (2026-10-09) renamed it, for every name.
+
+    THE LATEST CLOSE IS NOT IN THE DISTRIBUTION. `low`/`median`/`high`/`mean`/`percentile` and
+    `n_closes` are over the closes BEFORE it — the helper's construction, stated here as a field
+    so a consumer need not know it. Committed JSON written with `current` still reads."""
+
+    metric: str
+    latest_observed_close: float = Field(
+        validation_alias=AliasChoices("latest_observed_close", "current"))
+    low: float
+    high: float
+    median: float
+    percentile: float  # 0..1 — fraction of the earlier closes ≤ latest_observed_close
+    n_closes: int      # the closes BEFORE the latest one
+    as_of: str | None = None
+    mean: float | None = None
+    series: list[tuple[str, float]] = Field(default_factory=list)
+    periodicity_days_median: float | None = None
+    window_span_years: float | None = None
+    periodicity: str | None = None
+    data_quality: str | None = None
+    source_file: str | None = None
+    implied_ebitda_margin: float | None = None
+    implied_ebit_margin: float | None = None
+    implied_d_and_a_margin: float | None = None
+    source_sha256: str | None = None
+    source_mtime: str | None = None
+
+    # COMPUTED, so neither can disagree with the band it describes: the latest close's date IS the
+    # band's `as_of` (the helper dates the band at that close), and the statistics never include it.
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def latest_close_date(self) -> str | None:
+        return self.as_of
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def latest_observed_close_in_distribution(self) -> bool:
+        return False
+
+    @classmethod
+    def from_own_history(cls, band: OwnHistoryBand) -> ForwardHistoryBand:
+        """The trailing band's figures under the forward history's names — no value is touched."""
+        fields = band.model_dump()
+        current = fields.pop("current")
+        return cls(**fields, latest_observed_close=current)
+
+
 class MultipleHistorySeries(BaseModel, frozen=True):
     """One forward multiple's quarterly history, matched to its sheet row by EXACT label.
 
-    `points` is the whole row in time order, every non-number visible. `band` is the current close
-    against its own history, from the SAME helper as the trailing bands (`_own_history_band`); its
-    own `series` is left empty so the record carries ONE time series. A None band is named in the
-    layer's `withheld`, with why."""
+    `points` is the whole row in time order, every non-number visible. `band` is the latest observed
+    close against the closes before it, from the SAME helper as the trailing bands
+    (`_own_history_band`, converted by `ForwardHistoryBand.from_own_history`); its own `series` is
+    left empty so the record carries ONE time series. A None band is named in the layer's
+    `withheld`, with why."""
 
     metric: str        # display: 'EV/NTM EBIT'
     row_label: str     # the sheet's label, verbatim: 'TEV/NTM EBIT'
     context_only: bool  # True for P/NTM EPS — may not anchor a multiple leg (`note` says why)
     note: str | None = None
     points: list[MultipleClose]
-    band: OwnHistoryBand | None = None
+    band: ForwardHistoryBand | None = None
 
 
 class ForwardMultipleHistory(BaseModel, frozen=True):
@@ -809,9 +1048,9 @@ class ForwardMultipleHistory(BaseModel, frozen=True):
     source_sha256: str | None = None  # first 10 hex of the export read — the refresh's vintage key
     source_ref: str
     # (2026-10-08) ADDED LATER — ABSENT until rebuilt. `as_of` is the latest close, and each band's
-    # `current` is that close: an EXPORT-DAY close when the export was pulled mid-quarter (AMZN
-    # 2026-09-16), a settled quarter-end otherwise. `history_through` is the last quarter-end close.
-    # TODAY'S multiple is `forward_consensus.current_multiples`, never a band's `current`.
+    # `latest_observed_close` is that close: an EXPORT-DAY close when the export was pulled
+    # mid-quarter (AMZN 2026-09-16), a settled quarter-end otherwise. `history_through` is the last
+    # quarter-end close. TODAY'S multiple is `forward_consensus.current_multiples`, never a band's.
     latest_close_quarter_end: bool | None = None
     history_through: str | None = None
 
@@ -2206,6 +2445,12 @@ class Dossier(BaseModel):
     # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — the same
     # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
     ev_bridge: EvBridge | None = None
+    # (valuation basis, date semantics — 2026-10-09) the ACTIVE recipe's basis and the page's dates,
+    # NAMED. Pure functions of the page (`vinci.dossier.valuation_basis`), re-derived by
+    # `dossier_json` on every write so they cannot go stale; ABSENT on a page not yet re-written.
+    # Declared before `layer_refreshes`, which must stay immediately before `anchor`.
+    valuation_basis: ValuationBasis | None = None
+    date_semantics: DateSemantics | None = None
     # (layer refreshes) the writers that changed this page since its assembly, each with the code
     # vintage that ran it (`LayerRefresh`). ABSENT until a writer records one, and dropped by the
     # next full assembly, whose stamp then covers the whole page. Declared IMMEDIATELY BEFORE
@@ -2284,7 +2529,15 @@ def dossier_json(doc: Dossier) -> str:
 
     The pruning survives as an `exclude` mapping, computed from the values rather than hardcoded:
     a key is dropped only when it IS None, so a name that HAS the field still writes it.
+
+    THE DERIVED BLOCKS ARE RE-DERIVED HERE (2026-10-09). `valuation_basis`, `date_semantics` and
+    their QA flags are pure functions of the page, so the one writer every path shares is the one
+    place they can be kept true: a refresh that moves the bridge, or an assembly that keeps a
+    committed recipe over its own, writes blocks that describe what it wrote.
     """
+    from vinci.dossier.valuation_basis import with_derived  # cycle: it imports these models
+
+    doc = with_derived(doc)
     mech = doc.mechanical
     root: dict[str, Any] = {}
     for parent, key in DROP_WHEN_NONE:
@@ -2311,8 +2564,29 @@ def dossier_json(doc: Dossier) -> str:
         excl["ev_bridge"] = True
     if doc.layer_refreshes is None:
         excl["layer_refreshes"] = True
+    if doc.valuation_basis is None:
+        excl["valuation_basis"] = True
+    if doc.date_semantics is None:
+        excl["date_semantics"] = True
     for layer, key in TOP_DROP_WHEN_NONE:
         held = getattr(doc, layer)
         if held is not None and getattr(held, key) is None:
             excl.setdefault(layer, set()).add(key)
     return doc.model_dump_json(indent=2, exclude=excl or None)
+
+
+def write_dossier(path: Path, doc: Dossier) -> str:
+    """THE ONE WRITE of a committed `dossier.json` — through :func:`dossier_json`, so every page
+    any writer saves carries derived blocks that describe it (2026-10-09). Returns the text written.
+
+    NINE WRITERS, THREE SERIALIZERS, BEFORE THIS. Assembly and the refresh path used
+    `dossier_json`; `anchor-backfill`, `own-history-refresh` and `financials-backfill` spliced JSON
+    text; `peerset-backfill` re-dumped the raw dict; `dossier --midcycle` and the two
+    `scripts/refresh_*` used pydantic's default dump — which, run on the committed corpus,
+    rewrote 25 of 26 pages with `null` where the schema says ABSENT. A splice also left
+    `valuation_basis` stale whenever it moved one of its inputs (an anchor flipped to applicable
+    kept a block saying its R1 fields were ineligible). `tests/test_valuation_basis.py` pins every
+    writer to this function."""
+    text = dossier_json(doc)
+    path.write_text(text)
+    return text

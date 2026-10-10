@@ -25,7 +25,7 @@ from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
 from vinci.dossier.mechanical import _concentration
 from vinci.dossier.render import render_markdown
-from vinci.dossier.schemas import Dossier
+from vinci.dossier.schemas import Dossier, write_dossier
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -45,7 +45,8 @@ def main(argv: list[str]) -> int:
         conc = _concentration(bundle)
         mech = doss.mechanical.model_copy(update={"concentration": conc})
         doss = doss.model_copy(update={"mechanical": mech})
-        (folder / "dossier.json").write_text(doss.model_dump_json(indent=2))
+        # the one write — pydantic's default dump wrote null where the schema says ABSENT
+        write_dossier(folder / "dossier.json", doss)
         (folder / "dossier.md").write_text(render_markdown(doss))
         print(f"  {doss.ticker:<6} segments: {(conc.segments.value or 'UNKNOWN')[:72]}")
         n += 1

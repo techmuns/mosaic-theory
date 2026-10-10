@@ -23,6 +23,7 @@ from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num, excel_date
 from vinci.dossier.schemas import (
     Dossier,
+    ForwardHistoryBand,
     ForwardMultipleHistory,
     MechanicalLayer,
     MultipleClose,
@@ -103,7 +104,10 @@ def test_every_band_is_the_trailing_bands_own_stat_or_is_named_withheld(ticker: 
             if last.close is None:
                 assert f"reads '{last.cell}'" in named[0]
         else:
-            assert s.band == shared.model_copy(update={"series": []}), s.metric
+            # the shared helper's band, under the forward history's names (2026-10-09): its
+            # `current` is the LATEST OBSERVED CLOSE, never today's multiple
+            assert s.band == ForwardHistoryBand.from_own_history(
+                shared.model_copy(update={"series": []})), s.metric
 
 
 def test_ev_ntm_ebit_is_never_read_off_the_ebitda_row() -> None:
