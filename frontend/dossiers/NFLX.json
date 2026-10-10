@@ -14,10 +14,10 @@
         "note": null
       },
       "pe": {
-        "value": 27.1501976284585,
+        "value": 27.786561264822137,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-10-06 ÷ annual diluted EPS for the period ending 2025-12-31 (279d old, filed 2026-01-23)"
+        "note": "price 2026-10-09 ÷ annual diluted EPS for the period ending 2025-12-31 (282d old, filed 2026-01-23)"
       },
       "pe_percentile_5y": {
         "value": null,
@@ -423,36 +423,36 @@
             "column": "FY26E",
             "eps_basis": "EPS (Normalized)",
             "eps": 3.59,
-            "multiple": 19.1337,
-            "price": 68.69,
-            "price_as_of": "2026-10-06"
+            "multiple": 19.5822,
+            "price": 70.3,
+            "price_as_of": "2026-10-09"
           },
           {
             "label": "P/FY26E (GAAP)",
             "column": "FY26E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 3.58,
-            "multiple": 19.1872,
-            "price": 68.69,
-            "price_as_of": "2026-10-06"
+            "multiple": 19.6369,
+            "price": 70.3,
+            "price_as_of": "2026-10-09"
           },
           {
             "label": "P/FY27E (normalized)",
             "column": "FY27E",
             "eps_basis": "EPS (Normalized)",
             "eps": 3.81,
-            "multiple": 18.0289,
-            "price": 68.69,
-            "price_as_of": "2026-10-06"
+            "multiple": 18.4514,
+            "price": 70.3,
+            "price_as_of": "2026-10-09"
           },
           {
             "label": "P/FY27E (GAAP)",
             "column": "FY27E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 3.8,
-            "multiple": 18.0763,
-            "price": 68.69,
-            "price_as_of": "2026-10-06"
+            "multiple": 18.5,
+            "price": 70.3,
+            "price_as_of": "2026-10-09"
           }
         ],
         "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
@@ -602,6 +602,12 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "status": "present",
         "note": null
+      },
+      "nonoperating_quarters": {
+        "material": 1,
+        "window": 4,
+        "window_end": "2026-06-30",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30"
       },
       "liquidity_covenant_flags": {
         "value": "3.000% Senior Notes (Bonds and Notes) undrawn/– @ 3.000% Due 2025; 3.625% Senior Notes (Bonds and Notes) 1,526 @ 3.625% Due 2027; 3.625% Senior Notes (Bonds and Notes) 1,292 @ 3.625% Due 2030; 3.625% Senior Notes (Bonds and Notes) undrawn/– @ 3.625% Due 2025; 3.875% Senior Notes (Bonds and Notes) 1,409 @ 3.875% Due 2029; 4.375% Senior Notes (Bonds and Notes) 1,000 @ 4.375% Due 2026; 4.625% Senior Notes (Bonds and Notes) 1,292 @ 4.625% Due 2029; 4.875% Senior Notes (Bonds and Notes) 1,600 @ 4.875% Due 2028; 4.875% Senior Notes (Bonds and Notes) 1,000 @ 4.875% Due 2030; 4.900% Senior Notes (Bonds and Notes) 1,000 @ 4.900% Due 2034; 5.375% Senior Notes (Bonds and Notes) 900 @ 5.375% Due 2029",
@@ -4689,7 +4695,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[SENIOR UNSECURED REVOLVING CREDIT AGREEMENT · 0001193125-25-327462]\n  Principal / commitment amount: The Aggregate Commitments on the Signing Date are $5,000,000,000. (Letter of Credit…\n  Interest / coupon rate: ABR Loans: Alternate Base Rate plus Applicable Rate; Term SOFR Loans: Term SOFR Rate…\n  Maturity date: The earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the…\n  Financial-maintenance covenants: Consolidated EBITDA to Consolidated Interest Expense ratio, as of the end of each…\n[REVOLVING CREDIT AGREEMENT · 0001193125-19-094705 · amended by 0001193125-21-193187]\n  Principal / commitment amount: The aggregate amount of the Lenders' Revolving Commitments as of the [Second]…\n  Interest / coupon rate: Eurodollar Loans: Adjusted LIBO Rate plus Applicable Rate (0.75% per annum). ABR…\n  Maturity date: June 17, 2026 (amended from March 29, 2024)\n  Financial-maintenance covenants: No traditional financial-maintenance covenant; incurrence-based Aggregate Debt test…\n[CREDIT AGREEMENT · 0001193125-09-194962]\n  Principal / commitment amount: Total Commitment: One Hundred Million Dollars ($100,000,000); Letter of Credit…\n  Interest / coupon rate: Base Rate Loans: Base Rate plus Applicable Margin; LIBOR Loans: LIBOR Rate plus…\n  Maturity date: September 16, 2012\n  Financial-maintenance covenants: Total Leverage Ratio not greater than 2.25:1.00 at any time. Minimum EBITDA…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[SENIOR UNSECURED REVOLVING CREDIT AGREEMENT · 0001193125-25-327462]\n  Principal / commitment amount: The Aggregate Commitments on the Signing Date are $5,000,000,000. (Letter of Credit…\n  Interest / coupon rate: ABR Loans: Alternate Base Rate plus the Applicable Rate; Term SOFR Loans: Term SOFR…\n  Maturity date: The earliest of (a) third anniversary of the Acquisition Closing Date, (b) date of…\n  Financial-maintenance covenants: Consolidated EBITDA to Consolidated Interest Expense ratio, tested at end of each…\n[REVOLVING CREDIT AGREEMENT · 0001193125-19-094705 · amended by 0001193125-21-193187]\n  Principal / commitment amount: $1,000,000,000 (aggregate Revolving Commitments as of the Second Amendment Effective…\n  Interest / coupon rate: ABR Borrowing: Alternate Base Rate plus Applicable Rate; Eurodollar Borrowing:…\n  Maturity date: June 17, 2026 (amended from March 29, 2024)\n[CREDIT AGREEMENT · 0001193125-09-194962]\n  Principal / commitment amount: One Hundred Million Dollars ($100,000,000)\n  Interest / coupon rate: Base Rate plus the Applicable Margin (Base Rate Loans); LIBOR Rate plus the…\n  Maturity date: September 16, 2012\n  Financial-maintenance covenants: Total Leverage Ratio not greater than 2.25:1.00; Minimum EBITDA (four-quarter):…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4715,7 +4721,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The Aggregate Commitments on the Signing Date are $5,000,000,000. (Letter of Credit Sublimit $200,000,000)",
+              "value": "The Aggregate Commitments on the Signing Date are $5,000,000,000. (Letter of Credit Sublimit of $200,000,000; Total per Schedule 2.01 $5,000,000,000)",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Commitments ” means the Revolving Commitments of all the Lenders. The Aggregate Commitments on the Signing Date are $5,000,000,000.”"
@@ -4731,7 +4737,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR Loans: Alternate Base Rate plus Applicable Rate; Term SOFR Loans: Term SOFR Rate plus Applicable Rate. Applicable Rate for SOFR Loans ranges 0.600% to 1.10% per annum based on Debt Rating pricing levels; Applicable Rate for ABR Loans 0.00% to 0.10%. Floor = 0.00%.",
+              "value": "ABR Loans: Alternate Base Rate plus the Applicable Rate; Term SOFR Loans: Term SOFR Rate plus the Applicable Rate. Applicable Rate for SOFR Loans ranges 0.600% to 1.10% based on Debt Rating pricing levels; Applicable Rate for ABR Loans 0.00% to 0.10%. Floor = 0.00%.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Term SOFR Borrowing shall bear interest at the Term SOFR Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
@@ -4747,7 +4753,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "The earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the fifth anniversary of the Signing Date, subject to extension under Section 2.22 (up to two one-year extensions)",
+              "value": "The earliest of (a) third anniversary of the Acquisition Closing Date, (b) date of termination of the Merger Agreement, and (c) fifth anniversary of the Signing Date (December 19, 2025), subject to extension under Section 2.22 (up to two one-year extensions).",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means (i) the earliest of (a) the date that is the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the date that is the fifth anniversary of the Signing Date, or (ii) such later date to which the Maturity Date may be extended pursuant to Section 2.22 ; provided that, if any such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
@@ -4763,7 +4769,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated EBITDA to Consolidated Interest Expense ratio, as of the end of each fiscal quarter, not less than 3.00:1.00",
+              "value": "Consolidated EBITDA to Consolidated Interest Expense ratio, tested at end of each fiscal quarter, not less than 3.00:1.00.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: “Section 6.03 Financial Covenant . The Borrower will not permit the ratio, determined as of the end of each of its fiscal quarters ending after the Signing Date, of (x) Consolidated EBITDA to (y) Consolidated Interest Expense, for any Measurement Period ended on such date, to be less than 3.00:1.00.”"
@@ -4779,10 +4785,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Senior Unsecured; no collateral or guarantee requirement stated. Negative pledge under Section 6.01 (equal and ratable securing) with carve-outs; Cash Collateral provisions apply only to L/C Obligations",
+              "value": "Senior Unsecured facility (no collateral or guarantors stated). No guarantee of the Obligations is provided; title and Section 6.01 negative-pledge (equal-and-ratable) mechanics apply. Cash Collateral provisions apply only to L/C Obligations under Section 2.21.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
-              "note": "verbatim: “SENIOR UNSECURED REVOLVING CREDIT AGREEMENT ... The Borrower will not, and will not permit any of its Domestic Restricted Subsidiaries, to enter into, create, incur or assume any Lien on any Principal Property ... in order to secure any Indebtedness (the “ Initial Lien ”), without effectively providing that the Obligations shall be equally and ratably secured ...”"
+              "note": "verbatim: “SENIOR UNSECURED REVOLVING CREDIT AGREEMENT ... The Borrower will not, and will not permit any of its Domestic Restricted Subsidiaries, to enter into, create, incur or assume any Lien on any Principal Property ... without effectively providing that the Obligations shall be equally and ratably secured ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4795,58 +4801,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: if Aggregate Total Exposure exceeds total Revolving Commitments, prompt prepayment required (Section 2.08(c)). Events of Default per Section 7.01 include: (a) failure to pay principal; (b) failure to pay interest/fees (5 Business Day grace); (c) incorrect representation/warranty; (d) covenant breach (5.02, 5.03 existence, 5.07, Article 6); (e) other covenant breach (30-day cure); (f) failure to pay Material Indebtedness >$250,000,000; (g) Material Indebtedness acceleration; (h)/(i)/(j) bankruptcy/insolvency; (k) judgments >$250,000,000; (l) ERISA Events; (m) Loan Document invalidity; (n) Change of Control Triggering Event",
+              "value": "Mandatory prepayment: Section 2.08(c) — if Aggregate Total Exposure exceeds total Revolving Commitments, Borrower shall promptly prepay. Events of Default: Section 7.01 includes (a) failure to pay principal; (b) failure to pay interest/fees (5 Business Day cure); (c) incorrect representation/warranty; (d)/(e) covenant breaches; (f) cross-default payment default on Material Indebtedness >$250,000,000; (g) acceleration/early maturity events; (h)/(i)/(j) bankruptcy/insolvency; (k) judgments in excess of $250,000,000; (l) ERISA Events; (m) Loan Document invalidity; (n) Change of Control Triggering Event.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: “(c) If at any time the Aggregate Total Exposure exceeds the total Revolving Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Revolving Commitments then in effect.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Commitment Fee",
-            "value": {
-              "value": "Commitment Fee Rate per Applicable Rate pricing grid: 0.05% to 0.10% per annum based on Debt Rating",
-              "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Borrower agrees to pay to the Administrative Agent for the account of each Lender ... a commitment fee (the “ Commitment Fee ”), which shall accrue at the Applicable Rate on the actual daily difference between (x) the Aggregate Commitments then in effect and (y) the Aggregate Total Exposure”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Letter of Credit Sublimit",
-            "value": {
-              "value": "$200,000,000",
-              "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Letter of Credit Sublimit ” means an amount equal to $200,000,000. The Letter of Credit Sublimit is part of, and not in addition to, the Aggregate Commitments.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Default Rate",
-            "value": {
-              "value": "2% plus the otherwise applicable rate (overdue principal) or 2% plus the ABR Loan rate (other overdue amounts)",
-              "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
-              "status": "present",
-              "note": "verbatim: “all overdue amounts outstanding hereunder shall bear interest ... at a rate per annum (the “ Default Rate ”) equal to (i) in the case of overdue principal of any Loan, 2% plus the rate otherwise applicable to such Loan ... or (ii) in the case of any other overdue amount, 2% plus the rate applicable to ABR Loans”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4875,7 +4833,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The aggregate amount of the Lenders' Revolving Commitments as of the [Second] Amendment Effective Date is $1,000,000,000 (amended from $750,000,000). Incremental Facility (New Commitments) available up to $250,000,000 in the aggregate.",
+              "value": "$1,000,000,000 (aggregate Revolving Commitments as of the Second Amendment Effective Date) (amended from $750,000,000)",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
               "note": "verbatim: “The aggregate amount of the Lenders' Revolving Commitments as of the First Second Amendment Effective Date is $ 750,000,000. 1,000,000,000.”"
@@ -4891,7 +4849,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurodollar Loans: Adjusted LIBO Rate plus Applicable Rate (0.75% per annum). ABR Loans: Alternate Base Rate plus Applicable Rate (0.00% per annum). Default rate: 2% plus otherwise applicable rate. Commitment Fee: 0.10% per annum. Adjusted LIBO Rate floor of 0.00%.",
+              "value": "ABR Borrowing: Alternate Base Rate plus Applicable Rate; Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate. \"Applicable Rate\" means (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
@@ -4923,10 +4881,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "No traditional financial-maintenance covenant; incurrence-based Aggregate Debt test used in Sections 6.01, 6.02 and 6.04: Aggregate Debt not to exceed the greater of (a) $6,000,000,000 (amended from $3,750,000,000) and (b) 3.50 times (amended from 2.75) Consolidated EBITDA for the Measurement Period.",
-              "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
-              "status": "present",
-              "note": "verbatim: “any Domestic Restricted Subsidiary may create, incur, issue or assume Subsidiary Debt that would otherwise be subject to the restrictions set forth in Section 6.01(a) , without Guaranteeing the payment of the Obligations, if after giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) $ 3,750,000,000, 6,000,000,000, and (b) 2.75 3.50 times Consolidated EBITDA of the Borrower for the Measurement Period immediately preceding the date of the creation or incurrence of the Subsidiary Debt.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001193125-21-193187 · d552068dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4939,7 +4897,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "No standing guarantees or collateral at closing; springing requirements only. Guarantors: Domestic Restricted Subsidiary required to Guarantee the Obligations on an unsecured unsubordinated basis upon incurring Subsidiary Debt (Section 6.01/5.10(a)). Collateral: upon a Collateral Trigger Event (grant of a Lien on Principal Property to secure Obligations pursuant to Section 6.02), Borrower/Domestic Restricted Subsidiary must grant a valid pari passu security interest (Section 5.10(b)). 'Guaranty' means a guaranty agreement in substantially the form of Exhibit E.",
+              "value": "No standing collateral/guarantors at closing. Springing guaranty: Domestic Restricted Subsidiaries incurring Subsidiary Debt must Guarantee the Obligations on an unsecured unsubordinated basis (Section 6.01/5.10(a)). Springing collateral: upon a Collateral Trigger Event (grant of Lien on Principal Property under Section 6.02), Borrower must grant pari passu security interest (Section 5.10(b)). Basket exception: Aggregate Debt not exceeding greater of $6,000,000,000 and 3.50 times Consolidated EBITDA.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Borrower will not permit any of its Domestic Restricted Subsidiaries to create, assume, incur, Guarantee or otherwise become liable for any Indebtedness (any such Indebtedness or Guarantee, “ Subsidiary Debt ”), without Guaranteeing the payment of the Obligations on an unsecured unsubordinated basis until such time as such Subsidiary Debt is no longer outstanding.”"
@@ -4955,7 +4913,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: (Section 2.08(c)) if Aggregate Total Exposure exceeds total Commitments, prepay Revolving Loans to cure; (Section 2.08(d)) prepayment following Change of Control Triggering Event commitment termination. Events of Default (Section 7.01): (a) failure to pay principal; (b) failure to pay interest/fees (5 Business Day cure); (c) incorrect representation/warranty; (d) breach of specified covenants; (e) breach of other covenants (30-day cure); (f) failure to pay Material Indebtedness (>$250,000,000); (g) cross-acceleration of Material Indebtedness; (h) involuntary bankruptcy (60 days); (i) voluntary bankruptcy; (j) inability to pay debts; (k) judgments in excess of $250,000,000; (l) ERISA Events; (m) Loan Document ceasing to be in effect.",
+              "value": "Mandatory prepayment: if Aggregate Total Exposure exceeds total Commitments, Borrower shall promptly prepay (Section 2.08(c)); plus Change of Control Triggering Event prepayment under Section 2.08(d). Events of Default (Section 7.01) include: (a) failure to pay principal; (b) failure to pay interest/fees unremedied for 5 Business Days; (c) incorrect representation/warranty; (d)/(e) covenant breaches; (f) failure to pay Material Indebtedness in excess of $250,000,000; (g) cross-acceleration of Material Indebtedness; (h)/(i)/(j) bankruptcy/insolvency events; (k) judgments in excess of $250,000,000; (l) ERISA Events; (m) Loan Document ceases to be in full force.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
               "note": "verbatim: “(c) If at any time the Aggregate Total Exposure exceeds the total Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Commitments then in effect.”"
@@ -4987,10 +4945,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Total Commitment: One Hundred Million Dollars ($100,000,000); Letter of Credit Sublimit: lesser of (a) $10,000,000 and (b) the Total Commitment; optional increases up to an additional $50,000,000 (aggregate increases not to exceed $50,000,000). Commitments: Wells Fargo Bank, N.A. $50,000,000 (50%); Bank of America, N.A. $50,000,000 (50%); Total $100,000,000",
+              "value": "One Hundred Million Dollars ($100,000,000)",
               "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Total Commitment ” shall mean, at any time, One Hundred Million Dollars ($100,000,000) or, if such amount is reduced pursuant to Section 2.04(a) or (b) , the amount to which so reduced ... or, if such amount is increased pursuant to Section 2.01(b) , the amount to which it is increased”"
+              "note": "verbatim: ““ Total Commitment ” shall mean, at any time, One Hundred Million Dollars ($100,000,000) or, if such amount is reduced pursuant to Section 2.04(a) or (b) , the amount to which so reduced and in effect at such time or, if such amount is increased pursuant to Section 2.01(b) , the amount to which it is increased and in effect at such time.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5003,13 +4961,13 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Base Rate Loans: Base Rate plus Applicable Margin; LIBOR Loans: LIBOR Rate plus Applicable Margin. Pricing Grid Applicable Margin for LIBOR Loans: Tier I (<0.75) 2.75%, Tier II (>0.75 <1.50) 3.00%, Tier III (>1.50) 3.25%; Applicable Margin for Base Rate Loans: Tier I 1.75%, Tier II 2.00%, Tier III 2.25%. Base Rate = greatest of (a) Prime Rate, (b) Federal Funds Rate plus 1.50%, (c) One Month LIBOR Rate plus 1.50%. Default Rate: otherwise applicable rate plus three percent (3.00%)",
+              "value": "Base Rate plus the Applicable Margin (Base Rate Loans); LIBOR Rate plus the Applicable Margin (LIBOR Loans). Pricing Grid: Applicable Margin for LIBOR Loans 2.75%/3.00%/3.25%; Applicable Margin for Base Rate Loans 1.75%/2.00%/2.25% (by Total Leverage Ratio tier)",
               "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “(i) During such periods as such Borrowing consists of Base Rate Loans, at a rate per annum equal to the Base Rate plus the Applicable Margin therefor ... and (ii) During such periods as such Borrowing consists of LIBOR Loans, at a rate per annum equal ... to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor”"
+              "note": "verbatim: “(i) During such periods as such Borrowing consists of Base Rate Loans, at a rate per annum equal to the Base Rate plus the Applicable Margin therefor... (ii) During such periods as such Borrowing consists of LIBOR Loans, at a rate per annum equal at all times during each Interest Period for such LIBOR Loans to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor”"
             },
             "base_rate_label": "LIBOR Rate",
-            "margin_pct": 3.25,
+            "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null,
@@ -5035,10 +4993,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Total Leverage Ratio not greater than 2.25:1.00 at any time. Minimum EBITDA (four-quarter): Sep 30, 2009 through Dec 31, 2009 $125,000,000; Mar 31, 2010 through Jun 30, 2010 $150,000,000; Sep 30, 2010 through Jun 30, 2011 $175,000,000; Sep 30, 2011 and thereafter $200,0000,000. Capital Expenditures limited to $100,000,000 per fiscal year (commencing FY ending Dec 31, 2010)",
+              "value": "Total Leverage Ratio not greater than 2.25:1.00; Minimum EBITDA (four-quarter): $125,000,000 (9/30/2009–12/31/2009); $150,000,000 (3/31/2010–6/30/2010); $175,000,000 (9/30/2010–6/30/2011); $200,0000,000 (9/30/2011 and thereafter). Capital Expenditures not to exceed $100,000,000 per fiscal year (commencing FY ending 12/31/2010)",
               "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “(a) Total Leverage Ratio . The Borrower shall not permit the Total Leverage Ratio at any time to be greater than 2.25:1.00. (b) Minimum EBITDA . The Borrower shall not permit, as of the last day of any fiscal quarter, the EBITDA of the Loan Parties for the four (4) quarter period ending thereon, to be less than the amount set opposite the applicable period below”"
+              "note": "verbatim: “5.03. Financial Covenants . ... (a) Total Leverage Ratio . The Borrower shall not permit the Total Leverage Ratio at any time to be greater than 2.25:1.00. (b) Minimum EBITDA . The Borrower shall not permit, as of the last day of any fiscal quarter, the EBITDA of the Loan Parties for the four (4) quarter period ending thereon, to be less than the amount set opposite the applicable period below: September 30, 2009 through December 31, 2009 $125,000,000; March 31, 2010 through June 30, 2010 $150,000,000; September 30, 2010 through June 30, 2011 $175,000,000; September 30, 2011 and thereafter $200,0000,000”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5051,7 +5009,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured by Liens granted by the Borrower and Guarantors under the Security Documents (including the Pledge Agreement). “Guarantor” means each now existing or hereafter acquired or created direct or indirect Domestic Subsidiary which becomes a party to the Guaranty (Exhibit I). Collateral includes pledge of 100% of Equity Securities of Domestic Subsidiaries and 66% (or 100% for flow-through first-tier) of voting Equity Securities of first-tier Foreign Subsidiaries. Administrative Agent to hold valid, perfected first priority Lien (subject to Permitted Liens). As of Closing Date, Red Envelope Entertainment, LLC is an Excluded Subsidiary",
+              "value": "Secured by Liens granted under the Security Documents (Pledge Agreement and other Security Documents). “Guarantor” shall mean each now existing or hereafter acquired or created direct or indirect Domestic Subsidiary which becomes a party to the Guaranty (Guaranty Agreement in form of Exhibit I, pursuant to Section 5.01(i)). Pledge of Equity Securities: 100% of Domestic Subsidiaries and 66% (or 100% for flow-through first-tier Foreign Subsidiaries) of voting Equity Securities of first-tier Foreign Subsidiaries",
               "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
               "status": "present",
               "note": "verbatim: “2.14. Security . (a) Security Documents . The Loans, together with all other Obligations, shall be secured by the Liens granted by the Borrower under the Security Documents. All obligations of a Guarantor under the Credit Documents shall be secured by the Liens granted by such Guarantor under the Security Documents.”"
@@ -5067,10 +5025,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments (Section 2.06(c)): (i) if Effective Amount of Loans and L/C Obligations exceeds Total Commitment; (ii) 100% of Net Proceeds of asset sales/dispositions (with reinvestment exceptions and $10,000,000 de minimis per fiscal year); (iii) Net Insurance/Condemnation Proceeds (with reinvestment exceptions and <$40,000,000 per fiscal year de minimis); (iv) 100% of Net Proceeds of Indebtedness for borrowed money (excluding Permitted Indebtedness); (v) upon prepayment/redemption of senior unsecured notes or Subordinated Obligations, prepay all Obligations plus Cash Collateralize 105% of L/C Obligations. Events of Default (Section 6.01): (a) Non-Payment; (b) Specific Defaults; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Default (threshold $15,000,000); (f) Insolvency/Voluntary Proceedings; (g) Involuntary Proceedings; (h) Judgments ($15,000,000); (i) Credit Documents; (j) Security Documents; (k) ERISA; (l) Change of Control; (m) Involuntary Dissolution or Split Up; (n) Guarantors; (o) Designated Person; (p) Subordinated Obligations; (q) Uninsured Loss (>$40,000,000); (r) Unfunded Pension Liabilities (>$5,000,000)",
+              "value": "Mandatory prepayments (Section 2.06(c)): excess over Total Commitment; 100% of Net Proceeds of asset sales/dispositions (subject to reinvestment/$10,000,000 threshold); Net Insurance/Condemnation Proceeds (subject to $40,000,000 threshold/reinvestment); 100% of Net Proceeds of Indebtedness (excluding Permitted Indebtedness); upon required prepayment/redemption of senior unsecured notes or Subordinated Obligations (Section 2.06(c)(v)). Events of Default (Section 6.01): (a) Non-Payment; (b) Specific Defaults; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Default (threshold $15,000,000); (f) Insolvency Voluntary; (g) Involuntary Proceedings; (h) Judgments ($15,000,000); (i) Credit Documents; (j) Security Documents; (k) ERISA; (l) Change of Control; (m) Involuntary Dissolution; (n) Guarantors; (o) Designated Person; (p) Subordinated Obligations; (q) Uninsured Loss ($40,000,000); (r) Unfunded Pension Liabilities ($5,000,000)",
               "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “(c) Mandatory Prepayments . The Borrower shall prepay (or Cash Collateralize, as applicable) the Obligations as follows ... ARTICLE VI. EVENTS OF DEFAULT . 6.01. Events of Default . The occurrence or existence of any one or more of the following shall constitute an “Event of Default” hereunder”"
+              "note": "verbatim: “2.06. Prepayments . ... (c) Mandatory Prepayments . The Borrower shall prepay (or Cash Collateralize, as applicable) the Obligations as follows: (i) If, at any time, the Effective Amount of all Loans and L/C Obligations then outstanding exceeds the Total Commitment... (ii) If, at any time after the Closing Date any Loan Party sells or otherwise disposes of any assets... one hundred percent (100%) of the Net Proceeds... (iii) ... Net Insurance Proceeds or Net Condemnation Proceeds... (iv) ... issues or incurs any Indebtedness for borrowed money... one hundred percent (100%) of the Net Proceeds of such Indebtedness. ARTICLE VI. EVENTS OF DEFAULT . 6.01. Events of Default . The occurrence or existence of any one or more of the following shall constitute an “Event of Default” hereunder: (a) Non-Payment ... (b) Specific Defaults ... (e) Cross-Default ... (f) Insolvency; Voluntary Proceedings ... (l) Change of Control”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5099,7 +5057,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$750,000,000 (amended from $500,000,000) aggregate Revolving Commitments as of the First Amendment Effective Date",
+              "value": "$750,000,000 (initial aggregate Revolving Commitments as of the First Amendment Effective Date; amended from $500,000,000). Incremental Facility: New Commitments 'by an amount not in excess of $250,000,000 in the aggregate'",
               "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
               "status": "present",
               "note": "verbatim: “The initial aggregate amount of the Lenders' Revolving Commitments as of the First Amendment Effective Date is $ 500,000,000 . 750,000,000.”"
@@ -5115,10 +5073,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR Loans: Alternate Base Rate plus Applicable Rate (0.00% per annum); Eurodollar Loans: Adjusted LIBO Rate plus Applicable Rate (0.75% per annum). \"Applicable Rate\" means, for any day, (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan.",
+              "value": "ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Eurodollar Borrowing: Adjusted LIBO Rate plus the Applicable Rate. 'Applicable Rate' means (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan. Default rate: 2% plus otherwise applicable rate. Adjusted LIBO Rate floor: 'in no event shall the Adjusted LIBO Rate be less than 0.00%'",
               "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
               "status": "present",
-              "note": "verbatim: “(a)    The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b)    The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
+              "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
             },
             "base_rate_label": "Adjusted LIBO Rate",
             "margin_pct": 0.75,
@@ -5147,10 +5105,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "No financial-maintenance ratio covenant (e.g., leverage/coverage) is stated. The Agreement contains an Aggregate Debt incurrence basket (greater of $3,750,000,000 (amended from $2,500,000,000) and 2.75x (amended from 2.50x) Consolidated EBITDA) under Sections 6.01, 6.02, and 6.04; this is an incurrence-based limit, not a maintenance covenant.",
-              "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
-              "status": "present",
-              "note": "verbatim: “Notwithstanding Sections 6.01(a) and (b) , any Domestic Restricted Subsidiary may create, incur, issue or assume Subsidiary Debt ... if after giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) $ 2,500,000,000 , 3,750,000,000, and (b) 2.50 2.75 times Consolidated EBITDA of the Borrower for the Measurement Period immediately preceding the date of the creation or incurrence of the Subsidiary Debt.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001193125-19-094705 · d721020dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5163,10 +5121,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Facility is unsecured at closing; springing/conditional guarantees and collateral. Guarantors: Domestic Restricted Subsidiaries required to Guarantee the Obligations pursuant to Section 6.01 (if Subsidiary Debt incurred); \"Guarantor\" means any Subsidiary of the Borrower that has delivered a Guaranty. Collateral: if Borrower or a Domestic Restricted Subsidiary grants an Initial Lien on Principal Property (a \"Collateral Trigger Event\"), the Obligations must be equally and ratably secured (pari passu). Section 6.01(a): Subsidiary Debt requires Guaranteeing the Obligations on an unsecured unsubordinated basis; Section 6.02(a): Lien on Principal Property requires Obligations be equally and ratably secured.",
+              "value": "Facility is unsecured with springing/contingent guaranty and collateral. Guarantors: any Domestic Restricted Subsidiary required to Guarantee the Obligations pursuant to Section 6.01 (triggered by incurrence of Subsidiary Debt), via a Guaranty. Collateral: upon a 'Collateral Trigger Event' under Section 6.02 (grant of a Lien on Principal Property securing Indebtedness), Borrower/Domestic Restricted Subsidiary must grant a valid pari passu security interest to the Administrative Agent. No initial collateral granted.",
               "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
               "status": "present",
-              "note": "verbatim: “(a)     If any Domestic Restricted Subsidiary is required to Guarantee the Obligations pursuant to Section 6.01 , then the Borrower shall ... cause such Domestic Restricted Subsidiary to enter into a Guaranty ... (b)    If the Borrower or any Domestic Restricted Subsidiary is required to grant a Lien on any Principal Property to secure the Obligations pursuant to Section 6.02 (a “ Collateral Trigger Event ”), then the Borrower shall ... grant to the Administrative Agent ... a valid pari passu security interest in the property or assets subject to the applicable Initial Lien”"
+              "note": "verbatim: “(a) If any Domestic Restricted Subsidiary is required to Guarantee the Obligations pursuant to Section 6.01 , then the Borrower shall (i) concurrently with the incurrence of the Subsidiary Debt triggering such requirement, cause such Domestic Restricted Subsidiary to enter into a Guaranty... (b) If the Borrower or any Domestic Restricted Subsidiary is required to grant a Lien on any Principal Property to secure the Obligations pursuant to Section 6.02 (a “ Collateral Trigger Event ”), then the Borrower shall... take such actions necessary to grant to the Administrative Agent... a valid pari passu security interest”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5179,10 +5137,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: Section 2.08(c) - if Aggregate Total Exposure exceeds total Commitments, prepay the excess; Section 2.08(d) - prepayment on Change of Control Triggering Event commitment termination. Events of Default: Section 7.01(a)-(m) including failure to pay principal (a), interest/fees (b, 5 Business Day grace), breach of representations (c), covenant defaults (d,e), cross-default on Material Indebtedness >$250,000,000 (f,g), bankruptcy/insolvency (h,i,j), judgments >$250,000,000 (k), ERISA Events (l), and Loan Document invalidity (m).",
+              "value": "Mandatory prepayment (Section 2.08(c)): if Aggregate Total Exposure exceeds total Commitments, Borrower shall promptly prepay to eliminate the excess; Section 2.08(d): prepayment following termination of commitments after a Change of Control Triggering Event. Events of Default (Section 7.01): (a) failure to pay principal; (b) failure to pay interest/fees/other within 5 Business Days; (c) incorrect representation/warranty in any material respect; (d) breach of specified covenants (Sec 5.02, 5.03 existence, 5.09, Article 6); (e) other covenant breach unremedied 30 days after notice; (f) failure to pay Material Indebtedness principal >$250,000,000; (g) cross-acceleration of Material Indebtedness; (h) involuntary bankruptcy (60 days); (i) voluntary bankruptcy; (j) inability to pay debts; (k) judgments >$250,000,000 undischarged 60 days; (l) ERISA Events; (m) Loan Document ceases to be in full force.",
               "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
               "status": "present",
-              "note": "verbatim: “(c)    If at any time the Aggregate Total Exposure exceeds the total Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Commitments then in effect.”"
+              "note": "verbatim: “(c) If at any time the Aggregate Total Exposure exceeds the total Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Commitments then in effect.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5538,12 +5496,27 @@
           "ticker": "SKYD",
           "is_subject": false,
           "market_cap": 10716.7,
-          "acquired": null,
-          "total_assets": null,
-          "pct_assets": null,
-          "pct_market_cap": null,
-          "note": "unresolved — no CIK for 'SKYD'",
-          "impairment": null
+          "acquired": 7683.0,
+          "total_assets": 44411.0,
+          "pct_assets": 0.17299768075476796,
+          "pct_market_cap": 0.7169184543749475,
+          "note": null,
+          "impairment": {
+            "state": "charged",
+            "state_label": "wrote down",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 1,
+            "charged_years": 1,
+            "total": 5981.0,
+            "pct_acquired": 0.7784719510607836,
+            "last_charge_end": "2024-12-31",
+            "last_charge_amount": 5981.0,
+            "pending": 157.0,
+            "pending_span": "2025-01-01→2025-08-06, 217d",
+            "tags": "GoodwillImpairmentLoss",
+            "note": null
+          }
         },
         {
           "ticker": "CURI",
@@ -5601,16 +5574,16 @@
       "size_floor": 1000.0,
       "subject_pct_assets": 0.5789104824718089,
       "subject_pct_market_cap": 0.1183045056132242,
-      "median_all_assets": 0.15151131482093533,
-      "median_all_market_cap": 0.1066831074598225,
-      "median_large_assets": 0.15151131482093533,
-      "median_large_market_cap": 0.1066831074598225,
-      "n_all": 7,
-      "n_large": 5,
+      "median_all_assets": 0.16225449778785164,
+      "median_all_market_cap": 0.2884618473157379,
+      "median_large_assets": 0.16225449778785164,
+      "median_large_market_cap": 0.2884618473157379,
+      "n_all": 8,
+      "n_large": 6,
       "imp_window_years": 5,
-      "imp_n_large_assessed": 5,
-      "imp_n_large_charged": 3,
-      "imp_median_large_pct": 0.0810129279727234,
+      "imp_n_large_assessed": 6,
+      "imp_n_large_charged": 4,
+      "imp_median_large_pct": 0.12837313837757117,
       "imp_subject_pct": null,
       "imp_subject_state": "untagged"
     },
@@ -6751,7 +6724,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 68.69,
+        "value": 70.3,
         "source_ref": "EOD NFLX last close",
         "status": "present",
         "note": null
@@ -6760,13 +6733,13 @@
         "value": 124.86,
         "source_ref": "EOD NFLX 52-week high",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-10-06: spans 379d over 262 bars"
+        "note": "52-week window 2025-09-22→2026-10-09: spans 382d over 265 bars"
       },
       "low_52w": {
         "value": 65.08,
         "source_ref": "EOD NFLX 52-week low",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-10-06: spans 379d over 262 bars"
+        "note": "52-week window 2025-09-22→2026-10-09: spans 382d over 265 bars"
       },
       "shares_out": {
         "value": 4163939676.0,
@@ -6786,7 +6759,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-09",
       "market_cap_as_of": "2026-10-06"
     },
     "stock_performance": {
@@ -8469,7 +8442,7 @@
           "kind": "competitive_position",
           "metric": "addressable revenue captured",
           "period": "2026",
-          "value": "about 7%",
+          "value": "about 7% of addressable revenue",
           "value_num": null,
           "unit": null,
           "verbatim": "We've captured about 7% of addressable revenue.",
@@ -8481,7 +8454,7 @@
           "kind": "competitive_position",
           "metric": "addressable revenue market size",
           "period": "2026",
-          "value": "USD 670 billion",
+          "value": "USD 670 billion as of 2026",
           "value_num": null,
           "unit": null,
           "verbatim": "We now estimate that's USD 670 billion as of 2026, and that number grows, of course, year-over-year as well.",
@@ -8493,7 +8466,7 @@
           "kind": "competitive_position",
           "metric": "global TV view share",
           "period": "2026",
-          "value": "only 5%",
+          "value": "only 5% of TV view share globally",
           "value_num": null,
           "unit": null,
           "verbatim": "And we estimate that we account for only 5% of TV view share globally.",
@@ -8541,7 +8514,7 @@
           "kind": "competitive_position",
           "metric": "addressable households",
           "period": "2026",
-          "value": "roughly 800 million",
+          "value": "roughly 800 million addressable households",
           "value_num": null,
           "unit": null,
           "verbatim": "It's roughly 800 million addressable households.",
@@ -8553,7 +8526,7 @@
           "kind": "competitive_position",
           "metric": "addressable revenue captured",
           "period": "2026",
-          "value": "just 7%",
+          "value": "just 7% of addressable revenue market",
           "value_num": null,
           "unit": null,
           "verbatim": "We're capturing, we think, just 7% of addressable revenue market.",
@@ -8565,7 +8538,7 @@
           "kind": "competitive_position",
           "metric": "addressable revenue market size",
           "period": "2026",
-          "value": "about $670 billion",
+          "value": "about $670 billion of addressable revenue",
           "value_num": null,
           "unit": null,
           "verbatim": "It's about $670 billion of addressable revenue in the countries and categories in which we operate today.",
@@ -8577,7 +8550,7 @@
           "kind": "competitive_position",
           "metric": "global TV view share",
           "period": "2026",
-          "value": "only about 5%",
+          "value": "only about 5% of TV view share globally",
           "value_num": null,
           "unit": null,
           "verbatim": "And we estimate that we're only about 5% of TV view share globally.",
@@ -8588,8 +8561,8 @@
         {
           "kind": "leading_indicator",
           "metric": "live programming share of content budget",
-          "period": "this year (2026)",
-          "value": "5% of our content budget",
+          "period": "2026",
+          "value": "5% of our content budget this year",
           "value_num": null,
           "unit": null,
           "verbatim": "So live, we expect will be 5% of our content budget this year, but we think that will only be 1% of view hours.",
@@ -8600,7 +8573,7 @@
         {
           "kind": "leading_indicator",
           "metric": "live programming share of view hours",
-          "period": "this year (2026)",
+          "period": "2026",
           "value": "1% of view hours",
           "value_num": null,
           "unit": null,
@@ -8611,9 +8584,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "live events share of top new member sign-up days",
+          "metric": "new member sign-up days from live events",
           "period": "past 5 years",
-          "value": "6 out of top 10 new member sign-up days",
+          "value": "6 out of top 10 new member sign-up days over the past 5 years",
           "value_num": null,
           "unit": null,
           "verbatim": "Having said that, 6 out of top 10 new member sign-up days over the past 5 years have come from live events.",
@@ -8624,7 +8597,7 @@
         {
           "kind": "leading_indicator",
           "metric": "animation/kids family TV share of content spend",
-          "period": "this year (2026)",
+          "period": "2026",
           "value": "about 5% of our content spend",
           "value_num": null,
           "unit": null,
@@ -8636,11 +8609,11 @@
         {
           "kind": "leading_indicator",
           "metric": "animation/kids family TV share of view hours",
-          "period": "this year (2026)",
+          "period": "2026",
           "value": "8% of view hours",
           "value_num": null,
           "unit": null,
-          "verbatim": "it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours.",
+          "verbatim": "take animation series, kids family TV, it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours.",
           "following_context": "So same spend and 8x the Raw view hours. You can see the differences there, even though because as indicated by the amount that we're investing in both those categories being the same, we think they're doing the same value for the business.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "tier": "llm-fenced"
@@ -8649,7 +8622,7 @@
           "kind": "leading_indicator",
           "metric": "view hours growth",
           "period": "first half of 2026",
-          "value": "grew 2%",
+          "value": "grew 2% in the first half of 2026",
           "value_num": null,
           "unit": null,
           "verbatim": "And then on quantity, view hours grew 2% in the first half of 2026.",
@@ -8660,8 +8633,8 @@
         {
           "kind": "leading_indicator",
           "metric": "incremental view hours",
-          "period": "first half of 2026 vs. same period last year",
-          "value": "an incremental 1.5 billion hours",
+          "period": "first half of 2026",
+          "value": "an incremental 1.5 billion hours relative to the same period last year",
           "value_num": null,
           "unit": null,
           "verbatim": "That's an incremental 1.5 billion hours relative to the same period last year.",
@@ -8671,9 +8644,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "view hours growth rate",
+          "metric": "view hours growth (prior year)",
           "period": "2025",
-          "value": "1.5% growth",
+          "value": "1.5% growth in 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "It's a slight acceleration compared to 1.5% growth in 2025.",
@@ -8684,7 +8657,7 @@
         {
           "kind": "pricing_action",
           "metric": "price adjustments",
-          "period": "Q2/Q3 2026",
+          "period": "Q3 2026 outlook",
           "value": "recent price adjustments are going well",
           "value_num": null,
           "unit": null,
@@ -8696,8 +8669,8 @@
         {
           "kind": "leading_indicator",
           "metric": "content expense growth",
-          "period": "this year (2026)",
-          "value": "up about 10%",
+          "period": "2026",
+          "value": "up about 10% this year",
           "value_num": null,
           "unit": null,
           "verbatim": "So we're forecasting content expense up about 10% this year.",
@@ -8707,21 +8680,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "content expense growth (historical average)",
-          "period": "last 5 years",
-          "value": "8%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "content expense growth (historical average)",
-          "period": "past decade",
-          "value": "14%",
+          "metric": "content expense growth (historical averages)",
+          "period": "last 5 years / past decade",
+          "value": "a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade",
           "value_num": null,
           "unit": null,
           "verbatim": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
@@ -8737,62 +8698,72 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — absolute EBITDA, revenue, ROIC and self-funding all rose through a price-only drawdown; bear case rests on near-term revision breadth.",
+    "evidence_balance": "mixed — franchise still compounding margin, FCF and view hours, but a sharp idiosyncratic de-rate and negative near-dated revisions keep the forward-growth question open.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded uninterrupted from $911M (FY17) to $14,727M (LTM Jun-30-2026) with the margin reaching 30%, so the de-rating sits on top of a rising, not impaired, earnings base — the trailing-multiple collapse is a price event, not an operating one.",
+        "claim": "The price-driven de-rate is not matched by fundamentals: EBITDA margin has climbed Dec-31-2024 28% → Dec-31-2025 30% → Jun-30-2026 (LTM) 30% with absolute EBITDA rising 10,747 → 13,660 → 14,727, so the compression is multiple, not earnings.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Revenue still grew +13.4% YoY in Q2 Jun-30-2026 and consensus carries double-digit top-line growth out multiple years, so the franchise is compounding, not shrinking.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "claim": "On forward earnings the name trades P/FY26E (normalized) 19.6x and P/FY27E 18.5x at $70.3 — materially below the trailing lens, so the de-rate is read against growing forward EPS, not a collapsing one.",
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
         "cited": true
       },
       {
-        "claim": "Management frames vast remaining runway on validated operating metrics — under 45% penetrated into ~800M addressable households and only ~7% of a ~$670B addressable revenue market captured — a mechanism behind the growth case, not a bare multiple.",
-        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Recent price adjustments are 'going well' alongside healthy acquisition/retention, a pricing-mechanism driver supporting the forward revenue path rather than an optical read.",
-        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The balance sheet is self-funding and lightly levered — net-debt/EBITDA 0.5x, interest coverage 17.4x, LTM FCF positive — removing solvency from the bear thesis.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
-        "cited": true
-      },
-      {
-        "claim": "On the fundamental deltas the name beats peer median on margin (30% vs 15%), revenue growth (16% vs 9%), leverage (1.1x vs 2.1x debt/EBITDA) and carries an S&P 'A' issuer rating, so a discount to peers would be RESIDUAL rather than EARNED — the human must judge whether the peer gap is an overshoot given the heterogeneous roster.",
+        "claim": "Revenue growth remains intact and ahead of peers: name rev growth 16% vs peer-median 9%, with EBITDA margin 30% vs peer-median 15% — the discount question is whether it is EARNED (it is not, on these fundamentals) or RESIDUAL.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "ROIC/RoCE has risen every recent year to 20.2% LTM and RoE to 49.5%, evidence of an improving return profile into the drawdown, not deterioration.",
+        "claim": "The operating engine is self-funding at low leverage: net-debt/EBITDA 0.5x and FCF-positive, so survival is not the question even through the de-rate.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "cited": true
+      },
+      {
+        "claim": "Management reports its recent price adjustments are going well with healthy acquisition and retention — the pricing lever behind subscription revenue is working, not stalling.",
+        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Engagement quantity is still rising — view hours grew 2% in the first half of 2026, a slight acceleration vs 1.5% in 2025 — countering a 'secular decline in usage' thesis.",
+        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The current EV/EBITDA 20.2x sits at the 5th percentile of its own 9.2-year history (median 43.3x), a near-floor on its own-history basis rather than an elevated level.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
+        "cited": true
+      },
+      {
+        "claim": "Returns on capital are at a record high and rising — RoCE Dec-31-2024 16.2% → Dec-31-2025 19.3% → Jun-30-2026 (LTM) 20.2% — inconsistent with a terminally impaired franchise.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The stock has fallen as a gradual bleed, down ~22.7% over 180d against SPY +19.9% (~-42.6% relative), an idiosyncratic underperformance that is a genuine signal the market is re-rating the name, not a market-wide move.",
+        "claim": "The share price has fallen hard and idiosyncratically — NFLX −22.7% over 180d while SPY rose +19.9%, a −42.6pt relative underperformance — signalling a name-specific re-rating the market is pricing, not a sector drawdown.",
         "source_ref": "EOD NFLX−SPY 180d to 2026-09-22 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "A genuine counter-point to the quality case: $2,590M of the quarter ended 2026-03-31 — 40% of pre-tax income — came from BELOW the operating line, so trailing EPS/P/E spanning it is not a clean operating anchor; OUTWEIGHED by the uninterrupted rise in operating-line absolute EBITDA to $14,727M LTM.",
+        "claim": "A material slice of a recent in-window quarter was non-operating: $2,590M (40% of pre-tax income, 21% of revenue) came below the operating line in Q ending 2026-03-31, so any trailing EPS/P/E spanning it is not a clean operating anchor — the trailing P/LTM EPS 23.1x flatters.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       },
       {
-        "claim": "Near-term broker revision breadth is heavily negative — FQ3 2026 shows 11↑/21↓ on normalized EPS and 1↑/35↓ on revenue over 3 months — a real deterioration in the forward setup; OUTWEIGHED by the still-rising multi-year consensus revenue/EBITDA path and double-digit growth.",
+        "claim": "Analyst targets and sentiment have deteriorated into the print — one broker cut its target to $57 and moved to Sell on 2026-09-18, and target revisions cluster downward across September–October.",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-10-06 · export date unverified]",
+        "cited": true
+      },
+      {
+        "claim": "Near-dated estimate breadth is heavily negative on a 3-month lookback — Revenue FQ3 2026 3m 1↑/35↓ and EBITDA FQ3 2026 3m 6↑/19↓ — a genuine downward-revision tilt beneath the de-rate, even if the 1m window has stabilised.",
         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "cited": true
       },
       {
-        "claim": "A genuine governance/insider counter-point: zero open-market insider buys against 27 sells (7 insiders, $136.29M) over 182d; OUTWEIGHED by the self-funding, A-rated balance sheet and compounding EBITDA.",
+        "claim": "Insiders are one-sided sellers — 0 open-market buys vs 27 sells ($136.29M, 7 insiders) over 182 days and no purchase in the 3y scanned — no insider conviction underneath the fall.",
         "source_ref": "EDGAR Form 4 (latest 0001104659-26-113405; 642 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
@@ -8801,70 +8772,81 @@
       {
         "name": "Meta Platforms",
         "outcome": "recovered",
-        "distinguishing_fact": "Large-cap platform compounder that de-rated sharply on spend/competition fears while the core user and monetization engine kept growing, then re-rated as margins and growth reasserted.",
+        "distinguishing_fact": "Mega-cap platform that de-rated sharply on a growth-deceleration/spend scare while the core franchise kept compounding users and cash flow, then re-rated as margins reasserted.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "The Walt Disney Company",
         "outcome": "went terminal",
-        "distinguishing_fact": "Peer-roster media name whose streaming economics and legacy mix drove a far lower multiple and repeated write-downs — the value-trap pattern where the discount is EARNED by weaker margin and leverage.",
+        "distinguishing_fact": "Direct streaming peer in the roster carrying heavier leverage, lower margin and goodwill write-downs — the value-trap template where a media name stays cheap because fundamentals genuinely eroded.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Warner Bros. Discovery",
         "outcome": "went terminal",
-        "distinguishing_fact": "Peer-roster media name with declining revenue, heavy leverage and multi-billion goodwill impairment — the terminal media-decline pattern the subject's own metrics do NOT share.",
+        "distinguishing_fact": "Roster peer with declining revenue, high debt/EBITDA and a large goodwill impairment — the earned-discount case a de-rated media name can fall into.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Spotify Technology",
         "outcome": "recovered",
-        "distinguishing_fact": "Peer-roster streaming subscription business that de-rated on growth/margin doubts, then re-rated as pricing actions and operating leverage proved the model.",
+        "distinguishing_fact": "Subscription-streaming peer that endured a de-rate and then re-rated as pricing actions and margin expansion validated the model despite thin starting margins.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is the ~43% relative drawdown an overshoot on a still-compounding subscription franchise (residual discount to a weaker peer set), or the market correctly pricing a deceleration that trailing EBITDA has not yet revealed?",
+      "question": "Is the ~23% idiosyncratic de-rate an overshoot on a franchise still compounding revenue, margin and FCF — or the market pricing a genuine forward growth/monetization deceleration that trailing margins mask?",
       "evidence_for": [
         {
-          "claim": "Validated operating drivers show the engine still expanding — view hours +2% in 1H26 (a slight acceleration vs 1.5% in 2025), price adjustments going well, and content spend growing slower (~10%) than revenue — consistent with overshoot.",
+          "claim": "The pricing lever is working — management states recent price adjustments are going well with healthy acquisition and retention — the mechanism behind continued subscription-revenue growth.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA and revenue rose through the entire drawdown (EBITDA $13,660M FY25 → $14,727M LTM; revenue $45,183M → $48,371M), so price fell while fundamentals climbed.",
+          "claim": "Revenue YoY was still +13.4% in Q2 Jun-30-2026 and margin/absolute EBITDA both rose, so the engine driving forward EPS remains intact on the reported numbers.",
           "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "cited": true
+        },
+        {
+          "claim": "Forward multiples already reflect growing EPS — P/FY26E 19.6x stepping to P/FY27E 18.5x — so the price is low against rising, not falling, estimates.",
+          "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The load-bearing deceleration signal is the near-term revision breadth — FQ3 2026 revenue 1↑/35↓ and normalized EPS 11↑/21↓ over 3 months — brokers cutting into the print.",
+          "claim": "The guided Q3 growth step-down — management attributes FX-neutral revenue growth slowing from 12% (2Q) to 11% (3Q) partly to back-half-weighting — is the deceleration the market may be extrapolating.",
+          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "3-month near-dated revision breadth is sharply negative (Revenue FQ3 2026 1↑/35↓), evidence that the forward numbers the bull case rests on were being cut.",
           "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
           "cited": true
         },
         {
-          "claim": "Management itself flags Q3 FX-neutral revenue growth decelerating from 12% to 11%, and the full-year growth guide steps down from prior years — a genuine slope change.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+          "claim": "A large non-operating slice ($2,590M, 40% of pre-tax income) inflates trailing earnings inside the window, so the trailing valuation anchors look cheaper than the operating run-rate warrants.",
+          "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward EV/EBITDA on an adjusted basis and no company-adjusted LTM EBITDA are disclosed, so a trailing-vs-forward overshoot-vs-impairment read cannot be struck cleanly (the trailing multiple is explicitly 'trailing only').",
-      "The 5y P/E percentile cannot be built because a ~10x share-basis change splits the window across two EPS bases — own-history valuation context is partly unavailable.",
-      "The actual-vs-estimate EBITDA basis diverges (estimate columns imply ~3.42x the D&A of actuals), so trailing and forward multiples are not struck on the same basis and must not be compared directly.",
-      "Peer set is flagged HETEROGENEOUS (market caps span $36M–$4,235B, 117,968x); every peer multiple is confidence-gated, not a clean benchmark — the human must judge whether the peer-median discount is meaningful at all.",
-      "Capital-structure panel is 242d old and predates a 2026-02-27 Item 1.02 termination of a material agreement; an instrument listed may already be terminated — verify before relying on the debt schedule.",
-      "No segment EBITDA breakout (single-segment reporting) and no disclosed covenant basis for leverage — limits how finely the quality/survival read can be decomposed.",
-      "Why the drawdown happened is not in a discrete catalyst (gradual bleed, no gap-down, no revised-guidance 8-K on record) — the causal driver of the re-rating is not pinned by a single event."
+      "Forward EV/EBITDA on a company-adjusted basis is UNKNOWN (adjusted figure not in the 99.1 revised guidance), so overshoot-vs-impairment cannot be settled on a clean forward multiple.",
+      "The 5y P/E percentile cannot be built — a ~10.02x share-basis change (stock split) sits inside the window, so the own-history valuation floor is only verifiable on EV/EBITDA, not P/E.",
+      "The consensus EBITDA estimate basis adds back ~3.42x more D&A than the actual row, so trailing-vs-forward multiples are part-definitional and must not be compared directly to size the de-rate.",
+      "The debt schedule is 242d old and an Item 1.02 termination of a material agreement was filed 2026-02-27 that the panel predates — the current instrument/maturity picture is not confirmed (an opacity/vintage risk).",
+      "Peer set is flagged HETEROGENEOUS (market caps span $36M–$4,235B, 117,968x); the peer median is not a clean benchmark, so the −7%/−11% peer discount is a confidence-gated input, not a conclusion.",
+      "Nature and durability of the $2,590M non-operating gain is not disclosed — whether it recurs or is one-off bears directly on the true operating earnings anchor.",
+      "No segment/sub-metric breakout of paid members or ARM beyond single-segment reporting — limits visibility into whether volume or price is carrying revenue growth.",
+      "The reason for the gradual idiosyncratic bleed is unresolved — no discrete gap-down and no revised-guidance catalyst 8-K on the record, so the specific driver of the −42.6pt relative move is not pinned."
     ],
     "draw_agreement": {
       "attempted": 5,
       "completed": 5,
       "labels": {
-        "strongly-bullish": 4,
-        "mixed": 1
+        "strongly-bullish": 2,
+        "mixed": 3
       },
       "unanimous": false
     }
@@ -8874,8 +8856,8 @@
     "primary-source: 8-K 0001193125-26-312575 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001065280-26-000189 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001065280-26-000139 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
-    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'strongly-bullish': 4, 'mixed': 1}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.1s fetch)",
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'strongly-bullish': 2, 'mixed': 3}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -8884,15 +8866,17 @@
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (Unsecured Delayed Draw Term Loan Credit Facility): 8-K 0001193125-25-308651 · d65144dex101.htm declares itself no agreement at all",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001065280-26-000034 · ex102_q425.htm declares itself no agreement at all",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (Senior Unsecured Bridge Term Loan Facility): 8-K 0001193125-14-037000 · d671121dex101.htm declares itself no agreement at all",
-    "(E5) exhibit not extracted (cost bound): Unsecured Revolving Credit Facility·d37713dex101.htm"
+    "(E5) exhibit not extracted (cost bound): Unsecured Revolving Credit Facility·d37713dex101.htm",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-10-07T07:11:46.911437Z",
-  "extraction_version": "2026-08-16.1",
+  "assembled_at": "2026-10-10T13:03:25.292512Z",
+  "extraction_version": "2026-10-09.3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/7a8c48c6-a821-4457-bb5d-851644a93205/scratchpad/wt-nflx/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/f4a82156-ec52-4909-aaf6-d6b5ad43336a/scratchpad/wt-nflx/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-10-06"
+    "frontier": "2026-10-09"
   },
   "sector": "Consumer Discretionary",
   "industry": {
@@ -13503,7 +13487,7 @@
     "ciq_tev_claims": 7526.8,
     "ciq_tev_claims_source": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
     "edgar_net_debt": null,
-    "edgar_source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ",
+    "edgar_source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 − short-term investments 29 (ShortTermInvestments, 2026-06-30) ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ",
     "consensus": {
       "years": [
         {
@@ -13591,7 +13575,7 @@
     "ev_bridge": {
       "primary_basis": "EDGAR lease-inclusive net debt (the anchor's)",
       "current_claims": null,
-      "current_claims_source": "anchor.net_debt (EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ)",
+      "current_claims_source": "anchor.net_debt (EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 − short-term investments 29 (ShortTermInvestments, 2026-06-30) ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ)",
       "balance_sheet_date": null,
       "components": [],
       "ciq_tev_less_market_cap": 7526.8,
@@ -13643,9 +13627,9 @@
   "date_semantics": {
     "screen_reference_date": "2026-09-22",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-10-06",
+    "analysis_as_of": "2026-10-09",
     "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-10-06",
+    "price_as_of": "2026-10-09",
     "market_cap_as_of": "2026-10-06",
     "tev_as_of": "2026-10-06",
     "consensus_as_of": "≥2026-10-06",
@@ -13653,71 +13637,15 @@
     "historical_multiple_latest_observation": "2026-09-21",
     "historical_multiple_history_through": "2026-06-30",
     "stock_performance_as_of": "2026-09-22",
-    "assembled_at": "2026-10-07T07:11:46.911437Z",
+    "assembled_at": "2026-10-10T13:03:25.292512Z",
     "valuation_snapshot_as_of": "2026-10-06",
-    "price_days_after_valuation_snapshot": 0
+    "price_days_after_valuation_snapshot": 3
   },
-  "layer_refreshes": [
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "mechanical.catalyst_path"
-      ]
-    },
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_multiple_history"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.2",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "forward_multiple_history",
-        "historical_forecast_error"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.3",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus"
-      ]
-    },
-    {
-      "date": "2026-10-09",
-      "extraction_version": "2026-10-08.4",
-      "writer": "refresh",
-      "layers": [
-        "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-10",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "date_semantics",
-        "forward_multiple_history",
-        "valuation_basis"
-      ]
-    }
-  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-07T07:18:28.502466Z",
+    "computed_at": "2026-10-10T13:10:02.651015Z",
     "reason": "R1 inputs incomplete — see per-input source stamps",
     "data_quality": null,
     "data_quality_detail": [],
@@ -13746,7 +13674,7 @@
       "value": null,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ"
+      "source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 − short-term investments 29 (ShortTermInvestments, 2026-06-30) ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ"
     },
     "diluted_shares": {
       "value": 4261300000.0,
