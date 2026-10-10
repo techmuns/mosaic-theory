@@ -424,6 +424,16 @@ def test_a_paraphrased_quote_is_reanchored_to_the_verbatim_sentence_carrying_its
     assert "11.2" in sentence and sentence in block.text  # verbatim, from the article
 
 
+def test_a_quote_is_never_reanchored_to_a_sentence_that_lacks_its_figure() -> None:
+    """The sentence sharing the quote's words best is refused when it does not carry the claimed
+    figure (found unpinned by the 2026-10-10 mutation run)."""
+    art = Hypo(slug="no-figure", publisher="P", published=date(2026, 3, 2), blocks=[
+        ("paragraph", "DRAM contract prices rose sharply in the first quarter as AI servers "
+                      "absorbed supply. Prices were up 9% overall.")])
+    assert reanchor_quote("DRAM contract prices rose 9% in the first quarter as AI servers "
+                          "absorbed supply", "9%", art.doc().body_blocks) is None
+
+
 def test_a_quote_sharing_too_few_words_is_not_reanchored() -> None:
     doc = load_document(CALM_DIR)
     assert reanchor_quote("bond yields fell sharply over the winter", None,
@@ -600,9 +610,12 @@ def test_an_immaterial_verdict_without_a_reason_leaves_the_figure_open() -> None
 
 
 def test_no_passage_is_minted_without_an_llm_review(tmp_path: Path) -> None:
-    """A source-labelled line citing no verified claim is WITHHELD when only the deterministic
-    checks ran: a verbatim passage is minted as its anchor only when an LLM reviewer judged the
-    line and will judge it again."""
+    """End to end, with only the deterministic checks: a line that cites an invented quote gets no
+    verbatim passage minted as its anchor. What this pins is the composed result — the line is
+    labelled from its VERIFIED claims, so it is MODEL INFERENCE and never reaches the passage
+    branch at all. The branch's own condition (REVIEW_UNSUPPORTED only) is not reachable by a
+    deterministic check today: FACT_WITHOUT_CLAIM was raised 0 times in the 32 registries of the
+    2026-10-10 real runs, and a mutant widening that condition survives as equivalent."""
     pipe = make_pipeline(tmp_path)  # review=False
     pipe.start_run("fixture", as_of=date(2026, 3, 2))
     text = "Memory makers raised DRAM contract prices sharply as AI servers absorbed supply."
