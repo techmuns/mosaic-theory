@@ -1,0 +1,92 @@
+[
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-10-10T16:56:10.740710Z",
+  "detail": "'J.P. Morgan Private Bank' does not occur in the article text \u2014 dropped (no unnamed entity may be source-mentioned)",
+  "issue_id": "VI-042d397b7f54d4",
+  "ref_id": "J.P. Morgan Private Bank",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "mention",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "AUTHOR_METADATA_DISCREPANCY",
+  "created_at": "2026-10-10T16:56:10.741620Z",
+  "detail": "author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also credited on the page: Nick Roberts (by schema.org/Person microdata)",
+  "issue_id": "VI-5e60f4bd11bcb8",
+  "ref_id": "A-46796449712e",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:10.868122Z",
+  "detail": "s06.0: The phrase 'conditions the article presents as present-tense and actionable for portfolio construction now' is an editorial characterization not found in the cited measured-observation spans. The underlying figures (11.2 'currently', ~43%, 10-15) are supported, but the actionability framing is not anchored. | 'Currently implied correlation is in the 10-15 range and breadth is at ~43%, conditions the article p'",
+  "issue_id": "VI-807943a5711cb1",
+  "ref_id": "TH-4BC577D53A:s06.0",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-10T16:56:10.740908Z",
+  "detail": "h1 Low stock correlation makes sector and thematic se cites ['C-f3b6838cb01018'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-a5aa36b6a97a53",
+  "ref_id": "h1 Low stock correlation makes sector and thematic se",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-10T16:56:10.871812Z",
+  "detail": "s03.1: UNSUPPORTED \u2014 Cited span only says state governments put moratoriums on build-out weighing on sector; it does not say rising reliance on utilities raised electricity prices for consumers or that this triggered political backlash. Also labelled MEASURED OBSERVATION for an unsupported causal chain. | 'Rising reliance on utilities raised electricity prices for consumers, triggering political backlash '",
+  "issue_id": "VI-abc071e23853a9",
+  "ref_id": "TH-98FD8D046C:s03.1",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:10.868129Z",
+  "detail": "s07.2: The ~43% breadth and down-from-75% are supported. 'Benchmark gains are concentrated in a handful of heavyweight technology companies' is not in the cited spans \u2014 C-651d24fcd2c927 only states 'seven straight quarters of corporate earnings growth', which does not support concentration in tech heavyweights. The concentration claim is unsupported by cited spans and not clearly in the pool. | 'Benchmark gains are concentrated in a handful of heavyweight technology companies while breadth is n'",
+  "issue_id": "VI-d281f28c01c54d",
+  "ref_id": "TH-4BC577D53A:s07.2",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-10T16:56:10.867670Z",
+  "detail": "s07.2 prints '2026', which none of its cited claims carry: 'Benchmark gains are concentrated in a handful of heavyweight technology companies while breadth is n'",
+  "issue_id": "VI-d7958833a7b361",
+  "ref_id": "TH-4BC577D53A:s07.2",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:10.868126Z",
+  "detail": "s07.0: Only C-f3b6838cb01018 (correlation 10-15) is cited. The claims 'It is not unusual to see wide dispersion', 'could normalize back toward the ~40 average', and 'as it has after past brief spikes' are not in the cited span. These normalization/past-spike claims are not supported by any pool span either (the ~40 average is in C-0e01fcdfe7d3c0 but the normalization dynamic and past spikes are absent). | 'It is not unusual to see wide dispersion between stocks and sectors; low correlation could normalize'",
+  "issue_id": "VI-df1ccc8c3844a9",
+  "ref_id": "TH-4BC577D53A:s07.0",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:10.868114Z",
+  "detail": "s01.0: The sentence states the long-run average of the correlation index is 41 (from C-2a5ee12b031485: 'well below the long run average of 41'), which is supported. The 11.2, ~43%, and 75% figures are all supported. However, the cited figure label marks 11.2 as approximate when the span gives it as exact (11.2, approximate=False) \u2014 a minor mismatch in the figure labels, but the stated values themselves match. All claim values are present in cited spans. | 'The Cboe 3-month implied correlation index sits at 11.2 versus a long-run average of 41, and only ~4'",
+  "issue_id": "VI-f93a29838d6da3",
+  "ref_id": "TH-4BC577D53A:s01.0",
+  "run_id": "R-20261010T165610Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]

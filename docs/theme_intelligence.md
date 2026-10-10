@@ -39,18 +39,86 @@ could not be read; the readout says which) · **1** failed.
 
 `data/theme_intelligence/runs/<RUN_ID>/` (git-ignored; `runs/LATEST` names the newest):
 
-- `dashboard.html` / `.md` / `.json` / `.csv` — the weekly decision page: run status, window,
-  sources checked / failed, articles read, queued, themes created / updated, RESEARCH NOW / WATCH /
-  SKIP totals, retrieval caveats; then six categories in a fixed order — new, upgraded, downgraded,
+- `dashboard.html` / `.md` / `.json` / `.csv` — the weekly decision page: run status, window, and
+  a KPI strip in plain words — *Accessible sources: 6 of 8*, *Blocked sources: Morgan Stanley,
+  Goldman Sachs*, *Articles analyzed: N full · M partial*, *Research Now / Watch / Skip*, *New /
+  upgraded / downgraded / challenged theses*, *Reported figures not yet captured: X of Y* — then
+  unresolved caveats. Both thesis KPIs count the theses THIS RUN created or changed (a SKIP is
+  archived at once, and still counts) and its events (a thesis new this run can also be
+  challenged in it); each tile says so under its value. Then six categories in a fixed order —
+  each thesis in exactly one — new, upgraded, downgraded,
   challenged, unchanged but material, archived — each always printed with its count ("showing X of
-  Y" when collapsed); then a searchable archive of every thesis.
-- `cards/<THESIS_ID>.html` (web: header + 01/02/06/08 open, 03/04/05/07/09 on demand),
-  `.print.html` (everything open), `.md`, `.json` — the same nine sections in the same order, all
-  rendered from the stored `ThesisVersion`.
+  Y" when collapsed); then a searchable archive of every thesis. Each row shows the ARTICLE date
+  and the date the registry FIRST DETECTED the thesis apart ("new to the registry" never means
+  "new to the market"), what changed, why the action, the exposure the source names and the next
+  research step. Thesis ids, versions, change classes, claim ids and the rule trace sit behind the
+  *Show evidence IDs, engine codes and the decision trace* toggle; print shows everything.
+- `cards/<THESIS_ID>.html` — the COMPACT DECISION VIEW: header (action, evidence direction, record
+  kind, article date vs first detected) and 01 / 02 / 06 / 08 open, 03 / 04 / 05 / 07 / 09 folded
+  with a one-line summary, the same audit toggle; `.print.html` (everything open, audit included),
+  `.md`, `.json` — the same nine sections in the same order, all rendered from the stored
+  `ThesisVersion`.
 - `report_print.html` — the dashboard plus every card that changed, fully expanded.
 - `validation_log.json` — every verification issue (BLOCK / HOLD / WARN / INFO).
 - `manifest.json` — window, as-of, status, runtime, fetch / LLM seconds, model and prompt versions,
   tokens, cost, per-source coverage, warnings, output list.
+
+## How an article becomes records, and how each line is labelled
+
+Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intelligence-review-corrections.md`).
+
+- **Two record kinds.** An *investment thesis* argues a profit-transmission mechanism for listed
+  equities. A *market-regime record* captures a market-structure condition the article measures —
+  breadth, correlation, dispersion, volatility — together with the research OPPORTUNITY the article
+  draws from it (e.g. "sector and thematic selection matters more"). It needs no named stock and no
+  earnings mechanism, and it is never forced into a buy thesis. A market-structure condition the
+  article presents as a RISK (concentration, a correlation that could cause a simultaneous
+  drawdown) stays a market risk — never a record of either kind.
+- **Whole-article completeness.** A deterministic ledger lists every figure the article TEXT states
+  (with its sign and unit; years, tenors such as "200-day", and numbers inside names such as "S&P
+  500" are not figures) and every argument paragraph, BEFORE any model output is consulted. A
+  second, independent model pass (pass 1b) then re-reads the whole article beside the first pass's
+  record and must account for every gap — add the missed claim, mention, thesis or regime record,
+  or mark the gap immaterial WITH A REASON. Its additions go through the same verification as pass
+  1. Every figure ends captured / added by the completeness pass / immaterial / uncaptured; an
+  uncaptured figure is an open WARN issue, a dashboard caveat and a failing QA check.
+- **Labels.** A line the source supports is labelled by what its cited claims ARE — MEASURED
+  OBSERVATION (a reported figure or dated event), FORECAST (a projection or NTM figure) or SOURCE
+  OPINION (the publisher's interpretation, argument or recommendation — never an established
+  market fact) — and carries the WEAKEST label among them. MODEL INFERENCE is this tool's reasoning;
+  EXTERNALLY VERIFIED is reserved for checks against an independent primary source.
+- **Transmission.** A rising or falling share price, valuation multiple or index is a MARKET
+  REACTION, filed under its own step and never counted as an earnings mechanism; a step the model
+  files as pricing / margins / earnings that only describes a price move is re-filed and logged.
+- **Near term is a calendar test.** A forecast or event counts as near-term only when its stated
+  window starts within ~a year and ends within ~18 months of the as-of ("2025-2031" never does);
+  a measured observation counts when it is dated within the last quarter. The model's horizon label
+  is recorded, never decisive. A DISLOCATION must be a mispricing measured in the last quarter and
+  a CATALYST a dated event inside the window — an opinion or a forecast figure offered as either is
+  listed and not counted.
+- **Exposure.** RESEARCH NOW needs a source-named exposure: a point-in-time-verified listed common
+  equity OR a sector / theme the source names (a verified span containing the name). A sector
+  opportunity needs no ticker. A company's role as the SOURCE states it (e.g. capex spender) is
+  kept apart from the THESIS's reading of it (e.g. potential beneficiary), each labelled.
+- **Point-in-time securities.** A named company's exposure lines are the common-equity lines on the
+  cover page of its latest 10-K / 10-Q / 20-F / 40-F filed on or before the as-of date
+  (inline-XBRL `dei:TradingSymbol` / `Security12bTitle`). Preferred, depositary-preferred and debt
+  lines are kept for audit with their class, never as stock; a current-map ticker absent from that
+  cover is NOT_REGISTERED_AS_OF (or UNVERIFIED when an 8-A12B registration falls in between). When
+  no cover can be read the listing is UNVERIFIED and never counts as an exposure. Alphabet as of
+  2026-02-09: GOOGL / GOOG only — GOOGM / GOOGN, depositary shares of convertible preferred stock,
+  were registered in June 2026.
+- **Re-anchor before withholding.** A non-verbatim quote is re-anchored to the one verbatim
+  sentence that carries its figure and shares its words two-sidedly; a card line a check or the
+  reviewer rejects is re-cited to the reviewer's suggested spans, a verified claim carrying its
+  numbers or words, or — only when an LLM reviewer will judge it again — the verbatim passage
+  that carries it (minted as SOURCE OPINION evidence). It is then reviewed once more; only a line
+  still unsupported is withheld. A MODEL INFERENCE line is never re-anchored into a source label.
+- **Authors.** The union of every place the page credits one — JSON-LD, schema.org/Person
+  microdata, meta author, the visible byline (multi-line titles joined) — plus people the article
+  TEXT credits ("team led by …") as verified spans. A JSON-LD list that omits an author credited
+  elsewhere on the page is recorded as AUTHOR_METADATA_DISCREPANCY; declared alternate language
+  versions (hreflang) are recorded (none of the eight channels' article pages declares one).
 
 ## The eight channels (editable: `vinci/theme_intelligence/config/sources.toml`)
 
@@ -138,14 +206,32 @@ extraction, version and manifest. The model is `claude-opus-4-8` because the rep
 Sonnet 5.5 models reject — and changing the shared client would touch every fund LLM phase. Pass 1
 (extraction) and pass 2 (independent card review) are cached by content hash. Article text reaches
 the model inside `<untrusted_article>` and is treated as data; the tool schema has no field a trade
-could ride on. Measured costs: the J.P. Morgan article ≈ $0.53 (extraction + three card reviews);
-the 2026-10-10 capped scan ≈ $0.84 for three articles.
+could ride on. Measured costs (list price, 2026-10-10, all passes — extraction, completeness, card
+reviews): a J.P. Morgan article ≈ $0.68; a TrendForce release ≈ $0.88; a long SemiAnalysis preview
+≈ $1.24, or $1.35 when one answer had to be set aside and asked again. A cached answer costs
+nothing.
+
+- **Long articles.** An extraction that overruns the output cap (21,333 tokens, the SDK's
+  non-streaming ceiling) is retried ONCE in a declared COMPACT mode — at most 25 claims, issue
+  `EXTRACTION_COMPACT` — and the overrun is remembered, so a replay never pays for it twice. The
+  completeness pass then reviews the article's open gaps in PARTS of at most 50
+  (`COMPLETENESS_IN_PARTS`), each part shown what the earlier parts added. A part that overruns is
+  split once into halves, with the discarded call recorded at its cost; a half that overruns again
+  fails loud.
+- **Malformed answers.** The model's answer is validated ITEM BY ITEM: a claim, mention, thesis or
+  review that fails its schema is dropped and named (`MALFORMED_ITEM_DROPPED`, WARN) — never
+  coerced into a guessed value — and every valid item is kept. The paid answer is cached before it
+  is validated. A malformed top level (not an answer at all) still fails the article loudly.
 
 ## Limitations (also in the PR)
 
 - Morgan Stanley and Goldman Sachs refuse the honest User-Agent — BLOCKED, never bypassed.
 - BofA insight pages carry no publication date — UNDATED, never placed in a window.
 - SemiAnalysis paid posts expose a preview only — PARTIAL, never analysed as full text.
-- The SEC ticker map is current, not point-in-time; every resolution says so on replay runs. A
-  registrant with several tickers lists all of them, because the map does not state security type.
+- Point-in-time listings rest on the issuer's cover-page tagging (required since 2019); a filing
+  without tagged cover facts leaves the listing UNVERIFIED, so it never counts as an exposure.
+  Fiscal-year windows ("FY27") are read as the calendar year — approximate, and said so.
 - Consensus, market expectations and valuation are NOT_ASSESSED: the tool holds no such data.
+- The completeness pass and the card review are LLM judgements, checked deterministically where
+  they can be (every addition re-verified; an "immaterial" verdict needs a reason; a re-anchored
+  line is re-reviewed) — their open gaps are listed, not resolved by fiat.

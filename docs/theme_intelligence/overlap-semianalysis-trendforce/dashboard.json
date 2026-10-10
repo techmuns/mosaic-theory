@@ -1,0 +1,358 @@
+{
+ "archive": [
+  {
+   "action": "WATCH",
+   "card": "cards/TH-91CA483676.html",
+   "direction": "positive",
+   "evidence_direction": "STRONGER",
+   "last_material_update": "2026-09-30",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.memory",
+   "region": "Global",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-91CA483676",
+   "title": "Sparse attention does not reduce overall AI memory capacity demand",
+   "versions": 2
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-A7FF458FB3.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-30",
+   "mechanism": "pricing_cycle",
+   "node": "ai_infrastructure.memory",
+   "region": "Global",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-A7FF458FB3",
+   "title": "AI server demand keeps memory undersupplied, sustaining DRAM and NAND price increases",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-B121174B17.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-28",
+   "mechanism": "competitive_share_shift",
+   "node": "ai_infrastructure.compute_semis",
+   "region": "China",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-B121174B17",
+   "title": "GLM-5 attention config suggests optimization for Chinese Moore Threads accelerators, not NVIDIA",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-F2CD2F7AFC.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-28",
+   "mechanism": "competitive_share_shift",
+   "node": "ai_infrastructure.compute_semis",
+   "region": "Global",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-F2CD2F7AFC",
+   "title": "GB300/GB200 vs AMD MI355X serving-cost leadership depends on latency constraints",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-4BC0244112.html",
+   "direction": "negative",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-30",
+   "mechanism": "cost_inflation",
+   "node": "consumer_electronics",
+   "region": "Global",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ARCHIVED",
+   "thesis_id": "TH-4BC0244112",
+   "title": "Consumer memory demand weak as cost pass-through squeezes PC and mobile end markets",
+   "versions": 1
+  }
+ ],
+ "archived_total": 1,
+ "articles_blocked": 0,
+ "articles_partial": 0,
+ "articles_read": 1,
+ "attributions_only": 0,
+ "banner": null,
+ "categories": {
+  "ARCHIVED": [
+   {
+    "action": "SKIP",
+    "article_date": "2026-09-30",
+    "card": "cards/TH-4BC0244112.html",
+    "category": "ARCHIVED",
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "first_detected": "2026-09-30",
+    "flags": [
+     "ARCHIVED"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-09-30",
+    "named_companies": [
+     "TrendForce (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Assess which listed PC and smartphone OEMs face the greatest margin exposure to rising memory component costs in 4Q26-2027.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "sector_exposures": [
+     "smartphone (negative)"
+    ],
+    "sectors": [
+     "PC",
+     "Smartphones",
+     "Consumer electronics"
+    ],
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cAI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce\u201d (article date 2026-09-30) \u2014 first record of this thesis"
+    ],
+    "status": "ARCHIVED",
+    "thesis_id": "TH-4BC0244112",
+    "title": "Consumer memory demand weak as cost pass-through squeezes PC and mobile end markets",
+    "version": 1,
+    "what_changed": [
+     "Rising costs and depletion of low-cost inventories weigh on smartphone production, suppressing overall mobile DRAM bit demand.",
+     "PC brands are reducing SSD capacities in mainstream models to lower BOM costs, declining procurement volumes and per-device capacity.",
+     "Smartphone brands rely on existing inventories, leaving very limited incremental eMMC/UFS procurement.",
+     "The NAND Flash market shows a divergence between accelerating AI demand and weak consumer demand.",
+     "In eMMC/UFS, OEMs are purchasing only minimum volumes needed to maintain supplier relationships, narrowing negotiations to price confirmation for small order volumes.",
+     "Archived: research action is SKIP \u2014 kept in the searchable archive, off the active list"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Rising costs and depletion of low-cost inventories weigh on smartphone production, suppressing overall mobile DRAM bit demand. [C-b1403bcd70c9fd]",
+     "[novelty_unverified] PC brands are reducing SSD capacities in mainstream models to lower BOM costs, declining procurement volumes and per-device capacity. [C-af8e68d3113402]",
+     "[novelty_unverified] Smartphone brands rely on existing inventories, leaving very limited incremental eMMC/UFS procurement. [C-c8615de6841c2d]",
+     "[novelty_unverified] The NAND Flash market shows a divergence between accelerating AI demand and weak consumer demand. [C-341ec297a7b2a1]",
+     "[novelty_unverified] In eMMC/UFS, OEMs are purchasing only minimum volumes needed to maintain supplier relationships, narrowing negotiations to price confirmation for small order volumes. [C-047f547553a694]"
+    ],
+    "why_action": "Skip \u2014 no verified material evidence"
+   }
+  ],
+  "CHALLENGED": [],
+  "DOWNGRADED": [],
+  "NEW": [
+   {
+    "action": "WATCH",
+    "article_date": "2026-09-30",
+    "card": "cards/TH-A7FF458FB3.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "first_detected": "2026-09-30",
+    "flags": [],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-09-30",
+    "named_companies": [
+     "TrendForce (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check whether listed DRAM and NAND producers' consensus revenue estimates and valuations reflect the 10-20% QoQ 4Q26 contract price increases.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "Semiconductors (positive)"
+    ],
+    "sectors": [
+     "Semiconductors",
+     "DRAM",
+     "NAND Flash"
+    ],
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cAI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce\u201d (article date 2026-09-30) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-A7FF458FB3",
+    "title": "AI server demand keeps memory undersupplied, sustaining DRAM and NAND price increases",
+    "version": 1,
+    "what_changed": [
+     "Conventional DRAM contract prices are projected to grow 10-15% QoQ in 4Q26.",
+     "NAND Flash contract prices are expected to increase 15-20% QoQ in 4Q26.",
+     "Server DRAM is expected to remain undersupplied in 4Q26.",
+     "The pace of DRAM contract price increases is expected to moderate in 4Q26, with conventional DRAM prices rising 10-15% QoQ.",
+     "Overall NAND Flash contract prices are projected to increase 15-20% QoQ in 4Q26.",
+     "DRAM suppliers prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the overall market undersupplied.",
+     "showing 6 of 11 pieces of evidence from A-decec490fcdd \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Conventional DRAM contract prices are projected to grow 10-15% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9 [C-73273a64564506]",
+     "[novelty_unverified] NAND Flash contract prices are expected to increase 15-20% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9 [C-30deb97c31f8d3]",
+     "[novelty_unverified] Server DRAM is expected to remain undersupplied in 4Q26. [C-af6e5de53922c6]",
+     "[novelty_unverified] The pace of DRAM contract price increases is expected to moderate in 4Q26, with conventional DRAM prices rising 10-15% QoQ. \u27e8cited figures: forecast\u27e9 [C-06c5d6ed06fec9]",
+     "[novelty_unverified] Overall NAND Flash contract prices are projected to increase 15-20% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9 [C-5c50c201a2dcf7]",
+     "[novelty_unverified] DRAM suppliers prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the overall market undersupplied. [C-4b11f9480e3d59]",
+     "[novelty_unverified] showing 6 of 11 pieces of evidence from A-decec490fcdd \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst"
+   }
+  ],
+  "UNCHANGED BUT MATERIAL": [
+   {
+    "action": "WATCH",
+    "article_date": "2026-09-30",
+    "card": "cards/TH-91CA483676.html",
+    "category": "UNCHANGED BUT MATERIAL",
+    "change_reason": "no change in action (F1_source_reliability medium\u2192high; F2_material_evidence 5\u21929; F3_independent_origins 2\u21923; F6_recognizable_exposures 0 listed \u00b7 1 sector\u21920 listed \u00b7 2 sector; F11_retrieval PARTIAL\u2192FULL)",
+    "evidence_direction": "STRONGER",
+    "first_detected": "2026-09-28",
+    "flags": [],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-09-30",
+    "named_companies": [
+     "SGLang (UNRESOLVED)",
+     "TrendForce (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Identify listed enterprise SSD/QLC NAND suppliers and check whether consensus forecasts price in >80% YoY bit demand growth and accelerating 4Q26 prices.",
+    "other_named": [
+     "InferenceX [not a security]"
+    ],
+    "previous_action": "WATCH",
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "DRAM (positive)",
+     "Enterprise SSD (positive)"
+    ],
+    "sectors": [
+     "memory semiconductors",
+     "HBM",
+     "DRAM",
+     "NAND",
+     "Enterprise SSD",
+     "NAND Flash"
+    ],
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cAI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce\u201d (article date 2026-09-30) \u2014 new evidence"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-91CA483676",
+    "title": "Sparse attention does not reduce overall AI memory capacity demand",
+    "version": 2,
+    "what_changed": [
+     "New evidence: Most incremental enterprise SSD supply is already committed, so price growth is expected to accelerate in 4Q26.",
+     "New evidence: Enterprise SSDs are the only memory category expected to see price growth accelerate in 4Q26, driven by strong CSP demand.",
+     "New evidence: Enterprise SSD bit demand is projected to grow more than 80% YoY in 2026 as CSPs expand AI inference infrastructure.",
+     "New evidence: Enterprise SSD demand is shifting from LLM training toward actual AI deployment.",
+     "New evidence: Large-scale agentic AI rollout drives data volume growth for retrieval and caching, with rising QLC penetration in vector databases.",
+     "New evidence: Enterprise SSD is the only memory category to see a larger price increase than the previous quarter."
+    ],
+    "what_changed_audit": [
+     "[new] Most incremental enterprise SSD supply is already committed, so price growth is expected to accelerate in 4Q26. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 [C-4e5c0df17b919d]",
+     "[new] Enterprise SSDs are the only memory category expected to see price growth accelerate in 4Q26, driven by strong CSP demand. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 [C-e309c51b9cebaa]",
+     "[new] Enterprise SSD bit demand is projected to grow more than 80% YoY in 2026 as CSPs expand AI inference infrastructure. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9 [C-c4ea777ac30f35]",
+     "[new] Enterprise SSD demand is shifting from LLM training toward actual AI deployment. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 [C-2985f4a2235a03]",
+     "[new] Large-scale agentic AI rollout drives data volume growth for retrieval and caching, with rising QLC penetration in vector databases. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 [C-da0333ed23f37d]",
+     "[new] Enterprise SSD is the only memory category to see a larger price increase than the previous quarter. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 [C-0d216d572d2634]"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst"
+   }
+  ],
+  "UPGRADED": []
+ },
+ "caveats": [],
+ "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165608Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "kpi": {
+  "accessible_sources": null,
+  "archived": 1,
+  "articles_blocked": 0,
+  "articles_full": 1,
+  "articles_partial": 0,
+  "blocked_sources": null,
+  "challenged": 0,
+  "downgraded": 0,
+  "figures_in_articles": 7,
+  "figures_uncaptured": 0,
+  "new": 2,
+  "queued": 0,
+  "research_now": 0,
+  "skip": 1,
+  "theses_this_run": 3,
+  "upgraded": 0,
+  "watch": 2
+ },
+ "no_material_change": [],
+ "notes": [],
+ "run": {
+  "as_of": "2026-09-30",
+  "checkpoint": {},
+  "complete_prompt_version": "ti-complete-1",
+  "cost_usd": 0.0,
+  "counts": {
+   "articles_processed": 1,
+   "attributions_only": 0,
+   "claims_added_by_completeness": 4,
+   "claims_extracted": 30,
+   "claims_verified": 30,
+   "figures_in_articles": 7,
+   "figures_uncaptured": 0,
+   "http_cache_hits": 1,
+   "http_requests": 0,
+   "llm_calls": 7,
+   "llm_calls_cached": 7,
+   "mentions": 1,
+   "replayed_from_cache_cache_creation_input_tokens": 0,
+   "replayed_from_cache_cache_read_input_tokens": 0,
+   "replayed_from_cache_input_tokens": 72371,
+   "replayed_from_cache_output_tokens": 20530,
+   "theses_added_by_completeness": 0,
+   "theses_created": 2,
+   "theses_updated": 1
+  },
+  "db_schema_version": 2,
+  "engine_version": "ti-engine-2",
+  "extract_prompt_version": "ti-extract-6",
+  "fetch_seconds": 0.0,
+  "finished_at": "2026-10-10T16:56:08.694369Z",
+  "llm_model": "claude-opus-4-8",
+  "llm_provider": "anthropic",
+  "llm_seconds": 0.0,
+  "mode": "article",
+  "output_dir": "data/theme_intelligence/v2/overlap-12/runs/R-20261010T165608Z-article",
+  "parser_version": "ti-parse-4",
+  "review_prompt_version": "ti-review-4",
+  "run_id": "R-20261010T165608Z-article",
+  "sources": [],
+  "started_at": "2026-10-10T16:56:08.595533Z",
+  "status": "SUCCEEDED",
+  "tokens": {},
+  "warnings": [],
+  "window_from": "2026-09-30",
+  "window_to": "2026-09-30"
+ },
+ "sources": [],
+ "sources_checked": 0,
+ "sources_failed": [],
+ "themes_created": 2,
+ "themes_updated": 1,
+ "totals_active": {
+  "RESEARCH NOW": 0,
+  "SKIP": 0,
+  "WATCH": 4
+ },
+ "validation": {
+  "BLOCK": 2,
+  "HOLD": 0,
+  "INFO": 3,
+  "WARN": 15
+ },
+ "window": "2026-09-30 \u2192 2026-09-30 (as of 2026-09-30, mode article)"
+}

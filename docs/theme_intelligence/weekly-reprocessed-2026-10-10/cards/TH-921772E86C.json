@@ -1,0 +1,1470 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.optical_networking"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-10",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-08",
+   "latest_article_date": "2026-10-08",
+   "region": "Global",
+   "research_action": "SKIP",
+   "sector": "Optical interconnects, transceivers and datacenter networking",
+   "status": "ACTIVE",
+   "thesis_id": "TH-921772E86C",
+   "title": "AI datacenter optical shift drives VCSEL NPO suppliers' unit demand to 2031"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-f831d325faae32",
+     "C-4f16f595aaa348",
+     "C-82ad21636ce64d",
+     "C-9915397c0bd16c",
+     "C-8bf4ef58d55aa9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce projects VCSEL sales to reach 650 million units by 2031 at a 38% CAGR from 2025, driven by AI datacenter demand for short-reach optical interconnects, with six leading suppliers investing in VCSEL NPO solutions expected to launch 2027-2028. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-9915397c0bd16c",
+     "C-f28879ba1d4be5"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article positions VCSEL NPO as a highly competitive option for scale-up optical interconnect architectures, with suppliers investing to capture future scale-up network opportunities."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The forecast implies rising volume opportunity for the named optical component suppliers, but the article does not quantify revenue, pricing or margin impact per supplier, nor each supplier's share of the 650M-unit market."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f831d325faae32"
+     ],
+     "original_date": "2026-10-08",
+     "period": "by 2031",
+     "provenance": "FORECAST",
+     "text": "VCSEL sales are projected to reach 650 million units by 2031 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4f16f595aaa348"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2025 to 2031",
+     "provenance": "FORECAST",
+     "text": "VCSEL sales are projected to grow at a 38% CAGR from 2025 to 2031 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-82ad21636ce64d"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027 and 2028",
+     "provenance": "FORECAST",
+     "text": "Several VCSEL NPO solutions are expected to launch between 2027 and 2028"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8bf4ef58d55aa9",
+      "C-22808a20c6789d"
+     ],
+     "original_date": "2026-10-08",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Rising copper attenuation is expected to accelerate transition to optical interconnects including VCSEL NPO and Micro LED CPO"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-206e6c4c23ce97"
+     ],
+     "original_date": "2026-10-08",
+     "period": "by 2031",
+     "provenance": "FORECAST",
+     "text": "VCSEL demand is projected to reach 650 million units by 2031. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9915397c0bd16c"
+     ],
+     "original_date": "2026-10-08",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Six leading suppliers are investing heavily in VCSEL NPO R&D"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 9 pieces of evidence from A-5576af910bf8 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-08; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-22808a20c6789d",
+     "C-8bf4ef58d55aa9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Rising transmission speeds into the 1.6 Tbps era increase copper signal attenuation, accelerating transition to optical interconnects like VCSEL NPO for short-reach"
+   },
+   {
+    "claim_ids": [
+     "C-f831d325faae32",
+     "C-4f16f595aaa348"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "VCSEL unit sales projected to reach 650 million by 2031 at 38% CAGR from 2025 \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-9915397c0bd16c"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Volume growth would flow to named suppliers' revenue, but the article does not quantify per-company revenue or margin impact"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-206e6c4c23ce97",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "VCSEL unit demand",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "by 2031",
+    "qualifiers": [],
+    "quote": "VCSEL Demand Projected to Reach 650 Million Units by 2031",
+    "role": "supports",
+    "unit": "units",
+    "value": 650000000.0,
+    "value_text": "650 Million Units"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-22808a20c6789d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "transmission speed",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "as transmission speeds advance into the 1.6 Tbps era, high-frequency electrical signal attenuation over copper cables increases significantly",
+    "role": "supports",
+    "unit": "Tbps",
+    "value": 1.6,
+    "value_text": "1.6 Tbps"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4f16f595aaa348",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "VCSEL sales CAGR",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025 to 2031",
+    "qualifiers": [],
+    "quote": "growing at a CAGR of 38% from 2025 to 2031",
+    "role": "supports",
+    "unit": "%",
+    "value": 38.0,
+    "value_text": "38%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d2223a4ef3535d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "aggregate bandwidth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "up to"
+    ],
+    "quote": "Coherent, Broadcom, ams OSRAM, and HiSilicon are adopting mature 850nm VCSELs paired with photodiodes to achieve aggregate bandwidth of up to 3.2 Tbps",
+    "role": "supports",
+    "unit": "Tbps",
+    "value": 3.2,
+    "value_text": "3.2 Tbps"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f831d325faae32",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "VCSEL unit sales",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2031",
+    "qualifiers": [],
+    "quote": "projected to boost VCSEL sales to 650 million units by 2031",
+    "role": "supports",
+    "unit": "units",
+    "value": 650000000.0,
+    "value_text": "650 million units"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-88b2517a55405a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Lumentum and Furukawa Electric use higher-cost 1,060nm VCSEL solutions, and Coherent plans to adopt this too",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Lumentum and Furukawa Electric have adopted higher-cost 1,060nm VCSEL solutions, while Coherent is also planning to adopt this approach.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8bf4ef58d55aa9",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Rising copper attenuation is expected to accelerate transition to optical interconnects including VCSEL NPO and Micro LED CPO",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "expected to accelerate the transition toward optical interconnect technologies for short-reach transmission, including architectures such as VCSEL NPO and Micro LED CPO",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9915397c0bd16c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Six leading suppliers are investing heavily in VCSEL NPO R&D",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Major companies like Lumentum, Furukawa Electric, Coherent, Broadcom, ams OSRAM, and HiSilicon are investing heavily in R&D.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5576af910bf8",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-82ad21636ce64d",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Several VCSEL NPO solutions are expected to launch between 2027 and 2028",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027 and 2028",
+    "qualifiers": [],
+    "quote": "Several VCSEL NPO solutions are expected to launch between 2027 and 2028.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-085297299e7605",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and source of the report and forecasts"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": "0001633978",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-08-17 (accession 0001628280-26-057358) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value of $0.001 per share",
+       "ticker": "LITE"
+      }
+     ],
+     "mention_id": "M-e2398a70278c80",
+     "name_as_written": "Lumentum",
+     "other_securities": [],
+     "quote": "Lumentum",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier developing VCSEL NPO solutions, including 1,060nm"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-836da77cc473a6",
+     "name_as_written": "Furukawa Electric",
+     "other_securities": [],
+     "quote": "Furukawa Electric",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier developing VCSEL NPO, adopted 1,060nm solutions"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": "0000820318",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-08-14 (accession 0000820318-26-000020) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, no par value",
+       "ticker": "COHR"
+      }
+     ],
+     "mention_id": "M-3153a361987473",
+     "name_as_written": "Coherent",
+     "other_securities": [],
+     "quote": "Coherent",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier developing VCSEL NPO; uses 850nm and plans 1,060nm"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": "0001730168",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value",
+       "ticker": "AVGO"
+      }
+     ],
+     "mention_id": "M-1c205512ab1fc2",
+     "name_as_written": "Broadcom",
+     "other_securities": [],
+     "quote": "Broadcom",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier developing VCSEL NPO using 850nm VCSELs"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-c939eacbb34167",
+     "name_as_written": "ams OSRAM",
+     "other_securities": [],
+     "quote": "ams OSRAM",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier developing VCSEL NPO using 850nm VCSELs"
+    },
+    {
+     "article_id": "A-5576af910bf8",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-19c0cbdefa6505",
+     "name_as_written": "HiSilicon",
+     "other_securities": [],
+     "quote": "HiSilicon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier developing VCSEL NPO using 850nm VCSELs (Huawei subsidiary)"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-5576af910bf8",
+     "claim_ids": [
+      "C-f831d325faae32",
+      "C-4f16f595aaa348"
+     ],
+     "direction": "positive",
+     "name": "Semiconductors / LED",
+     "provenance": "FORECAST",
+     "quote": "Semiconductors / LED"
+    }
+   ],
+   "sectors": [
+    "Semiconductors / LED",
+    "optical interconnect"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "VCSEL NPO solutions expected to launch between 2027 and 2028 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-82ad21636ce64d",
+      "C-f831d325faae32"
+     ],
+     "provenance": "FORECAST",
+     "text": "Several VCSEL NPO solutions are expected to launch in 2027-2028, but the bulk of the unit forecast runs to 2031. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-f28879ba1d4be5",
+      "C-db42f59233fdda",
+      "C-75f32da1a0675a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "VCSEL NPO's improving performance, maturity and supply-chain readiness are strengthening its competitive advantages and building barriers to entry versus Micro LED CPO. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-75f32da1a0675a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Micro LED CPO offers long-term potential to approach the theoretical energy-per-bit limit and could displace VCSEL NPO once its supply chain and mass-transfer challenges are resolved."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-75f32da1a0675a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Micro LED CPO has long-term potential but faces mass transfer, fiber compatibility and coupling efficiency challenges"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Delays in 2027-2028 VCSEL NPO solution launches"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Faster-than-expected Micro LED CPO commercialization displacing VCSEL NPO"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Copper/AEC solutions extending viability at 1.6 Tbps speeds"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Each named supplier's share of the 650M-unit VCSEL market"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revenue, pricing and margin impact per supplier"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the 38% CAGR forecast reflects consensus or is TrendForce-specific"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the forecast is already reflected in supplier valuations"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Micro LED CPO achieving earlier commercial readiness"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "VCSEL NPO launch delays beyond 2028"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify each named supplier's VCSEL/optical revenue exposure and estimated share of the projected 650M-unit 2031 market, and compare TrendForce's 38% CAGR against other analysts' optical interconnect forecasts."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Confirmed VCSEL NPO design wins or product launches in 2027-2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "1.6 Tbps adoption accelerating at hyperscalers"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-5576af910bf8",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-82ad21636ce64d",
+     "C-f831d325faae32",
+     "C-4f16f595aaa348",
+     "C-9915397c0bd16c",
+     "C-22808a20c6789d",
+     "C-8bf4ef58d55aa9",
+     "C-d2223a4ef3535d",
+     "C-88b2517a55405a",
+     "C-206e6c4c23ce97",
+     "C-75f32da1a0675a"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-08T14:01:38+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Six Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reach 650 Million Units by 2031, Says TrendForce",
+    "upstream_origins": [
+     "TrendForce",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261008-13260.html"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165611Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-5576af910bf8",
+   "content": {
+    "header": {
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.optical_networking"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-10",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-08",
+     "latest_article_date": "2026-10-08",
+     "region": "Global",
+     "research_action": "SKIP",
+     "sector": "Optical interconnects, transceivers and datacenter networking",
+     "status": "ACTIVE",
+     "thesis_id": "TH-921772E86C",
+     "title": "AI datacenter optical shift drives VCSEL NPO suppliers' unit demand to 2031"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-f831d325faae32",
+       "C-4f16f595aaa348",
+       "C-82ad21636ce64d",
+       "C-9915397c0bd16c",
+       "C-8bf4ef58d55aa9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce projects VCSEL sales to reach 650 million units by 2031 at a 38% CAGR from 2025, driven by AI datacenter demand for short-reach optical interconnects, with six leading suppliers investing in VCSEL NPO solutions expected to launch 2027-2028. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-9915397c0bd16c",
+       "C-f28879ba1d4be5"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article positions VCSEL NPO as a highly competitive option for scale-up optical interconnect architectures, with suppliers investing to capture future scale-up network opportunities."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The forecast implies rising volume opportunity for the named optical component suppliers, but the article does not quantify revenue, pricing or margin impact per supplier, nor each supplier's share of the 650M-unit market."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f831d325faae32"
+       ],
+       "original_date": "2026-10-08",
+       "period": "by 2031",
+       "provenance": "FORECAST",
+       "text": "VCSEL sales are projected to reach 650 million units by 2031 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4f16f595aaa348"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2025 to 2031",
+       "provenance": "FORECAST",
+       "text": "VCSEL sales are projected to grow at a 38% CAGR from 2025 to 2031 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-82ad21636ce64d"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027 and 2028",
+       "provenance": "FORECAST",
+       "text": "Several VCSEL NPO solutions are expected to launch between 2027 and 2028"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8bf4ef58d55aa9",
+        "C-22808a20c6789d"
+       ],
+       "original_date": "2026-10-08",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Rising copper attenuation is expected to accelerate transition to optical interconnects including VCSEL NPO and Micro LED CPO"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-206e6c4c23ce97"
+       ],
+       "original_date": "2026-10-08",
+       "period": "by 2031",
+       "provenance": "FORECAST",
+       "text": "VCSEL demand is projected to reach 650 million units by 2031. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9915397c0bd16c"
+       ],
+       "original_date": "2026-10-08",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Six leading suppliers are investing heavily in VCSEL NPO R&D"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 9 pieces of evidence from A-5576af910bf8 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first recorded as of 2026-10-10 from a source dated 2026-10-08; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-22808a20c6789d",
+       "C-8bf4ef58d55aa9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Rising transmission speeds into the 1.6 Tbps era increase copper signal attenuation, accelerating transition to optical interconnects like VCSEL NPO for short-reach"
+     },
+     {
+      "claim_ids": [
+       "C-f831d325faae32",
+       "C-4f16f595aaa348"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "VCSEL unit sales projected to reach 650 million by 2031 at 38% CAGR from 2025 \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-9915397c0bd16c"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Volume growth would flow to named suppliers' revenue, but the article does not quantify per-company revenue or margin impact"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-206e6c4c23ce97",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "VCSEL unit demand",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "by 2031",
+      "qualifiers": [],
+      "quote": "VCSEL Demand Projected to Reach 650 Million Units by 2031",
+      "role": "supports",
+      "unit": "units",
+      "value": 650000000.0,
+      "value_text": "650 Million Units"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-22808a20c6789d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "transmission speed",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "as transmission speeds advance into the 1.6 Tbps era, high-frequency electrical signal attenuation over copper cables increases significantly",
+      "role": "supports",
+      "unit": "Tbps",
+      "value": 1.6,
+      "value_text": "1.6 Tbps"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4f16f595aaa348",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "VCSEL sales CAGR",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025 to 2031",
+      "qualifiers": [],
+      "quote": "growing at a CAGR of 38% from 2025 to 2031",
+      "role": "supports",
+      "unit": "%",
+      "value": 38.0,
+      "value_text": "38%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d2223a4ef3535d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "aggregate bandwidth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "up to"
+      ],
+      "quote": "Coherent, Broadcom, ams OSRAM, and HiSilicon are adopting mature 850nm VCSELs paired with photodiodes to achieve aggregate bandwidth of up to 3.2 Tbps",
+      "role": "supports",
+      "unit": "Tbps",
+      "value": 3.2,
+      "value_text": "3.2 Tbps"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f831d325faae32",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "VCSEL unit sales",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2031",
+      "qualifiers": [],
+      "quote": "projected to boost VCSEL sales to 650 million units by 2031",
+      "role": "supports",
+      "unit": "units",
+      "value": 650000000.0,
+      "value_text": "650 million units"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-88b2517a55405a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Lumentum and Furukawa Electric use higher-cost 1,060nm VCSEL solutions, and Coherent plans to adopt this too",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Lumentum and Furukawa Electric have adopted higher-cost 1,060nm VCSEL solutions, while Coherent is also planning to adopt this approach.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8bf4ef58d55aa9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Rising copper attenuation is expected to accelerate transition to optical interconnects including VCSEL NPO and Micro LED CPO",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "expected to accelerate the transition toward optical interconnect technologies for short-reach transmission, including architectures such as VCSEL NPO and Micro LED CPO",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9915397c0bd16c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Six leading suppliers are investing heavily in VCSEL NPO R&D",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Major companies like Lumentum, Furukawa Electric, Coherent, Broadcom, ams OSRAM, and HiSilicon are investing heavily in R&D.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5576af910bf8",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-82ad21636ce64d",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Several VCSEL NPO solutions are expected to launch between 2027 and 2028",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027 and 2028",
+      "qualifiers": [],
+      "quote": "Several VCSEL NPO solutions are expected to launch between 2027 and 2028.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-085297299e7605",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and source of the report and forecasts"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": "0001633978",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-08-17 (accession 0001628280-26-057358) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value of $0.001 per share",
+         "ticker": "LITE"
+        }
+       ],
+       "mention_id": "M-e2398a70278c80",
+       "name_as_written": "Lumentum",
+       "other_securities": [],
+       "quote": "Lumentum",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier developing VCSEL NPO solutions, including 1,060nm"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-836da77cc473a6",
+       "name_as_written": "Furukawa Electric",
+       "other_securities": [],
+       "quote": "Furukawa Electric",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier developing VCSEL NPO, adopted 1,060nm solutions"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": "0000820318",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-08-14 (accession 0000820318-26-000020) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, no par value",
+         "ticker": "COHR"
+        }
+       ],
+       "mention_id": "M-3153a361987473",
+       "name_as_written": "Coherent",
+       "other_securities": [],
+       "quote": "Coherent",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier developing VCSEL NPO; uses 850nm and plans 1,060nm"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": "0001730168",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value",
+         "ticker": "AVGO"
+        }
+       ],
+       "mention_id": "M-1c205512ab1fc2",
+       "name_as_written": "Broadcom",
+       "other_securities": [],
+       "quote": "Broadcom",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier developing VCSEL NPO using 850nm VCSELs"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-c939eacbb34167",
+       "name_as_written": "ams OSRAM",
+       "other_securities": [],
+       "quote": "ams OSRAM",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier developing VCSEL NPO using 850nm VCSELs"
+      },
+      {
+       "article_id": "A-5576af910bf8",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-19c0cbdefa6505",
+       "name_as_written": "HiSilicon",
+       "other_securities": [],
+       "quote": "HiSilicon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier developing VCSEL NPO using 850nm VCSELs (Huawei subsidiary)"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-5576af910bf8",
+       "claim_ids": [
+        "C-f831d325faae32",
+        "C-4f16f595aaa348"
+       ],
+       "direction": "positive",
+       "name": "Semiconductors / LED",
+       "provenance": "FORECAST",
+       "quote": "Semiconductors / LED"
+      }
+     ],
+     "sectors": [
+      "Semiconductors / LED",
+      "optical interconnect"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "VCSEL NPO solutions expected to launch between 2027 and 2028 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-82ad21636ce64d",
+        "C-f831d325faae32"
+       ],
+       "provenance": "FORECAST",
+       "text": "Several VCSEL NPO solutions are expected to launch in 2027-2028, but the bulk of the unit forecast runs to 2031. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-f28879ba1d4be5",
+        "C-db42f59233fdda",
+        "C-75f32da1a0675a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "VCSEL NPO's improving performance, maturity and supply-chain readiness are strengthening its competitive advantages and building barriers to entry versus Micro LED CPO. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-75f32da1a0675a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Micro LED CPO offers long-term potential to approach the theoretical energy-per-bit limit and could displace VCSEL NPO once its supply chain and mass-transfer challenges are resolved."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-75f32da1a0675a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Micro LED CPO has long-term potential but faces mass transfer, fiber compatibility and coupling efficiency challenges"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delays in 2027-2028 VCSEL NPO solution launches"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Faster-than-expected Micro LED CPO commercialization displacing VCSEL NPO"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Copper/AEC solutions extending viability at 1.6 Tbps speeds"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Each named supplier's share of the 650M-unit VCSEL market"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue, pricing and margin impact per supplier"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the 38% CAGR forecast reflects consensus or is TrendForce-specific"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the forecast is already reflected in supplier valuations"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Micro LED CPO achieving earlier commercial readiness"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "VCSEL NPO launch delays beyond 2028"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify each named supplier's VCSEL/optical revenue exposure and estimated share of the projected 650M-unit 2031 market, and compare TrendForce's 38% CAGR against other analysts' optical interconnect forecasts."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Confirmed VCSEL NPO design wins or product launches in 2027-2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "1.6 Tbps adoption accelerating at hyperscalers"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-5576af910bf8",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-82ad21636ce64d",
+       "C-f831d325faae32",
+       "C-4f16f595aaa348",
+       "C-9915397c0bd16c",
+       "C-22808a20c6789d",
+       "C-8bf4ef58d55aa9",
+       "C-d2223a4ef3535d",
+       "C-88b2517a55405a",
+       "C-206e6c4c23ce97",
+       "C-75f32da1a0675a"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-08T14:01:38+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Six Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reach 650 Million Units by 2031, Says TrendForce",
+      "upstream_origins": [
+       "TrendForce",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261008-13260.html"
+     }
+    ]
+   },
+   "content_sha": "41004c9823040c074a6f10ee8660ab8465362ad6d91cbdeffe057074c6c7b0f8",
+   "created_at": "2026-10-10T16:56:41.223603Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-f831d325faae32",
+       "C-4f16f595aaa348",
+       "C-9915397c0bd16c",
+       "C-8bf4ef58d55aa9",
+       "C-d2223a4ef3535d",
+       "C-88b2517a55405a",
+       "C-206e6c4c23ce97",
+       "C-82ad21636ce64d"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-68e13d46ba1d, ES-80d1e591e420",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 4 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "longer_term_only"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: Lumentum (LITE), Coherent (COHR), Broadcom (AVGO), sector: Semiconductors / LED",
+      "value": "3 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-82ad21636ce64d",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-75f32da1a0675a"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T165611Z-scan",
+   "thesis_id": "TH-921772E86C",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-10-10: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "withheld_sentences": {}
+}

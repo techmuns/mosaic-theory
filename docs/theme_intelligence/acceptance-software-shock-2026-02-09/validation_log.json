@@ -1,0 +1,142 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.690443Z",
+  "detail": "s03.1: The cited span says capex forecasts were 'scorned by investors,' not that capex forecasts are 'continued'; the sentence adds an unsupported causal claim that hyperscaler capex 'drives infrastructure suppliers' volumes,' which is not in the cited span. | \"Hyperscaler capex drives infrastructure suppliers' volumes; the article cites continued capex foreca\"",
+  "issue_id": "VI-10285f0cec1db4",
+  "ref_id": "TH-04140F1CA8:s03.1",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.690438Z",
+  "detail": "s03.0: The sentence is about agentic AI requiring compute/physical inputs (supported by C-88cd27b2627367), but it also cites C-08b191d8aae04e (the EV/sales 8x multiple reading) which has nothing to do with the claim content; the cited multiple figure is irrelevant to this sentence. | \"Agentic AI's rise still requires compute; AI model companies and hyperscalers must invest in semicon\"",
+  "issue_id": "VI-11bee148c66f7f",
+  "ref_id": "TH-04140F1CA8:s03.0",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T16:56:05.442236Z",
+  "detail": "c19: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-3ddf5f4ab793cd",
+  "ref_id": "C-ecd52e2e2bffce",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T16:56:05.441835Z",
+  "detail": "c4: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-52add60e9a78bc",
+  "ref_id": "C-60904408c8a015",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T16:56:05.442340Z",
+  "detail": "c21: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-6b4d9db0c5414c",
+  "ref_id": "C-32a82882ea3425",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T16:56:05.695590Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 The cited span is about margin expansion, not productivity gains. 'Companies adopting AI gain productivity' is not stated in the cited span) \u2014 re-anchored to C-0949f685aa48e9; after re-anchoring: supported",
+  "issue_id": "VI-756546b4ab6694",
+  "ref_id": "TH-A56902FFB6:s03.0",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.690447Z",
+  "detail": "s07.0: The cited span gives '2025 reaches about 11.5-11.6x' and 'latest reading is 8x' but does not state this is the S&P 500 Software Index EV/sales multiple; the index/metric attribution is not in the cited span (though supported elsewhere by pool spans). | 'The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading i'",
+  "issue_id": "VI-89a2739fe42742",
+  "ref_id": "TH-04140F1CA8:s07.0",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T16:56:05.690547Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 The claim about agentic AI requiring compute, semiconductors, electricity, cooling, networking and grid interconnection is not in the cited) \u2014 re-anchored to C-88cd27b2627367; after re-anchoring: supported",
+  "issue_id": "VI-9191939df85f01",
+  "ref_id": "TH-04140F1CA8:s03.0",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T16:56:05.441827Z",
+  "detail": "c4: forced chart_derived: the quote is in a chart description",
+  "issue_id": "VI-a4aef4e1c332b7",
+  "ref_id": "C-60904408c8a015",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-10T16:56:05.442289Z",
+  "detail": "c20: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-c0ba7e89b9ef94",
+  "ref_id": "C-b92f649a535a64",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.690450Z",
+  "detail": "s07.1: Labelled MEASURED OBSERVATION but the sentence is a conditional interpretation/opinion ('if AI disruption...the build thesis weakens'); the cited span is just the 8x multiple reading and does not support this conditional thesis claim. Label is stronger than content. | \"If AI disruption is real but doesn't require much new physical investment (a DeepSeek-style efficien\"",
+  "issue_id": "VI-c6d92590e9a908",
+  "ref_id": "TH-04140F1CA8:s07.1",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.683986Z",
+  "detail": "s06.0: The cited spans support oversold/depressed valuation readings but do not characterize this as an 'immediately investigable dislocation'; the interpretive framing exceeds MEASURED OBSERVATION content. Underlying figures are supported. | 'Software is at extreme oversold and depressed valuation levels now, an immediately investigable disl'",
+  "issue_id": "VI-da9a9881dad229",
+  "ref_id": "TH-8DA46A49DB:s06.0",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.695500Z",
+  "detail": "s01.1: The cited span supports margin expansion by adopters but says nothing about revenue/productivity gains being 'worth it' \u2014 that part is not in the cited span. Pool C-0949f685aa48e9 covers the long-run rewards angle. | 'The article states corporate AI adopters are already seeing positive margin impact and that revenue/'",
+  "issue_id": "VI-eab0c6c52e5b10",
+  "ref_id": "TH-A56902FFB6:s01.1",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T16:56:05.683993Z",
+  "detail": "s07.2: The cited spans support 'structurally lower growth rate and terminal value due to AI disruption' but 'permanent' and 'making the sector a value trap' are added interpretations not in the cited spans. | 'The valuation collapse could instead signal a structurally lower growth rate and terminal value for '",
+  "issue_id": "VI-ffc7ca7ba406e5",
+  "ref_id": "TH-8DA46A49DB:s07.2",
+  "run_id": "R-20261010T165605Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]

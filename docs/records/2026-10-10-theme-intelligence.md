@@ -101,3 +101,15 @@ weekly run $0.81 (3 articles), A → B $0.05; cache hits cost 0 and are reported
 - Scheduling is NOT claimed operational on Actions: a `workflow_dispatch` workflow can only be run
   once it is on the default branch, so the first Actions run, and the state branch it creates,
   happen after merge. The local wrapper's run is the verified scheduled-equivalent run.
+
+## Amendments
+
+- **2026-10-10 — review of PR #703, corrected on the same PR:**
+  `docs/records/2026-10-10-theme-intelligence-review-corrections.md`. Claims above that no longer
+  hold: (1) AI infrastructure's RESEARCH NOW — under the corrected evidence typing its only
+  offered dislocation is the article's rhetorical question (a SOURCE OPINION), so it is WATCH;
+  the three theses and their other actions stand. (2) "The SEC ticker map is current, not
+  point-in-time" — listings are now read from the as-of cover page; GOOGM / GOOGN were not
+  registered on 2026-02-09 and never enter the record as stock. (3) The decision trace quoted in
+  the PR ("Alphabet (GOOG/GOOGL/GOOGM/GOOGN)") was the defect the review named. (4) The weekly
+  run's records above were produced by `ti-extract-5`; the sample was reprocessed from scratch.

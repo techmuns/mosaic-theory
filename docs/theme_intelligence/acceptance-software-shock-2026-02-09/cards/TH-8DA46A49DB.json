@@ -1,0 +1,1838 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "ancestry": [
+    "software"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-02-09",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-02-09",
+   "latest_article_date": "2026-02-09",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Software industry (broad)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8DA46A49DB",
+   "title": "Indiscriminate software sell-off oversold the whole software sector"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-d345f3606a0f63",
+     "C-79ada2c20447c0",
+     "C-3f193c5f0fcc97",
+     "C-08b191d8aae04e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The S&P 500 Software Index is in a bear market with RSI at 18 (most oversold since 1990) and EV/sales near 8x, down from ~11.5-11.6x, with IGV over 20% below its 200-day moving average. \u27e8cited figures: data as of 2026-02-05; approximate, read from a chart\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-b933672d32a384"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article states that if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If the AI-disruption fear is overdone, the extreme oversold and valuation readings in software could represent an entry point, but the article does not quantify what growth/terminal-value impairment the price already discounts."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-79ada2c20447c0"
+     ],
+     "original_date": "2026-02-09",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990. \u27e8cited figures: data as of 2026-02-05\u27e9"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3f193c5f0fcc97"
+     ],
+     "original_date": "2026-02-09",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash."
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-08b191d8aae04e"
+     ],
+     "original_date": "2026-02-09",
+     "period": "as of 2026-02-05",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x. \u27e8cited figures: approximate, read from a chart\u27e9"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f0b54d48c8d4be"
+     ],
+     "original_date": "2026-02-09",
+     "period": "November 2022 comparison",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The software sector's EV/sales ratio is near levels seen in November 2022."
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d345f3606a0f63"
+     ],
+     "original_date": "2026-02-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The S&P 500 Software Index has fallen into a bear market."
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b933672d32a384"
+     ],
+     "original_date": "2026-02-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first recorded as of 2026-02-09 from a source dated 2026-02-09; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-8817a3f6ce2bd3",
+     "C-576cbf479b97ea"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Agentic AI (Anthropic/Claude Code) could let users replace traditional SaaS functions, raising fears of software obsolescence."
+   },
+   {
+    "claim_ids": [
+     "C-7cd52d5be82345"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "For the bear case to hold, software growth rates and terminal value must be structurally lower; otherwise current earnings power is intact and the selling is indiscriminate (model inference on what would need to be true)."
+   },
+   {
+    "claim_ids": [
+     "C-d345f3606a0f63",
+     "C-79ada2c20447c0",
+     "C-3f193c5f0fcc97",
+     "C-08b191d8aae04e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "market_reaction",
+    "text": "Software index fell into a bear market; RSI 18, EV/sales fell to ~8x, IGV >20% below 200-day MA. \u27e8cited figures: data as of 2026-02-05; approximate, read from a chart\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-08b191d8aae04e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 Software Index \u2014 EV/sales multiple",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "as of 2026-02-05",
+    "qualifiers": [
+     "latest reading"
+    ],
+    "quote": "in 2025 reaches about 11.5\u201311.6x before a sharp decline. The latest reading is 8x.",
+    "role": "dislocation",
+    "unit": "x",
+    "value": 8.0,
+    "value_text": "8x"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3f193c5f0fcc97",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "iShares Expanded Tech-Software Sector ETF (IGV) \u2014 spread to 200-day moving average",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "over",
+     "widest spread since the tail end of the dotcom crash"
+    ],
+    "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average, the widest spread since the tail end of the dotcom crash.",
+    "role": "dislocation",
+    "unit": "%",
+    "value": 20.0,
+    "value_text": "over 20%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-79ada2c20447c0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 Software Index \u2014 RSI",
+    "measured_as_of": "2026-02-05",
+    "origin": "Bloomberg Finance L.P.",
+    "period": null,
+    "qualifiers": [
+     "most oversold since 1990"
+    ],
+    "quote": "With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990.",
+    "role": "dislocation",
+    "unit": null,
+    "value": 18.0,
+    "value_text": "18"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b933672d32a384",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "conditional on belief"
+    ],
+    "quote": "if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look if you want to find an entry point.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d345f3606a0f63",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The S&P 500 Software Index has fallen into a bear market.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The S&P 500 Software Index has fallen into a bear market.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f0b54d48c8d4be",
+    "comparator": "November 2022",
+    "epistemic": "actual",
+    "label": "S&P 500 Software Index \u2014 EV/sales multiple",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "November 2022 comparison",
+    "qualifiers": [
+     "near levels seen in November of 2022"
+    ],
+    "quote": "Take a look at the sector\u2019s enterprise value (EV) to sales ratio: It\u2019s near levels seen in November of 2022, when the world was bracing for recession",
+    "role": "supports",
+    "unit": "x",
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-044e66606f1460",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "Anthropic has released several new models and features",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "AI model developer whose new models/features (Claude Code) drive the software disruption narrative"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c855e68f7fc77c",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P. Data as of February 5, 2026.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for the S&P 500 Software Index RSI data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001326801",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-01-29 (accession 0001628280-26-003942) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-805237c8f68cdc",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001018724",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-02-06 (accession 0001018724-26-000004) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-5262aa55c095e0",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001652044",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-02-09",
+       "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.001 par value",
+       "ticker": "GOOGL"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-02-09",
+       "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class C Capital Stock, $0.001 par value",
+       "ticker": "GOOG"
+      }
+     ],
+     "mention_id": "M-0bdb986c38cf4a",
+     "name_as_written": "Alphabet",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GOOGM"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GOOGN"
+      }
+     ],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0000789019",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-5320319dd93435",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ce33fd0b94e391",
+     "name_as_written": "S&P 500",
+     "other_securities": [],
+     "quote": "Tech\u2019s heavy presence in the S&P 500",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Index whose concentration and top-10 pairwise correlation is the market-structure risk argument"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-467a36fed1a979",
+     "name_as_written": "22V",
+     "other_securities": [],
+     "quote": "Sources: 22V, FactSet.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for the NTM net margins / AI Usage basket data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001013237",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": null,
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-01-05 (accession 0001628280-26-000223) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 Par Value",
+       "ticker": "FDS"
+      }
+     ],
+     "mention_id": "M-3ccdf62271db30",
+     "name_as_written": "FactSet",
+     "other_securities": [],
+     "quote": "Sources: 22V, FactSet.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "Source for the NTM net margins / AI Usage basket data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4339911083201a",
+     "name_as_written": "J.P. Morgan Private Bank",
+     "other_securities": [],
+     "quote": "Legal Disclaimer for J.P. Morgan Private Bank",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher of the commentary"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "market instrument",
+     "listings": [],
+     "mention_id": "M-19ff3bdfb23150",
+     "name_as_written": "S&P 500 Software Index",
+     "other_securities": [],
+     "quote": "The S&P 500 Software Index has fallen into a bear market.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Index whose bear market, RSI and EV/sales valuation are the article's core evidence"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001100663",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "market instrument",
+     "listings": [
+      {
+       "exchange": null,
+       "instrument": "fund_share",
+       "note": "fund/ETF share class",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "IGV"
+      }
+     ],
+     "mention_id": "M-df393322c882c5",
+     "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+     "other_securities": [],
+     "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "FUND",
+     "role": "market_instrument",
+     "role_detail": "Software ETF cited as trading over 20% below its 200-day moving average"
+    }
+   ],
+   "not_securities": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-f04e5de7b60fa2",
+     "name_as_written": "Claude Code",
+     "other_securities": [],
+     "quote": "if you believe Claude Code is just another DeepSeek moment",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Anthropic product cited as the disruptive catalyst for the software sell-off"
+    }
+   ],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-9fc728a2e96d81",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "Unlike the DeepSeek episode",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Prior AI episode used as a comparison for the current software repricing"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "claim_ids": [
+      "C-b933672d32a384",
+      "C-08b191d8aae04e"
+     ],
+     "direction": "positive",
+     "name": "software",
+     "provenance": "SOURCE OPINION",
+     "quote": "current software valuations are worth a look if you want to find an entry point."
+    }
+   ],
+   "sectors": [
+    "software"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-79ada2c20447c0",
+      "C-3f193c5f0fcc97",
+      "C-08b191d8aae04e"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Software is at extreme oversold and depressed valuation levels now, an immediately investigable dislocation. \u27e8cited figures: data as of 2026-02-05; approximate, read from a chart\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-79ada2c20447c0"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990. \u27e8cited figures: data as of 2026-02-05\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-3f193c5f0fcc97"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash."
+    },
+    {
+     "claim_ids": [
+      "C-08b191d8aae04e"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x. \u27e8cited figures: approximate, read from a chart\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-0949f685aa48e9",
+      "C-e89f7e66484b0b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The long-term AI macro thesis stands and companies leaning into AI will be rewarded, but more volatility is likely."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-7cd52d5be82345",
+      "C-576cbf479b97ea"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The valuation collapse could instead signal a structurally lower growth rate and terminal value for software companies due to permanent AI disruption, making the sector a value trap."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-7cd52d5be82345"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The valuation collapse could signal structurally lower growth and terminal value for software companies due to AI disruption."
+    },
+    {
+     "claim_ids": [
+      "C-576cbf479b97ea"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The author notes a view that one day software companies could become obsolete."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued software underperformance despite RSI below 30"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of actual SaaS revenue/seat erosion from agentic AI tools"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further EV/sales compression below 2022 lows"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-1d705296dc93cb",
+      "C-a5be834b14aea9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Because tech dominates the S&P 500 and its top companies (most with AI-linked revenue), the actual top 10 stocks have pairwise correlation in the 99th percentile, so if the tech/AI narrative falters a large portion of the index could draw down simultaneously. (scope: S&P 500 concentration / top-10 pairwise correlation; based on the publisher's own analysis testing random 10-stock samples; contrasts with past more sector-diversified leadership.)"
+    },
+    {
+     "claim_ids": [
+      "C-e89f7e66484b0b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "More bouts of volatility are likely as AI technology continues to leapfrog previous generations and as long as portfolios remain heavily skewed to tech. (scope: Author's forward-looking opinion on tech-concentrated portfolios; not quantified.)"
+    },
+    {
+     "claim_ids": [
+      "C-7cd52d5be82345"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The software valuation collapse could signal a structurally lower growth rate and terminal value for software companies due to AI disruption, rather than an overdone sell-off. (scope: Applies to the software sector; framed as an alternative interpretation of the EV/sales decline, conditional on AI permanently disrupting software.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: if you believe Claude Code is just another DeepSeek moment rather than permanent AI disruption of software"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether Claude Code/agentic AI permanently erodes SaaS revenue or is a transient scare"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "What degree of growth/terminal-value impairment is already priced into the ~8x EV/sales"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether oversold RSI readings reliably precede inflows this cycle (article notes few are buying)"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SaaS companies report accelerating revenue erosion from AI tools"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "EV/sales keeps compressing on worsening fundamentals"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess whether agentic AI tools (Claude Code) are materially displacing SaaS revenue/seats, and compare current software EV/sales against estimated growth/terminal-value impairment to judge if the sell-off is overdone."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Software RSI stays sub-30 while fundamentals (billings, net retention) hold up"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that agentic AI adoption has not dented SaaS revenue"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-332d3da6f3ac",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-79ada2c20447c0",
+     "C-3f193c5f0fcc97",
+     "C-08b191d8aae04e",
+     "C-d345f3606a0f63",
+     "C-60904408c8a015",
+     "C-f0b54d48c8d4be",
+     "C-b933672d32a384",
+     "C-7cd52d5be82345",
+     "C-576cbf479b97ea",
+     "C-1d705296dc93cb",
+     "C-a5be834b14aea9",
+     "C-e89f7e66484b0b"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-02-09T10:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "Software Shock: AI\u2019s Broken Logic",
+    "upstream_origins": [
+     "Bloomberg Finance L.P.",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 16:57 UTC from the registry (ti-engine-2; run R-20261010T165605Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-02-09",
+   "change_summary": "Initial record \u2014 created from A-332d3da6f3ac",
+   "content": {
+    "header": {
+     "ancestry": [
+      "software"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-02-09",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-02-09",
+     "latest_article_date": "2026-02-09",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Software industry (broad)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-8DA46A49DB",
+     "title": "Indiscriminate software sell-off oversold the whole software sector"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-d345f3606a0f63",
+       "C-79ada2c20447c0",
+       "C-3f193c5f0fcc97",
+       "C-08b191d8aae04e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The S&P 500 Software Index is in a bear market with RSI at 18 (most oversold since 1990) and EV/sales near 8x, down from ~11.5-11.6x, with IGV over 20% below its 200-day moving average. \u27e8cited figures: data as of 2026-02-05; approximate, read from a chart\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-b933672d32a384"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article states that if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If the AI-disruption fear is overdone, the extreme oversold and valuation readings in software could represent an entry point, but the article does not quantify what growth/terminal-value impairment the price already discounts."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-79ada2c20447c0"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990. \u27e8cited figures: data as of 2026-02-05\u27e9"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3f193c5f0fcc97"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash."
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-08b191d8aae04e"
+       ],
+       "original_date": "2026-02-09",
+       "period": "as of 2026-02-05",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x. \u27e8cited figures: approximate, read from a chart\u27e9"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f0b54d48c8d4be"
+       ],
+       "original_date": "2026-02-09",
+       "period": "November 2022 comparison",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The software sector's EV/sales ratio is near levels seen in November 2022."
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d345f3606a0f63"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The S&P 500 Software Index has fallen into a bear market."
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b933672d32a384"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first recorded as of 2026-02-09 from a source dated 2026-02-09; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-8817a3f6ce2bd3",
+       "C-576cbf479b97ea"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Agentic AI (Anthropic/Claude Code) could let users replace traditional SaaS functions, raising fears of software obsolescence."
+     },
+     {
+      "claim_ids": [
+       "C-7cd52d5be82345"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "For the bear case to hold, software growth rates and terminal value must be structurally lower; otherwise current earnings power is intact and the selling is indiscriminate (model inference on what would need to be true)."
+     },
+     {
+      "claim_ids": [
+       "C-d345f3606a0f63",
+       "C-79ada2c20447c0",
+       "C-3f193c5f0fcc97",
+       "C-08b191d8aae04e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "market_reaction",
+      "text": "Software index fell into a bear market; RSI 18, EV/sales fell to ~8x, IGV >20% below 200-day MA. \u27e8cited figures: data as of 2026-02-05; approximate, read from a chart\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-08b191d8aae04e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 Software Index \u2014 EV/sales multiple",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "as of 2026-02-05",
+      "qualifiers": [
+       "latest reading"
+      ],
+      "quote": "in 2025 reaches about 11.5\u201311.6x before a sharp decline. The latest reading is 8x.",
+      "role": "dislocation",
+      "unit": "x",
+      "value": 8.0,
+      "value_text": "8x"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3f193c5f0fcc97",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "iShares Expanded Tech-Software Sector ETF (IGV) \u2014 spread to 200-day moving average",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "over",
+       "widest spread since the tail end of the dotcom crash"
+      ],
+      "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average, the widest spread since the tail end of the dotcom crash.",
+      "role": "dislocation",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "over 20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-79ada2c20447c0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 Software Index \u2014 RSI",
+      "measured_as_of": "2026-02-05",
+      "origin": "Bloomberg Finance L.P.",
+      "period": null,
+      "qualifiers": [
+       "most oversold since 1990"
+      ],
+      "quote": "With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990.",
+      "role": "dislocation",
+      "unit": null,
+      "value": 18.0,
+      "value_text": "18"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b933672d32a384",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "conditional on belief"
+      ],
+      "quote": "if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look if you want to find an entry point.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d345f3606a0f63",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The S&P 500 Software Index has fallen into a bear market.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The S&P 500 Software Index has fallen into a bear market.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f0b54d48c8d4be",
+      "comparator": "November 2022",
+      "epistemic": "actual",
+      "label": "S&P 500 Software Index \u2014 EV/sales multiple",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "November 2022 comparison",
+      "qualifiers": [
+       "near levels seen in November of 2022"
+      ],
+      "quote": "Take a look at the sector\u2019s enterprise value (EV) to sales ratio: It\u2019s near levels seen in November of 2022, when the world was bracing for recession",
+      "role": "supports",
+      "unit": "x",
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-044e66606f1460",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Anthropic has released several new models and features",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "AI model developer whose new models/features (Claude Code) drive the software disruption narrative"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c855e68f7fc77c",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P. Data as of February 5, 2026.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for the S&P 500 Software Index RSI data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001326801",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-01-29 (accession 0001628280-26-003942) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-805237c8f68cdc",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001018724",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-02-06 (accession 0001018724-26-000004) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-5262aa55c095e0",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001652044",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-02-09",
+         "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.001 par value",
+         "ticker": "GOOGL"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-02-09",
+         "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class C Capital Stock, $0.001 par value",
+         "ticker": "GOOG"
+        }
+       ],
+       "mention_id": "M-0bdb986c38cf4a",
+       "name_as_written": "Alphabet",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GOOGM"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GOOGN"
+        }
+       ],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0000789019",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-5320319dd93435",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ce33fd0b94e391",
+       "name_as_written": "S&P 500",
+       "other_securities": [],
+       "quote": "Tech\u2019s heavy presence in the S&P 500",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Index whose concentration and top-10 pairwise correlation is the market-structure risk argument"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-467a36fed1a979",
+       "name_as_written": "22V",
+       "other_securities": [],
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for the NTM net margins / AI Usage basket data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001013237",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": null,
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-01-05 (accession 0001628280-26-000223) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 Par Value",
+         "ticker": "FDS"
+        }
+       ],
+       "mention_id": "M-3ccdf62271db30",
+       "name_as_written": "FactSet",
+       "other_securities": [],
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Source for the NTM net margins / AI Usage basket data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4339911083201a",
+       "name_as_written": "J.P. Morgan Private Bank",
+       "other_securities": [],
+       "quote": "Legal Disclaimer for J.P. Morgan Private Bank",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "market instrument",
+       "listings": [],
+       "mention_id": "M-19ff3bdfb23150",
+       "name_as_written": "S&P 500 Software Index",
+       "other_securities": [],
+       "quote": "The S&P 500 Software Index has fallen into a bear market.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Index whose bear market, RSI and EV/sales valuation are the article's core evidence"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001100663",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "market instrument",
+       "listings": [
+        {
+         "exchange": null,
+         "instrument": "fund_share",
+         "note": "fund/ETF share class",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "IGV"
+        }
+       ],
+       "mention_id": "M-df393322c882c5",
+       "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+       "other_securities": [],
+       "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "FUND",
+       "role": "market_instrument",
+       "role_detail": "Software ETF cited as trading over 20% below its 200-day moving average"
+      }
+     ],
+     "not_securities": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-f04e5de7b60fa2",
+       "name_as_written": "Claude Code",
+       "other_securities": [],
+       "quote": "if you believe Claude Code is just another DeepSeek moment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Anthropic product cited as the disruptive catalyst for the software sell-off"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-9fc728a2e96d81",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "Unlike the DeepSeek episode",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Prior AI episode used as a comparison for the current software repricing"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "claim_ids": [
+        "C-b933672d32a384",
+        "C-08b191d8aae04e"
+       ],
+       "direction": "positive",
+       "name": "software",
+       "provenance": "SOURCE OPINION",
+       "quote": "current software valuations are worth a look if you want to find an entry point."
+      }
+     ],
+     "sectors": [
+      "software"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-79ada2c20447c0",
+        "C-3f193c5f0fcc97",
+        "C-08b191d8aae04e"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Software is at extreme oversold and depressed valuation levels now, an immediately investigable dislocation. \u27e8cited figures: data as of 2026-02-05; approximate, read from a chart\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-79ada2c20447c0"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990. \u27e8cited figures: data as of 2026-02-05\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-3f193c5f0fcc97"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash."
+      },
+      {
+       "claim_ids": [
+        "C-08b191d8aae04e"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x. \u27e8cited figures: approximate, read from a chart\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-0949f685aa48e9",
+        "C-e89f7e66484b0b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The long-term AI macro thesis stands and companies leaning into AI will be rewarded, but more volatility is likely."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-7cd52d5be82345",
+        "C-576cbf479b97ea"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The valuation collapse could instead signal a structurally lower growth rate and terminal value for software companies due to permanent AI disruption, making the sector a value trap."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-7cd52d5be82345"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The valuation collapse could signal structurally lower growth and terminal value for software companies due to AI disruption."
+      },
+      {
+       "claim_ids": [
+        "C-576cbf479b97ea"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The author notes a view that one day software companies could become obsolete."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued software underperformance despite RSI below 30"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of actual SaaS revenue/seat erosion from agentic AI tools"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further EV/sales compression below 2022 lows"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-1d705296dc93cb",
+        "C-a5be834b14aea9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Because tech dominates the S&P 500 and its top companies (most with AI-linked revenue), the actual top 10 stocks have pairwise correlation in the 99th percentile, so if the tech/AI narrative falters a large portion of the index could draw down simultaneously. (scope: S&P 500 concentration / top-10 pairwise correlation; based on the publisher's own analysis testing random 10-stock samples; contrasts with past more sector-diversified leadership.)"
+      },
+      {
+       "claim_ids": [
+        "C-e89f7e66484b0b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "More bouts of volatility are likely as AI technology continues to leapfrog previous generations and as long as portfolios remain heavily skewed to tech. (scope: Author's forward-looking opinion on tech-concentrated portfolios; not quantified.)"
+      },
+      {
+       "claim_ids": [
+        "C-7cd52d5be82345"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The software valuation collapse could signal a structurally lower growth rate and terminal value for software companies due to AI disruption, rather than an overdone sell-off. (scope: Applies to the software sector; framed as an alternative interpretation of the EV/sales decline, conditional on AI permanently disrupting software.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: if you believe Claude Code is just another DeepSeek moment rather than permanent AI disruption of software"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether Claude Code/agentic AI permanently erodes SaaS revenue or is a transient scare"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "What degree of growth/terminal-value impairment is already priced into the ~8x EV/sales"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether oversold RSI readings reliably precede inflows this cycle (article notes few are buying)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SaaS companies report accelerating revenue erosion from AI tools"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "EV/sales keeps compressing on worsening fundamentals"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess whether agentic AI tools (Claude Code) are materially displacing SaaS revenue/seats, and compare current software EV/sales against estimated growth/terminal-value impairment to judge if the sell-off is overdone."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Software RSI stays sub-30 while fundamentals (billings, net retention) hold up"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that agentic AI adoption has not dented SaaS revenue"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-332d3da6f3ac",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-79ada2c20447c0",
+       "C-3f193c5f0fcc97",
+       "C-08b191d8aae04e",
+       "C-d345f3606a0f63",
+       "C-60904408c8a015",
+       "C-f0b54d48c8d4be",
+       "C-b933672d32a384",
+       "C-7cd52d5be82345",
+       "C-576cbf479b97ea",
+       "C-1d705296dc93cb",
+       "C-a5be834b14aea9",
+       "C-e89f7e66484b0b"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-02-09T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "Software Shock: AI\u2019s Broken Logic",
+      "upstream_origins": [
+       "Bloomberg Finance L.P.",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+     }
+    ]
+   },
+   "content_sha": "b5d0b1fe635f7fb439e7374765d0abbd74882e92312e4e30e617366714d7fc9b",
+   "created_at": "2026-10-10T16:56:05.684353Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d345f3606a0f63",
+       "C-60904408c8a015",
+       "C-f0b54d48c8d4be",
+       "C-79ada2c20447c0",
+       "C-3f193c5f0fcc97",
+       "C-08b191d8aae04e"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-aab273bf90d4, ES-fc428945cc0a",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-79ada2c20447c0",
+       "C-3f193c5f0fcc97",
+       "C-08b191d8aae04e",
+       "C-60904408c8a015"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-79ada2c20447c0: measured 2026-02-05 (4 days before the as-of); C-3f193c5f0fcc97: measured 2026-02-09 (0 days before the as-of); C-08b191d8aae04e: measured 2026-02-09 (0 days before the as-of); C-60904408c8a015: measured 2026-02-05 (4 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: software; instruments: S&P 500 Software Index, iShares Expanded Tech-Software Sector ETF (IGV)",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [
+       "C-79ada2c20447c0",
+       "C-3f193c5f0fcc97",
+       "C-08b191d8aae04e"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "3 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-7cd52d5be82345",
+       "C-576cbf479b97ea"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T165605Z-article",
+   "thesis_id": "TH-8DA46A49DB",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

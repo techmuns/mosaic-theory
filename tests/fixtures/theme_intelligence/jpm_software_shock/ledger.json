@@ -1,11 +1,11 @@
 {
  "provenance": {
   "what": "the FULL-ARTICLE completeness ledger persisted by the real run (derived analysis: figure as written, its sentence clipped to 240 characters, status and reason)",
-  "run_id": "R-20261010T142857Z-article"
+  "run_id": "R-20261010T165605Z-article"
  },
  "report": {
   "article_version_id": "AV-3fd2d0c8917fa66e",
-  "run_id": "R-20261010T142857Z-article",
+  "run_id": "R-20261010T165605Z-article",
   "figures": [
    {
     "block_id": "b005",
@@ -33,7 +33,7 @@
     "sentence": "The chart plots the S&P 500 Software Index Relative Strength Index (RSI) from January 2025 to February 5, 2026, with reference lines at 70 and 30.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Reference line on RSI chart shown only as a threshold marker for context, not part of the argument."
+    "reason": "Reference line on RSI chart shown only as a threshold marker, not used to make the argument."
    },
    {
     "block_id": "b009",
@@ -41,7 +41,7 @@
     "sentence": "The chart plots the S&P 500 Software Index Relative Strength Index (RSI) from January 2025 to February 5, 2026, with reference lines at 70 and 30.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Reference line on RSI chart; the 30 oversold threshold is already captured in c3."
+    "reason": "Reference line on RSI chart; the 30 oversold threshold is already captured in c3 from the text."
    },
    {
     "block_id": "b009",
@@ -49,7 +49,7 @@
     "sentence": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70-75 range from May through August, peaking near 77 in August.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical RSI path point shown only as chart context for the index's prior trajectory."
+    "reason": "Historical intra-chart point shown only as context for the RSI trajectory."
    },
    {
     "block_id": "b009",
@@ -57,7 +57,7 @@
     "sentence": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70-75 range from May through August, peaking near 77 in August.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical RSI range shown only as chart context."
+    "reason": "Historical chart range shown only as context for the RSI path."
    },
    {
     "block_id": "b009",
@@ -65,7 +65,7 @@
     "sentence": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70-75 range from May through August, peaking near 77 in August.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical RSI peak shown only as chart context."
+    "reason": "Historical peak shown only as chart context."
    },
    {
     "block_id": "b009",
@@ -73,7 +73,7 @@
     "sentence": "It falls to the mid 40s in September, rebounds to about 65-68 in October, then declines to the low 30s with brief dips near 27-30 in November.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical RSI range shown only as chart context."
+    "reason": "Historical chart range shown only as context."
    },
    {
     "block_id": "b009",
@@ -81,7 +81,7 @@
     "sentence": "It falls to the mid 40s in September, rebounds to about 65-68 in October, then declines to the low 30s with brief dips near 27-30 in November.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical RSI dips shown only as chart context."
+    "reason": "Historical intra-chart dips shown only as context."
    },
    {
     "block_id": "b009",
@@ -89,7 +89,7 @@
     "sentence": "It recovers to roughly the low 50s in December, oscillates around 40-50 in early January 2026, and then drops below 30 at month end.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical RSI oscillation range shown only as chart context."
+    "reason": "Historical chart oscillation range shown only as context."
    },
    {
     "block_id": "b009",
@@ -132,12 +132,22 @@
     "reason": ""
    },
    {
+    "block_id": "b013",
+    "figure": "99th percentile",
+    "sentence": "In fact, after testing thousands of possible combinations of the top 10 stocks in today's S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1d705296dc93cb"
+    ],
+    "reason": ""
+   },
+   {
     "block_id": "b017",
     "figure": "6.5x",
     "sentence": "The multiple is near 6.5x in early 2019, rises to about 9-10x through 2020, and peaks around 11.8x in late 2021.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical EV/Sales chart range shown only as context for the multiple's history."
+    "reason": "Historical EV/sales chart point (2019) shown only as context for the multiple range."
    },
    {
     "block_id": "b017",
@@ -145,7 +155,7 @@
     "sentence": "The multiple is near 6.5x in early 2019, rises to about 9-10x through 2020, and peaks around 11.8x in late 2021.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical EV/Sales chart range shown only as context."
+    "reason": "Historical chart range shown only as context."
    },
    {
     "block_id": "b017",
@@ -161,11 +171,9 @@
     "block_id": "b017",
     "figure": "7.0x",
     "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
-    "status": "added_by_completeness_pass",
-    "claim_ids": [
-     "C-6a7201ed56865d"
-    ],
-    "reason": ""
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical trough shown only as context; the Nov 2022 comparison is already captured in c11."
    },
    {
     "block_id": "b017",
@@ -173,7 +181,7 @@
     "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical EV/Sales range shown only as context."
+    "reason": "Historical range shown only as context."
    },
    {
     "block_id": "b017",
@@ -181,7 +189,7 @@
     "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Historical EV/Sales peaks shown only as context."
+    "reason": "Historical peaks shown only as context."
    },
    {
     "block_id": "b017",
@@ -219,7 +227,7 @@
     "sentence": "Approximate values: at Dec '23, S&P 500 ~12.6%, AI Usage ~12.7-12.8%, Ex AI ~12.4-12.5%.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Starting-point margin level on the time series; the current Feb 26 gap carries the argument and is captured."
+    "reason": "Chart starting point (Dec '23) shown only as context; the latest Feb '26 gap captured by c19-c21 carries the argument."
    },
    {
     "block_id": "b023",
@@ -227,7 +235,7 @@
     "sentence": "Approximate values: at Dec '23, S&P 500 ~12.6%, AI Usage ~12.7-12.8%, Ex AI ~12.4-12.5%.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Starting-point margin level shown only as chart context."
+    "reason": "Chart starting point shown only as context."
    },
    {
     "block_id": "b023",
@@ -235,7 +243,7 @@
     "sentence": "Approximate values: at Dec '23, S&P 500 ~12.6%, AI Usage ~12.7-12.8%, Ex AI ~12.4-12.5%.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Starting-point margin level shown only as chart context."
+    "reason": "Chart starting point shown only as context."
    },
    {
     "block_id": "b023",
@@ -243,7 +251,7 @@
     "sentence": "By Dec '24, S&P 500 ~13.6%, AI Usage ~14.7-14.8%, Ex AI ~12.6%.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Intermediate time-series margin value shown only as chart context."
+    "reason": "Historical intermediate chart value shown only as context."
    },
    {
     "block_id": "b023",
@@ -251,7 +259,7 @@
     "sentence": "By Dec '24, S&P 500 ~13.6%, AI Usage ~14.7-14.8%, Ex AI ~12.6%.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Intermediate time-series margin value shown only as chart context."
+    "reason": "Historical intermediate chart value shown only as context."
    },
    {
     "block_id": "b023",
@@ -259,7 +267,7 @@
     "sentence": "Around Jun '25, S&P 500 ~13.5%, AI Usage ~14.7-14.8%, Ex AI ~12.4.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Intermediate time-series margin value shown only as chart context."
+    "reason": "Historical intermediate chart value shown only as context."
    },
    {
     "block_id": "b023",
@@ -267,7 +275,7 @@
     "sentence": "Around Jun '25, S&P 500 ~13.5%, AI Usage ~14.7-14.8%, Ex AI ~12.4.",
     "status": "immaterial",
     "claim_ids": [],
-    "reason": "Intermediate time-series margin value shown only as chart context."
+    "reason": "Historical intermediate chart value shown only as context."
    },
    {
     "block_id": "b023",
@@ -323,12 +331,12 @@
   "blocks_without_claims": [
    "b026"
   ],
-  "added_claims": 2,
+  "added_claims": 1,
   "added_mentions": 0,
   "added_hypotheses": 0,
   "added_risks": 0,
   "prompt_version": "ti-complete-1",
-  "created_at": "2026-10-10T14:28:57.710136Z",
+  "created_at": "2026-10-10T16:56:05.443501Z",
   "blocks": [
    {
     "block_id": "b003",
@@ -400,7 +408,7 @@
     "block_id": "b026",
     "status": "immaterial",
     "hypothesis_ids": [],
-    "reason": "Index definition boilerplate, not an argument."
+    "reason": "Index definition / glossary line, not an argument."
    }
   ],
   "pass_ran": true,

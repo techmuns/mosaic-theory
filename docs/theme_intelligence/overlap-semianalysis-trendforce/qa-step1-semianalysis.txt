@@ -1,0 +1,20 @@
+  [PASS] run status recorded: status PARTIAL; counts {'figures_in_articles': 87, 'figures_uncaptured': 2, 'claims_added_by_completeness': 13, 'theses_added_by_completeness': 1, 'articles_processed': 1, 'articles_partial': 1, 'claims_extracted': 39, 'claims_verified': 39, 'mentions': 21, 'theses_created': 3, 'theses_updated': 0, 'attributions_only': 0, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 100335, 'replayed_from_cache_output_tokens': 29713, 'llm_calls': 6, 'llm_calls_cached': 6, 'http_requests': 0, 'http_cache_hits': 1}
+  [PASS] spans re-found in stored article text: 39 verified claim(s) in 1 article(s)
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-09-28
+  [PASS] cards keep the nine sections in order: 3 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 3 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-09-28
+  [PASS] completeness ledger recorded for every analysed article: 1 article(s)
+  [FAIL] every reported figure captured or judged immaterial: OPEN — 2 of 87 figure(s): A-c051303aa7e1 b020 '5.2'; A-c051303aa7e1 b020 '5.3'
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 1 article(s)
+  [PASS] append-only triggers present: 14 history tables
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/overlap-12/runs/R-20261010T165607Z-article
+QA R-20261010T165607Z-article: 18/19 passed

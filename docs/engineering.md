@@ -304,6 +304,22 @@ PR (CLAUDE.md: coin-time translation).
   idea that publisher articles support, and whether an analyst should look at it now* — RESEARCH
   NOW / WATCH / SKIP is a call on ANALYST ATTENTION, never a buy. Not the operator-typed house theme
   card (`vinci/themes/thesis.py`) and not on the decision path. Guide: `docs/theme_intelligence.md`.
+- **Market-regime record** (theme intelligence, `ThesisKind.MARKET_REGIME`) — plain words: *a card
+  for a market-STRUCTURE condition an article measures (breadth, correlation, dispersion) and the
+  research opportunity it draws — e.g. "pick sectors, not the index" — that names no stock and
+  argues no earnings mechanism*. A market-structure RISK stays a market risk, never a record.
+- **Completeness ledger / pass 1b** (theme intelligence, `completeness.py`) — plain words: *every
+  figure and argument paragraph the article's TEXT contains, listed before the model is consulted,
+  then a second model read that must account for each gap (add it, or call it immaterial with a
+  reason)*. An unaccounted figure is an open issue, never a silent drop.
+- **Re-anchoring** (theme intelligence) — plain words: *before a card line is withheld for citing
+  the wrong passage, point it at the passage that does carry it and check again*; never turns the
+  tool's own inference into the source's word.
+- **Compact extraction / completeness in parts** (theme intelligence, `EXTRACTION_COMPACT`,
+  `COMPLETENESS_IN_PARTS`) — plain words: *how an article too long for one model answer is still
+  read in full: a shorter, declared extraction, then the gap review split into parts of at most 50
+  gaps, each shown what the earlier parts added*. A part that still overruns is split once, then
+  fails loud.
 
 ## Local setup (every laptop, every contributor)
 
