@@ -5,13 +5,17 @@ immutable `ThesisVersion` content, its contributions, events and verification is
 re-render of an old run reproduces what that run recorded.
 
 DASHBOARD SHAPE (decision-first, not article-by-article):
-- top: run status, scan window, sources checked / failed, articles actually read, themes created /
-  updated, RESEARCH NOW / WATCH / SKIP totals, unresolved retrieval caveats;
+- top: run status, scan window, and the KPI strip in plain words — accessible sources ("6 of 8"),
+  blocked sources BY NAME, articles analysed (full vs partial), Research Now / Watch / Skip, and
+  new / upgraded / downgraded / challenged theses — then unresolved caveats;
 - then SIX categories in a fixed order — new, upgraded, downgraded, challenged, unchanged but
   material, archived. Every category is always printed with its count, so a downgrade can never
   disappear under upgrades; a category longer than the display collapse prints "showing X of Y"
   and keeps the rest one click below (expanded in print);
-- one row per THESIS (several articles on one theme this week = one row with several sources);
+- one row per THESIS (several articles on one theme this week = one row with several sources),
+  in plain language: the article date and the date the registry first detected the thesis are
+  shown apart ("new to the registry" never means "new to the market"); engine codes, thesis ids,
+  change classes, claim ids and the rule trace sit behind the audit toggle (print shows all);
 - a searchable archive of every thesis, whatever its status.
 
 A run that FAILED or is PARTIAL says so in a banner above everything else — a broken week never
@@ -23,13 +27,17 @@ from __future__ import annotations
 import csv
 import io
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
 from vinci.theme_intelligence.cards import (
+    _CHANGE_TAG,
     _CSS,
+    AUDIT_TOGGLE,
+    KIND_LABEL,
     RenderContext,
     clip,
     e,
@@ -45,6 +53,7 @@ from vinci.theme_intelligence.schemas import (
     ResearchAction,
     RunStatus,
     Thesis,
+    ThesisKind,
     ThesisStatus,
     ThesisVersion,
     WeeklyCategory,
@@ -56,12 +65,17 @@ from vinci.theme_intelligence.verify import card_sentences
 #: Issue codes that are retrieval caveats — always listed at the top of the dashboard.
 RETRIEVAL_CAVEAT_CODES = frozenset({"RETRIEVAL_BLOCKED", "NO_BODY", "PARTIAL_RETRIEVAL",
                                     "LOOKAHEAD", "DUPLICATE_CONTENT", "RESOLUTION_FAILED"})
+#: Open completeness gaps — a figure the article states that no verified claim captured, an
+#: argument block nothing accounts for, a completeness pass that did not run. Listed, never hidden.
+COMPLETENESS_CAVEAT_CODES = frozenset({"FIGURE_UNCAPTURED", "ARGUMENT_UNACCOUNTED",
+                                       "COMPLETENESS_PASS_NOT_RUN"})
 
 CATEGORY_ORDER = (WeeklyCategory.NEW, WeeklyCategory.UPGRADED, WeeklyCategory.DOWNGRADED,
                   WeeklyCategory.CHALLENGED, WeeklyCategory.UNCHANGED_MATERIAL,
                   WeeklyCategory.ARCHIVED)
 _CATEGORY_HELP = {
-    WeeklyCategory.NEW: "first recorded this run (new to the registry — novelty_unverified)",
+    WeeklyCategory.NEW: "first recorded this run — new to the registry, not necessarily new to "
+                        "the market",
     WeeklyCategory.UPGRADED: "research action raised on material evidence",
     WeeklyCategory.DOWNGRADED: "research action lowered — shown in full, never under the upgrades",
     WeeklyCategory.CHALLENGED: "contradictory evidence, a correction or a timing change arrived",
@@ -201,6 +215,13 @@ class DashRow:
     flags: list[str]
     version: int
     card: str
+    kind: str = ThesisKind.INVESTMENT_THESIS.value
+    article_date: str | None = None
+    first_detected: str | None = None
+    sector_exposures: list[str] = field(default_factory=list)
+    why_action: str = ""
+    rule_trace: list[str] = field(default_factory=list)
+    what_changed_audit: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -226,6 +247,8 @@ class Dashboard:
     validation: dict[str, int]
     generated: str
     notes: list[str] = field(default_factory=list)
+    #: the KPI strip, in the words a reader uses (see `kpis`)
+    kpi: dict[str, Any] = field(default_factory=dict)
 
 
 def _sources_line(store: Store, tid: str, run_id: str) -> list[str]:
@@ -238,8 +261,9 @@ def _sources_line(store: Store, tid: str, run_id: str) -> list[str]:
             continue
         authors = "; ".join(x.name for x in a.authors) if a.authors else "author UNKNOWN"
         pub = a.published_at.date().isoformat() if a.published_at else "date UNKNOWN"
-        out.append(f"{a.publisher} — {authors} — “{a.title or 'title UNKNOWN'}” ({pub}) "
-                   f"[{c.contribution.value}]")
+        what = _CHANGE_TAG.get(c.contribution) or "first record of this thesis"
+        out.append(f"{a.publisher} — {authors} — “{a.title or 'title UNKNOWN'}” (article date "
+                   f"{pub}) — {what.lower()}")
     return out
 
 
@@ -291,18 +315,25 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                                + ", ".join(sorted({x.event_type for x in evs})) + ")")
             continue
         changed: list[str] = []
+        audit: list[str] = []
         for v in this_run:
             for it in v.content.s02_what_changed.items:
-                line = f"[{it.change_class.value}] {it.text}"
+                tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
+                line = (f"{tag}: " if tag else "") + _plain(it.text)
                 if line not in changed:
                     changed.append(line)
+                full = (f"[{it.change_class.value}] {it.text}"
+                        + (f" [{', '.join(it.claim_ids)}]" if it.claim_ids else ""))
+                if full not in audit:
+                    audit.append(full)
         for x in evs:
             if x.event_type in ("ARCHIVED", "REACTIVATED", "REVIEW_NEEDED"):
-                changed.append(f"[{x.event_type.lower()}] {x.detail}")
+                changed.append(f"{x.event_type.replace('_', ' ').capitalize()}: {x.detail}")
         av = cur.content.s05_affected
         flags = sorted({x.event_type for x in evs} - {"CREATED", "UPDATED"})
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
+        hdr = cur.content.header
         row = DashRow(
             category=cat.value, thesis_id=tid, title=t.title, action=now_action.value,
             previous_action=prev_action.value if prev_action else None,
@@ -324,7 +355,12 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             sectors=list(av.sectors), next_action=cur.content.s08_decision.next_step.text,
             last_material_update=t.last_material_update.isoformat(), status=t.status.value,
             flags=sorted(set(flags)), version=cur.version,
-            card=cards.get(tid, {}).get("html", ""))
+            card=cards.get(tid, {}).get("html", ""), kind=hdr.kind.value,
+            article_date=hdr.latest_article_date.isoformat() if hdr.latest_article_date else None,
+            first_detected=(hdr.first_detected or t.created_as_of).isoformat(),
+            sector_exposures=[f"{x.name} ({x.direction.value})" for x in av.sector_exposures],
+            why_action=why_action(cur.priority.rules_fired),
+            rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit)
         cats[cat.value].append(row)
     for rows in cats.values():  # ranked: action first, then the freshest material evidence
         rows.sort(key=lambda r: r.thesis_id)
@@ -352,7 +388,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
     issues = store.issues(run_id=run_id)
     val = {s.value: sum(1 for i in issues if i.severity is s) for s in IssueSeverity}
     for i in issues:
-        if i.code in RETRIEVAL_CAVEAT_CODES or (
+        if i.code in RETRIEVAL_CAVEAT_CODES or i.code in COMPLETENESS_CAVEAT_CODES or (
                 i.severity in (IssueSeverity.BLOCK, IssueSeverity.HOLD)
                 and i.scope != "card_sentence"):
             caveats.append(f"{i.code} {i.ref_id}: {clip(i.detail, 240)}")
@@ -372,7 +408,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
     window = (f"{run.window_from.isoformat() if run.window_from else '—'} → "
               f"{run.window_to.isoformat() if run.window_to else '—'} (as of "
               f"{run.as_of.isoformat()}, mode {run.mode})")
-    return Dashboard(
+    d = Dashboard(
         run=json.loads(run.model_dump_json()), banner=banner, window=window,
         sources=[json.loads(sc.model_dump_json()) for sc in run.sources],
         sources_checked=sum(1 for sc in run.sources if sc.status != "NOT_RUN"),
@@ -388,6 +424,58 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                                                  if t.status is ThesisStatus.ARCHIVED),
         caveats=caveats, categories=cats, no_material_change=no_material, archive=archive,
         validation=val, generated=generated)
+    d.kpi = kpis(d, store)
+    return d
+
+
+def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
+    """The KPI strip in plain words — counts that state their population."""
+    from vinci.theme_intelligence.config import load_sources
+
+    run = d.run
+    manual = run["mode"] != "scan"
+    names = {sc.id: sc.publisher for sc in load_sources()}
+    blocked = [s for s in d.sources if s["status"] in ("BLOCKED", "ERROR")]
+    accessible = [s for s in d.sources if s["status"] in ("OK", "PARTIAL")]
+    cats = d.categories
+    return {
+        "accessible_sources": None if manual else f"{len(accessible)} of {len(d.sources)}",
+        "blocked_sources": None if manual else (
+            ", ".join(names.get(s["source_id"], s["source_id"]) for s in blocked) or "none"),
+        "articles_full": d.articles_read - d.articles_partial,
+        "articles_partial": d.articles_partial,
+        "articles_blocked": d.articles_blocked,
+        "queued": run.get("counts", {}).get("articles_queued", 0),
+        "research_now": d.totals_active.get("RESEARCH NOW", 0),
+        "watch": d.totals_active.get("WATCH", 0),
+        "skip": d.totals_active.get("SKIP", 0),
+        "new": len(cats.get(WeeklyCategory.NEW.value, [])),
+        "upgraded": len(cats.get(WeeklyCategory.UPGRADED.value, [])),
+        "downgraded": len(cats.get(WeeklyCategory.DOWNGRADED.value, [])),
+        "challenged": len(cats.get(WeeklyCategory.CHALLENGED.value, [])),
+        "archived": d.archived_total,
+        "figures_uncaptured": run.get("counts", {}).get("figures_uncaptured", 0),
+        "figures_in_articles": run.get("counts", {}).get("figures_in_articles", 0),
+    }
+
+
+def why_action(rules: tuple[str, ...] | list[str]) -> str:
+    """The deterministic rule that set the action, said plainly (the trace stays in the audit)."""
+    if not rules:
+        return ""
+    r = rules[0]
+    m = re.match(r"WATCH \(RESEARCH NOW unmet: (.*)\)$", r)
+    if m:
+        return "Watch — not yet Research Now: " + m.group(1)
+    if r.startswith("NOW "):
+        return "Research Now — every condition met (an investigation, not a trade)"
+    return re.sub(r"^SKIP-\d+ ", "Skip — ", r)
+
+
+def _plain(text: str) -> str:
+    """A card line for the first view: the system labels inside ⟨…⟩ are dropped (they are kept
+    in the audit trail and the card)."""
+    return re.sub(r"\s*⟨[^⟩]*⟩\s*", " ", text).strip()
 
 
 # --- dashboard renderers -----------------------------------------------------------------------
@@ -397,7 +485,8 @@ _DASH_CSS = """
 padding:10px 12px;border-radius:8px;font-weight:700;margin:0 0 12px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}
 .kpi{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--card)}
-.kpi b{display:block;font-size:20px}.kpi span{color:var(--muted);font-size:12px}
+.kpi b{display:block;font-size:17px;line-height:1.3}.kpi span{display:block;color:var(--muted);
+font-size:12px}
 .cat{margin:18px 0 6px;font:700 14px/1.3 ui-sans-serif,system-ui;text-transform:uppercase;
 letter-spacing:.05em}.cat small{font-weight:400;text-transform:none;letter-spacing:0;
 color:var(--muted)}.row{border:1px solid var(--line);border-radius:8px;padding:10px 12px;
@@ -425,23 +514,37 @@ def _failed_label(d: Dashboard) -> str:
 def _row_html(r: DashRow) -> str:
     pill = {"RESEARCH NOW": "now", "WATCH": "watch"}.get(r.action, "skip")
     change = (f"{r.previous_action} → {r.action}" if r.previous_action else f"new → {r.action}")
-    li = "".join(f"<li>{e(x)}</li>" for x in r.what_changed) or "<li>—</li>"
-    names = r.named_companies + r.named_instruments + r.private_named + r.other_named
+    shown, rest = r.what_changed[:3], r.what_changed[3:]
+    li = "".join(f"<li>{e(x)}</li>" for x in shown) or "<li>—</li>"
+    more = (f'<details><summary class="note">show the other {len(rest)} of '
+            f'{len(r.what_changed)}</summary><ul>' + "".join(f"<li>{e(x)}</li>" for x in rest)
+            + "</ul></details>") if rest else ""
+    names = r.named_companies + r.named_instruments + r.private_named
+    kind = (f'<span class="pill kind">{e(KIND_LABEL[ThesisKind(r.kind)])}</span>'
+            if r.kind == ThesisKind.MARKET_REGIME.value else "")
+    audit = (f'<div class="aud"><div class="k">Audit</div><div class="cc">{e(r.thesis_id)} · '
+             f'v{r.version}' + (" · " + e(", ".join(r.flags)) if r.flags else "")
+             + f'</div><div class="note">{e(change)} — {e(r.change_reason)}</div>'
+             + "".join(f'<div class="cc">{e(t)}</div>' for t in r.rule_trace)
+             + "".join(f'<div class="note">{e(x)}</div>' for x in r.what_changed_audit)
+             + "</div>")
     return (
         f'<div class="row"><div class="meta"><span class="pill {pill}">{e(r.action)}</span>'
-        f'<span class="pill dir">Evidence {e(r.evidence_direction)}</span><span class="cc">'
-        f'{e(r.thesis_id)} · v{r.version}</span>'
-        + "".join(f'<span class="pill dir">{e(f)}</span>' for f in r.flags)
-        + f'</div><h3><a href="{e(r.card)}">{e(r.title)}</a></h3>'
-        f'<div class="k">What changed this run</div><ul>{li}</ul>'
-        f'<div class="k">Priority</div><div>{e(change)} — {e(r.change_reason)}</div>'
-        f'<div class="k">Sources (original authors)</div><ul>'
-        + ("".join(f"<li>{e(s)}</li>" for s in r.sources) or "<li>—</li>") + "</ul>"
-        f'<div class="k">Named by the source</div><div>{e("; ".join(names) or "no company named")}'
-        f'</div><div class="k">Sectors</div><div>{e(", ".join(r.sectors) or "—")}</div>'
-        f'<div class="k">Next action</div><div>{e(r.next_action)}</div>'
-        f'<div class="note">Last material update {e(r.last_material_update)} · status '
-        f'{e(r.status)}</div></div>')
+        f'<span class="pill dir">Evidence {e(r.evidence_direction)}</span>{kind}</div>'
+        f'<h3><a href="{e(r.card)}">{e(r.title)}</a></h3>'
+        f'<div class="dates">Article date {e(r.article_date or "UNKNOWN")} · first detected by '
+        f'the registry {e(r.first_detected or "UNKNOWN")}'
+        + (" — new to the registry, not necessarily new to the market"
+           if r.category == WeeklyCategory.NEW.value else "") + "</div>"
+        f'<div class="k">What changed</div><ul>{li}</ul>{more}'
+        f'<div class="k">Why this action</div><div>{e(r.why_action or change)}</div>'
+        f'<div class="k">Exposure the source names</div><div>'
+        + e("; ".join([f"sector: {x}" for x in r.sector_exposures] + names)
+            or "no company or sector named")
+        + '</div><div class="k">Sources (original authors)</div><ul>'
+        + ("".join(f"<li>{e(x)}</li>" for x in r.sources) or "<li>—</li>") + "</ul>"
+        + f'<div class="k">Next research step</div><div>{e(r.next_action)}</div>'
+        + audit + "</div>")
 
 
 def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
@@ -453,21 +556,27 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
              f'Window {e(d.window)}.</div>']
     if d.banner:
         parts.append(f'<div class="banner">{e(d.banner)}</div>')
-    manual = run["mode"] == "article"
-    kp = [("Mode", "single article (manual URL)") if manual else
-          ("Sources checked", f"{d.sources_checked} of {len(d.sources)}"),
-          ("Sources failed", "n/a — no discovery" if manual else _failed_label(d)),
-          ("Articles read", str(d.articles_read)),
-          ("Queued by budget cap (not yet read)",
-           str(run.get("counts", {}).get("articles_queued", 0))),
-          ("Partial / blocked", f"{d.articles_partial} / {d.articles_blocked}"),
-          ("Themes created / updated", f"{d.themes_created} / {d.themes_updated}"),
-          ("RESEARCH NOW · WATCH · SKIP (active)",
-           f"{d.totals_active.get('RESEARCH NOW', 0)} · {d.totals_active.get('WATCH', 0)} · "
-           f"{d.totals_active.get('SKIP', 0)}"),
-          ("Archived", str(d.archived_total))]
+    k = d.kpi or {}
+    kp = ([("Sources", "single article (manual URL) — no discovery")]
+          if k.get("accessible_sources") is None else
+          [("Accessible sources", str(k["accessible_sources"])),
+           ("Blocked sources", str(k["blocked_sources"]))])
+    kp += [("Articles analyzed", f"{k.get('articles_full', 0)} full · "
+                                 f"{k.get('articles_partial', 0)} partial"
+            + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")),
+           ("Research Now / Watch / Skip",
+            f"{k.get('research_now', 0)} / {k.get('watch', 0)} / {k.get('skip', 0)}"),
+           ("New / upgraded / downgraded / challenged theses",
+            f"{k.get('new', 0)} / {k.get('upgraded', 0)} / {k.get('downgraded', 0)} / "
+            f"{k.get('challenged', 0)}")]
+    if k.get("queued"):
+        kp.append(("Queued by the budget cap (not yet read)", str(k["queued"])))
+    if k.get("figures_in_articles"):
+        kp.append(("Reported figures not yet captured",
+                   f"{k.get('figures_uncaptured', 0)} of {k['figures_in_articles']}"))
     parts.append('<div class="kpis">' + "".join(
-        f'<div class="kpi"><b>{e(v)}</b><span>{e(k)}</span></div>' for k, v in kp) + "</div>")
+        f'<div class="kpi"><span>{e(label)}</span><b>{e(v)}</b></div>' for label, v in kp)
+        + "</div>")
     if d.sources:
         parts.append('<details class="sec"' + (" open" if print_mode else "")
                      + '><summary>Source coverage (' + str(len(d.sources)) + ')</summary><table>'
@@ -515,13 +624,15 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                  f'status)</small></div><input class="search" placeholder="filter by id, title, '
                  f'sector, action, status…" oninput="filt(this.value)"><table id="arch"><tr>'
                  f'<th>Thesis</th><th>Action</th><th>Evidence</th><th>Status</th><th>Sector'
-                 f'</th><th>Node / mechanism</th><th>Ver</th><th>Last material update</th></tr>'
+                 f'</th><th class="aud">Node / mechanism</th><th>Versions</th>'
+                 f'<th>Last material update</th></tr>'
                  + "".join(
-                     f'<tr><td><a href="{e(a["card"])}">{e(a["title"])}</a><div class=cc>'
+                     f'<tr><td><a href="{e(a["card"])}">{e(a["title"])}</a><div class="cc aud">'
                      f'{e(a["thesis_id"])}</div></td><td>{e(a["action"])}</td>'
                      f'<td>{e(a["evidence_direction"])}</td><td>{e(a["status"])}</td>'
-                     f'<td>{e(a["sector"])} · {e(a["region"])}</td><td class=cc>{e(a["node"])} / '
-                     f'{e(a["mechanism"])} / {e(a["direction"])}</td><td>{a["versions"]}</td>'
+                     f'<td>{e(a["sector"])} · {e(a["region"])}</td><td class="cc aud">'
+                     f'{e(a["node"])} / {e(a["mechanism"])} / {e(a["direction"])}</td>'
+                     f'<td>{a["versions"]}</td>'
                      f'<td>{e(a["last_material_update"])}</td></tr>' for a in d.archive)
                  + "</table>")
     v = d.validation
@@ -536,8 +647,8 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
               "'details').forEach(d=>d.open=true));</script>")
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
             "content='width=device-width,initial-scale=1'><title>Theme intelligence weekly"
-            "</title><style>" + _CSS + _DASH_CSS + "</style></head><body><div class=wrap>"
-            + "".join(parts) + "</div>" + script + "</body></html>")
+            "</title><style>" + _CSS + _DASH_CSS + "</style></head><body>" + AUDIT_TOGGLE
+            + "<div class=wrap>" + "".join(parts) + "</div>" + script + "</body></html>")
 
 
 def render_dashboard_md(d: Dashboard) -> str:
@@ -547,17 +658,22 @@ def render_dashboard_md(d: Dashboard) -> str:
          f"- Window: {d.window}"]
     if d.banner:
         md += ["", f"> **{d.banner}**", ""]
-    md += [("- Mode: single article (manual URL) — no source discovery" if run["mode"] == "article"
-           else f"- Sources checked: {d.sources_checked} of {len(d.sources)}; failed: "
-                f"{_failed_label(d)}"),
-          f"- Articles read: {d.articles_read} (partial {d.articles_partial}, blocked "
-          f"{d.articles_blocked}); queued by the budget cap, not yet read: "
-          f"{run.get('counts', {}).get('articles_queued', 0)}",
-          f"- Themes created / updated: {d.themes_created} / {d.themes_updated}; attribution-only "
-          f"contributions: {d.attributions_only}",
-          f"- Active RESEARCH NOW / WATCH / SKIP: {d.totals_active.get('RESEARCH NOW', 0)} / "
-          f"{d.totals_active.get('WATCH', 0)} / {d.totals_active.get('SKIP', 0)}; archived "
-          f"{d.archived_total}", ""]
+    k = d.kpi or {}
+    md += ([("- Sources: single article (manual URL) — no source discovery")]
+           if k.get("accessible_sources") is None else
+           [f"- Accessible sources: {k['accessible_sources']}",
+            f"- Blocked sources: {k['blocked_sources']}"])
+    md += [f"- Articles analyzed: {k.get('articles_full', 0)} full · "
+           f"{k.get('articles_partial', 0)} partial"
+           + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")
+           + (f"; queued by the budget cap, not yet read: {k['queued']}" if k.get("queued")
+              else ""),
+           f"- Research Now / Watch / Skip: {k.get('research_now', 0)} / {k.get('watch', 0)} / "
+           f"{k.get('skip', 0)} (archived {d.archived_total})",
+           f"- New / upgraded / downgraded / challenged theses: {k.get('new', 0)} / "
+           f"{k.get('upgraded', 0)} / {k.get('downgraded', 0)} / {k.get('challenged', 0)}",
+           f"- Reported figures not yet captured: {k.get('figures_uncaptured', 0)} of "
+           f"{k.get('figures_in_articles', 0)}", ""]
     if d.sources:
         md += ["## Source coverage", "",
               "| Source | Status | Discovered | In window | Undated | New | Processed | Queued | "
@@ -578,20 +694,24 @@ def render_dashboard_md(d: Dashboard) -> str:
         if not rows:
             md += ["_None this run._", ""]
         for r in rows:
-            change = (f"{r.previous_action} → {r.action}" if r.previous_action
-                      else f"new → {r.action}")
-            md += [f"### [{r.action}] {r.title} (`{r.thesis_id}` v{r.version})"
-                  + (f" — flags: {', '.join(r.flags)}" if r.flags else ""),
-                  f"- Evidence direction: {r.evidence_direction}",
-                  f"- Priority: {change} — {r.change_reason}", "- What changed this run:"]
+            md += [f"### [{r.action}] {r.title}"
+                   + (f" — {KIND_LABEL[ThesisKind(r.kind)]}"
+                      if r.kind == ThesisKind.MARKET_REGIME.value else ""),
+                   f"- Article date {r.article_date or 'UNKNOWN'} · first detected by the registry "
+                   f"{r.first_detected or 'UNKNOWN'}"
+                   + (" (new to the registry, not necessarily new to the market)"
+                      if r.category == WeeklyCategory.NEW.value else ""),
+                   f"- Evidence direction: {r.evidence_direction}",
+                   f"- Why this action: {r.why_action}", "- What changed:"]
             md += [f"  - {x}" for x in r.what_changed] or ["  - —"]
             md += ["- Sources:"] + ([f"  - {s}" for s in r.sources] or ["  - —"])
-            names = (r.named_companies + r.named_instruments + r.private_named
-                     + r.other_named)
-            md += [f"- Named by the source: {'; '.join(names) or 'no company named'}",
-                  f"- Sectors: {', '.join(r.sectors) or '—'}",
-                  f"- Next action: {r.next_action}",
-                  f"- Last material update: {r.last_material_update} · card: {r.card}", ""]
+            names = ([f"sector: {x}" for x in r.sector_exposures] + r.named_companies
+                     + r.named_instruments + r.private_named)
+            md += [f"- Exposure the source names: {'; '.join(names) or 'no company or sector'}",
+                   f"- Next research step: {r.next_action}",
+                   f"- Audit: `{r.thesis_id}` v{r.version}"
+                   + (f" · flags {', '.join(r.flags)}" if r.flags else "")
+                   + f" · {r.change_reason} · card: {r.card}", ""]
     if d.no_material_change:
         md += ["## No material change this run", ""] + [f"- {x}" for x in d.no_material_change]
         md.append("")
@@ -612,18 +732,20 @@ def render_dashboard_csv(d: Dashboard) -> str:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")  # LF: committed readouts stay diff-able
     w.writerow(["category", "research_action", "previous_action", "thesis_id", "version", "title",
-                "evidence_direction", "what_changed", "sources", "named_companies",
-                "named_instruments", "private_named", "other_named", "sectors", "next_action",
-                "change_reason",
-                "last_material_update", "status", "flags", "card"])
+                "kind", "article_date", "first_detected", "evidence_direction", "what_changed",
+                "sources", "sector_exposures", "named_companies", "named_instruments",
+                "private_named", "other_named", "sectors", "next_action", "why_action",
+                "change_reason", "last_material_update", "status", "flags", "card"])
     for cat in CATEGORY_ORDER:
         for r in d.categories.get(cat.value, []):
             w.writerow([r.category, r.action, r.previous_action or "", r.thesis_id, r.version,
-                        r.title, r.evidence_direction, " | ".join(r.what_changed),
-                        " | ".join(r.sources), " | ".join(r.named_companies),
+                        r.title, r.kind, r.article_date or "", r.first_detected or "",
+                        r.evidence_direction, " | ".join(r.what_changed),
+                        " | ".join(r.sources), " | ".join(r.sector_exposures),
+                        " | ".join(r.named_companies),
                         " | ".join(r.named_instruments), " | ".join(r.private_named),
                         " | ".join(r.other_named),
-                        " | ".join(r.sectors), r.next_action, r.change_reason,
+                        " | ".join(r.sectors), r.next_action, r.why_action, r.change_reason,
                         r.last_material_update, r.status, " | ".join(r.flags), r.card])
     return buf.getvalue()
 

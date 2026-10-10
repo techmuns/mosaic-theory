@@ -5,12 +5,21 @@ model output, the real SEC rows) — nothing here is a hand-written card. Value 
 because every input is FROZEN (CLAUDE.md test-layer rule); the live run is the corpus check.
 
 What the brief requires of this article, and what each test pins:
-- exactly THREE theses — AI infrastructure / indiscriminate selling (RESEARCH NOW), software /
-  conditional valuation recovery (WATCH), AI adoption / margin advantage (WATCH);
+- exactly THREE theses — AI infrastructure / indiscriminate selling, software / conditional
+  valuation recovery (WATCH), AI adoption / margin advantage (WATCH);
 - META, AMZN, GOOGL, MSFT named as capex spenders, no chipmaker added; Anthropic private; IGV an
   ETF; the 145-member basket's NTM margins approximate + forecast + dated 2026-02-02 (22V/FactSet);
-- the 99th-percentile correlation stays a market RISK, never a fourth thesis;
-- RESEARCH NOW is research-only: investment readiness NOT_ASSESSED, valuation NOT_ASSESSED.
+- Alphabet's exposure is GOOGL / GOOG only: GOOGM / GOOGN (depositary shares of convertible
+  PREFERRED stock) were not registered on 2026-02-09 and never enter the record as stock;
+- the 99th-percentile correlation stays a market RISK, never a fourth record of any kind;
+- valuation and investment readiness stay NOT_ASSESSED.
+
+AI INFRASTRUCTURE IS WATCH, NOT THE BRIEF'S RESEARCH NOW (review of PR #703, P0.4 / P0.5). Its
+only offered "dislocation" is the article's rhetorical question — "why are stocks also down that
+should benefit…" — which is the SOURCE's OPINION, not a measured mispricing; the corrected rule
+counts only a mispricing measured in the last quarter or a dated event inside the window. The
+first build's RESEARCH NOW rested on counting that opinion as evidence. Pinned from the
+deterministic rule trace, so a future change to the rule has to change this test on purpose.
 """
 
 from __future__ import annotations
@@ -28,13 +37,16 @@ from vinci.theme_intelligence.report import card_context, write_run_outputs
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
     Epistemic,
+    InstrumentClass,
     InvestmentReadiness,
     LinkRole,
+    PitStatus,
     ResearchAction,
     ResolutionStatus,
     RunStatus,
     StanceInSource,
     Thesis,
+    ThesisKind,
     ThesisVersion,
 )
 from vinci.theme_intelligence.verify import card_sentences
@@ -62,11 +74,17 @@ def _by_node(pipe: Pipeline) -> dict[str, tuple[Thesis, ThesisVersion]]:
 def test_exactly_three_theses_with_the_expected_actions(jpm: Pipeline) -> None:
     by = _by_node(jpm)
     assert sorted(by) == ["ai_adoption", "ai_infrastructure", "software"]
-    assert by["ai_infrastructure"][1].priority.research_action is ResearchAction.RESEARCH_NOW
+    assert len(jpm.store.theses()) == 3
+    infra = by["ai_infrastructure"][1].priority
+    assert infra.research_action is ResearchAction.WATCH
+    assert "no verified dislocation or catalyst" in infra.rules_fired[0]
+    f7 = next(f for f in infra.factors if f.factor_id == "F7_dislocation_or_catalyst")
+    assert f7.value == "absent" and "NOT counted (opinion" in f7.note
     assert by["software"][1].priority.research_action is ResearchAction.WATCH
     assert by["ai_adoption"][1].priority.research_action is ResearchAction.WATCH
-    # the correlation is a market risk, not a fourth thesis
+    # the correlation is a market risk, not a fourth record of either kind
     assert all(t.key_mechanism != "market_structure_risk" for t, _ in by.values())
+    assert {t.kind for t, _ in by.values()} == {ThesisKind.INVESTMENT_THESIS}
 
 
 def test_ai_infrastructure_names_only_the_four_spenders(jpm: Pipeline) -> None:
@@ -79,6 +97,19 @@ def test_ai_infrastructure_names_only_the_four_spenders(jpm: Pipeline) -> None:
     assert all(c.resolution_status is ResolutionStatus.LISTED_EQUITY for c in cos)
     assert all(c.recommendation_status.value == "not_a_recommendation" for c in cos)
     assert all(c.role.value == "spending_customer" for c in cos)
+    # POINT IN TIME: every exposure line is common equity on a cover page filed by the as-of date;
+    # Alphabet's preferred depositary lines did not exist yet and never become its stock
+    assert tickers["Alphabet"] == {"GOOGL", "GOOG"}
+    for c in cos:
+        for x in c.listings:
+            assert x.pit_status is PitStatus.VERIFIED, (c.name_as_written, x)
+            assert x.instrument is InstrumentClass.COMMON_EQUITY
+            assert x.pit_source is not None
+            assert date.fromisoformat(x.pit_source.split("filed ")[1][:10]) <= JPM_AS_OF
+    goog = next(c for c in cos if c.name_as_written == "Alphabet")
+    later = {x.ticker: x.pit_status for x in goog.other_securities}
+    assert later == {"GOOGM": PitStatus.NOT_REGISTERED_AS_OF,
+                     "GOOGN": PitStatus.NOT_REGISTERED_AS_OF}
     # chipmakers are a basket the source does NOT populate — no company was added for them
     named = {c.name_as_written for grp in (v.content.s05_affected.companies,
                                            v.content.s05_affected.instruments,
@@ -88,7 +119,6 @@ def test_ai_infrastructure_names_only_the_four_spenders(jpm: Pipeline) -> None:
     # research-only: readiness and valuation stay NOT_ASSESSED, said on the card
     assert v.priority.investment_readiness is InvestmentReadiness.NOT_ASSESSED
     assert "NOT_ASSESSED" in v.content.s06_why_now.valuation_status
-    assert "INVESTIGATION" in v.priority.rules_fired[0]
     assert t.stance is StanceInSource.ASSERTED
 
 
@@ -157,8 +187,9 @@ def test_cards_render_nine_sections_in_order_everywhere(jpm: Pipeline) -> None:
         # REGRESSION: empty groups once matched each other's headings by identity (`()` is one
         # object), repeating headings in the Markdown card — each heading exactly once, in order
         s05 = md.split("## 05")[1].split("## 06")[0]
-        heads = ["Source-explicit companies", "Named instruments / indices", "Private or unlisted",
-                 "Named, not securities", "Also named in the source"]
+        heads = ["Sectors / themes the source names", "Stock exposures of this thesis",
+                 "Named instruments / indices", "Private or unlisted", "Named, not securities",
+                 "Also named in the source"]
         assert [s05.count(f"**{h}") for h in heads] == [1] * len(heads)
         assert [s05.index(f"**{h}") for h in heads] == sorted(s05.index(f"**{h}") for h in heads)
         # the print file is the complete record: no toggle of any kind stays closed in it

@@ -25,12 +25,14 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from dataclasses import dataclass
+import types
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Protocol, Union, get_args, get_origin
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from vinci.graph.llm import LlmError
 from vinci.theme_intelligence.config import (
     EXTRACT_PROMPT_VERSION,
     LLM_MODEL,
@@ -50,7 +52,14 @@ from vinci.theme_intelligence.schemas import (
     MentionRole,
     RecommendationStatus,
     StanceInSource,
+    ThesisKind,
 )
+
+#: Provenance values a model text field may carry. `source_stated` = the article says it (it must
+#: cite claims that verify); `article_fact` is the ti-extract-5 spelling of the same, still read so
+#: older cached extractions replay. The CARD label is never this value — it is derived from what
+#: the cited claims ARE (measured observation / forecast / the source's opinion), see verify.py.
+SOURCE_STATED = frozenset({"source_stated", "article_fact"})
 
 
 class ToolClient(Protocol):
@@ -115,8 +124,12 @@ class XMention(_X):
 
 class XText(_X):
     text: str
-    provenance: str  # article_fact | model_inference
+    provenance: str  # source_stated (legacy: article_fact) | model_inference
     claim_ids: list[str] = Field(default_factory=list)
+
+    @property
+    def source_stated(self) -> bool:
+        return self.provenance in SOURCE_STATED
 
 
 class XStep(_X):
@@ -136,6 +149,24 @@ class XBasket(_X):
     claim_ids: list[str] = Field(default_factory=list)
 
 
+class XSector(_X):
+    """A sector / industry / theme the SOURCE names as exposed — verified as a span."""
+
+    name: str
+    direction: Direction
+    block_id: str
+    quote: str
+    claim_ids: list[str] = Field(default_factory=list)
+
+
+class XAuthor(_X):
+    """A person the article's TEXT credits as an author or research lead — verified as a span."""
+
+    name: str
+    block_id: str
+    quote: str
+
+
 class XCatalyst(_X):
     window_text: str | None = None
     provenance: str = "model_inference"
@@ -145,6 +176,7 @@ class XCatalyst(_X):
 class XHypothesis(_X):
     local_id: str
     title: str
+    kind: ThesisKind = ThesisKind.INVESTMENT_THESIS
     value_chain_node: str
     mechanism: str
     direction: Direction
@@ -155,6 +187,7 @@ class XHypothesis(_X):
     premise_condition: str | None = None
     bottom_line_fact: XText
     bottom_line_inference: XText
+    source_implication: XText | None = None
     transmission_chain: list[XStep] = Field(default_factory=list)
     supporting_claim_ids: list[str] = Field(default_factory=list)
     strongest_evidence_claim_ids: list[str] = Field(default_factory=list)
@@ -167,6 +200,7 @@ class XHypothesis(_X):
     unknowns: list[str] = Field(default_factory=list)
     disconfirming_observables: list[str] = Field(default_factory=list)
     affected_mentions: list[XAffected] = Field(default_factory=list)
+    sector_exposures: list[XSector] = Field(default_factory=list)
     cited_baskets: list[XBasket] = Field(default_factory=list)
     next_research_step: str
     raise_priority_if: list[str] = Field(default_factory=list)
@@ -186,6 +220,7 @@ class Extraction(_X):
     mentions: list[XMention]
     hypotheses: list[XHypothesis]
     market_risks: list[XRisk] = Field(default_factory=list)
+    attributed_authors: list[XAuthor] = Field(default_factory=list)
 
 
 # --- the tool schema ---------------------------------------------------------------------------
@@ -196,16 +231,43 @@ def _enum(e: type[Any]) -> dict[str, Any]:
 
 _NULLABLE_STR = {"type": ["string", "null"]}
 _IDS = {"type": "array", "items": {"type": "string"}}
+_PROV = {"type": "string", "enum": ["source_stated", "model_inference"]}
 _TEXT = {
     "type": "object",
-    "properties": {"text": {"type": "string"},
-                   "provenance": {"type": "string", "enum": ["article_fact", "model_inference"]},
-                   "claim_ids": _IDS},
+    "properties": {"text": {"type": "string"}, "provenance": _PROV, "claim_ids": _IDS},
     "required": ["text", "provenance", "claim_ids"],
 }
+STEPS = ("industry_shift", "volumes", "pricing", "costs", "margins", "cash_flow",
+         "listed_earnings", "market_reaction")
 
 
 def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
+    parts = tool_parts(taxonomy)
+    return {
+        "name": "record_article_evidence",
+        "description": "Record the article's evidence, named entities, hypotheses and risks.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "article_classification": {"type": "object", "properties": {
+                    "article_class": _enum(ArticleClass), "basis": {"type": "string"},
+                    "basis_block_ids": _IDS}, "required": ["article_class", "basis",
+                                                           "basis_block_ids"]},
+                "claims": {"type": "array", "items": parts["claim"],
+                           "maxItems": MAX_CLAIMS_PER_ARTICLE},
+                "mentions": {"type": "array", "items": parts["mention"]},
+                "hypotheses": {"type": "array", "items": parts["hypothesis"]},
+                "market_risks": {"type": "array", "items": parts["risk"]},
+                "attributed_authors": {"type": "array", "items": parts["author"]},
+            },
+            "required": ["article_classification", "claims", "mentions", "hypotheses",
+                         "market_risks", "attributed_authors"],
+        },
+    }
+
+
+def tool_parts(taxonomy: Taxonomy) -> dict[str, dict[str, Any]]:
+    """The item schemas shared by pass 1 and the completeness pass (pass 1b)."""
     claim = {
         "type": "object",
         "properties": {
@@ -225,7 +287,9 @@ def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
                            "the quote, e.g. '18', 'over 20%', '8x', '2–3', '16.4%'"},
             "unit": _NULLABLE_STR,
             "comparator": _NULLABLE_STR,
-            "period": _NULLABLE_STR,
+            "period": {**_NULLABLE_STR, "description": "the calendar window the figure or event "
+                       "refers to, as written: 'NTM', '4Q26', '2H 2026', '2025-2031', 'September "
+                       "2026', 'since May 2026'"},
             "measured_as_of": {**_NULLABLE_STR, "description": "YYYY-MM-DD ONLY if the source "
                                "states the data date for this figure"},
             "as_of_block_id": _NULLABLE_STR,
@@ -269,19 +333,32 @@ def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
     step = {
         "type": "object",
         "properties": {
-            "step": {"type": "string", "enum": ["industry_shift", "volumes", "pricing", "costs",
-                                                "margins", "cash_flow", "listed_earnings"]},
+            "step": {"type": "string", "enum": list(STEPS)},
             "text": {"type": "string"},
-            "provenance": {"type": "string", "enum": ["article_fact", "model_inference"]},
+            "provenance": _PROV,
             "claim_ids": _IDS,
         },
         "required": ["step", "text", "provenance", "claim_ids"],
+    }
+    sector = {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "the sector / industry / theme exactly as "
+                                                      "the article names it"},
+            "direction": _enum(Direction),
+            "block_id": {"type": "string"},
+            "quote": {"type": "string", "description": "exact substring of that block containing "
+                                                       "the name"},
+            "claim_ids": _IDS,
+        },
+        "required": ["name", "direction", "block_id", "quote", "claim_ids"],
     }
     hypothesis = {
         "type": "object",
         "properties": {
             "local_id": {"type": "string", "description": "h1, h2, ..."},
             "title": {"type": "string", "description": "plain-English, about 12 words"},
+            "kind": _enum(ThesisKind),
             "value_chain_node": {"type": "string",
                                  "enum": sorted(taxonomy.node_ids)},
             "mechanism": {"type": "string", "enum": sorted(taxonomy.mechanism_ids)},
@@ -295,13 +372,13 @@ def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
                                   "as the source frames it; null if unconditional"},
             "bottom_line_fact": _TEXT,
             "bottom_line_inference": _TEXT,
+            "source_implication": {"anyOf": [_TEXT, {"type": "null"}]},
             "transmission_chain": {"type": "array", "items": step},
             "supporting_claim_ids": _IDS,
             "strongest_evidence_claim_ids": _IDS,
             "dislocation_claim_ids": _IDS,
             "catalyst": {"type": "object", "properties": {
-                "window_text": _NULLABLE_STR,
-                "provenance": {"type": "string", "enum": ["article_fact", "model_inference"]},
+                "window_text": _NULLABLE_STR, "provenance": _PROV,
                 "claim_ids": _IDS}, "required": ["window_text", "provenance", "claim_ids"]},
             "near_term_view": _TEXT,
             "structural_view": _TEXT,
@@ -313,6 +390,7 @@ def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
                 "type": "object",
                 "properties": {"name_as_written": {"type": "string"}, "role": _enum(MentionRole)},
                 "required": ["name_as_written", "role"]}},
+            "sector_exposures": {"type": "array", "items": sector},
             "cited_baskets": {"type": "array", "items": {
                 "type": "object",
                 "properties": {"description": {"type": "string"}, "claim_ids": _IDS},
@@ -321,13 +399,14 @@ def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
             "raise_priority_if": _IDS,
             "lower_priority_if": _IDS,
         },
-        "required": ["local_id", "title", "value_chain_node", "mechanism", "direction",
-                     "geography", "sectors", "horizon", "stance_in_source", "premise_condition",
-                     "bottom_line_fact", "bottom_line_inference", "transmission_chain",
-                     "supporting_claim_ids", "strongest_evidence_claim_ids",
-                     "dislocation_claim_ids", "catalyst", "near_term_view", "structural_view",
-                     "opposing_explanations", "counter_claim_ids", "unknowns",
-                     "disconfirming_observables", "affected_mentions", "cited_baskets",
+        "required": ["local_id", "title", "kind", "value_chain_node", "mechanism",
+                     "direction", "geography", "sectors", "horizon", "stance_in_source",
+                     "premise_condition", "bottom_line_fact", "bottom_line_inference",
+                     "source_implication", "transmission_chain", "supporting_claim_ids",
+                     "strongest_evidence_claim_ids", "dislocation_claim_ids", "catalyst",
+                     "near_term_view", "structural_view", "opposing_explanations",
+                     "counter_claim_ids", "unknowns", "disconfirming_observables",
+                     "affected_mentions", "sector_exposures", "cited_baskets",
                      "next_research_step", "raise_priority_if", "lower_priority_if"],
     }
     risk = {
@@ -337,25 +416,15 @@ def tool_schema(taxonomy: Taxonomy) -> dict[str, Any]:
                        "claim_ids": _IDS, "related_hypothesis_ids": _IDS},
         "required": ["statement", "scope_qualification", "claim_ids", "related_hypothesis_ids"],
     }
-    return {
-        "name": "record_article_evidence",
-        "description": "Record the article's evidence, named entities, hypotheses and risks.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "article_classification": {"type": "object", "properties": {
-                    "article_class": _enum(ArticleClass), "basis": {"type": "string"},
-                    "basis_block_ids": _IDS}, "required": ["article_class", "basis",
-                                                           "basis_block_ids"]},
-                "claims": {"type": "array", "items": claim, "maxItems": MAX_CLAIMS_PER_ARTICLE},
-                "mentions": {"type": "array", "items": mention},
-                "hypotheses": {"type": "array", "items": hypothesis},
-                "market_risks": {"type": "array", "items": risk},
-            },
-            "required": ["article_classification", "claims", "mentions", "hypotheses",
-                         "market_risks"],
-        },
+    author = {
+        "type": "object",
+        "properties": {"name": {"type": "string"}, "block_id": {"type": "string"},
+                       "quote": {"type": "string", "description": "exact substring of that block "
+                                                                  "containing the name"}},
+        "required": ["name", "block_id", "quote"],
     }
+    return {"claim": claim, "mention": mention, "hypothesis": hypothesis, "risk": risk,
+            "author": author, "sector": sector}
 
 
 def system_prompt(taxonomy: Taxonomy) -> str:
@@ -382,8 +451,15 @@ several figures (e.g. three groups' values), make one claim per figure (they may
 each with its own scope.
 3. A figure taken from a chart description that says "Approximate values" or uses "~"/"around" is \
 approximate=true and chart_derived=true. Never present it as exact.
-4. epistemic: actual (observed/reported), forecast (NTM, estimates, expectations, projections — \
-NTM figures are forecasts), opinion (the author's judgement), mixed, unknown.
+4. epistemic — this decides how the card LABELS every line citing the claim, so be exact: \
+actual ONLY for a measured / reported figure or a dated event (a MEASURED OBSERVATION); forecast \
+for NTM figures, estimates, expectations, projections (a FORECAST); opinion for the author's \
+interpretation, argument, characterisation or recommendation — e.g. "the market is pricing in \
+…", "utilities have played a very different role", "dispersion may become one of investors' most \
+valuable tools" (a SOURCE OPINION, never an established market fact); mixed; unknown.
+4b. period: the calendar window the figure or event refers to, as written ("NTM", "4Q26", \
+"2H 2026", "2025-2031", "September 2026", "since May 2026"). Never leave a forecast's period \
+empty when the article states it — the near-term test reads these windows.
 5. measured_as_of: only when the source states the data date for that figure (e.g. "Data as of \
 February 5, 2026") — give as_of_block_id. Never substitute the publication date.
 6. attributed_source: the upstream data source the article names for the figure (e.g. \
@@ -397,10 +473,32 @@ only when the article explicitly recommends that named security, rating_stated o
 a rating. NEVER add an organization the article does not name: no implied peers, no index or \
 basket constituents, no expanding "chipmakers" into company names. Private companies are \
 private_company. issuer_name_hint / ticker_hint are your identification for later independent \
-verification — null when unsure.
+verification — null when unsure. Sectors, industries and themes ("utilities", "software") are \
+not organizations: record them in a hypothesis's sector_exposures, not as mentions.
 
-HYPOTHESES: only GENUINELY DISTINCT profit-transmission mechanisms for listed equities that the \
-article advances or presents as an investable possibility. Do not force a count; zero is valid.
+ATTRIBUTED AUTHORS: every person the article's TEXT credits as its author or as the lead of the \
+research team ("By …", "written by …", "team led by …"), with an exact quote from one block that \
+contains the name. Not people merely quoted or cited. Empty when the text credits nobody.
+
+WHOLE-ARTICLE COVERAGE: every material argument the article makes must land somewhere — in a \
+hypothesis, a market-regime record, a market risk or a claim. An article can carry a sector \
+thesis AND a separate market-structure argument at once: record both. Never drop an argument \
+because it names no company, and never force one into a buy thesis.
+
+HYPOTHESES have a kind:
+- investment_thesis: a GENUINELY DISTINCT profit-transmission mechanism for listed equities that \
+the article advances or presents as an investable possibility.
+- market_regime: a market-STRUCTURE condition the article documents with its own figures — \
+breadth (e.g. the share of stocks above a moving average), stock-bond or implied correlation, \
+dispersion, volatility — TOGETHER WITH a research OPPORTUNITY the article itself draws from it \
+(e.g. that sector or thematic stock selection matters more, or that diversification can be found \
+within equities). Node macro_market unless the regime is specific to one sector; mechanism \
+dispersion_selection; direction positive. It needs no named company and no earnings mechanism: \
+leave its transmission_chain to the industry_shift / market_reaction steps the article states.
+- A market-structure condition the article presents as a RISK to holdings (concentration, \
+crowding, a correlation that could cause a simultaneous drawdown) is NOT a record of either kind: \
+it goes to market_risks with its exact scope and qualification. A market risk stays a risk.
+Do not force a count; zero is valid.
 - Record the ARTICLE'S investable view. When the article reports what the market is pricing (a \
 narrative) and then offers its own — even conditional — investable view on the same assets, the \
 hypothesis is the article's view (stance_in_source conditional when it is framed as depending on a \
@@ -424,10 +522,11 @@ the named companies' earnings or valuations reflect it, whether the spending or 
 return, consensus expectations — and, when the evidence compares groups (e.g. adopters vs \
 non-adopters), that the comparison shows association, not demonstrated causation, unless the \
 article demonstrates causation.
-- horizon: next_2_4_quarters when the hypothesis's evidence or catalyst concerns roughly the next \
-twelve months (forward/NTM estimates, a dislocation an analyst could investigate now, a dated \
-event); longer_term only when the argument is explicitly multi-year with no nearer evidence; \
-unclear otherwise.
+- horizon: next_2_4_quarters when the hypothesis's evidence or catalyst falls in roughly the next \
+twelve months (forward/NTM estimates, a dated event within a year, a current dislocation an \
+analyst could investigate now); longer_term when the argument rests on multi-year windows — a \
+forecast for 2025-2031 is longer_term even though it is a forecast; unclear otherwise. The \
+registry re-tests this against the claims' own periods, so state them.
 - Market-level risks (concentration, correlation, volatility, positioning) go to market_risks, \
 with their exact scope and qualification, unless the article ties them to a specific profit \
 mechanism.
@@ -438,12 +537,30 @@ poor fit.
 - direction: the effect on the listed equities exposed (positive / negative).
 - stance_in_source: asserted (the article argues it), conditional (the article frames it as \
 depending on a condition, e.g. "if you believe..."), speculative, reported_view (others' view).
-- Every text field carries provenance: article_fact only when the article states it (cite \
-claim ids); otherwise model_inference. bottom_line_fact must be supported by its cited claims; \
-bottom_line_inference states the implication and is inference. If the article does not quantify \
-an earnings, revenue or valuation effect, say that rather than estimating one.
-- transmission_chain runs industry shift → volumes / pricing / costs / margins / cash flow → \
-listed-company earnings; mark each step's provenance honestly.
+- Every text field carries provenance: source_stated only when the article itself says it (cite \
+the claim ids that carry it); otherwise model_inference. bottom_line_fact must be supported by its \
+cited claims; source_implication is the implication the ARTICLE ITSELF draws for investors or \
+research (cite its claims; null when it draws none); bottom_line_inference is YOUR inference. If \
+the article does not quantify an earnings, revenue or valuation effect, say that rather than \
+estimating one.
+- transmission_chain is the ECONOMIC path: industry shift → volumes / pricing of the companies' \
+products / costs / margins / cash flow → listed-company earnings; mark each step's provenance \
+honestly. A rising or falling SHARE PRICE, valuation multiple, index level, relative performance, \
+sell-off or rally is the market's REACTION, never an earnings mechanism: record it as a \
+market_reaction step, never as pricing / margins / listed_earnings. ALWAYS record the fundamental \
+step(s) an investment_thesis depends on: source_stated where the article states them (cite the \
+claims — e.g. reported capex or demand), model_inference where it does not (say what would have \
+to happen to volumes, pricing, costs, margins or cash flow). For a valuation-dislocation thesis \
+the fundamental step is the economics the price move ignores (e.g. the spending that drives \
+suppliers' volumes).
+- dislocation_claim_ids: MEASURED observations of a mispricing or an outsized move (an oversold \
+reading, a valuation gap against history) — never an opinion. catalyst claim_ids: a dated EVENT \
+that could reprice the thesis — never a forecast figure or an opinion. The registry re-checks both.
+- sector_exposures: the sectors, industries or themes the article ITSELF names as exposed (e.g. \
+"utilities", "S&P 500 Utilities", "software", "at both a sector and thematic level"), each with \
+an exact quote from one block that contains the name. A research opportunity does not need a \
+named company, but it does need the article to name the population; never infer a sector the \
+article does not name.
 - next_research_step is an investigation (what to check next), never a trade. \
 raise_priority_if / lower_priority_if are observable events or data.
 - cited_baskets: a basket or index the article cites WITHOUT naming its members (describe it; \
@@ -457,18 +574,35 @@ TAXONOMY (mechanism):
 """
 
 
-def user_message(doc: ParsedDocument, *, publisher: str, as_of: str) -> str:
+#: Registry theses offered to the extractor as ALIGNMENT candidates, at most this many (newest
+#: material update first); the cut is printed in the message, never silent.
+REGISTRY_CONTEXT_MAX = 60
+
+
+def user_message(doc: ParsedDocument, *, publisher: str, as_of: str,
+                 registry: list[tuple[str, str]] | None = None) -> str:
     authors = "; ".join(a.name + (f" ({a.title})" if a.title else "") for a in doc.authors) \
         or "UNKNOWN"
     lines = [
         f"Publisher: {publisher}",
         f"Title: {doc.title or 'UNKNOWN'}",
-        f"Author(s): {authors}",
+        f"Author(s) per page metadata: {authors}",
         f"Published: {doc.published_raw or 'UNKNOWN'}",
         f"Analysis as-of date: {as_of} (do not use any knowledge of events after it)",
         f"Retrieval: {doc.retrieval_state.value}",
-        "<untrusted_article>",
     ]
+    if registry:
+        shown = registry[:REGISTRY_CONTEXT_MAX]
+        lines.append("<registry_theses> Theses already in the registry, as node|mechanism|"
+                     "direction|geography — title. When this article argues the SAME economic "
+                     "thesis as one of these, use exactly that node, mechanism, direction and "
+                     "geography so it updates that record; when it argues something different, "
+                     "choose freely. Similarity is not identity."
+                     + (f" (showing {len(shown)} of {len(registry)})"
+                        if len(registry) > len(shown) else ""))
+        lines += [f"- {k} — {t}" for k, t in shown]
+        lines.append("</registry_theses>")
+    lines.append("<untrusted_article>")
     for b in doc.blocks:
         lines.append(f"[{b.block_id}|{b.kind}] {b.text}")
     lines.append("</untrusted_article>")
@@ -486,6 +620,78 @@ class ExtractionResult:
     usage: dict[str, int] | None
     cost_usd: float | None
     seconds: float
+    #: the full answer overran the output cap and this is the declared COMPACT retry
+    compact: bool = False
+    #: usage of the truncated full attempt (billed, discarded) — recorded, never hidden
+    truncated_usage: dict[str, int] | None = None
+    #: items of the answer that failed their schema and were DROPPED (path: error) — never coerced
+    dropped: list[str] = field(default_factory=list)
+
+
+def _model_spec(ann: Any) -> tuple[str, type[BaseModel]] | None:
+    origin, args = get_origin(ann), get_args(ann)
+    if origin is list and args and isinstance(args[0], type) and issubclass(args[0], BaseModel):
+        return "list", args[0]
+    if origin in (Union, types.UnionType):
+        for a in args:
+            if isinstance(a, type) and issubclass(a, BaseModel):
+                return "one", a
+    if isinstance(ann, type) and issubclass(ann, BaseModel):
+        return "one", ann
+    return None
+
+
+def _clean(cls: type[BaseModel], data: Any, path: str, dropped: list[str]) -> Any:
+    if not isinstance(data, dict):
+        return data
+    out = dict(data)
+    for name, f in cls.model_fields.items():
+        spec = _model_spec(f.annotation)
+        if spec is None or name not in out:
+            continue
+        kind, sub = spec
+        if kind == "list" and isinstance(out[name], list):
+            kept = []
+            for i, item in enumerate(out[name]):
+                item2 = _clean(sub, item, f"{path}{name}[{i}].", dropped)
+                try:
+                    sub.model_validate(item2)
+                except ValidationError as exc:
+                    err = exc.errors()[0]
+                    dropped.append(f"{path}{name}[{i}] dropped — {'.'.join(map(str, err['loc']))}: "
+                                   f"{err['msg']} (got {str(err.get('input'))[:60]!r})")
+                    continue
+                kept.append(item2)
+            out[name] = kept
+        elif kind == "one" and isinstance(out[name], dict):
+            out[name] = _clean(sub, out[name], f"{path}{name}.", dropped)
+    return out
+
+
+def validate_items(cls: type[BaseModel], out: dict[str, Any]) -> tuple[Any, list[str]]:
+    """Validate a tool answer ITEM BY ITEM. An item (a claim, a mention, a hypothesis, a nested
+    sector span …) that fails its schema is DROPPED and reported — never coerced into a guessed
+    value; every valid item is kept. Observed 2026-10-10: one mention typed "other" (not an
+    allowed entity type) made the whole-answer check discard a paid extraction. A malformed TOP
+    level still fails loud."""
+    dropped: list[str] = []
+    return cls.model_validate(_clean(cls, out, "", dropped)), dropped
+
+
+#: A full extraction that overruns the output cap is retried ONCE in this declared compact mode.
+#: Nothing is guessed: the compact answer is verified like any other, the article's completeness
+#: ledger and pass 1b then re-read the whole text for what it leaves out, and the run logs the
+#: degradation (EXTRACTION_COMPACT) and the truncated call's cost.
+COMPACT_MAX_CLAIMS = 25
+COMPACT_RULES = f"""COMPACT MODE. A complete answer for this long article exceeded the output \
+limit. Record at most {COMPACT_MAX_CLAIMS} claims (the decision-relevant figures first), at most \
+four hypotheses, at most three transmission steps each, and keep every free-text field under 35 \
+words. A separate completeness pass re-reads the whole article for anything left out, so prefer \
+fewer, exact claims over many."""
+
+
+def _truncated(exc: Exception) -> bool:
+    return "truncated at max_tokens" in str(exc)
 
 
 def cost_of(model: str, usage: dict[str, int] | None) -> float | None:
@@ -509,29 +715,68 @@ def cache_key(model: str, prompt_version: str, tool: dict[str, Any], system: str
 
 def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy: Taxonomy,
                    client: ToolClient | None, cache_dir: Path,
-                   prompt_version: str = EXTRACT_PROMPT_VERSION) -> ExtractionResult:
+                   prompt_version: str = EXTRACT_PROMPT_VERSION,
+                   registry: list[tuple[str, str]] | None = None) -> ExtractionResult:
     tool = tool_schema(taxonomy)
     system = system_prompt(taxonomy)
-    user = user_message(doc, publisher=publisher, as_of=as_of)
+    user = user_message(doc, publisher=publisher, as_of=as_of, registry=registry)
     model = client.model if client is not None else LLM_MODEL
     key = cache_key(model, prompt_version, tool, system, user)
     path = cache_dir / "extract" / f"{key}.json"
-    if path.exists():
-        rec = json.loads(path.read_text())
-        return ExtractionResult(Extraction.model_validate(rec["output"]), rec["output"],
-                                f"X-{key[:16]}", rec["model"], rec["prompt_version"], True,
-                                rec.get("usage"), 0.0, 0.0)
+    marker = cache_dir / "extract" / f"{key}.truncated.json"
+    ctool = json.loads(json.dumps(tool))
+    ctool["input_schema"]["properties"]["claims"]["maxItems"] = COMPACT_MAX_CLAIMS
+    csystem = system + "\n" + COMPACT_RULES
+    cversion = prompt_version + "+compact"
+    ckey = cache_key(model, cversion, ctool, csystem, user)
+    cpath = cache_dir / "extract" / f"{ckey}.json"
+    for p, k, compact in ((path, key, False),
+                          (cpath, ckey, True)):
+        if p.exists():  # a truncation marker means the full answer never fits: go to compact
+            rec = json.loads(p.read_text())
+            trunc = json.loads(marker.read_text()).get("usage") if marker.exists() else None
+            parsed, dropped = validate_items(Extraction, rec["output"])
+            return ExtractionResult(parsed, rec["output"], f"X-{k[:16]}", rec["model"],
+                                    rec["prompt_version"], True, rec.get("usage"), 0.0, 0.0,
+                                    compact=compact, truncated_usage=trunc if compact else None,
+                                    dropped=dropped)
     if client is None:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")
+    trunc_usage: dict[str, int] | None = None
+    if not marker.exists():
+        t0 = time.monotonic()
+        try:
+            out = client.extract(system=system, user=user, tool=tool)
+        except LlmError as exc:
+            if not _truncated(exc):
+                raise
+            trunc_usage = getattr(client, "last_usage", None)
+            marker.parent.mkdir(parents=True, exist_ok=True)
+            marker.write_text(json.dumps({"model": model, "prompt_version": prompt_version,
+                                          "usage": trunc_usage, "error": str(exc)},
+                                         sort_keys=True, indent=1))
+        else:
+            seconds = time.monotonic() - t0
+            usage = getattr(client, "last_usage", None)
+            path.parent.mkdir(parents=True, exist_ok=True)  # the paid answer is kept FIRST
+            path.write_text(json.dumps({"model": model, "prompt_version": prompt_version,
+                                        "usage": usage, "seconds": seconds, "output": out},
+                                       sort_keys=True, indent=1))
+            parsed, dropped = validate_items(Extraction, out)
+            return ExtractionResult(parsed, out, f"X-{key[:16]}", model, prompt_version, False,
+                                    usage, cost_of(model, usage), seconds, dropped=dropped)
+    else:
+        trunc_usage = json.loads(marker.read_text()).get("usage")
+    # the declared COMPACT retry — a second truncation fails loud (LlmError), never half-kept
     t0 = time.monotonic()
-    out = client.extract(system=system, user=user, tool=tool)
+    out = client.extract(system=csystem, user=user, tool=ctool)
     seconds = time.monotonic() - t0
     usage = getattr(client, "last_usage", None)
-    parsed = Extraction.model_validate(out)  # fail loud on a malformed tool call
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps({"model": model, "prompt_version": prompt_version,
-                                "usage": usage, "seconds": seconds, "output": out},
-                               sort_keys=True, indent=1))
-    return ExtractionResult(parsed, out, f"X-{key[:16]}", model, prompt_version, False, usage,
-                            cost_of(model, usage), seconds)
+    cpath.parent.mkdir(parents=True, exist_ok=True)
+    cpath.write_text(json.dumps({"model": model, "prompt_version": cversion, "usage": usage,
+                                 "seconds": seconds, "output": out}, sort_keys=True, indent=1))
+    parsed, dropped = validate_items(Extraction, out)
+    return ExtractionResult(parsed, out, f"X-{ckey[:16]}", model, cversion, False, usage,
+                            cost_of(model, usage), seconds, compact=True,
+                            truncated_usage=trunc_usage, dropped=dropped)

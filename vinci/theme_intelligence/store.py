@@ -37,6 +37,7 @@ from vinci.theme_intelligence.schemas import (
     ArticleVersion,
     ChangeEvent,
     Claim,
+    CompletenessReport,
     EvidenceSource,
     Mention,
     SecurityResolution,
@@ -51,11 +52,14 @@ from vinci.theme_intelligence.schemas import (
 
 M = TypeVar("M", bound=BaseModel)
 
-APPEND_ONLY_TABLES = (
+#: The history tables migration v1 created — FROZEN with v1 (an applied step is never edited).
+_V1_APPEND_ONLY = (
     "article_versions", "extractions", "claims", "mentions", "security_resolutions",
     "thesis_versions", "thesis_claim_links", "contributions", "relations", "change_events",
     "snapshots", "verification_issues", "llm_calls",
 )
+#: Every append-only history table at the current schema.
+APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness")
 
 #: (version, statements). Version 1 is the initial schema. A later change APPENDS a new entry —
 #: never edits an applied one (a DB that already ran step N would silently diverge from one that
@@ -106,12 +110,23 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " purpose TEXT NOT NULL, payload TEXT NOT NULL)",
         "CREATE TABLE candidates (url TEXT PRIMARY KEY, source_id TEXT NOT NULL,"
         " status TEXT NOT NULL, payload TEXT NOT NULL)",
-        *[stmt for t in APPEND_ONLY_TABLES for stmt in (
+        *[stmt for t in _V1_APPEND_ONLY for stmt in (
             f"CREATE TRIGGER {t}_no_update BEFORE UPDATE ON {t} "
             f"BEGIN SELECT RAISE(ABORT, '{t} is append-only'); END",
             f"CREATE TRIGGER {t}_no_delete BEFORE DELETE ON {t} "
             f"BEGIN SELECT RAISE(ABORT, '{t} is append-only'); END",
         )],
+    ]),
+    # v2 (2026-10-11): the per-article-version COMPLETENESS LEDGER — every figure the article
+    # states and what happened to it (captured / added by the completeness pass / immaterial /
+    # uncaptured). Append-only like every other history table.
+    (2, [
+        "CREATE TABLE completeness (article_version_id TEXT NOT NULL, run_id TEXT NOT NULL,"
+        " payload TEXT NOT NULL, PRIMARY KEY (article_version_id, run_id))",
+        "CREATE TRIGGER completeness_no_update BEFORE UPDATE ON completeness "
+        "BEGIN SELECT RAISE(ABORT, 'completeness is append-only'); END",
+        "CREATE TRIGGER completeness_no_delete BEFORE DELETE ON completeness "
+        "BEGIN SELECT RAISE(ABORT, 'completeness is append-only'); END",
     ]),
 ]
 
@@ -471,6 +486,14 @@ class Store:
         return self._rows("SELECT payload FROM verification_issues ORDER BY issue_id", [],
                           VerificationIssue)
 
+    def add_completeness(self, r: CompletenessReport) -> bool:
+        return self._append("completeness", {"article_version_id": r.article_version_id,
+                                             "run_id": r.run_id}, r)
+
+    def completeness(self, article_version_id: str) -> list[CompletenessReport]:
+        return self._rows("SELECT payload FROM completeness WHERE article_version_id=? ORDER BY "
+                          "run_id", [article_version_id], CompletenessReport)
+
     def add_llm_call(self, call_id: str, run_id: str, purpose: str,
                      record: dict[str, Any]) -> None:
         self.conn.execute("INSERT OR IGNORE INTO llm_calls (call_id, run_id, purpose, payload) "
@@ -507,7 +530,7 @@ class Store:
     TABLES = ("meta", "articles", "article_versions", "extractions", "evidence_sources", "claims",
               "mentions", "security_resolutions", "theses", "thesis_versions",
               "thesis_claim_links", "contributions", "relations", "change_events", "runs",
-              "snapshots", "verification_issues", "llm_calls", "candidates")
+              "snapshots", "verification_issues", "llm_calls", "candidates", "completeness")
 
     def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY

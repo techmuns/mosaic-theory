@@ -174,5 +174,9 @@ id = "market_structure_risk"
 label = "Concentration, correlation or positioning risk at market level"
 
 [[mechanism]]
+id = "dispersion_selection"
+label = "Low correlation / narrow breadth widens dispersion, so sector, theme or stock selection drives returns"
+
+[[mechanism]]
 id = "other"
 label = "None of the above — the thesis is created REVIEW_NEEDED"

@@ -6,32 +6,56 @@ a QA pass is evidence about the persisted state, not a restatement of the run's 
 - spans: every verified claim's quote is re-found in its stored article-version block;
 - numbers: every number-bearing verified claim's figure is re-found in its quote;
 - look-ahead: no evidence dated after the run's as-of, no article published after it analysed;
-- card facts: every ARTICLE FACT card line cites a verified claim and prints only its numbers;
+- card facts: every source-labelled card line cites a verified claim and prints only its numbers;
 - structure: every card has the nine sections in the fixed order;
 - immutability: every version's content hash recomputes, and the version chain links up;
 - append-only: the no-UPDATE / no-DELETE triggers exist on every history table;
 - names: every source-explicit company is a mention whose name is in the article text;
 - readiness: a RESEARCH NOW card keeps investment readiness NOT_ASSESSED;
 - coverage: a scan reports every configured source, with internally consistent counts;
-- renders: HTML / Markdown / JSON of each card carry the same section order and claim refs.
+- renders: HTML / Markdown / JSON of each card carry the same section order and claim refs;
+- completeness: every analysed article has a completeness ledger; every figure it states is
+  captured or explicitly judged immaterial, and every argument block is accounted for — the open
+  ones are listed in full;
+- point in time: every listed exposure is common equity registered on a cover page filed on or
+  before the run's as-of (no later-registered security, no preferred / debt line);
+- labels: every source-labelled line carries the WEAKEST label of the claims it cites, and no
+  share-price / valuation move sits in an earnings step;
+- authors: every analysed article names its author(s).
 """
 
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 from vinci.theme_intelligence.cards import card_sha
 from vinci.theme_intelligence.config import load_sources
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
+    SOURCE_LABELS,
     CardContent,
+    FieldStatus,
+    InstrumentClass,
     InvestmentReadiness,
+    PitStatus,
+    Provenance,
     ResearchAction,
 )
 from vinci.theme_intelligence.store import APPEND_ONLY_TABLES, Store
-from vinci.theme_intelligence.verify import _NUM, deterministic_card_checks, locate, norm_text
+from vinci.theme_intelligence.verify import (
+    EARNINGS_STEPS,
+    card_sentences,
+    deterministic_card_checks,
+    is_market_reaction,
+    label_for,
+    locate,
+    norm_text,
+    stated_numbers,
+)
 
 
 @dataclass
@@ -95,7 +119,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
             if block is None or locate(c.quote, block.text) is None:
                 span_bad.append(f"{c.claim_id} ({c.block_id})")
             if c.value_text and c.number_verified:
-                nums = [n.replace(",", "") for n in _NUM.findall(c.value_text)]
+                nums = [n.replace(",", "") for n in stated_numbers(c.value_text)]
                 q = norm_text(c.quote).replace(",", "")
                 if nums and not any(n in q for n in nums):
                     num_bad.append(f"{c.claim_id} {c.value_text!r}")
@@ -137,10 +161,11 @@ def run_qa(store: Store, run_id: str) -> QaResult:
             if prior is None or prior.content_sha != v.prior_content_sha:
                 chain_bad.append(f"{v.thesis_id} v{v.version}")
         claims = {}
-        for lk in store.links(v.thesis_id):
-            kc = store.claim(lk.claim_id)
+        cited = {c for _t, _p, cids in card_sentences(v.content).values() for c in cids}
+        for cid in {lk.claim_id for lk in store.links(v.thesis_id)} | cited:
+            kc = store.claim(cid)
             if kc is not None:
-                claims[lk.claim_id] = kc
+                claims[cid] = kc
         recorded = {i.ref_id for i in store.issues(run_id=run_id) if i.severity.value == "BLOCK"}
         for i in deterministic_card_checks(v.content, claims, run_id):
             if i.ref_id not in recorded:
@@ -163,7 +188,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
     add(QaCheck("version content hashes recompute", not sha_bad, _fail_list(sha_bad) or "ok"))
     add(QaCheck("version chain links to the prior version", not chain_bad,
                 _fail_list(chain_bad) or "ok"))
-    add(QaCheck("ARTICLE FACT lines cite verified claims (or are withheld)", not fact_bad,
+    add(QaCheck("source-labelled lines cite verified claims (or are withheld)", not fact_bad,
                 _fail_list(fact_bad) or "every failing line was recorded and withheld"))
     add(QaCheck("RESEARCH NOW keeps readiness NOT_ASSESSED", not ready_bad,
                 _fail_list(ready_bad) or "ok"))
@@ -172,6 +197,77 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 + (f"; {len(names_unchecked)} not re-checkable here — their article's full text "
                    f"is not retained by an imported registry (verified when ingested): "
                    f"{_fail_list(names_unchecked)}" if names_unchecked else "")))
+
+    # labels, transmission and point-in-time listings on this run's versions ----------------------
+    label_bad: list[str] = []
+    react_bad: list[str] = []
+    pit_bad: list[str] = []
+    for v in versions:
+        cited_ids = {c for _t, _p, cids in card_sentences(v.content).values() for c in cids}
+        linked_claims = {cid: kc2 for cid in {lk.claim_id for lk in store.links(v.thesis_id)}
+                         | cited_ids if (kc2 := store.claim(cid)) is not None}
+        unlinked = cited_ids - {lk.claim_id for lk in store.links(v.thesis_id)}
+        if unlinked:
+            label_bad.append(f"{v.thesis_id} v{v.version}: cites claim(s) the thesis does not "
+                             f"link: {', '.join(sorted(unlinked)[:3])}")
+        for sid, (_text, prov, cids) in card_sentences(v.content).items():
+            if prov in {p.value for p in SOURCE_LABELS} and prov != Provenance.ARTICLE_FACT.value:
+                want = label_for(cids, linked_claims)
+                if want is not None and want.value != prov:
+                    label_bad.append(f"{v.thesis_id} v{v.version} {sid}: {prov} but cites "
+                                     f"{want.value}")
+        for st in v.content.s03_transmission:
+            if st.step in EARNINGS_STEPS and is_market_reaction(st.text):
+                react_bad.append(f"{v.thesis_id} v{v.version} {st.step}: {st.text[:80]!r}")
+        for co in v.content.s05_affected.companies:
+            for ls in co.listings:
+                filed = re.search(r"filed (\d{4}-\d{2}-\d{2})", ls.pit_source or "")
+                if ls.pit_status is not PitStatus.VERIFIED or \
+                        ls.instrument is not InstrumentClass.COMMON_EQUITY:
+                    pit_bad.append(f"{v.thesis_id}: {co.name_as_written} {ls.ticker} "
+                                   f"{ls.pit_status.value}/{ls.instrument.value}")
+                elif filed is None or date.fromisoformat(filed.group(1)) > run.as_of:
+                    pit_bad.append(f"{v.thesis_id}: {co.name_as_written} {ls.ticker} cover page "
+                                   f"{ls.pit_source!r} not on or before {run.as_of}")
+    add(QaCheck("source-labelled lines carry the weakest label of their claims", not label_bad,
+                _fail_list(label_bad) or f"{len(versions)} version(s) checked"))
+    add(QaCheck("no share-price / valuation move filed as an earnings step", not react_bad,
+                _fail_list(react_bad) or "ok"))
+    add(QaCheck("listed exposures are point-in-time-verified common equity", not pit_bad,
+                _fail_list(pit_bad) or f"as of {run.as_of}"))
+
+    # completeness ledgers and authors for every article this run analysed ------------------------
+    no_ledger: list[str] = []
+    open_figs: list[str] = []
+    open_blocks: list[str] = []
+    n_figs = 0
+    no_author: list[str] = []
+    for aid in article_ids:
+        art = store.article(aid)
+        if art is not None and art.authors_status is not FieldStatus.KNOWN:
+            no_author.append(f"{aid} ({art.publisher})")
+        for av in store.article_versions(aid):
+            if av.retrieval_state.value == "BLOCKED" or not av.blocks:
+                continue
+            reps = [r for r in store.completeness(av.version_id) if r.run_id == run_id] or \
+                store.completeness(av.version_id)
+            if not reps:
+                no_ledger.append(f"{aid} {av.version_id}")
+                continue
+            rep = reps[-1]
+            n_figs += len(rep.figures)
+            open_figs += [f"{aid} {f.block_id} {f.figure!r}" for f in rep.uncaptured]
+            open_blocks += [f"{aid} {b.block_id}" for b in rep.unaccounted_blocks]
+    add(QaCheck("completeness ledger recorded for every analysed article", not no_ledger,
+                _fail_list(no_ledger) or f"{len(article_ids)} article(s)"))
+    add(QaCheck("every reported figure captured or judged immaterial", not open_figs,
+                (f"OPEN — {len(open_figs)} of {n_figs} figure(s): " + _fail_list(open_figs, 12))
+                if open_figs else f"{n_figs} figure(s) accounted for"))
+    add(QaCheck("every argument block accounted for", not open_blocks,
+                (f"OPEN — {len(open_blocks)} block(s): " + _fail_list(open_blocks, 12))
+                if open_blocks else "ok"))
+    add(QaCheck("every analysed article names its author(s)", not no_author,
+                _fail_list(no_author) or f"{len(article_ids)} article(s)"))
 
     # append-only triggers ------------------------------------------------------------------------
     trig = {r[0] for r in store.conn.execute(

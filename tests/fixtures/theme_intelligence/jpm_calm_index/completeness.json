@@ -1,0 +1,146 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1b completeness model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-complete-1",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 18335,
+   "max_tokens": 16384,
+   "output_tokens": 1374
+  }
+ },
+ "output": {
+  "added_claims": [
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b018",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "k1",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "which has made utilities providers key enablers of AI",
+    "statement": "The AI data center build-out requires electricity, making utilities providers key enablers of AI.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b020",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "k2",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "higher yields in the Treasury market can compete with this aspect of what the sector has to offer",
+    "statement": "Because utilities are valued for their dividends, higher Treasury yields compete with utility dividends and weigh on the sector.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "added_hypotheses": [],
+  "added_mentions": [],
+  "added_risks": [],
+  "block_reviews": [
+   {
+    "block_id": "b017",
+    "claim_ids": [],
+    "hypothesis_ids": [
+     "h2"
+    ],
+    "reason": "States that utilities, historically defensive, have played a very different role recently; sets up h2's argument on utilities under rates/moratorium pressure.",
+    "verdict": "covered"
+   },
+   {
+    "block_id": "b018",
+    "claim_ids": [
+     "k1"
+    ],
+    "hypothesis_ids": [
+     "h2"
+    ],
+    "reason": "Describes utilities as key enablers of AI power demand — the positive demand driver behind h2. Added a claim capturing this.",
+    "verdict": "added"
+   },
+   {
+    "block_id": "b020",
+    "claim_ids": [
+     "k2"
+    ],
+    "hypothesis_ids": [
+     "h2"
+    ],
+    "reason": "States that higher Treasury yields compete with utility dividends, weighing on the sector — a distinct transmission mechanism for h2. Added claim.",
+    "verdict": "added"
+   },
+   {
+    "block_id": "b024",
+    "claim_ids": [],
+    "hypothesis_ids": [
+     "h1",
+     "h2"
+    ],
+    "reason": "Summary that utilities encapsulate AI promise, political consequences and higher rates; restates forces already carried by h1 and h2.",
+    "verdict": "covered"
+   }
+  ],
+  "figure_reviews": [
+   {
+    "claim_ids": [],
+    "figure_id": "b015#70",
+    "reason": "Historical chart range (2020 peak above 70) shown only as context to illustrate that current correlation is unusually low; not used to make a forward argument.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b015#30",
+    "reason": "Historical 2021-2022 fluctuation range shown only as context for the correlation chart; not decision-relevant on its own.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b015#60",
+    "reason": "Historical 2021-2022 fluctuation range shown only as context for the correlation chart; not decision-relevant on its own.",
+    "verdict": "immaterial"
+   }
+  ],
+  "hypothesis_additions": [
+   {
+    "affected_mentions": [],
+    "catalyst_claim_ids": [],
+    "counter_claim_ids": [],
+    "dislocation_claim_ids": [],
+    "hypothesis_id": "h2",
+    "sector_exposures": [
+     {
+      "block_id": "b020",
+      "claim_ids": [
+       "k2"
+      ],
+      "direction": "negative",
+      "name": "utilities",
+      "quote": "rising bond yields have also weighed on the sector"
+     }
+    ],
+    "supporting_claim_ids": [
+     "k1",
+     "k2"
+    ]
+   }
+  ]
+ }
+}

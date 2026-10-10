@@ -28,10 +28,17 @@ DEFAULT_DATA_DIR = Path("data/theme_intelligence")
 
 LLM_PROVIDER = "anthropic"
 LLM_MODEL = "claude-opus-4-8"
-EXTRACT_PROMPT_VERSION = "ti-extract-5"
-REVIEW_PROMPT_VERSION = "ti-review-3"
-PARSER_VERSION = "ti-parse-3"
-ENGINE_VERSION = "ti-engine-1"
+#: Output-token cap per call. The shared client sends NON-streaming requests, and the Anthropic SDK
+#: refuses a non-streaming request whose cap implies more than 10 minutes at its assumed 128k
+#: tokens/hour — 21,333 tokens. The default 16,384 truncated the v6 extraction of a 3,000-word
+#: SemiAnalysis post on 2026-10-10 (the run FAILED loudly, nothing partial kept). Billing is on
+#: tokens actually produced, so the higher cap costs nothing on shorter outputs.
+LLM_MAX_TOKENS = 21_333
+EXTRACT_PROMPT_VERSION = "ti-extract-6"
+COMPLETE_PROMPT_VERSION = "ti-complete-1"
+REVIEW_PROMPT_VERSION = "ti-review-4"
+PARSER_VERSION = "ti-parse-4"
+ENGINE_VERSION = "ti-engine-2"
 
 #: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
 #: Cache writes bill 1.25x input and cache reads 0.1x input. Used for the run manifest's cost line;
@@ -57,6 +64,16 @@ MAX_CLAIMS_PER_ARTICLE = 40
 #: moves to the searchable archive (an ARCHIVED event the weekly report shows). New material
 #: evidence re-activates it.
 STALE_AFTER_DAYS = 91
+
+#: THE RESEARCH HORIZON IN CALENDAR TERMS (face validity, never outcome-tuned). A card's horizon is
+#: the next 2-4 quarters, so a forecast or dated event counts as near-term only when its window
+#: STARTS within NEAR_TERM_START_DAYS of the as-of and ENDS within NEAR_TERM_END_DAYS — a calendar
+#: year already under way qualifies, "2025-2031" never does merely because it is a forecast.
+NEAR_TERM_START_DAYS = 366
+NEAR_TERM_END_DAYS = 549
+#: A MEASURED observation is current evidence when its data date (or, if the source states none,
+#: the article's publication date) is at most one quarter before the as-of.
+CURRENT_OBSERVATION_DAYS = 92
 
 #: Weekly-dashboard display collapse per category. NOT a cut: the rest of the category sits one
 #: click below, and the heading prints "showing X of Y".

@@ -1,31 +1,27 @@
 {
  "provenance": {
-  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen extraction cites, and within paragraphs only the sentences a cited quote touches (verbatim; chart notes and source lines whole). Not the full article: the full text is not stored.",
+  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen pass-1 and pass-1b outputs cite, and within paragraphs only the sentences a cited quote touches (verbatim; bylines and data-date notes whole). Not the full article: the full text is not stored.",
   "trimmed_blocks": [
    "b003",
    "b004",
    "b005",
    "b009",
-   "b011",
    "b012",
    "b013",
    "b014",
    "b017",
-   "b018",
    "b019",
-   "b023",
-   "b024",
-   "b028"
+   "b023"
   ],
   "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic",
   "retrieved_at": "2026-10-09T16:25:51.841940+00:00",
-  "parser_version": "ti-parse-2",
+  "parser_version": "ti-parse-4",
   "full_body_sha256": "3fd2d0c8917fa66e5254a40a8d418fcaa4ef91a0bdc496d0ef4902f346b540d4",
   "full_body_word_count": 1146,
   "blocks_total": 42,
   "blocks_in_excerpt": 20,
   "retrieval_state": "FULL",
-  "built_at": "2026-10-10T11:53:59.705916+00:00"
+  "built_at": "2026-10-10T14:29:22.236634+00:00"
  },
  "canonical_url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic",
  "title": "Software Shock: AI’s Broken Logic",
@@ -34,9 +30,10 @@
   {
    "name": "Kriti Gupta",
    "title": "Executive Director, Global Investment Strategist",
-   "source_field": "json-ld Article.author; title from byline block b041"
+   "source_field": "json-ld Article.author + microdata schema.org/Person (itemprop=author); visible byline block b041"
   }
  ],
+ "author_discrepancy": null,
  "published_at": "2026-02-09T10:30:00+05:30",
  "published_raw": "2026-02-09T10:30:00+05:30",
  "published_source": "json-ld Article.datePublished",
@@ -54,16 +51,16 @@
   {
    "block_id": "b004",
    "kind": "paragraph",
-   "text": "Over the last few weeks, Anthropic has released several new models and features that have once again shaken up the AI landscape. The latest breakthrough allows a user to interact with their computer using natural language to generate code and achieve real outcomes: from data aggregation and analysis to formatting, to expense tracking—domains that traditional software-as-a-service firms dominate.",
-   "sha256": "43ab0a2d24eaa5cc11046d1da7d25a49cd44af27534dcd1212ef70dd4cb50dc5",
+   "text": "Over the last few weeks, Anthropic has released several new models and features that have once again shaken up the AI landscape. Therefore, one day, software companies could become obsolete.",
+   "sha256": "6792038349e3b6753b9c80549b58dd7d0b4d0c5a472e9aed8956b741a01f1bab",
    "section": "Software Shock: AI’s Broken Logic",
    "order": 4
   },
   {
    "block_id": "b005",
    "kind": "paragraph",
-   "text": "The S&P 500 Software Index has fallen into a bear market. With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990. Historically, anything below 30 incentivizes inflows.",
-   "sha256": "8251365fe2b21c188b99616a505268be79915b6a0c348efddd1d1b0abf16566a",
+   "text": "The S&P 500 Software Index has fallen into a bear market. With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990. Historically, anything below 30 incentivizes inflows. But few are buying.",
+   "sha256": "4cc0a632c8a123adcca191e1e0f209f364ae631c5168df20cbebe584e660501d",
    "section": "Software Shock: AI’s Broken Logic",
    "order": 5
   },
@@ -94,8 +91,8 @@
   {
    "block_id": "b011",
    "kind": "paragraph",
-   "text": "And therein lies the broken logic. The market is selling indiscriminately.",
-   "sha256": "7f0c238a2f83937e7a1abd93d2e03c1767f012ca3b17501ec634212a49bd3837",
+   "text": "But if the view is that new AI companies are going to disrupt the entire software industry, why are stocks also down that should benefit from the disruption—like the hyperscalers that invested early in AI technology, chipmakers fulfilling demand from the infrastructure build, and even the materials needed for the process—also down? And therein lies the broken logic. The market is selling indiscriminately.",
+   "sha256": "120e35c6e75b9178b83e43523c8c10aac5eacb54074d8a8e27921cf04d2f88a0",
    "section": "S&P 500 Software Index, Relative Strength Index",
    "order": 11
   },
@@ -110,8 +107,8 @@
   {
    "block_id": "b013",
    "kind": "paragraph",
-   "text": "Tech’s heavy presence in the S&P 500 and its top companies—most of whom have significant revenues tied to the AI theme—matters because it means a large part of the index is highly correlated with each other. In fact, after testing thousands of possible combinations of the top 10 stocks in today’s S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
-   "sha256": "3b58cc85534f61795cd2c6944de010341c2ec75566193bf1afab50ea105113cd",
+   "text": "Tech’s heavy presence in the S&P 500 and its top companies—most of whom have significant revenues tied to the AI theme—matters because it means a large part of the index is highly correlated with each other. In fact, after testing thousands of possible combinations of the top 10 stocks in today’s S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile. That means if the technology and AI narrative falters, a large portion of the S&P 500 could experience a simultaneous drawdown—something like the price action of this week.",
+   "sha256": "9a31abe4f878fed64908dc84b4b285ff168a0deff7383920e4c528f9cc739dad",
    "section": "S&P 500 Software Index, Relative Strength Index",
    "order": 13
   },
@@ -134,8 +131,8 @@
   {
    "block_id": "b018",
    "kind": "paragraph",
-   "text": "The macro thesis of AI stands. It’s going to change the productivity landscape, and the companies that lean into it will be rewarded in the long run.",
-   "sha256": "ed56289bb7c0e39e329da7ebd0d89f9497d4837ca7c75bc414aa18886a6dcefe",
+   "text": "The macro thesis of AI stands. It’s going to change the productivity landscape, and the companies that lean into it will be rewarded in the long run. But more bouts of volatility are likely as the technology itself continues to leapfrog previous generations, and as long as portfolios remain so skewed to tech.",
+   "sha256": "34d3eb67fdcd47956031def683e6a1c7663e6936e96a4ae10df31b1673cb7193",
    "section": "S&P 500 Software Index, enterprise value/sales multiple",
    "order": 18
   },
@@ -158,26 +155,18 @@
   {
    "block_id": "b023",
    "kind": "chart_description",
-   "text": "The chart tracks NTM net margins (NTM net income divided by NTM revenue) from December 2023 to February 2026 for three groups: S&P 500 (dark blue), S&P 500 AI Usage (teal), and Ex AI Usage (orange). Approximate values: at Dec ’23, S&P 500 ~12.6%, AI Usage ~12.7–12.8%, Ex AI ~12.4–12.5%. At Feb ’26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
-   "sha256": "4d64acae6e5be5d19b95a012d722d8419224e2079cf89d2f4f7e6720c185c00c",
+   "text": "Approximate values: at Dec ’23, S&P 500 ~12.6%, AI Usage ~12.7–12.8%, Ex AI ~12.4–12.5%. At Feb ’26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+   "sha256": "37090cb9d313c892fcb27839b8f074df53b985c5205e362007504d4e83b76a5d",
    "section": "NTM Net Margins (NTM Net Income / NTM Revenue), %",
    "order": 23
   },
   {
    "block_id": "b024",
    "kind": "paragraph",
-   "text": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain.",
-   "sha256": "cad6187c45a0f6e6e640b1fe0b1e7db4058b489bfbf6385d1bf67b425a6a8e62",
+   "text": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain. They’ve been swept up in the software sell-off for now, but they are most likely to benefit in the long term.",
+   "sha256": "bcca8c556d778cf9349cd6d2bea3653ecd9e8c382780b82ac6b0bafdf4735f8a",
    "section": "NTM Net Margins (NTM Net Income / NTM Revenue), %",
    "order": 24
-  },
-  {
-   "block_id": "b028",
-   "kind": "disclaimer",
-   "text": "This webpage content is for information/educational purposes only and may inform you of certain products and services offered by private banking businesses, part of JPMorgan Chase & Co.",
-   "sha256": "bb4ca1bff68dc08f943e8f3bc0d43b1b43bafd401243bb85861e104bdcfdde61",
-   "section": "Important Information",
-   "order": 28
   },
   {
    "block_id": "b034",
@@ -202,6 +191,14 @@
    "sha256": "2358febb43430be54404de8068da18887f6a32fcfa83f6eba2be4d60baaa13cf",
    "section": "TAGS",
    "order": 41
+  },
+  {
+   "block_id": "b042",
+   "kind": "byline",
+   "text": "Published Feb 9, 2026",
+   "sha256": "613ab30a8bdba7e9b7c6afc4b6aa9ff5307856904b7b61abbac607d6efef97a4",
+   "section": "TAGS",
+   "order": 42
   }
  ]
 }

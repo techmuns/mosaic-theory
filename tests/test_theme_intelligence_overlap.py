@@ -14,12 +14,15 @@ from pathlib import Path
 import pytest
 
 from tests.theme_intelligence_support import (
+    CALM_AS_OF,
+    CALM_DIR,
     JPM_AS_OF,
     Hypo,
     claim,
     extraction,
     hyp,
     ingest,
+    ingest_calm,
     ingest_jpm,
     make_pipeline,
     mention,
@@ -540,9 +543,9 @@ def test_article_a_then_b_on_preserved_state(tmp_path: Path) -> None:
     # REGRESSION (live A→B runs, 2026-10-10): the card's own "Update (2026-02-20, <publisher>):"
     # prefix was number-checked as if the sentence asserted 2026 / 02 / 20 — first unstripped,
     # then mis-stripped when the publisher name held parentheses — and turned independent
-    # SUPPORTING evidence into a RESEARCH NOW → WATCH demotion
+    # SUPPORTING evidence into a demotion. Independent support never lowers the action.
     assert out.evidence_direction is EvidenceDirection.STRONGER
-    assert v2.priority.research_action is ResearchAction.RESEARCH_NOW
+    assert v2.priority.research_action is v1.priority.research_action
     assert not [i for i in two.store.issues() if i.code == "NUMBER_NOT_IN_CITED_CLAIMS"
                 and i.ref_id.endswith(":s01.2")]
 
@@ -561,14 +564,16 @@ def test_a_material_review_block_holds_promotion_and_a_narrative_one_does_not(
                 created_at=datetime.now(tz=UTC))]
         return review
 
+    # on the AUTHENTIC calm-index fixture, whose utilities thesis is RESEARCH NOW unblocked
     actions = {}
     for sid in ("s01.0", "s03.0"):
-        pipe = make_pipeline(tmp_path / sid)
+        pipe = make_pipeline(tmp_path / sid, sec_dirs=(CALM_DIR,))
         pipe.engine.reviewer = blocker(sid)
-        pipe.start_run("fixture", as_of=JPM_AS_OF)
-        ingest_jpm(pipe)
-        infra = next(t for t in pipe.store.theses() if t.key_node == "ai_infrastructure")
-        v = pipe.store.thesis_version(infra.thesis_id, 1)
+        pipe.start_run("fixture", as_of=CALM_AS_OF)
+        ingest_calm(pipe)
+        util = next(t for t in pipe.store.theses() if t.key_node.endswith("power_grid")
+                    or t.key_node == "utilities")
+        v = pipe.store.thesis_version(util.thesis_id, 1)
         assert v is not None
         actions[sid] = v.priority.research_action
     assert actions["s01.0"] is ResearchAction.WATCH  # a decision-bearing sentence: held

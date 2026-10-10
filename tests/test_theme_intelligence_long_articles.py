@@ -1,0 +1,317 @@
+"""Long articles, malformed model answers, and the publisher of a feed-host URL — failures of the
+2026-10-10 live runs.
+
+1. One mention came back typed "other" (not an allowed entity type) and the whole-answer check
+   discarded a paid extraction: the contradiction run FAILED. Now each ITEM is validated; a
+   malformed one is dropped and NAMED (never coerced into a guessed value), the rest is kept.
+2. The completeness pass over a ~3,000-word SemiAnalysis post (124 open figures + 91 open
+   paragraphs) overran the output cap, so the article's gaps stayed unreviewed. Now the gaps are
+   reviewed in PARTS, each part seeing what the earlier parts added; a part that overruns is split
+   once, and the discarded call is recorded with its cost.
+3. `article --url https://newsletter.semianalysis.com/p/…` was filed "UNKNOWN publisher": the
+   channel was matched on its entry page's host only, and SemiAnalysis posts live on its feed's.
+
+Fake LLM clients only: no network, no spend. The article is HYPOTHETICAL and labelled as such.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+import pytest
+from pydantic import ValidationError
+
+from tests.theme_intelligence_support import (
+    JPM_DIR,
+    FrozenSecHttp,
+    Hypo,
+    claim,
+    extraction,
+    fetched,
+    hyp,
+    mention,
+)
+from vinci.graph.llm import LlmError
+from vinci.theme_intelligence import completeness as completeness_mod
+from vinci.theme_intelligence.__main__ import main, source_for_url
+from vinci.theme_intelligence.completeness import run_completeness, scan_article
+from vinci.theme_intelligence.config import load_sources, load_taxonomy
+from vinci.theme_intelligence.extract import Extraction, validate_items
+from vinci.theme_intelligence.pipeline import Pipeline
+from vinci.theme_intelligence.schemas import IssueSeverity
+from vinci.theme_intelligence.securities import SecResolver
+from vinci.theme_intelligence.store import Store
+
+TRUNCATED = ("model claude-opus-4-8 truncated at max_tokens=21333 — tool call incomplete; raise "
+             "the cap or shrink the prompt")
+SEGMENTS = ("Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel")
+AS_OF = date(2026, 9, 10)
+
+
+def _paragraph(i: int, seg: str) -> str:
+    who = "the operator Acme Corp" if i == 0 else "the operator"
+    tail = "while Hyperscalers grew orders" if i == 0 else "while costs grew"
+    return (f"In the {seg} segment {who} reported that unit revenue rose {i + 2}% {tail} at a "
+            f"slower pace this year.")
+
+
+LONG = Hypo(slug="long-article", publisher="Hypo Research A", published=AS_OF,
+            blocks=[("paragraph", _paragraph(i, s)) for i, s in enumerate(SEGMENTS)])
+
+
+def _pass1(*, bad_items: bool) -> dict[str, Any]:
+    """Pass 1 captures the first paragraph only; with `bad_items`, it also carries the observed
+    malformed shape (a mention typed "other") and an affected mention with an unknown role."""
+    affected = [("Acme Corp", "potential_beneficiary")]
+    mentions = [mention("Acme Corp", "b001", "Acme Corp")]
+    if bad_items:
+        affected.append(("Hyperscalers", "bystander"))
+        mentions.append(mention("Hyperscalers", "b001", "Hyperscalers", entity_type="other"))
+    ans = extraction(
+        [claim("c1", "b001", "unit revenue rose 2%", "Alpha unit revenue +2%", value=2,
+               value_text="2%", unit="%", period="2026")],
+        [hyp("h1", "Unit revenue up-cycle", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"], affected=affected)],
+        mentions=mentions)
+    ans["attributed_authors"] = []
+    return ans
+
+
+def _listed(user: str) -> set[str]:
+    """The gaps a completeness message ASKS about: open figures and unanchored paragraphs."""
+    figs = re.findall(r"^- (\S+) \[b\d+\] .* — NOT CAPTURED — ", user, re.M)
+    return set(figs) | set(re.findall(r"^- (b\d+): UNANCHORED$", user, re.M))
+
+
+class FakeLlm:
+    """Answers pass 1 with a fixed extraction and pass 1b by accounting for every listed gap
+    (immaterial, with a reason). Part 1 also ADDS two claims — one for its own gap and one for a
+    gap that belongs to part 2 — and gives a verdict on a gap it was never shown."""
+
+    model = "claude-opus-4-8"
+
+    def __init__(self, pass1: dict[str, Any], *, truncate: frozenset[str] = frozenset()) -> None:
+        self.pass1 = pass1
+        self.truncate = truncate
+        self.calls: list[str] = []
+        self.users: dict[str, str] = {}
+        self.last_usage: dict[str, int] | None = None
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> dict[str, Any]:
+        self.last_usage = {"input_tokens": 1000, "output_tokens": 400}
+        if tool["name"] == "record_article_evidence":
+            self.calls.append("extract")
+            return self.pass1
+        m = re.search(r"This is part (\w+):", user)
+        label = m.group(1) if m else ""
+        self.calls.append("complete" + (f"-{label}" if label else ""))
+        self.users[label] = user
+        if label in self.truncate:
+            self.last_usage = {"input_tokens": 1000, "output_tokens": 21333}
+            raise LlmError(TRUNCATED)
+        gaps = _listed(user)
+        out: dict[str, Any] = {
+            "figure_reviews": [{"figure_id": g, "verdict": "immaterial", "claim_ids": [],
+                                "reason": "test: restates the segment pattern"}
+                               for g in sorted(gaps) if "#" in g],
+            "block_reviews": [{"block_id": g, "verdict": "immaterial", "hypothesis_ids": [],
+                               "claim_ids": [], "reason": "test: restates the segment pattern"}
+                              for g in sorted(gaps) if "#" not in g],
+            "added_claims": [], "added_mentions": [], "hypothesis_additions": [],
+            "added_hypotheses": [], "added_risks": []}
+        if label in ("1", ""):
+            out["added_claims"] = [
+                claim("k1_1", "b002", "unit revenue rose 3%", "Bravo unit revenue +3%", value=3,
+                      value_text="3%", unit="%", period="2026"),
+                claim("k1_2", "b005", "unit revenue rose 6%", "Echo unit revenue +6%", value=6,
+                      value_text="6%", unit="%", period="2026")]
+            out["hypothesis_additions"] = [{
+                "hypothesis_id": "h1", "supporting_claim_ids": ["k1_1", "k1_2"],
+                "dislocation_claim_ids": [], "counter_claim_ids": [], "catalyst_claim_ids": [],
+                "affected_mentions": [], "sector_exposures": []}]
+            out["figure_reviews"] = [r for r in out["figure_reviews"]
+                                     if r["figure_id"] != "b002#3%"] + [
+                {"figure_id": "b002#3%", "verdict": "captured_by_added_claim",
+                 "claim_ids": ["k1_1"], "reason": ""},
+                {"figure_id": "b008#9%", "verdict": "immaterial", "claim_ids": [],
+                 "reason": "a verdict on a gap this part was not shown"}]
+        return out
+
+
+# --- 1. item-level validation ---------------------------------------------------------------
+
+def test_a_malformed_item_is_dropped_and_named_and_every_valid_item_kept() -> None:
+    parsed, dropped = validate_items(Extraction, _pass1(bad_items=True))
+    assert [m.name_as_written for m in parsed.mentions] == ["Acme Corp"]
+    assert [a.name_as_written for a in parsed.hypotheses[0].affected_mentions] == ["Acme Corp"]
+    assert len(parsed.claims) == 1 and len(parsed.hypotheses) == 1  # the rest is kept
+    assert len(dropped) == 2, dropped
+    assert dropped[0].startswith("mentions[1] dropped — entity_type") and "'other'" in dropped[0]
+    assert dropped[1].startswith("hypotheses[0].affected_mentions[1] dropped — role")
+    assert "'bystander'" in dropped[1]
+
+
+def test_a_clean_answer_drops_nothing_and_a_malformed_top_level_still_fails_loud() -> None:
+    parsed, dropped = validate_items(Extraction, _pass1(bad_items=False))
+    assert dropped == [] and len(parsed.mentions) == 1
+    broken = _pass1(bad_items=False)
+    broken["claims"] = "c1"  # not a list: nothing item-level to keep — the answer is refused
+    with pytest.raises(ValidationError):
+        validate_items(Extraction, broken)
+
+
+# --- 2. the completeness pass in parts --------------------------------------------------------
+
+def test_a_long_articles_gaps_are_reviewed_in_parts_and_an_overrun_part_is_split_once(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc, tax = LONG.doc(), load_taxonomy()
+    x = Extraction.model_validate(_pass1(bad_items=False))
+    ledger = scan_article(doc)
+    assert len(ledger.figures) == 8 and len(ledger.argument_blocks) == 8  # 14 open after pass 1
+    fake = FakeLlm(_pass1(bad_items=False), truncate=frozenset({"2"}))
+    res = run_completeness(doc, x, ledger, publisher="P", as_of=AS_OF.isoformat(), taxonomy=tax,
+                           client=fake, cache_dir=tmp_path)
+    assert fake.calls == ["complete-1", "complete-2", "complete-2a", "complete-2b", "complete-3"]
+    assert [(c.label, c.truncated) for c in res.calls] == [
+        ("1", False), ("2", True), ("2a", False), ("2b", False), ("3", False)]
+    assert (res.calls[1].cost_usd or 0) > 0  # the discarded call is costed, never hidden
+    assert (res.cost_usd or 0) > sum(c.cost_usd or 0 for c in res.calls if not c.truncated)
+    # a later part is SHOWN what earlier parts added, and is not asked about what they cover
+    assert "b1.k1_2" in fake.users["2a"]
+    assert _listed(fake.users["2a"]) == {"b006#7%"}
+    assert _listed(fake.users["2b"]) == {"b006", "b007#8%", "b007"}
+    assert {c.local_id for c in res.output.added_claims} == {"b1.k1_1", "b1.k1_2"}
+    assert [a.supporting_claim_ids for a in res.output.hypothesis_additions] == [
+        ["b1.k1_1", "b1.k1_2"]]
+    # a verdict on a gap the part was not shown is ignored — and said so
+    assert [d for d in res.dropped if "b008#9%" in d] == [
+        "part 1: figure_reviews: b008#9% is not a gap of this part — verdict ignored"]
+    assert len(res.notes) == 2 and "reviewed in 3 parts" in res.notes[0]
+    assert "split once" in res.notes[1]
+    # a replay re-pays nothing: the overrun is remembered, every answer is cached
+    again = FakeLlm(_pass1(bad_items=False))
+    replay = run_completeness(doc, x, ledger, publisher="P", as_of=AS_OF.isoformat(),
+                              taxonomy=tax, client=again, cache_dir=tmp_path)
+    assert again.calls == [] and replay.cached and replay.output == res.output
+    assert [c.label for c in replay.calls] == ["1", "2a", "2b", "3"]
+
+
+def test_a_half_that_overruns_again_fails_loud(tmp_path: Path,
+                                               monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    x = Extraction.model_validate(_pass1(bad_items=False))
+    fake = FakeLlm(_pass1(bad_items=False), truncate=frozenset({"2", "2a"}))
+    with pytest.raises(LlmError):
+        run_completeness(doc, x, scan_article(doc), publisher="P", as_of=AS_OF.isoformat(),
+                         taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
+    assert fake.calls == ["complete-1", "complete-2", "complete-2a"]  # split once, never again
+
+
+def test_a_short_article_is_one_call_over_the_full_ledger(tmp_path: Path) -> None:
+    doc = LONG.doc()
+    x = Extraction.model_validate(_pass1(bad_items=False))
+    fake = FakeLlm(_pass1(bad_items=False))
+    res = run_completeness(doc, x, scan_article(doc), publisher="P", as_of=AS_OF.isoformat(),
+                           taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
+    assert fake.calls == ["complete"] and res.notes == []
+    assert "<batch>" not in fake.users[""]
+    assert "b001#2%" in fake.users[""]  # the full ledger, captured figures included
+    assert {c.local_id for c in res.output.added_claims} == {"k1_1", "k1_2"}  # ids untouched
+
+
+# --- 3. end to end: both live failures in one article, through the pipeline -----------------
+
+def test_the_long_malformed_article_runs_end_to_end_with_every_gap_accounted_for(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    fake = FakeLlm(_pass1(bad_items=True), truncate=frozenset({"2"}))
+    resolver = SecResolver(tmp_path / "sec", http=FrozenSecHttp(JPM_DIR))  # type: ignore[arg-type]
+    pipe = Pipeline(tmp_path / "ti", sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=fake, resolver=resolver, review=False)  # type: ignore[arg-type]
+    run = pipe.start_run("article", as_of=AS_OF)
+    doc = LONG.doc()
+    pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
+                          as_of=AS_OF, publisher_override=LONG.publisher)
+    assert len(pipe.store.theses()) == 1
+    version = pipe.store.article_versions(pipe.store.articles()[0].article_id)[0]
+    rep = pipe.store.completeness(version.version_id)[0]
+    assert rep.pass_ran
+    by = {f.figure: f.status for f in rep.figures}
+    assert by["2%"] == "captured"
+    assert by["3%"] == by["6%"] == "added_by_completeness_pass"
+    assert {f.status for f in rep.figures} <= {"captured", "added_by_completeness_pass",
+                                               "immaterial"}
+    assert {b.status for b in rep.blocks} <= {"anchored", "immaterial"}
+    issues = pipe.store.issues(run_id=run.run_id)
+    dropped = [i.detail for i in issues if i.code == "MALFORMED_ITEM_DROPPED"]
+    assert any(d.startswith("extraction: mentions[1] dropped") for d in dropped), dropped
+    assert any(d.startswith("extraction: hypotheses[0].affected_mentions[1] dropped")
+               for d in dropped), dropped
+    assert all(i.severity is IssueSeverity.WARN for i in issues
+               if i.code == "MALFORMED_ITEM_DROPPED")
+    assert len([i for i in issues if i.code == "COMPLETENESS_IN_PARTS"]) == 2
+    calls = pipe.store.llm_calls(run.run_id)
+    assert sorted(c["purpose"] for c in calls) == sorted(
+        ["extract", "complete-1", "complete-2-truncated", "complete-2a", "complete-2b",
+         "complete-3"])
+    trunc = next(c for c in calls if c["purpose"] == "complete-2-truncated")
+    assert trunc["cost_usd"] > 0 and trunc["usage"]["output_tokens"] == 21333
+
+
+# --- 4. the publisher of an article on a channel's feed host --------------------------------
+
+@pytest.mark.parametrize(("url", "source_id"), [
+    ("https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53",
+     "semianalysis"),
+    ("https://semianalysis.com/p/an-entry-host-post", "semianalysis"),
+    ("https://www.trendforce.com/presscenter/news/20260930-13258.html", "trendforce"),
+    ("https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/"
+     "a-calm-index-a-restless-market", "jpm_tmt"),
+    ("https://www.citigroup.com/global/insights/overcoming-gridlock-2-0-solving-power-"
+     "bottlenecks-to-drive-ai-energy-security", "citi_must_c"),
+    ("https://newsletter.semianalysis.com.example.test/p/lookalike", "manual"),  # exact host
+    ("https://example.test/hypothetical/elsewhere", "manual"),
+])
+def test_a_url_is_its_channels_by_any_configured_host(url: str, source_id: str) -> None:
+    assert source_for_url(url, load_sources()) == source_id
+
+
+def test_a_feed_host_article_is_filed_under_its_channels_publisher_end_to_end(
+        tmp_path: Path) -> None:
+    """The CLI path the live run took (`article --url`), on saved HTML and a frozen extraction:
+    the stored article, its version's source line and its card name SemiAnalysis."""
+    url = "https://newsletter.semianalysis.com/p/hypothetical-feed-host-post"
+    html = tmp_path / "page.html"
+    html.write_text(
+        "<!doctype html><html><head><title>[HYPOTHETICAL TEST FIXTURE] feed host</title>"
+        "<meta name='author' content='Test Author'></head><body><article><p>DRAM contract "
+        "prices rose 9% in the quarter as AI server demand absorbed supply across every "
+        "vendor.</p><p>Suppliers kept capacity additions modest, so inventories at module "
+        "makers fell again while buyers locked in longer contracts with the major vendors."
+        "</p><p>This hypothetical page exists only to test that a post on a channel's feed "
+        "host is filed under that channel's publisher.</p></article></body></html>")
+    fx = tmp_path / "extraction.json"
+    ans = extraction(
+        [claim("c1", "b001", "DRAM contract prices rose 9% in the quarter", "DRAM +9%",
+               value=9, value_text="9%", unit="%", period="the quarter")],
+        [hyp("h1", "DRAM contract price up-cycle", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"])])
+    ans["attributed_authors"] = []
+    fx.write_text(json.dumps(ans))
+    data = tmp_path / "ti"
+    rc = main(["--data-dir", str(data), "article", "--url", url, "--as-of", "2026-09-10",
+               "--html", str(html), "--fixture", str(fx), "--cache-only", "--no-review"])
+    assert rc in (0, 2)
+    store = Store(data / "registry.db")
+    art = store.articles()[0]
+    assert (art.source_id, art.publisher) == ("semianalysis", "SemiAnalysis")
+    card = next((data / "runs").rglob("cards/TH-*.json"))
+    assert "UNKNOWN publisher" not in card.read_text()
+    assert "SemiAnalysis" in card.read_text()

@@ -1,0 +1,1009 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1 model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-extract-6",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 13864,
+   "max_tokens": 16384,
+   "output_tokens": 10286
+  }
+ },
+ "output": {
+  "article_classification": {
+   "article_class": "publisher_commentary",
+   "basis": "Investment strategy commentary from J.P. Morgan Private Bank expressing the firm's judgment/views on market structure, explicitly stating it 'should not be regarded as a research report'.",
+   "basis_block_ids": [
+    "b001",
+    "b002",
+    "b027",
+    "b031"
+   ]
+  },
+  "attributed_authors": [
+   {
+    "block_id": "b037",
+    "name": "Kriti Gupta",
+    "quote": "Kriti Gupta"
+   },
+   {
+    "block_id": "b040",
+    "name": "Nick Roberts",
+    "quote": "Nick Roberts"
+   }
+  ],
+  "claims": [
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b003",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "c1",
+    "measured_as_of": null,
+    "metric": "stock-bond correlation",
+    "period": null,
+    "qualifiers": [],
+    "quote": "that relationship has turned positive. That means stocks and bonds can rise and fall together",
+    "statement": "The stock-bond correlation has turned positive, so stocks and bonds can rise and fall together.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c2",
+    "measured_as_of": null,
+    "metric": "10-year Treasury yield change",
+    "period": "over the summer",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "10-year Treasury yields have risen nearly 80 basis points over the course of the summer",
+    "statement": "10-year Treasury yields rose nearly 80 basis points over the summer.",
+    "unit": "basis points",
+    "value": 80,
+    "value_text": "nearly 80 basis points"
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c3",
+    "measured_as_of": null,
+    "metric": "distance above 200-day moving average",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The S&P 500 sits ~6% above its 200-day moving average",
+    "scope": "S&P 500",
+    "statement": "The S&P 500 is about 6% above its 200-day moving average.",
+    "unit": "%",
+    "value": 6,
+    "value_text": "~6%"
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c4",
+    "measured_as_of": null,
+    "metric": "distance from record high",
+    "period": null,
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "within about 2% of its record high",
+    "scope": "S&P 500",
+    "statement": "The S&P 500 is within about 2% of its record high.",
+    "unit": "%",
+    "value": 2,
+    "value_text": "about 2%"
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c5",
+    "measured_as_of": null,
+    "metric": "share of stocks above 200-day average",
+    "period": null,
+    "qualifiers": [],
+    "quote": "only ~43% of stocks in the benchmark are trading above their 200-day average",
+    "scope": "S&P 500",
+    "statement": "Only about 43% of S&P 500 stocks are trading above their 200-day average.",
+    "unit": "%",
+    "value": 43,
+    "value_text": "~43%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "comparator": "down from",
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c6",
+    "measured_as_of": null,
+    "metric": "share of stocks above 200-day average",
+    "period": "mid-August",
+    "qualifiers": [],
+    "quote": "That figure is down from 75% in mid-August",
+    "scope": "S&P 500",
+    "statement": "The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August.",
+    "unit": "%",
+    "value": 75,
+    "value_text": "75%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c7",
+    "measured_as_of": null,
+    "metric": "10-year Treasury yield change",
+    "period": null,
+    "qualifiers": [
+     "over"
+    ],
+    "quote": "10-year Treasury yields have risen over 60 basis points",
+    "statement": "10-year Treasury yields have risen over 60 basis points.",
+    "unit": "basis points",
+    "value": 60,
+    "value_text": "over 60 basis points"
+   },
+   {
+    "approximate": true,
+    "as_of_block_id": "b008",
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b011",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c8",
+    "measured_as_of": "2026-09-30",
+    "metric": "price return since May",
+    "period": "since May 2026",
+    "qualifiers": [
+     "around"
+    ],
+    "quote": "S&P 500 Utilities start out strong, climbing to a peak above 10% in July before steadily falling and ending September around –10%",
+    "scope": "S&P 500 Utilities",
+    "statement": "S&P 500 Utilities peaked above 10% price return in July then fell to around -10% by end September (since May).",
+    "unit": "%",
+    "value": -10,
+    "value_text": "around –10%"
+   },
+   {
+    "approximate": true,
+    "as_of_block_id": "b008",
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b011",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c9",
+    "measured_as_of": "2026-09-30",
+    "metric": "price return since May",
+    "period": "since May 2026",
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "finishing September with a modest gain of about 2%",
+    "scope": "S&P 500",
+    "statement": "The S&P 500 finished September up about 2% (price return since May).",
+    "unit": "%",
+    "value": 2,
+    "value_text": "about 2%"
+   },
+   {
+    "approximate": true,
+    "as_of_block_id": "b008",
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b011",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c10",
+    "measured_as_of": "2026-09-30",
+    "metric": "price return since May",
+    "period": "since May 2026",
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "The Mag 7 stocks drop sharply early in the summer, hitting lows near –12% in July, but then rebound steadily, ending September up about 7%",
+    "scope": "Mag 7 basket",
+    "statement": "The Mag 7 basket ended September up about 7% (price return since May) after a July low near -12%.",
+    "unit": "%",
+    "value": 7,
+    "value_text": "about 7%"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b012",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c11",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "today, stocks are moving more independently than normal",
+    "statement": "Today stocks are moving more independently than normal.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b012",
+    "chart_derived": false,
+    "comparator": "well below long run average of 41",
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c12",
+    "measured_as_of": null,
+    "metric": "Cboe 3-month implied correlation index",
+    "period": "currently",
+    "qualifiers": [],
+    "quote": "The measure currently sits at 11.2, well below the long run average of 41",
+    "scope": "Cboe 3-month implied correlation index",
+    "statement": "The Cboe 3-month implied correlation index sits at 11.2, well below the long-run average of 41.",
+    "unit": "index level",
+    "value": 11.2,
+    "value_text": "11.2"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b012",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c13",
+    "measured_as_of": null,
+    "metric": "Cboe 3-month implied correlation long-run average",
+    "period": "long run",
+    "qualifiers": [],
+    "quote": "the long run average of 41",
+    "scope": "Cboe 3-month implied correlation index",
+    "statement": "The long-run average of the Cboe 3-month implied correlation index is 41.",
+    "unit": "index level",
+    "value": 41,
+    "value_text": "41"
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b012",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c14",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "It offers an opportunity to diversify risk exposure within the equities market itself at both a sector and thematic level.",
+    "statement": "Low implied correlation offers an opportunity to diversify within equities at a sector and thematic level.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b015",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c15",
+    "measured_as_of": null,
+    "metric": "S&P 500 3-month implied correlation",
+    "period": "2026",
+    "qualifiers": [
+     "hovering"
+    ],
+    "quote": "the correlation remains low, hovering in the 10–15 range",
+    "scope": "S&P 500 3-month implied correlation",
+    "statement": "The S&P 500 3-month implied correlation recently remains low, in the 10-15 range.",
+    "unit": "index level",
+    "value": null,
+    "value_text": "10–15 range"
+   },
+   {
+    "approximate": true,
+    "attributed_source": null,
+    "block_id": "b015",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c16",
+    "measured_as_of": null,
+    "metric": "S&P 500 3-month implied correlation 20-year average",
+    "period": "20-year",
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "the dashed line marking the 20-year average at about 40",
+    "scope": "S&P 500 3-month implied correlation",
+    "statement": "The 20-year average of S&P 500 3-month implied correlation is about 40.",
+    "unit": "index level",
+    "value": 40,
+    "value_text": "about 40"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c17",
+    "measured_as_of": null,
+    "metric": "consecutive quarters of earnings growth",
+    "period": null,
+    "qualifiers": [],
+    "quote": "equities have been more focused on seven straight quarters of corporate earnings growth",
+    "scope": "corporate earnings",
+    "statement": "Equities have focused on seven straight quarters of corporate earnings growth, buffering the index against rising yields.",
+    "unit": "quarters",
+    "value": 7,
+    "value_text": "seven"
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b019",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "event",
+    "local_id": "c18",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "state governments have put moratoriums on that build-out—something that has weighed on the sector",
+    "statement": "State governments have imposed moratoriums on data center build-out, weighing on the utilities sector.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "attributed_source": null,
+    "block_id": "b023",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "event",
+    "local_id": "c19",
+    "measured_as_of": null,
+    "metric": null,
+    "period": "June-September",
+    "qualifiers": [],
+    "quote": "peaking just before the New York data center moratorium is signed. After that point, both the price and P/E ratio begin to decline, with a sharper drop following the Texas data center restrictions announcement in early August",
+    "scope": "S&P 500 Utilities",
+    "statement": "Utilities price and P/E declined after the New York data center moratorium and dropped sharply after the Texas data center restrictions in early August.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b025",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c20",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "that dispersion itself may become one of investors’ most valuable tools",
+    "statement": "Dispersion may become one of investors' most valuable tools in a world where bonds diversify less.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "hypotheses": [
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "S&P 500",
+      "role": "market_instrument"
+     },
+     {
+      "name_as_written": "Cboe 3-month implied correlation index",
+      "role": "market_instrument"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c1",
+      "c5",
+      "c6",
+      "c12",
+      "c13"
+     ],
+     "provenance": "source_stated",
+     "text": "With stock-bond correlation turned positive and the Cboe 3-month implied correlation at 11.2 vs a long-run average of 41, breadth has narrowed (only ~43% of S&P 500 stocks above their 200-day average, down from 75% in mid-August)."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c14",
+      "c20"
+     ],
+     "provenance": "model_inference",
+     "text": "The article argues that because bonds diversify equities less, selecting among sectors and themes inside the equity market is now a more valuable diversification tool, but it does not quantify any return or earnings impact."
+    },
+    "catalyst": {
+     "claim_ids": [],
+     "provenance": "model_inference",
+     "window_text": null
+    },
+    "cited_baskets": [
+     {
+      "claim_ids": [
+       "c10"
+      ],
+      "description": "Equally-weighted basket of seven large tech stocks (the Mag 7) used to show divergent performance from the index and utilities."
+     }
+    ],
+    "counter_claim_ids": [
+     "c15",
+     "c16"
+    ],
+    "direction": "positive",
+    "disconfirming_observables": [
+     "Cboe 3-month implied correlation reverting toward its 41 long-run average",
+     "Breadth broadening with share of stocks above 200-day average rising back toward 75%",
+     "Stock-bond correlation turning negative again"
+    ],
+    "dislocation_claim_ids": [
+     "c12",
+     "c5",
+     "c6"
+    ],
+    "geography": "United States",
+    "horizon": "next_2_4_quarters",
+    "kind": "market_regime",
+    "local_id": "h1",
+    "lower_priority_if": [
+     "Implied correlation rises back toward 41",
+     "Breadth broadens materially"
+    ],
+    "mechanism": "dispersion_selection",
+    "near_term_view": {
+     "claim_ids": [
+      "c12",
+      "c5"
+     ],
+     "provenance": "source_stated",
+     "text": "Currently implied correlation sits at 11.2, far below the 41 long-run average, with breadth at ~43%, supporting the dispersion opportunity now."
+    },
+    "next_research_step": "Examine historical relationship between low Cboe implied correlation readings and realized cross-sectional equity dispersion / diversification benefit.",
+    "opposing_explanations": [
+     {
+      "claim_ids": [
+       "c15",
+       "c16"
+      ],
+      "provenance": "source_stated",
+      "text": "Wide dispersion between stocks and sectors is not unusual historically, so the current reading may not represent a durable regime change."
+     }
+    ],
+    "premise_condition": null,
+    "raise_priority_if": [
+     "Implied correlation stays depressed while breadth narrows further",
+     "Stock-bond correlation remains positive over subsequent quarters"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b012",
+      "claim_ids": [
+       "c14"
+      ],
+      "direction": "positive",
+      "name": "at both a sector and thematic level",
+      "quote": "within the equities market itself at both a sector and thematic level"
+     }
+    ],
+    "sectors": [
+     "equities broadly",
+     "sectors and themes within equities"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c14",
+      "c20"
+     ],
+     "provenance": "source_stated",
+     "text": "The article says low correlation offers an opportunity to diversify risk within equities at both a sector and thematic level, and that dispersion may become one of investors' most valuable tools."
+    },
+    "stance_in_source": "asserted",
+    "strongest_evidence_claim_ids": [
+     "c12",
+     "c5",
+     "c6"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c1",
+      "c14"
+     ],
+     "provenance": "source_stated",
+     "text": "If the stock-bond correlation stays positive, diversification must increasingly be sought within equities rather than across stocks and bonds."
+    },
+    "supporting_claim_ids": [
+     "c1",
+     "c5",
+     "c6",
+     "c11",
+     "c12",
+     "c13",
+     "c14",
+     "c15",
+     "c16",
+     "c20"
+    ],
+    "title": "Low implied correlation makes equity sector and theme selection the new diversifier",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c1",
+       "c11",
+       "c12"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "Positive stock-bond correlation and low implied correlation mean stocks move more independently, so index-level calm hides underlying repricing."
+     },
+     {
+      "claim_ids": [
+       "c5",
+       "c6",
+       "c3"
+      ],
+      "provenance": "source_stated",
+      "step": "market_reaction",
+      "text": "Breadth narrowed sharply (43% vs 75%) while the index stayed near highs, reflecting dispersed sector/stock responses to the same macro forces."
+     }
+    ],
+    "unknowns": [
+     "Whether low implied correlation persists or mean-reverts to the ~41 average",
+     "Whether sector/theme selection actually delivers diversification benefits versus simple association in current data",
+     "Consensus expectations for the stock-bond correlation going forward"
+    ],
+    "value_chain_node": "macro_market"
+   },
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "S&P 500 Utilities",
+      "role": "potentially_harmed"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c8",
+      "c18",
+      "c19",
+      "c20"
+     ],
+     "provenance": "source_stated",
+     "text": "S&P 500 Utilities swung from a July peak above 10% to about -10% since May as state data-center moratoriums (New York, then Texas restrictions in early August) and rising bond yields weighed on the dividend-valued sector."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c18",
+      "c19"
+     ],
+     "provenance": "model_inference",
+     "text": "The article presents utilities as hurt by policy moratoriums on data-center build-out and by higher yields competing with their dividends, but does not quantify the earnings impact."
+    },
+    "catalyst": {
+     "claim_ids": [
+      "c19"
+     ],
+     "provenance": "source_stated",
+     "window_text": "early August (Texas data center restrictions announcement)"
+    },
+    "cited_baskets": [],
+    "counter_claim_ids": [
+     "c18"
+    ],
+    "direction": "negative",
+    "disconfirming_observables": [
+     "Reversal of state data-center moratoriums",
+     "Falling Treasury yields easing dividend-valuation pressure",
+     "Utilities sector price/P/E recovery"
+    ],
+    "dislocation_claim_ids": [
+     "c8"
+    ],
+    "geography": "United States",
+    "horizon": "next_2_4_quarters",
+    "kind": "investment_thesis",
+    "local_id": "h2",
+    "lower_priority_if": [
+     "Moratoriums lifted and build-out resumes",
+     "Yields fall materially"
+    ],
+    "mechanism": "policy_regulation",
+    "near_term_view": {
+     "claim_ids": [
+      "c8",
+      "c19"
+     ],
+     "provenance": "source_stated",
+     "text": "Utilities underperformance intensified through September following data-center restrictions and rising yields."
+    },
+    "next_research_step": "Assess which utility names have the largest data-center load exposure and sensitivity to state moratoriums and rate moves.",
+    "opposing_explanations": [
+     {
+      "claim_ids": [
+       "c18"
+      ],
+      "provenance": "source_stated",
+      "text": "Utilities are enablers of AI power demand, which could support the sector if build-out resumes."
+     }
+    ],
+    "premise_condition": null,
+    "raise_priority_if": [
+     "Additional states impose data-center moratoriums",
+     "Treasury yields continue rising"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b017",
+      "claim_ids": [
+       "c8",
+       "c18",
+       "c19"
+      ],
+      "direction": "negative",
+      "name": "utilities",
+      "quote": "Utilities have long been thought of as a defensive sector"
+     }
+    ],
+    "sectors": [
+     "utilities"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c18",
+      "c19",
+      "c20"
+     ],
+     "provenance": "source_stated",
+     "text": "The article frames utilities as a microcosm of the AI promise, political backlash and higher-rate reality, illustrating how sectors respond differently to the same macro forces."
+    },
+    "stance_in_source": "asserted",
+    "strongest_evidence_claim_ids": [
+     "c8",
+     "c19",
+     "c18"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c18",
+      "c20"
+     ],
+     "provenance": "source_stated",
+     "text": "Utilities sit at the intersection of AI power demand, political affordability backlash and higher rates, a tension that could persist."
+    },
+    "supporting_claim_ids": [
+     "c8",
+     "c18",
+     "c19",
+     "c7",
+     "c2"
+    ],
+    "title": "Rates, data-center moratoriums pressure utilities despite AI power demand",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c18"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "AI data-center build-out made utilities key power enablers, but public backlash over electricity affordability prompted state moratoriums on build-out."
+     },
+     {
+      "claim_ids": [
+       "c18"
+      ],
+      "provenance": "model_inference",
+      "step": "volumes",
+      "text": "Moratoriums on data-center build-out constrain the demand/capacity expansion utilities would serve."
+     },
+     {
+      "claim_ids": [
+       "c8",
+       "c19"
+      ],
+      "provenance": "source_stated",
+      "step": "market_reaction",
+      "text": "Utilities price and P/E fell after the NY moratorium and sharply after Texas restrictions, ending September around -10% since May."
+     }
+    ],
+    "unknowns": [
+     "Whether utilities' earnings reflect the moratorium impact",
+     "How long state moratoriums persist",
+     "Whether higher yields continue to pressure dividend valuations"
+    ],
+    "value_chain_node": "ai_infrastructure.power_grid"
+   }
+  ],
+  "market_risks": [
+   {
+    "claim_ids": [
+     "c1"
+    ],
+    "related_hypothesis_ids": [
+     "h1"
+    ],
+    "scope_qualification": "Applies to traditional stock-bond portfolio diversification in the current inflation/growth environment driven by the AI build-out.",
+    "statement": "The stock-bond correlation has turned positive, so stocks and bonds can rise and fall together, reducing the diversification bonds historically provided to equities."
+   },
+   {
+    "claim_ids": [
+     "c5",
+     "c6"
+    ],
+    "related_hypothesis_ids": [
+     "h1"
+    ],
+    "scope_qualification": "Concentration/breadth risk at the index level; ~43% of stocks above 200-day average, down from 75% in mid-August.",
+    "statement": "Majority of S&P 500 gains are driven by heavyweight technology companies, so narrow breadth leaves less-resilient sectors exposed to higher rates beneath a calm index."
+   }
+  ],
+  "mentions": [
+   {
+    "block_id": "b027",
+    "claim_ids": [],
+    "direction": "neutral",
+    "entity_type": "publisher",
+    "issuer_name_hint": "JPMorgan Chase & Co.",
+    "name_as_written": "J.P. Morgan Private Bank",
+    "quote": "private banking businesses, part of JPMorgan Chase & Co. (“JPM”)",
+    "recommendation_status": "not_a_recommendation",
+    "role": "publisher",
+    "role_detail": "Publisher of the commentary.",
+    "ticker_hint": "JPM"
+   },
+   {
+    "block_id": "b008",
+    "claim_ids": [
+     "c8",
+     "c9",
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "data_provider",
+    "issuer_name_hint": null,
+    "name_as_written": "Bloomberg Finance L.P.",
+    "quote": "Source: Bloomberg Finance L.P.",
+    "recommendation_status": "not_a_recommendation",
+    "role": "data_source",
+    "role_detail": "Data source for price return chart.",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "Alphabet Inc.",
+    "name_as_written": "Alphabet",
+    "quote": "Alphabet",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "GOOGL"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "Amazon.com, Inc.",
+    "name_as_written": "Amazon",
+    "quote": "Amazon",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "AMZN"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "Apple Inc.",
+    "name_as_written": "Apple",
+    "quote": "Apple",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "AAPL"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "Meta Platforms, Inc.",
+    "name_as_written": "Meta",
+    "quote": "Meta",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "META"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "Microsoft Corporation",
+    "name_as_written": "Microsoft",
+    "quote": "Microsoft",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "NVIDIA Corporation",
+    "name_as_written": "Nvidia",
+    "quote": "Nvidia",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "neutral",
+    "entity_type": "company",
+    "issuer_name_hint": "Tesla, Inc.",
+    "name_as_written": "Tesla",
+    "quote": "Tesla",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Constituent of the Mag 7 basket defined in the note.",
+    "ticker_hint": "TSLA"
+   },
+   {
+    "block_id": "b005",
+    "claim_ids": [
+     "c3",
+     "c4",
+     "c5",
+     "c9"
+    ],
+    "direction": "neutral",
+    "entity_type": "index",
+    "issuer_name_hint": null,
+    "name_as_written": "S&P 500",
+    "quote": "The S&P 500 sits ~6% above its 200-day moving average",
+    "recommendation_status": "not_a_recommendation",
+    "role": "market_instrument",
+    "role_detail": "Headline benchmark discussed for breadth and index-level calm.",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b011",
+    "claim_ids": [
+     "c8",
+     "c19"
+    ],
+    "direction": "negative",
+    "entity_type": "index",
+    "issuer_name_hint": null,
+    "name_as_written": "S&P 500 Utilities",
+    "quote": "S&P 500 Utilities",
+    "recommendation_status": "not_a_recommendation",
+    "role": "sector_example",
+    "role_detail": "Utilities sector index used as the microcosm of market forces.",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b012",
+    "claim_ids": [
+     "c12",
+     "c13"
+    ],
+    "direction": "neutral",
+    "entity_type": "index",
+    "issuer_name_hint": null,
+    "name_as_written": "Cboe 3-month implied correlation index",
+    "quote": "Cboe 3-month implied correlation index",
+    "recommendation_status": "not_a_recommendation",
+    "role": "market_instrument",
+    "role_detail": "Measure cited to show low expected correlation among large US stocks.",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b009",
+    "claim_ids": [
+     "c10"
+    ],
+    "direction": "positive",
+    "entity_type": "basket",
+    "issuer_name_hint": null,
+    "name_as_written": "Mag 7",
+    "quote": "Mag 7 is an equally-weighted basket",
+    "recommendation_status": "not_a_recommendation",
+    "role": "cited_basket",
+    "role_detail": "Equally-weighted basket of seven large tech stocks defined in the note.",
+    "ticker_hint": null
+   }
+  ]
+ }
+}

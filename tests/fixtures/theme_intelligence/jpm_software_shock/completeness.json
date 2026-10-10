@@ -1,0 +1,220 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1b completeness model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-complete-1",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 20806,
+   "max_tokens": 16384,
+   "output_tokens": 2064
+  }
+ },
+ "output": {
+  "added_claims": [
+   {
+    "approximate": true,
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b017",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "k1",
+    "measured_as_of": null,
+    "metric": "EV/sales multiple",
+    "period": "late 2021",
+    "qualifiers": [
+     "around"
+    ],
+    "quote": "peaks around 11.8x in late 2021",
+    "statement": "The S&P 500 Software Index EV/sales multiple peaked around 11.8x in late 2021.",
+    "unit": "x",
+    "value": 11.8,
+    "value_text": "11.8x"
+   },
+   {
+    "approximate": true,
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b017",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "k2",
+    "measured_as_of": null,
+    "metric": "EV/sales multiple",
+    "period": "mid 2022",
+    "qualifiers": [
+     "roughly"
+    ],
+    "quote": "It then falls to roughly 7.0x by mid 2022",
+    "statement": "The S&P 500 Software Index EV/sales multiple fell to roughly 7.0x by mid 2022.",
+    "unit": "x",
+    "value": 7.0,
+    "value_text": "7.0x"
+   }
+  ],
+  "added_hypotheses": [],
+  "added_mentions": [],
+  "added_risks": [],
+  "block_reviews": [
+   {
+    "block_id": "b026",
+    "claim_ids": [],
+    "hypothesis_ids": [],
+    "reason": "Index definition boilerplate, not an argument.",
+    "verdict": "immaterial"
+   }
+  ],
+  "figure_reviews": [
+   {
+    "claim_ids": [],
+    "figure_id": "b009#70",
+    "reason": "Reference line on RSI chart shown only as a threshold marker for context, not part of the argument.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#30",
+    "reason": "Reference line on RSI chart; the 30 oversold threshold is already captured in c3.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#29",
+    "reason": "Historical RSI path point shown only as chart context for the index's prior trajectory.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#70-75",
+    "reason": "Historical RSI range shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#77",
+    "reason": "Historical RSI peak shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#65-68",
+    "reason": "Historical RSI range shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#27-30",
+    "reason": "Historical RSI dips shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#40-50",
+    "reason": "Historical RSI oscillation range shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#6.5",
+    "reason": "Historical EV/Sales chart range shown only as context for the multiple's history.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#9-10",
+    "reason": "Historical EV/Sales chart range shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [
+     "k1"
+    ],
+    "figure_id": "b017#11.8",
+    "reason": "Late-2021 peak multiple is the historical high against which current 8x dislocation is framed.",
+    "verdict": "captured_by_added_claim"
+   },
+   {
+    "claim_ids": [
+     "k2"
+    ],
+    "figure_id": "b017#7.0",
+    "reason": "Mid-2022 trough is the recession-era level the article explicitly compares the current reading to.",
+    "verdict": "captured_by_added_claim"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#9-11",
+    "reason": "Historical EV/Sales range shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#11.0-11.3",
+    "reason": "Historical EV/Sales peaks shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.6%",
+    "reason": "Starting-point margin level on the time series; the current Feb 26 gap carries the argument and is captured.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.7-12.8%",
+    "reason": "Starting-point margin level shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.4-12.5%",
+    "reason": "Starting-point margin level shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#13.6%",
+    "reason": "Intermediate time-series margin value shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#14.7-14.8%",
+    "reason": "Intermediate time-series margin value shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#13.5%",
+    "reason": "Intermediate time-series margin value shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.4",
+    "reason": "Intermediate time-series margin value shown only as chart context.",
+    "verdict": "immaterial"
+   }
+  ],
+  "hypothesis_additions": [
+   {
+    "affected_mentions": [],
+    "catalyst_claim_ids": [],
+    "counter_claim_ids": [],
+    "dislocation_claim_ids": [
+     "k2"
+    ],
+    "hypothesis_id": "h1",
+    "sector_exposures": [],
+    "supporting_claim_ids": [
+     "k1",
+     "k2"
+    ]
+   }
+  ]
+ }
+}

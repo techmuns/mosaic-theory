@@ -3,10 +3,18 @@ body as numbered blocks a claim can point back to.
 
 METADATA ORDER (first hit wins, and the field it came from is recorded):
   title      JSON-LD headline → og:title (site suffix stripped) → <h1> → <title>
-  authors    JSON-LD author Person(s) → meta[name=author] → UNKNOWN
-  published  JSON-LD datePublished → meta article:published_time → <time datetime> in the article
-             → "Published <date>" text in the body → UNKNOWN
+  authors    the UNION of every place the page credits an author — JSON-LD Article.author,
+             schema.org/Person microdata (itemprop=author), meta[name=author] — each author
+             recording every field it was found in. Sources that DISAGREE are recorded as a
+             discrepancy (J.P. Morgan's "A calm index" lists Kriti Gupta in JSON-LD but credits
+             Nick Roberts too in its byline microdata; first-hit-wins dropped him). Authors the
+             article TEXT credits ("team led by …") are added after extraction, as verified spans.
+  published  JSON-LD datePublished → meta article:published_time → the page's own Next.js page
+             data (`publishDate` of the entry whose url is this page) → "Published <date>" text
+             in the body → UNKNOWN
   modified   JSON-LD dateModified → meta article:modified_time  (never the publication date)
+Alternate official versions the page declares (hreflang) are recorded, so a reader can see
+whether another regional edition could credit someone else.
 A date that states only a month ("September 2024") is kept RAW with status UNKNOWN — inventing the
 1st or the 15th would fabricate an entry point.
 
@@ -77,6 +85,9 @@ _FULL_REPORT_ELSEWHERE = re.compile(
     r"(read the full (article|report)|download the (full )?report|full report (is )?available)",
     re.I)
 _RESEARCH_DISCLAIMER = re.compile(r"should not be regarded as a research report", re.I)
+_BOILERPLATE = re.compile(r"^(past performance (does not|is not|is no)|it is not possible to "
+                          r"invest directly in an index|for illustrative purposes only)", re.I)
+_TAG_HEADINGS = re.compile(r"^(tags|topics|related topics|filed under|categories)$", re.I)
 _MONTHS = ("january|february|march|april|may|june|july|august|september|october|november|"
            "december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec")
 _PUBLISHED_TEXT = re.compile(rf"\bpublished\s*:?\s*((?:{_MONTHS})\.? \d{{1,2}},? \d{{4}})", re.I)
@@ -101,10 +112,15 @@ class ParsedDocument:
     notes: list[str] = field(default_factory=list)
     article_class_hint: ArticleClass | None = None
     article_class_basis: str | None = None
+    #: authors credited by one metadata source but not another, said plainly (None: they agree)
+    author_discrepancy: str | None = None
+    #: alternate official versions the page declares: (hreflang, url)
+    alternates: tuple[tuple[str, str], ...] = ()
 
     @property
     def body_blocks(self) -> tuple[Block, ...]:
-        return tuple(b for b in self.blocks if b.kind not in ("disclaimer", "byline", "dek"))
+        return tuple(b for b in self.blocks
+                     if b.kind not in ("disclaimer", "byline", "dek", "tag"))
 
     @property
     def word_count(self) -> int:
@@ -190,6 +206,97 @@ def _authors_from_ld(art: dict[str, Any]) -> list[Author]:
     return out
 
 
+def _authors_from_microdata(soup: BeautifulSoup) -> list[Author]:
+    """schema.org/Person items the page marks as an article's author (itemprop=author / creator):
+    the name from itemprop=name, else the itemprop=url link's label; the title from jobTitle."""
+    out: list[Author] = []
+    for el in soup.find_all(itemtype=re.compile(r"schema\.org/Person", re.I)):
+        if not isinstance(el, Tag):
+            continue
+        prop = str(el.get("itemprop") or "").lower()
+        if prop not in ("author", "creator"):
+            continue
+        name: str | None = None
+        nm = el.find(itemprop="name")
+        if isinstance(nm, Tag):
+            name = str(nm.get("content") or nm.get_text(" ", strip=True)) or None
+        if not name:
+            link = el.find(itemprop="url")
+            if isinstance(link, Tag):
+                name = str(link.get("data-label") or link.get_text(" ", strip=True)) or None
+        if not name:
+            continue
+        titles = [str(j.get("content") or j.get_text(" ", strip=True)).strip()
+                  for j in el.find_all(itemprop="jobTitle") if isinstance(j, Tag)]
+        title = " ".join(t for t in titles if t) or None
+        out.append(Author(name=_clean(name), title=_clean(title) if title else None,
+                          source_field=f"microdata schema.org/Person (itemprop={prop})"))
+    return out
+
+
+def _name_key(name: str) -> str:
+    return re.sub(r"[^a-z]", "", name.lower())
+
+
+def _union_authors(sources: list[tuple[str, list[Author]]]) -> tuple[list[Author], str | None]:
+    """Every author any source credits, once, with every field that credits them — and, when the
+    sources disagree, a plain statement of who is missing from where."""
+    merged: dict[str, Author] = {}
+    found: dict[str, list[str]] = {}
+    for label, authors in sources:
+        for a in authors:
+            k = _name_key(a.name)
+            if not k:
+                continue
+            found.setdefault(k, [])
+            if label not in found[k]:
+                found[k].append(label)
+            if k not in merged:
+                merged[k] = a
+            else:
+                prev = merged[k]
+                merged[k] = prev.model_copy(update={
+                    "title": prev.title or a.title,
+                    "source_field": prev.source_field if a.source_field in prev.source_field
+                    else f"{prev.source_field} + {a.source_field}"})
+    # the STRUCTURED author list (the first source, JSON-LD) is the one a reader trusts to be
+    # complete — an author credited elsewhere on the page but missing from it is the discrepancy
+    # (a single-valued meta tag naming only the first author is the convention, not one)
+    primary = sources[0][0]
+    note = None
+    if sources[0][1]:
+        missing = [k for k in merged if primary not in found[k]]
+        if missing:
+            note = (f"author metadata disagrees: {primary} credits "
+                    + ", ".join(a.name for a in sources[0][1]) + "; also credited on the page: "
+                    + "; ".join(f"{merged[k].name} (by {' + '.join(found[k])})"
+                                for k in missing))
+    return list(merged.values()), note
+
+
+def _next_publish_date(soup: BeautifulSoup, urls: list[str]) -> str | None:
+    """`publishDate` of THIS page's own entry in Next.js page data (`__NEXT_DATA__`) — matched by
+    the entry's url, so another article's date on the same page is never taken."""
+    el = soup.find("script", id="__NEXT_DATA__")
+    if not isinstance(el, Tag) or not el.string:
+        return None
+    try:
+        data = json.loads(el.string)
+    except json.JSONDecodeError:
+        return None
+    targets = {u.rstrip("/").lower() for u in urls if u}
+    stack: list[Any] = [data]
+    while stack:
+        o = stack.pop()
+        if isinstance(o, dict):
+            if o.get("publishDate") and str(o.get("url", "")).rstrip("/").lower() in targets:
+                return str(o["publishDate"])
+            stack.extend(o.values())
+        elif isinstance(o, list):
+            stack.extend(o)
+    return None
+
+
 def _noise(el: Tag) -> bool:
     attrs = " ".join([str(el.get("id") or ""), " ".join(el.get("class") or [])])
     return bool(attrs.strip()) and bool(_NOISE_ATTR.search(attrs))
@@ -258,9 +365,11 @@ def _kind(tag: str, text: str) -> str:
         return "heading"
     if re.match(r"^sources?\s*:", text, re.I):
         return "chart_source"
-    if re.match(r"^(the )?(chart|graph|table|figure) (plots|tracks|shows|compares|displays)",
-                text, re.I):
+    if re.match(r"^(the |this )?(chart|graph|table|figure|exhibit) (above |below )?(plots|tracks|"
+                r"shows|compares|displays|illustrates|depicts)", text, re.I):
         return "chart_description"
+    if _BOILERPLATE.match(text):
+        return "disclaimer"
     if tag == "li":
         return "list_item"
     if tag == "figcaption":
@@ -291,12 +400,21 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     elif soup.title and soup.title.string:
         title, title_src = _clean(soup.title.string), "title"
 
-    # authors
-    authors = _authors_from_ld(art)
-    if not authors and (m := _meta(soup, "author", "article:author", "parsely-author")) \
+    # authors: the union of every place the page credits one
+    meta_authors: list[Author] = []
+    if (m := _meta(soup, "author", "article:author", "parsely-author")) \
             and not m.startswith("http"):
-            authors = [Author(name=a.strip(), title=None, source_field="meta author")
-                       for a in re.split(r",| and ", m) if a.strip()]
+        meta_authors = [Author(name=a.strip(), title=None, source_field="meta author")
+                        for a in re.split(r",| and ", m) if a.strip()]
+    authors, author_note = _union_authors([("JSON-LD Article.author", _authors_from_ld(art)),
+                                           ("schema.org/Person microdata",
+                                            _authors_from_microdata(soup)),
+                                           ("meta author", meta_authors)])
+    alternates = tuple(
+        (str(ln.get("hreflang")), urljoin(final_url or url, str(ln.get("href"))))
+        for ln in soup.find_all("link", hreflang=True)
+        if isinstance(ln, Tag) and ln.get("href")
+        and "alternate" in [str(r).lower() for r in (ln.get("rel") or [])])
 
     # dates
     pub_raw, pub_src = None, None
@@ -305,6 +423,8 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     elif (m := _meta(soup, "article:published_time", "datePublished", "publish-date",
                      "date")):
         pub_raw, pub_src = m, "meta published_time"
+    elif (nd := _next_publish_date(soup, [url, final_url or "", canonical])):
+        pub_raw, pub_src = nd, "Next.js page data publishDate (this page's own entry)"
     mod_raw, mod_src = None, None
     if art.get("dateModified"):
         mod_raw, mod_src = str(art["dateModified"]), "json-ld Article.dateModified"
@@ -317,7 +437,7 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     _walk(container, raw)
     blocks: list[Block] = []
     section: str | None = None
-    in_disclaimer = False
+    in_disclaimer = in_tags = False
     seen: set[str] = set()
     for tag, text in raw:
         if _UI_NOISE.match(text):
@@ -328,7 +448,11 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
             break
         if kind == "heading" and _DISCLAIMER_HEADINGS.match(text):
             in_disclaimer = True
-        if in_disclaimer and kind != "heading":
+        if kind == "heading" and _TAG_HEADINGS.match(text):
+            in_tags = True  # topic tags and the byline that follows them — metadata, not body
+        if in_tags and kind != "heading":
+            kind = "tag"
+        elif in_disclaimer and kind != "heading":
             kind = "disclaimer"
         if text in seen and kind not in ("heading",):
             continue  # pages repeat chart alt text / descriptions for responsive layouts
@@ -357,11 +481,22 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     for i, b in enumerate(blocks):
         if b.text.lower() in names:
             relabel[b.block_id] = "byline"
-            nb = blocks[i + 1] if i + 1 < len(blocks) else None
-            if nb and len(nb.text) <= 90 and not _PUBLISHED_TEXT.search(nb.text) \
-                    and nb.kind in ("paragraph", "disclaimer"):
-                relabel[nb.block_id] = "byline"
-                titles[b.text.lower()] = (nb.text, nb.block_id)
+            # the author's title: the short line(s) after the name — a line ending in a comma
+            # continues on the next ("Executive Director," / "Global Investment Strategist")
+            parts: list[Block] = []
+            for nb in blocks[i + 1:i + 3]:
+                if len(nb.text) > 90 or _PUBLISHED_TEXT.search(nb.text) \
+                        or nb.text.lower() in names \
+                        or nb.kind not in ("paragraph", "disclaimer", "tag"):
+                    break
+                parts.append(nb)
+                if not nb.text.rstrip().endswith(","):
+                    break
+            if parts:
+                for nb in parts:
+                    relabel[nb.block_id] = "byline"
+                titles[b.text.lower()] = (" ".join(nb.text for nb in parts),
+                                          "+".join(nb.block_id for nb in parts))
         elif _PUBLISHED_LINE.fullmatch(b.text):
             relabel[b.block_id] = "byline"
         elif dek and b.text == dek:
@@ -371,9 +506,13 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
                   else b for b in blocks]
     if titles:
         authors = [a.model_copy(update={"title": titles[a.name.lower()][0],
-                                        "source_field": f"{a.source_field}; title from byline "
+                                        "source_field": f"{a.source_field}; visible byline "
                                                         f"block {titles[a.name.lower()][1]}"})
                    if a.name.lower() in titles else a for a in authors]
+    if author_note:
+        notes.append(author_note)
+    notes.append(f"{len(alternates)} alternate version(s) declared (hreflang) — not fetched"
+                 if alternates else "no alternate publication versions declared (hreflang)")
 
     # "Published Feb 9, 2026" in the page when no structured date exists
     if pub_raw is None:
@@ -422,4 +561,5 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
         published_status=FieldStatus.KNOWN if published_at else FieldStatus.UNKNOWN,
         modified_at=modified_at, modified_source=mod_src, blocks=tuple(blocks),
         retrieval_state=state, notes=notes, article_class_hint=hint, article_class_basis=basis,
+        author_discrepancy=author_note, alternates=alternates,
     )

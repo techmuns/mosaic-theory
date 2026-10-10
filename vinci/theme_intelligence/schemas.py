@@ -21,7 +21,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 1
+DB_SCHEMA_VERSION = 2
 
 
 class Frozen(BaseModel):
@@ -89,6 +89,7 @@ class EntityType(StrEnum):
     GOVERNMENT_OR_AGENCY = "government_or_agency"
     BASKET = "basket"
     OTHER_ORGANIZATION = "other_organization"
+    SECTOR = "sector"  # an industry / sector / theme the source names as a population
 
 
 class MentionRole(StrEnum):
@@ -141,10 +142,55 @@ class ResolutionStatus(StrEnum):
 
 
 class Provenance(StrEnum):
-    ARTICLE_FACT = "ARTICLE FACT"
-    MODEL_INFERENCE = "MODEL INFERENCE"
-    EXTERNALLY_VERIFIED = "EXTERNALLY VERIFIED"
+    """How a card line is supported. What a SOURCE says is never one undifferentiated "fact": a
+    publisher's ARGUMENT is not an established market fact, and a forecast is not an observation.
+    The label of a line citing several claims is its WEAKEST support (opinion < forecast <
+    observation), so an interpretation can never ride in on a measured figure beside it."""
+
+    SOURCE_OPINION = "SOURCE OPINION"  # the publisher's interpretation, argument or recommendation
+    MEASURED_OBSERVATION = "MEASURED OBSERVATION"  # a measured / reported actual the source states
+    FORECAST = "FORECAST"  # a projection, estimate or forward (e.g. NTM) figure in the source
+    MODEL_INFERENCE = "MODEL INFERENCE"  # this tool's own reasoning
+    EXTERNALLY_VERIFIED = "EXTERNALLY VERIFIED"  # confirmed against an independent primary source
     UNKNOWN = "UNKNOWN"
+    ARTICLE_FACT = "ARTICLE FACT"  # LEGACY label (ti-engine-1 records) — loads, never written now
+
+
+#: Labels that assert the SOURCE says it — each must cite verified claims (pass-2 checks).
+SOURCE_LABELS = frozenset({Provenance.SOURCE_OPINION, Provenance.MEASURED_OBSERVATION,
+                           Provenance.FORECAST, Provenance.ARTICLE_FACT})
+
+
+class ThesisKind(StrEnum):
+    """An INVESTMENT THESIS argues a profit-transmission mechanism for listed equities. A
+    MARKET-REGIME record captures a market-structure condition (breadth, correlation, dispersion,
+    volatility, cross-asset correlation) together with the research implication the source draws
+    — never forced into a buy thesis, never dropped because it names no stock."""
+
+    INVESTMENT_THESIS = "investment_thesis"
+    MARKET_REGIME = "market_regime"
+
+
+class InstrumentClass(StrEnum):
+    """What a listed line IS, read from the issuer's own registration title (SEC cover page)."""
+
+    COMMON_EQUITY = "common_equity"
+    PREFERRED = "preferred"  # incl. depositary shares representing preferred stock
+    DEBT = "debt"
+    DEPOSITARY_RECEIPT = "depositary_receipt"  # ADS / ADR of ordinary shares
+    WARRANT_OR_RIGHT = "warrant_or_right"
+    UNIT = "unit"
+    FUND_SHARE = "fund_share"
+    UNKNOWN = "unknown"
+
+
+class PitStatus(StrEnum):
+    """Was this line a registered security ON THE ARTICLE'S DATE? A current-day ticker map is not
+    point-in-time; only an issuer filing dated on or before the as-of date can say so."""
+
+    VERIFIED = "VERIFIED"  # on the cover page of the issuer's latest filing on or before the date
+    NOT_REGISTERED_AS_OF = "NOT_REGISTERED_AS_OF"  # first registered after the date
+    UNVERIFIED = "UNVERIFIED"  # no point-in-time source could decide
 
 
 class ResearchAction(StrEnum):
@@ -376,6 +422,10 @@ class Listing(Frozen):
     ticker: str
     exchange: str | None
     note: str | None = None
+    security_class: str | None = None  # the issuer's own title, e.g. "Class A Common Stock"
+    instrument: InstrumentClass = InstrumentClass.UNKNOWN
+    pit_status: PitStatus = PitStatus.UNVERIFIED
+    pit_source: str | None = None  # the filing that decided it (form, date, accession)
 
 
 class SecurityResolution(Frozen):
@@ -389,6 +439,9 @@ class SecurityResolution(Frozen):
     source_ref: str
     resolved_at: datetime
     note: str = ""
+    #: the issuer's OTHER lines — not common equity, or not registered on the as-of date. Kept for
+    #: the audit, never presented as the company's stock exposure.
+    other_securities: tuple[Listing, ...] = ()
 
 
 class EnrichmentCandidate(Frozen):
@@ -423,6 +476,11 @@ class CardHeader(Frozen):
     last_material_update: date
     status: ThesisStatus
     ancestry: tuple[str, ...]
+    kind: ThesisKind = ThesisKind.INVESTMENT_THESIS
+    #: when THIS REGISTRY first recorded the thesis — "new to the registry", never "new to market"
+    first_detected: date | None = None
+    #: publication date of the latest contributing source article
+    latest_article_date: date | None = None
 
 
 class ChangeItem(Frozen):
@@ -442,7 +500,10 @@ class WhatChanged(Frozen):
 
 
 class TransmissionStep(Frozen):
-    step: str  # industry_shift | volumes | pricing | costs | margins | cash_flow | listed_earnings
+    #: industry_shift | volumes | pricing | costs | margins | cash_flow | listed_earnings — the
+    #: earnings chain — or market_reaction: a share-price / valuation / index move, which is the
+    #: market's RESPONSE and never itself a mechanism by which earnings change
+    step: str
     text: str
     provenance: Provenance
     claim_ids: tuple[str, ...] = ()
@@ -474,14 +535,31 @@ class AffectedCompany(Frozen):
     mention_id: str
     name_as_written: str
     resolution_status: ResolutionStatus
-    listings: tuple[Listing, ...]
+    listings: tuple[Listing, ...]  # point-in-time verified COMMON-EQUITY lines only
     cik: str | None
-    role: MentionRole
+    role: MentionRole  # the role the SOURCE states (e.g. capex spender) — never rewritten
     role_detail: str
     direction: Direction
     recommendation_status: RecommendationStatus
     article_id: str
     quote: str
+    #: the THESIS's reading of this name (e.g. "potential beneficiary") and what supports it:
+    #: SOURCE OPINION when the source says so, MODEL INFERENCE when the thesis infers it
+    exposure_reading: str | None = None
+    exposure_provenance: Provenance | None = None
+    other_securities: tuple[Listing, ...] = ()  # non-common or not-yet-registered lines (audit)
+
+
+class SectorExposure(Frozen):
+    """A sector / industry / theme the SOURCE names as exposed — a research opportunity does not
+    need an individual ticker, but it does need the source to name the population."""
+
+    name: str
+    direction: Direction
+    provenance: Provenance
+    quote: str
+    article_id: str
+    claim_ids: tuple[str, ...] = ()
 
 
 class AffectedView(Frozen):
@@ -496,6 +574,8 @@ class AffectedView(Frozen):
     #: every OTHER organization the contributing source(s) name, with its stated role — shown so
     #: the card lists all named entities, but NOT exposures of this thesis
     also_named: tuple[AffectedCompany, ...] = ()
+    #: sectors / themes the source names as exposed (verified spans)
+    sector_exposures: tuple[SectorExposure, ...] = ()
 
 
 class WhyNow(Frozen):
@@ -617,6 +697,7 @@ class Thesis(Mutable):
     ancestry: tuple[str, ...]
     stance: StanceInSource  # strongest stance any contributing source takes
     horizon: Horizon
+    kind: ThesisKind = ThesisKind.INVESTMENT_THESIS
 
 
 class ThesisVersion(Frozen):
@@ -716,6 +797,7 @@ class WeeklyRun(Mutable):
     parser_version: str
     engine_version: str
     db_schema_version: int
+    complete_prompt_version: str = ""
     sources: list[SourceCoverage] = Field(default_factory=list)
     counts: dict[str, int] = Field(default_factory=dict)
     tokens: dict[str, int] = Field(default_factory=dict)
@@ -734,6 +816,53 @@ class Snapshot(Frozen):
     thesis_versions: tuple[tuple[str, int], ...]
     created_at: datetime
     report_paths: tuple[str, ...]
+
+
+class FigureCheck(Frozen):
+    """One figure the ARTICLE states, and what happened to it — the completeness ledger is built
+    from the article text, never from the claims the first model happened to select."""
+
+    block_id: str
+    figure: str
+    sentence: str
+    status: str  # captured | added_by_completeness_pass | immaterial | uncaptured
+    claim_ids: tuple[str, ...] = ()
+    reason: str = ""
+
+
+class BlockCheck(Frozen):
+    """One ARGUMENT block of the article and what accounts for it."""
+
+    block_id: str
+    status: str  # anchored | covered | added | immaterial | unreviewed
+    hypothesis_ids: tuple[str, ...] = ()
+    reason: str = ""
+
+
+class CompletenessReport(Frozen):
+    article_version_id: str
+    run_id: str
+    figures: tuple[FigureCheck, ...]
+    argument_blocks: tuple[str, ...]  # body blocks carrying argument text
+    blocks_without_claims: tuple[str, ...]  # argument blocks no verified claim anchors to
+    added_claims: int
+    added_mentions: int
+    added_hypotheses: int
+    added_risks: int
+    prompt_version: str
+    created_at: datetime
+    blocks: tuple[BlockCheck, ...] = ()
+    #: the LLM re-read ran (False: only the deterministic ledger — the gap is then visible)
+    pass_ran: bool = True
+    note: str = ""
+
+    @property
+    def uncaptured(self) -> tuple[FigureCheck, ...]:
+        return tuple(f for f in self.figures if f.status == "uncaptured")
+
+    @property
+    def unaccounted_blocks(self) -> tuple[BlockCheck, ...]:
+        return tuple(b for b in self.blocks if b.status == "unreviewed")
 
 
 class VerificationIssue(Frozen):

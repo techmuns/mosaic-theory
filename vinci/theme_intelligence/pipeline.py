@@ -1,8 +1,12 @@
 """One shared, deterministic pipeline behind every entry point (scan / article / report / qa).
 
 PER ARTICLE: fetch → parse → (duplicate-content and look-ahead guards) → article + immutable
-version records → idempotency guard → extraction (LLM pass 1, cached by content) → deterministic
-verification → SEC security resolution → engine (match / version / prioritise) → pass-2 review.
+version records → idempotency guard → extraction (LLM pass 1, cached by content, with the
+registry's existing thesis keys offered as alignment candidates) → WHOLE-ARTICLE completeness
+(a deterministic figure / argument ledger from the text, then the independent pass 1b re-read;
+its additions merged) → deterministic verification → text-credited authors added to the article
+record → point-in-time SEC security resolution → engine (match / version / prioritise) → pass-2
+review with re-anchoring → the completeness report persisted.
 
 GUARANTEES
 - A BLOCKED fetch is RECORDED (article + BLOCKED version) and counted — never silently omitted.
@@ -25,7 +29,17 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from vinci.graph.llm import LlmError
+from vinci.theme_intelligence.completeness import (
+    CompletenessOutput,
+    CompletenessResult,
+    build_report,
+    merge_completeness,
+    run_completeness,
+    scan_article,
+)
 from vinci.theme_intelligence.config import (
+    COMPLETE_PROMPT_VERSION,
     ENGINE_VERSION,
     EXTRACT_PROMPT_VERSION,
     LLM_MODEL,
@@ -39,9 +53,11 @@ from vinci.theme_intelligence.config import (
 from vinci.theme_intelligence.discovery import Discovery, discover_source
 from vinci.theme_intelligence.engine import ArticleContext, Engine, ThesisOutcome
 from vinci.theme_intelligence.extract import (
+    COMPACT_MAX_CLAIMS,
     Extraction,
     ExtractionResult,
     ToolClient,
+    cost_of,
     run_extraction,
 )
 from vinci.theme_intelligence.fetch import FetchResult, PoliteFetcher
@@ -51,6 +67,7 @@ from vinci.theme_intelligence.schemas import (
     Article,
     ArticleClass,
     ArticleVersion,
+    Author,
     CardContent,
     Claim,
     FieldStatus,
@@ -59,13 +76,16 @@ from vinci.theme_intelligence.schemas import (
     RunStatus,
     SecurityResolution,
     Snapshot,
+    ThesisStatus,
     VerificationIssue,
     WeeklyRun,
 )
 from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.verify import (
+    ReviewOutcome,
     deterministic_card_checks,
+    norm_name,
     review_card,
     verify_extraction,
 )
@@ -135,6 +155,7 @@ class Pipeline:
             extract_prompt_version=EXTRACT_PROMPT_VERSION,
             review_prompt_version=REVIEW_PROMPT_VERSION, parser_version=PARSER_VERSION,
             engine_version=ENGINE_VERSION, db_schema_version=DB_SCHEMA_VERSION,
+            complete_prompt_version=COMPLETE_PROMPT_VERSION,
             output_dir=str(self.paths.runs / rid))
         self.store.upsert_run(run)
         self.run = run
@@ -199,7 +220,7 @@ class Pipeline:
              "at": datetime.now(tz=UTC).isoformat()})
 
     # -- review hook ------------------------------------------------------------------------------
-    def _review(self, card: CardContent, claims: dict[str, Claim]) -> list[VerificationIssue]:
+    def _review(self, card: CardContent, claims: dict[str, Claim]) -> ReviewOutcome:
         assert self.run is not None
         issues = deterministic_card_checks(card, claims, self.run.run_id)
         if not self.review:
@@ -210,7 +231,7 @@ class Pipeline:
                 severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
                 detail="pass-2 LLM review disabled for this run (--no-review); only the "
                        "deterministic card checks ran", created_at=datetime.now(tz=UTC)))
-            return issues
+            return ReviewOutcome(issues)
         try:
             rr = review_card(card, claims, client=self.client, cache_dir=self.paths.llm_cache,
                              run_id=self.run.run_id)
@@ -220,17 +241,18 @@ class Pipeline:
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
                 severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN", detail=str(exc),
                 created_at=datetime.now(tz=UTC)))
-            return issues
+            return ReviewOutcome(issues)
         self._llm_call("review", card.header.thesis_id + ":" + card.header.title[:40], rr.cached,
                        rr.usage, rr.cost_usd, rr.seconds,
                        self.client.model if self.client else LLM_MODEL, REVIEW_PROMPT_VERSION)
-        return issues + rr.issues
+        return ReviewOutcome(issues + rr.issues, rr.anchors)
 
     # -- one article ------------------------------------------------------------------------------
     def process_url(self, url: str, *, source_id: str, as_of: date,
                     html: str | None = None, fixture: dict[str, Any] | None = None,
                     publisher_override: str | None = None,
-                    listed: tuple[date, str] | None = None) -> ArticleResult:
+                    listed: tuple[date, str] | None = None,
+                    completeness_fixture: dict[str, Any] | None = None) -> ArticleResult:
         assert self.run is not None
         src = self.sources.get(source_id)
         publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
@@ -261,11 +283,13 @@ class Pipeline:
             doc.published_source = f"publisher listing — {basis} (date only)"
             doc.published_status = FieldStatus.KNOWN
         return self.process_document(doc, fr, url=url, source_id=source_id, as_of=as_of,
-                                     fixture=fixture, publisher_override=publisher_override)
+                                     fixture=fixture, publisher_override=publisher_override,
+                                     completeness_fixture=completeness_fixture)
 
     def process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,
                          source_id: str, as_of: date, fixture: dict[str, Any] | None = None,
-                         publisher_override: str | None = None) -> ArticleResult:
+                         publisher_override: str | None = None,
+                         completeness_fixture: dict[str, Any] | None = None) -> ArticleResult:
         """Everything after parsing. Tests and replays enter here with an already-parsed
         document (e.g. an authentic excerpt) — the same code path the live fetch takes."""
         assert self.run is not None
@@ -320,18 +344,46 @@ class Pipeline:
             return ArticleResult(url, "ALREADY_INGESTED", aid, version.version_id,
                                  note="this article version was already applied — no new records")
 
-        xres = self._extract(doc, publisher, as_of, fixture)
+        xres = self._extract(doc, publisher, as_of, fixture, self._registry_context())
+        if xres.truncated_usage is not None and not xres.cached:  # the billed, discarded attempt
+            self._llm_call("extract-truncated", aid, False, xres.truncated_usage,
+                           cost_of(xres.model, xres.truncated_usage), 0.0, xres.model,
+                           EXTRACT_PROMPT_VERSION)
         self._llm_call("extract", aid, xres.cached, xres.usage, xres.cost_usd, xres.seconds,
                        xres.model, xres.prompt_version)
+        for d in xres.dropped:
+            self._issue("article", aid, IssueSeverity.WARN, "MALFORMED_ITEM_DROPPED",
+                        f"extraction: {d}")
+        if xres.compact:
+            out_t = (xres.truncated_usage or {}).get("output_tokens")
+            self._issue("article", aid, IssueSeverity.WARN, "EXTRACTION_COMPACT",
+                        f"the full extraction overran the output cap ({out_t} output tokens, "
+                        f"discarded) — this article was extracted in the declared COMPACT mode "
+                        f"(at most {COMPACT_MAX_CLAIMS} claims); the completeness pass re-reads "
+                        f"the whole article for what that leaves out")
         if xres.extraction.article_classification.article_class != article.article_class:
             self._issue("article", aid, IssueSeverity.INFO, "CLASS_DISAGREES",
                         f"model classifies {xres.extraction.article_classification.article_class}"
                         f" ({xres.extraction.article_classification.basis[:140]}); the record "
                         f"keeps {article.article_class.value} ({article.article_class_basis})")
-        ve = verify_extraction(doc, xres.extraction, article_id=aid,
+        # WHOLE-ARTICLE completeness: the ledger is read from the TEXT first; pass 1b accounts
+        # for every gap; its additions go through the same verification as pass 1
+        ledger = scan_article(doc)
+        comp, comp_note = self._complete(doc, xres, ledger, publisher, as_of, aid,
+                                         fixture is not None, completeness_fixture)
+        merged = merge_completeness(xres.extraction, comp.output if comp else None)
+        for d in merged.dropped:
+            self._issue("article", aid, IssueSeverity.WARN, "MALFORMED_ITEM_DROPPED",
+                        f"completeness merge: {d}")
+        ve = verify_extraction(doc, merged.extraction, article_id=aid,
                                article_version_id=version.version_id,
                                extraction_id=xres.extraction_id, publisher=publisher,
                                as_of=as_of, run_id=self.run.run_id)
+        report = build_report(ledger=ledger, ve=ve, merged=merged,
+                              output=comp.output if comp else None,
+                              article_version_id=version.version_id, run_id=self.run.run_id,
+                              pass_ran=comp is not None, note=comp_note)
+        article = self._with_text_authors(article, doc, ve)
         if state is RetrievalState.PARTIAL:
             ve.issues.append(VerificationIssue(
                 issue_id="VI-" + _sha(self.run.run_id, aid, "partial")[:14],
@@ -348,8 +400,12 @@ class Pipeline:
         ctx = ArticleContext(article=article, version=version, reliability=reliability,
                              run_id=self.run.run_id, as_of=as_of)
         outcomes = self.engine.apply(ctx, ve, resolutions)
+        self._record_completeness(aid, report)
         # the extraction record is the "applied" marker — written only AFTER the engine succeeds,
         # so a run that dies mid-article re-processes it (idempotently) instead of skipping it
+        if comp is not None:
+            self.store.add_extraction("XC" + xres.extraction_id[1:], version.version_id,
+                                      comp.model, comp.prompt_version, comp.raw)
         self.store.add_extraction(xres.extraction_id, version.version_id, xres.model,
                                   xres.prompt_version, xres.raw)
         self._count("articles_processed")
@@ -371,8 +427,19 @@ class Pipeline:
             "SELECT COUNT(*) FROM extractions WHERE article_version_id=?", (version_id,)).fetchone()
         return bool(rows and rows[0])
 
+    def _registry_context(self) -> list[tuple[str, str]]:
+        """The registry's theses as alignment candidates for the extractor: node|mechanism|
+        direction|geography — title, freshest material update first. `other`-keyed theses are
+        left out (they never merge by key)."""
+        ts = [t for t in self.store.theses() if t.status is not ThesisStatus.ARCHIVED
+              and "other" not in (t.key_node, t.key_mechanism)]
+        ts.sort(key=lambda t: (t.last_material_update, t.thesis_id), reverse=True)
+        return [(f"{t.key_node}|{t.key_mechanism}|{t.key_direction.value}|{t.key_geography}",
+                 t.title) for t in ts]
+
     def _extract(self, doc: ParsedDocument, publisher: str, as_of: date,
-                 fixture: dict[str, Any] | None) -> ExtractionResult:
+                 fixture: dict[str, Any] | None,
+                 registry: list[tuple[str, str]] | None = None) -> ExtractionResult:
         if fixture is not None:
             ext = Extraction.model_validate(fixture)
             key = _sha(json.dumps(fixture, sort_keys=True), doc.content_sha256)
@@ -380,7 +447,85 @@ class Pipeline:
                                     "fixture", True, None, 0.0, 0.0)
         return run_extraction(doc, publisher=publisher, as_of=as_of.isoformat(),
                               taxonomy=self.taxonomy, client=self.client,
-                              cache_dir=self.paths.llm_cache)
+                              cache_dir=self.paths.llm_cache, registry=registry)
+
+    def _complete(self, doc: ParsedDocument, xres: ExtractionResult, ledger: Any,
+                  publisher: str, as_of: date, aid: str, fixture_mode: bool,
+                  completeness_fixture: dict[str, Any] | None,
+                  ) -> tuple[CompletenessResult | None, str]:
+        """Pass 1b. A frozen fixture replays a frozen pass 1b; a fixture WITHOUT one runs the
+        deterministic ledger only and says so (WARN) — never a silent pass."""
+        if completeness_fixture is not None:
+            out = CompletenessOutput.model_validate(completeness_fixture)
+            return CompletenessResult(out, completeness_fixture, True, None, 0.0, 0.0,
+                                      "fixture", "fixture"), "frozen completeness fixture"
+        if fixture_mode:
+            note = ("fixture replay without a frozen completeness pass — only the deterministic "
+                    "figure / argument ledger ran")
+            self._issue("article", aid, IssueSeverity.WARN, "COMPLETENESS_PASS_NOT_RUN", note)
+            return None, note
+        try:
+            res = run_completeness(doc, xres.extraction, ledger, publisher=publisher,
+                                   as_of=as_of.isoformat(), taxonomy=self.taxonomy,
+                                   client=self.client, cache_dir=self.paths.llm_cache)
+        except (RuntimeError, LlmError) as exc:  # no client / no cache / an overrun: the gap
+            self._issue("article", aid, IssueSeverity.WARN,  # is reported, never hidden
+                        "COMPLETENESS_PASS_NOT_RUN", str(exc))
+            return None, str(exc)
+        for call in res.calls:  # one record per call — a discarded (split) call included
+            purpose = ("complete" + (f"-{call.label}" if call.label else "")
+                       + ("-truncated" if call.truncated else ""))
+            self._llm_call(purpose, aid, call.cached, call.usage, call.cost_usd, call.seconds,
+                           res.model, res.prompt_version)
+        for n in res.notes:
+            self._issue("article", aid, IssueSeverity.INFO, "COMPLETENESS_IN_PARTS", n)
+        for d in res.dropped:
+            self._issue("article", aid, IssueSeverity.WARN, "MALFORMED_ITEM_DROPPED",
+                        f"completeness pass: {d}")
+        return res, ""
+
+    def _record_completeness(self, aid: str, report: Any) -> None:
+        """Persist the ledger; every figure still uncaptured and every argument block still
+        unaccounted for is an OPEN issue (WARN), listed in full — never truncated."""
+        assert self.run is not None
+        self.store.add_completeness(report)
+        for f in report.uncaptured:
+            self._issue("article", aid, IssueSeverity.WARN, "FIGURE_UNCAPTURED",
+                        f"{f.block_id}: {f.figure!r} — {f.reason} — sentence {f.sentence!r}")
+        for b in report.unaccounted_blocks:
+            self._issue("article", aid, IssueSeverity.WARN, "ARGUMENT_UNACCOUNTED",
+                        f"{b.block_id}: {b.reason}")
+        self._count("figures_in_articles", len(report.figures))
+        self._count("figures_uncaptured", len(report.uncaptured))
+        self._count("claims_added_by_completeness", report.added_claims)
+        self._count("theses_added_by_completeness", report.added_hypotheses)
+
+    def _with_text_authors(self, article: Article, doc: ParsedDocument,
+                           ve: Any) -> Article:
+        """Authors the article TEXT credits ("team led by …"), verified as spans, joined to the
+        metadata authors; a metadata disagreement and any declared alternate versions are
+        recorded as issues so the attribution trail is visible."""
+        aid = article.article_id
+        if doc.author_discrepancy:
+            self._issue("article", aid, IssueSeverity.INFO, "AUTHOR_METADATA_DISCREPANCY",
+                        doc.author_discrepancy)
+        if doc.alternates:
+            self._issue("article", aid, IssueSeverity.INFO, "ALTERNATE_VERSIONS_DECLARED",
+                        f"{len(doc.alternates)} alternate version(s) declared (hreflang), not "
+                        f"fetched: " + "; ".join(f"{h} {u}" for h, u in doc.alternates))
+        have = {norm_name(a.name) for a in article.authors}
+        extra = [Author(name=a.name, title=None,
+                        source_field=f"article text {a.block_id}: {a.quote[:120]!r}")
+                 for a in ve.authors if norm_name(a.name) not in have]
+        if not extra:
+            return article
+        self._issue("article", aid, IssueSeverity.INFO, "AUTHORS_FROM_TEXT",
+                    "credited in the article text, not in page metadata: "
+                    + "; ".join(f"{a.name} ({a.source_field})" for a in extra))
+        updated = article.model_copy(update={"authors": (*article.authors, *extra),
+                                             "authors_status": FieldStatus.KNOWN})
+        self.store.upsert_article(updated)
+        return updated
 
     def _article_record(self, aid: str, doc: ParsedDocument, source_id: str, publisher: str,
                         default_class: ArticleClass, now: datetime) -> Article:

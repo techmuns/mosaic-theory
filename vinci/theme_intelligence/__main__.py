@@ -24,6 +24,7 @@ from vinci.theme_intelligence.config import (
     DEFAULT_DATA_DIR,
     DEFAULT_MAX_ARTICLES_PER_RUN,
     DEFAULT_SCAN_DAYS,
+    LLM_MAX_TOKENS,
     LLM_MODEL,
     Paths,
     SourceConfig,
@@ -51,13 +52,18 @@ def _client(required: bool) -> ToolClient | None:
         return None
     from vinci.graph.llm import AnthropicLlmClient
 
-    return AnthropicLlmClient(model=LLM_MODEL, max_tokens=16384)
+    return AnthropicLlmClient(model=LLM_MODEL, max_tokens=LLM_MAX_TOKENS)
 
 
 def source_for_url(url: str, sources: tuple[SourceConfig, ...]) -> str:
+    """The channel whose configured entry, listing, sitemap or feed URL is on this URL's host
+    (EXACT host). A SemiAnalysis post lives on newsletter.semianalysis.com, its feed's host, not
+    on the entry page's semianalysis.com — matched on the entry host alone it was filed
+    "UNKNOWN publisher" (observed 2026-10-10). No match → "manual"."""
     host = urlparse(url).netloc.lower()
     for s in sources:
-        if urlparse(s.entry_url).netloc.lower() == host:
+        urls = (s.entry_url, s.listing_url, s.sitemap_url, s.feed_url)
+        if host in {urlparse(u).netloc.lower() for u in urls if u}:
             return s.id
     return "manual"
 

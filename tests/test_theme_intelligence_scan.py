@@ -231,6 +231,44 @@ def test_a_failed_source_makes_the_run_partial_and_the_page_says_so(
     assert "PARTIAL RUN" in html and "not absent" in html
 
 
+def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_codes(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of PR #703, P2: "Accessible sources: 7 of 8", the blocked channels BY NAME,
+    articles analysed full vs partial, Research Now / Watch / Skip, new / upgraded / downgraded /
+    challenged; thesis ids, change classes, claim ids and rule codes only behind the audit toggle;
+    the article date and the registry's first-detected date shown apart."""
+    from bs4 import BeautifulSoup
+
+    pipe = make_pipeline(tmp_path)
+    _fake_scan(monkeypatch, pipe, [f"https://example.test/hypothetical/k{i}" for i in range(2)],
+               failing_source=True)
+    run = pipe.run_scan(window_from=WINDOW[0], window_to=WINDOW[1], as_of=WINDOW[1],
+                        max_articles=5)
+    cards = write_cards(pipe.store, tmp_path / "out", generated="t")
+    d = build_dashboard(pipe.store, run.run_id, cards=cards, generated="t")
+    html = render_dashboard_html(d)
+    blocked = list(pipe.sources.values())[1].publisher
+    for label, value in (("Accessible sources", f"{len(pipe.sources) - 1} of {len(pipe.sources)}"),
+                         ("Blocked sources", blocked),
+                         ("Articles analyzed", "2 full · 0 partial"),
+                         ("Research Now / Watch / Skip", None),
+                         ("New / upgraded / downgraded / challenged theses", None)):
+        assert f"<span>{label}</span>" in html, label
+        if value:
+            assert f"<span>{label}</span><b>{value}</b>" in html, (label, value)
+    soup = BeautifulSoup(html, "html.parser")
+    for el in soup.select(".aud, .auditbar, script, input"):
+        el.decompose()
+    first = soup.get_text(" ", strip=True)
+    assert "Article date 2026-10-02" in first and "first detected by the registry" in first
+    for code in ("TH-", "novelty_unverified", "WATCH (RESEARCH NOW unmet", "SKIP-", "C-",
+                 "F5_", "F7_"):
+        assert code not in first, code
+    # … and all of it is still there for the audit view and the printed record
+    assert all(tid in html for rows in d.categories.values() for tid in
+               (r.thesis_id for r in rows))
+
+
 # --- the dashboard -------------------------------------------------------------------------------
 
 def test_every_category_prints_with_a_count_and_a_long_one_says_showing_x_of_y(

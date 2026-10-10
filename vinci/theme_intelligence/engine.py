@@ -19,6 +19,13 @@ WHAT AN INCOMING CLAIM IS, relative to what the thesis already holds:
 Only MATERIAL classes create a new version; a repeat is recorded as an attribution with no new
 version, no changed priority and no false confirmation. Prior versions are immutable rows; each new
 version carries a field-by-field diff against the one before.
+
+RE-ANCHOR BEFORE WITHHOLDING. When a source-labelled card line fails its check (a number its cited
+claims lack, no verified citation, or the pass-2 reviewer judging its cited spans insufficient),
+the engine first looks for OTHER verified claims of the same source(s) that carry it — the
+reviewer's suggestions, then a deterministic number-and-words match — re-cites the line, re-derives
+its label, and reviews it again. Only a line that is still unsupported is withheld. A MODEL
+INFERENCE line is never re-anchored into a source label.
 """
 
 from __future__ import annotations
@@ -30,12 +37,16 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 
 from vinci.theme_intelligence.cards import (
+    LABEL_CLOSE,
+    LABEL_OPEN,
     CardInputs,
     affected_from,
     card_sha,
     compose_card,
     diff_cards,
     origin_label,
+    sector_exposures_from,
+    with_citations,
 )
 from vinci.theme_intelligence.config import ENGINE_VERSION, STALE_AFTER_DAYS, Taxonomy
 from vinci.theme_intelligence.priority import ThesisState, compute_priority
@@ -61,6 +72,7 @@ from vinci.theme_intelligence.schemas import (
     IssueSeverity,
     LinkRole,
     Mention,
+    PitStatus,
     Provenance,
     RelationType,
     ResearchAction,
@@ -79,10 +91,16 @@ from vinci.theme_intelligence.schemas import (
 )
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.verify import (
+    ReviewOutcome,
     VerifiedExtraction,
     VerifiedHypothesis,
     VerifiedRisk,
     card_sentences,
+    label_for,
+    overlap_anchor,
+    passage_anchor,
+    passage_claim,
+    reanchor_sentence,
 )
 
 _GEO = {"us": "US", "u.s.": "US", "united states": "US", "usa": "US", "america": "US",
@@ -145,7 +163,10 @@ class ThesisOutcome:
     events: list[str] = field(default_factory=list)
 
 
-Reviewer = Callable[[CardContent, dict[str, Claim]], list[VerificationIssue]]
+#: A reviewer returns its issues — or a ReviewOutcome that also carries re-anchoring suggestions.
+Reviewer = Callable[[CardContent, dict[str, Claim]], list[VerificationIssue] | ReviewOutcome]
+#: The deterministic card checks whose failure re-anchoring can cure.
+_REANCHORABLE = frozenset({"NUMBER_NOT_IN_CITED_CLAIMS", "FACT_WITHOUT_CLAIM"})
 
 
 class Engine:
@@ -224,7 +245,7 @@ class Engine:
             current_version=1, created_at=now, created_as_of=ctx.as_of,
             last_material_update=published,
             ancestry=self.taxonomy.ancestry(raw.value_chain_node),
-            stance=raw.stance_in_source, horizon=raw.horizon)
+            stance=raw.stance_in_source, horizon=raw.horizon, kind=raw.kind)
         roles = self._roles(h, risks)
         links = [ThesisClaimLink(thesis_id=tid, claim_id=cid, role=role, first_version=1,
                                  change_class=ChangeClass.NOVELTY_UNVERIFIED,
@@ -237,14 +258,14 @@ class Engine:
                      for r in relations]
         head, n_evidence = self._headline_claims(h, claims)
         items = [ChangeItem(change_class=ChangeClass.NOVELTY_UNVERIFIED,
-                            text=claims[c].statement, provenance=Provenance.ARTICLE_FACT,
+                            text=claims[c].statement, provenance=_label([c], claims),
                             claim_ids=(c,), article_id=ctx.article.article_id,
                             original_date=published.isoformat(), period=claims[c].period)
                  for c in head]
         if n_evidence > len(head):
             items.append(_more_item(len(head), n_evidence, ctx.article.article_id))
-        vs_prior = (f"No prior thesis with this identity in the registry as of "
-                    f"{ctx.as_of.isoformat()} — initial record (NEW).")
+        vs_prior = (f"New to the registry — first recorded as of {ctx.as_of.isoformat()} from a "
+                    f"source dated {published.isoformat()}; not necessarily new to the market.")
         novelty = ("novelty_unverified — the registry held no earlier verified baseline, so this "
                    "is new TO THE REGISTRY, not demonstrated new to the market")
         version = self._build_version(
@@ -337,8 +358,8 @@ class Engine:
             "stance": max(thesis.stance, h.raw.stance_in_source, key=lambda s: _STANCE_RANK[s]),
             "horizon": h.raw.horizon if h.raw.horizon is not Horizon.UNCLEAR else thesis.horizon})
         items = [ChangeItem(change_class=classes[cid],
-                            text=f"{claims[cid].statement} — {notes[cid]}",
-                            provenance=Provenance.ARTICLE_FACT, claim_ids=(cid,),
+                            text=f"{claims[cid].statement} {LABEL_OPEN}{notes[cid]}{LABEL_CLOSE}",
+                            provenance=_label([cid], claims), claim_ids=(cid,),
                             article_id=ctx.article.article_id,
                             original_date=published.isoformat(), period=claims[cid].period)
                  for cid in roles if classes[cid] is not ChangeClass.REPEATED]
@@ -348,12 +369,13 @@ class Engine:
             items.append(_more_item(len(items), n_changed, ctx.article.article_id))
         repeated = [cid for cid in roles if classes[cid] is ChangeClass.REPEATED]
         if repeated:
+            # registry bookkeeping, not a statement of the source: never source-labelled
             items.append(ChangeItem(change_class=ChangeClass.REPEATED,
                                     text=f"{len(repeated)} claim(s) repeat evidence already held "
                                          f"(same origin) — attribution only"
                                          + (f" (showing 6 of {len(repeated)} claim refs)"
                                             if len(repeated) > 6 else ""),
-                                    provenance=Provenance.ARTICLE_FACT,
+                                    provenance=Provenance.MODEL_INFERENCE,
                                     claim_ids=tuple(repeated[:6]),
                                     article_id=ctx.article.article_id,
                                     original_date=published.isoformat()))
@@ -485,9 +507,9 @@ class Engine:
         classes = dict.fromkeys(add, ChangeClass.CONTRADICTORY)
         inc = inc.model_copy(update={"current_version": next_v})
         items = [ChangeItem(change_class=ChangeClass.CONTRADICTORY,
-                            text=f"Competing hypothesis {challenger} ({ctx.article.article_id}): "
-                                 f"{claims[c].statement}",
-                            provenance=Provenance.ARTICLE_FACT, claim_ids=(c,),
+                            text=f"{LABEL_OPEN}competing hypothesis {challenger}, "
+                                 f"{ctx.article.article_id}{LABEL_CLOSE} {claims[c].statement}",
+                            provenance=_label([c], claims), claim_ids=(c,),
                             article_id=ctx.article.article_id,
                             original_date=(ctx.article.published_at.date().isoformat()
                                            if ctx.article.published_at else None))
@@ -544,23 +566,38 @@ class Engine:
                 mid: resolutions[mid] for mid in mentions if mid in resolutions},
             sectors=list(h.raw.sectors) if h else [],
             baskets=[CardSentence(text=b.description + " (constituents not named by the source)",
-                                  provenance=Provenance.ARTICLE_FACT if any(
-                                      x in h.claim_map for x in b.claim_ids)
-                                  else Provenance.MODEL_INFERENCE,
+                                  provenance=_label([h.claim_map[x] for x in b.claim_ids
+                                                     if x in h.claim_map], all_claims),
                                   claim_ids=tuple(h.claim_map[x] for x in b.claim_ids
                                                   if x in h.claim_map))
                      for b in h.raw.cited_baskets] if h else [],
             prev=prev.s05_affected if prev else None,
-            article_mentions=tuple(mentions))
+            article_mentions=tuple(mentions),
+            sector_exposures=sector_exposures_from(
+                h.sectors if h else [], all_claims, ctx.article.article_id,
+                prev.s05_affected if prev else None))
         sources = self._sources(thesis.thesis_id, ctx, links, all_claims)
         hold_reasons = self._hold_reasons(links, all_claims)
 
+        published = tuple((s.article_id, s.published_at.date()) for s in sources
+                          if s.published_at is not None)
+
         def make(hold_extra: list[str]) -> tuple[CardContent, ResearchPriority]:
             holds = hold_reasons + hold_extra
-            listed = tuple((c.name_as_written, "/".join(x.ticker for x in c.listings))
-                           for c in affected.companies
-                           if c.resolution_status is ResolutionStatus.LISTED_EQUITY
-                           and c.role in EXPOSURE_ROLES)
+            # an EXPOSURE is a point-in-time-verified common-equity line — a current-day ticker
+            # map never counts (the listings carry only VERIFIED common equity by construction;
+            # the filter restates it so a future resolver change cannot widen it silently)
+            listed = tuple((c.name_as_written, "/".join(
+                x.ticker for x in c.listings if x.pit_status is PitStatus.VERIFIED))
+                for c in affected.companies
+                if c.resolution_status is ResolutionStatus.LISTED_EQUITY
+                and c.role in EXPOSURE_ROLES
+                and any(x.pit_status is PitStatus.VERIFIED for x in c.listings))
+            unverified = tuple(c.name_as_written for c in affected.companies
+                               if c.resolution_status is ResolutionStatus.LISTED_EQUITY
+                               and c.role in EXPOSURE_ROLES
+                               and not any(x.pit_status is PitStatus.VERIFIED
+                                           for x in c.listings))
             instruments = tuple(c.name_as_written for c in affected.instruments)
             stub = CardInputs(thesis=thesis, version=version, as_of=ctx.as_of, hyp=h,
                               article=ctx.article, prev=prev, claims=all_claims, links=links,
@@ -587,20 +624,27 @@ class Engine:
                 stance=thesis.stance, verification_hold=bool(holds),
                 hold_reasons=tuple(holds), retrieval=ctx.version.retrieval_state
                 if ctx.version.retrieval_state is not RetrievalState.BLOCKED
-                else RetrievalState.PARTIAL)
+                else RetrievalState.PARTIAL, kind=thesis.kind,
+                sector_exposures=tuple(s.name for s in affected.sector_exposures),
+                unverified_listings=unverified, as_of=ctx.as_of, published=published)
             pr = compute_priority(state, previous=previous, evidence_direction=direction,
                                   previous_factors=prev_factors)  # type: ignore[arg-type]
             return compose_card(CardInputs(**{**stub.__dict__, "priority": pr})), pr
 
         card, pr = make([])
         review_issues: list[VerificationIssue] = []
+        anchors: dict[str, list[str]] = {}
         if self.reviewer is not None:
             sents = card_sentences(card)
             for _t, _p, cids in sents.values():  # a line carried from an earlier version keeps
                 for cid in cids:                 # citing its claims — judge it against them
                     if cid not in all_claims and (c := self.store.claim(cid)):
                         all_claims[cid] = c
-            review_issues = self.reviewer(card, all_claims)
+            review_issues, anchors = self._review_and_reanchor(ctx, thesis.thesis_id, version,
+                                                               card, all_claims)
+            if anchors:
+                card = with_citations(card, anchors, all_claims)
+                sents = card_sentences(card)
             blocks = [i for i in review_issues if i.severity is IssueSeverity.BLOCK]
             material = list(dict.fromkeys(
                 sid for i in blocks if material_sentence(
@@ -608,9 +652,12 @@ class Engine:
             if material:
                 card, pr = make([f"review withheld {len(material)} decision-bearing "
                                  f"sentence(s): " + ", ".join(material)])
+                if anchors:
+                    card = with_citations(card, anchors, all_claims)
             with self.store.tx():
                 for i in review_issues:
                     self.store.add_issue(i)
+        self._link_cited(ctx, thesis.thesis_id, version, card, links, all_claims)
         diffs: list[FieldDiff] = []
         if prev is not None:
             diffs = [FieldDiff(field_id=f, change_class=c, old=o, new=n, claim_ids=ids)
@@ -621,6 +668,92 @@ class Engine:
             content=card, priority=pr, evidence_direction=direction,
             change_summary=change_summary, diffs=tuple(diffs), prior_content_sha=prev_sha,
             content_sha=card_sha(card))
+
+    def _link_cited(self, ctx: ArticleContext, tid: str, version: int, card: CardContent,
+                    links: list[ThesisClaimLink], claims: dict[str, Claim]) -> None:
+        """Every claim the card cites is LINKED to the thesis. A citation outside the role lists
+        — a source implication, a why-now view, a transmission step, a sector span, a re-anchored
+        line — becomes a CONTEXT link, so the evidence trail QA re-derives from the registry is the
+        one the card shows (found by QA on the real corpus, 2026-10-10)."""
+        cited = [c for _t, _p, cids in card_sentences(card).values() for c in cids]
+        cited += [c for se in card.s05_affected.sector_exposures for c in se.claim_ids]
+        cited += [c for b in card.s05_affected.baskets for c in b.claim_ids]
+        held = {lk.claim_id for lk in links} | {lk.claim_id for lk in self.store.links(tid)}
+        extra = [ThesisClaimLink(
+            thesis_id=tid, claim_id=cid, role=LinkRole.CONTEXT, first_version=version,
+            change_class=ChangeClass.NO_MATERIAL_CHANGE,
+            independence_group=claims[cid].origin_id or ctx.article.article_id)
+            for cid in dict.fromkeys(cited) if cid not in held and cid in claims]
+        if extra:
+            with self.store.tx():
+                for lk in extra:
+                    self.store.add_link(lk)
+
+    def _review_and_reanchor(self, ctx: ArticleContext, tid: str, version: int,
+                             card: CardContent, claims: dict[str, Claim],
+                             ) -> tuple[list[VerificationIssue], dict[str, list[str]]]:
+        """Review; RE-ANCHOR every failing source-labelled line before anything is withheld —
+        the reviewer's suggested spans, then a verified claim carrying its numbers or words, then
+        the verbatim SOURCE PASSAGE that carries it (minted as a source-opinion claim, linked as
+        context); a line the reviewer found only partly supported takes its suggested spans too.
+        The re-anchored card is reviewed once more. Returns the issues that stand (plus an INFO
+        record per re-anchored line) and the anchors applied. A MODEL INFERENCE line is never
+        re-anchored (`with_citations` leaves it untouched)."""
+        assert self.reviewer is not None
+        out = self.reviewer(card, claims)
+        issues, suggested = (out.issues, dict(out.anchors)) if isinstance(out, ReviewOutcome) \
+            else (out, {})
+        pool = {cid: c for cid, c in claims.items() if c.span_verified}
+        sents = card_sentences(card)
+        anchors: dict[str, list[str]] = {}
+        for i in issues:
+            if i.severity is not IssueSeverity.BLOCK or i.scope != "card_sentence":
+                continue
+            sid = i.ref_id.partition(":")[2]
+            if sid not in sents or sid in anchors:
+                continue
+            text, _prov, cids = sents[sid]
+            extra = suggested.get(sid)
+            if not extra and i.code in _REANCHORABLE:
+                extra = reanchor_sentence(text, cids, pool)
+            if not extra and i.code == "REVIEW_UNSUPPORTED":
+                extra = overlap_anchor(text, cids, pool)  # candidates; the re-review decides
+            if not extra and i.code == "REVIEW_UNSUPPORTED":
+                got = passage_anchor(text, ctx.version.blocks)
+                if got is not None:
+                    pc = passage_claim(got[0], got[1], article_id=ctx.article.article_id,
+                                       article_version_id=ctx.version.version_id,
+                                       origin_id=None, run_id=ctx.run_id)
+                    if pc.span_verified:
+                        claims[pc.claim_id] = pool[pc.claim_id] = pc
+                        with self.store.tx():
+                            self.store.add_claim(pc)
+                        extra = [pc.claim_id]
+            if extra:
+                anchors[sid] = extra
+        partial = {i.ref_id.partition(":")[2] for i in issues if i.code == "REVIEW_PARTIAL"}
+        for sid, ids in suggested.items():
+            if sid in partial and sid not in anchors:
+                anchors[sid] = ids
+        if not anchors:
+            return issues, {}
+        card2 = with_citations(card, anchors, claims)
+        out2 = self.reviewer(card2, claims)
+        issues2 = out2.issues if isinstance(out2, ReviewOutcome) else out2
+        still = {i.ref_id.partition(":")[2] for i in issues2
+                 if i.severity is IssueSeverity.BLOCK and i.scope == "card_sentence"}
+        tid = card.header.thesis_id
+        first = {i.ref_id.partition(":")[2]: i for i in issues
+                 if i.scope == "card_sentence" and (i.severity is IssueSeverity.BLOCK
+                                                    or i.code == "REVIEW_PARTIAL")}
+        notes = [self._issue(ctx, "card_sentence", f"{tid}:{sid}", IssueSeverity.INFO,
+                             "SENTENCE_REANCHORED",
+                             f"{sid}: first check {first[sid].code} ({first[sid].detail[:160]}) "
+                             f"— re-anchored to {', '.join(extra)}; after re-anchoring: "
+                             + ("STILL UNSUPPORTED — withheld" if sid in still
+                                else "supported"))
+                 for sid, extra in anchors.items() if sid in first]
+        return issues2 + notes, anchors
 
     def _roles(self, h: VerifiedHypothesis | _ChallengeHyp,
                risks: list[VerifiedRisk]) -> dict[str, LinkRole]:
@@ -655,9 +788,9 @@ class Engine:
                         claims: dict[str, Claim]) -> list[CardSentence]:
         out = []
         for r in risks:
-            prov = Provenance.ARTICLE_FACT if r.claim_ids else Provenance.MODEL_INFERENCE
             out.append(CardSentence(text=f"{r.raw.statement} (scope: {r.raw.scope_qualification})",
-                                    provenance=prov, claim_ids=tuple(r.claim_ids)))
+                                    provenance=_label(r.claim_ids, claims),
+                                    claim_ids=tuple(r.claim_ids)))
         return out
 
     def _sources(self, tid: str, ctx: ArticleContext, links: list[ThesisClaimLink],
@@ -757,6 +890,12 @@ class Engine:
         return VerificationIssue(issue_id="VI-" + _sha(ctx.run_id, scope, ref, code)[:14],
                                  run_id=ctx.run_id, scope=scope, ref_id=ref, severity=sev,
                                  code=code, detail=detail, created_at=datetime.now(tz=UTC))
+
+
+def _label(ids: list[str], claims: dict[str, Claim]) -> Provenance:
+    """The label of a line restating source claims: the WEAKEST of what they are (measured
+    observation / forecast / source opinion); MODEL INFERENCE when none verified."""
+    return label_for(ids, claims) or Provenance.MODEL_INFERENCE
 
 
 #: 02 WHAT CHANGED lists at most this many items; the rest are counted in a closing item that
