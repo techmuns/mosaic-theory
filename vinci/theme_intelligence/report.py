@@ -437,7 +437,15 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     names = {sc.id: sc.publisher for sc in load_sources()}
     blocked = [s for s in d.sources if s["status"] in ("BLOCKED", "ERROR")]
     accessible = [s for s in d.sources if s["status"] in ("OK", "PARTIAL")]
-    cats = d.categories
+    # Every count below is over the theses THIS RUN created or changed (all sections, the
+    # archived included) and its EVENTS: a SKIP is archived at once, so counting active theses
+    # could never show one; and a thesis created and challenged in one run sits under NEW, so
+    # counting sections hid the challenge (both observed in the 2026-10-10 weekly run).
+    rows = [r for rs in d.categories.values() for r in rs]
+
+    def rank(a: str) -> int:
+        return ACTION_RANK[ResearchAction(a)]
+
     return {
         "accessible_sources": None if manual else f"{len(accessible)} of {len(d.sources)}",
         "blocked_sources": None if manual else (
@@ -446,13 +454,16 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
         "articles_partial": d.articles_partial,
         "articles_blocked": d.articles_blocked,
         "queued": run.get("counts", {}).get("articles_queued", 0),
-        "research_now": d.totals_active.get("RESEARCH NOW", 0),
-        "watch": d.totals_active.get("WATCH", 0),
-        "skip": d.totals_active.get("SKIP", 0),
-        "new": len(cats.get(WeeklyCategory.NEW.value, [])),
-        "upgraded": len(cats.get(WeeklyCategory.UPGRADED.value, [])),
-        "downgraded": len(cats.get(WeeklyCategory.DOWNGRADED.value, [])),
-        "challenged": len(cats.get(WeeklyCategory.CHALLENGED.value, [])),
+        "theses_this_run": len(rows),
+        "research_now": sum(1 for r in rows if r.action == ResearchAction.RESEARCH_NOW.value),
+        "watch": sum(1 for r in rows if r.action == ResearchAction.WATCH.value),
+        "skip": sum(1 for r in rows if r.action == ResearchAction.SKIP.value),
+        "new": sum(1 for r in rows if r.previous_action is None),
+        "upgraded": sum(1 for r in rows if r.previous_action is not None
+                        and rank(r.action) > rank(r.previous_action)),
+        "downgraded": sum(1 for r in rows if r.previous_action is not None
+                          and rank(r.action) < rank(r.previous_action)),
+        "challenged": sum(1 for r in rows if "CHALLENGED" in r.flags),
         "archived": d.archived_total,
         "figures_uncaptured": run.get("counts", {}).get("figures_uncaptured", 0),
         "figures_in_articles": run.get("counts", {}).get("figures_in_articles", 0),
@@ -485,7 +496,9 @@ _DASH_CSS = """
 padding:10px 12px;border-radius:8px;font-weight:700;margin:0 0 12px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}
 .kpi{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--card)}
-.kpi b{display:block;font-size:17px;line-height:1.3}.kpi span{display:block;color:var(--muted);
+.kpi b{display:block;font-size:17px;line-height:1.3}
+.kpi small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.kpi span{display:block;color:var(--muted);
 font-size:12px}
 .cat{margin:18px 0 6px;font:700 14px/1.3 ui-sans-serif,system-ui;text-transform:uppercase;
 letter-spacing:.05em}.cat small{font-weight:400;text-transform:none;letter-spacing:0;
@@ -557,7 +570,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     if d.banner:
         parts.append(f'<div class="banner">{e(d.banner)}</div>')
     k = d.kpi or {}
-    kp = ([("Sources", "single article (manual URL) — no discovery")]
+    kp: list[tuple[str, ...]] = ([("Sources", "single article (manual URL) — no discovery")]
           if k.get("accessible_sources") is None else
           [("Accessible sources", str(k["accessible_sources"])),
            ("Blocked sources", str(k["blocked_sources"]))])
@@ -565,17 +578,20 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                                  f"{k.get('articles_partial', 0)} partial"
             + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")),
            ("Research Now / Watch / Skip",
-            f"{k.get('research_now', 0)} / {k.get('watch', 0)} / {k.get('skip', 0)}"),
+            f"{k.get('research_now', 0)} / {k.get('watch', 0)} / {k.get('skip', 0)}",
+            f"of the {k.get('theses_this_run', 0)} theses this run created or changed"),
            ("New / upgraded / downgraded / challenged theses",
             f"{k.get('new', 0)} / {k.get('upgraded', 0)} / {k.get('downgraded', 0)} / "
-            f"{k.get('challenged', 0)}")]
+            f"{k.get('challenged', 0)}",
+            "this run's events — a thesis new this run can also be challenged in it")]
     if k.get("queued"):
         kp.append(("Queued by the budget cap (not yet read)", str(k["queued"])))
     if k.get("figures_in_articles"):
         kp.append(("Reported figures not yet captured",
                    f"{k.get('figures_uncaptured', 0)} of {k['figures_in_articles']}"))
     parts.append('<div class="kpis">' + "".join(
-        f'<div class="kpi"><span>{e(label)}</span><b>{e(v)}</b></div>' for label, v in kp)
+        f'<div class="kpi"><span>{e(t[0])}</span><b>{e(t[1])}</b>'
+        + (f"<small>{e(t[2])}</small>" if len(t) > 2 else "") + "</div>" for t in kp)
         + "</div>")
     if d.sources:
         parts.append('<details class="sec"' + (" open" if print_mode else "")
@@ -669,9 +685,11 @@ def render_dashboard_md(d: Dashboard) -> str:
            + (f"; queued by the budget cap, not yet read: {k['queued']}" if k.get("queued")
               else ""),
            f"- Research Now / Watch / Skip: {k.get('research_now', 0)} / {k.get('watch', 0)} / "
-           f"{k.get('skip', 0)} (archived {d.archived_total})",
+           f"{k.get('skip', 0)} — of the {k.get('theses_this_run', 0)} theses this run created "
+           f"or changed (archived in the registry: {d.archived_total})",
            f"- New / upgraded / downgraded / challenged theses: {k.get('new', 0)} / "
-           f"{k.get('upgraded', 0)} / {k.get('downgraded', 0)} / {k.get('challenged', 0)}",
+           f"{k.get('upgraded', 0)} / {k.get('downgraded', 0)} / {k.get('challenged', 0)} — "
+           f"this run's events; a thesis new this run can also be challenged in it",
            f"- Reported figures not yet captured: {k.get('figures_uncaptured', 0)} of "
            f"{k.get('figures_in_articles', 0)}", ""]
     if d.sources:

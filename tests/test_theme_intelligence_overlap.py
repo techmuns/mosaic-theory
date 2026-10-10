@@ -335,6 +335,45 @@ def test_one_article_challenging_a_thesis_twice_records_two_challenges(
     assert len(mine) == 2 and len({cb.contribution_id for cb in mine}) == 2
 
 
+def test_the_kpis_count_this_runs_theses_and_events(tmp_path: Path) -> None:
+    """Observed 2026-10-10 in the weekly run: "Skip 0" though the run skipped a thesis (a SKIP is
+    archived at once, and the strip counted ACTIVE theses), and "challenged 0" though a thesis
+    created in the run was challenged in it (the strip counted the exclusive NEW section)."""
+    from vinci.theme_intelligence.report import build_dashboard, kpis
+
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("fixture", as_of=W1)
+    ingest_jpm(pipe)  # three theses created this run
+    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
+    bear = Hypo(slug="bear-and-skip", publisher="Hypo Research B", published=W1, blocks=[
+        ("paragraph", "Seat counts at large SaaS vendors fell 8% in 4Q25 as coding agents "
+                      "replaced junior developer licenses.")])
+    x = extraction(
+        [claim("c1", "b001", "Seat counts at large SaaS vendors fell 8% in 4Q25",
+               "SaaS seat counts -8% in 4Q25", metric="SaaS seat count change", value=8,
+               value_text="8%", unit="%", period="4Q25", scope="large SaaS vendors"),
+         claim("c2", "b001", "a quote this article never prints", "unverifiable", value=5,
+               value_text="5%", unit="%")],
+        [hyp("h1", "Agents erode SaaS seat revenue", node=bull.key_node,
+             mechanism="disruption_revenue_erosion", direction="negative", supporting=["c1"]),
+         hyp("h2", "Optics demand rises", node="ai_infrastructure.optical_networking",
+             mechanism="demand_volume_shift", supporting=["c2"])])
+    ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
+    pipe.engine.archive_pass(run_id=run.run_id, as_of=W1)  # as a real run ends: SKIP archived
+    d = build_dashboard(pipe.store, run.run_id, cards={}, generated="t")
+    k = kpis(d, pipe.store)
+    rows = [r for rs in d.categories.values() for r in rs]
+    assert k["theses_this_run"] == len(rows) == 5
+    assert (k["research_now"], k["watch"], k["skip"]) == tuple(
+        sum(1 for r in rows if r.action == a) for a in ("RESEARCH NOW", "WATCH", "SKIP"))
+    assert k["skip"] == 1  # the unverifiable optics thesis, archived at once
+    assert k["new"] == 5
+    assert k["challenged"] == 1  # the software thesis: created AND challenged this run
+    assert not d.categories.get("CHALLENGED")  # …which the exclusive sections file under NEW
+    assert len(d.categories["ARCHIVED"]) == 1 and len(d.categories["NEW"]) == 4  # the SKIP
+    assert d.totals_active.get("SKIP", 0) == 0  # the old strip's "Skip" could never count it
+
+
 # --- 7. a sector-only paper ----------------------------------------------------------------------
 
 def test_a_sector_only_paper_adds_no_company(pipe: Pipeline) -> None:
