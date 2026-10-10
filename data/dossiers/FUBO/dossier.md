@@ -1,6 +1,6 @@
 # Dossier — FuboTV Inc. (NYSE: FUBO)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.3_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -534,6 +534,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-07 · forward_consensus, mechanical.catalyst_path — refresh at 2026-08-16.1
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
+  - 2026-10-10 · anchor, date_semantics, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 7d old — 2026-08-11 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 7d old (2026-08-11, valuation.implied_expectations.multiples_as_of) — within the ceiling

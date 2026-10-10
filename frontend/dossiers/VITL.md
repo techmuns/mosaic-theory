@@ -1,6 +1,6 @@
 # Dossier — Vital Farms, Inc. (Nasdaq: VITL)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-08.4_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -549,6 +549,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
+  - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 28d old (2026-07-21, valuation.implied_expectations.multiples_as_of) — within the ceiling

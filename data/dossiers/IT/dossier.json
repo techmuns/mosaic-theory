@@ -8682,7 +8682,8 @@
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "TWIN 'Gartner (own 2020 arc)' has numbers ['17', '2020', '25'] — must be non-numeric"
+    "TWIN 'Gartner (own 2020 arc)' has numbers ['17', '2020', '25'] — must be non-numeric",
+    "VALUATION_RECIPE_BASIS_CONFLICT: IT: the two share counts disagree by 5.43% — stock_info.shares_out 63,148,976 against anchor.diluted_shares 66,581,000 (diluted weighted-average). Beyond 2% that is a structural change (a conversion, a raise, a split), not the buyback pace. Resolve which count belongs in the denominator before writing a value per share."
   ],
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-18T12:39:51.873184Z",
@@ -11296,7 +11297,7 @@
         ],
         "band": {
           "metric": "EV/NTM Revenue",
-          "current": 1.711308,
+          "latest_observed_close": 1.711308,
           "low": 1.6014,
           "high": 6.306263,
           "median": 4.009006,
@@ -11314,7 +11315,9 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "66405c3bc0",
-          "source_mtime": "2026-09-01T17:49:32+00:00"
+          "source_mtime": "2026-09-01T17:49:32+00:00",
+          "latest_close_date": "2026-07-17",
+          "latest_observed_close_in_distribution": false
         }
       },
       {
@@ -11521,7 +11524,7 @@
         ],
         "band": {
           "metric": "EV/NTM EBITDA",
-          "current": 7.006961,
+          "latest_observed_close": 7.006961,
           "low": 6.556103,
           "high": 27.968797,
           "median": 21.53406,
@@ -11539,7 +11542,9 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "66405c3bc0",
-          "source_mtime": "2026-09-01T17:49:32+00:00"
+          "source_mtime": "2026-09-01T17:49:32+00:00",
+          "latest_close_date": "2026-07-17",
+          "latest_observed_close_in_distribution": false
         }
       },
       {
@@ -11746,7 +11751,7 @@
         ],
         "band": {
           "metric": "EV/NTM EBIT",
-          "current": 8.677459,
+          "latest_observed_close": 8.677459,
           "low": 8.119296,
           "high": 60.764295,
           "median": 32.890784,
@@ -11764,7 +11769,9 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "66405c3bc0",
-          "source_mtime": "2026-09-01T17:49:32+00:00"
+          "source_mtime": "2026-09-01T17:49:32+00:00",
+          "latest_close_date": "2026-07-17",
+          "latest_observed_close_in_distribution": false
         }
       },
       {
@@ -11971,7 +11978,7 @@
         ],
         "band": {
           "metric": "P/NTM EPS",
-          "current": 9.909311,
+          "latest_observed_close": 9.909311,
           "low": 9.153502,
           "high": 47.630824,
           "median": 35.7851505,
@@ -11989,7 +11996,9 @@
           "implied_ebit_margin": null,
           "implied_d_and_a_margin": null,
           "source_sha256": "66405c3bc0",
-          "source_mtime": "2026-09-01T17:49:32+00:00"
+          "source_mtime": "2026-09-01T17:49:32+00:00",
+          "latest_close_date": "2026-07-17",
+          "latest_observed_close_in_distribution": false
         }
       }
     ],
@@ -13151,6 +13160,95 @@
     "source_sha256": "66405c3bc0",
     "estimates_sha256": "d324beb8f6"
   },
+  "valuation_basis": {
+    "recipe": "R1_midcycle_margin_evebitda",
+    "priceable": false,
+    "status_reason": "R1-family (R1_midcycle_margin_evebitda): priced from the anchor's R1 inputs — 1 conflict(s), see `conflicts`",
+    "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
+    "multiple_basis": "EV/EBITDA",
+    "current_multiple": null,
+    "history_series": "mechanical.valuation.own_history (trailing EV/EBITDA, TEV/LTM)",
+    "ev_bridge_basis": "EDGAR lease-inclusive net debt (the anchor's)",
+    "scenario_formula": "((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda - net_debt",
+    "per_share_formula": "exit_equity_value / exit_share_count",
+    "formula_steps": [
+      "EBIT = revenue × op margin",
+      "EBITDA = EBIT + D&A",
+      "EV = EBITDA × exit multiple (EV/EBITDA)",
+      "equity = EV − net debt",
+      "value/share = equity ÷ diluted shares"
+    ],
+    "ev_bridge": {
+      "primary_basis": "EDGAR lease-inclusive net debt (the anchor's)",
+      "current_claims": 1840.79,
+      "current_claims_source": "anchor.net_debt (EDGAR: total debt 2,979 + finance leases 0 + operating leases 350 − cash 1,489 ($M))",
+      "balance_sheet_date": null,
+      "components": [],
+      "ciq_tev_less_market_cap": 1688.2,
+      "reconciles_to_ciq_tev": null,
+      "cross_check": {
+        "basis": "CIQ TEV claims (ev_bridge)",
+        "value": 1688.229,
+        "source": "ev_bridge.claims",
+        "eligible_for_primary_bridge": false,
+        "reason": "R1's record subtracts the anchor's EDGAR net debt by its own rule; CIQ's claims are shown beside it, never substituted"
+      }
+    },
+    "exit_claims": {
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "forecast_status": "assumption",
+      "current_claims": 1840.79,
+      "by_year": [],
+      "fcf_rollforward_used": false,
+      "rule": "R1's record subtracts the anchor's net debt as given — today's figure, held",
+      "reason": null
+    },
+    "exit_share_count": {
+      "default_method": "HOLD_CURRENT_SHARES_OUTSTANDING",
+      "current_value": 63148976.0,
+      "unit": "shares",
+      "current_source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)",
+      "count_basis": "BASIC shares outstanding at the EDGAR cover date (point-in-time) — it EXCLUDES the dilutive increment (options, RSUs, convertibles)",
+      "includes_dilutive_increment": false,
+      "forecast_status": "assumption",
+      "override_allowed": true,
+      "override_rule": "replace with the point-in-time DILUTED count — this basic count plus the dilutive increment stated from the filing (options and RSUs by the treasury-stock method, convertibles if-converted) — or with a reliable, explicit forward share-count forecast on that basis; never the diluted weighted average, which is a period average",
+      "diluted_weighted_average": {
+        "value": 66581000.0,
+        "unit": "shares",
+        "source": "anchor.diluted_shares (diluted weighted-average (latest 10-Q); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding)",
+        "eligible_as_point_in_time_denominator": false
+      }
+    },
+    "non_operating_assets": {
+      "primary_treatment": "included_in_vendor_tev",
+      "carve_out": false,
+      "reason": "the primary current and historical EV multiple series use the vendor's TEV definition, which carries non-operating investments inside enterprise value; carving them out of the bridge alone would value a different enterprise than the one the multiple was struck on",
+      "adjusted_operating_ev_allowed": true,
+      "adjustment_condition": "only if BOTH the current and the historical valuation series are rebuilt consistently on the adjusted operating-EV basis — a separate, consistently rebased framework, never a carve-out in the bridge alone"
+    },
+    "anchor_fields_eligible": true,
+    "conflicts": [
+      "IT: the two share counts disagree by 5.43% — stock_info.shares_out 63,148,976 against anchor.diluted_shares 66,581,000 (diluted weighted-average). Beyond 2% that is a structural change (a conversion, a raise, a split), not the buyback pace. Resolve which count belongs in the denominator before writing a value per share."
+    ]
+  },
+  "date_semantics": {
+    "screen_reference_date": "2026-08-14",
+    "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
+    "analysis_as_of": "2026-08-17",
+    "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
+    "price_as_of": "2026-08-17",
+    "market_cap_as_of": "2026-07-29",
+    "tev_as_of": "2026-07-29",
+    "consensus_as_of": "≥2026-07-27",
+    "balance_sheet_date": "2026-03-31",
+    "historical_multiple_latest_observation": "2026-07-17",
+    "historical_multiple_history_through": "2026-06-30",
+    "stock_performance_as_of": "2026-08-14",
+    "assembled_at": "2026-08-18T12:39:51.873184Z",
+    "valuation_snapshot_as_of": "2026-07-29",
+    "price_days_after_valuation_snapshot": 19
+  },
   "layer_refreshes": [
     {
       "date": "2026-08-31",
@@ -13201,6 +13299,18 @@
       "writer": "refresh",
       "layers": [
         "ev_bridge"
+      ]
+    },
+    {
+      "date": "2026-10-10",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor",
+        "date_semantics",
+        "forward_multiple_history",
+        "qa_flags",
+        "valuation_basis"
       ]
     }
   ],
@@ -13262,6 +13372,23 @@
     "anchor_base_value_per_share": 364.0728,
     "anchor_ev_ebit": 28.5008,
     "overall_confidence": "firm",
-    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "scenario_eligibility": {
+      "eligible_for_scenario_valuation": true,
+      "fields": [
+        "multiple_basis",
+        "margin",
+        "multiple",
+        "d_and_a",
+        "net_debt",
+        "diluted_shares",
+        "ltm_revenue",
+        "ltm_fcf",
+        "anchor_base_value_per_share",
+        "midcycle_gap",
+        "anchor_ev_ebit"
+      ],
+      "reason": "the active recipe is R1-family (R1_midcycle_margin_evebitda) and R1's anchor applies — these fields are an R1 record's inputs (its template reads `d_and_a` and `net_debt` from here)"
+    }
   }
 }
