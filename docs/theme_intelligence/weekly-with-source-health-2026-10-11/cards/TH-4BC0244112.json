@@ -1,0 +1,1279 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "consumer_electronics"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T08:31:46.453602Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-08",
+   "latest_article_date": "2026-10-08",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-4BC0244112",
+   "title": "Rising component costs threaten 2027 notebook shipments and brand margins"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-bdd840bbdfb58c",
+     "C-ade954eada83ea",
+     "C-5c4866cc0eff1f",
+     "C-160e2e66912459"
+    ],
+    "provenance": "FORECAST",
+    "text": "TrendForce projects a low-single-digit 2027 notebook shipment decline, which could deepen to high-single-digit if elevated CPU/DRAM costs are fully passed to consumers; CPU, DRAM and SSD were ~68% of BOM for a US$900 notebook in 3Q26. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1504a5fa7c87be",
+     "C-160e2e66912459",
+     "C-ade954eada83ea",
+     "C-53fccc4a1db229"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The focus of the 2027 notebook market will shift from component availability to whether consumers can absorb higher prices, with brands' ability to balance pricing, specs, supply and profitability being critical. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Notebook brands face a margin-vs-volume squeeze in 2027 that could pressure both unit shipments and gross margins, but the article does not quantify the earnings effect on any named company."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ade954eada83ea"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "If DRAM and CPU prices stay elevated and costs are passed to consumers, the full-year shipment decline could reach the high-single-digit range. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5c4866cc0eff1f"
+     ],
+     "original_date": "2026-10-08",
+     "period": "3Q26",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "For a mainstream notebook with a US$900 MSRP, CPU, DRAM, and SSD accounted for approximately 68% of BOM cost in 3Q26. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-bdd840bbdfb58c"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Global notebook shipments are projected to decline by a low-single-digit percentage in 2027. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-160e2e66912459"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "If brands mitigate retail price impact via mix/spec adjustment and cost absorption, the shipment decline could remain low-single-digit. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-add02c9a2fc9f2"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "DRAM supply is likely to stay tight in 2027 as AI servers absorb advanced-process capacity, limiting PC DRAM supply growth."
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f3fc6fa28329ae"
+     ],
+     "original_date": "2026-10-08",
+     "period": "after 2026",
+     "provenance": "FORECAST",
+     "text": "Replacement demand momentum is likely to weaken in periods after 2026 because some purchases were pulled forward"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 9 pieces of evidence from A-19eb305b208e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-ade954eada83ea"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Higher retail prices extend replacement cycles, deepening the shipment decline potentially to high-single-digit. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-ade954eada83ea",
+     "C-53fccc4a1db229"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Brands pass costs to consumers via higher retail prices, or reduce specifications. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-5c4866cc0eff1f",
+     "C-116467c3e6297e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "CPU, DRAM and SSD costs rise and account for ~68% of BOM for a mainstream US$900 notebook as low-cost inventories deplete. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-160e2e66912459",
+     "C-53fccc4a1db229"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "margins",
+    "text": "Absorbing costs instead of raising prices would squeeze gross margins. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-160e2e66912459",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "notebook shipments growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "decline",
+     "conditional"
+    ],
+    "quote": "If brands can mitigate the impact on retail prices by adjusting product mixes and specifications while absorbing some of the additional costs, the shipment decline could remain in the low-single-digit range.",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "low-single-digit range"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5c4866cc0eff1f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "CPU+DRAM+SSD share of BOM cost",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "3Q26",
+    "qualifiers": [
+     "mainstream notebook",
+     "MSRP US$900"
+    ],
+    "quote": "for a mainstream notebook with a manufacturer's suggested retail price (MSRP) of US$900, CPU, DRAM, and SSD components accounted for approximately 68% of the bill of materials (BOM) cost in 3Q26",
+    "role": "supports",
+    "unit": "%",
+    "value": 68.0,
+    "value_text": "approximately 68%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ade954eada83ea",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "notebook shipments growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "decline",
+     "conditional on elevated DRAM and CPU prices"
+    ],
+    "quote": "if DRAM and CPU prices remain elevated, brands may be forced to pass more of these costs on to consumers. These higher retail prices could further extend replacement cycles, potentially pushing the full-year shipment decline into the high-single-digit range.",
+    "role": "catalyst",
+    "unit": "%",
+    "value": null,
+    "value_text": "high-single-digit range"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bdd840bbdfb58c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "notebook shipments growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "decline"
+    ],
+    "quote": "Global notebook shipments are currently projected to decline by a low-single-digit percentage in 2027.",
+    "role": "catalyst",
+    "unit": "%",
+    "value": null,
+    "value_text": "low-single-digit percentage"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-116467c3e6297e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "As low-cost inventories deplete, brands will face more direct pressure from rising CPU, DRAM and SSD prices",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "as lower-cost inventories are gradually depleted, brands will face more direct pressure from rising CPU, DRAM, and SSD prices",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1504a5fa7c87be",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The primary notebook market risk in 2027 is expected to shift from supply constraints to rising costs impacting demand.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "the primary risk facing the market in 2027 is expected to shift from supply constraints to the impact of rising costs on demand",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-53fccc4a1db229",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Brands face a trade-off: raising prices weakens demand, absorbing costs squeezes gross margins, and cutting specifications undermines competitiveness",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Raising retail prices risks weakening demand, while absorbing higher costs would squeeze gross margins. Alternatively, reducing specifications such as memory capacity to control BOM costs could undermine product competitiveness.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-add02c9a2fc9f2",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "DRAM supply is likely to stay tight in 2027 as AI servers absorb advanced-process capacity, limiting PC DRAM supply growth.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "DRAM supply is likely to stay tight as AI server applications continue to absorb advanced-process capacity, while PC DRAM faces the risk of limited supply growth",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f3fc6fa28329ae",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Replacement demand momentum is likely to weaken in periods after 2026 because some purchases were pulled forward",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "after 2026",
+    "qualifiers": [
+     "likely"
+    ],
+    "quote": "replacement momentum in subsequent periods is likely to weaken",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-19eb305b208e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-83c533f1b7390f",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the notebook industry report and all forecasts."
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-19eb305b208e",
+     "claim_ids": [
+      "C-bdd840bbdfb58c",
+      "C-ade954eada83ea",
+      "C-5c4866cc0eff1f"
+     ],
+     "direction": "negative",
+     "name": "Consumer Electronics",
+     "provenance": "FORECAST",
+     "quote": "Consumer Electronics"
+    }
+   ],
+   "sectors": [
+    "notebook brands",
+    "consumer electronics"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-1c031376a02b4a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "2026 shipments were supported by pull-forward demand and better CPU availability, but this does not indicate a genuine end-market recovery."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-add02c9a2fc9f2"
+     ],
+     "provenance": "FORECAST",
+     "text": "DRAM supply likely stays tight through 2027 as AI servers absorb advanced-process capacity, structurally pressuring PC component costs."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-160e2e66912459"
+     ],
+     "provenance": "FORECAST",
+     "text": "If brands absorb some costs and adjust product mix/specs, the shipment decline could stay in the low-single-digit range."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM/CPU prices easing in 2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "NAND supply loosening reducing SSD costs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Shipment data showing resilient replacement demand"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-add02c9a2fc9f2",
+      "C-dba911d7d3a6eb",
+      "C-56423d34a3e302"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Notebook component supply in 2027 may become more uneven: DRAM stays tight from AI server demand while NAND may ease in 2H27, and PCBs, MLCCs and PMICs face price/lead-time pressure from capacity, raw material and geopolitical issues. (scope: Notebook component supply chain, 2027; directional TrendForce assessment without quantified price impact.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: DRAM, CPU, and SSD prices remain elevated and brands pass costs to consumers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether specific listed notebook brands can pass costs or will absorb margin pressure"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Magnitude of 2027 CPU/DRAM/SSD price increases"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether consensus already reflects the shipment decline"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Component prices decline"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Replacement demand proves resilient"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check listed notebook OEM/ODM gross margin guidance and DRAM/CPU contract price trajectories to gauge how much 2027 cost inflation will be passed through vs absorbed."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM and CPU contract prices continue rising into 2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Brands signal full cost pass-through"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-19eb305b208e",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-bdd840bbdfb58c",
+     "C-ade954eada83ea",
+     "C-1504a5fa7c87be",
+     "C-5c4866cc0eff1f",
+     "C-160e2e66912459",
+     "C-add02c9a2fc9f2",
+     "C-f3fc6fa28329ae",
+     "C-116467c3e6297e",
+     "C-53fccc4a1db229",
+     "C-dba911d7d3a6eb",
+     "C-56423d34a3e302"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-08T16:24:43+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Rising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipment Declines and Price Increases, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261008-13264.html"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 08:33 UTC from the registry (ti-engine-2; run R-20261011T083033Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-19eb305b208e",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T08:31:46.453602Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-08",
+     "latest_article_date": "2026-10-08",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-4BC0244112",
+     "title": "Rising component costs threaten 2027 notebook shipments and brand margins"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-bdd840bbdfb58c",
+       "C-ade954eada83ea",
+       "C-5c4866cc0eff1f",
+       "C-160e2e66912459"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce projects a low-single-digit 2027 notebook shipment decline, which could deepen to high-single-digit if elevated CPU/DRAM costs are fully passed to consumers; CPU, DRAM and SSD were ~68% of BOM for a US$900 notebook in 3Q26. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1504a5fa7c87be",
+       "C-160e2e66912459",
+       "C-ade954eada83ea",
+       "C-53fccc4a1db229"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The focus of the 2027 notebook market will shift from component availability to whether consumers can absorb higher prices, with brands' ability to balance pricing, specs, supply and profitability being critical. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Notebook brands face a margin-vs-volume squeeze in 2027 that could pressure both unit shipments and gross margins, but the article does not quantify the earnings effect on any named company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ade954eada83ea"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "If DRAM and CPU prices stay elevated and costs are passed to consumers, the full-year shipment decline could reach the high-single-digit range. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5c4866cc0eff1f"
+       ],
+       "original_date": "2026-10-08",
+       "period": "3Q26",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "For a mainstream notebook with a US$900 MSRP, CPU, DRAM, and SSD accounted for approximately 68% of BOM cost in 3Q26. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-bdd840bbdfb58c"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Global notebook shipments are projected to decline by a low-single-digit percentage in 2027. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-160e2e66912459"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "If brands mitigate retail price impact via mix/spec adjustment and cost absorption, the shipment decline could remain low-single-digit. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-add02c9a2fc9f2"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "DRAM supply is likely to stay tight in 2027 as AI servers absorb advanced-process capacity, limiting PC DRAM supply growth."
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f3fc6fa28329ae"
+       ],
+       "original_date": "2026-10-08",
+       "period": "after 2026",
+       "provenance": "FORECAST",
+       "text": "Replacement demand momentum is likely to weaken in periods after 2026 because some purchases were pulled forward"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 9 pieces of evidence from A-19eb305b208e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-ade954eada83ea"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Higher retail prices extend replacement cycles, deepening the shipment decline potentially to high-single-digit. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-ade954eada83ea",
+       "C-53fccc4a1db229"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Brands pass costs to consumers via higher retail prices, or reduce specifications. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-5c4866cc0eff1f",
+       "C-116467c3e6297e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "CPU, DRAM and SSD costs rise and account for ~68% of BOM for a mainstream US$900 notebook as low-cost inventories deplete. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-160e2e66912459",
+       "C-53fccc4a1db229"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "margins",
+      "text": "Absorbing costs instead of raising prices would squeeze gross margins. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-160e2e66912459",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "notebook shipments growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "decline",
+       "conditional"
+      ],
+      "quote": "If brands can mitigate the impact on retail prices by adjusting product mixes and specifications while absorbing some of the additional costs, the shipment decline could remain in the low-single-digit range.",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "low-single-digit range"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5c4866cc0eff1f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "CPU+DRAM+SSD share of BOM cost",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "3Q26",
+      "qualifiers": [
+       "mainstream notebook",
+       "MSRP US$900"
+      ],
+      "quote": "for a mainstream notebook with a manufacturer's suggested retail price (MSRP) of US$900, CPU, DRAM, and SSD components accounted for approximately 68% of the bill of materials (BOM) cost in 3Q26",
+      "role": "supports",
+      "unit": "%",
+      "value": 68.0,
+      "value_text": "approximately 68%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ade954eada83ea",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "notebook shipments growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "decline",
+       "conditional on elevated DRAM and CPU prices"
+      ],
+      "quote": "if DRAM and CPU prices remain elevated, brands may be forced to pass more of these costs on to consumers. These higher retail prices could further extend replacement cycles, potentially pushing the full-year shipment decline into the high-single-digit range.",
+      "role": "catalyst",
+      "unit": "%",
+      "value": null,
+      "value_text": "high-single-digit range"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bdd840bbdfb58c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "notebook shipments growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "decline"
+      ],
+      "quote": "Global notebook shipments are currently projected to decline by a low-single-digit percentage in 2027.",
+      "role": "catalyst",
+      "unit": "%",
+      "value": null,
+      "value_text": "low-single-digit percentage"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-116467c3e6297e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "As low-cost inventories deplete, brands will face more direct pressure from rising CPU, DRAM and SSD prices",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "as lower-cost inventories are gradually depleted, brands will face more direct pressure from rising CPU, DRAM, and SSD prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1504a5fa7c87be",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The primary notebook market risk in 2027 is expected to shift from supply constraints to rising costs impacting demand.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "the primary risk facing the market in 2027 is expected to shift from supply constraints to the impact of rising costs on demand",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-53fccc4a1db229",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Brands face a trade-off: raising prices weakens demand, absorbing costs squeezes gross margins, and cutting specifications undermines competitiveness",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Raising retail prices risks weakening demand, while absorbing higher costs would squeeze gross margins. Alternatively, reducing specifications such as memory capacity to control BOM costs could undermine product competitiveness.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-add02c9a2fc9f2",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DRAM supply is likely to stay tight in 2027 as AI servers absorb advanced-process capacity, limiting PC DRAM supply growth.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "DRAM supply is likely to stay tight as AI server applications continue to absorb advanced-process capacity, while PC DRAM faces the risk of limited supply growth",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f3fc6fa28329ae",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Replacement demand momentum is likely to weaken in periods after 2026 because some purchases were pulled forward",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "after 2026",
+      "qualifiers": [
+       "likely"
+      ],
+      "quote": "replacement momentum in subsequent periods is likely to weaken",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-19eb305b208e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-83c533f1b7390f",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the notebook industry report and all forecasts."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-19eb305b208e",
+       "claim_ids": [
+        "C-bdd840bbdfb58c",
+        "C-ade954eada83ea",
+        "C-5c4866cc0eff1f"
+       ],
+       "direction": "negative",
+       "name": "Consumer Electronics",
+       "provenance": "FORECAST",
+       "quote": "Consumer Electronics"
+      }
+     ],
+     "sectors": [
+      "notebook brands",
+      "consumer electronics"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-1c031376a02b4a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "2026 shipments were supported by pull-forward demand and better CPU availability, but this does not indicate a genuine end-market recovery."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-add02c9a2fc9f2"
+       ],
+       "provenance": "FORECAST",
+       "text": "DRAM supply likely stays tight through 2027 as AI servers absorb advanced-process capacity, structurally pressuring PC component costs."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-160e2e66912459"
+       ],
+       "provenance": "FORECAST",
+       "text": "If brands absorb some costs and adjust product mix/specs, the shipment decline could stay in the low-single-digit range."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM/CPU prices easing in 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "NAND supply loosening reducing SSD costs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Shipment data showing resilient replacement demand"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-add02c9a2fc9f2",
+        "C-dba911d7d3a6eb",
+        "C-56423d34a3e302"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Notebook component supply in 2027 may become more uneven: DRAM stays tight from AI server demand while NAND may ease in 2H27, and PCBs, MLCCs and PMICs face price/lead-time pressure from capacity, raw material and geopolitical issues. (scope: Notebook component supply chain, 2027; directional TrendForce assessment without quantified price impact.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: DRAM, CPU, and SSD prices remain elevated and brands pass costs to consumers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether specific listed notebook brands can pass costs or will absorb margin pressure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Magnitude of 2027 CPU/DRAM/SSD price increases"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether consensus already reflects the shipment decline"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Component prices decline"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Replacement demand proves resilient"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check listed notebook OEM/ODM gross margin guidance and DRAM/CPU contract price trajectories to gauge how much 2027 cost inflation will be passed through vs absorbed."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM and CPU contract prices continue rising into 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Brands signal full cost pass-through"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-19eb305b208e",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-bdd840bbdfb58c",
+       "C-ade954eada83ea",
+       "C-1504a5fa7c87be",
+       "C-5c4866cc0eff1f",
+       "C-160e2e66912459",
+       "C-add02c9a2fc9f2",
+       "C-f3fc6fa28329ae",
+       "C-116467c3e6297e",
+       "C-53fccc4a1db229",
+       "C-dba911d7d3a6eb",
+       "C-56423d34a3e302"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-08T16:24:43+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Rising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipment Declines and Price Increases, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261008-13264.html"
+     }
+    ]
+   },
+   "content_sha": "ae3461ed91b8a432cf8b7da30e7d40178a349018a27ecfb38b22b94d141659c0",
+   "created_at": "2026-10-11T08:31:46.458822Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-5c4866cc0eff1f",
+       "C-160e2e66912459",
+       "C-add02c9a2fc9f2",
+       "C-f3fc6fa28329ae",
+       "C-bdd840bbdfb58c",
+       "C-ade954eada83ea"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "4 fundamental step(s) shown by the source, 4 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-160e2e66912459",
+       "C-add02c9a2fc9f2",
+       "C-f3fc6fa28329ae",
+       "C-bdd840bbdfb58c",
+       "C-ade954eada83ea",
+       "C-5c4866cc0eff1f"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-160e2e66912459: forecast window 2027-01-01..2027-12-31 (2027); C-add02c9a2fc9f2: forecast window 2027-01-01..2027-12-31 (2027); C-f3fc6fa28329ae: forecast window 2026-01-01..2026-12-31 (2026); C-bdd840bbdfb58c: forecast window 2027-01-01..2027-12-31 (2027); showing 4 of 6); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: Consumer Electronics",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-bdd840bbdfb58c, C-ade954eada83ea",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T083033Z-scan",
+   "thesis_id": "TH-4BC0244112",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

@@ -331,6 +331,11 @@ PR (CLAUDE.md: coin-time translation).
 - **Near-term fundamental inflection / F12** (theme intelligence, `priority.py`) — plain words:
   *the second road to RESEARCH NOW: a credible, source-explained change in a fundamental within
   2-4 quarters, plus the question "is it already in estimates?"* — never a forecast alone.
+- **Source health** (theme intelligence, `health.py`, `sources --check-health`) — plain words: *is
+  each publisher channel still being read — access, discovery, a few real articles and their
+  dates — checked cheaply and kept as history*: HEALTHY / DEGRADED / BLOCKED / ERROR / UNKNOWN,
+  with content freshness (FRESH / QUIET) kept apart; a third status beside a scan's execution and
+  its research verification.
 - **Research-verification status** (theme intelligence, `report.research_verification`) — plain
   words: *how much of what a run read is accounted for*, shown apart from whether the run
   executed; a completed scan with open gaps reads INCOMPLETE, never verified.

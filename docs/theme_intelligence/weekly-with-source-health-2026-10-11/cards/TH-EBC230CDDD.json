@@ -1,0 +1,2798 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "ai_models_platforms"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T08:31:47.236850Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-08",
+   "latest_article_date": "2026-10-08",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-EBC230CDDD",
+   "title": "China's frontier labs race ahead without safety gating, intensifying competition for US labs"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-2e352ca16a7e09",
+     "C-c4a988d866ab2d",
+     "C-e177d992ccf6e5",
+     "C-1bcfbfc203fc1c",
+     "C-f4e8ccaec3d482",
+     "C-2d514b8231bfc3"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SemiAnalysis documents that 9 leading Chinese labs ship models at thirty-fold-higher cadence with no frontier-safety gating (94.9% of 857 releases have no safety disclosure), remaining in a release and price war with cheap open-weight models, while US labs that called for pacing (Anthropic) still shipped new models framed as staying competitive with China."
+   },
+   {
+    "claim_ids": [
+     "C-1bcfbfc203fc1c",
+     "C-955bd8daad0275"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues no one, including Anthropic, can unilaterally pace the frontier when Chinese labs will not slow, so pacing collapses into 'remaining competitive with China.'"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The absence of any Chinese slowdown and the proliferation of cheap Chinese open-weight models is a competitive and pricing headwind for Western frontier labs like Anthropic, but the article quantifies no revenue, margin or valuation impact on listed equities."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2e352ca16a7e09"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2021 to 15 September 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "813 releases (94.9%) have no safety disclosure at all."
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c4a988d866ab2d"
+     ],
+     "original_date": "2026-10-08",
+     "period": "Q3 2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Release cadence rose from 3 in Q1 2023 to 101 in Q3 2025, a roughly thirty-fold rise."
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f4e8ccaec3d482"
+     ],
+     "original_date": "2026-10-08",
+     "period": "September 2026",
+     "provenance": "SOURCE OPINION",
+     "text": "Anthropic was reported weighing a new model before its IPO as cheap open-weight rivals, especially in China, squeezed the economics."
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-00088b169237b8"
+     ],
+     "original_date": "2026-10-08",
+     "period": "since mid-2023",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Open-weight releases make up more than half of every quarter since mid-2023."
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1bcfbfc203fc1c"
+     ],
+     "original_date": "2026-10-08",
+     "period": "September 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China."
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b344f1ae454450"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment."
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 20 pieces of evidence from A-5bfa8fff567e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-c4a988d866ab2d",
+     "C-00088b169237b8",
+     "C-2e352ca16a7e09"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "Chinese frontier labs accelerate releases (101 in Q3 2025 vs 3 in Q1 2023) with majority open-weight and no safety gating."
+   },
+   {
+    "claim_ids": [
+     "C-f4e8ccaec3d482"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Cheap open-weight Chinese rivals squeeze the economics of Western model developers."
+   },
+   {
+    "claim_ids": [
+     "C-f4e8ccaec3d482"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Any effect on listed-company revenue or margins would flow through model pricing and share, but the article does not quantify it and most named Chinese labs and Anthropic are private."
+   },
+   {
+    "claim_ids": [
+     "C-1bcfbfc203fc1c"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "market_reaction",
+    "text": "Anthropic frames its new release as 'remaining competitive with China' rather than pacing."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-00088b169237b8",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "open-weight share of releases",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since mid-2023",
+    "qualifiers": [
+     "every quarter"
+    ],
+    "quote": "open-weight releases (dark blue) make up more than half of every quarter since mid-2023",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "more than half"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-00b7bda1e61613",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "ByteDance releases with safety result",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [
+     "largely closed"
+    ],
+    "quote": "ByteDance\u2019s largely closed Doubao fleet 2 in 120.",
+    "role": "supports",
+    "unit": "of 120 releases",
+    "value": 2.0,
+    "value_text": "2"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-112f146a7e6e4e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "max releases with safety result per quarter",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "per quarter (Q1 2023\u2013Q3 2025)",
+    "qualifiers": [
+     "never exceed"
+    ],
+    "quote": "Releases with any safety result never exceed 7 in a quarter.",
+    "role": "supports",
+    "unit": "releases",
+    "value": 7.0,
+    "value_text": "7"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2b5d786f7f0c24",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "regulatory texts issued",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "five days (mid-September 2026)",
+    "qualifiers": [
+     "in five days"
+    ],
+    "quote": "Seven texts in five days.",
+    "role": "supports",
+    "unit": "texts",
+    "value": 7.0,
+    "value_text": "Seven"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2e352ca16a7e09",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share of releases with no safety disclosure",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [
+     "813 of 857"
+    ],
+    "quote": "The remaining 813 releases, 94.9% of everything the 9 companies have shipped, have no safety disclosure at all.",
+    "role": "supports",
+    "unit": "%",
+    "value": 94.9,
+    "value_text": "94.9%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-33307a4db29532",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Baidu releases with safety result",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [],
+    "quote": "Baidu 1 in 49.",
+    "role": "supports",
+    "unit": "of 49 releases",
+    "value": 1.0,
+    "value_text": "1"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-390ace70b2e2a6",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "code/cyber-security documents",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [
+     "7 secure-code benchmarks",
+     "only 3 cyber-offence or biological risk"
+    ],
+    "quote": "9 documents were concerned with code or cyber security, but 7 of those were secure-code-generation benchmarks for coding models.",
+    "role": "supports",
+    "unit": "documents",
+    "value": 9.0,
+    "value_text": "9"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-aea7b59372b246",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Tencent releases with safety result",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [],
+    "quote": "Tencent has 1 in 133.",
+    "role": "supports",
+    "unit": "of 133 releases",
+    "value": 1.0,
+    "value_text": "1"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b344f1ae454450",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [
+     "after the DeepSeek moment"
+    ],
+    "quote": "The comprehensive AI Law promised in the 2023 and 2024 legislative plans was shelved in 2025, four months after the DeepSeek moment.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "four months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-c4a988d866ab2d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "model releases per quarter",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "Q3 2025",
+    "qualifiers": [
+     "3 in Q1 2023",
+     "90 in Q3 2024",
+     "thirty-fold rise"
+    ],
+    "quote": "The bars climb from 3 releases in Q1 2023 to 90 in Q3 2024 and 101 in Q3 2025, a thirty-fold rise",
+    "role": "supports",
+    "unit": "releases",
+    "value": 101.0,
+    "value_text": "101"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-cdac9658ca6f24",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "quarters with zero at-launch safety results",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "15 quarters (Q1 2023\u2013Q3 2025)",
+    "qualifiers": [
+     "never exceed 3 at launch"
+    ],
+    "quote": "Releases with a result available at launch never exceed 3 and sit at zero in 9 of the 15 quarters.",
+    "role": "supports",
+    "unit": "of 15 quarters",
+    "value": 9.0,
+    "value_text": "9"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d8e8c931a3677a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "labs whose CEO said nothing on safety",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "January 2023 to 21 September 2026",
+    "qualifiers": [],
+    "quote": "At five of the nine labs, the founder or CEO has said nothing.",
+    "role": "supports",
+    "unit": "of nine labs",
+    "value": 5.0,
+    "value_text": "five"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b046",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e52662d85eb230",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Only 6 days after Anthropic's slow-down call, Anthropic was reported weighing a new model before its IPO, with cheap open-weight China rivals squeezing economics.",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "September 2026",
+    "qualifiers": [
+     "reported"
+    ],
+    "quote": "only 6 days after asking the industry to slow down, Dario\u2019s Anthropic was reported to be weighing a new model before its IPO",
+    "role": "supports",
+    "unit": "days",
+    "value": 6.0,
+    "value_text": "6 days"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e597dbae2bf993",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "harmful-output/refusal results",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [
+     "7 jailbreak-resistance results"
+    ],
+    "quote": "We find 18 reported harmful-output or refusal results and 7 reported jailbreak-resistance results.",
+    "role": "supports",
+    "unit": "results",
+    "value": 18.0,
+    "value_text": "18"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eb670d2504f87a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "median safety-disclosure lag",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2021 to 15 September 2026",
+    "qualifiers": [
+     "median lag",
+     "maximum 349 days"
+    ],
+    "quote": "Another 16 were documented only afterwards, with a median lag of 42 days and a maximum of 349 days",
+    "role": "supports",
+    "unit": "days",
+    "value": 42.0,
+    "value_text": "42"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b048",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5152f506082408",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The article promises to lay out dated tests over the next six months that would change its conclusion.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next six months",
+    "qualifiers": [],
+    "quote": "What are the dated tests over the next six months that would change our mind?",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "six months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b045",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c2b4d908187fed",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "DeepSeek V4.1 engineer Liu Shengyu wrote he has no choice but to join the cruel arms race, not wanting Anthropic to control AGI.",
+    "measured_as_of": null,
+    "origin": "Liu Shengyu",
+    "period": "13 September 2026",
+    "qualifiers": [],
+    "quote": "he has \u201cno choice but to join the cruel arms race,\u201d because he \u201cespecially\u201d does not want Anthropic controlling AGI",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e177d992ccf6e5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "SemiAnalysis asserts Chinese frontier labs are not slowing down and are in a release and price war.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Nobody in China\u2019s AI industry is slowing down, and nobody is asking them to. The frontier labs are in a release and price war.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b046",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f4e8ccaec3d482",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Anthropic was reported weighing a new model before its IPO as cheap open-weight rivals, especially in China, squeezed the economics.",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "September 2026",
+    "qualifiers": [
+     "reported"
+    ],
+    "quote": "Anthropic was reported to be weighing a new model before its IPO, with cheap open-weight rivals \u201cespecially in China\u201d squeezing the economics.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5bfa8fff567e",
+    "block_id": "b046",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1bcfbfc203fc1c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China.",
+    "measured_as_of": null,
+    "origin": "Anthropic",
+    "period": "September 2026",
+    "qualifiers": [
+     "framed as remaining competitive with China"
+    ],
+    "quote": "Anthropic shipped Claude Opus 5.5 , which Anthropic itself calls \u201cour first release since we called for pacing the frontier.\u201d",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e64f4e21b0f454",
+     "name_as_written": "ByteDance",
+     "other_securities": [],
+     "quote": "ByteDance",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Chinese hyperscaler among the 9 leading developers analyzed; Doubao fleet"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": "0001744676",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-69bc2b611865bc",
+     "name_as_written": "Tencent",
+     "other_securities": [],
+     "quote": "Tencent",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Chinese hyperscaler among the 9 developers; 1 safety result in 133 releases"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": "0001329099",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6a5aa5e30d3451",
+     "name_as_written": "Baidu",
+     "other_securities": [],
+     "quote": "Baidu",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Chinese hyperscaler among the 9 developers; 1 result in 49"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": "0002109556",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5acbb87def8e7e",
+     "name_as_written": "MiniMax",
+     "other_securities": [
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "MMXGY"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "MNMXF"
+      }
+     ],
+     "quote": "MiniMax",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Chinese AI startup among the 9 developers"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ac7bbc92f54892",
+     "name_as_written": "StepFun",
+     "other_securities": [],
+     "quote": "StepFun",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Chinese AI startup among the 9 developers"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-022383fa71da54",
+     "name_as_written": "Cyberspace Administration of China (CAC)",
+     "other_securities": [],
+     "quote": "Cyberspace Administration of China (CAC)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Chinese regulator overseeing TC260 and AI content rules"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0cac43aa3df0b6",
+     "name_as_written": "TC260",
+     "other_securities": [],
+     "quote": "released by TC260",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Standards body that issues China's AI Safety Governance Frameworks (recommended, not mandatory)"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2d13ffa2d8a372",
+     "name_as_written": "Shanghai AI Lab (SAIL)",
+     "other_securities": [],
+     "quote": "The Shanghai AI Lab (SAIL)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "State-backed lab publishing Frontier AI Risk Management Framework; no power to compel rivals"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3df5565ee22b31",
+     "name_as_written": "CAICT",
+     "other_securities": [],
+     "quote": "CAICT (the China Academy of Information and Communications Technology)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "MIIT research institute; released AI Safety Benchmark 2.0, voluntary testing"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9f9d351715314b",
+     "name_as_written": "CnAISDA",
+     "other_securities": [],
+     "quote": "CnAISDA (China AI Safety and Development Association)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Network of eight institutions representing China abroad; no staff, budget or testing mandate"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-612f7ddc561b44",
+     "name_as_written": "Global Times",
+     "other_securities": [],
+     "quote": "the state-run Global Times",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "State-run Chinese outlet calling Dario's essay a Cold War playbook"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3fe33060352c0d",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the article and the original datasets"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a1bc866551b0b8",
+     "name_as_written": "Chinese Academy of Social Sciences (CASS)",
+     "other_securities": [],
+     "quote": "the Chinese Academy of Social Sciences (CASS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "home institution of legal/public-policy scholars shaping AI governance discourse"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f00f78ef63f5eb",
+     "name_as_written": "China University of Political Science and Law (CUPL)",
+     "other_securities": [],
+     "quote": "the China University of Political Science and Law (CUPL)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "institution housing legal scholars writing AI-rule expert readings"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-841022b20c0e82",
+     "name_as_written": "Beijing Institute for General AI",
+     "other_securities": [],
+     "quote": "Zhu Songchun, Director of the Beijing Institute for General AI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "institute whose director criticized the 'human-extinction narrative' as marketing"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2cafc525709711",
+     "name_as_written": "People\u2019s Daily",
+     "other_securities": [],
+     "quote": "the CCP\u2019s official People\u2019s Daily made it a headline on 5 July",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "CCP official newspaper that propagated the development-first slogan"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9a506484f1b5a5",
+     "name_as_written": "Legal Daily",
+     "other_securities": [],
+     "quote": "Legal Daily",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "legal venue sampled in the 102-text expert dataset"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-963d91fc67d129",
+     "name_as_written": "MIIT",
+     "other_securities": [],
+     "quote": "MIIT\u2019s AI ethics-review regime (March 2026)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "ministry issuing AI ethics-review regime and parent of CAICT"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-224f84dd2f57fd",
+     "name_as_written": "State Council",
+     "other_securities": [],
+     "quote": "The State Council\u2019s AI+ Action Plan",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "body whose AI+ Action Plan sets rapid-deployment penetration targets"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5af4fc1d8dfcb9",
+     "name_as_written": "UK AISI",
+     "other_securities": [],
+     "quote": "SAIL has also run some twenty Chinese and Western models through UK AISI\u2019s Inspect evaluation tools.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "UK AI Safety Institute whose Inspect tools SAIL used"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bcaf3928a3b272",
+     "name_as_written": "World AI Cooperation Organization",
+     "other_securities": [],
+     "quote": "founded a World AI Cooperation Organization in Shanghai",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Shanghai-based body China founded as part of its safety-forward posture"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-53788a9edf833a",
+     "name_as_written": "Zhu Songchun, Director of the Beijing Institute for General AI",
+     "other_securities": [],
+     "quote": "Zhu Songchun, Director of the Beijing Institute for General AI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Director who called the human-extinction narrative 'Oppenheimer-style marketing'"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-411ac0f6bc49da",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "gside \u201cLLM equals AGI\u201d and the scaling law. His example was Anthropic declaring its Mythos model too dangerous to release while r",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "US frontier lab cited as the counterpoint: called for pacing yet shipped Claude Opus 5.5 and weighed a model before IPO under China competition"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": "0001577552",
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-b3e741a1c999a6",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Chinese hyperscaler, largest publisher with 238 releases (Qwen)"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-c4c490e68268ac",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Chinese AI startup; documented V3 at launch, none of R1/V3.1/V4"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-dff919b81ddc19",
+     "name_as_written": "Zhipu Z.ai",
+     "other_securities": [],
+     "quote": "Zhipu Z.ai",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Chinese AI startup, only lab with safety as a named strategic commitment and a result every year since 2022"
+    },
+    {
+     "article_id": "A-5bfa8fff567e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-c115b83a8cc3f3",
+     "name_as_written": "MoonShot",
+     "other_securities": [],
+     "quote": "MoonShot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Chinese AI startup (Kimi); Kimi K2 technical report among few touching cyber/bio risk"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "AI frontier labs",
+    "AI model developers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "next six months - dated tests the article says would change its mind [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-e177d992ccf6e5",
+      "C-f4e8ccaec3d482"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese release-and-price war continues with cheap open-weight models pressuring Western labs' economics in the near term."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-5d6c0a44c52b6c",
+      "C-955bd8daad0275"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China's development-first regime means Chinese frontier competition will not self-slow, structurally pressuring any Western attempt to pace."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-ac7dd11a39dce7",
+      "C-720296d85e0cc1"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Dario Amodei's view that export controls and security could preserve a US lead and create room to slow down."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-ac7dd11a39dce7"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "On 12 September 2026 Dario Amodei published an essay arguing frontier labs must deliberately slow model-capability improvement."
+    },
+    {
+     "claim_ids": [
+      "C-3f657d5da2c868"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Beijing's stated AI-safety position is the most safety-forward of any major AI power outside Europe (per the article, in contrast to its speed-first practice)."
+    },
+    {
+     "claim_ids": [
+      "C-afcdf8c2aec4f2"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Zhipu (Z.ai) is the only Chinese frontier lab where safety is a named strategic commitment."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chinese labs begin routinely gating releases with dangerous-capability evaluations"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chinese frontier release cadence decelerates"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Open-weight pricing pressure eases and Western model pricing stabilizes"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-2e352ca16a7e09",
+      "C-8d9361f85cb0ce",
+      "C-c2b5064b42fba5",
+      "C-cb2a14c94e353e",
+      "C-5fba39f3053690",
+      "C-4b0336041f2273"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article documents a market-structure/safety risk that China's most-capable frontier models ship with essentially no dangerous-capability evaluations (94.9% of releases have no safety disclosure; no Chinese frontier text model shipped with a dangerous-capability evaluation), while frameworks and evaluators have no power to compel compliance. (scope: Applies to frontier AI governance risk across the 9 leading Chinese developers as assessed by SemiAnalysis through 15 September 2026; a geopolitical/technology-governance risk, not tied by the article to a specific listed-equity profit mechanism.)"
+    },
+    {
+     "claim_ids": [
+      "C-fcafe17c4142e5",
+      "C-c3aca662c0f6ff",
+      "C-7a92aefbdcb95d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese experts and officials argue America's safety emphasis is 'Oppenheimer-style marketing' and cognitive-domain shaping, suggesting cross-border AI-governance coordination risk that could keep both sides racing. (scope: Reported views of named Chinese figures (Zhu Songchun, Zhi Zhenfeng) and the publisher's framing; geopolitical/narrative risk, not a quantified market risk.)"
+    },
+    {
+     "claim_ids": [
+      "C-76f15ade61bcb2",
+      "C-9a4381e4e26507",
+      "C-53c12874f182b6",
+      "C-61783e514312b0",
+      "C-fcafe17c4142e5"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China's technical scientists and its legal-policy scholars operate in two separate governance debates (model-level safety vs application-level services), and binding frontier duties went nowhere because the decision rests with top leadership that prioritizes development \u2014 leaving frontier-risk governance structurally stalled. (scope: China's AI-safety policy ecosystem; based on publisher's coding of 102 expert/official texts and mapping of 32 influential voices.)"
+    },
+    {
+     "claim_ids": [
+      "C-a73c40748d892b",
+      "C-7a92aefbdcb95d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "In Chinese official texts AI \u5b89\u5168 is shifting from 'safety' to 'security', with Framework 3.0 framing US export controls as a supply-chain security risk and Chinese experts characterizing US safety emphasis as 'cognitive-domain shaping' \u2014 a cross-border governance-coordination risk that could keep both sides racing. (scope: US-China AI governance relationship; publisher interpretation plus cited expert statements (Zhi Zhenfeng, Zhu Songchun).)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the release/price pressure materially changes the revenue, margins or valuations of any listed company"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Most named Chinese labs and Anthropic are private, so no direct listed-equity earnings linkage is established"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether open-weight proliferation is association or demonstrated cause of pricing pressure"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chinese frontier cadence slows or safety gating becomes routine"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Open-weight competition shown not to affect commercial model pricing"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess whether cheap Chinese open-weight model proliferation is measurably compressing API/model pricing and margins for listed AI-exposed companies (e.g. cloud/model providers) versus private labs."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of model-pricing compression hitting listed companies' disclosed revenue or margins"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Anthropic IPO terms reflecting China-driven pricing pressure"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-5bfa8fff567e",
+    "authors": [
+     "Mark Chen",
+     "Doug",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-1bcfbfc203fc1c",
+     "C-5152f506082408",
+     "C-2e352ca16a7e09",
+     "C-c4a988d866ab2d",
+     "C-00088b169237b8",
+     "C-e177d992ccf6e5",
+     "C-f4e8ccaec3d482",
+     "C-b344f1ae454450",
+     "C-2b5d786f7f0c24",
+     "C-eb670d2504f87a",
+     "C-112f146a7e6e4e",
+     "C-cdac9658ca6f24",
+     "C-aea7b59372b246",
+     "C-00b7bda1e61613",
+     "C-33307a4db29532",
+     "C-e597dbae2bf993",
+     "C-390ace70b2e2a6",
+     "C-d8e8c931a3677a",
+     "C-e52662d85eb230",
+     "C-c2b4d908187fed",
+     "C-ac7dd11a39dce7",
+     "C-3f657d5da2c868",
+     "C-afcdf8c2aec4f2",
+     "C-8d9361f85cb0ce",
+     "C-c2b5064b42fba5",
+     "C-cb2a14c94e353e",
+     "C-fcafe17c4142e5",
+     "C-c3aca662c0f6ff",
+     "C-76f15ade61bcb2",
+     "C-9a4381e4e26507",
+     "C-53c12874f182b6",
+     "C-61783e514312b0",
+     "C-a73c40748d892b",
+     "C-7a92aefbdcb95d"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-08T17:46:05Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "FULL",
+    "title": "Beijing Will Not Pace the Frontier: China\u2019s Speed-First AI Safety Regime",
+    "upstream_origins": [
+     "Anthropic",
+     "Liu Shengyu",
+     "Zhi Zhenfeng",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 08:33 UTC from the registry (ti-engine-2; run R-20261011T083033Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-5bfa8fff567e",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "ai_models_platforms"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T08:31:47.236850Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-08",
+     "latest_article_date": "2026-10-08",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI model developers and AI platforms / applications",
+     "status": "ACTIVE",
+     "thesis_id": "TH-EBC230CDDD",
+     "title": "China's frontier labs race ahead without safety gating, intensifying competition for US labs"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-2e352ca16a7e09",
+       "C-c4a988d866ab2d",
+       "C-e177d992ccf6e5",
+       "C-1bcfbfc203fc1c",
+       "C-f4e8ccaec3d482",
+       "C-2d514b8231bfc3"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis documents that 9 leading Chinese labs ship models at thirty-fold-higher cadence with no frontier-safety gating (94.9% of 857 releases have no safety disclosure), remaining in a release and price war with cheap open-weight models, while US labs that called for pacing (Anthropic) still shipped new models framed as staying competitive with China."
+     },
+     {
+      "claim_ids": [
+       "C-1bcfbfc203fc1c",
+       "C-955bd8daad0275"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues no one, including Anthropic, can unilaterally pace the frontier when Chinese labs will not slow, so pacing collapses into 'remaining competitive with China.'"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The absence of any Chinese slowdown and the proliferation of cheap Chinese open-weight models is a competitive and pricing headwind for Western frontier labs like Anthropic, but the article quantifies no revenue, margin or valuation impact on listed equities."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2e352ca16a7e09"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2021 to 15 September 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "813 releases (94.9%) have no safety disclosure at all."
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c4a988d866ab2d"
+       ],
+       "original_date": "2026-10-08",
+       "period": "Q3 2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Release cadence rose from 3 in Q1 2023 to 101 in Q3 2025, a roughly thirty-fold rise."
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f4e8ccaec3d482"
+       ],
+       "original_date": "2026-10-08",
+       "period": "September 2026",
+       "provenance": "SOURCE OPINION",
+       "text": "Anthropic was reported weighing a new model before its IPO as cheap open-weight rivals, especially in China, squeezed the economics."
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-00088b169237b8"
+       ],
+       "original_date": "2026-10-08",
+       "period": "since mid-2023",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Open-weight releases make up more than half of every quarter since mid-2023."
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1bcfbfc203fc1c"
+       ],
+       "original_date": "2026-10-08",
+       "period": "September 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China."
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b344f1ae454450"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment."
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 20 pieces of evidence from A-5bfa8fff567e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-c4a988d866ab2d",
+       "C-00088b169237b8",
+       "C-2e352ca16a7e09"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "Chinese frontier labs accelerate releases (101 in Q3 2025 vs 3 in Q1 2023) with majority open-weight and no safety gating."
+     },
+     {
+      "claim_ids": [
+       "C-f4e8ccaec3d482"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Cheap open-weight Chinese rivals squeeze the economics of Western model developers."
+     },
+     {
+      "claim_ids": [
+       "C-f4e8ccaec3d482"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Any effect on listed-company revenue or margins would flow through model pricing and share, but the article does not quantify it and most named Chinese labs and Anthropic are private."
+     },
+     {
+      "claim_ids": [
+       "C-1bcfbfc203fc1c"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "market_reaction",
+      "text": "Anthropic frames its new release as 'remaining competitive with China' rather than pacing."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-00088b169237b8",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "open-weight share of releases",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since mid-2023",
+      "qualifiers": [
+       "every quarter"
+      ],
+      "quote": "open-weight releases (dark blue) make up more than half of every quarter since mid-2023",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "more than half"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-00b7bda1e61613",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ByteDance releases with safety result",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [
+       "largely closed"
+      ],
+      "quote": "ByteDance\u2019s largely closed Doubao fleet 2 in 120.",
+      "role": "supports",
+      "unit": "of 120 releases",
+      "value": 2.0,
+      "value_text": "2"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-112f146a7e6e4e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "max releases with safety result per quarter",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "per quarter (Q1 2023\u2013Q3 2025)",
+      "qualifiers": [
+       "never exceed"
+      ],
+      "quote": "Releases with any safety result never exceed 7 in a quarter.",
+      "role": "supports",
+      "unit": "releases",
+      "value": 7.0,
+      "value_text": "7"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2b5d786f7f0c24",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "regulatory texts issued",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "five days (mid-September 2026)",
+      "qualifiers": [
+       "in five days"
+      ],
+      "quote": "Seven texts in five days.",
+      "role": "supports",
+      "unit": "texts",
+      "value": 7.0,
+      "value_text": "Seven"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2e352ca16a7e09",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share of releases with no safety disclosure",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [
+       "813 of 857"
+      ],
+      "quote": "The remaining 813 releases, 94.9% of everything the 9 companies have shipped, have no safety disclosure at all.",
+      "role": "supports",
+      "unit": "%",
+      "value": 94.9,
+      "value_text": "94.9%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-33307a4db29532",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Baidu releases with safety result",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [],
+      "quote": "Baidu 1 in 49.",
+      "role": "supports",
+      "unit": "of 49 releases",
+      "value": 1.0,
+      "value_text": "1"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-390ace70b2e2a6",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "code/cyber-security documents",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [
+       "7 secure-code benchmarks",
+       "only 3 cyber-offence or biological risk"
+      ],
+      "quote": "9 documents were concerned with code or cyber security, but 7 of those were secure-code-generation benchmarks for coding models.",
+      "role": "supports",
+      "unit": "documents",
+      "value": 9.0,
+      "value_text": "9"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aea7b59372b246",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Tencent releases with safety result",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [],
+      "quote": "Tencent has 1 in 133.",
+      "role": "supports",
+      "unit": "of 133 releases",
+      "value": 1.0,
+      "value_text": "1"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b344f1ae454450",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "China's planned comprehensive AI Law was shelved in 2025, four months after the DeepSeek moment.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [
+       "after the DeepSeek moment"
+      ],
+      "quote": "The comprehensive AI Law promised in the 2023 and 2024 legislative plans was shelved in 2025, four months after the DeepSeek moment.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "four months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-c4a988d866ab2d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "model releases per quarter",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "Q3 2025",
+      "qualifiers": [
+       "3 in Q1 2023",
+       "90 in Q3 2024",
+       "thirty-fold rise"
+      ],
+      "quote": "The bars climb from 3 releases in Q1 2023 to 90 in Q3 2024 and 101 in Q3 2025, a thirty-fold rise",
+      "role": "supports",
+      "unit": "releases",
+      "value": 101.0,
+      "value_text": "101"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-cdac9658ca6f24",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "quarters with zero at-launch safety results",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "15 quarters (Q1 2023\u2013Q3 2025)",
+      "qualifiers": [
+       "never exceed 3 at launch"
+      ],
+      "quote": "Releases with a result available at launch never exceed 3 and sit at zero in 9 of the 15 quarters.",
+      "role": "supports",
+      "unit": "of 15 quarters",
+      "value": 9.0,
+      "value_text": "9"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d8e8c931a3677a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "labs whose CEO said nothing on safety",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "January 2023 to 21 September 2026",
+      "qualifiers": [],
+      "quote": "At five of the nine labs, the founder or CEO has said nothing.",
+      "role": "supports",
+      "unit": "of nine labs",
+      "value": 5.0,
+      "value_text": "five"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b046",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e52662d85eb230",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Only 6 days after Anthropic's slow-down call, Anthropic was reported weighing a new model before its IPO, with cheap open-weight China rivals squeezing economics.",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "September 2026",
+      "qualifiers": [
+       "reported"
+      ],
+      "quote": "only 6 days after asking the industry to slow down, Dario\u2019s Anthropic was reported to be weighing a new model before its IPO",
+      "role": "supports",
+      "unit": "days",
+      "value": 6.0,
+      "value_text": "6 days"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e597dbae2bf993",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "harmful-output/refusal results",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [
+       "7 jailbreak-resistance results"
+      ],
+      "quote": "We find 18 reported harmful-output or refusal results and 7 reported jailbreak-resistance results.",
+      "role": "supports",
+      "unit": "results",
+      "value": 18.0,
+      "value_text": "18"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eb670d2504f87a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "median safety-disclosure lag",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2021 to 15 September 2026",
+      "qualifiers": [
+       "median lag",
+       "maximum 349 days"
+      ],
+      "quote": "Another 16 were documented only afterwards, with a median lag of 42 days and a maximum of 349 days",
+      "role": "supports",
+      "unit": "days",
+      "value": 42.0,
+      "value_text": "42"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b048",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5152f506082408",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The article promises to lay out dated tests over the next six months that would change its conclusion.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next six months",
+      "qualifiers": [],
+      "quote": "What are the dated tests over the next six months that would change our mind?",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "six months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b045",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c2b4d908187fed",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "DeepSeek V4.1 engineer Liu Shengyu wrote he has no choice but to join the cruel arms race, not wanting Anthropic to control AGI.",
+      "measured_as_of": null,
+      "origin": "Liu Shengyu",
+      "period": "13 September 2026",
+      "qualifiers": [],
+      "quote": "he has \u201cno choice but to join the cruel arms race,\u201d because he \u201cespecially\u201d does not want Anthropic controlling AGI",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e177d992ccf6e5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SemiAnalysis asserts Chinese frontier labs are not slowing down and are in a release and price war.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Nobody in China\u2019s AI industry is slowing down, and nobody is asking them to. The frontier labs are in a release and price war.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b046",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f4e8ccaec3d482",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Anthropic was reported weighing a new model before its IPO as cheap open-weight rivals, especially in China, squeezed the economics.",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "September 2026",
+      "qualifiers": [
+       "reported"
+      ],
+      "quote": "Anthropic was reported to be weighing a new model before its IPO, with cheap open-weight rivals \u201cespecially in China\u201d squeezing the economics.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5bfa8fff567e",
+      "block_id": "b046",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1bcfbfc203fc1c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Anthropic shipped Claude Opus 5.5, its first release since calling for pacing the frontier, framed as remaining competitive with China.",
+      "measured_as_of": null,
+      "origin": "Anthropic",
+      "period": "September 2026",
+      "qualifiers": [
+       "framed as remaining competitive with China"
+      ],
+      "quote": "Anthropic shipped Claude Opus 5.5 , which Anthropic itself calls \u201cour first release since we called for pacing the frontier.\u201d",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e64f4e21b0f454",
+       "name_as_written": "ByteDance",
+       "other_securities": [],
+       "quote": "ByteDance",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Chinese hyperscaler among the 9 leading developers analyzed; Doubao fleet"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": "0001744676",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-69bc2b611865bc",
+       "name_as_written": "Tencent",
+       "other_securities": [],
+       "quote": "Tencent",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Chinese hyperscaler among the 9 developers; 1 safety result in 133 releases"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": "0001329099",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6a5aa5e30d3451",
+       "name_as_written": "Baidu",
+       "other_securities": [],
+       "quote": "Baidu",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Chinese hyperscaler among the 9 developers; 1 result in 49"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": "0002109556",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5acbb87def8e7e",
+       "name_as_written": "MiniMax",
+       "other_securities": [
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "MMXGY"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "MNMXF"
+        }
+       ],
+       "quote": "MiniMax",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Chinese AI startup among the 9 developers"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ac7bbc92f54892",
+       "name_as_written": "StepFun",
+       "other_securities": [],
+       "quote": "StepFun",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Chinese AI startup among the 9 developers"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-022383fa71da54",
+       "name_as_written": "Cyberspace Administration of China (CAC)",
+       "other_securities": [],
+       "quote": "Cyberspace Administration of China (CAC)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Chinese regulator overseeing TC260 and AI content rules"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0cac43aa3df0b6",
+       "name_as_written": "TC260",
+       "other_securities": [],
+       "quote": "released by TC260",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Standards body that issues China's AI Safety Governance Frameworks (recommended, not mandatory)"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2d13ffa2d8a372",
+       "name_as_written": "Shanghai AI Lab (SAIL)",
+       "other_securities": [],
+       "quote": "The Shanghai AI Lab (SAIL)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "State-backed lab publishing Frontier AI Risk Management Framework; no power to compel rivals"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3df5565ee22b31",
+       "name_as_written": "CAICT",
+       "other_securities": [],
+       "quote": "CAICT (the China Academy of Information and Communications Technology)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "MIIT research institute; released AI Safety Benchmark 2.0, voluntary testing"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9f9d351715314b",
+       "name_as_written": "CnAISDA",
+       "other_securities": [],
+       "quote": "CnAISDA (China AI Safety and Development Association)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Network of eight institutions representing China abroad; no staff, budget or testing mandate"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-612f7ddc561b44",
+       "name_as_written": "Global Times",
+       "other_securities": [],
+       "quote": "the state-run Global Times",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "State-run Chinese outlet calling Dario's essay a Cold War playbook"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3fe33060352c0d",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the article and the original datasets"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a1bc866551b0b8",
+       "name_as_written": "Chinese Academy of Social Sciences (CASS)",
+       "other_securities": [],
+       "quote": "the Chinese Academy of Social Sciences (CASS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "home institution of legal/public-policy scholars shaping AI governance discourse"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f00f78ef63f5eb",
+       "name_as_written": "China University of Political Science and Law (CUPL)",
+       "other_securities": [],
+       "quote": "the China University of Political Science and Law (CUPL)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "institution housing legal scholars writing AI-rule expert readings"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-841022b20c0e82",
+       "name_as_written": "Beijing Institute for General AI",
+       "other_securities": [],
+       "quote": "Zhu Songchun, Director of the Beijing Institute for General AI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "institute whose director criticized the 'human-extinction narrative' as marketing"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2cafc525709711",
+       "name_as_written": "People\u2019s Daily",
+       "other_securities": [],
+       "quote": "the CCP\u2019s official People\u2019s Daily made it a headline on 5 July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "CCP official newspaper that propagated the development-first slogan"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9a506484f1b5a5",
+       "name_as_written": "Legal Daily",
+       "other_securities": [],
+       "quote": "Legal Daily",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "legal venue sampled in the 102-text expert dataset"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-963d91fc67d129",
+       "name_as_written": "MIIT",
+       "other_securities": [],
+       "quote": "MIIT\u2019s AI ethics-review regime (March 2026)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "ministry issuing AI ethics-review regime and parent of CAICT"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-224f84dd2f57fd",
+       "name_as_written": "State Council",
+       "other_securities": [],
+       "quote": "The State Council\u2019s AI+ Action Plan",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "body whose AI+ Action Plan sets rapid-deployment penetration targets"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5af4fc1d8dfcb9",
+       "name_as_written": "UK AISI",
+       "other_securities": [],
+       "quote": "SAIL has also run some twenty Chinese and Western models through UK AISI\u2019s Inspect evaluation tools.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "UK AI Safety Institute whose Inspect tools SAIL used"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bcaf3928a3b272",
+       "name_as_written": "World AI Cooperation Organization",
+       "other_securities": [],
+       "quote": "founded a World AI Cooperation Organization in Shanghai",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Shanghai-based body China founded as part of its safety-forward posture"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-53788a9edf833a",
+       "name_as_written": "Zhu Songchun, Director of the Beijing Institute for General AI",
+       "other_securities": [],
+       "quote": "Zhu Songchun, Director of the Beijing Institute for General AI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Director who called the human-extinction narrative 'Oppenheimer-style marketing'"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-411ac0f6bc49da",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "gside \u201cLLM equals AGI\u201d and the scaling law. His example was Anthropic declaring its Mythos model too dangerous to release while r",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "US frontier lab cited as the counterpoint: called for pacing yet shipped Claude Opus 5.5 and weighed a model before IPO under China competition"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": "0001577552",
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-b3e741a1c999a6",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Chinese hyperscaler, largest publisher with 238 releases (Qwen)"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-c4c490e68268ac",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Chinese AI startup; documented V3 at launch, none of R1/V3.1/V4"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-dff919b81ddc19",
+       "name_as_written": "Zhipu Z.ai",
+       "other_securities": [],
+       "quote": "Zhipu Z.ai",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Chinese AI startup, only lab with safety as a named strategic commitment and a result every year since 2022"
+      },
+      {
+       "article_id": "A-5bfa8fff567e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-c115b83a8cc3f3",
+       "name_as_written": "MoonShot",
+       "other_securities": [],
+       "quote": "MoonShot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Chinese AI startup (Kimi); Kimi K2 technical report among few touching cyber/bio risk"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "AI frontier labs",
+      "AI model developers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "next six months - dated tests the article says would change its mind [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-e177d992ccf6e5",
+        "C-f4e8ccaec3d482"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese release-and-price war continues with cheap open-weight models pressuring Western labs' economics in the near term."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-5d6c0a44c52b6c",
+        "C-955bd8daad0275"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China's development-first regime means Chinese frontier competition will not self-slow, structurally pressuring any Western attempt to pace."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ac7dd11a39dce7",
+        "C-720296d85e0cc1"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Dario Amodei's view that export controls and security could preserve a US lead and create room to slow down."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ac7dd11a39dce7"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "On 12 September 2026 Dario Amodei published an essay arguing frontier labs must deliberately slow model-capability improvement."
+      },
+      {
+       "claim_ids": [
+        "C-3f657d5da2c868"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Beijing's stated AI-safety position is the most safety-forward of any major AI power outside Europe (per the article, in contrast to its speed-first practice)."
+      },
+      {
+       "claim_ids": [
+        "C-afcdf8c2aec4f2"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Zhipu (Z.ai) is the only Chinese frontier lab where safety is a named strategic commitment."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chinese labs begin routinely gating releases with dangerous-capability evaluations"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chinese frontier release cadence decelerates"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Open-weight pricing pressure eases and Western model pricing stabilizes"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-2e352ca16a7e09",
+        "C-8d9361f85cb0ce",
+        "C-c2b5064b42fba5",
+        "C-cb2a14c94e353e",
+        "C-5fba39f3053690",
+        "C-4b0336041f2273"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article documents a market-structure/safety risk that China's most-capable frontier models ship with essentially no dangerous-capability evaluations (94.9% of releases have no safety disclosure; no Chinese frontier text model shipped with a dangerous-capability evaluation), while frameworks and evaluators have no power to compel compliance. (scope: Applies to frontier AI governance risk across the 9 leading Chinese developers as assessed by SemiAnalysis through 15 September 2026; a geopolitical/technology-governance risk, not tied by the article to a specific listed-equity profit mechanism.)"
+      },
+      {
+       "claim_ids": [
+        "C-fcafe17c4142e5",
+        "C-c3aca662c0f6ff",
+        "C-7a92aefbdcb95d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese experts and officials argue America's safety emphasis is 'Oppenheimer-style marketing' and cognitive-domain shaping, suggesting cross-border AI-governance coordination risk that could keep both sides racing. (scope: Reported views of named Chinese figures (Zhu Songchun, Zhi Zhenfeng) and the publisher's framing; geopolitical/narrative risk, not a quantified market risk.)"
+      },
+      {
+       "claim_ids": [
+        "C-76f15ade61bcb2",
+        "C-9a4381e4e26507",
+        "C-53c12874f182b6",
+        "C-61783e514312b0",
+        "C-fcafe17c4142e5"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China's technical scientists and its legal-policy scholars operate in two separate governance debates (model-level safety vs application-level services), and binding frontier duties went nowhere because the decision rests with top leadership that prioritizes development \u2014 leaving frontier-risk governance structurally stalled. (scope: China's AI-safety policy ecosystem; based on publisher's coding of 102 expert/official texts and mapping of 32 influential voices.)"
+      },
+      {
+       "claim_ids": [
+        "C-a73c40748d892b",
+        "C-7a92aefbdcb95d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "In Chinese official texts AI \u5b89\u5168 is shifting from 'safety' to 'security', with Framework 3.0 framing US export controls as a supply-chain security risk and Chinese experts characterizing US safety emphasis as 'cognitive-domain shaping' \u2014 a cross-border governance-coordination risk that could keep both sides racing. (scope: US-China AI governance relationship; publisher interpretation plus cited expert statements (Zhi Zhenfeng, Zhu Songchun).)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the release/price pressure materially changes the revenue, margins or valuations of any listed company"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Most named Chinese labs and Anthropic are private, so no direct listed-equity earnings linkage is established"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether open-weight proliferation is association or demonstrated cause of pricing pressure"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chinese frontier cadence slows or safety gating becomes routine"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Open-weight competition shown not to affect commercial model pricing"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess whether cheap Chinese open-weight model proliferation is measurably compressing API/model pricing and margins for listed AI-exposed companies (e.g. cloud/model providers) versus private labs."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of model-pricing compression hitting listed companies' disclosed revenue or margins"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Anthropic IPO terms reflecting China-driven pricing pressure"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-5bfa8fff567e",
+      "authors": [
+       "Mark Chen",
+       "Doug",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-1bcfbfc203fc1c",
+       "C-5152f506082408",
+       "C-2e352ca16a7e09",
+       "C-c4a988d866ab2d",
+       "C-00088b169237b8",
+       "C-e177d992ccf6e5",
+       "C-f4e8ccaec3d482",
+       "C-b344f1ae454450",
+       "C-2b5d786f7f0c24",
+       "C-eb670d2504f87a",
+       "C-112f146a7e6e4e",
+       "C-cdac9658ca6f24",
+       "C-aea7b59372b246",
+       "C-00b7bda1e61613",
+       "C-33307a4db29532",
+       "C-e597dbae2bf993",
+       "C-390ace70b2e2a6",
+       "C-d8e8c931a3677a",
+       "C-e52662d85eb230",
+       "C-c2b4d908187fed",
+       "C-ac7dd11a39dce7",
+       "C-3f657d5da2c868",
+       "C-afcdf8c2aec4f2",
+       "C-8d9361f85cb0ce",
+       "C-c2b5064b42fba5",
+       "C-cb2a14c94e353e",
+       "C-fcafe17c4142e5",
+       "C-c3aca662c0f6ff",
+       "C-76f15ade61bcb2",
+       "C-9a4381e4e26507",
+       "C-53c12874f182b6",
+       "C-61783e514312b0",
+       "C-a73c40748d892b",
+       "C-7a92aefbdcb95d"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-08T17:46:05Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "FULL",
+      "title": "Beijing Will Not Pace the Frontier: China\u2019s Speed-First AI Safety Regime",
+      "upstream_origins": [
+       "Anthropic",
+       "Liu Shengyu",
+       "Zhi Zhenfeng",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier"
+     }
+    ]
+   },
+   "content_sha": "13fbd0cb882e134bedb86429bc5c1c1f72269ff04d77d0034350de1d8c0dfab8",
+   "created_at": "2026-10-11T08:31:47.255157Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-2e352ca16a7e09",
+       "C-c4a988d866ab2d",
+       "C-00088b169237b8",
+       "C-f4e8ccaec3d482",
+       "C-b344f1ae454450",
+       "C-2b5d786f7f0c24",
+       "C-eb670d2504f87a",
+       "C-112f146a7e6e4e",
+       "C-cdac9658ca6f24",
+       "C-aea7b59372b246",
+       "C-00b7bda1e61613",
+       "C-33307a4db29532",
+       "C-e597dbae2bf993",
+       "C-390ace70b2e2a6",
+       "C-d8e8c931a3677a",
+       "C-e52662d85eb230",
+       "C-1bcfbfc203fc1c"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "17"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-853a1316115b, ES-fb02348db7fb",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-1bcfbfc203fc1c",
+       "C-2e352ca16a7e09",
+       "C-2b5d786f7f0c24",
+       "C-eb670d2504f87a",
+       "C-aea7b59372b246",
+       "C-00b7bda1e61613",
+       "C-33307a4db29532",
+       "C-e597dbae2bf993",
+       "C-390ace70b2e2a6",
+       "C-d8e8c931a3677a",
+       "C-e52662d85eb230"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "11 claim(s) inside the next 2-4 quarters (C-1bcfbfc203fc1c: measured 2026-09-30 (10 days before the as-of); C-2e352ca16a7e09: measured 2026-09-30 (10 days before the as-of); C-2b5d786f7f0c24: measured 2026-09-30 (10 days before the as-of); C-eb670d2504f87a: measured 2026-09-30 (10 days before the as-of); showing 4 of 11); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector"
+     },
+     {
+      "claim_ids": [
+       "C-1bcfbfc203fc1c"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-5152f506082408",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-ac7dd11a39dce7",
+       "C-3f657d5da2c868",
+       "C-afcdf8c2aec4f2"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (3 counter-claims in total)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T083033Z-scan",
+   "thesis_id": "TH-EBC230CDDD",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {
+  "s03.3": "REVIEW_UNSUPPORTED \u2014 s03.3: UNSUPPORTED \u2014 Cited span only says Anthropic calls Opus 5.5 its first release since calling for pacing; it does not support that Anthropic frames the release as 'remaining competitive with China' rather than pacing. No pool span supports this framing. | \"Anthropic frames its new release as 'remaining competitive with China' rather than pacing.\"",
+  "s07.6": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.6 prints '32', which none of its cited claims carry: \"China's technical scientists and its legal-policy scholars operate in two separate governance debate\""
+ }
+}

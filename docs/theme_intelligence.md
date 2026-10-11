@@ -182,6 +182,64 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 
 `expect_blocked = true` marks MS and GS as standing refusals: still attempted and reported BLOCKED
 every run, but they do not by themselves turn a run PARTIAL. Any other channel that fails does.
+It never conceals a channel: its health status stays BLOCKED (see below).
+
+## Source health monitoring (`health.py`)
+
+Is each channel still being READ, or failing silently? A bounded, LLM-free check per channel —
+never "healthy" because a page answered HTTP 200. Record:
+`docs/records/2026-10-11-theme-intelligence-source-health.md`.
+
+```bash
+python -m vinci.theme_intelligence sources --check-health            # report + next actions
+python -m vinci.theme_intelligence sources --check-health --json     # machine-readable
+python -m vinci.theme_intelligence sources --check-health --sources gs_research --force
+python -m vinci.theme_intelligence sources                           # last-known status only
+```
+
+It also runs at the start of EVERY scan (scheduled or manual), and the weekly dashboard shows it
+apart from the scan's execution status and the research-verification status.
+
+- **The seven tests.** (1) *access* — the endpoint discovery starts from, under robots.txt and the
+  honest User-Agent; (2) *discovery* — the channel's own adapter finds genuine article URLs (titles,
+  listing dates); (3) *extraction* — up to three articles SPREAD across the listing (newest dated,
+  middle, oldest) fetched and parsed; (4) *dates and authors* — each page's own date and byline, the
+  listing's dates, and the latest scan's undated share; (5) *completeness* — full text, paywalled
+  preview or partial page, plus the latest scan's outcomes; (6) *freshness* — the newest dated
+  article against the window, URLs new since the last check; (7) *parser integrity* — a 200 page
+  whose body the parser cannot read, or an extraction that collapsed against the channel's own
+  earlier ones.
+- **One status.** BLOCKED (access denied, or cannot safely proceed — a robots.txt that cannot be
+  read FAILS CLOSED and nothing is fetched) · ERROR (a transport failure, an unexpected answer, a
+  broken adapter or a crashed check) · DEGRADED (previews, undated pages, partial extraction, a
+  parser that no longer reads the page, a listing with no articles) · HEALTHY (every test passed) ·
+  UNKNOWN (never checked). **Freshness is separate**: nothing dated in the window is QUIET, not
+  unhealthy.
+- **Politeness.** A 401 / 403 / 451 is never retried, and a channel that refused is not
+  re-requested for 24 hours (`--force` overrides). The live access fetch is reused by the scan's
+  discovery that follows, so a scan does not ask twice. The channel's crawl-delay floor and the
+  site's robots Crawl-delay apply to every request.
+- **History and changes.** Every check is an immutable row (`source_health`, schema v3), exported
+  with the registry, so status and failure streaks survive the scheduled run's restart. Each row
+  carries: last checked, last successful discovery, last successful full-text extraction, last
+  verified publication date, articles discovered / in the window, the latest scan's full / preview
+  / undated / unreadable counts, consecutive failed checks, status since, and what changed —
+  HEALTHY → DEGRADED / BLOCKED, extraction → parser failure, a drop to zero discovered articles
+  (flagged for review, never read as "published nothing"), dates missing at consecutive checks, a
+  BLOCKED channel accessible again.
+- **Alerts.** NEW_FAILURE on a change into a failing state, RECOVERED on an improvement, one
+  PERSISTENT_FAILURE reminder when a failure reaches three checks, then nothing until it changes; a
+  known standing restriction (`expect_blocked`) is shown, not re-alerted. The dashboard shows them
+  in a banner. Delivery: set `THEME_INTELLIGENCE_HEALTH_HOOK` to a command; it receives the alerts
+  as JSON on stdin (no email or chat integration is required).
+- **Manual upload.** A BLOCKED or DEGRADED channel carries an UPLOAD_REQUIRED (blocked, previews,
+  unreadable pages) or MANUAL_REVIEW (undated pages, an empty listing, a persistent error) item
+  naming the publisher, the issue, the affected article if known (its URL and the title the
+  listing gave — never an invented one) and the action. Upload an authorized copy through the
+  SAME pipeline: `article --url <article URL> --html <saved page> --as-of <date> --source <id>` —
+  labelled a manual upload in the article's provenance. An upload never changes the channel's
+  health: one document is not proof of its coverage. When automatic retrieval is shown to work
+  again the item is lifted for future articles; uploaded articles stay in the registry.
 
 ## Scheduling
 

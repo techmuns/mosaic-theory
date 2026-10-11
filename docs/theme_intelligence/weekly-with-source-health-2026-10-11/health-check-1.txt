@@ -1,0 +1,33 @@
+source health — window 2026-10-02..2026-10-11 (newest-article freshness), 8 channel(s)
+Sources healthy: 2/8 | Degraded: 4 | Blocked: 2 | Errors: 0
+
+  Citi                       DEGRADED  QUIET    checked 2026-10-11T08:28  partial: 2 of 3 sampled article(s) partial (short body (96 words) — treated as a teaser / excerpt)
+  Bank of America            DEGRADED  QUIET    checked 2026-10-11T08:28  metadata problem: 2 of 3 sampled article(s) carry no publication date on the page or the listing — undated art
+  J.P. Morgan Private Bank   HEALTHY   FRESH    checked 2026-10-11T08:28  discovery, a full-text article, its date and byline all read
+  Morgan Stanley             BLOCKED   UNKNOWN  checked 2026-10-11T08:28  robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — canno
+  Nomura                     DEGRADED  FRESH    checked 2026-10-11T08:28  partial: 1 of 3 sampled article(s) partial (the page summarises a fuller report it links to; that report was n
+  TrendForce                 HEALTHY   FRESH    checked 2026-10-11T08:29  discovery, a full-text article, its date and byline all read
+  SemiAnalysis               DEGRADED  FRESH    checked 2026-10-11T08:29  partial: 1 of 3 sampled article(s) are paywalled previews — only the preview is readable
+  Goldman Sachs              BLOCKED   UNKNOWN  checked 2026-10-11T08:29  https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)
+
+Changes needing attention:
+  [NEW_FAILURE] Citi: first check of this channel
+  [NEW_FAILURE] Bank of America: first check of this channel
+  [NEW_FAILURE] Nomura: first check of this channel
+  [NEW_FAILURE] SemiAnalysis: first check of this channel
+
+Next actions:
+  Citi (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source citi_must_c if you are entitled to the full text
+      UPLOAD_REQUIRED: https://www.citigroup.com/global/insights/latam-poised-for-take-off — LatAm Poised for Take-Off
+  Bank of America (DEGRADED): review: publication dates are not on the pages, so articles are counted UNDATED and never placed in a window — analyse one on demand with `article --url`
+      MANUAL_REVIEW: https://business.bofa.com/en-us/content/breakthrough-technology/asia-ai-hardware-era.html — Asia and the AI hardware era AI is running into physical limits. The next winners will be those that can scale beyond them. 5 min read
+  Morgan Stanley (BLOCKED): automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source ms_research
+      UPLOAD_REQUIRED: unknown — the channel cannot be read
+  Nomura (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source nomura_connects if you are entitled to the full text
+      UPLOAD_REQUIRED: https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies — Central Banks Recalibrating Monetary Policies
+  SemiAnalysis (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source semianalysis if you are entitled to the full text
+      UPLOAD_REQUIRED: https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier — Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime
+  Goldman Sachs (BLOCKED): automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source gs_research
+      UPLOAD_REQUIRED: unknown — the channel cannot be read
+
+Alerts: not delivered — no channel configured (THEME_INTELLIGENCE_HEALTH_HOOK unset); shown on the dashboard

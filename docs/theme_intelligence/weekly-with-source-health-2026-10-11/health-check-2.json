@@ -1,0 +1,587 @@
+{
+ "alert_delivery": "",
+ "checked_at": "2026-10-11T08:30:04.597764+00:00",
+ "counts": {
+  "BLOCKED": 2,
+  "DEGRADED": 4,
+  "ERROR": 0,
+  "HEALTHY": 2,
+  "UNKNOWN": 0
+ },
+ "skipped": {
+  "gs_research": "not re-requested: access was refused at 2026-10-11 08:29 UTC; next re-test after 2026-10-12 08:29 UTC (or pass --force)",
+  "ms_research": "not re-requested: access was refused at 2026-10-11 08:28 UTC; next re-test after 2026-10-12 08:28 UTC (or pass --force)"
+ },
+ "sources": [
+  {
+   "alert": "",
+   "changes": [],
+   "checked_at": "2026-10-11T08:29:30.903726+00:00",
+   "consecutive_failed_checks": 2,
+   "discovered": 20,
+   "expect_blocked": false,
+   "freshness": "QUIET",
+   "in_window": 0,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": "2026-10-11T08:29:30.903726+00:00",
+   "last_successful_extraction": "2026-10-11T08:29:30.903726+00:00",
+   "last_verified_publication_date": "2026-09-14",
+   "manual_action": {
+    "action": "upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source citi_must_c if you are entitled to the full text",
+    "affected": [
+     "https://www.citigroup.com/global/insights/latam-poised-for-take-off \u2014 LatAm Poised for Take-Off"
+    ],
+    "issue": "partial: 2 of 3 sampled article(s) partial (short body (96 words) \u2014 treated as a teaser / excerpt)",
+    "kind": "UPLOAD_REQUIRED"
+   },
+   "manual_upload_recommended": true,
+   "newest_article_date": "2026-09-14",
+   "next_action": "upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source citi_must_c if you are entitled to the full text",
+   "publisher": "Citi",
+   "reason": "partial: 2 of 3 sampled article(s) partial (short body (96 words) \u2014 treated as a teaser / excerpt)",
+   "source_id": "citi_must_c",
+   "status": "DEGRADED",
+   "tests": [
+    {
+     "detail": "https://www.citigroup.com/global/insights/must-c answered HTTP 200 (1752 KB); robots.txt 200 obeyed",
+     "name": "access",
+     "result": "PASS"
+    },
+    {
+     "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+     "name": "discovery",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) read; 1 full text",
+     "name": "extraction",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 0 of 3 carry a byline",
+     "name": "dates_authors",
+     "result": "WARN"
+    },
+    {
+     "detail": "partial: 2 of 3 sampled article(s) partial (short body (96 words) \u2014 treated as a teaser / excerpt)",
+     "name": "completeness",
+     "result": "WARN"
+    },
+    {
+     "detail": "newest dated article 2026-09-14 \u2014 nothing dated since 2026-10-02: QUIET, not unhealthy; 0 URL(s) new since the last check",
+     "name": "freshness",
+     "result": "WARN"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) read, 96\u2013570 words; 3 re-read against an earlier check",
+     "name": "parser_integrity",
+     "result": "PASS"
+    }
+   ]
+  },
+  {
+   "alert": "",
+   "changes": [
+    "publication dates missing at 2 consecutive checks"
+   ],
+   "checked_at": "2026-10-11T08:29:36.452941+00:00",
+   "consecutive_failed_checks": 2,
+   "discovered": 16,
+   "expect_blocked": false,
+   "freshness": "QUIET",
+   "in_window": 0,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": "2026-10-11T08:29:36.452941+00:00",
+   "last_successful_extraction": "2026-10-11T08:29:36.452941+00:00",
+   "last_verified_publication_date": "2026-06-25",
+   "manual_action": {
+    "action": "review: publication dates are not on the pages, so articles are counted UNDATED and never placed in a window \u2014 analyse one on demand with `article --url`",
+    "affected": [
+     "https://business.bofa.com/en-us/content/breakthrough-technology/asia-ai-hardware-era.html \u2014 Asia and the AI hardware era AI is running into physical limits. The next winners will be those that can scale beyond them. 5 min read"
+    ],
+    "issue": "metadata problem: 2 of 3 sampled article(s) carry no publication date on the page or the listing \u2014 undated articles are never placed in a window (1 of 3 sampled page(s) state a publication date; the listing dates 0 of 16; 1 of 3 carry a byline)",
+    "kind": "MANUAL_REVIEW"
+   },
+   "manual_upload_recommended": false,
+   "newest_article_date": "2026-06-25",
+   "next_action": "review: publication dates are not on the pages, so articles are counted UNDATED and never placed in a window \u2014 analyse one on demand with `article --url`",
+   "publisher": "Bank of America",
+   "reason": "metadata problem: 2 of 3 sampled article(s) carry no publication date on the page or the listing \u2014 undated articles are never placed in a window (1 of 3 sampled page(s) state a publication date; the listing dates 0 of 16; 1 of 3 carry a byline)",
+   "source_id": "bofa_institutional",
+   "status": "DEGRADED",
+   "tests": [
+    {
+     "detail": "https://business.bofa.com/en-us/content/institutional-investing-insights.html answered HTTP 200 (336 KB); robots.txt 200 obeyed",
+     "name": "access",
+     "result": "PASS"
+    },
+    {
+     "detail": "16 article URL(s); 16 with a title, 0 with a listing date",
+     "name": "discovery",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) read; 3 full text",
+     "name": "extraction",
+     "result": "PASS"
+    },
+    {
+     "detail": "metadata problem: 2 of 3 sampled article(s) carry no publication date on the page or the listing \u2014 undated articles are never placed in a window (1 of 3 sampled page(s) state a publication date; the listing dates 0 of 16; 1 of 3 carry a byline)",
+     "name": "dates_authors",
+     "result": "FAIL"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) full text",
+     "name": "completeness",
+     "result": "PASS"
+    },
+    {
+     "detail": "newest dated article 2026-06-25 \u2014 nothing dated since 2026-10-02: QUIET, not unhealthy; 0 URL(s) new since the last check",
+     "name": "freshness",
+     "result": "WARN"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) read, 640\u20131714 words; 3 re-read against an earlier check",
+     "name": "parser_integrity",
+     "result": "PASS"
+    }
+   ]
+  },
+  {
+   "alert": "",
+   "changes": [],
+   "checked_at": "2026-10-11T08:29:42.530286+00:00",
+   "consecutive_failed_checks": 0,
+   "discovered": 51,
+   "expect_blocked": false,
+   "freshness": "FRESH",
+   "in_window": 1,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": "2026-10-11T08:29:42.530286+00:00",
+   "last_successful_extraction": "2026-10-11T08:29:42.530286+00:00",
+   "last_verified_publication_date": "2026-10-02",
+   "manual_action": null,
+   "manual_upload_recommended": false,
+   "newest_article_date": "2026-10-02",
+   "next_action": "none \u2014 automatic retrieval works",
+   "publisher": "J.P. Morgan Private Bank",
+   "reason": "discovery, a full-text article, its date and byline all read",
+   "source_id": "jpm_tmt",
+   "status": "HEALTHY",
+   "tests": [
+    {
+     "detail": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt answered HTTP 200 (484 KB); robots.txt 200 obeyed",
+     "name": "access",
+     "result": "PASS"
+    },
+    {
+     "detail": "51 article URL(s); 51 with a title, 51 with a listing date",
+     "name": "discovery",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) read; 3 full text",
+     "name": "extraction",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 51 of 51; 3 of 3 carry a byline",
+     "name": "dates_authors",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) full text",
+     "name": "completeness",
+     "result": "PASS"
+    },
+    {
+     "detail": "newest dated article 2026-10-02; 0 URL(s) new since the last check",
+     "name": "freshness",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) read, 1100\u20132045 words; 3 re-read against an earlier check",
+     "name": "parser_integrity",
+     "result": "PASS"
+    }
+   ]
+  },
+  {
+   "alert": "KNOWN_RESTRICTION",
+   "changes": [
+    "first check of this channel"
+   ],
+   "checked_at": "2026-10-11T08:28:40.657381+00:00",
+   "consecutive_failed_checks": 1,
+   "discovered": 0,
+   "expect_blocked": true,
+   "freshness": "UNKNOWN",
+   "in_window": 0,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": null,
+   "last_successful_extraction": null,
+   "last_verified_publication_date": null,
+   "manual_action": {
+    "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source ms_research",
+    "affected": [
+     "unknown \u2014 the channel cannot be read"
+    ],
+    "issue": "robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "kind": "UPLOAD_REQUIRED"
+   },
+   "manual_upload_recommended": true,
+   "newest_article_date": null,
+   "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source ms_research",
+   "publisher": "Morgan Stanley",
+   "reason": "robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+   "source_id": "ms_research",
+   "status": "BLOCKED",
+   "tests": [
+    {
+     "detail": "robots.txt unreachable (RemoteProtocolError) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "name": "access",
+     "result": "FAIL"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "discovery",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "extraction",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "dates_authors",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "completeness",
+     "result": "SKIP"
+    },
+    {
+     "detail": "no article discovered",
+     "name": "freshness",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "parser_integrity",
+     "result": "SKIP"
+    }
+   ]
+  },
+  {
+   "alert": "",
+   "changes": [],
+   "checked_at": "2026-10-11T08:29:53.650417+00:00",
+   "consecutive_failed_checks": 2,
+   "discovered": 14,
+   "expect_blocked": false,
+   "freshness": "FRESH",
+   "in_window": 0,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": "2026-10-11T08:29:53.650417+00:00",
+   "last_successful_extraction": "2026-10-11T08:29:53.650417+00:00",
+   "last_verified_publication_date": "2026-10-07",
+   "manual_action": {
+    "action": "upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source nomura_connects if you are entitled to the full text",
+    "affected": [
+     "https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies \u2014 Central Banks Recalibrating Monetary Policies"
+    ],
+    "issue": "partial: 1 of 3 sampled article(s) partial (the page summarises a fuller report it links to; that report was not read)",
+    "kind": "UPLOAD_REQUIRED"
+   },
+   "manual_upload_recommended": true,
+   "newest_article_date": "2026-10-07",
+   "next_action": "upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source nomura_connects if you are entitled to the full text",
+   "publisher": "Nomura",
+   "reason": "partial: 1 of 3 sampled article(s) partial (the page summarises a fuller report it links to; that report was not read)",
+   "source_id": "nomura_connects",
+   "status": "DEGRADED",
+   "tests": [
+    {
+     "detail": "https://www.nomuraconnects.com/articles/ answered HTTP 200 (63 KB); robots.txt 404 \u2014 RFC 9309: no restrictions",
+     "name": "access",
+     "result": "PASS"
+    },
+    {
+     "detail": "14 article URL(s); 14 with a title, 0 with a listing date",
+     "name": "discovery",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) read; 2 full text",
+     "name": "extraction",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 0 of 14; 3 of 3 carry a byline",
+     "name": "dates_authors",
+     "result": "PASS"
+    },
+    {
+     "detail": "partial: 1 of 3 sampled article(s) partial (the page summarises a fuller report it links to; that report was not read)",
+     "name": "completeness",
+     "result": "WARN"
+    },
+    {
+     "detail": "newest dated article 2026-10-07; 0 URL(s) new since the last check",
+     "name": "freshness",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) read, 1023\u20131244 words; 3 re-read against an earlier check",
+     "name": "parser_integrity",
+     "result": "PASS"
+    }
+   ]
+  },
+  {
+   "alert": "",
+   "changes": [],
+   "checked_at": "2026-10-11T08:29:58.973406+00:00",
+   "consecutive_failed_checks": 0,
+   "discovered": 5,
+   "expect_blocked": false,
+   "freshness": "FRESH",
+   "in_window": 2,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": "2026-10-11T08:29:58.973406+00:00",
+   "last_successful_extraction": "2026-10-11T08:29:58.973406+00:00",
+   "last_verified_publication_date": "2026-10-08",
+   "manual_action": null,
+   "manual_upload_recommended": false,
+   "newest_article_date": "2026-10-08",
+   "next_action": "none \u2014 automatic retrieval works",
+   "publisher": "TrendForce",
+   "reason": "discovery, a full-text article, its date and byline all read",
+   "source_id": "trendforce",
+   "status": "HEALTHY",
+   "tests": [
+    {
+     "detail": "https://www.trendforce.com/presscenter/news answered HTTP 200 (133 KB); robots.txt 200 obeyed",
+     "name": "access",
+     "result": "PASS"
+    },
+    {
+     "detail": "5 article URL(s); 5 with a title, 5 with a listing date",
+     "name": "discovery",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) read; 3 full text",
+     "name": "extraction",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 5 of 5; 3 of 3 carry a byline",
+     "name": "dates_authors",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) full text",
+     "name": "completeness",
+     "result": "PASS"
+    },
+    {
+     "detail": "newest dated article 2026-10-08; 0 URL(s) new since the last check",
+     "name": "freshness",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) read, 366\u2013962 words; 3 re-read against an earlier check",
+     "name": "parser_integrity",
+     "result": "PASS"
+    }
+   ]
+  },
+  {
+   "alert": "",
+   "changes": [],
+   "checked_at": "2026-10-11T08:30:04.597764+00:00",
+   "consecutive_failed_checks": 2,
+   "discovered": 20,
+   "expect_blocked": false,
+   "freshness": "FRESH",
+   "in_window": 2,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": "2026-10-11T08:30:04.597764+00:00",
+   "last_successful_extraction": "2026-10-11T08:30:04.597764+00:00",
+   "last_verified_publication_date": "2026-10-08",
+   "manual_action": {
+    "action": "upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source semianalysis if you are entitled to the full text",
+    "affected": [
+     "https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier \u2014 Beijing Will Not Pace the Frontier: China\u2019s Speed-First AI Safety Regime"
+    ],
+    "issue": "partial: 1 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable",
+    "kind": "UPLOAD_REQUIRED"
+   },
+   "manual_upload_recommended": true,
+   "newest_article_date": "2026-10-08",
+   "next_action": "upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source semianalysis if you are entitled to the full text",
+   "publisher": "SemiAnalysis",
+   "reason": "partial: 1 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable",
+   "source_id": "semianalysis",
+   "status": "DEGRADED",
+   "tests": [
+    {
+     "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3606 KB); robots.txt 200 obeyed",
+     "name": "access",
+     "result": "PASS"
+    },
+    {
+     "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+     "name": "discovery",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled article(s) read; 2 full text",
+     "name": "extraction",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline",
+     "name": "dates_authors",
+     "result": "PASS"
+    },
+    {
+     "detail": "partial: 1 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable",
+     "name": "completeness",
+     "result": "WARN"
+    },
+    {
+     "detail": "newest dated article 2026-10-08; 0 URL(s) new since the last check",
+     "name": "freshness",
+     "result": "PASS"
+    },
+    {
+     "detail": "3 of 3 sampled page(s) read, 1920\u20137379 words; 3 re-read against an earlier check",
+     "name": "parser_integrity",
+     "result": "PASS"
+    }
+   ]
+  },
+  {
+   "alert": "KNOWN_RESTRICTION",
+   "changes": [
+    "first check of this channel"
+   ],
+   "checked_at": "2026-10-11T08:29:20.607492+00:00",
+   "consecutive_failed_checks": 1,
+   "discovered": 0,
+   "expect_blocked": true,
+   "freshness": "UNKNOWN",
+   "in_window": 0,
+   "last_scan": {
+    "full": 0,
+    "partial": 0,
+    "run_id": null,
+    "undated": 0,
+    "unreadable": 0
+   },
+   "last_successful_discovery": null,
+   "last_successful_extraction": null,
+   "last_verified_publication_date": null,
+   "manual_action": {
+    "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source gs_research",
+    "affected": [
+     "unknown \u2014 the channel cannot be read"
+    ],
+    "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "kind": "UPLOAD_REQUIRED"
+   },
+   "manual_upload_recommended": true,
+   "newest_article_date": null,
+   "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source gs_research",
+   "publisher": "Goldman Sachs",
+   "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+   "source_id": "gs_research",
+   "status": "BLOCKED",
+   "tests": [
+    {
+     "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "name": "access",
+     "result": "FAIL"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "discovery",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "extraction",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "dates_authors",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "completeness",
+     "result": "SKIP"
+    },
+    {
+     "detail": "no article discovered",
+     "name": "freshness",
+     "result": "SKIP"
+    },
+    {
+     "detail": "not reached \u2014 an earlier test failed",
+     "name": "parser_integrity",
+     "result": "SKIP"
+    }
+   ]
+  }
+ ],
+ "summary": "Sources healthy: 2/8 | Degraded: 4 | Blocked: 2 | Errors: 0",
+ "total": 8
+}
