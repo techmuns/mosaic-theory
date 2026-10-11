@@ -223,6 +223,19 @@ class MonitorSnapshot(BaseModel):
     panels: list[PanelRow] = Field(default_factory=list)
 
 
+class EvidenceDate(BaseModel):
+    """One date a scenario record states for its evidence, and where it came from."""
+
+    on: date
+    source: str                     # "underwrite_date" | "<leg> reason amendment"
+
+
+class UnreadableEvidenceDateError(ValueError):
+    """A record's underwrite date or ``[amended …]`` tag is not a real ISO date. Raised naming the
+    record, so the monitor can drop THAT row loudly instead of the whole run (the theme-card
+    doctrine: one hand-edited file must not take the book's marks and spread down with it)."""
+
+
 class FreshnessRow(BaseModel):
     """Per live leg: what the record has READ, and what EDGAR has published since.
 
@@ -250,6 +263,13 @@ class FreshnessRow(BaseModel):
     #: has had no caller since #531 shipped it, so the 7 stale tags it can name reached no human.
     stale_tags: list[str] = Field(default_factory=list)
     watch_note: str | None = None                            # e.g. WERN avoid_priced
+    #: (2026-10-11) evidence the record states AFTER the date this row reads through — an
+    #: underwrite or amendment written later, left out of ``last_evidence_date``. Non-empty means
+    #: the row's legs and triggers are the record as it stands NOW, not as it stood then. Typed so a
+    #: reader never parses the day's note for it (the note is rendered from this field). Defaulted:
+    #: every committed day predates it.
+    evidence_after_day: list[EvidenceDate] = Field(default_factory=list)
+
 
 
 class MeasuredTriggerRow(BaseModel):
@@ -436,6 +456,25 @@ def decisions_as_of(raw: list[dict[str, Any]], *, as_of: date) -> list[dict[str,
             if date.fromisoformat(str(entry_of(r)["entry_price_as_of"])) <= as_of]
 
 
+def live_verdicts(raw: list[dict[str, Any]], *, as_of: date) -> dict[str, str]:
+    """Each ticker's verdict of record ON ``as_of``: its NEWEST decision entered by then and not
+    CLOSED by then — the book's own point-in-time read, closures applied.
+
+    The freshness panel labelled each name with the FIRST decision the whole ledger held for it,
+    closed or not (review of #707): IT, closed 2026-07-21 and a `watch` record since, read BUY on
+    every committed day from 08-11; and a name closed and re-entered would show its OLD verdict.
+    A name with no live decision here falls back to its record's status, as any watch name does.
+    """
+    closed = closed_decision_ids(raw, as_of=as_of)
+    out: dict[str, str] = {}
+    # entry date order, ledger order within a day (stable) — so a later decision overwrites
+    for r in sorted(decisions_as_of(raw, as_of=as_of),
+                    key=lambda r: str(entry_of(r)["entry_price_as_of"])):
+        if r["entry_id"] not in closed:
+            out[str(r["ticker"])] = str(r["verdict"])
+    return out
+
+
 def _is_buy(verdict: str) -> bool:
     """BUY-family vs the rest — mirrors the frontend isBuyVerdict (family, not equality)."""
     return verdict.upper().startswith("BUY")
@@ -562,18 +601,45 @@ def sector_note(*, ticker: str, sic: str | None, frozen_sector: str | None) -> s
 _AMENDED_RE = re.compile(r"\[amended (\d{4}-\d{2}-\d{2})")
 
 
-def _evidence_dates(record: dict[str, Any]) -> list[tuple[date, str]]:
+def _evidence_dates(record: dict[str, Any]) -> list[EvidenceDate]:
     """Every date the record states for its evidence — the underwrite date and each visible
-    ``[amended YYYY-MM-DD …]`` tag — with where it came from. One reader, so the bound below and
-    the note naming what it dropped cannot disagree about which dates the record carries."""
-    dates: list[tuple[date, str]] = []
+    ``[amended YYYY-MM-DD …]`` tag — with where it came from. One reader, so the bound and the
+    field naming what it dropped cannot disagree about which dates the record carries.
+
+    A date that is not a real ISO date raises :class:`UnreadableEvidenceDateError` NAMING the
+    record and the field (`2026-02-30` matches the tag pattern and is no date); it never parses to
+    a guess."""
+    out: list[EvidenceDate] = []
+
+    def _add(raw: str, source: str) -> None:
+        try:
+            out.append(EvidenceDate(on=date.fromisoformat(raw), source=source))
+        except ValueError as exc:
+            raise UnreadableEvidenceDateError(
+                f"{record.get('ticker') or '<no ticker>'}: {source} {raw!r} is not an ISO "
+                f"date ({exc})") from exc
+
     raw = record.get("underwrite_date")
     if raw:
-        dates.append((date.fromisoformat(str(raw)), "underwrite_date"))
+        _add(str(raw), "underwrite_date")
     for leg, s in (record.get("scenarios") or {}).items():
         for m in _AMENDED_RE.finditer(str(s.get("reason") or "")):
-            dates.append((date.fromisoformat(m.group(1)), f"{leg} reason amendment"))
-    return dates
+            _add(m.group(1), f"{leg} reason amendment")
+    return out
+
+
+def _split_evidence(record: dict[str, Any], through: date | None
+                    ) -> tuple[date | None, str | None, list[EvidenceDate]]:
+    """ONE parse → the newest evidence date on or before ``through`` (with its source) AND the
+    dates after it, oldest first. ``through=None`` bounds nothing."""
+    dates = _evidence_dates(record)
+    known = [d for d in dates if through is None or d.on <= through]
+    later = sorted((d for d in dates if through is not None and d.on > through),
+                   key=lambda d: (d.on, d.source))
+    if not known:
+        return None, None, later
+    best = max(known, key=lambda d: d.on)
+    return best.on, best.source, later
 
 
 def last_evidence_date(record: dict[str, Any], *,
@@ -582,27 +648,34 @@ def last_evidence_date(record: dict[str, Any], *,
     ``[amended YYYY-MM-DD …]`` tag on any leg reason (the visible-amendment convention). Returns
     ``(date, source)``; ``(None, None)`` when the record states no date at all (fail-honest).
 
-    ``as_of`` BOUNDS IT TO THE DAY BEING BUILT (2026-10-11). The record is read as it stands
-    today, so re-cutting a past monitor day read an amendment written AFTER that day as evidence
-    the day already had — the committed 2026-07-20 day carries WERN's 2026-07-21 amendment and
-    EPAM's and SMPL's 2026-07-21 underwrites, because it was cut on the 21st. A date after
-    ``as_of`` is not evidence on ``as_of``; when every date is after it, the record states no
-    evidence for that day and this returns ``(None, None)`` — the caller says why
-    (:func:`evidence_after`). Omitted, the latest date is returned, as before."""
-    dates = [t for t in _evidence_dates(record) if as_of is None or t[0] <= as_of]
-    if not dates:
-        return None, None
-    best = max(dates, key=lambda t: t[0])
-    return best[0], best[1]
+    ``as_of`` BOUNDS IT (2026-10-11). The record is read as it stands today, so re-cutting a past
+    monitor day read an amendment written AFTER that day as evidence the day already had — the
+    committed 2026-07-20 day carries WERN's 2026-07-21 amendment and EPAM's and SMPL's 2026-07-21
+    underwrites, because it was cut on the 21st. A date after ``as_of`` is not evidence on
+    ``as_of``; when every date is after it, the record states no evidence for that day and this
+    returns ``(None, None)`` — `FreshnessRow.evidence_after_day` carries what was left out.
+    Omitted, the latest date is returned, as before."""
+    ev, src, _ = _split_evidence(record, as_of)
+    return ev, src
 
 
-def evidence_after(record: dict[str, Any], *, as_of: date) -> list[tuple[date, str]]:
-    """The record's evidence dates AFTER ``as_of``, oldest first — what :func:`last_evidence_date`
-    leaves out of a day built before them. Non-empty means the record was underwritten or amended
-    after that day, so its legs and triggers are read as they stand NOW, not as they stood then: a
-    past day can bound a date, but it cannot un-write a record. The monitor names these in the
-    day's notes rather than leaving a missing evidence date to read as a record with no date."""
-    return sorted(t for t in _evidence_dates(record) if t[0] > as_of)
+def later_evidence_note(row: FreshnessRow, *, through: date) -> str:
+    """The day's note for a row whose record states evidence after ``through`` — RENDERED FROM
+    `row.evidence_after_day`, the one carrier; a reader that needs the dates reads the field."""
+    return (f"{row.ticker}: scenarios/{row.ticker}.json carries evidence dated after {through} ("
+            + "; ".join(f"{d.source} {d.on}" for d in row.evidence_after_day)
+            + ") — not read as this day's evidence; the record's legs and triggers are read as "
+              "they stand today, not as they stood on this day")
+
+
+def record_after_day_note(row: FreshnessRow, *, through: date) -> str:
+    """The day's note for a record left OUT of the day: every evidence date it states is after
+    ``through``, so the record this run can read did not exist on that day. Rendered from the
+    row that was built and then withheld, so the dates named are the ones the bound read."""
+    first = row.evidence_after_day[0]
+    return (f"{row.ticker}: no freshness row — every evidence date scenarios/{row.ticker}.json "
+            f"states is after {through} (first: {first.source} {first.on}), so the record this run "
+            f"reads did not exist on this day")
 
 
 def next_expected_print(filing_dates: list[date], *,
@@ -730,6 +803,7 @@ def _measured_rows(ticker: str, record: dict[str, Any],
 
 def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
                   filings: list[tuple[str, date, str]], today: date,
+                  known_through: date | None = None,
                   watch_note: str | None = None,
                   mechanical: dict[str, Any] | None = None,
                   prior_days: list[dict[str, Any]] | None = None) -> FreshnessRow:
@@ -737,12 +811,20 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
     earnings filings. A filing dated AFTER the record's last evidence date sets ``unread_print``
     — a flag for the human, never a verdict on any trigger.
 
-    ``today`` IS THE DAY THE ROW DESCRIBES, AND NOTHING DATED AFTER IT IS READ (2026-10-11). EDGAR
-    answers with everything filed up to the moment of the call, so re-running `--ref 2026-09-22`
-    on 10-11 wrote IT's 10-08 8-K and WERN's 10-06 and 10-08 8-Ks into the 09-22 day as unread
-    prints — lookahead into a dated record. Filings after ``today`` are dropped here, in the pure
-    function, so the bound holds for every caller rather than at one fetch site; the record's
-    evidence date is bounded the same way (:func:`last_evidence_date`).
+    TWO DATES, AND NOTHING IS READ PAST THE SECOND (2026-10-11). ``today`` is the SESSION the row
+    describes: a dated trigger is PASSED against it and the next print is estimated from it.
+    ``known_through`` (default ``today``) is how far the row may READ — filings and the record's
+    evidence dates after it are dropped. EDGAR answers with everything filed up to the moment of
+    the call, so re-running `--ref 2026-09-22` on 10-11 wrote IT's 10-08 8-K and WERN's 10-06 and
+    10-08 8-Ks into the 09-22 day as unread prints — lookahead into a dated record. The bound sits
+    here, in the pure function, so it holds for every caller rather than at one fetch site.
+
+    They differ on purpose. The monitor passes its `--ref` (today, on a routine run) as
+    ``known_through``: a Monday-morning run is filed under Friday's session because Monday has no
+    close yet, and it must still flag Monday's 07:00 8-K — the review of #707 caught the first cut
+    hiding it until the next session's file. A re-cut of a past day passes that day, so it reads
+    only what was filed by then. Evidence dates the bound left out land in
+    ``evidence_after_day``, typed, never only in prose.
 
     ``mechanical`` is the name's committed dossier mechanical layer, SUPPLIED BY THE CALLER rather
     than read here — the same rule the scoring package follows for baskets, and for the same
@@ -750,8 +832,9 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
     would put file layout inside a pure function. Absent, the measured criteria are reported
     UNKNOWN with that as their stated cause, never silently skipped.
     """
-    ev, ev_src = last_evidence_date(record, as_of=today)
-    known = [f for f in filings if f[1] <= today]
+    through = known_through or today
+    ev, ev_src, later = _split_evidence(record, through)
+    known = [f for f in filings if f[1] <= through]
     newer = [f"{form} {d.isoformat()} acc {acc}"
              for form, d, acc in sorted(known, key=lambda t: t[1])
              if ev is not None and d > ev]
@@ -780,7 +863,7 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
         next_expected_print=nxt, next_expected_basis=basis,
         triggers=triggers, passed_trigger_deadlines=passed,
         measured=measured, stale_tags=_stale_tags(mechanical),
-        watch_note=watch_note,
+        watch_note=watch_note, evidence_after_day=later,
     )
 
 

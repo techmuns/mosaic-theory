@@ -2153,9 +2153,21 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     edgar = EdgarClient.from_config(cfg)
     # THE FRESHNESS SET IS THE BOOK AS OF THE DAY TOO (2026-10-11). It was drawn from the whole
     # ledger, so a re-cut of 2026-07-20 gave GOOGL — entered 2026-08-14 — a BUY freshness row in a
-    # day whose book, three blocks up, already excludes it. Both the names and the verdict logged
-    # beside them now come from `asof_rows`, the same point-in-time read the book uses.
-    for name in sorted({r["ticker"] for r in asof_rows} | _watch_tickers(root)):
+    # day whose book, three blocks up, already excludes it. The names and the verdict beside each
+    # now come from `live_verdicts`: decisions entered by the session and NOT CLOSED by it, newest
+    # first — the book's read with its closures applied (review of #707: IT, closed 07-21 and a
+    # watch record since, read BUY on every day from 08-11). A name with no live decision is here
+    # only if its record is a watch, and is labelled with the record's status.
+    live = mon.live_verdicts(ledger_all, as_of=now_date)
+    # TWO ANCHORS, NAMED. The row is filed under the SESSION (`now_date`): its deadlines are PASSED
+    # against it — the anchor the theme sweep below took on review 2026-08-31 — and prior days are
+    # read strictly before it. It READS through `ref`, the date asked for: a routine run (no
+    # `--ref`, so today) still flags a filing made this morning in the file of the last session,
+    # while a re-cut of a past day passes that day and reads only what was filed by then. The
+    # EDGAR window is anchored on the same `known_through` as the bound, so the fetch and the
+    # filter cannot drift apart.
+    known_through = ref
+    for name in sorted(set(live) | _watch_tickers(root)):
         rec_path = root / "scenarios" / f"{name}.json"
         if not rec_path.exists():
             continue
@@ -2164,12 +2176,12 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         filings: list[tuple[str, date, str]] = []
         if cik:
             for f in edgar.recent_filings(cik, forms=("8-K", "10-Q", "10-K"),
-                                          since=ref - timedelta(days=760)):
+                                          since=known_through - timedelta(days=760)):
                 filings.append((f.form, f.filing_date, f.accession))
         v = record.get("verdict") or {}
         note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
                 if v.get("avoid_priced") else None)
-        logged = next((r["verdict"] for r in asof_rows if r["ticker"] == name), None)
+        logged = live.get(name)
         status = str(v.get("status") or "—")
         # THE DOSSIER IS RESOLVED HERE, not inside the monitor (ruling 3). `freshness_row` takes
         # the mechanical layer as a parameter for the same reason the scoring package takes its
@@ -2180,25 +2192,27 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         dpath = root / "data" / "dossiers" / name / "dossier.json"
         mech = (json.loads(dpath.read_text()).get("mechanical")
                 if dpath.is_file() else None)
-        # THE ROW DESCRIBES `now_date`, the session the snapshot is stamped with — not the calendar
-        # `ref` (2026-10-11), the same anchor the theme sweep below took on review 2026-08-31.
-        # `freshness_row` drops every filing and evidence date after it, so a re-cut of a past day
-        # reads only what was filed by then, and a weekend run cannot flag Saturday's deadline as
-        # passed in Friday's file.
-        fresh.append(mon.freshness_row(
-            ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
-            record=record, filings=filings, today=now_date, watch_note=note, mechanical=mech,
-            prior_days=prior_days))
-        # WHAT THE BOUND CANNOT DO, SAID ON THE DAY. A date is bounded; the record it sits in is
-        # read as it stands now. A record underwritten or amended after the day therefore puts
-        # today's legs and triggers into a past day's row, and an evidence date the bound dropped
-        # must not read as a record that states none.
-        if late := mon.evidence_after(record, as_of=now_date):
-            notes.append(
-                f"{name}: scenarios/{name}.json carries evidence dated after {now_date} ("
-                + "; ".join(f"{src} {d}" for d, src in late)
-                + ") — not read as this day's evidence; the record's legs and triggers are read "
-                  "as they stand today, not as they stood on this day")
+        try:
+            row = mon.freshness_row(
+                ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
+                record=record, filings=filings, today=now_date, known_through=known_through,
+                watch_note=note, mechanical=mech, prior_days=prior_days)
+        except mon.UnreadableEvidenceDateError as exc:
+            # ONE HAND-EDITED RECORD MUST NOT TAKE THE BOOK DOWN — the theme-card doctrine below.
+            # The row is not written and the day says so by name; it never passes silently.
+            notes.append(f"RECORD {exc} · its freshness row is NOT written")
+            continue
+        # WHAT THE BOUND CANNOT DO, SAID ON THE DAY — rendered from the row's typed field. A record
+        # stating NO evidence by `known_through` did not exist on this day in any form this run can
+        # read, so it gets no row (its triggers and deadlines would all be later ones); one
+        # AMENDED after the day keeps its row, its bounded date, and a note that its legs and
+        # triggers are today's.
+        if row.evidence_after_day:
+            if row.last_evidence_date is None:
+                notes.append(mon.record_after_day_note(row, through=known_through))
+                continue
+            notes.append(mon.later_evidence_note(row, through=known_through))
+        fresh.append(row)
 
     # DUAL MEASUREMENT (ratified §7, 2026-07-22). The CALL is scored at its horizon regardless of
     # whether the position was exited — an exit is a capital decision, not a retraction, and
