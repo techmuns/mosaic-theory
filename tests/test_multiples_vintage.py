@@ -170,6 +170,82 @@ def _bundles() -> list[tuple[str, CiqBundle]]:
             for tk in sorted(p.name for p in root.iterdir() if p.is_dir()) if ms.files(tk)]
 
 
+def _disclosed(pt: dict[str, Any], flags: list[str]) -> bool:
+    """An untraceable point the PAGE ALREADY DISCLOSES: marked `cited: false`, with the assembler's
+    UNCITED flag quoting its claim. Ruled 2026-10-11 (operator) — the 2026-08-07 precedent: such a
+    point stays on the page for the human, flagged, and is not re-rolled away."""
+    claim = str(pt.get("claim") or "")[:40]
+    return pt.get("cited") is False and bool(claim) and any(
+        f.startswith("UNCITED") and claim in f for f in flags)
+
+
+def _untraced_citations(doc: dict[str, Any], refs: Any,
+                        traces: Any) -> tuple[int, list[str]]:
+    """(citations scanned, the ones that resolve to nothing WITHOUT being disclosed)."""
+    flags = list(doc.get("qa_flags") or [])
+    syn = doc.get("synthesis") or {}
+    scanned, broken = 0, []
+    for key in ("bull_points", "bear_points"):
+        for i, pt in enumerate(syn.get(key) or []):
+            ref = pt.get("source_ref")
+            if not ref:
+                continue
+            scanned += 1
+            if not traces(ref, refs) and not _disclosed(pt, flags):
+                broken.append(f"{key}[{i}] (cited={pt.get('cited')})")
+    # DECISIVE-QUESTION EVIDENCE COUNTS TOO. The first cut walked only bull/bear points, so a
+    # reworded stamp quoted ONLY here passed — measured 77 such citations on the corpus, every
+    # one of them traceable today, so this is free coverage rather than a new obligation.
+    dq = syn.get("decisive_question") or {}
+    for side in ("evidence_for", "evidence_against"):
+        for i, pt in enumerate(dq.get(side) or []):
+            ref = pt.get("source_ref") if isinstance(pt, dict) else None
+            if not ref:
+                continue
+            scanned += 1
+            if not traces(ref, refs) and not _disclosed(pt, flags):
+                broken.append(f"decisive_question.{side}[{i}]")
+    # twin cases carry no `cited` mark, so nothing can disclose them — strict, as before
+    for i, tw in enumerate(syn.get("twin_reference_cases") or []):
+        src = tw.get("source")
+        if not src or "unverified" in src.lower():
+            continue
+        scanned += 1
+        if not traces(src, refs):
+            broken.append(f"twin[{i}]")
+    return scanned, broken
+
+
+def test_an_untraceable_point_passes_only_when_the_page_discloses_it() -> None:
+    """BOTH SIDES, on UBER's real committed point (decisive evidence_against, 2026-10-11): its
+    `source_ref` is a peer-heterogeneity note, not a source. Disclosed — `cited: false` and the
+    UNCITED flag — it passes; claiming `cited: true`, or with the flag gone, it is the stale-stamp
+    failure this file exists for (CONSTRUCTED from the real page)."""
+    import copy
+    import json
+
+    from vinci.dossier.schemas import Dossier
+    from vinci.dossier.synthesis import _refs_in, _traces
+
+    root = pathlib.Path(__file__).resolve().parents[1]
+    doc = json.loads((root / "data" / "dossiers" / "UBER" / "dossier.json").read_text())
+    refs = _refs_in(Dossier.model_validate(doc).mechanical)
+    pts = doc["synthesis"]["decisive_question"]["evidence_against"]
+    untraced = [k for k, pt in enumerate(pts) if not _traces(pt.get("source_ref") or "", refs)]
+    i = untraced[0] if untraced else None
+    if i is None:
+        pytest.skip("UBER's page no longer carries an untraceable decisive point")
+    assert _untraced_citations(doc, refs, _traces)[1] == []
+    claimed = copy.deepcopy(doc)
+    claimed["synthesis"]["decisive_question"]["evidence_against"][i]["cited"] = True
+    assert _untraced_citations(claimed, refs, _traces)[1] == [
+        f"decisive_question.evidence_against[{i}]"]
+    unflagged = copy.deepcopy(doc)
+    unflagged["qa_flags"] = [f for f in doc["qa_flags"] if not f.startswith("UNCITED")]
+    assert _untraced_citations(unflagged, refs, _traces)[1] == [
+        f"decisive_question.evidence_against[{i}]"]
+
+
 def test_the_multiples_stamps_are_frozen_because_they_are_join_keys() -> None:
     """THE REVERT, PINNED (#460). `Close [ISO]` was strictly better provenance and had to go back.
 
@@ -185,7 +261,13 @@ def test_the_multiples_stamps_are_frozen_because_they_are_join_keys() -> None:
     it fires on the next author who edits these strings without re-rolling synthesis.
 
     ITEM 20's `(latest)` FAMILY IS THEREFORE REOPENED. It cannot be closed by rewording; it needs
-    provenance keyed by a stable id with the display string derived from it. Recorded in STATE."""
+    provenance keyed by a stable id with the display string derived from it. Recorded in STATE.
+
+    NARROWED TO ITS OWN INVARIANT (operator, 2026-10-11): a point that resolves to nothing passes
+    only when the page DISCLOSES it — `cited: false` and the assembler's UNCITED flag
+    (`_disclosed`). The failure this file guards is a point still reading as source-verified; a
+    disclosed one is the 2026-08-07 precedent, left on the page for the human rather than
+    re-rolled away."""
     import json
 
     root = pathlib.Path(__file__).resolve().parents[1]
@@ -196,34 +278,9 @@ def test_the_multiples_stamps_are_frozen_because_they_are_join_keys() -> None:
     for path in sorted((root / "data" / "dossiers").glob("*/dossier.json")):
         doc = json.loads(path.read_text())
         refs = _refs_in(Dossier.model_validate(doc).mechanical)
-        syn = doc.get("synthesis") or {}
-        for key in ("bull_points", "bear_points"):
-            for i, pt in enumerate(syn.get(key) or []):
-                ref = pt.get("source_ref")
-                if not ref:
-                    continue
-                scanned += 1
-                if not _traces(ref, refs):
-                    broken.append(f"{path.parent.name} {key}[{i}] (cited={pt.get('cited')})")
-        # DECISIVE-QUESTION EVIDENCE COUNTS TOO. The first cut walked only bull/bear points, so a
-        # reworded stamp quoted ONLY here passed — measured 77 such citations on the corpus, every
-        # one of them traceable today, so this is free coverage rather than a new obligation.
-        dq = syn.get("decisive_question") or {}
-        for side in ("evidence_for", "evidence_against"):
-            for i, pt in enumerate(dq.get(side) or []):
-                ref = pt.get("source_ref") if isinstance(pt, dict) else None
-                if not ref:
-                    continue
-                scanned += 1
-                if not _traces(ref, refs):
-                    broken.append(f"{path.parent.name} decisive_question.{side}[{i}]")
-        for i, tw in enumerate(syn.get("twin_reference_cases") or []):
-            src = tw.get("source")
-            if not src or "unverified" in src.lower():
-                continue
-            scanned += 1
-            if not _traces(src, refs):
-                broken.append(f"{path.parent.name} twin[{i}]")
+        n, bad = _untraced_citations(doc, refs, _traces)
+        scanned += n
+        broken += [f"{path.parent.name} {b}" for b in bad]
     assert scanned, "no committed synthesis citation was scanned — the pin ran vacuously"
     assert not broken, (
         f"{len(broken)} committed synthesis citation(s) no longer trace to their own mechanical "
