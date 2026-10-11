@@ -38,6 +38,7 @@ from vinci.theme_intelligence.ingest import InactiveSourceError, ingest_file
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.report import build_dashboard, card_context
 from vinci.theme_intelligence.schemas import (
+    DocumentRecord,
     HealthStatus,
     RunStatus,
     SourceCoverage,
@@ -126,6 +127,12 @@ def _historical_bofa(pipe: Pipeline) -> tuple[str, str]:
                                 {"source_id": "bofa_institutional", "run_id": "R-old"})
     pipe.store.upsert_candidate(BOFA_URL + "?u", "bofa_institutional", "UNDATED",
                                 {"source_id": "bofa_institutional", "title": "Undated BofA page"})
+    # a BofA document the old registry still held for a licence check — never asked about again
+    pipe.store.upsert_document(DocumentRecord(
+        doc_id="D-0123456789abcdef", sha256="0123456789abcdef" * 4, filename="bofa-note.pdf",
+        fmt="pdf", size=1, received_at=datetime(2026, 7, 1, tzinfo=UTC),
+        source_id="bofa_institutional", publisher="Bank of America", status="HELD",
+        match_basis="licence not stated (historical)"))
     pipe.store.add_health_check(SourceHealthCheck(
         check_id="SH-old-bofa", source_id="bofa_institutional", publisher="Bank of America",
         checked_at=datetime(2026, 10, 11, 8, 30, tzinfo=UTC), trigger="scan",
@@ -186,9 +193,10 @@ def test_new_bofa_material_is_refused_through_every_route(tmp_path: Path,
     pipe.start_run("ingest", as_of=AS_OF)
     with pytest.raises(InactiveSourceError, match="Bank of America .* retired on 2026-10-11"):
         ingest_file(pipe, MS_PDF, Declared(source_id="bofa_institutional", llm_permitted=True))
-    with pytest.raises(InactiveSourceError, match="host of Bank of America"):
-        ingest_file(pipe, MS_PDF, Declared(source_id="ms_research", url=BOFA_URL,
-                                           llm_permitted=True))
+    for url in (BOFA_URL, "https://insights.business.bofa.com/en-us/a-subdomain-page"):
+        with pytest.raises(InactiveSourceError, match="host of Bank of America"):
+            ingest_file(pipe, MS_PDF, Declared(source_id="ms_research", url=url,
+                                               llm_permitted=True))
     with pytest.raises(InactiveSourceError, match="not an active channel"):
         ingest_file(pipe, MS_PDF, Declared(source_id="some_other_bank", llm_permitted=True))
     assert pipe.store.documents() == []  # nothing stored, nothing recorded

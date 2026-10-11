@@ -163,3 +163,20 @@ def test_a_scan_stops_at_the_first_refusal_and_queues_the_rest(
     assert run.status is RunStatus.PARTIAL and run.counts["articles_queued"] == 3
     assert any("spend guard: the run budget is exhausted" in w for w in run.warnings)
     assert sorted(u for u, _s, _m in pipe.store.candidates("QUEUED")) == sorted(urls)
+
+
+def test_a_call_whose_cost_is_not_reported_counts_at_its_bound() -> None:
+    """No usage reported = no measurement: the guard counts the call at its bound, never at 0."""
+
+    class Silent:
+        model = "claude-opus-4-8"
+        last_usage = None
+
+        def extract(self, **_kw: Any) -> dict[str, Any]:
+            return {}
+
+    guard = SpendGuard(run_limit=100.0)
+    GuardedClient(Silent(), guard).extract(system="s", user="u" * 100, tool={"name": "x"})
+    (call,) = guard.calls
+    assert call["actual_usd"] is None
+    assert guard.run_spent == pytest.approx(call["bound_usd"], abs=1e-4)
