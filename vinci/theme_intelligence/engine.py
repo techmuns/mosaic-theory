@@ -49,6 +49,7 @@ from vinci.theme_intelligence.cards import (
     with_citations,
 )
 from vinci.theme_intelligence.config import ENGINE_VERSION, STALE_AFTER_DAYS, Taxonomy
+from vinci.theme_intelligence.contradiction import AMBIGUOUS, CONTRADICTS, assess
 from vinci.theme_intelligence.priority import ThesisState, compute_priority
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
@@ -583,7 +584,6 @@ class Engine:
         """A new opposite-direction thesis CHALLENGES the existing one: its support is linked to
         the incumbent as CONTRADICTS evidence (a new incumbent version), never merged."""
         out: list[ThesisOutcome] = []
-        new_links = self.store.links(new_tid)
         for rel in self.store.relations(new_tid):
             if rel.relation is not RelationType.COMPETING:
                 continue
@@ -593,8 +593,15 @@ class Engine:
             inc = self.store.thesis(other_id)
             if inc is None or inc.status is ThesisStatus.ARCHIVED:
                 continue
-            support = [lk.claim_id for lk in new_links if lk.role in (
-                LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)]
+            if rel.evidence_role == EvidenceRole.CONTRADICTION_REVIEW.value:
+                ev = self._event(ctx, inc.thesis_id, None, "CONTRADICTION_REVIEW",
+                                 f"competing thesis {new_tid}: {rel.reason}")
+                with self.store.tx():
+                    self.store.add_event(ev)
+                continue
+            # ONLY the claims that directly contradict the incumbent's own evidence are filed —
+            # never the challenger's whole support, never by how many claims it has
+            support = list(rel.claim_ids)
             if not support:
                 continue
             fake = _ChallengeHyp(support)
@@ -983,6 +990,7 @@ class Engine:
         now = datetime.now(tz=UTC)
         seg_label = {sg.id: sg.label for sg in self.taxonomy.segments}
         t_windows = evidence_windows(own, ctx.as_of)
+        cids: tuple[str, ...] = ()
         for o in self.store.theses():
             if o.thesis_id == t.thesis_id:
                 continue
@@ -997,12 +1005,39 @@ class Engine:
                                           evidence_windows(self._evidence_of(o.thesis_id),
                                                            ctx.as_of), seg_label)
                 if opposite and not diffs:
-                    rel, role = RelationType.COMPETING, EvidenceRole.CONTRADICTION.value
-                    why = (f"a direct contradiction — the same claim (node {t.key_node}, "
-                           f"mechanism {t.key_mechanism}"
-                           + (f", segment {t.key_segment}" if t.key_segment else "")
-                           + ", overlapping geography and timeframe) predicted the opposite "
-                             "way — linked, never merged")
+                    # the same thesis claim predicted the opposite way — but a thesis is only
+                    # weakened by CLAIMS that directly contradict its own (contradiction.py)
+                    asmt = assess(own, self._evidence_of(o.thesis_id),
+                               products=list(self.taxonomy.products_of(t.key_node)),
+                               ref=ctx.as_of, overlap_geo=geographies_overlap,
+                               geo_ch=t.key_geography, geo_inc=o.key_geography)
+                    basis = (f"the same thesis claim (node {t.key_node}, mechanism "
+                             f"{t.key_mechanism}"
+                             + (f", segment {t.key_segment}" if t.key_segment else "")
+                             + ", overlapping geography and timeframe) predicted the opposite way")
+                    if asmt.verdict == CONTRADICTS:
+                        rel, role = RelationType.COMPETING, EvidenceRole.CONTRADICTION.value
+                        cids = tuple(asmt.contradicting)
+                        first = next(p for p in asmt.pairs if p.kind == CONTRADICTS)
+                        why = (f"a direct contradiction — {basis}; {len(cids)} claim(s) directly "
+                               f"contradict its evidence ({first.challenger} vs "
+                               f"{first.incumbent}: {'; '.join(first.reasons)}) — only those "
+                               f"are filed against it; linked, never merged")
+                    elif asmt.verdict == AMBIGUOUS:
+                        rel = RelationType.COMPETING
+                        role = EvidenceRole.CONTRADICTION_REVIEW.value
+                        first_a = asmt.ambiguous[0]
+                        why = (f"held for review — {basis}, but no claim pair is clearly "
+                               f"comparable ({first_a.challenger} vs {first_a.incumbent}: "
+                               f"{'; '.join(first_a.reasons)}); nothing is filed against it "
+                               f"automatically")
+                    else:
+                        rel, role = RelationType.RELATED, EvidenceRole.RELATED.value
+                        first_c = asmt.pairs[0] if asmt.pairs else None
+                        why = (f"{basis}, but every claim pair is compatible"
+                               + (f" ({first_c.challenger} vs {first_c.incumbent}: "
+                                  f"{'; '.join(first_c.reasons)})" if first_c else "")
+                               + " — related, never used as counter-evidence")
                 elif opposite:
                     rel, role = RelationType.RELATED, EvidenceRole.RELATED.value
                     why = (f"the opposite direction on the same value-chain node, but not the "
@@ -1044,7 +1079,9 @@ class Engine:
             rels.append(ThemeRelation(
                 relation_id="TR-" + _sha(*pair, rel.value)[:14], from_thesis=t.thesis_id,
                 to_thesis=o.thesis_id, relation=rel, reason=why, run_id=ctx.run_id,
-                created_at=now, evidence_role=role))
+                created_at=now, evidence_role=role,
+                claim_ids=cids if role == EvidenceRole.CONTRADICTION.value else ()))
+            cids = ()
         return rels
 
     def _event(self, ctx: ArticleContext, tid: str, version: int | None, etype: str,
@@ -1199,6 +1236,8 @@ def _competing_basis(inc: Thesis, ch: Thesis | None) -> str:
 _RELATION_LABEL = {
     (RelationType.COMPETING, EvidenceRole.CONTRADICTION.value):
         "CONTRADICTION — competing hypothesis",
+    (RelationType.COMPETING, EvidenceRole.CONTRADICTION_REVIEW.value):
+        "COMPETING, held for review (not applied) —",
     (RelationType.RELATED, EvidenceRole.RELATED.value): "RELATED, not a contradiction —",
     (RelationType.SIBLING, EvidenceRole.ADJACENT_SUPPORT.value): "ADJACENT SUPPORT (sibling) —",
     (RelationType.PARENT_CHILD, EvidenceRole.ADJACENT_SUPPORT.value):

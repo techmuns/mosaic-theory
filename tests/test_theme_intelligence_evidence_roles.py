@@ -345,3 +345,159 @@ def test_two_unclassified_theses_are_never_a_contradiction_by_key(tmp_path: Path
     after = pipe.store.thesis(inc.thesis_id)
     assert after is not None and after.current_version == 1
 
+
+
+# --- Stage 1: claim-level contradiction (hybrid-ingestion brief) ---------------------------------
+
+def _q4(pipe: Pipeline, slug: str, publisher: str, texts: list[str], direction: str,
+        title: str) -> None:
+    from tests.test_theme_intelligence_overlap import _memory_case
+
+    _memory_case(pipe, slug, publisher, texts, direction, title)
+
+
+HBM_UP = "HBM contract prices are projected to rise 12% QoQ in 4Q26 on AI accelerator demand."
+GENERIC_DOWN = "DRAM contract prices are projected to fall 8% QoQ in 4Q26 as buyers pause."
+
+
+def test_hbm_up_while_conventional_dram_falls_is_never_a_contradiction(tmp_path: Path) -> None:
+    """The brief's named regression: both theses sit on the DRAM / HBM segment and predict
+    opposite price moves in the same quarter — but about DIFFERENT products. Compatible:
+    RELATED, no CONTRADICTS evidence, no new version."""
+    from tests.test_theme_intelligence_overlap import DRAM_DOWN, Q4_AS_OF
+
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("fixture", as_of=Q4_AS_OF)
+    _q4(pipe, "hbm-up", "Hypo Research A", [HBM_UP], "positive", "HBM prices rise in 4Q26")
+    (inc,) = pipe.store.theses()
+    _q4(pipe, "dram-down", "Hypo Research B", [DRAM_DOWN], "negative",
+        "Conventional DRAM prices fall in 4Q26")
+    rels = pipe.store.relations(inc.thesis_id)
+    assert [(r.relation, r.evidence_role) for r in rels] == [(RelationType.RELATED, "RELATED")]
+    assert "different products (conventional_dram vs hbm)" in rels[0].reason
+    after = pipe.store.thesis(inc.thesis_id)
+    assert after is not None and after.current_version == 1
+    assert not [lk for lk in pipe.store.links(inc.thesis_id) if lk.role is LinkRole.CONTRADICTS]
+
+
+def test_an_ambiguous_pairing_is_held_for_review_and_changes_nothing(tmp_path: Path) -> None:
+    """Generic "DRAM" against HBM: the generic term spans HBM, so the claims may or may not be
+    about the same series — a human decides; the incumbent is untouched."""
+    from tests.test_theme_intelligence_overlap import Q4_AS_OF
+
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("fixture", as_of=Q4_AS_OF)
+    _q4(pipe, "hbm-up", "Hypo Research A", [HBM_UP], "positive", "HBM prices rise in 4Q26")
+    (inc,) = pipe.store.theses()
+    _q4(pipe, "dram-generic", "Hypo Research B", [GENERIC_DOWN], "negative",
+        "DRAM prices fall in 4Q26")
+    (rel,) = pipe.store.relations(inc.thesis_id)
+    assert (rel.relation, rel.evidence_role) == (RelationType.COMPETING, "CONTRADICTION_REVIEW")
+    assert "a generic product against one it covers" in rel.reason and rel.claim_ids == ()
+    after = pipe.store.thesis(inc.thesis_id)
+    assert after is not None and after.current_version == 1
+    assert [e.event_type for e in pipe.store.events(thesis_id=inc.thesis_id)
+            if e.event_type == "CONTRADICTION_REVIEW"] == ["CONTRADICTION_REVIEW"]
+
+
+@pytest.mark.parametrize("n_claims", [1, 5])
+def test_a_contradicting_publishers_claim_count_never_decides(tmp_path: Path,
+                                                               n_claims: int) -> None:
+    """Never downgraded because one publisher wrote MORE claims: the incumbent has two
+    independent supporting sources; one contradicting publisher writing one claim or five
+    reaches the same research action — weighed by independent origins, not claims."""
+    from tests.test_theme_intelligence_overlap import DRAM_UP, Q4_AS_OF
+
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("fixture", as_of=Q4_AS_OF)
+    second = DRAM_UP.replace("10%", "11%").replace("server demand", "AI server demand")
+    art = Hypo(slug="dram-up-two-sources", publisher="Hypo Research A", published=Q4_AS_OF,
+               blocks=[("paragraph", DRAM_UP), ("paragraph", second)])
+    x = extraction(
+        [claim("c1", "b001", DRAM_UP.rstrip("."), "DRAM +10%", kind="forecast",
+               epistemic="forecast", metric="DRAM contract price", value=10, value_text="10%",
+               unit="%", period="4Q26"),
+         claim("c2", "b002", second.rstrip("."), "DRAM +11%", kind="forecast",
+               epistemic="forecast", metric="DRAM contract price", value=11, value_text="11%",
+               unit="%", period="4Q26", source="Hypo Data Vendor")],
+        [hyp("h1", "DRAM contract prices rise in 4Q26", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", geography="Global", supporting=["c1", "c2"])])
+    ingest(pipe, art.doc(), x, as_of=Q4_AS_OF, publisher="Hypo Research A")
+    (inc,) = pipe.store.theses()
+    downs = [f"Conventional DRAM contract prices are projected to fall {6 + i}% QoQ in 4Q26 "
+             f"(scenario {i + 1})." for i in range(n_claims)]
+    _q4(pipe, f"dram-down-{n_claims}", "Hypo Research B", downs, "negative",
+        "DRAM contract prices fall in 4Q26")
+    v = pipe.store.thesis_version(inc.thesis_id, pipe.store.thesis(inc.thesis_id).current_version)
+    assert v is not None
+    assert len([lk for lk in pipe.store.links(inc.thesis_id)
+                if lk.role is LinkRole.CONTRADICTS]) == n_claims  # each directly contradicts
+    assert not any("outweighs" in r or "contested" in r for r in v.priority.rules_fired)
+    f8 = next(f for f in v.priority.factors if f.factor_id == "F8_counterevidence")
+    assert "1 independent contradicting source(s) vs 2 supporting" in f8.note
+
+
+def test_the_same_observation_restated_is_compared_once() -> None:
+    from tests.test_theme_intelligence_overlap import DRAM_DOWN, DRAM_UP
+    from vinci.theme_intelligence.config import load_taxonomy
+    from vinci.theme_intelligence.contradiction import assess
+    from vinci.theme_intelligence.engine import geographies_overlap
+
+    def mk(cid: str, quote: str) -> Any:
+        from vinci.theme_intelligence.schemas import Claim
+
+        return Claim(claim_id=cid, article_id="A", article_version_id="AV", block_id="b001",
+                     char_start=0, char_end=1, quote=quote, statement=quote, kind="forecast",
+                     epistemic="forecast", metric="DRAM contract price", value=8,
+                     value_text="8%", unit="%", period="4Q26", origin_id="ES-B",
+                     confidence="high", span_verified=True, number_verified=True,
+                     measure_key="dram|price|4q26|%", fingerprint="fp", extraction_id="X")
+
+    products = list(load_taxonomy().products_of("ai_infrastructure.memory"))
+    restated = [mk(f"C-{i}", DRAM_DOWN) for i in range(3)]  # one observation, three claims
+    a = assess(restated, [mk("C-inc", DRAM_UP)], products=products, ref=date(2026, 9, 30),
+               overlap_geo=geographies_overlap, geo_ch="Global", geo_inc="Global")
+    assert len(a.pairs) == 1 and a.contradicting == ["C-0"]
+
+
+@pytest.mark.parametrize(("ch", "inc", "want", "says"), [
+    ("Conventional DRAM contract prices will fall 8% QoQ in 4Q26.",
+     "Conventional DRAM contract prices will rise 10% QoQ in 4Q26.", "CONTRADICTS",
+     "opposite directions"),
+    ("HBM contract prices will fall 8% QoQ in 4Q26.",
+     "Conventional DRAM contract prices will rise 10% QoQ in 4Q26.", "COMPATIBLE",
+     "different products"),
+    ("Conventional DRAM shipments will fall 8% QoQ in 4Q26.",
+     "Conventional DRAM contract prices will rise 10% QoQ in 4Q26.", "COMPATIBLE",
+     "different variables"),
+    ("Conventional DRAM contract prices will fall 8% QoQ in 2Q27.",
+     "Conventional DRAM contract prices will rise 10% QoQ in 4Q26.", "COMPATIBLE",
+     "different periods"),
+    ("Conventional DRAM contract prices will rise 8% QoQ in 4Q26.",
+     "Conventional DRAM contract prices will rise 10% QoQ in 4Q26.", "COMPATIBLE",
+     "the same direction"),
+    ("Conventional DRAM contract prices will not fall in 4Q26.",
+     "Conventional DRAM contract prices will rise 10% QoQ in 4Q26.", "AMBIGUOUS",
+     "no single direction"),
+    ("DRAM contract prices will fall 8% QoQ in 4Q26.",
+     "HBM contract prices will rise 10% QoQ in 4Q26.", "AMBIGUOUS", "generic product"),
+])
+def test_each_dimension_of_a_claim_pair(ch: str, inc: str, want: str, says: str) -> None:
+    from vinci.theme_intelligence.config import load_taxonomy
+    from vinci.theme_intelligence.contradiction import compare
+    from vinci.theme_intelligence.engine import geographies_overlap
+    from vinci.theme_intelligence.schemas import Claim
+
+    def mk(cid: str, quote: str) -> Claim:
+        period = "2Q27" if "2Q27" in quote else "4Q26"
+        return Claim(claim_id=cid, article_id="A", article_version_id="AV", block_id="b001",
+                     char_start=0, char_end=1, quote=quote, statement=quote, kind="forecast",
+                     epistemic="forecast", period=period, confidence="high",
+                     span_verified=True, number_verified=True, measure_key=cid,
+                     fingerprint=cid, extraction_id="X")
+
+    v = compare(mk("C-ch", ch), mk("C-inc", inc),
+                products=list(load_taxonomy().products_of("ai_infrastructure.memory")),
+                ref=date(2026, 9, 30), overlap_geo=geographies_overlap, geo_ch="Global",
+                geo_inc="Global")
+    assert v.kind == want and any(says in r for r in v.reasons), v

@@ -269,6 +269,9 @@ class EvidenceRole(StrEnum):
     REPEATED_SOURCE = "REPEATED_SOURCE"
     #: the opposite direction on related economics, not a contradiction
     RELATED = "RELATED"
+    #: opposite predictions of the same thesis claim whose CLAIMS could not be shown either
+    #: contradictory or compatible — held for a human; nothing changes automatically
+    CONTRADICTION_REVIEW = "CONTRADICTION_REVIEW"
 
 
 def identity_key(node: str, mechanism: str, direction: str, geography: str,

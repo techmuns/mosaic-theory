@@ -152,6 +152,14 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
     regime = st.kind is ThesisKind.MARKET_REGIME
     support_mat = [c for c in st.supporting + st.dislocation + st.catalyst if _material(c)]
     counter_mat = [c for c in st.counter if _material(c)]
+    # OBSERVATIONS, not claims: a claim restating the same measure and value from the same
+    # original source (its fingerprint) counts once — and a contradiction from OTHER sources is
+    # weighed by independent origins, never by how many claims one publisher wrote
+    support_obs = {c.fingerprint for c in support_mat}
+    support_origins = {c.origin_id or c.article_id for c in support_mat}
+    own_counter_obs = {c.fingerprint for c in counter_mat
+                       if (c.origin_id or c.article_id) in support_origins}
+    external_origins = {c.origin_id or c.article_id for c in counter_mat} - support_origins
     origins = sorted({c.origin_id or c.article_id for c in st.supporting + st.dislocation
                       + st.catalyst})
     fundamental = [s for s in st.transmission if s.step in EARNINGS_STEPS
@@ -290,7 +298,11 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                        "absent" if not candidates else "incomplete",
                        note=inflection_note, claim_ids=ids(credible or candidates)),
         PriorityFactor(factor_id="F8_counterevidence", value=str(len(counter_mat)),
-                       note=f"material counter-claims ({len(st.counter)} counter-claims in total)",
+                       note=f"material counter-claims ({len(st.counter)} counter-claims in total); "
+                            f"{len(own_counter_obs)} distinct counter-observation(s) from the "
+                            f"supporting sources vs {len(support_obs)} supporting; "
+                            f"{len(external_origins)} independent contradicting source(s) vs "
+                            f"{len(support_origins)} supporting",
                        claim_ids=ids(list(st.counter))),
         PriorityFactor(factor_id="F9_premise_in_source", value=st.stance.value,
                        note="asserted | conditional | speculative | reported_view"),
@@ -324,7 +336,10 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                 if candidates else ""))
         if st.stance is not StanceInSource.ASSERTED:
             unmet.append(f"premise is {st.stance.value} in the source")
-        if counter_mat and len(counter_mat) >= len(support_mat):
+        if external_origins and len(external_origins) >= len(support_origins):
+            unmet.append(f"contested: {len(external_origins)} independent source(s) directly "
+                         f"contradict it, against {len(support_origins)} supporting")
+        elif own_counter_obs and len(own_counter_obs) >= len(support_obs):
             unmet.append("counter-evidence outweighs support")
         if st.retrieval is not RetrievalState.FULL:
             unmet.append(f"retrieval {st.retrieval.value}")

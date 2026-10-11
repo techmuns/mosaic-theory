@@ -216,3 +216,76 @@ terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
          "onsite generation", "on-site power", "onsite power", "gas turbine", "gas turbines",
          "fuel cell", "fuel cells", "reciprocating engine", "reciprocating engines"]
 
+# PRODUCTS — finer than segments, for CLAIM-level contradiction checks (contradiction.py): two
+# claims contradict only when they speak about the same product, variable, period and geography
+# with opposite directions. Read from the verbatim quote (and the claim's metric / scope); the
+# most specific term wins ("conventional DRAM" is not the generic "DRAM"). `covers`: the
+# specific products a generic term spans — a generic claim against one of them is AMBIGUOUS.
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "hbm"
+label = "HBM"
+terms = ["HBM", "HBM3", "HBM3E", "HBM4", "HBM4E", "high-bandwidth memory",
+         "high bandwidth memory"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "conventional_dram"
+label = "Conventional DRAM"
+terms = ["conventional DRAM", "commodity DRAM", "standard DRAM", "DDR4", "DDR5", "LPDDR",
+         "LPDDR4", "LPDDR4X", "LPDDR5", "LPDDR5X", "GDDR6", "GDDR7", "server DRAM", "PC DRAM",
+         "mobile DRAM", "graphics DRAM", "RDIMM"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "dram"
+label = "DRAM (generic)"
+terms = ["DRAM"]
+covers = ["hbm", "conventional_dram"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "nand_flash"
+label = "NAND Flash"
+terms = ["NAND", "NAND Flash", "NAND wafer", "NAND wafers", "flash", "QLC", "TLC"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "enterprise_ssd"
+label = "Enterprise SSD"
+terms = ["enterprise SSD", "enterprise SSDs", "eSSD", "data-center SSD", "datacenter SSD"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "client_ssd"
+label = "Client SSD"
+terms = ["client SSD", "client SSDs", "PC SSD", "consumer SSD"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "ssd"
+label = "SSD (generic)"
+terms = ["SSD", "SSDs"]
+covers = ["enterprise_ssd", "client_ssd"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "emmc_ufs"
+label = "eMMC / UFS"
+terms = ["eMMC", "UFS"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "grid_utilities"
+label = "Grid-connected utilities"
+terms = ["utility", "utilities", "ratepayer", "ratepayers", "rate base"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "onsite_generation"
+label = "Behind-the-meter / on-site generation"
+terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
+         "onsite generation", "on-site power", "onsite power", "gas turbine", "gas turbines",
+         "fuel cell", "fuel cells", "reciprocating engine", "reciprocating engines"]
+

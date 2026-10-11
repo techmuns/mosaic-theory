@@ -119,10 +119,28 @@ class Segment:
 
 
 @dataclass(frozen=True)
+class Product:
+    """A product within a node, for CLAIM-level comparison (taxonomy.toml `[[product]]`): a
+    claim about HBM prices is not a claim about conventional DRAM prices. `covers` names the
+    specific products a generic term spans ("DRAM" spans HBM and conventional DRAM) — a generic
+    claim against one it covers is ambiguous, never assumed the same."""
+
+    node: str
+    id: str
+    label: str
+    terms: tuple[str, ...]
+    covers: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
 class Taxonomy:
     nodes: tuple[TaxonomyItem, ...]
     mechanisms: tuple[TaxonomyItem, ...]
     segments: tuple[Segment, ...] = ()
+    products: tuple[Product, ...] = ()
+
+    def products_of(self, node_id: str) -> tuple[Product, ...]:
+        return tuple(p for p in self.products if p.node == node_id)
 
     def segments_of(self, node_id: str) -> tuple[Segment, ...]:
         return tuple(sg for sg in self.segments if sg.node == node_id)
@@ -191,7 +209,15 @@ def load_taxonomy(path: Path | None = None) -> Taxonomy:
     for sg in segments:
         if sg.node not in node_ids or not sg.terms or "+" in sg.id:
             raise ConfigError(f"segment {sg.id}: unknown node, no terms or a '+' in its id")
-    return Taxonomy(nodes=nodes, mechanisms=mechs, segments=segments)
+    products = tuple(Product(str(p["node"]), str(p["id"]), str(p["label"]),
+                             tuple(str(x) for x in p["terms"]),
+                             tuple(str(x) for x in p.get("covers", [])))
+                     for p in raw.get("product", []))
+    pids = {p.id for p in products}
+    for p in products:
+        if p.node not in node_ids or not p.terms or set(p.covers) - pids:
+            raise ConfigError(f"product {p.id}: unknown node, no terms or an unknown covered id")
+    return Taxonomy(nodes=nodes, mechanisms=mechs, segments=segments, products=products)
 
 
 @dataclass(frozen=True)

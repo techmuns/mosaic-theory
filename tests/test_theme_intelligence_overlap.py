@@ -319,43 +319,74 @@ def test_bullish_recovery_and_bearish_seat_erosion_are_related_not_a_contradicti
         before.priority.research_action
 
 
+#: one DRAM contract-price series, one quarter (4Q26): an incumbent forecast UP, a challenger DOWN
+Q4_AS_OF = date(2026, 9, 30)
+DRAM_UP = ("Conventional DRAM contract prices are projected to rise 10% QoQ in 4Q26 on "
+           "server demand.")
+DRAM_DOWN = ("Conventional DRAM contract prices are projected to fall 8% QoQ in 4Q26 as "
+             "hyperscalers digest inventory.")
+DRAM_INVENTORY = ("Conventional DRAM inventory at module makers rose to 12 weeks in 4Q26 as "
+                  "orders slowed.")
+
+
+def _memory_case(pipe: Pipeline, slug: str, publisher: str, texts: list[str], direction: str,
+                 title: str, *, geography: str = "Global", hid: str = "h1",
+                 more: list[tuple[str, list[str], str]] | None = None,
+                 as_of: date = Q4_AS_OF) -> None:
+    """A HYPOTHETICAL memory article: each text one paragraph and one forecast claim; one thesis
+    over all of them (plus `more` theses: (title, claim ids, geography))."""
+    art = Hypo(slug=slug, publisher=publisher, published=as_of,
+               blocks=[("paragraph", t) for t in texts])
+    claims = []
+    for i, t in enumerate(texts, 1):
+        fig = next(w for w in t.split() if w.endswith("%") or w.isdigit())
+        val = float(fig.rstrip("%"))
+        claims.append(claim(f"c{i}", f"b00{i}", t.rstrip("."), t[:60], kind="forecast",
+                            epistemic="forecast", metric="memory measure", value=val,
+                            value_text=fig, unit="%" if fig.endswith("%") else "weeks",
+                            period="4Q26"))
+    hyps = [hyp(hid, title, node="ai_infrastructure.memory", mechanism="pricing_cycle",
+                direction=direction, geography=geography,
+                supporting=[f"c{i}" for i in range(1, len(texts) + 1)] if not more else ["c1"])]
+    for j, (t2, ids, geo) in enumerate(more or [], 2):
+        hyps.append(hyp(f"h{j}", t2, node="ai_infrastructure.memory", mechanism="pricing_cycle",
+                        direction=direction, geography=geo, supporting=ids))
+    ingest(pipe, art.doc(), extraction(claims, hyps), as_of=as_of, publisher=publisher)
+
+
 def test_a_direct_contradiction_challenges_the_incumbent(tmp_path: Path) -> None:
-    """The positive pin: the same claim — node, mechanism, geography, an overlapping window —
-    predicted the opposite way IS a contradiction: COMPETING, its evidence filed as CONTRADICTS,
-    the incumbent re-versioned WEAKER and flagged challenged; never merged."""
+    """The positive pin, at CLAIM level: opposing forecasts for the SAME conventional-DRAM
+    contract-price series in the same quarter contradict — COMPETING, the incumbent re-versioned
+    WEAKER. Only the directly contradicting claim is filed against it: the challenger's
+    inventory claim (another variable) is compatible and stays out."""
     pipe = make_pipeline(tmp_path)
-    pipe.start_run("fixture", as_of=W1)
-    ingest_jpm(pipe)
-    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
-    bear = Hypo(slug="de-rating", publisher="Hypo Research B", published=W1,
-                blocks=[("paragraph", _DE_RATING)])
-    x = extraction([_de_rating_claim()],
-                   [hyp("h1", "Software multiples keep compressing", node=bull.key_node,
-                        mechanism=bull.key_mechanism, direction="negative", supporting=["c1"])])
-    ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
-    softs = [t for t in pipe.store.theses() if t.key_node == bull.key_node]
-    assert len(softs) == 2  # never merged
-    rel = [r for r in pipe.store.relations(bull.thesis_id)
+    pipe.start_run("fixture", as_of=Q4_AS_OF)
+    _memory_case(pipe, "dram-up", "Hypo Research A", [DRAM_UP], "positive",
+                 "DRAM contract prices rise in 4Q26")
+    (inc0,) = pipe.store.theses()
+    _memory_case(pipe, "dram-down", "Hypo Research B", [DRAM_DOWN, DRAM_INVENTORY], "negative",
+                 "DRAM contract prices fall in 4Q26")
+    rel = [r for r in pipe.store.relations(inc0.thesis_id)
            if r.relation is RelationType.COMPETING]
     assert len(rel) == 1 and rel[0].evidence_role == "CONTRADICTION"
-    inc = pipe.store.thesis(bull.thesis_id)
-    assert inc is not None and inc.current_version == 2  # the incumbent is challenged
-    contra = [lk for lk in pipe.store.links(bull.thesis_id)
-              if lk.role is LinkRole.CONTRADICTS and lk.first_version == 2]
-    assert contra and all(lk.change_class is ChangeClass.CONTRADICTORY for lk in contra)
-    v2 = pipe.store.thesis_version(bull.thesis_id, 2)
+    assert len(rel[0].claim_ids) == 1  # the price claim — never the inventory claim
+    filed = pipe.store.claim(rel[0].claim_ids[0])
+    assert filed is not None and "fall 8%" in filed.quote
+    inc = pipe.store.thesis(inc0.thesis_id)
+    assert inc is not None and inc.current_version == 2
+    contra = [lk for lk in pipe.store.links(inc0.thesis_id) if lk.role is LinkRole.CONTRADICTS]
+    assert [lk.claim_id for lk in contra] == list(rel[0].claim_ids)
+    v2 = pipe.store.thesis_version(inc0.thesis_id, 2)
     assert v2 is not None and v2.evidence_direction is EvidenceDirection.WEAKER
-    # the card states the basis: the same claim, predicted the opposite way
     card = json.dumps(v2.content.model_dump(mode="json"), ensure_ascii=False)
-    assert (f"a direct contradiction — the same claim (node {bull.key_node}, mechanism "
-            f"{bull.key_mechanism}") in card
+    assert "a direct contradiction — the same claim (node ai_infrastructure.memory" in card
     # the first view names no registry ids — they stay in the audit view and print (observed
     # 2026-10-10: "challenged by competing thesis TH-…", "⟨competing hypothesis TH-…, A-…⟩")
     import re
 
     from bs4 import BeautifulSoup
 
-    challenger = next(t.thesis_id for t in softs if t.thesis_id != bull.thesis_id)
+    challenger = next(t.thesis_id for t in pipe.store.theses() if t.thesis_id != inc0.thesis_id)
     rc = card_context(pipe.store, inc, v2, generated="t")
     soup = BeautifulSoup(render_html(v2.content, rc), "html.parser")
     for el in soup.select(".aud, .auditbar, script, input, style"):
@@ -369,39 +400,53 @@ def test_a_direct_contradiction_challenges_the_incumbent(tmp_path: Path) -> None
     assert challenger in render_html(v2.content, rc, print_mode=True)
 
 
+def test_opposite_theses_whose_claims_do_not_contradict_are_never_applied(
+        tmp_path: Path) -> None:
+    """J.P. Morgan's software thesis (oversold → recovery) against a bear thesis on the same
+    node and mechanism. The bear's evidence ("multiples compressed a further 10%") does not
+    contradict the bull's own (the sell-off happened): held for review or related — never
+    CONTRADICTS evidence, never a WEAKER version."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("fixture", as_of=W1)
+    ingest_jpm(pipe)
+    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
+    links_before = pipe.store.links(bull.thesis_id)
+    bear = Hypo(slug="de-rating", publisher="Hypo Research B", published=W1,
+                blocks=[("paragraph", _DE_RATING)])
+    x = extraction([_de_rating_claim()],
+                   [hyp("h1", "Software multiples keep compressing", node=bull.key_node,
+                        mechanism=bull.key_mechanism, direction="negative", supporting=["c1"])])
+    ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
+    rels = pipe.store.relations(bull.thesis_id)
+    roles = {r.evidence_role for r in rels if {r.from_thesis, r.to_thesis} != {bull.thesis_id}}
+    assert roles & {"CONTRADICTION_REVIEW", "RELATED"} and "CONTRADICTION" not in roles
+    inc = pipe.store.thesis(bull.thesis_id)
+    assert inc is not None and inc.current_version == 1
+    assert pipe.store.links(bull.thesis_id) == links_before
+
+
 def test_one_article_challenging_a_thesis_twice_records_two_challenges(
         tmp_path: Path) -> None:
     """Observed 2026-10-10 in the weekly run: an article whose two new theses both compete with
     one existing thesis challenged it twice, and the second challenge reused the first one's
     contribution id — the store's integrity guard stopped the run. One id per challenger. (Two
-    DIRECT contradictions since round 3: the same claim at the US and at a Global scope.)"""
+    DIRECT claim-level contradictions: the same DRAM series and quarter, at a US and a Global
+    scope.)"""
     pipe = make_pipeline(tmp_path)
-    pipe.start_run("fixture", as_of=W1)
-    ingest_jpm(pipe)
-    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
-    other = ("Global software EV/sales multiples compressed a further 10% in 1Q26 as agent "
-             "adoption spread.")
-    bear = Hypo(slug="two-bears", publisher="Hypo Research B", published=W1,
-                blocks=[("paragraph", _DE_RATING), ("paragraph", other)])
-    x = extraction(
-        [_de_rating_claim(),
-         claim("c2", "b002", other.rstrip("."), "Global software EV/sales -10% in 1Q26",
-               metric="software EV/sales multiple change", value=10, value_text="10%",
-               unit="%", period="1Q26", scope="global software")],
-        [hyp("h1", "US software multiples keep compressing", node=bull.key_node,
-             mechanism=bull.key_mechanism, direction="negative", supporting=["c1"]),
-         hyp("h2", "Global software multiples keep compressing", node=bull.key_node,
-             mechanism=bull.key_mechanism, direction="negative", geography="Global",
-             supporting=["c2"])])
-    ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
-    inc = pipe.store.thesis(bull.thesis_id)
+    pipe.start_run("fixture", as_of=Q4_AS_OF)
+    _memory_case(pipe, "dram-up", "Hypo Research A", [DRAM_UP], "positive",
+                 "DRAM contract prices rise in 4Q26")
+    (inc0,) = pipe.store.theses()
+    us = DRAM_DOWN.replace("Conventional DRAM", "US conventional DRAM")
+    _memory_case(pipe, "two-bears", "Hypo Research B", [us, DRAM_DOWN], "negative",
+                 "US DRAM contract prices fall", geography="US",
+                 more=[("Global DRAM contract prices fall", ["c2"], "Global")])
+    inc = pipe.store.thesis(inc0.thesis_id)
     assert inc is not None and inc.current_version == 3  # challenged once by each
-    mine = [cb for cb in pipe.store.contributions(bull.thesis_id)
+    mine = [cb for cb in pipe.store.contributions(inc0.thesis_id)
             if cb.contribution is ChangeClass.CONTRADICTORY]
     assert len(mine) == 2 and len({cb.contribution_id for cb in mine}) == 2
-    # the two challengers are the same claim at overlapping scopes: adjacent, never merged
-    bears = [t for t in pipe.store.theses() if t.key_node == bull.key_node
-             and t.thesis_id != bull.thesis_id]
+    bears = [t for t in pipe.store.theses() if t.thesis_id != inc0.thesis_id]
     assert len(bears) == 2
     sib = [r for r in pipe.store.relations(bears[0].thesis_id)
            if {r.from_thesis, r.to_thesis} == {bears[0].thesis_id, bears[1].thesis_id}]
@@ -418,30 +463,34 @@ def test_the_kpis_count_this_runs_theses_and_events(tmp_path: Path) -> None:
     pipe = make_pipeline(tmp_path)
     run = pipe.start_run("fixture", as_of=W1)
     ingest_jpm(pipe)  # three theses created this run
-    bull = next(t for t in pipe.store.theses() if t.key_node.startswith("software"))
+    _memory_case(pipe, "dram-up", "Hypo Research A", [DRAM_UP], "positive",
+                 "DRAM contract prices rise in 4Q26", as_of=W1)  # a fourth
     bear = Hypo(slug="bear-and-skip", publisher="Hypo Research B", published=W1,
-                blocks=[("paragraph", _DE_RATING)])
+                blocks=[("paragraph", DRAM_DOWN)])
     x = extraction(
-        [_de_rating_claim(),
+        [claim("c1", "b001", DRAM_DOWN.rstrip("."), "DRAM -8% QoQ 4Q26", kind="forecast",
+               epistemic="forecast", metric="DRAM contract price", value=8, value_text="8%",
+               unit="%", period="4Q26"),
          claim("c2", "b001", "a quote this article never prints", "unverifiable", value=5,
                value_text="5%", unit="%")],
-        [hyp("h1", "Software multiples keep compressing", node=bull.key_node,
-             mechanism=bull.key_mechanism, direction="negative", supporting=["c1"]),
+        [hyp("h1", "DRAM contract prices fall in 4Q26", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", direction="negative", geography="Global",
+             supporting=["c1"]),
          hyp("h2", "Optics demand rises", node="ai_infrastructure.optical_networking",
              mechanism="demand_volume_shift", supporting=["c2"])])
     ingest(pipe, bear.doc(), x, as_of=W1, publisher=bear.publisher)
-    pipe.engine.archive_pass(run_id=run.run_id, as_of=W1)  # as a real run ends: SKIP archived
+    pipe.engine.archive_pass(run_id=run.run_id, as_of=W1)  # SKIP archived, as a run ends
     d = build_dashboard(pipe.store, run.run_id, cards={}, generated="t")
     k = kpis(d, pipe.store)
     rows = [r for rs in d.categories.values() for r in rs]
-    assert k["theses_this_run"] == len(rows) == 5
+    assert k["theses_this_run"] == len(rows) == 6
     assert (k["research_now"], k["watch"], k["skip"]) == tuple(
         sum(1 for r in rows if r.action == a) for a in ("RESEARCH NOW", "WATCH", "SKIP"))
     assert k["skip"] == 1  # the unverifiable optics thesis, archived at once
-    assert k["new"] == 5
-    assert k["challenged"] == 1  # the software thesis: created AND challenged this run
+    assert k["new"] == 6
+    assert k["challenged"] == 1  # the DRAM-up thesis: created AND challenged this run
     assert not d.categories.get("CHALLENGED")  # …which the exclusive sections file under NEW
-    assert len(d.categories["ARCHIVED"]) == 1 and len(d.categories["NEW"]) == 4  # the SKIP
+    assert len(d.categories["ARCHIVED"]) == 1 and len(d.categories["NEW"]) == 5  # the SKIP
     assert d.totals_active.get("SKIP", 0) == 0  # the old strip's "Skip" could never count it
 
 
