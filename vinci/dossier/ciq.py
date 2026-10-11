@@ -245,12 +245,25 @@ _AMBIGUITY_REMEDY = ("keep ONE export per kind: move the stale one(s) to "
                      "data/manual/ciq-archive/replaced-<YYYY-MM-DD>/<TICKER>/ and re-run")
 
 
+def _customers_role(name: str) -> str | None:
+    """Which of the two business-relationship exports a `customers`-kind file is, by name."""
+    low = name.lower()
+    return "customers" if "customer" in low else "suppliers" if "supplier" in low else None
+
+
 def ambiguous_exports(workbooks: tuple[CiqWorkbook, ...] | list[CiqWorkbook]) -> list[str]:
     """Every single-file kind (by period type, for financials) the workbooks hold more than once,
-    each with the files it found — empty when every kind is held once."""
+    each with the files it found — empty when every kind is held once.
+
+    `customers` is two exports, not one: the Customers file and the Suppliers file are each held
+    ONCE. Its reader picks the Customers file BY NAME, first match, so a re-pulled Customers export
+    beside the old one (`.xls` → `.rtf`, the GOOGL Key Developments rename) is the same stale-wins
+    shape as any other kind. Transcripts alone are exempt — one per call."""
     groups: dict[tuple[str, str | None], list[str]] = {}
     for w in workbooks:
-        if w.kind not in MULTI_FILE_KINDS:
+        if w.kind == "customers":
+            groups.setdefault((w.kind, _customers_role(w.path.name)), []).append(w.path.name)
+        elif w.kind not in MULTI_FILE_KINDS:
             groups.setdefault((w.kind, w.freq), []).append(w.path.name)
     return [f"{kind}{f' ({freq})' if freq else ''}: {sorted(names)}"
             for (kind, freq), names in sorted(groups.items(),
@@ -358,26 +371,34 @@ class CiqBundle:
         cache: dict[Path, dict[str, list[list[Any]]]] = {}
         unrecognised: list[str] = []
         for p in paths:
+            # Sync and editor droppings (`.DS_Store`, `._<name>` AppleDouble files, `~$book.xls`
+            # lock files) are not exports — skipped BEFORE classification, because a lock file
+            # carries its workbook's name and would otherwise count as a second export of its kind
+            # (an Excel window open on the comps would refuse the whole folder).
+            if p.name.startswith((".", "~$")):
+                continue
             name = p.name.lower()
             kind = next(
                 (k for k, kws in _WORKBOOK_KEYWORDS.items() if any(w in name for w in kws)), None
             )
             if kind is None:
-                # Sync and editor droppings (`.DS_Store`, `~$book.xls` lock files) are not exports.
-                if not p.name.startswith((".", "~$")):
-                    unrecognised.append(p.name)
+                unrecognised.append(p.name)
                 continue
             try:
                 fmt = classify(p)
             except OSError:
                 fmt = CiqFormat.UNKNOWN
-            freq = None
+            # The FILENAME token names the period type even when the workbook cannot be read
+            # (no `xlrd`, a corrupt or non-spreadsheet export): an unreadable Annual + Quarterly
+            # pair is two period types, not two exports, and the parse failure surfaces — as it
+            # always did — when a reader opens the sheet.
+            freq = _financials_freq(name, []) if kind == "financials" else None
             if kind == "financials" and fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
                 try:
                     cache[p] = read_sheets(p, fmt)
                     freq = _financials_freq(name, cache[p].get("Income Statement", []))
                 except CiqParseError:
-                    freq = None
+                    pass
             wbs.append(CiqWorkbook(kind=kind, path=p, fmt=fmt, freq=freq))
         # REFUSED AT CONSTRUCTION, before any reader runs: several readers sit inside broad
         # handlers that turn a raise into a missing section, so the one place a guess between two
@@ -395,9 +416,10 @@ class CiqBundle:
         NEVER A PICK BETWEEN SEVERAL (2026-10-11). This returned the first candidate by sort
         order, and with ``freq`` it fell back to the first of ANY period type — the shape that once
         served AORT's annual workbook to a quarterly request. Now several candidates refuse
-        (:class:`CiqAmbiguousError`); a LONE export whose period type is unread still answers, as
-        before. `MULTI_FILE_KINDS` keep their old answer — they are read through
-        :meth:`all_workbooks`."""
+        (:class:`CiqAmbiguousError`). A LONE export still answers, as before — WHATEVER its period
+        type: a folder holding only an Annual export answers a quarterly request with it (kept
+        deliberately; no live folder is in that state). `MULTI_FILE_KINDS` keep their old answer
+        — they are read through :meth:`all_workbooks`."""
         cands = [w for w in self.workbooks if w.kind == kind]
         if not cands:
             return None
@@ -416,7 +438,7 @@ class CiqBundle:
                 f"{self.ticker}: {kind} ({freq}) — "
                 + (f"{len(match)} exports of that period type: {sorted(w.path.name for w in match)}"
                    if match else f"none of that period type among {names}, and another period "
-                   "type is never substituted")
+                   "type is never substituted among several")
                 + f". {_AMBIGUITY_REMEDY}")
         if len(cands) > 1:
             raise CiqAmbiguousError(

@@ -184,3 +184,58 @@ def test_anchor_backfill_lets_the_ambiguity_through() -> None:
     src = inspect.getsource(cli._cmd_anchor_backfill)
     broad = src.index("no workbook is normal; EDGAR-only then")
     assert src.index("except CiqAmbiguousError:") < broad
+
+
+# --- review fixes (2026-10-11): what is NOT a second export, and what still is ------------------
+
+@pytest.mark.parametrize("dropping", [
+    "~$mpany Comparable Analysis Uber Technologies Inc.xls",     # Excel's lock file, comps open
+    "._Company Comparable Analysis Uber Technologies Inc.xls",   # AppleDouble sidecar
+])
+def test_editor_and_sync_droppings_are_not_a_second_export(
+    tmp_path: pathlib.Path, dropping: str,
+) -> None:
+    """A lock file carries its workbook's name, so classified BEFORE the dropping skip it counted as
+    a second comps export and an Excel window open on the comps refused the whole folder. The
+    AppleDouble `._` sidecar sorted FIRST and was picked. Neither is an export, nor unrecognised."""
+    b = CiqBundle.from_files("UBER", _folder(tmp_path, (UBER_COMPS[1], dropping)))
+    comps = b.workbook("comps")
+    assert comps is not None and comps.path.name == UBER_COMPS[1]
+    assert len(b.all_workbooks("comps")) == 1 and dropping not in b.unrecognised
+
+
+def test_an_unreadable_annual_and_quarterly_pair_is_not_ambiguous(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The filename token names the period type even when the workbook cannot be read (`xlrd` not
+    installed — `read_sheets` raises `CiqParseError`). Tagged None, the pair read as two exports of
+    one kind and the refusal told the operator to archive a file that was not stale."""
+    import vinci.dossier.ciq as ciq
+
+    def _no_xlrd(path: pathlib.Path, fmt: CiqFormat | None = None) -> None:
+        raise ciq.CiqParseError(f"{path.name}: legacy .xls needs `xlrd` — not installed")
+
+    monkeypatch.setattr(ciq, "read_sheets", _no_xlrd)
+    names = ("Uber Technologies Inc NYSE UBER Financials_Annual.xls",
+             "Uber Technologies Inc NYSE UBER Financials_Quarterly.xls")
+    for n in names:   # BIFF magic, so classify() says .xls and the read is attempted
+        (tmp_path / n).write_bytes(b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"\x00" * 64)
+    b = CiqBundle.from_files("UBER", sorted(tmp_path.iterdir()))
+    ann, qtr = b.workbook("financials", freq="annual"), b.workbook("financials", freq="quarterly")
+    assert ann is not None and ann.path.name == names[0]
+    assert qtr is not None and qtr.path.name == names[1]
+
+
+def test_two_customers_exports_refuse_and_the_supplier_pair_does_not(
+    tmp_path: pathlib.Path,
+) -> None:
+    """`customers` is two exports, each held once. Its reader takes the FIRST file named
+    Customers, so a re-pulled Customers export beside the old one (the GOOGL `.xls` → `.rtf`
+    shape) is the stale-wins defect on an exempt kind. Customers + Suppliers stays accepted."""
+    pair = ("Uber Technologies Inc NYSE UBER Customers.rtf",
+            "Uber Technologies Inc NYSE UBER Suppliers.rtf")
+    CiqBundle.from_files("UBER", _folder(tmp_path, pair))          # the negative pin
+    (tmp_path / "Uber Technologies Inc NYSE UBER Customers.xls").write_bytes(b"placeholder")
+    with pytest.raises(CiqAmbiguousError) as exc:
+        CiqBundle.from_files("UBER", sorted(tmp_path.iterdir()))
+    assert "Customers.xls" in str(exc.value) and "Suppliers" not in str(exc.value)

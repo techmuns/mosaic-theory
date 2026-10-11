@@ -101,3 +101,21 @@ Every other site catches only `CiqUnavailableError` / `FileNotFoundError`, so th
 - **Not changed: the lone-export fallback.** A folder holding ONLY an annual financials export still
   answers a quarterly request with it. No live folder is in that state (all 26 hold both); it is the
   pre-existing behaviour, kept.
+
+**REVIEW FIXES (same PR, before merge).** Three shapes the first cut refused or let through
+wrongly, each pinned and mutation-checked (3 mutants, 3 killed):
+- **Editor and sync droppings were classified before they were skipped.** An Excel lock file
+  (`~$…Comparable Analysis….xls`) carries its workbook's name, so an Excel window open on the comps
+  counted as a second comps export and refused the folder; an AppleDouble `._` sidecar sorted first
+  and was the old pick. Droppings are now skipped before classification.
+- **An unreadable financials pair read as one export.** With `xlrd` absent the period type was
+  `None` for both the Annual and the Quarterly file, so the refusal told the operator to archive a
+  file that was not stale. The filename token now sets the period type before any read.
+- **`customers` was exempt whole.** Its reader takes the first file named Customers, so two
+  Customers exports beside each other were the stale-wins shape on an exempt kind. Customers and
+  Suppliers are now each held once; only transcripts stay exempt.
+- After the fixes, all **26/26** live folders (`data/manual/ciq`, 2026-10-11) still build, and
+  **217 of 217** picks (every kind each folder holds; financials once per period type) are the
+  same file the pre-PR first-of-a-kind logic picked. The live folders hold **0** `._*` / `~$*`
+  files, so the earlier skip changes no live pick. The UBER, BRBR and GOOGL copy-in shapes (each
+  live folder plus its `replaced-*` archive's differently-named leftovers) still refuse.
