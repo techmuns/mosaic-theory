@@ -296,6 +296,8 @@ def test_a_pull_replays_the_documents_the_branch_does_not_hold(
     state.pull(local_root, remote)
     laptop = make_pipeline(tmp_path / "laptop")
     up = _upload(laptop, MS_PDF, _ms_ext())  # not pushed yet …
+    first = laptop.store.document(up.doc_id)
+    assert first is not None and first.filename == MS_PDF.name
     laptop.store.close()
     _scan(actions, "week-2")  # … and the branch moves meanwhile
     state.push(actions.paths.root, remote)
@@ -316,6 +318,9 @@ def test_a_pull_replays_the_documents_the_branch_does_not_hold(
     assert {r.run_id for r in actions.store.runs()} <= runs  # the branch's runs are all here
     [doc] = again.store.documents()
     assert doc.status == "INGESTED" and doc.article_id == up.article_id
+    # the replay read the private copy (named by its hash): the name the file ARRIVED with and
+    # WHEN it arrived are the original record's (observed 2026-10-11, GitHub state test)
+    assert doc.filename == MS_PDF.name and doc.received_at == first.received_at
     again.store.close()
     state.push(local_root, remote)  # now a fast-forward
 

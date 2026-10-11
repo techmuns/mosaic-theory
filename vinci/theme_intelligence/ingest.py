@@ -287,9 +287,15 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
                 duplicate_of: str | None = None,
                 fixture: dict[str, Any] | None = None,
                 completeness_fixture: dict[str, Any] | None = None,
-                max_cost: float | None = None) -> IngestResult:
+                max_cost: float | None = None,
+                replay_of: DocumentRecord | None = None) -> IngestResult:
     """Read, identify, gate and — when authorised — analyse one document through the shared
-    pipeline. Requires a started run (`pipe.start_run("ingest", …)`)."""
+    pipeline. Requires a started run (`pipe.start_run("ingest", …)`).
+
+    `replay_of`: the record a `state pull` replays — the file is read from its private copy
+    (named by its hash), so the name it ARRIVED with and WHEN it arrived come from the record,
+    never from the copy or the replay's clock (observed 2026-10-11 on the GitHub state test: a
+    replayed upload showed its hash as its name and the replay time as its upload time)."""
     assert pipe.run is not None
     now = datetime.now(tz=UTC)
     _require_active(pipe, declared)  # before the file is even read or stored
@@ -298,14 +304,16 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     src = pipe.sources.get(declared.source_id)
     publisher = src.publisher if src else declared.source_id
     prior = pipe.store.document_by_sha(read.sha256)
+    arrived = prior or replay_of  # the record of the file's first arrival, if any
     if prior is not None and prior.status not in ("HELD", "REVIEW"):
         return IngestResult(doc_id, "DUPLICATE", prior.article_id, prior.version_id,
                             note=f"the same file was imported as {prior.doc_id} on "
                                  f"{prior.received_at:%Y-%m-%d %H:%M} UTC ({prior.status}) — "
                                  f"nothing re-counted")
     rec = DocumentRecord(
-        doc_id=doc_id, sha256=read.sha256, filename=path.name, fmt=read.fmt, size=read.size,
-        received_at=prior.received_at if prior else now, source_id=declared.source_id,
+        doc_id=doc_id, sha256=read.sha256, filename=arrived.filename if arrived else path.name,
+        fmt=read.fmt, size=read.size,
+        received_at=arrived.received_at if arrived else now, source_id=declared.source_id,
         publisher=publisher, declared={k: str(v) for k, v in {
             "url": declared.url, "title": declared.title,
             "authors": "; ".join(declared.authors) or None,
@@ -316,7 +324,7 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         published=read.doc.published_at.date() if read.doc.published_at else None,
         published_source=read.doc.published_source, pages=read.pages, tables=read.tables,
         issues=tuple(read.issues), stored_path=_store_copy(pipe, path, read),
-        run_id=pipe.run.run_id, history=list(prior.history) if prior else [])
+        run_id=pipe.run.run_id, history=list(arrived.history) if arrived else [])
 
     def finish(status: str, note: str, article_id: str | None = None,
                version_id: str | None = None, basis: str = "") -> IngestResult:

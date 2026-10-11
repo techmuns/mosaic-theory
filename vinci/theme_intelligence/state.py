@@ -258,7 +258,7 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                                   # a cost the operator already accepted is not asked again
                                   max_cost=float("inf") if d.status in ("INGESTED", "UPGRADED")
                                   else None,
-                                  fixture=fixtures.get(d.sha256))
+                                  fixture=fixtures.get(d.sha256), replay_of=d)
             except DocumentError as exc:
                 group.append(f"  {d.doc_id}: NOT replayed — {exc}")
                 failed += 1
@@ -277,7 +277,8 @@ def _check_tree(tree: Path) -> None:
            if p.is_file() and ".git" not in p.parts and p.suffix.lower() in _FORBIDDEN]
     if bad:
         raise StateSyncError(f"refusing to push: forbidden file kind(s) in the state tree: "
-                             f"{bad[:5]}")
+                             f"{bad[:5]}"
+                             + (f" (showing 5 of {len(bad)})" if len(bad) > 5 else ""))
     av = tree / "registry" / "article_versions.jsonl"
     if av.exists():
         for ln in av.read_text().splitlines():
