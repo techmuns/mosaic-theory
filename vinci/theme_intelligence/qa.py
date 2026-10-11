@@ -102,6 +102,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                          | {str(c["ref"]) for c in store.llm_calls(run_id)
                             if c.get("purpose") == "extract"})
     span_bad: list[str] = []
+    span_unheld: list[str] = []
     num_bad: list[str] = []
     look_bad: list[str] = []
     n_claims = 0
@@ -114,6 +115,11 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 continue
             n_claims += 1
             av0 = store.article_version(c.article_version_id)
+            if av0 is not None and av0.blocks and not any(b.text for b in av0.blocks):
+                # the text was never brought here (state import / a document kept elsewhere):
+                # NOT re-checked — said so, never counted as re-verified
+                span_unheld.append(f"{c.claim_id} ({c.article_id})")
+                continue
             block = next((b for b in (av0.blocks if av0 else ()) if b.block_id == c.block_id),
                          None)
             if block is None or locate(c.quote, block.text) is None:
@@ -139,7 +145,12 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 _fail_list(unverified_linked)
                 or f"{len(linked)} linked claim(s) in the registry, all verified"))
     add(QaCheck("spans re-found in stored article text", not span_bad,
-                f"{n_claims} verified claim(s) in {len(article_ids)} article(s)"
+                f"{n_claims - len(span_unheld)} of {n_claims} verified claim(s) in "
+                f"{len(article_ids)} article(s) re-checked"
+                + (f"; {len(span_unheld)} NOT re-checkable here — the article text is not held "
+                   f"on this machine (an imported registry keeps hashes and quotes, never full "
+                   f"text); never counted as re-verified: {_fail_list(span_unheld)}"
+                   if span_unheld else "")
                 + (f"; FAILED: {_fail_list(span_bad)}" if span_bad else "")))
     add(QaCheck("figures re-found in their quotes", not num_bad,
                 _fail_list(num_bad) if num_bad else "every number-bearing claim checked"))

@@ -91,7 +91,7 @@ _RANK = {HealthStatus.HEALTHY: 0, HealthStatus.UNKNOWN: 0, HealthStatus.DEGRADED
          HealthStatus.ERROR: 2, HealthStatus.BLOCKED: 2}
 _DENIED = frozenset({401, 403, 451})
 _UPLOAD = ("upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence "
-           "article --url <article URL> --html <saved page> --as-of <date> --source {sid}")
+           "ingest-file --path <report.pdf or saved page> --source {sid} [--url <article URL>]")
 
 
 @dataclass

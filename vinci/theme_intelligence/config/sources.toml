@@ -23,6 +23,17 @@
 #                          semianalysis.com robots Crawl-delay 100 — so the feed is read directly;
 #                          paid posts carry only a preview and are recorded PARTIAL)
 #   gs_research       403 Access Denied on entry, sitemap and insights  -> BLOCKED
+#
+# `linked_reports`: what to do when a page says it summarises a fuller report it links to.
+#   "fetch"   — read the report through the polite fetcher (robots.txt obeyed, honest UA, never
+#               an authenticated / paid / client-portal route) as a fuller VERSION of the same
+#               article. Setting it is the operator's statement that the publisher makes those
+#               reports public on its own site and they may be processed like the page itself.
+#               Bounded by `max_linked_reports` per run (long documents: LLM cost).
+#   "request" — (default) list the report for an authorised upload (`ingest-file`).
+# `manual_llm_processing`: may a MANUALLY SUPPLIED document of this channel go to the
+#   third-party LLM? permitted | not_permitted | unknown (default — the document is HELD unless
+#   the operator states, per document, that its licence allows it: `--llm-permitted`).
 
 [[source]]
 id = "citi_must_c"
@@ -30,6 +41,9 @@ publisher = "Citi"
 channel = "Citi Must C (Citi Research public insights)"
 entry_url = "https://www.citigroup.com/global/insights/must-c"
 adapter = "citi_next_data"
+# each Must C page links its report as a public PDF on ir.citi.com ("Download Here")
+linked_reports = "fetch"
+max_linked_reports = 2
 reliability = "medium"
 default_article_class = "publisher_commentary"
 min_crawl_delay_s = 5
@@ -78,6 +92,9 @@ listing_url = "https://www.nomuraconnects.com/articles/"
 link_pattern = "^https://www\\.nomuraconnects\\.com/focused-thinking-posts/"
 max_listing_pages = 3
 max_date_checks = 36
+# "To read the full report, click here" leads to the Nomura client portal (go.nomuranow.com):
+# never fetched — listed for an authorised upload
+linked_reports = "request"
 reliability = "medium"
 default_article_class = "publisher_commentary"
 min_crawl_delay_s = 5

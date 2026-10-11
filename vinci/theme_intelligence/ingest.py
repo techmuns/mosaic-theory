@@ -221,7 +221,8 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
             "url": declared.url, "title": declared.title,
             "authors": "; ".join(declared.authors) or None,
             "published": declared.published.isoformat() if declared.published else None,
-            "llm_permitted": declared.llm_permitted}.items() if v is not None},
+            "llm_permitted": declared.llm_permitted, "via": declared.via}.items()
+            if v is not None},
         status="PENDING", title=read.doc.title,
         published=read.doc.published_at.date() if read.doc.published_at else None,
         published_source=read.doc.published_source, pages=read.pages, tables=read.tables,
@@ -267,8 +268,8 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     doc = read.doc
     if match.kind == UPGRADE and match.article is not None:
         doc = _as_version_of(doc, match.article, rec)
-    note = (f"operator-supplied copy — a MANUAL UPLOAD of an authorized document ({read.fmt}, "
-            f"{read.pages or '?'} page(s); {rec.doc_id})")
+    how = declared.via or "operator-supplied copy — a MANUAL UPLOAD of an authorized document"
+    note = f"{how} ({read.fmt}, {read.pages or '?'} page(s); {rec.doc_id})"
     fr = FetchResult(url=doc.canonical_url, final_url=declared.url, status=None,
                      state=doc.retrieval_state, note=note, content=None,
                      content_type=read.fmt, fetched_at=now, sha256=read.sha256,

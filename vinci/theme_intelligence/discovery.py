@@ -457,8 +457,20 @@ def discover_source(src: SourceConfig, f: PoliteFetcher, store: Store, *, window
                 continue
             doc = parse_document(fr.text, url, fr.final_url)
             if doc.published_at is None:
+                mod = doc.modified_at.date() if doc.modified_at else None
+                if mod is not None and mod < window_from:
+                    # published no later than its last modification: certainly before the window
+                    c.status = "OUT_OF_WINDOW"
+                    c.note = (f"the page states no publication date; last modified {mod} "
+                              f"({doc.modified_source}) — published no later than that, so "
+                              f"before the window")
+                    cov.skipped_out_of_window += 1
+                    continue
                 c.status = "UNDATED"
-                c.note = "the page states no publication date — not placed in any window"
+                c.note = ("the page states no publication date"
+                          + (f"; last modified {mod} — it may be new" if mod else "")
+                          + " — not placed in any window: VERIFY its date, then analyse it with "
+                            "`article --url <url> --published <verified date>`")
                 cov.undated += 1
                 continue
             c.listed_date = doc.published_at.date()
@@ -482,8 +494,9 @@ def discover_source(src: SourceConfig, f: PoliteFetcher, store: Store, *, window
             f"max_date_checks={src.max_date_checks}); the rest are counted UNDATED")
     if cov.undated:
         cov.warnings.append(f"{cov.undated} candidate(s) carry no publication date the source "
-                            f"states — counted UNDATED, never placed in a window (analyse one "
-                            f"on demand with `article --url`)")
+                            f"states — counted UNDATED, never placed in a window; listed on "
+                            f"the dashboard for date verification (`article --url <url> "
+                            f"--published <verified date>`)")
     cov.status = "PARTIAL" if (cov.inaccessible or cov.errors) else "OK"
     return Discovery(cov, list(uniq.values()))
 

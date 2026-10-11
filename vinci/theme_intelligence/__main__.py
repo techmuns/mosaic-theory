@@ -10,6 +10,8 @@
         [--url U] [--title T] [--author A] [--published YYYY-MM-DD] [--llm-permitted]
     python -m vinci.theme_intelligence ingest-inbox [--inbox DIR] [--source S]
     python -m vinci.theme_intelligence documents [--status HELD]
+    python -m vinci.theme_intelligence state pull|push|status --remote <git remote> \
+        [--branch theme-intelligence-state]
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
 
 Exit status: 0 = the run succeeded; 2 = PARTIAL (some source or article could not be processed —
@@ -113,7 +115,8 @@ def cmd_article(a: argparse.Namespace) -> int:
               f"through the same pipeline; the channel's health is unchanged (one document is "
               f"not proof its coverage is complete)")
     run, res = pipe.run_article(a.url, as_of=_iso(a.as_of), source_id=sid, html=html,
-                                fixture=fixture, publisher=a.publisher, html_note=note)
+                                fixture=fixture, publisher=a.publisher, html_note=note,
+                                published=_iso(a.published) if a.published else None)
     print(f"run {run.run_id}: scan execution {run.status.value} — article {res.status} "
           f"{res.note}".rstrip())
     for o in res.outcomes:
@@ -402,6 +405,32 @@ def cmd_ingest_inbox(a: argparse.Namespace) -> int:
     return _EXIT[run.status]
 
 
+def cmd_state(a: argparse.Namespace) -> int:
+    """The ONE registry between this machine and the scheduled run (see state.py)."""
+    from vinci.theme_intelligence import state
+
+    data = Path(a.data_dir)
+    remote = a.remote or state.sync_state(Paths(data)).get("remote")
+    if not remote or "***" in remote:
+        raise SystemExit("--remote is required (a git remote path or URL; credentials stay in "
+                         "git's own credential helper)")
+    try:
+        if a.action == "pull":
+            res = state.pull(data, remote, a.branch, replay=not a.no_replay, force=a.force,
+                             make_pipeline=lambda: _ingest_pipeline(a))
+        elif a.action == "push":
+            res = state.push(data, remote, a.branch, message=a.message)
+        else:
+            res = state.status(data, remote, a.branch)
+    except state.StateSyncError as exc:
+        print(f"state {a.action} refused: {exc}")
+        return 1
+    print(f"state {res.action} — {res.remote} {res.branch}")
+    for line in res.lines:
+        print(f"  {line}")
+    return 0
+
+
 def cmd_documents(a: argparse.Namespace) -> int:
     st = Store(Paths(Path(a.data_dir)).db)
     for d in st.documents(a.status):
@@ -437,6 +466,9 @@ def main(argv: list[str] | None = None) -> int:
     ar.add_argument("--html", help="use this saved HTML instead of fetching — the MANUAL "
                                    "UPLOAD route for an authorized copy of an article a "
                                    "blocked or degraded channel will not serve")
+    ar.add_argument("--published", help="YYYY-MM-DD you VERIFIED, for a page that states no "
+                                        "publication date (used only then; labelled "
+                                        "operator-verified)")
     ar.add_argument("--fixture", help="use this extraction JSON instead of the LLM")
     ar.add_argument("--cache-only", action="store_true", help="never call the LLM")
     ar.add_argument("--no-review", action="store_true", help="skip the pass-2 LLM review")
@@ -486,6 +518,19 @@ def main(argv: list[str] | None = None) -> int:
     ib.add_argument("--no-review", action="store_true")
     ib.add_argument("--out")
     ib.set_defaults(fn=cmd_ingest_inbox)
+
+    ss = sub.add_parser("state", help="carry the ONE registry to / from the state branch")
+    ss.add_argument("action", choices=("pull", "push", "status"))
+    ss.add_argument("--remote", help="git remote path or URL (default: the last one used)")
+    ss.add_argument("--branch", default="theme-intelligence-state")
+    ss.add_argument("--no-replay", action="store_true",
+                    help="pull without re-ingesting the local documents the branch lacks")
+    ss.add_argument("--force", action="store_true",
+                    help="pull even when local non-document runs would be discarded (backed up)")
+    ss.add_argument("--message", help="push: the commit message")
+    ss.add_argument("--cache-only", action="store_true", help="replay: never call the LLM")
+    ss.add_argument("--no-review", action="store_true")
+    ss.set_defaults(fn=cmd_state)
 
     dc = sub.add_parser("documents", help="list the manually supplied documents")
     dc.add_argument("--status")

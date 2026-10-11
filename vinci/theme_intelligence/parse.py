@@ -84,6 +84,10 @@ _PAYWALL = re.compile(
 _FULL_REPORT_ELSEWHERE = re.compile(
     r"(read the full (article|report)|download the (full )?report|full report (is )?available)",
     re.I)
+#: an anchor that leads to the full report ("Download Here", "Read the full report") — NOT
+#: "Download PDF", which on BofA's pages is a print edition of the same article
+_REPORT_ANCHOR = re.compile(r"^(download( (here|now|report|the (full )?report))|"
+                            r"(read|view|access) the (full )?report|full report)$", re.I)
 _RESEARCH_DISCLAIMER = re.compile(r"should not be regarded as a research report", re.I)
 _BOILERPLATE = re.compile(r"^(past performance (does not|is not|is no)|it is not possible to "
                           r"invest directly in an index|for illustrative purposes only)", re.I)
@@ -116,6 +120,9 @@ class ParsedDocument:
     author_discrepancy: str | None = None
     #: alternate official versions the page declares: (hreflang, url)
     alternates: tuple[tuple[str, str], ...] = ()
+    #: links to the FULLER REPORT the page summarises: (anchor text, absolute url) — read only
+    #: where the channel permits (sources.toml `linked_reports`), else listed for upload
+    linked_reports: tuple[tuple[str, str], ...] = ()
 
     @property
     def body_blocks(self) -> tuple[Block, ...]:
@@ -332,7 +339,17 @@ def _main_container(soup: BeautifulSoup) -> Tag:
     return cur
 
 
-def _walk(el: Tag, out: list[tuple[str, str]]) -> None:
+def _para_chars(el: Tag) -> int:
+    """The paragraph text an element holds (paragraphs over 60 characters — the container
+    scoring's measure)."""
+    return sum(n for p in el.find_all("p") if (n := len(p.get_text(" ", strip=True))) > 60)
+
+
+def _walk(el: Tag, out: list[tuple[str, str]], body_chars: int = 0) -> None:
+    """`body_chars`: the container's paragraph text. An element whose id/class reads as noise is
+    dropped — UNLESS it holds most of that text: then the name describes the page template, not
+    a sidebar. (Citi wraps the whole article in `template-apply-sidebar`; the substring match
+    dropped every word of a 7,300-character page, observed 2026-10-11.)"""
     for child in el.children:
         if isinstance(child, (Comment, Doctype, Declaration, ProcessingInstruction)):
             continue  # an HTML comment is markup, not article text
@@ -343,7 +360,7 @@ def _walk(el: Tag, out: list[tuple[str, str]]) -> None:
             continue
         if not isinstance(child, Tag) or child.name in _DROP_TAGS:
             continue
-        if _noise(child):
+        if _noise(child) and not (body_chars and _para_chars(child) * 2 > body_chars):
             continue
         if child.name in _LEAF_BLOCK:
             t = _clean(child.get_text(" ", strip=True))
@@ -357,7 +374,31 @@ def _walk(el: Tag, out: list[tuple[str, str]]) -> None:
             if t:
                 out.append(("div", t))
             continue
-        _walk(child, out)
+        _walk(child, out, body_chars)
+
+
+def _report_links(container: Tag, base: str) -> tuple[tuple[str, str], ...]:
+    """Links in the article body to the fuller report it summarises: a report-download anchor
+    ("Download Here") or "here" right after "read the full report". A bare PDF link is NOT one:
+    on 2026-10-11 that rule marked every J.P. Morgan page partial for its regulatory Form CRS
+    footer and BofA pages for the third-party data they cite — it selected on FORM (a PDF
+    exists), not on what the page says the PDF is."""
+    out: list[tuple[str, str]] = []
+    for a in container.find_all("a", href=True):
+        href = str(a.get("href") or "").strip()
+        if not href or href.startswith(("#", "mailto:", "javascript:")):
+            continue
+        text = _clean(a.get_text(" ", strip=True))
+        hit = bool(_REPORT_ANCHOR.match(text))
+        if not hit and text.lower() in ("here", "click here"):
+            before = ""
+            for prev in a.find_all_previous(string=True, limit=4):
+                before = f"{prev} {before}"
+            hit = bool(_FULL_REPORT_ELSEWHERE.search(before))
+        url = urljoin(base, href)
+        if hit and url not in {u for _, u in out}:
+            out.append((text or "(link)", url))
+    return tuple(out)
 
 
 def _kind(tag: str, text: str) -> str:
@@ -430,11 +471,14 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
         mod_raw, mod_src = str(art["dateModified"]), "json-ld Article.dateModified"
     elif (m := _meta(soup, "article:modified_time")):
         mod_raw, mod_src = m, "meta article:modified_time"
+    elif (m := _meta(soup, "last_modified_date")):
+        mod_raw, mod_src = m, "meta last_modified_date (a MODIFICATION date)"
 
     # body
     container = _main_container(soup)
     raw: list[tuple[str, str]] = []
-    _walk(container, raw)
+    _walk(container, raw, _para_chars(container))
+    report_links = _report_links(container, final_url or url)
     blocks: list[Block] = []
     section: str | None = None
     in_disclaimer = in_tags = False
@@ -542,9 +586,10 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     elif body_words < 150:
         state = RetrievalState.PARTIAL
         notes.append(f"short body ({body_words} words) — treated as a teaser / excerpt")
-    elif _FULL_REPORT_ELSEWHERE.search(page_text_l):
+    elif _FULL_REPORT_ELSEWHERE.search(page_text_l) or report_links:
         state = RetrievalState.PARTIAL
-        notes.append("the page summarises a fuller report it links to; that report was not read")
+        notes.append("the page summarises a fuller report it links to; that report was not read"
+                     + (f" ({report_links[0][1]})" if report_links else ""))
 
     hint, basis = None, None
     for b in blocks:
@@ -561,5 +606,5 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
         published_status=FieldStatus.KNOWN if published_at else FieldStatus.UNKNOWN,
         modified_at=modified_at, modified_source=mod_src, blocks=tuple(blocks),
         retrieval_state=state, notes=notes, article_class_hint=hint, article_class_basis=basis,
-        author_discrepancy=author_note, alternates=alternates,
+        author_discrepancy=author_note, alternates=alternates, linked_reports=report_links,
     )

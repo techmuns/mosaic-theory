@@ -51,6 +51,7 @@ from vinci.theme_intelligence.schemas import (
     ChangeEvent,
     IssueSeverity,
     ResearchAction,
+    RetrievalState,
     RunStatus,
     Thesis,
     ThesisKind,
@@ -76,6 +77,30 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
                          "NOTHING_ANALYSED")
 
 
+#: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
+#: article analysed between two scans appears in the next scan's ONE ranked list
+MANUAL_MODES = ("ingest", "article")
+#: entries listed per intake list before "showing X of Y"
+INTAKE_SHOW = 12
+
+
+def report_runs(store: Store, run: WeeklyRun) -> list[WeeklyRun]:
+    """The runs one report covers. A SCAN's report is the week's report: the scan itself plus
+    every manual-ingest / single-article run that started after the previous scan began and
+    before this one (none of them failed or still running). Any other run reports itself."""
+    if run.mode != "scan":
+        return [run]
+    runs = store.runs()
+    prev = max((r.started_at for r in runs if r.mode == "scan" and r.started_at < run.started_at),
+               default=None)
+    manual = sorted((r for r in runs if r.mode in MANUAL_MODES
+                     and r.started_at < run.started_at
+                     and (prev is None or r.started_at > prev)
+                     and r.status not in (RunStatus.FAILED, RunStatus.RUNNING)),
+                    key=lambda r: r.started_at)
+    return [*manual, run]
+
+
 def source_health_as_of(store: Store, run: WeeklyRun) -> dict[str, Any]:
     """Every configured channel's latest health record written no later than the run finished
     (a scan checks its channels at its start) — a never-checked channel counts UNKNOWN."""
@@ -86,7 +111,8 @@ def source_health_as_of(store: Store, run: WeeklyRun) -> dict[str, Any]:
     return summary(list(store.latest_health(until=until).values()), list(load_sources()))
 
 
-def research_verification(store: Store, run: WeeklyRun) -> dict[str, Any]:
+def research_verification(store: Store, run: WeeklyRun,
+                          runs: list[WeeklyRun] | None = None) -> dict[str, Any]:
     """The run's RESEARCH-VERIFICATION status, never folded into its execution status (review of
     PR #703, round 3). Over the completeness ledgers THIS RUN recorded — one per analysed article
     version:
@@ -98,14 +124,16 @@ def research_verification(store: Store, run: WeeklyRun) -> dict[str, Any]:
       NOTHING_ANALYSED         the run recorded no ledger
     Every open item is listed with its cause — never truncated. An unverified claim is never
     linked to a thesis (QA checks it), so open material can hold a thesis back, never raise it."""
-    reps = store.completeness_for_run(run.run_id)
+    runs = runs or [run]
+    reps = [x for r in runs for x in store.completeness_for_run(r.run_id)]
     figures = [(r, f) for r in reps for f in r.figures]
     blocks = [(r, b) for r in reps for b in r.blocks]
     open_f = [(r, f) for r, f in figures if f.status == "uncaptured"]
     open_b = [(r, b) for r, b in blocks if b.status == "unreviewed"]
     not_run = sum(1 for r in reps if not r.pass_ran)
-    partial = run.counts.get("articles_partial", 0)
-    unreadable = run.counts.get("articles_blocked", 0) + run.counts.get("articles_no_body", 0)
+    partial = sum(r.counts.get("articles_partial", 0) for r in runs)
+    unreadable = sum(r.counts.get("articles_blocked", 0) + r.counts.get("articles_no_body", 0)
+                     for r in runs)
     causes: dict[str, int] = {}
     for x in [f for _, f in open_f] + [b for _, b in open_b]:
         causes[x.open_cause or "unclassified"] = causes.get(x.open_cause or "unclassified", 0) + 1
@@ -141,6 +169,142 @@ def research_verification(store: Store, run: WeeklyRun) -> dict[str, Any]:
         + [f"{r.article_version_id} {b.block_id} paragraph — {b.open_cause or 'unclassified'}: "
            f"{b.reason}" for r, b in open_b],
     }
+
+
+def _listed(items: list[str]) -> dict[str, Any]:
+    """A list with its population: every entry is kept in the JSON; the page shows the first
+    INTAKE_SHOW and says "showing X of Y"."""
+    return {"total": len(items), "items": items}
+
+
+def _doc_line(store: Store, d: Any, as_of: dict[str, date]) -> str:
+    original = (store.path.parent / d.stored_path) if d.stored_path else None
+    held = ("original held privately on this machine" if original and original.exists()
+            else "original NOT on this machine — its text is not re-verifiable here")
+    how = ("linked report fetched automatically" if d.declared.get("via")
+           else "manual upload")
+    return (f"{d.publisher} — “{d.title or 'title UNKNOWN'}” ({d.filename}; {d.fmt}"
+            + (f", {d.pages} page(s)" if d.pages else "") + f") — {d.status}, {how}; "
+            f"published {d.published.isoformat() if d.published else 'UNKNOWN'}"
+            + (f" ({d.published_source})" if d.published else "")
+            + f"; uploaded {d.received_at:%Y-%m-%d %H:%M} UTC; analysed as of "
+            f"{as_of.get(d.run_id or '', '—')}; {held}"
+            + (f"; article {d.article_id}" if d.article_id else "") + f" [{d.doc_id}]")
+
+
+def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
+                    health: dict[str, Any]) -> dict[str, Any]:
+    """Research Intake / Manual Action — six lists, each with its population:
+    automatically analysed, manually imported, partial awaiting a complete document, publishers
+    blocked or degraded, known articles needing an upload or a metadata check, and channels
+    whose coverage is unknown. Source health, ingestion coverage and research verification stay
+    separate statuses; this section is ingestion coverage."""
+    rids = {r.run_id for r in runs}
+    as_of = {r.run_id: r.as_of for r in runs}
+    docs_all = store.documents()
+    via_doc = {d.article_id: d for d in docs_all if d.article_id}
+    auto: list[str] = []
+    for r in runs:
+        if r.mode == "ingest":
+            continue
+        aids = sorted({c.article_id for c in store.contributions() if c.run_id == r.run_id}
+                      | {str(c["ref"]) for c in store.llm_calls(r.run_id)
+                         if c.get("purpose") == "extract"})
+        for aid in aids:
+            a = store.article(aid)
+            vs = store.article_versions(aid)
+            if a is None:
+                continue
+            state = vs[-1].retrieval_state.value if vs else "?"
+            auto.append(f"{a.publisher} — “{a.title or 'title UNKNOWN'}” — published "
+                        f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'};"
+                        f" {state}; analysed as of {r.as_of.isoformat()} ({r.mode} run)"
+                        + ("; its linked report read too" if aid in via_doc
+                           and via_doc[aid].declared.get("via") else "") + f" [{aid}]")
+    manual = [_doc_line(store, d, as_of) for d in docs_all if d.run_id in rids]
+    # partial articles still awaiting a complete document (registry-wide, latest version)
+    upload_issue: dict[str, str] = {}
+    for i in store.issues():
+        if i.code == "LINKED_REPORT_UPLOAD":
+            upload_issue[i.ref_id] = i.detail
+    awaiting: list[str] = []
+    needs_upload: list[str] = []
+    for a in store.articles():
+        vs = [v for v in store.article_versions(a.article_id)
+              if v.retrieval_state is not RetrievalState.BLOCKED]
+        if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
+            continue
+        line = (f"{a.publisher} — “{a.title or 'title UNKNOWN'}” (published "
+                f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'}; "
+                f"{vs[-1].body_word_count} words read) [{a.article_id}]")
+        awaiting.append(line)
+        if a.article_id in upload_issue:
+            needs_upload.append(f"{line} — {clip(upload_issue[a.article_id], 300)}")
+    for row in health.get("attention", []):
+        ma = row.get("manual_action")
+        if ma and ma.get("kind") == "UPLOAD_REQUIRED":
+            needs_upload.append(f"{row['publisher']} (channel {row['status']}) — {ma['action']}"
+                                + (f" — known: {'; '.join(ma['affected'][:3])}"
+                                   if ma.get("affected") else ""))
+    metadata: list[str] = []
+    for url, _st, rec in store.candidates("UNDATED"):
+        metadata.append(f"{rec.get('source_id', '?')} — “{rec.get('title') or url}” — "
+                        f"{rec.get('note') or 'the page states no publication date'} ({url})")
+    for d in docs_all:
+        if d.status == "HELD":
+            metadata.append("HELD (licence not confirmed for third-party LLM processing) — "
+                            + _doc_line(store, d, as_of))
+        elif d.status == "REVIEW":
+            metadata.append("REVIEW (which article it is, is uncertain) — "
+                            + _doc_line(store, d, as_of))
+    for i in store.issues():
+        if i.code == "PUBLICATION_DATE_DISAGREES" and i.run_id in rids:
+            metadata.append(f"date disagreement — {i.ref_id}: {clip(i.detail, 240)}")
+    publishers = [f"{r['publisher']}: {r['status']} — {clip(r['reason'], 200)}"
+                  for r in health.get("rows", []) if r["status"] in ("DEGRADED", "BLOCKED",
+                                                                      "ERROR")]
+    gaps = [f"{r['publisher']}: coverage UNKNOWN ({r['status']}) — what it published cannot be "
+            f"seen by this system; no new article from it is NOT evidence it published nothing"
+            for r in health.get("rows", []) if r["status"] in ("BLOCKED", "ERROR", "UNKNOWN")]
+    for sc in run.sources:
+        if sc.truncation:
+            gaps.append(f"{sc.source_id}: partial discovery — {sc.truncation}")
+    if run.counts.get("articles_queued"):
+        gaps.append(f"{run.counts['articles_queued']} in-window article(s) queued by the budget "
+                    f"cap — discovered, not yet read")
+    out = {"automatic": _listed(auto), "manual": _listed(manual),
+           "awaiting_documents": _listed(awaiting), "publishers": _listed(publishers),
+           "needs_upload": _listed(needs_upload), "needs_metadata": _listed(metadata),
+           "coverage_gaps": _listed(gaps),
+           "runs": [f"{r.run_id} ({r.mode}, as of {r.as_of.isoformat()}, {r.status.value})"
+                    for r in runs]}
+    out["line"] = (f"{len(auto)} analysed automatically · {len(manual)} imported manually · "
+                   f"{len(awaiting)} partial awaiting a complete document · {len(publishers)} "
+                   f"publisher(s) blocked or degraded · {len(needs_upload)} needing an upload · "
+                   f"{len(metadata)} needing a metadata or licence check · {len(gaps)} coverage "
+                   f"gap(s)")
+    return out
+
+
+def _intake_labels(store: Store, tid: str, rids: set[str]) -> list[str]:
+    """How the evidence this report added to a thesis ARRIVED — per contributing article."""
+    out: list[str] = []
+    docs = store.documents()
+    for c in store.contributions(thesis_id=tid):
+        if c.run_id not in rids:
+            continue
+        d = next((x for x in docs if x.article_id == c.article_id and x.run_id == c.run_id
+                  and x.status in ("INGESTED", "UPGRADED")), None)
+        if d is None:
+            label = f"automatic ({c.article_id})"
+        elif d.declared.get("via"):
+            label = f"linked report fetched automatically ({d.doc_id}, {c.article_id})"
+        else:
+            label = (f"manual upload ({d.doc_id} “{d.filename}”, uploaded "
+                     f"{d.received_at:%Y-%m-%d}, {c.article_id})")
+        if label not in out:
+            out.append(label)
+    return out
 
 
 CATEGORY_ORDER = (WeeklyCategory.NEW, WeeklyCategory.UPGRADED, WeeklyCategory.DOWNGRADED,
@@ -298,6 +462,8 @@ class DashRow:
     why_action: str = ""
     rule_trace: list[str] = field(default_factory=list)
     what_changed_audit: list[str] = field(default_factory=list)
+    #: how this report's evidence for the thesis arrived (automatic / manual upload / linked)
+    intake: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -329,12 +495,16 @@ class Dashboard:
     verification: dict[str, Any] = field(default_factory=dict)
     #: SOURCE HEALTH as of the run (see `health.summary`) — apart from execution and verification
     source_health: dict[str, Any] = field(default_factory=dict)
+    #: Research Intake / Manual Action — ingestion coverage, its own status (see research_intake)
+    intake: dict[str, Any] = field(default_factory=dict)
+    #: the runs this report covers (a scan's report takes in the manual runs since the last scan)
+    report_runs: list[str] = field(default_factory=list)
 
 
-def _sources_line(store: Store, tid: str, run_id: str) -> list[str]:
+def _sources_line(store: Store, tid: str, rids: set[str]) -> list[str]:
     out: list[str] = []
     for c in store.contributions(thesis_id=tid):
-        if c.run_id != run_id:
+        if c.run_id not in rids:
             continue
         a = store.article(c.article_id)
         if a is None:
@@ -371,7 +541,9 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
     if run is None:
         raise KeyError(f"no run {run_id}")
     asof = theses_as_of_run(store, run)
-    events = store.events(run_id=run_id)
+    runs = report_runs(store, run)
+    rids = {r.run_id for r in runs}
+    events = [ev for r in runs for ev in store.events(run_id=r.run_id)]
     by_thesis: dict[str, list[ChangeEvent]] = {}
     for ev in events:
         by_thesis.setdefault(ev.thesis_id, []).append(ev)
@@ -382,8 +554,8 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             continue
         t, cur = asof[tid]
         versions = store.thesis_versions(tid)
-        this_run = [v for v in versions if v.run_id == run_id]
-        before = [v for v in versions if v.run_id != run_id
+        this_run = [v for v in versions if v.run_id in rids]
+        before = [v for v in versions if v.run_id not in rids
                   and (not this_run or v.version < min(x.version for x in this_run))]
         prev_action = before[-1].priority.research_action if before else None
         if "CREATED" in {x.event_type for x in evs}:
@@ -419,7 +591,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             previous_action=prev_action.value if prev_action else None,
             change_reason=cur.priority.change_reason,
             evidence_direction=cur.evidence_direction.value, what_changed=changed,
-            sources=_sources_line(store, tid, run_id),
+            sources=_sources_line(store, tid, rids), intake=_intake_labels(store, tid, rids),
             named_companies=[c.name_as_written + (" (" + "/".join(x.ticker for x in c.listings)
                                                   + ")" if c.listings else
                                                   f" ({c.resolution_status.value})")
@@ -466,7 +638,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         r["action"])], r["thesis_id"]))
 
     caveats: list[str] = []
-    issues = store.issues(run_id=run_id)
+    issues = [i for r in runs for i in store.issues(run_id=r.run_id)]
     val = {s.value: sum(1 for i in issues if i.severity is s) for s in IssueSeverity}
     for i in issues:
         if i.code in RETRIEVAL_CAVEAT_CODES or i.code in COMPLETENESS_CAVEAT_CODES or (
@@ -494,20 +666,22 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         sources=[json.loads(sc.model_dump_json()) for sc in run.sources],
         sources_checked=sum(1 for sc in run.sources if sc.status != "NOT_RUN"),
         sources_failed=failed,
-        articles_read=run.counts.get("articles_processed", 0),
-        articles_partial=run.counts.get("articles_partial", 0),
-        articles_blocked=run.counts.get("articles_blocked", 0)
-        + run.counts.get("articles_no_body", 0),
-        themes_created=run.counts.get("theses_created", 0),
-        themes_updated=run.counts.get("theses_updated", 0),
-        attributions_only=run.counts.get("attributions_only", 0),
+        articles_read=sum(r.counts.get("articles_processed", 0) for r in runs),
+        articles_partial=sum(r.counts.get("articles_partial", 0) for r in runs),
+        articles_blocked=sum(r.counts.get("articles_blocked", 0)
+                             + r.counts.get("articles_no_body", 0) for r in runs),
+        themes_created=sum(r.counts.get("theses_created", 0) for r in runs),
+        themes_updated=sum(r.counts.get("theses_updated", 0) for r in runs),
+        attributions_only=sum(r.counts.get("attributions_only", 0) for r in runs),
         totals_active=totals, archived_total=sum(1 for t, _ in asof.values()
                                                  if t.status is ThesisStatus.ARCHIVED),
         caveats=caveats, categories=cats, no_material_change=no_material, archive=archive,
         validation=val, generated=generated)
-    d.kpi = kpis(d, store)
-    d.verification = research_verification(store, run)
+    d.report_runs = [r.run_id for r in runs]
     d.source_health = source_health_as_of(store, run)
+    d.intake = research_intake(store, run, runs, d.source_health)
+    d.kpi = kpis(d, store)
+    d.verification = research_verification(store, run, runs)
     return d
 
 
@@ -550,6 +724,7 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
         "archived": d.archived_total,
         "figures_uncaptured": run.get("counts", {}).get("figures_uncaptured", 0),
         "figures_in_articles": run.get("counts", {}).get("figures_in_articles", 0),
+        "manually_imported": d.intake.get("manual", {}).get("total", 0) if d.intake else 0,
     }
 
 
@@ -660,6 +835,8 @@ def _row_html(r: DashRow) -> str:
             or "no company or sector named")
         + '</div><div class="k">Sources (original authors)</div><ul>'
         + ("".join(f"<li>{e(x)}</li>" for x in r.sources) or "<li>—</li>") + "</ul>"
+        + (f'<div class="note">How this evidence arrived: {e("; ".join(r.intake))}</div>'
+           if r.intake else "")
         + f'<div class="k">Next research step</div><div>{e(r.next_action)}</div>'
         + audit + "</div>")
 
@@ -713,6 +890,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
         + (f"<small>{e(t[2])}</small>" if len(t) > 2 else "") + "</div>" for t in kp)
         + "</div>")
     parts.append(_health_html(d.source_health, print_mode))
+    parts.append(_intake_html(d.intake, print_mode))
     if d.sources:
         parts.append('<details class="sec"' + (" open" if print_mode else "")
                      + '><summary>Source coverage (' + str(len(d.sources)) + ')</summary><table>'
@@ -785,6 +963,39 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
             "content='width=device-width,initial-scale=1'><title>Theme intelligence weekly"
             "</title><style>" + _CSS + _DASH_CSS + "</style></head><body>" + AUDIT_TOGGLE
             + "<div class=wrap>" + "".join(parts) + "</div>" + script + "</body></html>")
+
+
+_INTAKE_LISTS = (
+    ("automatic", "Articles automatically analysed"),
+    ("manual", "Articles manually imported"),
+    ("awaiting_documents", "Partial articles awaiting a complete document"),
+    ("publishers", "Publishers blocked or degraded"),
+    ("needs_upload", "Known articles requiring an upload"),
+    ("needs_metadata", "Requiring a metadata or licence check"),
+    ("coverage_gaps", "Unknown publisher-level coverage gaps"),
+)
+
+
+def _intake_html(it: dict[str, Any], print_mode: bool) -> str:
+    """Research Intake / Manual Action — compact: the counts line, then each list on demand
+    (print: open), each saying "showing X of Y" when long."""
+    if not it:
+        return ""
+    out = [f'<div class="sh"><div class="k">Research intake / manual action</div><div><b>'
+           f'{e(it["line"])}</b> <small class="note">ingestion coverage over '
+           f'{len(it.get("runs", []))} run(s) — apart from source health and research '
+           f'verification; one ranked list below, whatever the route in</small></div>']
+    for key, title in _INTAKE_LISTS:
+        lst = it.get(key) or {"total": 0, "items": []}
+        items = lst["items"]
+        shown = items[:INTAKE_SHOW]
+        head = (f"showing {len(shown)} of {lst['total']}" if len(items) > len(shown)
+                else str(lst["total"]))
+        out.append('<details class="sec"' + (" open" if print_mode and items else "")
+                   + f'><summary>{e(title)} ({head})</summary>'
+                   + ("".join(f'<div class="s note">{e(x)}</div>' for x in shown)
+                      or '<div class="s note">none</div>') + "</details>")
+    return "".join(out) + "</div>"
 
 
 _HEALTH_PILL = {"HEALTHY": "skip", "DEGRADED": "watch", "BLOCKED": "now", "ERROR": "now",
@@ -894,6 +1105,19 @@ def render_dashboard_md(d: Dashboard) -> str:
                f"{r['in_window']} | {r['consecutive_failed_checks']} | "
                f"{'yes' if r['manual_upload_recommended'] else '—'} |" for r in h["rows"]]
         md.append("")
+    it = d.intake
+    if it:
+        md += ["## Research intake / manual action", "", f"**{it['line']}** — ingestion coverage "
+               f"over {len(it.get('runs', []))} run(s), apart from source health and research "
+               f"verification", ""]
+        for key, title in _INTAKE_LISTS:
+            lst = it.get(key) or {"total": 0, "items": []}
+            shown = lst["items"][:INTAKE_SHOW]
+            head = (f"showing {len(shown)} of {lst['total']}" if len(shown) < lst["total"]
+                    else str(lst["total"]))
+            md.append(f"**{title}** ({head})")
+            md += [f"- {x}" for x in shown] or ["- none"]
+            md.append("")
     if d.sources:
         md += ["## Source coverage", "",
               "| Source | Status | Discovered | In window | Undated | New | Processed | Queued | "
@@ -925,6 +1149,8 @@ def render_dashboard_md(d: Dashboard) -> str:
                    f"- Why this action: {r.why_action}", "- What changed:"]
             md += [f"  - {x}" for x in r.what_changed] or ["  - —"]
             md += ["- Sources:"] + ([f"  - {s}" for s in r.sources] or ["  - —"])
+            if r.intake:
+                md.append(f"- How this evidence arrived: {'; '.join(r.intake)}")
             names = ([f"sector: {x}" for x in r.sector_exposures] + r.named_companies
                      + r.named_instruments + r.private_named)
             md += [f"- Exposure the source names: {'; '.join(names) or 'no company or sector'}",

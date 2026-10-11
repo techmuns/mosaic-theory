@@ -37,7 +37,7 @@ LLM_MAX_TOKENS = 21_333
 EXTRACT_PROMPT_VERSION = "ti-extract-6"
 COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
-PARSER_VERSION = "ti-parse-4"
+PARSER_VERSION = "ti-parse-5"
 ENGINE_VERSION = "ti-engine-2"
 
 #: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
@@ -104,6 +104,13 @@ class SourceConfig:
     #: permitted | not_permitted | unknown — anything but "permitted" HOLDS the document for
     #: review unless the operator states, for that document, that its licence allows it
     manual_llm_processing: str = "unknown"
+    #: a page that summarises a fuller report it LINKS to: "fetch" = read that report through
+    #: the polite fetcher (robots obeyed; never an authenticated, paid or client-portal route)
+    #: as a fuller VERSION of the same article, processed like the public page that links it;
+    #: "request" = list it for an authorised upload (the default)
+    linked_reports: str = "request"
+    #: linked reports fetched per run for this channel — each is a long document (cost bound)
+    max_linked_reports: int = 2
 
 
 @dataclass(frozen=True)
@@ -185,10 +192,14 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
                 max_date_checks=int(s.get("max_date_checks", 12)),
                 expect_blocked=bool(s.get("expect_blocked", False)),
                 manual_llm_processing=str(s.get("manual_llm_processing", "unknown")),
+                linked_reports=str(s.get("linked_reports", "request")),
+                max_linked_reports=int(s.get("max_linked_reports", 2)),
             ))
         except KeyError as exc:
             raise ConfigError(f"source entry missing {exc}: {s}") from exc
     for sc in out:
+        if sc.linked_reports not in ("fetch", "request"):
+            raise ConfigError(f"{sc.id}: linked_reports must be fetch | request")
         if sc.manual_llm_processing not in ("permitted", "not_permitted", "unknown"):
             raise ConfigError(f"{sc.id}: manual_llm_processing must be permitted | "
                               f"not_permitted | unknown")

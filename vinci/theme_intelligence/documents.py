@@ -61,6 +61,8 @@ class Declared:
     #: may this document's text be sent to the third-party LLM under its licence? None = not
     #: stated → the document is HELD for review, never processed on an assumption
     llm_permitted: bool | None = None
+    #: how it arrived when not by hand: "linked report fetched automatically from <url> …"
+    via: str | None = None
 
 
 @dataclass

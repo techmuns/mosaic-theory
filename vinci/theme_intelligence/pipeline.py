@@ -259,7 +259,9 @@ class Pipeline:
                     publisher_override: str | None = None,
                     listed: tuple[date, str] | None = None,
                     completeness_fixture: dict[str, Any] | None = None,
-                    html_note: str = "supplied fixture HTML") -> ArticleResult:
+                    html_note: str = "supplied fixture HTML",
+                    declared_published: date | None = None,
+                    linked_fixture: dict[str, Any] | None = None) -> ArticleResult:
         assert self.run is not None
         src = self.sources.get(source_id)
         publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
@@ -289,9 +291,78 @@ class Pipeline:
             doc.published_raw = d.isoformat()
             doc.published_source = f"publisher listing — {basis} (date only)"
             doc.published_status = FieldStatus.KNOWN
-        return self.process_document(doc, fr, url=url, source_id=source_id, as_of=as_of,
-                                     fixture=fixture, publisher_override=publisher_override,
-                                     completeness_fixture=completeness_fixture)
+        if doc.published_at is None and declared_published is not None:
+            d = declared_published
+            doc.published_at = datetime(d.year, d.month, d.day)
+            doc.published_raw = d.isoformat()
+            doc.published_source = "operator-verified (the page states no date)"
+            doc.published_status = FieldStatus.KNOWN
+        res = self.process_document(doc, fr, url=url, source_id=source_id, as_of=as_of,
+                                    fixture=fixture, publisher_override=publisher_override,
+                                    completeness_fixture=completeness_fixture)
+        if doc.linked_reports and res.article_id and res.status in (
+                "PROCESSED", "PARTIAL_PROCESSED", "ALREADY_INGESTED"):
+            self._linked_report(doc, res, source_id, as_of, linked_fixture)
+        return res
+
+    def _linked_report(self, doc: ParsedDocument, res: ArticleResult, source_id: str,
+                       as_of: date, fixture: dict[str, Any] | None) -> None:
+        """The fuller report a page links to: fetched and read as a NEW VERSION of the same
+        article where the channel permits (`linked_reports = "fetch"`), else listed for an
+        authorised upload. Never an authenticated route; robots.txt obeyed by the fetcher."""
+        from vinci.theme_intelligence.documents import Declared, DocumentError, file_sha256
+        from vinci.theme_intelligence.ingest import ingest_file
+
+        assert self.run is not None and res.article_id is not None
+        src = self.sources.get(source_id)
+        _text, link = doc.linked_reports[0]
+        if any(link in d.declared.get("via", "") for d in self.store.documents()):
+            return  # already read in an earlier run
+        upload = (f"upload an authorised copy: python -m vinci.theme_intelligence ingest-file "
+                  f"--path <report> --source {source_id} --url {doc.canonical_url}")
+        if src is None or src.linked_reports != "fetch":
+            self._issue("article", res.article_id, IssueSeverity.WARN, "LINKED_REPORT_UPLOAD",
+                        f"{doc.canonical_url} summarises a fuller report it links to ({link}); "
+                        f"the channel's policy is to request it, never to fetch it — {upload}")
+            self._count("linked_reports_requested")
+            return
+        key = f"linked_reports_fetched_{source_id}"
+        if self.run.counts.get(key, 0) >= src.max_linked_reports:
+            self._issue("article", res.article_id, IssueSeverity.WARN, "LINKED_REPORT_UPLOAD",
+                        f"{doc.canonical_url} links its fuller report ({link}); not read this "
+                        f"run — the cap max_linked_reports={src.max_linked_reports} was reached "
+                        f"(read in a later run, or {upload})")
+            self._count("linked_reports_deferred")
+            return
+        self._count(key)
+        fr = self.fetcher.fetch(link)
+        if fr.content is None or not fr.content.startswith(b"%PDF-"):
+            self._issue("article", res.article_id, IssueSeverity.WARN, "LINKED_REPORT_UPLOAD",
+                        f"{doc.canonical_url} links its fuller report ({link}), which could not be "
+                        f"read automatically ({fr.state.value}: {fr.note[:160]}; "
+                        f"{fr.content_type or 'no content'}) — {upload}")
+            self._count("linked_reports_unreadable")
+            return
+        store = self.paths.root / "documents"
+        store.mkdir(mode=0o700, parents=True, exist_ok=True)
+        tmp = store / f"incoming-{hashlib.sha256(fr.content).hexdigest()[:16]}.pdf"
+        tmp.write_bytes(fr.content)
+        tmp.chmod(0o600)
+        try:
+            out = ingest_file(self, tmp, Declared(
+                source_id=source_id, llm_permitted=True,
+                via=f"linked report fetched automatically from {link} (linked from "
+                    f"{doc.canonical_url}; robots.txt obeyed)"),
+                as_of=as_of, same_as=res.article_id, fixture=fixture)
+        except DocumentError as exc:
+            self._issue("article", res.article_id, IssueSeverity.WARN, "LINKED_REPORT_UPLOAD",
+                        f"{link}: {exc} — {upload}")
+            self._count("linked_reports_unreadable")
+            return
+        finally:
+            if tmp.exists() and (store / f"{file_sha256(tmp)}.pdf").exists():
+                tmp.unlink()  # ingest_file kept its own copy, named by content
+        self._count(f"linked_reports_{out.status.lower()}")
 
     def process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,
                          source_id: str, as_of: date, fixture: dict[str, Any] | None = None,
@@ -605,7 +676,8 @@ class Pipeline:
     def run_article(self, url: str, *, as_of: date, source_id: str = "manual",
                     publisher: str | None = None, html: str | None = None,
                     fixture: dict[str, Any] | None = None,
-                    html_note: str = "supplied fixture HTML") -> tuple[WeeklyRun, ArticleResult]:
+                    html_note: str = "supplied fixture HTML",
+                    published: date | None = None) -> tuple[WeeklyRun, ArticleResult]:
         """One article — fetched, or an operator-supplied copy (`html`): the manual-upload route
         for a BLOCKED or DEGRADED channel, through the SAME pipeline. An upload never changes the
         channel's health record: one document is not proof the channel's coverage is complete."""
@@ -613,7 +685,7 @@ class Pipeline:
         try:
             res = self.process_url(url, source_id=source_id, as_of=as_of, html=html,
                                    fixture=fixture, publisher_override=publisher,
-                                   html_note=html_note)
+                                   html_note=html_note, declared_published=published)
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
                                                     f"{traceback.format_exc()[-1500:]}")
