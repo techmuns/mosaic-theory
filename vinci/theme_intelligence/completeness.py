@@ -59,7 +59,12 @@ from vinci.theme_intelligence.extract import (
 )
 from vinci.theme_intelligence.parse import ParsedDocument
 from vinci.theme_intelligence.schemas import BlockCheck, CompletenessReport, FigureCheck
-from vinci.theme_intelligence.verify import VerifiedExtraction, in_hyphenated_name, norm_text
+from vinci.theme_intelligence.verify import (
+    VerifiedExtraction,
+    content_words,
+    in_hyphenated_name,
+    norm_text,
+)
 
 #: Block kinds whose text is scanned for figures, and those that carry ARGUMENT text.
 FIGURE_KINDS = frozenset({"paragraph", "list_item", "heading", "chart_title", "chart_description",
@@ -190,10 +195,7 @@ def scan_article(doc: ParsedDocument) -> Ledger:
     return Ledger(figures=figures, argument_blocks=args)
 
 
-def quote_covers(quote: str, core: str) -> bool:
-    q = norm_text(quote).lower()
-    if not re.search(r"\d", core):  # a counted period in words: every word must be there
-        return all(w in q for w in core.split() if w not in ("more", "straight", "consecutive"))
+def _figure_re(core: str) -> re.Pattern[str]:
     sign = core.startswith("-")
     body = core[1:] if sign else core
     pat = re.escape(body).replace(r"\-", r"\s?(?:-|to)\s?")
@@ -201,7 +203,58 @@ def quote_covers(quote: str, core: str) -> bool:
         pat = pat[:-1] + r"\s?(?:%|percent|per cent)"
     # a signed figure needs its minus; an unsigned one must not be the tail of " -10%"
     lead = r"(?<![\d.,])-\s?" if sign else r"(?<![\d.,])(?<!\s-)"
-    return re.search(lead + pat + r"(?![\d])", q) is not None
+    return re.compile(lead + pat + r"(?![\d])")
+
+
+def quote_covers(quote: str, core: str) -> bool:
+    q = norm_text(quote).lower()
+    if not re.search(r"\d", core):  # a counted period in words: every word must be there
+        return all(w in q for w in core.split() if w not in ("more", "straight", "consecutive"))
+    return _figure_re(core).search(q) is not None
+
+
+#: how many words either side of a figure say what it measures ("supply deficit of 30%"). Three,
+#: not five: at five the SUBJECT both facts share ("power transformers") vouches for a different
+#: MEASURE ("prices … 80% higher" / "imports … 80% of supply").
+_CONTEXT_WORDS = 3
+
+
+def _beside(text: str, core: str) -> set[str]:
+    """The content words within `_CONTEXT_WORDS` words of every occurrence of the figure — a unit
+    glued to it ("50-GW+", "2,358.5GVA", "~$400") is part of the figure, not a word beside it."""
+    t = norm_text(text).lower()
+    near: list[str] = []
+    for m in _figure_re(core).finditer(t):
+        before, after = re.sub(r"\S+$", "", t[:m.start()]), re.sub(r"^\S+", "", t[m.end():])
+        near += before.split()[-_CONTEXT_WORDS:] + after.split()[:_CONTEXT_WORDS]
+    return {w for w in content_words(" ".join(near)) if w.isalpha()}
+
+
+def _precise(text: str, core: str) -> str | None:
+    """The figure written in full with what it counts — "2,358.5gva", "2,358 days" — when it has
+    four or more digits (too precise to recur by coincidence); else None."""
+    body = core.lstrip("-").rstrip("%")
+    m = re.search(r"(?<![\d.,])(" + re.escape(body) + r"(?:[.,]\d+)*)(\S*)(?:\s+(\w+))?",
+                  norm_text(text).lower())
+    if m is None or sum(ch.isdigit() for ch in m.group(1)) < 4:
+        return None
+    return m.group(1) + (m.group(2) or " " + (m.group(3) or ""))
+
+
+def states_figure(quote: str, f: Figure) -> bool:
+    """A claim quoted from ANOTHER block states this figure: its quote covers the figure, and the
+    words BESIDE the figure share a content word in both ("deficit" — "a supply deficit of 30%" /
+    "an assumed 30% deficit"), or both write the same precise number in full with the same unit
+    ("2,358.5GVA"). A shared number is not identity, nor is a word shared somewhere in a long
+    sentence: the Citi Gridlock infographic reads "Power Transformers … Prices are about 80%
+    higher", and "80% of U.S. power transformer supply" (imports) shares "power" with it — a
+    different fact (observed 2026-10-11)."""
+    if not quote_covers(quote, f.core):
+        return False
+    if _beside(f.sentence, f.core) & _beside(quote, f.core):
+        return True
+    full = _precise(f.sentence, f.core)
+    return full is not None and full == _precise(quote, f.core)
 
 
 # --- pass 1b: the independent re-read ----------------------------------------------------------
@@ -763,6 +816,7 @@ def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
                       if (g := ve.claim_map.get(merged.renamed.get(i, i))) is not None])
 
     fig_reviews = {r.figure_id: r for r in (output.figure_reviews if output else [])}
+    by_id = {c.claim_id: c for c in verified}
     figures: list[FigureCheck] = []
     for f in ledger.figures:
         cov = [c for c in verified if c.block_id == f.block_id and quote_covers(c.quote, f.core)]
@@ -770,6 +824,11 @@ def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
         p1b = [c.claim_id for c in cov
                if set(local_of.get(c.claim_id, [])) & merged.pass1b_claims]
         rv = fig_reviews.get(f.figure_id)
+        # a figure RESTATED (a chart caption, a table, a summary) is captured where the article
+        # states it — when pass 1b names that claim AND the claim verifiably states this figure
+        named = ([g for g in linked(rv.claim_ids)
+                  if g in by_id and states_figure(by_id[g].quote, f)]
+                 if rv is not None and rv.verdict == "captured_by_added_claim" else [])
         cause = ""
         if p1:
             status, ids, reason = "captured", p1, ""
@@ -777,6 +836,12 @@ def build_report(*, ledger: Ledger, ve: VerifiedExtraction, merged: Merged,
             status, ids, reason = "added_by_completeness_pass", p1b, ""
         elif rv is not None and rv.verdict == "immaterial" and rv.reason.strip():
             status, ids, reason = "immaterial", [], rv.reason.strip()
+        elif named:
+            first = any(set(local_of.get(g, [])) & merged.pass1_claims for g in named)
+            homes = ", ".join(_uniq([by_id[g].block_id for g in named]))
+            status, ids = ("captured" if first else "added_by_completeness_pass"), named
+            reason = (f"restated here; captured where the article states it ({homes}: "
+                      f"{', '.join(named)})")
         else:
             status, ids = "uncaptured", []
             # a claim quoting the figure exists but failed verification (its number or span):

@@ -437,6 +437,42 @@ def _issue(run_id: str, scope: str, ref: str, sev: IssueSeverity, code: str,
                              detail=detail, created_at=datetime.now(tz=UTC))
 
 
+#: A decline the quote states IN WORDS directly beside the figure — "down ~27%", "fell by about
+#: 4%", "a 27% drop". Observed 2026-10-11 (Citi Gridlock, real run): "U.S. EV sales in 1Q 2026
+#: were down ~27% YoY" read as value -27 failed the number check, as did "EU27+UK demand down
+#: ~10%" and "industrial demand down ~20%". A LEVEL is never a decline: "fell to 4%" does not
+#: match ("to" sits between), so it still needs its own sign.
+_DECLINE_BEFORE = re.compile(
+    r"\b(?:down|fell|fallen|declined|decreased|dropped|shrank|shrunk|contracted|slid|slipped|"
+    r"lost)\s+(?:by\s+)?(?:(?:about|around|approximately|roughly|nearly|almost|some|over|"
+    r"more\s+than)\s+)?$", re.I)
+_DECLINE_AFTER = re.compile(r"^\s*(?:(?:yoy|y/y|year[- ]over[- ]year)\s+)?"
+                            r"(?:decline|drop|fall|decrease|reduction|contraction|lower)\b", re.I)
+
+
+def _states_decline(vt_n: str, quote: str) -> bool:
+    """The quote states a decline in words directly beside this figure."""
+    q = norm_text(quote)
+    return any(_DECLINE_BEFORE.search(q[:m.start()]) or _DECLINE_AFTER.match(q[m.end():])
+               for m in re.finditer(re.escape(vt_n), q))
+
+
+def _elided_in(vt_n: str, quote: str) -> bool:
+    """A figure written with an ellipsis ("12 ... 30 or more") is verbatim when EVERY piece is,
+    in order. Observed 2026-10-11 (Citi Gridlock): "wait times can extend to 12 months, or even
+    30 or more" with value text '12 ... 30 or more' failed the number check."""
+    parts = [p.strip() for p in re.split(r"\.\.\.|…", vt_n)]
+    if not all(parts):  # "12 ..." states no second piece
+        return False
+    q, at = norm_text(quote), 0
+    for p in parts:  # whole pieces only: '12' is not the tail of '2012'
+        m = re.compile(r"(?<![\w.,])" + re.escape(p) + r"(?![\w])").search(q, at)
+        if m is None:
+            return False
+        at = m.end()
+    return True
+
+
 def _number_check(value: float | None, value_text: str | None, unit: str | None,
                   quote: str) -> tuple[bool | None, list[str]]:
     if value is None and not value_text:
@@ -452,10 +488,13 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
         nums += mult + [(k - 1.0) * 100.0 for k in mult]  # ×2, or the +100% change it states
     scales = [1.0] + [_SCALE[m.group(1).lower()] for m in _SCALE_WORD.finditer(vt_n)]
     if value is None:
-        ok = in_quote
+        ok = in_quote or _elided_in(vt_n, quote)
     else:
         ok = in_quote and any(abs(n * k - value) <= 1e-9 * max(1.0, abs(value))
                               for n in nums for k in scales)
+        if not ok and in_quote and value < 0 and any(
+                abs(n * k + value) <= 1e-9 * max(1.0, abs(value)) for n in nums for k in scales):
+            ok = _states_decline(vt_n, quote)  # "down ~27%" read as -27: the minus is the word
     if not ok:
         notes.append(f"number check failed: value={value} value_text={vt!r} vs quote")
     u = (unit or "").lower()
