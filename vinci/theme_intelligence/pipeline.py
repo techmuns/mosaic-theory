@@ -362,6 +362,10 @@ class Pipeline:
         finally:
             if tmp.exists() and (store / f"{file_sha256(tmp)}.pdf").exists():
                 tmp.unlink()  # ingest_file kept its own copy, named by content
+        if out.status == "HELD":
+            self._issue("article", res.article_id, IssueSeverity.WARN, "LINKED_REPORT_UPLOAD",
+                        f"{doc.canonical_url} links its fuller report ({link}); fetched but "
+                        f"HELD, not analysed — {out.note}")
         self._count(f"linked_reports_{out.status.lower()}")
 
     def process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,

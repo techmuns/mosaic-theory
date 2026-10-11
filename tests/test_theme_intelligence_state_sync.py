@@ -280,7 +280,8 @@ def test_pull_ingest_push_then_the_scheduled_scan_reports_it(tmp_path: Path) -> 
                for b in json.loads(json.loads(ln)["payload"])["blocks"])
 
 
-def test_a_pull_replays_the_documents_the_branch_does_not_hold(tmp_path: Path) -> None:
+def test_a_pull_replays_the_documents_the_branch_does_not_hold(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     remote = _bare(tmp_path)
     actions = make_pipeline(tmp_path / "actions")
     _scan(actions, "week-1")
@@ -296,6 +297,11 @@ def test_a_pull_replays_the_documents_the_branch_does_not_hold(tmp_path: Path) -
         state.push(local_root, remote)
     sha = MS_PDF.read_bytes()
     import hashlib
+
+    # the operator accepted this document's cost when it was first analysed: a replay never
+    # holds it again, even under a lower limit
+    from vinci.theme_intelligence import ingest as ingest_mod
+    monkeypatch.setattr(ingest_mod, "DOC_COST_LIMIT_USD", 0.01)
     res = state.pull(local_root, remote, make_pipeline=lambda: make_pipeline(tmp_path / "laptop"),
                      fixtures={hashlib.sha256(sha).hexdigest(): _ms_ext()})
     assert any(up.doc_id in x and "replayed — INGESTED" in x for x in res.lines), res.lines

@@ -270,8 +270,10 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
                         f"{rec.get('note') or 'the page states no publication date'} ({url})")
     for d in docs_all:
         if d.status == "HELD":
-            metadata.append("HELD (licence not confirmed for third-party LLM processing) — "
-                            + _doc_line(store, d, as_of))
+            why = d.history[-1].split(": ", 1)[-1] if d.history else "held"
+            kind = ("cost above the per-document limit" if why.startswith("COST:")
+                    else "licence not confirmed for third-party LLM processing")
+            metadata.append(f"HELD ({kind}) — {_doc_line(store, d, as_of)} — {clip(why, 220)}")
         elif d.status == "REVIEW":
             metadata.append("REVIEW (which article it is, is uncertain) — "
                             + _doc_line(store, d, as_of))

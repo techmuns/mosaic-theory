@@ -255,6 +255,9 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                 out = ingest_file(pipe, src, declared, as_of=as_of, same_as=same_as,
                                   duplicate_of=dup.group(1) if dup else None,
                                   force_new=basis == "the operator states it is a new article",
+                                  # a cost the operator already accepted is not asked again
+                                  max_cost=float("inf") if d.status in ("INGESTED", "UPGRADED")
+                                  else None,
                                   fixture=fixtures.get(d.sha256))
             except DocumentError as exc:
                 group.append(f"  {d.doc_id}: NOT replayed — {exc}")

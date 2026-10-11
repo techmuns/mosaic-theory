@@ -564,6 +564,44 @@ def test_an_unstated_licence_holds_the_document_and_release_processes_it(pipe: P
     assert [h.split(" UTC ")[1].split(":")[0] for h in rec2.history] == ["HELD", "INGESTED"]
 
 
+def test_a_document_estimated_above_the_cost_limit_is_held_until_raised(pipe: Pipeline) -> None:
+    """Measured 2026-10-11: Citi's 60-page Gridlock report cost $46.67 through the pipeline. A
+    document is estimated BEFORE any model call; above the limit it is HELD, nothing sent."""
+    from vinci.theme_intelligence.ingest import estimate_cost
+    from vinci.theme_intelligence.report import research_intake
+
+    est = estimate_cost(read_document(MS_PDF, _ms()))
+    assert est.parts == 1 and est.figures > 0 and 0 < est.low < est.high
+    counts = table_counts(pipe)
+    held = ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction(),
+                       max_cost=0.01)
+    assert held.status == "HELD" and held.note.startswith("COST: estimated $")
+    assert f"--release {held.doc_id} --max-cost" in held.note
+    assert {k: v for k, v in table_counts(pipe).items() if k != "documents"} == \
+        {k: v for k, v in counts.items() if k != "documents"}  # nothing analysed
+    assert pipe.run is not None
+    meta = research_intake(pipe.store, pipe.run, [pipe.run], {})["needs_metadata"]["items"]
+    assert any(x.startswith("HELD (cost above the per-document limit)") for x in meta)
+    ok = ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction(), max_cost=100)
+    assert ok.status == "INGESTED" and ok.doc_id == held.doc_id
+
+
+def test_the_cost_estimate_reproduces_the_measured_reports() -> None:
+    """The calibration, pinned on the three real reports' measured parts and costs (list price,
+    2026-10-11): the estimated part count bounds the run's from above by at most one, and the
+    measured cost lies inside the estimated range — the constants cannot drift silently."""
+    import math
+
+    from vinci.theme_intelligence.completeness import GAPS_PER_CALL
+    from vinci.theme_intelligence.config import DOC_COST_FIXED_USD, DOC_COST_PER_PART_USD
+
+    lo, hi = DOC_COST_PER_PART_USD
+    for gaps, run_parts, cost in ((1143, 22, 46.67), (527, 10, 9.47), (376, 7, 3.80)):
+        parts = math.ceil(gaps / GAPS_PER_CALL)  # gaps = stated figures + argument paragraphs
+        assert parts - 1 <= run_parts <= parts
+        assert lo * parts <= cost <= hi * parts + DOC_COST_FIXED_USD
+
+
 def test_a_refused_licence_holds_and_a_channel_policy_permits(tmp_path: Path) -> None:
     pipe = make_pipeline(tmp_path / "a")
     pipe.start_run("ingest", as_of=AS_OF)
@@ -623,6 +661,44 @@ def test_the_cli_releases_a_held_document_by_its_id(tmp_path: Path) -> None:
     [again] = Store(data / "registry.db").documents()
     assert again.doc_id == rec.doc_id and again.status == "HELD"
     assert "NOT permitted" in again.history[-1]
+
+
+def test_a_document_whose_analysis_failed_is_analysed_next_time_not_a_duplicate(
+        pipe: Pipeline) -> None:
+    """The pipeline registers the article version BEFORE extraction; when extraction failed, the
+    same document imported again matched that version and was called a DUPLICATE — it would
+    never have been analysed (found 2026-10-11)."""
+    with pytest.raises(RuntimeError, match="no cached extraction"):
+        ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF)  # no model, no fixture: fails mid-way
+    res = ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    assert res.status == "INGESTED", res.note
+    assert "never analysed" in res.note
+    assert len(pipe.store.article_versions(res.article_id or "")) == 1
+    again = ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    assert again.status == "DUPLICATE"
+
+
+def test_a_failed_analysis_is_recorded_failed_and_the_inbox_file_stays(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Observed 2026-10-11: `ingest-file --cache-only` with no cached extraction crashed with a
+    traceback and left its run RUNNING. It is FAILED, said plainly; an inbox file stays put."""
+    from vinci.theme_intelligence.__main__ import main
+    from vinci.theme_intelligence.store import Store
+
+    data = tmp_path / "data"
+    common = ["--as-of", AS_OF.isoformat(), "--cache-only", "--no-review"]
+    rc = main(["--data-dir", str(data), "ingest-file", "--path", str(MS_PDF), "--source",
+               "ms_research", "--llm-permitted", *common])
+    assert rc == 1 and "failed: RuntimeError" in capsys.readouterr().out
+    runs = Store(data / "registry.db").runs()
+    assert [r.status.value for r in runs] == ["FAILED"]
+    inbox = tmp_path / "inbox"
+    inbox.mkdir()
+    shutil.copyfile(MS_PDF, inbox / "ms.pdf")
+    (inbox / "ms.pdf.meta.json").write_text('{"source": "ms_research", "llm_permitted": true}')
+    rc = main(["--data-dir", str(data), "ingest-inbox", "--inbox", str(inbox), *common])
+    assert rc == 2 and (inbox / "ms.pdf").exists() and "left in the inbox" in \
+        capsys.readouterr().out
 
 
 # --- 8. privacy: no document under version control except the synthetic fixtures ----------------

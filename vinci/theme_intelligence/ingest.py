@@ -38,6 +38,11 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from vinci.theme_intelligence.config import (
+    DOC_COST_FIXED_USD,
+    DOC_COST_LIMIT_USD,
+    DOC_COST_PER_PART_USD,
+)
 from vinci.theme_intelligence.documents import Declared, DocumentRead, read_document
 from vinci.theme_intelligence.fetch import FetchResult
 from vinci.theme_intelligence.parse import ParsedDocument
@@ -64,6 +69,9 @@ WEAK_OVERLAP = 0.2
 #: house words (two different TrendForce releases overlapped 21% with 0% text in common)
 TITLE_REVIEW = 0.5
 NEW, UPGRADE, DUPLICATE, REVIEW = "NEW", "UPGRADE", "DUPLICATE", "REVIEW"
+#: the same text is registered but was never analysed (an earlier run failed mid-way): the SAME
+#: article, analysed now — never a duplicate of an analysis that does not exist
+RETRY = "RETRY"
 
 
 @dataclass
@@ -162,9 +170,13 @@ def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
 def identify(pipe: Pipeline, read: DocumentRead, declared: Declared) -> Match:
     """Which article, if any, the document already is — see the module docstring."""
     st = pipe.store
-    row = st.conn.execute("SELECT article_id FROM article_versions WHERE content_sha256=? "
-                          "LIMIT 1", (read.doc.content_sha256,)).fetchone()
+    row = st.conn.execute("SELECT article_id, version_id FROM article_versions WHERE "
+                          "content_sha256=? LIMIT 1", (read.doc.content_sha256,)).fetchone()
     if row:
+        if not pipe._applied(str(row[0]), str(row[1])):  # noqa: SLF001 — the pipeline's own test
+            return Match(RETRY, st.article(str(row[0])),
+                         "the same text is registered but was never analysed (an earlier run "
+                         "did not finish) — analysed now")
         return Match(DUPLICATE, st.article(str(row[0])),
                      "the same text is already registered (another file or format)")
     # the operator's URL, or the one the document states for itself (a saved page's canonical
@@ -185,6 +197,34 @@ def identify(pipe: Pipeline, read: DocumentRead, declared: Declared) -> Match:
         if m.kind == REVIEW and best is None:
             best = m
     return best or Match(NEW, None, "no article of this publisher resembles it")
+
+
+@dataclass(frozen=True)
+class CostEstimate:
+    parts: int
+    figures: int
+    paragraphs: int
+    low: float
+    high: float
+
+    def line(self) -> str:
+        return (f"estimated ${self.low:,.0f}–${self.high:,.0f} (list price): up to {self.parts} "
+                f"completeness part(s) for {self.figures} stated figure(s) and "
+                f"{self.paragraphs} argument paragraph(s)")
+
+
+def estimate_cost(read: DocumentRead) -> CostEstimate:
+    """Deterministic, before any model call — see config.DOC_COST_PER_PART_USD."""
+    import math
+
+    from vinci.theme_intelligence.completeness import GAPS_PER_CALL, scan_article
+
+    led = scan_article(read.doc)
+    gaps = len(led.figures) + len(led.argument_blocks)
+    parts = max(1, math.ceil(gaps / GAPS_PER_CALL))
+    lo, hi = DOC_COST_PER_PART_USD
+    return CostEstimate(parts, len(led.figures), len(led.argument_blocks),
+                        round(lo * parts, 2), round(hi * parts + DOC_COST_FIXED_USD, 2))
 
 
 def _articles(pipe: Pipeline) -> list[Article]:
@@ -220,7 +260,8 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
                 force_new: bool = False, same_as: str | None = None,
                 duplicate_of: str | None = None,
                 fixture: dict[str, Any] | None = None,
-                completeness_fixture: dict[str, Any] | None = None) -> IngestResult:
+                completeness_fixture: dict[str, Any] | None = None,
+                max_cost: float | None = None) -> IngestResult:
     """Read, identify, gate and — when authorised — analyse one document through the shared
     pipeline. Requires a started run (`pipe.start_run("ingest", …)`)."""
     assert pipe.run is not None
@@ -296,11 +337,21 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     if not ok:
         aid = match.article.article_id if match.article else None
         return finish("HELD", why, aid, basis=match.basis)
+    est = estimate_cost(read)
+    limit = DOC_COST_LIMIT_USD if max_cost is None else max_cost
+    if est.high > limit:
+        aid = match.article.article_id if match.article else None
+        import math
+
+        return finish("HELD", f"COST: {est.line()} — above the per-document limit "
+                              f"${limit:,.0f}; nothing was sent to the model. Analyse it "
+                              f"deliberately: ingest-file --release {doc_id} --max-cost "
+                              f"{math.ceil(est.high)}", aid, basis=match.basis)
     doc = read.doc
-    if match.kind == UPGRADE and match.article is not None:
+    if match.kind in (UPGRADE, RETRY) and match.article is not None:
         doc = _as_version_of(doc, match.article, rec)
     how = declared.via or "operator-supplied copy — a MANUAL UPLOAD of an authorized document"
-    note = f"{how} ({read.fmt}, {read.pages or '?'} page(s); {rec.doc_id})"
+    note = f"{how} ({read.fmt}, {read.pages or '?'} page(s); {rec.doc_id}; {est.line()})"
     fr = FetchResult(url=doc.canonical_url, final_url=declared.url, status=None,
                      state=doc.retrieval_state, note=note, content=None,
                      content_type=read.fmt, fetched_at=now, sha256=read.sha256,

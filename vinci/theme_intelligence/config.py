@@ -79,6 +79,18 @@ CURRENT_OBSERVATION_DAYS = 92
 #: click below, and the heading prints "showing X of Y".
 DASHBOARD_ROWS_PER_CATEGORY = 12
 
+#: A supplied or linked DOCUMENT's model cost, estimated BEFORE any call from what the
+#: completeness pass will have to review: at most ceil((stated figures + argument paragraphs) /
+#: GAPS_PER_CALL) parts, each re-sending the whole text. Range per part (USD, list price) and
+#: the fixed part (extraction + card reviews) — CALIBRATED on three real reports (2026-10-11,
+#: claude-opus-4-8): Citi Gridlock 23 parts estimated / 22 run, $46.67; LatAm 11 / 10, $9.47;
+#: ETF 8 / 7, $3.80. A face-validity cost constant, never tuned on research outcomes.
+DOC_COST_PER_PART_USD = (0.4, 2.1)
+DOC_COST_FIXED_USD = 2.0
+#: a document whose HIGH estimate exceeds this is HELD (COST) until `--max-cost` raises it —
+#: also for a linked report the scan would fetch automatically
+DOC_COST_LIMIT_USD = 30.0
+
 
 @dataclass(frozen=True)
 class SourceConfig:

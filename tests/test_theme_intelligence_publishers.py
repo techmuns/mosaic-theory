@@ -229,6 +229,24 @@ def test_the_per_run_cap_defers_a_linked_report(tmp_path: Path) -> None:
     assert "max_linked_reports=0" in i.detail
 
 
+def test_a_linked_report_estimated_above_the_cost_limit_is_held_and_listed(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A scan never spends past the per-document limit unattended: the report is fetched and
+    stored, HELD with its estimate, and listed for a deliberate import."""
+    from vinci.theme_intelligence import ingest as ingest_mod
+
+    monkeypatch.setattr(ingest_mod, "DOC_COST_LIMIT_USD", 0.01)
+    f = _citi_fetcher((SYN_PDF.read_bytes(), "application/pdf"))
+    pipe = _pipe(tmp_path, f)
+    res = pipe.process_url(PAGE, source_id="citi_must_c", as_of=AS_OF, fixture=PAGE_EXT,
+                           linked_fixture=REPORT_EXT)
+    assert len(pipe.store.article_versions(res.article_id or "")) == 1  # not analysed
+    [doc] = pipe.store.documents()
+    assert doc.status == "HELD" and doc.stored_path
+    [i] = [i for i in pipe.store.issues() if i.code == "LINKED_REPORT_UPLOAD"]
+    assert "HELD, not analysed" in i.detail and "COST: estimated $" in i.detail
+
+
 def test_a_request_channel_never_fetches_its_linked_report(tmp_path: Path) -> None:
     """Nomura's full reports sit on its client portal: listed for upload, never fetched."""
     f = _citi_fetcher((SYN_PDF.read_bytes(), "application/pdf"))

@@ -343,10 +343,15 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
     run = pipe.start_run("ingest", as_of=as_of)
     try:
         res = ingest_file(pipe, path, declared, as_of=as_of, force_new=a.as_new,
-                          same_as=a.same_as, duplicate_of=a.duplicate_of)
+                          same_as=a.same_as, duplicate_of=a.duplicate_of,
+                          max_cost=a.max_cost)
     except DocumentError as exc:
         pipe.finish_run(RunStatus.FAILED, error=str(exc))
         print(f"refused: {exc}")
+        return 1
+    except Exception as exc:  # noqa: BLE001 — recorded FAILED, said plainly, never left RUNNING
+        pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}")
+        print(f"failed: {type(exc).__name__}: {exc}")
         return 1
     run = pipe.finish_run(RunStatus.SUCCEEDED if res.status in (
         "INGESTED", "UPGRADED", "DUPLICATE", "HELD", "REVIEW") else RunStatus.PARTIAL)
@@ -385,11 +390,15 @@ def cmd_ingest_inbox(a: argparse.Namespace) -> int:
         try:
             if declared is None:  # an unsupported format: refused whatever its source
                 declared = Declared(source_id="unknown")
-            res = ingest_file(pipe, f, declared, as_of=as_of)
+            res = ingest_file(pipe, f, declared, as_of=as_of, max_cost=a.max_cost)
         except DocumentError as exc:
             print(f"  {f.name}: refused — {exc}")
             failed += 1
             dest_dir = inbox / "rejected"
+        except Exception as exc:  # noqa: BLE001 — not the file's fault: it stays for a retry
+            print(f"  {f.name}: failed — {type(exc).__name__}: {exc} (left in the inbox)")
+            failed += 1
+            continue
         else:
             _print_ingest(res)
             dest_dir = inbox / _INBOX_DIRS.get(res.status, "processed")
@@ -507,6 +516,9 @@ def main(argv: list[str] | None = None) -> int:
                                             "recorded, nothing added")
     same.add_argument("--as-new", action="store_true", help="a new article, whatever it resembles")
     ig.add_argument("--release", help="process a HELD / REVIEW document by its id")
+    ig.add_argument("--max-cost", type=float,
+                    help="USD: analyse even when the estimate exceeds the per-document limit "
+                         "(default config.DOC_COST_LIMIT_USD)")
     ig.add_argument("--cache-only", action="store_true")
     ig.add_argument("--no-review", action="store_true")
     ig.add_argument("--out")
@@ -515,6 +527,7 @@ def main(argv: list[str] | None = None) -> int:
     ib = sub.add_parser("ingest-inbox", help="import every document in the private inbox")
     ib.add_argument("--inbox", help="default: <data-dir>/inbox")
     ib.add_argument("--source", help="default source for files without a .meta.json")
+    ib.add_argument("--max-cost", type=float, help="USD per document (default: the limit)")
     ib.add_argument("--as-of")
     ib.add_argument("--cache-only", action="store_true")
     ib.add_argument("--no-review", action="store_true")
