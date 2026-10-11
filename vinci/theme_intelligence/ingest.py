@@ -43,7 +43,12 @@ from vinci.theme_intelligence.config import (
     DOC_COST_LIMIT_USD,
     DOC_COST_PER_PART_USD,
 )
-from vinci.theme_intelligence.documents import Declared, DocumentRead, read_document
+from vinci.theme_intelligence.documents import (
+    Declared,
+    DocumentError,
+    DocumentRead,
+    read_document,
+)
 from vinci.theme_intelligence.fetch import FetchResult
 from vinci.theme_intelligence.parse import ParsedDocument
 from vinci.theme_intelligence.schemas import (
@@ -232,6 +237,27 @@ def _articles(pipe: Pipeline) -> list[Article]:
             pipe.store.conn.execute("SELECT payload FROM articles ORDER BY article_id")]
 
 
+class InactiveSourceError(DocumentError):
+    """The named channel is retired or not configured: nothing from it is imported."""
+
+
+def _require_active(pipe: Pipeline, declared: Declared) -> None:
+    from vinci.theme_intelligence.config import retired_for
+
+    if declared.source_id in pipe.sources:
+        r = retired_for(url=declared.url) if declared.url else None
+        if r is not None:
+            raise InactiveSourceError(f"{declared.url} is on a host of {r.publisher}, a channel "
+                                      f"retired on {r.retired} — not imported")
+        return
+    r = retired_for(source_id=declared.source_id)
+    if r is not None:
+        raise InactiveSourceError(f"{r.publisher} ({r.id}) was retired on {r.retired} — "
+                                  f"{r.reason}; its research is not imported")
+    raise InactiveSourceError(f"{declared.source_id!r} is not an active channel — one of: "
+                              f"{', '.join(sorted(pipe.sources))}")
+
+
 def llm_authorised(pipe: Pipeline, declared: Declared) -> tuple[bool, str]:
     if declared.llm_permitted is not None:
         return declared.llm_permitted, ("the operator states third-party LLM processing is "
@@ -266,6 +292,7 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     pipeline. Requires a started run (`pipe.start_run("ingest", …)`)."""
     assert pipe.run is not None
     now = datetime.now(tz=UTC)
+    _require_active(pipe, declared)  # before the file is even read or stored
     read = read_document(path, declared)  # DocumentError on an unreadable file
     doc_id = "D-" + read.sha256[:16]
     src = pipe.sources.get(declared.source_id)

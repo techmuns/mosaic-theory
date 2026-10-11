@@ -184,10 +184,15 @@ def test_the_intake_lists_what_needs_a_human(tmp_path: Path) -> None:
         checked_at=datetime(2026, 10, 11, 6, 0, tzinfo=UTC), trigger="manual",
         status=HealthStatus.BLOCKED, reason="access denied (HTTP 403) (test)",
         next_action="manual upload", expect_blocked=True))
-    pipe.store.upsert_candidate("https://business.bofa.com/en-us/content/x.html",
-                                "bofa_institutional", "UNDATED",
-                                {"source_id": "bofa_institutional", "title": "An undated insight",
+    pipe.store.upsert_candidate("https://www.nomuraconnects.com/focused-thinking-posts/x",
+                                "nomura_connects", "UNDATED",
+                                {"source_id": "nomura_connects", "title": "An undated insight",
                                  "note": "the page states no publication date — VERIFY"})
+    # a RETIRED channel's historical row is never asked about again
+    pipe.store.upsert_candidate("https://business.bofa.com/en-us/content/y.html",
+                                "bofa_institutional", "UNDATED",
+                                {"source_id": "bofa_institutional", "title": "A retired insight",
+                                 "note": "the page states no publication date"})
     pipe.start_run("ingest", as_of=AS_OF)
     held = ingest_file(pipe, MS_PDF, Declared(source_id="ms_research"), as_of=AS_OF)
     pipe.finish_run(RunStatus.SUCCEEDED)
@@ -196,6 +201,7 @@ def test_the_intake_lists_what_needs_a_human(tmp_path: Path) -> None:
     it = d.intake
     meta = " ".join(it["needs_metadata"]["items"])
     assert "An undated insight" in meta and "VERIFY" in meta
+    assert "A retired insight" not in meta
     assert "HELD (licence not confirmed" in meta and held.doc_id in meta
     assert any(x.startswith("Goldman Sachs: BLOCKED") for x in it["publishers"]["items"])
     assert any(x.startswith("Goldman Sachs: coverage UNKNOWN") and "NOT evidence" in x

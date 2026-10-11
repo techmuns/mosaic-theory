@@ -1,5 +1,12 @@
 # Theme-intelligence source channels — EDITABLE CONFIGURATION, not code.
 #
+# SEVEN active publishers (decision 2026-10-11): Citi, J.P. Morgan, Nomura, TrendForce and
+# SemiAnalysis are read automatically (hybrid where a report must be supplied); Morgan Stanley and
+# Goldman Sachs are MANUAL-FIRST (`mode = "manual_first"`: a lightweight health check only, no
+# discovery or retrieval — their research arrives as authorised uploads). Bank of America is
+# RETIRED ([[retired]] below): no discovery, no health check, no intake, no new evidence; its
+# historical records stay in the registry as provenance.
+#
 # One [[source]] per monitored channel. `entry_url` is the canonical entry point the brief names;
 # `adapter` selects the discovery strategy in `vinci/theme_intelligence/discovery.py` (a strategy
 # per publisher layout, never a per-article special case). `expect_blocked` marks a channel whose
@@ -12,10 +19,6 @@
 #
 # Access state as PROBED 2026-10-09 with the honest User-Agent in config.py (no spoofing, ever):
 #   citi_must_c       200 (articles in the page's __NEXT_DATA__ contentMap; robots.txt answers 403)
-#   bofa_institutional 200 (article cards on the insights page; the insight pages state NO
-#                          publication date: one last modified before the window is out of it;
-#                          the rest are listed UNDATED for date verification — analyse one with
-#                          `article --url <url> --published <verified date>`)
 #   jpm_tmt           200 (listing + sitemap with lastmod; robots Crawl-delay 10 for AI agents)
 #   ms_research       CONNECTION DROPPED on every request incl. robots.txt  -> BLOCKED
 #   nomura_connects   200 (/articles/ listing, paginated p2..pN; no feed; robots.txt 404)
@@ -49,16 +52,6 @@ reliability = "medium"
 default_article_class = "publisher_commentary"
 min_crawl_delay_s = 5
 
-[[source]]
-id = "bofa_institutional"
-publisher = "Bank of America"
-channel = "BofA institutional investing insights"
-entry_url = "https://business.bofa.com/en-us/content/institutional-investing-insights.html"
-adapter = "bofa_cards"
-max_date_checks = 24
-reliability = "medium"
-default_article_class = "publisher_commentary"
-min_crawl_delay_s = 5
 
 [[source]]
 id = "jpm_tmt"
@@ -79,6 +72,7 @@ entry_url = "https://www.morganstanley.com/what-we-do/research"
 adapter = "generic_listing"
 link_pattern = "^https://www\\.morganstanley\\.com/(ideas|insights)/"
 expect_blocked = true
+mode = "manual_first"
 reliability = "high"
 default_article_class = "institutional_research"
 min_crawl_delay_s = 10
@@ -130,6 +124,18 @@ entry_url = "https://www.goldmansachs.com/insights/goldman-sachs-research/"
 adapter = "generic_listing"
 link_pattern = "^https://www\\.goldmansachs\\.com/insights/articles/"
 expect_blocked = true
+mode = "manual_first"
 reliability = "high"
 default_article_class = "institutional_research"
 min_crawl_delay_s = 10
+
+# RETIRED channels: never discovered, health-checked, queued or imported again. Kept so that
+# records written while they were active stay attributable (their articles, versions, theses and
+# runs are history, never rewritten), and so that a URL on their hosts is refused, not analysed
+# as an unknown source.
+[[retired]]
+id = "bofa_institutional"
+publisher = "Bank of America"
+retired = "2026-10-11"
+reason = "removed from the approved publisher list by the operator (2026-10-11)"
+hosts = ["business.bofa.com"]

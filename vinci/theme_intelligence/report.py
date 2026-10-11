@@ -87,7 +87,8 @@ INTAKE_SHOW = 12
 def report_runs(store: Store, run: WeeklyRun) -> list[WeeklyRun]:
     """The runs one report covers. A SCAN's report is the week's report: the scan itself plus
     every manual-ingest / single-article run that started after the previous scan began and
-    before this one (none of them failed or still running). Any other run reports itself."""
+    before this one, analysed AS OF a date inside the scan's window (a replay as of July is not
+    this week's research), none of them failed or still running. Any other run reports itself."""
     if run.mode != "scan":
         return [run]
     runs = store.runs()
@@ -96,6 +97,7 @@ def report_runs(store: Store, run: WeeklyRun) -> list[WeeklyRun]:
     manual = sorted((r for r in runs if r.mode in MANUAL_MODES
                      and r.started_at < run.started_at
                      and (prev is None or r.started_at > prev)
+                     and (run.window_from is None or r.as_of >= run.window_from)
                      and r.status not in (RunStatus.FAILED, RunStatus.RUNNING)),
                     key=lambda r: r.started_at)
     return [*manual, run]
@@ -217,11 +219,15 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     blocked or degraded, known articles needing an upload or a metadata check, and channels
     whose coverage is unknown. Source health, ingestion coverage and research verification stay
     separate statuses; this section is ingestion coverage."""
+    from vinci.theme_intelligence.config import load_retired_sources, load_sources
+
     rids = {r.run_id for r in runs}
     as_of = {r.run_id: r.as_of for r in runs}
-    docs_all = store.documents()
+    retired = {r.id for r in load_retired_sources()}  # history only: never asked for anything
+    docs_all = [d for d in store.documents() if d.source_id not in retired]
     via_doc = {d.article_id: d for d in docs_all if d.article_id}
     auto: list[str] = []
+    auto_by: dict[str, int] = {}
     for r in runs:
         if r.mode == "ingest":
             continue
@@ -233,6 +239,7 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
             vs = store.article_versions(aid)
             if a is None:
                 continue
+            auto_by[a.source_id] = auto_by.get(a.source_id, 0) + 1
             state = vs[-1].retrieval_state.value if vs else "?"
             auto.append(f"{a.publisher} — “{a.title or 'title UNKNOWN'}” — published "
                         f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'};"
@@ -248,6 +255,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     awaiting: list[str] = []
     needs_upload: list[str] = []
     for a in store.articles():
+        if a.source_id in retired:
+            continue
         vs = [v for v in store.article_versions(a.article_id)
               if v.retrieval_state is not RetrievalState.BLOCKED]
         if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
@@ -266,6 +275,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
                                    if ma.get("affected") else ""))
     metadata: list[str] = []
     for url, _st, rec in store.candidates("UNDATED"):
+        if rec.get("source_id") in retired:
+            continue
         metadata.append(f"{rec.get('source_id', '?')} — “{rec.get('title') or url}” — "
                         f"{rec.get('note') or 'the page states no publication date'} ({url})")
     for d in docs_all:
@@ -292,7 +303,32 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     if run.counts.get("articles_queued"):
         gaps.append(f"{run.counts['articles_queued']} in-window article(s) queued by the budget "
                     f"cap — discovered, not yet read")
-    out = {"automatic": _listed(auto), "manual": _listed(manual),
+    # per configured publisher: what it actually got — automatic, manual, or nothing
+    health_by = {r["source_id"]: r for r in health.get("rows", [])}
+    manual_by: dict[str, int] = {}
+    for d in docs_all:
+        if d.run_id in rids and d.status in ("INGESTED", "UPGRADED"):
+            manual_by[d.source_id] = manual_by.get(d.source_id, 0) + 1
+    coverage: list[str] = []
+    for src in load_sources():
+        st = health_by.get(src.id, {}).get("status", "UNKNOWN")
+        n_auto, n_man = auto_by.get(src.id, 0), manual_by.get(src.id, 0)
+        if src.mode == "manual_first":
+            verdict = (f"MANUAL-FIRST — {n_man} supplied document(s) analysed this week"
+                       if n_man else "MANUAL-FIRST — nothing supplied this week: its research "
+                                     "this week is MISSING, not absent")
+        elif st == "HEALTHY":
+            verdict = "automated coverage"
+        elif st == "DEGRADED":
+            verdict = "PARTIAL automated coverage — see source health"
+        elif st in ("BLOCKED", "ERROR"):
+            verdict = "automated access BLOCKED — coverage UNKNOWN"
+        else:
+            verdict = "coverage UNKNOWN (not checked)"
+        coverage.append(f"{src.publisher} [{src.mode.replace('_', '-')}; access {st}] — "
+                        f"{n_auto} article(s) analysed automatically, {n_man} supplied — "
+                        f"{verdict}")
+    out = {"automatic": _listed(auto), "manual": _listed(manual), "coverage": _listed(coverage),
            "awaiting_documents": _listed(awaiting), "publishers": _listed(publishers),
            "needs_upload": _listed(needs_upload), "needs_metadata": _listed(metadata),
            "coverage_gaps": _listed(gaps),
@@ -712,8 +748,10 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     run = d.run
     manual = run["mode"] != "scan"
     names = {sc.id: sc.publisher for sc in load_sources()}
-    blocked = [s for s in d.sources if s["status"] in ("BLOCKED", "ERROR")]
-    accessible = [s for s in d.sources if s["status"] in ("OK", "PARTIAL")]
+    automatic = [s for s in d.sources if s["status"] != "MANUAL_FIRST"]
+    blocked = [s for s in automatic if s["status"] in ("BLOCKED", "ERROR")]
+    accessible = [s for s in automatic if s["status"] in ("OK", "PARTIAL")]
+    manual_first = [s for s in d.sources if s["status"] == "MANUAL_FIRST"]
     # Every count below is over the theses THIS RUN created or changed (all sections, the
     # archived included) and its EVENTS: a SKIP is archived at once, so counting active theses
     # could never show one; and a thesis created and challenged in one run sits under NEW, so
@@ -724,7 +762,10 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
         return ACTION_RANK[ResearchAction(a)]
 
     return {
-        "accessible_sources": None if manual else f"{len(accessible)} of {len(d.sources)}",
+        "accessible_sources": None if manual else f"{len(accessible)} of {len(automatic)}",
+        "manual_first_sources": None if manual else (
+            ", ".join(names.get(s["source_id"], s["source_id"]) for s in manual_first)
+            or "none"),
         "blocked_sources": None if manual else (
             ", ".join(names.get(s["source_id"], s["source_id"]) for s in blocked) or "none"),
         "articles_full": d.articles_read - d.articles_partial,
@@ -883,8 +924,11 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     k = d.kpi or {}
     kp: list[tuple[str, ...]] = ([("Sources", "single article (manual URL) — no discovery")]
           if k.get("accessible_sources") is None else
-          [("Accessible sources", str(k["accessible_sources"])),
-           ("Blocked sources", str(k["blocked_sources"]))])
+          [("Accessible sources", str(k["accessible_sources"]),
+            "automatic channels read this run"),
+           ("Blocked sources", str(k["blocked_sources"])),
+           ("Manual-first sources", str(k.get("manual_first_sources") or "none"),
+            "health-checked only — research arrives as uploads")])
     kp += [("Articles analyzed", f"{k.get('articles_full', 0)} full · "
                                  f"{k.get('articles_partial', 0)} partial"
             + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")),
@@ -986,6 +1030,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
 
 
 _INTAKE_LISTS = (
+    ("coverage", "Coverage by publisher (the configured channels)"),
     ("automatic", "Articles automatically analysed"),
     ("manual", "Articles manually imported"),
     ("awaiting_documents", "Partial articles awaiting a complete document"),
@@ -1024,7 +1069,7 @@ _HEALTH_PILL = {"HEALTHY": "skip", "DEGRADED": "watch", "BLOCKED": "now", "ERROR
 
 def _health_html(h: dict[str, Any], print_mode: bool) -> str:
     """The compact block: the counts line, NEW changes prominently, only the channels needing
-    attention (reason, action, affected article if known), and all eight on demand. Reasons are
+    attention (reason, action, affected article if known), and every channel on demand. Reasons are
     composed sentences — never a stack trace."""
     if not h:
         return ""
@@ -1087,8 +1132,10 @@ def render_dashboard_md(d: Dashboard) -> str:
     k = d.kpi or {}
     md += ([("- Sources: single article (manual URL) — no source discovery")]
            if k.get("accessible_sources") is None else
-           [f"- Accessible sources: {k['accessible_sources']}",
-            f"- Blocked sources: {k['blocked_sources']}"])
+           [f"- Accessible sources: {k['accessible_sources']} (automatic channels)",
+            f"- Blocked sources: {k['blocked_sources']}",
+            f"- Manual-first sources (health check only; research arrives as uploads): "
+            f"{k.get('manual_first_sources') or 'none'}"])
     md += [f"- Articles analyzed: {k.get('articles_full', 0)} full · "
            f"{k.get('articles_partial', 0)} partial"
            + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")

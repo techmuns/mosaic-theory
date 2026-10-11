@@ -6,8 +6,9 @@
   Each Must C page links its full report ("Download Here", ir.citi.com) — read where permitted.
 - Nomura: "To read the full report, click here" leads to the client portal — requested, never
   fetched.
-- BofA: insight pages state no publication date — a page's last-modified date bounds it (before
-  the window → out of it), the rest are listed for date verification, never silently dropped.
+- Undated pages (observed on Bank of America's insight pages, a channel since retired, and on
+  Nomura): a page's last-modified date bounds it (before the window → out of it), the rest are
+  listed for date verification, never silently dropped.
 - J.P. Morgan and TrendForce: working adapters, pinned on trimmed copies of their REAL listing
   pages (scripts, styles and images removed; DOM, hrefs and printed text kept — the adapter
   sees identical candidates on the original and the trimmed copy, verified when trimmed).
@@ -141,14 +142,14 @@ def test_a_real_sidebar_holding_a_minority_of_the_text_is_still_dropped() -> Non
 
 
 @pytest.mark.parametrize(("html_link", "expected"), [
-    ('<a href="/content/dam/x/quantum-technology.pdf">Download PDF</a>', ()),  # BofA print copy
+    ('<a href="/content/dam/x/quantum-technology.pdf">Download PDF</a>', ()),  # a print copy
     ('<footer><a href="https://www.jpmorgan.com/directdoc/form_crs.pdf">Form CRS</a></footer>',
      ()),  # J.P. Morgan regulatory footer
     ('<p>To read the full report, click</p><a href="https://portal.example.test/pub/1">here</a>',
      (("here", "https://portal.example.test/pub/1"),)),  # Nomura's client-portal link
     ('<a href="https://ir.example.test/r">Download Here</a>',
      (("Download Here", "https://ir.example.test/r"),)),  # Citi's report link
-], ids=["bofa-print-pdf", "jpm-form-crs", "nomura-click-here", "citi-download-here"])
+], ids=["print-copy-pdf", "jpm-form-crs", "nomura-click-here", "citi-download-here"])
 def test_which_links_are_a_fuller_report(html_link: str, expected: tuple[Any, ...]) -> None:
     """A link is the fuller report only when the page SAYS so — never because a PDF exists
     (the bare-PDF rule marked every J.P. Morgan page partial in the 2026-10-11 corpus check)."""
@@ -265,9 +266,9 @@ def test_the_channel_policies_as_configured() -> None:
     assert "ingest-file" in _UPLOAD  # the health hint points at the document route
 
 
-# --- BofA: no publication date on the page ------------------------------------------------------
+# --- a page that states no publication date (Nomura's layout) ----------------------------------
 
-def _bofa_page(title: str, modified: str | None) -> bytes:
+def _undated_page(title: str, modified: str | None) -> bytes:
     meta = f'<meta name="last_modified_date" content="{modified}">' if modified else ""
     body = "".join(f"<p>{PARA.format(i=i)}</p>" for i in range(6))
     return (f"<html><head>{meta}</head><body><main><h1>{title}</h1>{body}</main></body></html>"
@@ -275,25 +276,25 @@ def _bofa_page(title: str, modified: str | None) -> bytes:
 
 
 def test_an_undated_page_is_bounded_by_its_last_modification(tmp_path: Path) -> None:
-    src = _src("bofa_institutional")
-    base = "https://business.bofa.com/en-us/content"
-    listing = (f'<html><body><main><div class="card"><a href="{base}/old-insight.html">An old '
+    src = _src("nomura_connects", max_listing_pages=1)
+    base = "https://www.nomuraconnects.com/focused-thinking-posts"
+    listing = (f'<html><body><main><div class="card"><a href="{base}/old-insight">An old '
                f'insight whose title is long enough for the card rule</a></div><div '
-               f'class="card"><a href="{base}/recent-insight.html">A recent insight whose title '
+               f'class="card"><a href="{base}/recent-insight">A recent insight whose title '
                f'is long enough for the card rule</a></div><div class="card"><a '
-               f'href="{base}/bare-insight.html">A bare insight whose title is long enough for '
+               f'href="{base}/bare-insight">A bare insight whose title is long enough for '
                f'the card rule</a></div></main></body></html>').encode()
-    f = Fetcher({src.entry_url: (listing, "text/html"),
-                 f"{base}/old-insight.html": (_bofa_page("Old", "2025-09-26T10:20:25-04:00"),
-                                              "text/html"),
-                 f"{base}/recent-insight.html": (_bofa_page("Recent", "2026-10-05T09:00:00-04:00"),
-                                                 "text/html"),
-                 f"{base}/bare-insight.html": (_bofa_page("Bare", None), "text/html")})
+    f = Fetcher({src.listing_url: (listing, "text/html"),
+                 f"{base}/old-insight": (_undated_page("Old", "2025-09-26T10:20:25-04:00"),
+                                         "text/html"),
+                 f"{base}/recent-insight": (_undated_page("Recent", "2026-10-05T09:00:00-04:00"),
+                                            "text/html"),
+                 f"{base}/bare-insight": (_undated_page("Bare", None), "text/html")})
     st = Store(tmp_path / "r.db")
     d = discover_source(src, f, st, window_from=date(2026, 10, 2),  # type: ignore[arg-type]
                         window_to=AS_OF)
     by = {c.url.rsplit("/", 1)[-1]: c for c in d.candidates}
-    old, recent, bare = by["old-insight.html"], by["recent-insight.html"], by["bare-insight.html"]
+    old, recent, bare = by["old-insight"], by["recent-insight"], by["bare-insight"]
     assert old.status == "OUT_OF_WINDOW" and "last modified 2025-09-26" in old.note
     assert recent.status == "UNDATED" and "last modified 2026-10-05" in recent.note
     assert "VERIFY" in recent.note and "--published" in recent.note
@@ -302,10 +303,10 @@ def test_an_undated_page_is_bounded_by_its_last_modification(tmp_path: Path) -> 
 
 
 def test_an_operator_verified_date_is_labelled_as_such(tmp_path: Path) -> None:
-    url = "https://business.bofa.com/en-us/content/recent-insight.html"
-    f = Fetcher({url: (_bofa_page("Recent", "2026-10-05T09:00:00-04:00"), "text/html")})
+    url = "https://www.nomuraconnects.com/focused-thinking-posts/recent-insight"
+    f = Fetcher({url: (_undated_page("Recent", "2026-10-05T09:00:00-04:00"), "text/html")})
     pipe = _pipe(tmp_path, f)
-    res = pipe.process_url(url, source_id="bofa_institutional", as_of=AS_OF, fixture=PAGE_EXT,
+    res = pipe.process_url(url, source_id="nomura_connects", as_of=AS_OF, fixture=PAGE_EXT,
                            declared_published=date(2026, 10, 3))
     art = pipe.store.article(res.article_id or "")
     assert art is not None and art.published_at is not None

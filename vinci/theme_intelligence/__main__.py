@@ -106,6 +106,13 @@ def cmd_article(a: argparse.Namespace) -> int:
     html = Path(a.html).read_text() if a.html else None
     pipe = Pipeline(Path(a.data_dir), sources=sources, taxonomy=taxonomy, client=client,
                     review=not a.no_review)
+    from vinci.theme_intelligence.config import retired_for
+
+    r = retired_for(source_id=a.source, url=a.url)
+    if r is not None:
+        print(f"refused: {r.publisher} was retired on {r.retired} ({r.reason}) — its research "
+              f"is not analysed")
+        return 1
     sid = a.source or source_for_url(a.url, sources)
     note = (f"operator-supplied copy — a MANUAL UPLOAD of an authorized document "
             f"({Path(a.html).name})" if a.html else "supplied fixture HTML")
@@ -461,7 +468,8 @@ def main(argv: list[str] | None = None) -> int:
     so.add_argument("--json", action="store_true", help="machine-readable report")
     so.add_argument("--force", action="store_true",
                     help="re-test a channel that refused access less than 24h ago")
-    so.add_argument("--sources", help="comma-separated source ids (default: all eight)")
+    so.add_argument("--sources", help="comma-separated source ids (default: every active "
+                                      "channel)")
     so.add_argument("--days", type=int, default=DEFAULT_SCAN_DAYS,
                     help="freshness window ending today")
     so.set_defaults(fn=cmd_sources)
@@ -470,7 +478,7 @@ def main(argv: list[str] | None = None) -> int:
     ar.add_argument("--url", required=True)
     ar.add_argument("--as-of", required=True, help="YYYY-MM-DD; later-dated facts are refused")
     ar.add_argument("--source", help="source id (default: matched on the URL host)")
-    ar.add_argument("--publisher", help="publisher name for a URL outside the eight channels "
+    ar.add_argument("--publisher", help="publisher name for a URL outside the channels "
                                         "(default: the matched channel's publisher, else UNKNOWN)")
     ar.add_argument("--html", help="use this saved HTML instead of fetching — the MANUAL "
                                    "UPLOAD route for an authorized copy of an article a "
@@ -489,7 +497,8 @@ def main(argv: list[str] | None = None) -> int:
     sc.add_argument("--from", dest="date_from")
     sc.add_argument("--to", dest="date_to")
     sc.add_argument("--as-of", help="default: the window end")
-    sc.add_argument("--sources", help="comma-separated source ids (default: all eight)")
+    sc.add_argument("--sources", help="comma-separated source ids (default: every active "
+                                      "channel)")
     sc.add_argument("--max-articles", type=int, default=DEFAULT_MAX_ARTICLES_PER_RUN)
     sc.add_argument("--resume", help="resume an interrupted run id")
     sc.add_argument("--cache-only", action="store_true")

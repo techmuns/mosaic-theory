@@ -123,6 +123,21 @@ class SourceConfig:
     linked_reports: str = "request"
     #: linked reports fetched per run for this channel — each is a long document (cost bound)
     max_linked_reports: int = 2
+    #: "automatic" — discovered and read by every scan; "manual_first" — a lightweight health
+    #: check only (no discovery, no retrieval attempt): its research arrives as authorised uploads
+    mode: str = "automatic"
+
+
+@dataclass(frozen=True)
+class RetiredSource:
+    """A channel removed from the active list: its history stays attributable; nothing new is
+    discovered, checked, queued or imported from it."""
+
+    id: str
+    publisher: str
+    retired: str
+    reason: str
+    hosts: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -186,6 +201,30 @@ class ConfigError(ValueError):
     """An editable config file is malformed — refuse rather than guess."""
 
 
+def load_retired_sources(path: Path | None = None) -> tuple[RetiredSource, ...]:
+    raw = tomllib.loads((path or CONFIG_DIR / "sources.toml").read_text())
+    try:
+        return tuple(RetiredSource(id=str(r["id"]), publisher=str(r["publisher"]),
+                                   retired=str(r["retired"]), reason=str(r["reason"]),
+                                   hosts=tuple(str(h) for h in r.get("hosts", ())))
+                     for r in raw.get("retired", []))
+    except KeyError as exc:
+        raise ConfigError(f"retired entry missing {exc}") from exc
+
+
+def retired_for(source_id: str | None = None, url: str | None = None,
+                path: Path | None = None) -> RetiredSource | None:
+    """The retired channel a source id or a URL's host belongs to, if any."""
+    from urllib.parse import urlparse
+
+    host = (urlparse(url).hostname or "").lower() if url else ""
+    for r in load_retired_sources(path):
+        if source_id == r.id or (host and any(host == h or host.endswith("." + h)
+                                              for h in r.hosts)):
+            return r
+    return None
+
+
 def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
     raw = tomllib.loads((path or CONFIG_DIR / "sources.toml").read_text())
     out: list[SourceConfig] = []
@@ -206,10 +245,16 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
                 manual_llm_processing=str(s.get("manual_llm_processing", "unknown")),
                 linked_reports=str(s.get("linked_reports", "request")),
                 max_linked_reports=int(s.get("max_linked_reports", 2)),
+                mode=str(s.get("mode", "automatic")),
             ))
         except KeyError as exc:
             raise ConfigError(f"source entry missing {exc}: {s}") from exc
+    retired = {r.id for r in load_retired_sources(path)}
     for sc in out:
+        if sc.id in retired:
+            raise ConfigError(f"{sc.id} is both active and retired")
+        if sc.mode not in ("automatic", "manual_first"):
+            raise ConfigError(f"{sc.id}: mode must be automatic | manual_first")
         if sc.linked_reports not in ("fetch", "request"):
             raise ConfigError(f"{sc.id}: linked_reports must be fetch | request")
         if sc.manual_llm_processing not in ("permitted", "not_permitted", "unknown"):

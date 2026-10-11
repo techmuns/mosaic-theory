@@ -49,7 +49,7 @@ class LiveNetworkError(BaseException):
 @pytest.fixture(autouse=True)
 def _offline(monkeypatch: pytest.MonkeyPatch) -> None:
     """No test here may reach a real host. Observed 2026-10-11: the scan's new source-health pass
-    went to the eight LIVE publishers from these offline tests (minutes of crawl delays) because
+    went to the LIVE publishers from these offline tests (minutes of crawl delays) because
     `_fake_scan` stubbed discovery but not the health check."""
     import httpx
 
@@ -236,14 +236,16 @@ def test_a_budget_cap_queues_the_rest_and_says_so(tmp_path: Path,
 
 def test_a_candidate_later_ruled_out_of_the_window_leaves_the_review_list(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Observed 2026-10-11: 12 BofA pages stayed UNDATED on the dashboard's review list after a
-    scan had bounded them out of the window by their last modification — an OUT_OF_WINDOW
-    result was never written back over the stale row. A processed row is never touched."""
+    """Observed 2026-10-11 (on Bank of America's pages, a channel since retired): 12 pages
+    stayed UNDATED on the review list after a scan had bounded them out of the window by their
+    last modification — an OUT_OF_WINDOW result was never written back over the stale row. A
+    processed row is never touched."""
     pipe = make_pipeline(tmp_path)
     _fake_scan(monkeypatch, pipe, [])
     undated, done = "https://example.test/hypothetical/undated", "https://example.test/hypothetical/done"
-    pipe.store.upsert_candidate(undated, "bofa_institutional", "UNDATED", {"note": "old"})
-    pipe.store.upsert_candidate(done, "bofa_institutional", "PROCESSED", {"note": "read"})
+    sid = list(pipe.sources)[0]
+    pipe.store.upsert_candidate(undated, sid, "UNDATED", {"note": "old"})
+    pipe.store.upsert_candidate(done, sid, "PROCESSED", {"note": "read"})
     srcs = list(pipe.sources.values())
 
     def discover(src: Any, f: Any, store: Any, *, window_from: date,
@@ -295,7 +297,8 @@ def test_a_failed_source_makes_the_run_partial_and_the_page_says_so(
 
 def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_codes(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Review of PR #703, P2: "Accessible sources: 7 of 8", the blocked channels BY NAME,
+    """Review of PR #703, P2: "Accessible sources: 4 of 5" (the AUTOMATIC channels; the two
+    manual-first ones are named on their own), the blocked channels BY NAME,
     articles analysed full vs partial, Research Now / Watch / Skip, new / upgraded / downgraded /
     challenged; thesis ids, change classes, claim ids and rule codes only behind the audit toggle;
     the article date and the registry's first-detected date shown apart."""
@@ -310,8 +313,12 @@ def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_cod
     d = build_dashboard(pipe.store, run.run_id, cards=cards, generated="t")
     html = render_dashboard_html(d)
     blocked = list(pipe.sources.values())[1].publisher
-    for label, value in (("Accessible sources", f"{len(pipe.sources) - 1} of {len(pipe.sources)}"),
+    auto = [s for s in pipe.sources.values() if s.mode == "automatic"]
+    manual_first = ", ".join(s.publisher for s in pipe.sources.values()
+                             if s.mode == "manual_first")
+    for label, value in (("Accessible sources", f"{len(auto) - 1} of {len(auto)}"),
                          ("Blocked sources", blocked),
+                         ("Manual-first sources", manual_first),
                          ("Articles analyzed", "2 full · 0 partial"),
                          ("Research Now / Watch / Skip", None),
                          ("New / upgraded / downgraded / challenged theses", None)):

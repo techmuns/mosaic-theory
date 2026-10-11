@@ -1,9 +1,8 @@
-"""Eight source channels → dated article candidates, with honest per-source coverage.
+"""The automatic source channels → dated article candidates, with honest per-source coverage.
 
 One adapter per publisher LAYOUT (never per article), selected by `adapter` in `sources.toml`:
 
   citi_next_data     Must C page's embedded CMS data (`__NEXT_DATA__`): series items + publishDate
-  bofa_cards         insights page article cards (undated) → each page's own date
   jpm_tmt            Top Market Takeaways listing cards (dated); sitemap lastmod as fallback
   generic_listing    entry page anchors matching `link_pattern` (dated cards or page date)
   nomura_articles    /articles/ listing + its pagination (undated) → each page's own date
@@ -60,7 +59,6 @@ _MONTHS = {m: i + 1 for i, m in enumerate(
 METHOD = {
     "citi_next_data": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with "
                       "CMS publishDate)",
-    "bofa_cards": "insights page article cards (undated) → publication date from each page",
     "jpm_tmt": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
     "generic_listing": "entry page links matching the configured pattern → card or page date",
     "nomura_articles": "/articles/ listing + pagination (undated) → publication date from each "
@@ -255,16 +253,6 @@ def citi_next_data(src: SourceConfig, f: PoliteFetcher, cov: SourceCoverage) -> 
     return out
 
 
-def bofa_cards(src: SourceConfig, f: PoliteFetcher, cov: SourceCoverage) -> list[Candidate]:
-    fr = _entry(src, f, cov)
-    host = re.escape(urlparse(src.entry_url).netloc)
-    pat = re.compile(src.link_pattern or rf"^https://{host}/en-us/content/.+\.html$")
-    return [Candidate(url=u, source_id=src.id, title=t, listed_date=d,
-                      date_basis="listing card date" if d else "undated")
-            for u, t, d in card_links(_soup(fr), fr.final_url or src.entry_url, pat,
-                                      min_text=40)]
-
-
 def jpm_tmt(src: SourceConfig, f: PoliteFetcher, cov: SourceCoverage) -> list[Candidate]:
     fr = _entry(src, f, cov)
     base = canon(src.entry_url)
@@ -389,7 +377,6 @@ def semianalysis_feed(src: SourceConfig, f: PoliteFetcher,
 
 ADAPTERS: dict[str, Adapter] = {
     "citi_next_data": citi_next_data,
-    "bofa_cards": bofa_cards,
     "jpm_tmt": jpm_tmt,
     "generic_listing": generic_listing,
     "nomura_articles": nomura_articles,

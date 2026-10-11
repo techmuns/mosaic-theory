@@ -746,10 +746,27 @@ class Pipeline:
             # what earlier runs QUEUED is read FIRST, before discovery touches the table, and
             # it is offered ahead of this run's own candidates
             carried = [(url, meta) for url, _st, meta in self.store.candidates("QUEUED")]
+            for url, meta in carried:  # a channel no longer active never has its queue read
+                sid = str(meta.get("source_id", ""))
+                if sid not in self.sources:
+                    self.store.upsert_candidate(url, sid, "SOURCE_INACTIVE", {
+                        **meta, "run_id": run.run_id,
+                        "note": f"{sid} is not an active channel — never processed"})
+            carried = [(u, m) for u, m in carried if str(m.get("source_id", "")) in self.sources]
             discoveries: list[Discovery] = []
             for src in self.sources.values():
                 h = denied.get(src.id)
-                if h is not None:  # refused at the endpoint moments ago — never asked twice
+                if src.mode == "manual_first":  # a health check only: no discovery attempt
+                    hc = next((x for x in (self.health.checks if self.health else [])
+                               if x.source_id == src.id), None)
+                    d = Discovery(SourceCoverage(
+                        source_id=src.id, publisher=src.publisher, channel=src.channel,
+                        method="manual-first: lightweight health check only — research "
+                               "arrives as authorised uploads (ingest-file)",
+                        checked_at=hc.checked_at if hc else None, status="MANUAL_FIRST",
+                        warnings=[f"automated access: {hc.status.value} — {hc.reason[:160]}"
+                                  if hc else "automated access not checked this run"]), [])
+                elif h is not None:  # refused at the endpoint moments ago — never asked twice
                     bcov = SourceCoverage(
                         source_id=src.id, publisher=src.publisher, channel=src.channel,
                         method=METHOD.get(src.adapter, src.adapter), checked_at=h.checked_at,

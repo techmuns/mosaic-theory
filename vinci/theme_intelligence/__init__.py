@@ -1,6 +1,6 @@
 """Living equity-theme intelligence — a RESEARCH DISCOVERY and PRIORITISATION tool.
 
-It discovers permitted public research articles from eight publisher channels, extracts their
+It discovers permitted public research articles from seven publisher channels, extracts their
 source-anchored evidence, named companies and risks, keeps a persistent, versioned registry of
 investment theses, and issues a decision-first weekly briefing of identical nine-section Living
 Thesis Cards. "RESEARCH NOW" means *allocate analyst attention* — never buy.

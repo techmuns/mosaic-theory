@@ -126,19 +126,23 @@ def store(tmp_path: Path) -> Store:
 
 # --- H.1 every channel gets a status and a timestamp ----------------------------------------------
 
-def test_all_eight_channels_receive_a_status_and_a_last_checked_time(
+def test_every_configured_channel_receives_a_status_and_a_last_checked_time(
         tmp_path: Path, store: Store) -> None:
+    """Every ACTIVE channel — seven since Bank of America was retired (2026-10-11): the
+    denominators follow the configuration, never a constant."""
     eight = [replace(s, min_crawl_delay_s=0.0) for s in load_sources()]
+    n = len(eight)
+    assert n == 7
     web = Web()  # every page of every host: 404, except what is stated below
     web.pages["https://www.goldmansachs.com/robots.txt"] = (403, "")
     web.pages["https://www.morganstanley.com/robots.txt"] = httpx.ConnectError("dropped")
     run = check(store, fetcher(tmp_path, web), eight)
     assert [h.source_id for h in run.checks] == [s.id for s in eight]
     assert all(h.status in HealthStatus and h.checked_at == T0 for h in run.checks)
-    assert len(store.latest_health()) == 8
+    assert len(store.latest_health()) == n
     s = summary(run.checks, eight)
-    assert s["total"] == 8 and sum(s["counts"].values()) == 8
-    assert s["line"].startswith("Sources healthy: 0/8 | Degraded: ")
+    assert s["total"] == n and sum(s["counts"].values()) == n
+    assert s["line"].startswith(f"Sources healthy: 0/{n} | Degraded: ")
 
 
 # --- H.2 a working listing with a broken article parser -------------------------------------------
@@ -428,7 +432,7 @@ def test_the_health_cli_runs_without_an_llm_key(tmp_path: Path,
     assert cli.main(["--data-dir", str(tmp_path / "ti"), "sources", "--check-health",
                      "--json"]) == 0
     out = json.loads(capsys.readouterr().out)
-    assert out["total"] == 8 and len(out["sources"]) == 8
+    assert out["total"] == len(load_sources()) == len(out["sources"]) == 7
     assert out["summary"].startswith("Sources healthy: ")
     assert all(r["checked_at"] and r["status"] in HealthStatus.__members__ for r in out["sources"])
 
@@ -537,7 +541,7 @@ def test_a_channel_is_judged_on_several_articles_not_one(
     assert len(h.samples) == 3 and "2 of 3" in h.reason, shape
 
 
-def _bofa_shape(s: SourceConfig) -> Web:
+def _undated_listing_shape(s: SourceConfig) -> Web:
     """The live Bank of America shape (2026-10-11): an undated listing whose FIRST entries are
     one dated series, the pages further down stating no date."""
     host = s.entry_url.split("/")[2]
@@ -553,7 +557,7 @@ def _bofa_shape(s: SourceConfig) -> Web:
 def test_the_sample_is_spread_across_the_listing_not_its_top(
         tmp_path: Path, store: Store) -> None:
     s = src()
-    h = check(store, fetcher(tmp_path, _bofa_shape(s)), [s]).checks[0]
+    h = check(store, fetcher(tmp_path, _undated_listing_shape(s)), [s]).checks[0]
     assert [x.split(" — ")[0].rsplit("/", 1)[1] for x in h.samples] == [
         "note-0", "note-4", "note-8"]
     assert h.status is HealthStatus.DEGRADED and "metadata problem" in h.reason
