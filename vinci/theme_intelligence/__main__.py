@@ -343,7 +343,7 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
     run = pipe.start_run("ingest", as_of=as_of)
     try:
         res = ingest_file(pipe, path, declared, as_of=as_of, force_new=a.as_new,
-                          same_as=a.same_as)
+                          same_as=a.same_as, duplicate_of=a.duplicate_of)
     except DocumentError as exc:
         pipe.finish_run(RunStatus.FAILED, error=str(exc))
         print(f"refused: {exc}")
@@ -503,6 +503,8 @@ def main(argv: list[str] | None = None) -> int:
     ig.add_argument("--as-of", help="analysis as-of (default: today, UTC)")
     same = ig.add_mutually_exclusive_group()
     same.add_argument("--same-as", help="the article id this document is a version of")
+    same.add_argument("--duplicate-of", help="the article id this document merely repeats — "
+                                            "recorded, nothing added")
     same.add_argument("--as-new", action="store_true", help="a new article, whatever it resembles")
     ig.add_argument("--release", help="process a HELD / REVIEW document by its id")
     ig.add_argument("--cache-only", action="store_true")

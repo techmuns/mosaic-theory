@@ -133,7 +133,13 @@ def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool) 
         return Match(DUPLICATE, art, f"the same text in another file or format ({facts})")
     fuller = new_words > max(words * 1.3, words + 150)
     if held and c_old >= CONTAINED and fuller:
-        return Match(UPGRADE, art, f"a fuller version of the held article ({facts})")
+        if state is RetrievalState.PARTIAL:
+            return Match(UPGRADE, art, f"a fuller version of the held article ({facts})")
+        # the held article is COMPLETE: a longer document containing it is another edition, an
+        # appendix or page furniture (a printed web page) — never assumed to complete it
+        return Match(REVIEW, art, f"contains the held COMPLETE article plus more — another "
+                                  f"edition, an appendix or page furniture: a human decides "
+                                  f"({facts})")
     if (stated or (t >= 0.8 and same_date)) and fuller and (
             state is RetrievalState.PARTIAL or not held) and t >= 0.5:
         return Match(UPGRADE, art, ("the operator states its URL; " if stated else "")
@@ -198,6 +204,7 @@ def _store_copy(pipe: Pipeline, path: Path, read: DocumentRead) -> str:
 
 def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date | None = None,
                 force_new: bool = False, same_as: str | None = None,
+                duplicate_of: str | None = None,
                 fixture: dict[str, Any] | None = None,
                 completeness_fixture: dict[str, Any] | None = None) -> IngestResult:
     """Read, identify, gate and — when authorised — analyse one document through the shared
@@ -242,6 +249,13 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     if read.doc.retrieval_state is RetrievalState.BLOCKED:
         return finish("REJECTED", "no readable text (a scanned or image-only document?) — "
                                   "nothing analysed; " + "; ".join(read.issues[:3]))
+    if duplicate_of:
+        held = pipe.store.article(duplicate_of)
+        if held is None:
+            return finish("REVIEW", f"--duplicate-of {duplicate_of}: no such article")
+        return finish("DUPLICATE", f"the operator states it duplicates article {duplicate_of} "
+                                   f"— no new contribution", duplicate_of,
+                      basis=f"the operator states it duplicates article {duplicate_of}")
     if same_as:
         held = pipe.store.article(same_as)
         if held is None:
@@ -259,8 +273,9 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         aid = match.article.article_id if match.article else None
         pipe._issue("article", aid or doc_id, IssueSeverity.WARN, "DOCUMENT_REVIEW",  # noqa: SLF001
                     f"{doc_id} ({path.name}): {match.basis}")
-        return finish("REVIEW", f"{match.basis} — import again with --same-as <article id> or "
-                                f"--as-new", aid, basis=match.basis)
+        return finish("REVIEW", f"{match.basis} — import again with --same-as <article id> "
+                                f"(a fuller version of it), --duplicate-of <article id> (the same "
+                                f"article: add nothing) or --as-new", aid, basis=match.basis)
     ok, why = llm_authorised(pipe, declared)
     if not ok:
         aid = match.article.article_id if match.article else None

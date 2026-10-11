@@ -389,6 +389,30 @@ def test_case_c_an_uncertain_match_goes_to_review_never_a_merge(pipe: Pipeline,
     assert table_counts(pipe)["articles"] == counts["articles"] + 1
 
 
+def test_a_longer_copy_of_a_complete_article_is_reviewed_never_an_upgrade(
+        pipe: Pipeline, tmp_path: Path) -> None:
+    """A printed web page carries the site's furniture; an annex adds material. Containing a
+    COMPLETE held article plus more is not evidence of completing it — a human decides."""
+    first = ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    assert first.status == "INGESTED"
+    body = " ".join(b.text for b in read_document(MS_PDF, _ms()).doc.blocks)
+    longer = tmp_path / "printed-with-site-furniture.txt"
+    longer.write_text(body + "\n\n" + " ".join(
+        f"Site navigation item {i} and footer link {i} printed with the page." for i in range(40)))
+    counts = table_counts(pipe)
+    res = ingest_file(pipe, longer, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    assert res.status == "REVIEW" and "held COMPLETE article plus more" in res.note
+    assert "--duplicate-of" in res.note
+    assert table_counts(pipe)["article_versions"] == counts["article_versions"]
+    # the human's answer: the same article — recorded, nothing added
+    dup = ingest_file(pipe, longer, _ms(), as_of=AS_OF, duplicate_of=first.article_id)
+    assert dup.status == "DUPLICATE" and dup.doc_id == res.doc_id
+    assert table_counts(pipe) == {**counts, "documents": counts["documents"] + 1}  # the record
+    rec = pipe.store.document(dup.doc_id)
+    assert rec is not None and rec.article_id == first.article_id
+    assert [h.split(" UTC ")[1].split(":")[0] for h in rec.history] == ["REVIEW", "DUPLICATE"]
+
+
 def test_shingle_containment_is_directional() -> None:
     a = shingles("one two three four five six seven eight nine ten")
     b = shingles("one two three four five six seven eight nine ten eleven twelve thirteen")
@@ -513,6 +537,25 @@ def test_the_inbox_imports_and_files_every_document(tmp_path: Path) -> None:
     assert stat.S_IMODE((inbox / "held").stat().st_mode) == 0o700
 
 
+def test_the_cli_releases_a_held_document_by_its_id(tmp_path: Path) -> None:
+    """`ingest-file --release <doc id>` re-reads the PRIVATE copy with the statements recorded
+    at import; still unauthorised, it stays HELD — no model is asked either way here."""
+    from vinci.theme_intelligence.__main__ import main
+    from vinci.theme_intelligence.store import Store
+
+    data = tmp_path / "data"
+    common = ["--as-of", AS_OF.isoformat(), "--cache-only", "--no-review"]
+    assert main(["--data-dir", str(data), "ingest-file", "--path", str(MS_PDF), "--source",
+                 "ms_research", "--published", "2026-10-01", *common]) == 0
+    [rec] = Store(data / "registry.db").documents()
+    assert rec.status == "HELD" and rec.declared == {"published": "2026-10-01"}
+    assert main(["--data-dir", str(data), "ingest-file", "--release", rec.doc_id,
+                 "--llm-not-permitted", *common]) == 0
+    [again] = Store(data / "registry.db").documents()
+    assert again.doc_id == rec.doc_id and again.status == "HELD"
+    assert "NOT permitted" in again.history[-1]
+
+
 # --- 8. privacy: no document under version control except the synthetic fixtures ----------------
 
 def test_no_research_document_is_tracked_by_git() -> None:
@@ -522,7 +565,7 @@ def test_no_research_document_is_tracked_by_git() -> None:
     try:
         out = subprocess.run(["git", "ls-files", "*.pdf", "*.docx", "*.PDF"], cwd=root,
                              capture_output=True, text=True, check=True, timeout=30,
-                             env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"}).stdout.split()
+                             env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"}).stdout.splitlines()
     except (OSError, subprocess.SubprocessError) as exc:
         pytest.skip(f"git unavailable: {exc}")
     allowed = "tests/fixtures/theme_intelligence/synthetic_documents/"

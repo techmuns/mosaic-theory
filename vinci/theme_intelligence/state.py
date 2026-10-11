@@ -250,8 +250,10 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
             basis = d.match_basis or ""
             m = re.match(r"the operator states it is article (\S+)$", basis)
             same_as = m.group(1) if m else (d.article_id if dec.get("via") else None)
+            dup = re.match(r"the operator states it duplicates article (\S+)$", basis)
             try:
                 out = ingest_file(pipe, src, declared, as_of=as_of, same_as=same_as,
+                                  duplicate_of=dup.group(1) if dup else None,
                                   force_new=basis == "the operator states it is a new article",
                                   fixture=fixtures.get(d.sha256))
             except DocumentError as exc:
