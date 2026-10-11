@@ -345,7 +345,7 @@ class Pipeline:
             return
         store = self.paths.root / "documents"
         store.mkdir(mode=0o700, parents=True, exist_ok=True)
-        tmp = store / f"incoming-{hashlib.sha256(fr.content).hexdigest()[:16]}.pdf"
+        tmp = store / f"linked-report-{hashlib.sha256(fr.content).hexdigest()[:16]}.pdf"
         tmp.write_bytes(fr.content)
         tmp.chmod(0o600)
         try:

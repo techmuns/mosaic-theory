@@ -196,6 +196,9 @@ def test_a_linked_report_is_read_as_a_fuller_version_of_the_same_article(
     [doc] = pipe.store.documents()
     assert doc.status == "UPGRADED" and doc.article_id == res.article_id
     assert REPORT in doc.declared["via"] and "robots.txt obeyed" in doc.declared["via"]
+    # provenance says how it arrived — never "the operator states" for an automatic fetch
+    assert "own page links to" in (doc.match_basis or "")
+    assert "operator" not in (doc.match_basis or "") and doc.filename.startswith("linked-report-")
     quotes = [c.quote for c in pipe.store.claims_for_article(res.article_id or "")]
     assert quotes == ["On-site gas turbine orders are projected to grow 30% in 2027"]
     # the next run reads the page again: the report is not fetched a second time

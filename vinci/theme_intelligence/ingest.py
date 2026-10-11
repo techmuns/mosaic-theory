@@ -58,8 +58,11 @@ SHINGLE = 8
 CONTAINED = 0.6
 #: both ways at least this much, and similar length: the same text in another format
 SAME_TEXT = 0.85
-#: a title / text overlap between these bounds is REVIEW, never an automatic merge
+#: a TEXT overlap from here up (short of the rules above) is REVIEW, never an automatic merge
 WEAK_OVERLAP = 0.2
+#: a TITLE overlap alone sends a document to REVIEW only from here up — a publisher's titles share
+#: house words (two different TrendForce releases overlapped 21% with 0% text in common)
+TITLE_REVIEW = 0.5
 NEW, UPGRADE, DUPLICATE, REVIEW = "NEW", "UPGRADE", "DUPLICATE", "REVIEW"
 
 
@@ -105,15 +108,18 @@ def title_overlap(a: str | None, b: str | None) -> float:
 
 
 def _held_text(pipe: Pipeline, article_id: str) -> tuple[str, RetrievalState | None, int]:
+    """The latest readable version's text — "" when this machine does not hold it (a registry
+    pulled from the state branch keeps block hashes, never article text)."""
     vs = [v for v in pipe.store.article_versions(article_id)
           if v.retrieval_state is not RetrievalState.BLOCKED]
     if not vs:
         return "", None, 0
     v = vs[-1]
-    return " ".join(b.text for b in v.blocks), v.retrieval_state, v.body_word_count
+    return " ".join(b.text for b in v.blocks).strip(), v.retrieval_state, v.body_word_count
 
 
-def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool) -> Match:
+def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
+             url_basis: str = "the operator states its URL") -> Match:
     """One held article against the new document."""
     held, state, words = _held_text(pipe, art.article_id)
     new_text = " ".join(b.text for b in read.doc.blocks)
@@ -128,25 +134,28 @@ def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool) 
              f"text found in the held {c_new:.0%}; held {words} words "
              f"({state.value if state else 'no readable version'}), new {new_words} words"
              + (f"; dates {art.published_at.date() if art.published_at else '?'} vs "
-                f"{read.doc.published_at.date() if read.doc.published_at else '?'}"))
+                f"{read.doc.published_at.date() if read.doc.published_at else '?'}")
+             + ("; the held text is NOT on this machine (a pulled registry keeps no article "
+                "text) — compared by URL, title and date only" if state and not held else ""))
+    lead = f"{url_basis}; " if stated else ""
     if held and c_old >= SAME_TEXT and c_new >= SAME_TEXT:
-        return Match(DUPLICATE, art, f"the same text in another file or format ({facts})")
+        return Match(DUPLICATE, art, f"{lead}the same text in another file or format ({facts})")
     fuller = new_words > max(words * 1.3, words + 150)
     if held and c_old >= CONTAINED and fuller:
         if state is RetrievalState.PARTIAL:
-            return Match(UPGRADE, art, f"a fuller version of the held article ({facts})")
+            return Match(UPGRADE, art, f"{lead}a fuller version of the held article ({facts})")
         # the held article is COMPLETE: a longer document containing it is another edition, an
         # appendix or page furniture (a printed web page) — never assumed to complete it
-        return Match(REVIEW, art, f"contains the held COMPLETE article plus more — another "
+        return Match(REVIEW, art, f"{lead}contains the held COMPLETE article plus more — another "
                                   f"edition, an appendix or page furniture: a human decides "
                                   f"({facts})")
     if (stated or (t >= 0.8 and same_date)) and fuller and (
-            state is RetrievalState.PARTIAL or not held) and t >= 0.5:
-        return Match(UPGRADE, art, ("the operator states its URL; " if stated else "")
+            state is RetrievalState.PARTIAL or state is None) and t >= 0.5:
+        return Match(UPGRADE, art, lead
                      + f"a fuller document for a {state.value if state else 'unread'} article "
                        f"({facts})")
-    if stated or t >= WEAK_OVERLAP or c_old >= WEAK_OVERLAP or c_new >= WEAK_OVERLAP:
-        return Match(REVIEW, art, f"an uncertain match — a human decides ({facts})")
+    if stated or t >= TITLE_REVIEW or c_old >= WEAK_OVERLAP or c_new >= WEAK_OVERLAP:
+        return Match(REVIEW, art, f"{lead}an uncertain match — a human decides ({facts})")
     return Match(NEW, None, facts)
 
 
@@ -158,11 +167,16 @@ def identify(pipe: Pipeline, read: DocumentRead, declared: Declared) -> Match:
     if row:
         return Match(DUPLICATE, st.article(str(row[0])),
                      "the same text is already registered (another file or format)")
-    if declared.url:
+    # the operator's URL, or the one the document states for itself (a saved page's canonical
+    # link) — bibliographic identity; a urn is only the content's own name
+    if declared.url or not read.doc.canonical_url.startswith("urn:"):
         art = st.article_by_url(read.doc.canonical_url)
         if art is not None:
-            return _compare(pipe, art, read, stated=True)
-        return Match(NEW, None, "the operator states a URL not yet held")
+            return _compare(pipe, art, read, stated=True, url_basis=(
+                "the operator states its URL" if declared.url
+                else "the document states its own URL (canonical link)"))
+        if declared.url:
+            return Match(NEW, None, "the operator states a URL not yet held")
     best: Match | None = None
     for art in (a for a in _articles(pipe) if a.source_id == declared.source_id):
         m = _compare(pipe, art, read, stated=False)
@@ -260,7 +274,9 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         held = pipe.store.article(same_as)
         if held is None:
             return finish("REVIEW", f"--same-as {same_as}: no such article")
-        match = Match(UPGRADE, held, f"the operator states it is article {same_as}")
+        match = Match(UPGRADE, held, (f"the fuller report article {same_as}'s own page links to"
+                                      if declared.via else
+                                      f"the operator states it is article {same_as}"))
     elif force_new:
         match = Match(NEW, None, "the operator states it is a new article")
     else:

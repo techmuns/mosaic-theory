@@ -413,6 +413,61 @@ def test_a_longer_copy_of_a_complete_article_is_reviewed_never_an_upgrade(
     assert [h.split(" UTC ")[1].split(":")[0] for h in rec.history] == ["REVIEW", "DUPLICATE"]
 
 
+def test_a_weak_title_overlap_alone_is_a_new_article(pipe: Pipeline, tmp_path: Path) -> None:
+    """Observed 2026-10-11: two different TrendForce releases shared 21% of their title words
+    and 0% of their text, and the second went to REVIEW. A title alone needs 50%."""
+    ingest_file(pipe, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    other = tmp_path / "other.md"
+    other.write_text("# Synthetic Memory Outlook Note\n\n" + " ".join(
+        f"Unrelated synthetic sentence number {i} about a different subject entirely."
+        for i in range(12)) + "\n")
+    res = ingest_file(pipe, other, _ms(), as_of=AS_OF, fixture=_ok(extraction([], [])))
+    assert res.status == "INGESTED", res.note
+
+
+def test_a_pulled_registry_compares_without_text_and_says_so(tmp_path: Path) -> None:
+    """A registry restored from the state branch holds no article text: a document is compared
+    by URL, title and date only — said in the basis — and an uncertain match is REVIEW."""
+    from vinci.theme_intelligence.store import Store
+
+    a = make_pipeline(tmp_path / "a")
+    a.start_run("ingest", as_of=AS_OF)
+    first = ingest_file(a, MS_PDF, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    a.store.export_jsonl(tmp_path / "branch")
+    (tmp_path / "b" / "ti").mkdir(parents=True)
+    Store.import_jsonl(tmp_path / "branch", tmp_path / "b" / "ti" / "registry.db").close()
+    b = make_pipeline(tmp_path / "b")
+    b.start_run("ingest", as_of=AS_OF)
+    res = ingest_file(b, MS_HTML, _ms(), as_of=AS_OF, fixture=_ms_extraction())
+    assert res.status == "REVIEW" and res.article_id == first.article_id
+    assert "the held text is NOT on this machine" in res.note
+
+
+def test_a_saved_page_is_identified_by_its_own_canonical_link(pipe: Pipeline,
+                                                               tmp_path: Path) -> None:
+    """A saved web page names its URL itself (rel=canonical): no --url needed to find the
+    article — a fuller copy of a PARTIAL page upgrades it, and the basis says who stated the URL."""
+    from vinci.theme_intelligence.parse import parse_document
+
+    url = "https://example.test/synthetic/teaser-then-full"
+    head = (f'<html><head><title>Synthetic Teaser Note</title><link rel="canonical" '
+            f'href="{url}"></head><body><main><h1>Synthetic Teaser Note</h1>')
+    teaser = "".join(f"<p>Synthetic teaser sentence {i} about memory supply tightening.</p>"
+                     for i in range(8))
+    rest = "".join(f"<p>Synthetic full-text paragraph {i} continuing the argument with more "
+                   f"detail on contract pricing and supplier discipline.</p>" for i in range(20))
+    doc = parse_document(head + teaser + "</main></body></html>", url)
+    assert doc.retrieval_state is RetrievalState.PARTIAL  # a short teaser
+    pre = pipe.process_document(doc, fetched(doc, state=RetrievalState.PARTIAL), url=url,
+                                source_id="semianalysis", as_of=AS_OF,
+                                fixture=_ok(extraction([], [])))
+    saved = tmp_path / "saved full page.html"
+    saved.write_text(head + teaser + rest + "</main></body></html>")
+    res = ingest_file(pipe, saved, _sa(), as_of=AS_OF, fixture=_ok(extraction([], [])))
+    assert res.status == "UPGRADED" and res.article_id == pre.article_id, res.note
+    assert "the document states its own URL (canonical link)" in res.note
+
+
 def test_shingle_containment_is_directional() -> None:
     a = shingles("one two three four five six seven eight nine ten")
     b = shingles("one two three four five six seven eight nine ten eleven twelve thirteen")
