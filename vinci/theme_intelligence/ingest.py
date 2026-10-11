@@ -397,11 +397,41 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     if read.date_disagreement and res.article_id:
         pipe._issue("article", res.article_id, IssueSeverity.WARN,  # noqa: SLF001
                     "PUBLICATION_DATE_DISAGREES", read.date_disagreement)
+    if match.kind == UPGRADE and match.article is not None and res.article_id:
+        _compare_version_dates(pipe, match.article, doc, res.article_id)
     status = ("UPGRADED" if match.kind == UPGRADE and res.status in (
         "PROCESSED", "PARTIAL_PROCESSED") else "INGESTED" if res.status in (
         "PROCESSED", "PARTIAL_PROCESSED") else res.status)
     return finish(status, f"{match.basis}; pipeline {res.status} {res.note}".strip(),
                   res.article_id, res.version_id, basis=match.basis)
+
+
+#: a report dated up to this many days BEFORE the page that publishes it is the ordinary order
+#: (written, then put online); any other difference is flagged for review
+REPORT_BEFORE_PAGE_DAYS = 30
+
+
+def _compare_version_dates(pipe: Pipeline, art: Article, doc: ParsedDocument,
+                           article_id: str) -> None:
+    """Both dates are kept on the versions; the difference is explained or flagged."""
+    if art.published_at is None or doc.stated_date is None:
+        return
+    page, (report, src) = art.published_at.date(), doc.stated_date
+    if page == report:
+        return
+    gap = (page - report).days
+    both = (f"the article is dated {page} ({art.published_source}); this version's document "
+            f"states {report} ({src})")
+    if 0 < gap <= REPORT_BEFORE_PAGE_DAYS:
+        pipe._issue("article", article_id, IssueSeverity.INFO,  # noqa: SLF001
+                    "VERSION_DATES_DIFFER", f"{both} — {gap} day(s) before: a report dated "
+                    f"before the page that publishes it; both kept")
+    else:
+        pipe._issue("article", article_id, IssueSeverity.WARN,  # noqa: SLF001
+                    "PUBLICATION_DATE_CONFLICT",
+                    f"{both} — " + (f"the document is dated {-gap} day(s) AFTER the article"
+                                    if gap < 0 else f"{gap} days apart")
+                    + " with no ordinary explanation: verify which date is the publication")
 
 
 def _as_version_of(doc: ParsedDocument, art: Article, rec: DocumentRecord) -> ParsedDocument:
@@ -414,7 +444,7 @@ def _as_version_of(doc: ParsedDocument, art: Article, rec: DocumentRecord) -> Pa
             and art.published_at.date() != doc.published_at.date()):
         notes.append(f"the article's own date {art.published_at.date()} is kept; the uploaded "
                      f"document states {doc.published_at.date()} ({doc.published_source})")
-    return replace(
+    return replace(  # `stated_date` (the document's own, set by its reader) is kept as read
         doc, canonical_url=art.canonical_url, title=art.title or doc.title,
         title_source=art.title_source if art.title else doc.title_source,
         authors=art.authors or doc.authors,

@@ -432,7 +432,11 @@ class Pipeline:
             raw_sha256=fr.sha256, content_sha256=doc.content_sha256,
             modified_at=doc.modified_at, modified_source=doc.modified_source,
             evidence_location=str(fr.cache_path) if fr.cache_path else None,
-            parser_version=PARSER_VERSION, body_word_count=doc.word_count, blocks=doc.blocks)
+            parser_version=PARSER_VERSION, body_word_count=doc.word_count, blocks=doc.blocks,
+            document_date=(doc.stated_date[0] if doc.stated_date
+                           else doc.published_at.date() if doc.published_at else None),
+            document_date_source=(doc.stated_date[1] if doc.stated_date
+                                  else doc.published_source if doc.published_at else None))
         existing_v = self.store.version_by_content(aid, doc.content_sha256)
         with self.store.tx():
             self.store.upsert_article(article)

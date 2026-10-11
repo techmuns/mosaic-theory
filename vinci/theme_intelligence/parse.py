@@ -35,7 +35,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 from urllib.parse import urljoin
 
@@ -118,6 +118,9 @@ class ParsedDocument:
     article_class_basis: str | None = None
     #: authors credited by one metadata source but not another, said plainly (None: they agree)
     author_discrepancy: str | None = None
+    #: the date THIS document states and where it was read, when it is not `published_at`
+    #: (an upgrade keeps the article's date there; this keeps the document's own)
+    stated_date: tuple[date, str] | None = None
     #: alternate official versions the page declares: (hreflang, url)
     alternates: tuple[tuple[str, str], ...] = ()
     #: links to the FULLER REPORT the page summarises: (anchor text, absolute url) — read only

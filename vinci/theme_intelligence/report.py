@@ -289,7 +289,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
             metadata.append("REVIEW (which article it is, is uncertain) — "
                             + _doc_line(store, d, as_of))
     for i in store.issues():
-        if i.code == "PUBLICATION_DATE_DISAGREES" and i.run_id in rids:
+        if i.code in ("PUBLICATION_DATE_DISAGREES", "PUBLICATION_DATE_CONFLICT") \
+                and i.run_id in rids:
             metadata.append(f"date disagreement — {i.ref_id}: {clip(i.detail, 240)}")
     publishers = [f"{r['publisher']}: {r['status']} — {clip(r['reason'], 200)}"
                   for r in health.get("rows", []) if r["status"] in ("DEGRADED", "BLOCKED",

@@ -1009,6 +1009,11 @@ class Engine:
             origins = sorted({origin_label(claims[c].attributed_source_text) for c in cids})
             vers = self.store.article_versions(aid)
             state = vers[-1].retrieval_state if vers else ctx.version.retrieval_state
+            dated = [(i, v) for i, v in enumerate(vers, 1) if v.document_date]
+            vdates = (tuple(f"version {i} ({v.retrieval_state.value.lower()}): "
+                            f"{v.document_date.isoformat() if v.document_date else '?'} — "
+                            f"{v.document_date_source or '?'}" for i, v in dated)
+                      if len({v.document_date for _i, v in dated}) > 1 else ())
             contrib = (current if aid == ctx.article.article_id
                        else contribs[aid].contribution if aid in contribs
                        else ChangeClass.NOVELTY_UNVERIFIED)
@@ -1018,7 +1023,8 @@ class Engine:
                 authors_status=a.authors_status, publisher=a.publisher,
                 published_at=a.published_at, published_status=a.published_status,
                 url=a.canonical_url, article_class=a.article_class, retrieval_state=state,
-                upstream_origins=tuple(origins), claim_ids=cids, contribution=contrib))
+                upstream_origins=tuple(origins), claim_ids=cids, contribution=contrib,
+                version_dates=vdates))
         return out
 
     def _source_reliabilities(self, tid: str) -> list[str]:

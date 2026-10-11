@@ -156,7 +156,7 @@ def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title
         published_source=pub_src,
         published_status=FieldStatus.KNOWN if published else FieldStatus.UNKNOWN,
         modified_at=None, modified_source=None, blocks=tuple(blocks), retrieval_state=state,
-        notes=notes)
+        notes=notes, stated_date=(doc_date, pub_src or "?") if doc_date else None)
     return read
 
 

@@ -890,7 +890,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         f"<div class=note>{e(s.article_class.value.replace('_', ' '))} · retrieval "
         f"{e(s.retrieval_state.value)}</div><div class=\"cc aud\">{e(s.article_id)}</div></td>"
         f"<td>{e('; '.join(s.authors) if s.authors else 'UNKNOWN')}</td><td>{e(s.publisher)}</td>"
-        f"<td>{e(s.published_at.date().isoformat() if s.published_at else 'UNKNOWN')}</td>"
+        f"<td>{e(s.published_at.date().isoformat() if s.published_at else 'UNKNOWN')}"
+        + "".join(f"<div class=note>{e(x)}</div>" for x in s.version_dates) + "</td>"
         f"<td>{e(', '.join(s.upstream_origins) or '—')}</td><td>"
         f"{e(_CHANGE_TAG.get(s.contribution) or 'Initial record')}"
         f"<div class=\"note aud\">{e(s.contribution.value)} · {e(len(s.claim_ids))} claim "
@@ -1043,6 +1044,8 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     md += ["", f"## {titles['s09_sources']}"]
     for s in card.s09_sources:
         art_date = s.published_at.date().isoformat() if s.published_at else "UNKNOWN"
+        if s.version_dates:
+            art_date += f" (versions: {'; '.join(s.version_dates)})"
         md.append(f"- [{s.title or 'title UNKNOWN'}]({s.url}) — "
                  f"{'; '.join(s.authors) if s.authors else 'author UNKNOWN'} — {s.publisher} — "
                  f"article date {art_date}"

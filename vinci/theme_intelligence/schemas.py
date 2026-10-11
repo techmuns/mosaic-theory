@@ -391,6 +391,10 @@ class ArticleVersion(Frozen):
     parser_version: str
     body_word_count: int
     blocks: tuple[Block, ...] = ()
+    #: the publication date THIS version's own document states, and where it was read — a page
+    #: and the report it links can be dated differently; both are kept, never conflated
+    document_date: date | None = None
+    document_date_source: str | None = None
 
 
 class EvidenceSource(Frozen):
@@ -662,6 +666,9 @@ class SourceRef(Frozen):
     upstream_origins: tuple[str, ...]
     claim_ids: tuple[str, ...]
     contribution: ChangeClass
+    #: each version's own date when they differ ("version 2 (report PDF): 2026-09-10 — the
+    #: document text (page 1-2)"); empty when every version states the article's date
+    version_dates: tuple[str, ...] = ()
 
 
 class CardContent(Frozen):
