@@ -314,6 +314,9 @@ class Engine:
         self.taxonomy = taxonomy
         self.reviewer = reviewer
         self.node_label = {n.id: n.label for n in taxonomy.nodes}
+        #: thesis id -> when this registry FIRST ingested it, for a `state pull` replay: a thesis
+        #: it re-creates keeps its original date, never the replay's clock
+        self.first_ingested: dict[str, datetime] = {}
 
     # -- public --------------------------------------------------------------------------------
     def apply(self, ctx: ArticleContext, ve: VerifiedExtraction,
@@ -415,7 +418,7 @@ class Engine:
         raw = h.raw
         tid = thesis_id_for(key)
         other = raw.value_chain_node == "other" or raw.mechanism == "other"
-        now = datetime.now(tz=UTC)
+        now = self.first_ingested.get(tid) or datetime.now(tz=UTC)
         published = (ctx.article.published_at.date() if ctx.article.published_at else ctx.as_of)
         thesis = Thesis(
             thesis_id=tid, key_node=raw.value_chain_node, key_mechanism=raw.mechanism,

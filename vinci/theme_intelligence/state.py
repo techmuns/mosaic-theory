@@ -8,7 +8,15 @@ carries the registry between the two:
   state pull    rebuild the local registry from the branch (the local one backed up first), then
                 REPLAY every local document the branch does not hold yet — from its private copy,
                 through the same pipeline (an unchanged document's model calls come from the
-                content-addressed LLM cache, so a replay costs nothing new)
+                content-addressed LLM cache, so a replay costs nothing new). Every run the
+                branch lacks is CARRIED into the rebuilt registry for its RECORD — run id,
+                times, cost and every paid-call row, unchanged — marked `ledger_only` (its
+                evidence is the replay's, which names it in `replay_of`). The paid-call ledger
+                is checked: each record of the local registry and of the branch kept exactly
+                once, or the pull fails loud (observed 2026-10-11 on the GitHub state test: a
+                replay had replaced two paid import runs — $0.31 and $0.47 — whose records then
+                survived only in the pre-pull backup). A replay keeps the ingestion dates of
+                the articles and theses it re-creates.
   state push    export the local registry onto the branch and push — FAST-FORWARD ONLY: refused
                 when the branch moved since the last pull (pull again — the replay is safe)
   state status  what the branch holds that the local registry does not, and the reverse
@@ -44,7 +52,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from vinci.theme_intelligence.config import Paths
-from vinci.theme_intelligence.schemas import DocumentRecord, RunStatus
+from vinci.theme_intelligence.schemas import DocumentRecord, RunStatus, WeeklyRun
 from vinci.theme_intelligence.store import Store
 
 if TYPE_CHECKING:
@@ -180,14 +188,29 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         old_runs = {r.run_id: r for r in old.runs()} if old else {}
         remote_runs = _remote_runs(reg)
         remote_docs = _remote_ids(reg, "documents", "sha256")
-        stranded = [r for r in old_runs.values() if _run_key(r) not in remote_runs
-                    and r.mode != "ingest"]
+        local_only = [r for r in old_runs.values() if _run_key(r) not in remote_runs]
+        stranded = [r for r in local_only if r.mode != "ingest" and not r.ledger_only]
+        # one id, two runs (a run id is a second-resolution stamp): carrying the local one would
+        # overwrite the branch's record of the other
+        clash = {r.run_id for r in local_only if r.run_id in {rid for rid, _s in remote_runs}}
         if stranded and not force:
             raise StateSyncError(
                 f"the local registry holds {len(stranded)} run(s) the branch does not, which a "
                 f"pull cannot replay ({', '.join(f'{r.run_id} [{r.mode}]' for r in stranded[:5])}"
                 f"): push first if the branch has not moved, or pass --force (the local "
                 f"registry is backed up before it is replaced)")
+        if clash and not force:
+            if old is not None:
+                old.close()
+            raise StateSyncError(
+                f"run id(s) {', '.join(sorted(clash))} name one run here and another on the "
+                f"branch — carrying one would overwrite the other's record; nothing was "
+                f"changed (--force pulls without carrying them: their records stay in the "
+                f"backup, and the pull says what they cost)")
+        carried, local_ledger, dates = _what_a_pull_keeps(
+            old, [r for r in local_only if r.run_id not in clash])
+        uncarried = {c: v for c, v in local_ledger.items() if v[0] in clash}
+        local_ledger = {c: v for c, v in local_ledger.items() if v[0] not in clash}
         if old is not None:
             backup = old.backup(paths.backups)
             old.close()
@@ -197,6 +220,16 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
                 if p.exists():
                     p.unlink()
         new = Store.import_jsonl(reg, paths.db)
+        branch_ledger = new.paid_ledger()
+        res.lines += _carry(new, carried, forced={r.run_id for r in stranded})
+        res.lines.append(_check_ledger(new, local_ledger, branch_ledger, backup_hint=str(
+            paths.backups), not_carried=len(uncarried)))
+        for rid in sorted(clash):  # forced: said, with what it cost — never silently dropped
+            rows = [v for v in uncarried.values() if v[0] == rid]
+            res.lines.append(
+                f"NOT carried: {rid} — its id names a different run on the branch; its record "
+                f"({len(rows)} paid call(s), ${sum(c or 0.0 for _r, c in rows):.4f}) stays in "
+                f"the backup")
         counts = {t: int(new.conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0])
                   for t in ("runs", "articles", "theses", "documents")}
         new.close()
@@ -212,13 +245,87 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         res.lines.append(f"{len(todo)} local document(s) NOT on the branch and not replayed: "
                          + ", ".join(d.doc_id for d in todo))
         return res
-    res.lines += _replay(paths, todo, old_runs, make_pipeline, fixtures or {})
+    res.lines += _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates)
     return res
+
+
+#: one paid-call record: (call id, purpose, record as stored)
+_CallRow = tuple[str, str, dict[str, Any]]
+
+
+def _what_a_pull_keeps(old: Store | None, local_only: list[WeeklyRun]
+                       ) -> tuple[list[tuple[WeeklyRun, list[_CallRow]]],
+                                  dict[str, tuple[str, float | None]], dict[str, datetime]]:
+    """Read from the registry a pull replaces, before it is replaced: the runs to carry with
+    their call rows, its paid-call ledger, and when it first ingested each article / thesis.
+    A replay that paid nothing is not carried — it is replayed again, and the runs it replayed
+    are carried themselves."""
+    if old is None:
+        return [], {}, {}
+    carried = []
+    for r in sorted(local_only, key=lambda x: x.started_at):
+        rows = old.llm_call_rows(r.run_id)
+        if r.replay_of and not any(not rec.get("cached") for _c, _p, rec in rows):
+            continue
+        carried.append((r, rows))
+    dates = {a.article_id: a.first_seen_at for a in old.articles()}
+    dates.update({t.thesis_id: t.created_at for t in old.theses()})
+    return carried, old.paid_ledger(), dates
+
+
+def _carry(new: Store, carried: list[tuple[WeeklyRun, list[_CallRow]]],
+           forced: set[str]) -> list[str]:
+    """The runs the branch lacks, into the rebuilt registry — identity, times, cost and every
+    call row unchanged; only `ledger_only` says why their evidence is not here."""
+    if not carried:
+        return []
+    now = datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M UTC")
+    out = []
+    with new.tx():
+        for r, rows in carried:
+            why = r.ledger_only or (
+                f"carried by the forced state pull of {now} for its record — its evidence was "
+                f"discarded (the local registry is backed up)" if r.run_id in forced else
+                f"carried by the state pull of {now} for its record — its documents' evidence "
+                f"is the branch's, or a replay run's that names this run (replay_of)")
+            new.upsert_run(r.model_copy(update={"ledger_only": why}))
+            for cid, purpose, rec in rows:
+                new.add_llm_call(cid, r.run_id, purpose, rec)
+            paid = [rec for _c, _p, rec in rows if not rec.get("cached")]
+            cost = sum(float(rec.get("cost_usd") or 0.0) for rec in paid)
+            out.append(f"  {r.run_id} [{r.mode}]: {len(paid)} paid call(s), ${cost:.4f}")
+    return [f"carried {len(carried)} run(s) the branch lacks — run id, times, cost and every "
+            f"call record unchanged:", *out]
+
+
+def _check_ledger(new: Store, local: dict[str, tuple[str, float | None]],
+                  branch: dict[str, tuple[str, float | None]], *, backup_hint: str,
+                  not_carried: int = 0) -> str:
+    """Every paid call of the replaced registry and of the branch is in the rebuilt one exactly
+    once, at the same cost — else the pull fails loud (the replaced registry is backed up)."""
+    expected = {**branch, **local}
+    after = new.paid_ledger()
+    missing = sorted(set(expected) - set(after))
+    changed = sorted(c for c in expected if c in after and after[c] != expected[c])
+    extra = sorted(set(after) - set(expected))
+    if missing or changed or extra:
+        raise StateSyncError(
+            f"the paid-call ledger does not reconcile after the rebuild — {len(missing)} missing, "
+            f"{len(changed)} changed, {len(extra)} unexpected (first: "
+            f"{(missing + changed + extra)[0]}); the replaced registry is in {backup_hint}")
+    known = [c for _r, c in after.values() if c is not None]
+    unpriced = len(after) - len(known)
+    return (f"paid-call ledger: {len(after)} call(s), ${sum(known):.4f}"
+            + (f" (+{unpriced} without a price)" if unpriced else "")
+            + " — every record of the replaced registry and of the branch kept once"
+            + (f", except the {not_carried} of the run(s) not carried below" if not_carried
+               else ""))
 
 
 def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
             make_pipeline: Callable[[], Pipeline],
-            fixtures: dict[str, dict[str, Any]]) -> list[str]:
+            fixtures: dict[str, dict[str, Any]],
+            dates: dict[str, datetime] | None = None) -> list[str]:
     from vinci.theme_intelligence.documents import Declared, DocumentError
     from vinci.theme_intelligence.ingest import ingest_file
 
@@ -227,9 +334,16 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
     for d in todo:
         r = old_runs.get(d.run_id or "")
         by_asof.setdefault(r.as_of if r else datetime.now(tz=UTC).date(), []).append(d)
+    def origins(run_id: str | None) -> tuple[str, ...]:  # a replay of a replay: its originals
+        r = old_runs.get(run_id or "")
+        return tuple(r.replay_of) if r is not None and r.replay_of else (
+            (run_id,) if run_id else ())
+
     for as_of, docs in sorted(by_asof.items()):
         pipe = make_pipeline()
-        pipe.start_run("ingest", as_of=as_of)
+        pipe.first_ingested.update(dates or {})  # a re-created record keeps its first date
+        run0 = pipe.start_run("ingest", as_of=as_of)
+        run0.replay_of = tuple(sorted({o for d in docs for o in origins(d.run_id)}))
         failed = 0
         group: list[str] = []
         for d in sorted(docs, key=lambda x: x.received_at):
@@ -266,7 +380,10 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
             group.append(f"  {d.doc_id} ({d.filename}): replayed — {out.status}"
                          + (f" (was {d.status})" if out.status != d.status else ""))
         run = pipe.finish_run(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
-        lines += [f"replay run {run.run_id} (as of {as_of}):", *group]
+        paid = (f"; it paid ${run.cost_usd:.4f} anew (answers not in this machine's cache)"
+                if run.cost_usd else "; every model answer from the cache, $0")
+        lines += [f"replay run {run.run_id} (as of {as_of}) of "
+                  f"{', '.join(run.replay_of) or 'no recorded run'}{paid}:", *group]
     return lines
 
 

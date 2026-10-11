@@ -44,8 +44,10 @@ could not be read; the readout says which) · **1** failed.
 `data/theme_intelligence/runs/<RUN_ID>/` (git-ignored; `runs/LATEST` names the newest):
 
 - `dashboard.html` / `.md` / `.json` / `.csv` — the weekly decision page: run status, window, and
-  a KPI strip in plain words — *Accessible sources: 6 of 8*, *Blocked sources: Morgan Stanley,
-  Goldman Sachs*, *Articles analyzed: N full · M partial*, *Research Now / Watch / Skip*, *New /
+  a KPI strip in plain words — *Accessible sources: 5 of 5* (the automatic channels), *Blocked
+  automatic channels: none*, *Manual-first sources: Morgan Stanley [automated access BLOCKED],
+  Goldman Sachs [automated access BLOCKED]*, *Articles analyzed: N full · M partial*, *Research
+  Now / Watch / Skip*, *New /
   upgraded / downgraded / challenged theses*, *Reported figures not yet captured: X of Y* — then
   unresolved caveats. Both thesis KPIs count the theses THIS RUN created or changed (a SKIP is
   archived at once, and still counts) and its events (a thesis new this run can also be
@@ -419,6 +421,16 @@ python -m vinci.theme_intelligence state push
   REPLAYS every local document the branch does not hold yet from its private copy, through the same
   pipeline (an unchanged document's model calls come from the LLM cache). It refuses — unless
   `--force`, with the backup kept — to discard a local scan or article run it cannot replay.
+  **Nothing paid is lost or counted twice.** Every run the branch lacks is carried into the
+  rebuilt registry for its RECORD — run id, times, cost and every paid-call row, unchanged —
+  marked `ledger_only` (its evidence is the replay's, which names it in `replay_of`, or was
+  discarded by `--force`); the weekly report never counts a carried run. The pull then checks
+  the paid-call ledger — every record of the replaced registry and of the branch present
+  exactly once at the same cost, or it fails loud — and prints it (`paid-call ledger: N
+  call(s), $X`). A replay keeps the ORIGINAL ingestion dates (upload time, the article's and
+  thesis's first ingestion) and adds no article text to the branch. A local run whose id names a
+  different run on the branch (a second-resolution id can repeat) is refused; `--force` pulls
+  without carrying it, says so with its cost, and leaves its record in the backup.
 - `state push` exports the registry WITHOUT article text, refuses a tree holding anything but
   derived JSONL (no PDF, page, database or article text), and is FAST-FORWARD ONLY: if the
   scheduled run committed since your pull, it refuses — pull again (the replay is safe), then
@@ -524,9 +536,7 @@ measured for three Citi reports).
   REVIEW, which a human resolves; nothing merges on a guess.
 - State sync was demonstrated against the real private repository on a TEMPORARY branch
   (`theme-intelligence-state-test-20261011`, synthetic registry); the PRODUCTION state branch
-  does not exist yet — the first scheduled run (after merge, once enabled) creates it. A pull
-  that replays a local document run keeps that run's paid-call records only in its pre-pull
-  backup (open).
+  does not exist yet — the first scheduled run (after merge, once enabled) creates it.
 - Point-in-time listings rest on the issuer's cover-page tagging (required since 2019); a filing
   without tagged cover facts leaves the listing UNVERIFIED, so it never counts as an exposure.
   Fiscal-year windows ("FY27") are read as the calendar year — approximate, and said so.

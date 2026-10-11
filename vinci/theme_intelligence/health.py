@@ -491,8 +491,8 @@ def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
 def _scan_stats(store: Store, sid: str) -> dict[str, Any]:
     """The latest finished SCAN that covered this channel: its articles by retrieval outcome."""
     for run in sorted(store.runs(), key=lambda r: r.started_at, reverse=True):
-        if run.mode != "scan" or run.finished_at is None:
-            continue
+        if run.mode != "scan" or run.finished_at is None or run.ledger_only:
+            continue  # a run carried for its record holds none of its candidates
         cov = next((c for c in run.sources if c.source_id == sid), None)
         if cov is None:
             continue

@@ -872,6 +872,13 @@ class WeeklyRun(Mutable):
     checkpoint: dict[str, str] = Field(default_factory=dict)
     #: the spend guard's record: limits, every paid call's bound and actual cost, refusals
     spend: dict[str, Any] = Field(default_factory=dict)
+    #: a `state pull` REPLAY: the original runs whose documents this run analysed again from
+    #: their private copies (its own calls come from the cache — the spend is theirs)
+    replay_of: tuple[str, ...] = ()
+    #: set on a run a `state pull` carried into a rebuilt registry for its identity and its
+    #: paid-call record only — its evidence was replayed (see the replay naming it) or discarded
+    #: by a forced pull; never reported as this week's research
+    ledger_only: str = ""
 
 
 class Snapshot(Frozen):

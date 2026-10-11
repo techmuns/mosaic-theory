@@ -92,9 +92,10 @@ def report_runs(store: Store, run: WeeklyRun) -> list[WeeklyRun]:
     if run.mode != "scan":
         return [run]
     runs = store.runs()
-    prev = max((r.started_at for r in runs if r.mode == "scan" and r.started_at < run.started_at),
-               default=None)
+    prev = max((r.started_at for r in runs if r.mode == "scan" and not r.ledger_only
+                and r.started_at < run.started_at), default=None)
     manual = sorted((r for r in runs if r.mode in MANUAL_MODES
+                     and not r.ledger_only  # carried for its record: its evidence is elsewhere
                      and r.started_at < run.started_at
                      and (prev is None or r.started_at > prev)
                      and (run.window_from is None or r.as_of >= run.window_from)

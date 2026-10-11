@@ -567,6 +567,24 @@ class Store:
         return [json.loads(r[0]) for r in self.conn.execute(
             "SELECT payload FROM llm_calls WHERE run_id=? ORDER BY call_id", (run_id,))]
 
+    def llm_call_rows(self, run_id: str) -> list[tuple[str, str, dict[str, Any]]]:
+        """(call id, purpose, record) — a call exactly as recorded, to carry it elsewhere."""
+        return [(str(c), str(p), dict(json.loads(r))) for c, p, r in self.conn.execute(
+            "SELECT call_id, purpose, payload FROM llm_calls WHERE run_id=? ORDER BY call_id",
+            (run_id,))]
+
+    def paid_ledger(self) -> dict[str, tuple[str, float | None]]:
+        """Every PAID model call (not served from the cache): call id -> (run id, cost USD; None
+        when the model had no price). The registry's spend history, call by call."""
+        out: dict[str, tuple[str, float | None]] = {}
+        for cid, rid, payload in self.conn.execute(
+                "SELECT call_id, run_id, payload FROM llm_calls ORDER BY call_id"):
+            rec = json.loads(payload)
+            if not rec.get("cached"):
+                cost = rec.get("cost_usd")
+                out[str(cid)] = (str(rid), None if cost is None else float(cost))
+        return out
+
     # -- discovery queue --------------------------------------------------------------------------
     def upsert_candidate(self, url: str, source_id: str, status: str,
                          record: dict[str, Any]) -> None:

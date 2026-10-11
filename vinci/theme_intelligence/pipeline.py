@@ -145,6 +145,9 @@ class Pipeline:
         # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
         # review, and says so in the validation log rather than passing silently
         self.engine = Engine(self.store, taxonomy, reviewer=self._review)
+        #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
+        #: replay, from the registry the pull replaced): a re-created record keeps that date
+        self.first_ingested = self.engine.first_ingested
 
     # -- runs -----------------------------------------------------------------------------------
     def start_run(self, mode: str, *, as_of: date, window_from: date | None = None,
@@ -691,7 +694,7 @@ class Pipeline:
             published_at=doc.published_at, published_raw=doc.published_raw,
             published_source=doc.published_source, published_status=doc.published_status,
             article_class=cls, article_class_basis=basis,
-            first_seen_at=prior.first_seen_at if prior else now)
+            first_seen_at=prior.first_seen_at if prior else self.first_ingested.get(aid, now))
 
     def _record_blocked(self, url: str, source_id: str, publisher: str,
                         default_class: ArticleClass, fr: FetchResult) -> ArticleResult:
