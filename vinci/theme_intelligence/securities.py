@@ -27,6 +27,21 @@ Rules: a model-supplied ticker / issuer hint is only a LOOKUP KEY — it resolve
 SEC registrant name it points to matches the name as written. A name matching several registrants
 is AMBIGUOUS. No match is UNRESOLVED (or PRIVATE when the entity was classified as a private
 company and no SEC-listed registrant matches).
+
+IDENTITY BEFORE TICKER. A registered ticker proves a security exists, not that it is the company the
+source means. Two checks run before the point-in-time listing check (found 2026-10-11: "Delta", an
+SOFC competitor whose extraction hint was 2308 — Delta Electronics' Taiwan code — had resolved to
+DAL, Delta Air Lines, on the bare prefix "delta"):
+- a hint that names a listing the SEC data does not hold (a foreign code: 2308, SIE, 6501) says
+  the company is listed elsewhere: a PARTIAL name match to some SEC registrant is then refused —
+  only the registrant's exact name is accepted;
+- the BUSINESS the source describes FOR THIS COMPANY (its own quote and role — never the
+  surrounding paragraph: CBRE cited as a data source inside a paragraph on data-centre hardware
+  is not a hardware company; observed 2026-10-11) must be compatible with the issuer's SEC
+  industry (SIC). A clear incompatibility — fuel cells against "Air Transportation, Scheduled"
+  — leaves the entity UNRESOLVED with both stated. The compatibility table is generous (an
+  internet retailer's SIC is compatible with a cloud context), so it vetoes only what is plainly
+  another business; with no business stated, or no SIC on file, nothing is vetoed.
 """
 
 from __future__ import annotations
@@ -67,6 +82,110 @@ _IX = re.compile(r"<ix:nonnumeric\b([^>]*)>(.*?)</ix:nonnumeric>", re.I | re.S)
 
 def _tokens(s: str) -> list[str]:
     return norm_name(s).split()
+
+
+#: strong product / industry terms → a business family (face-validity table, never tuned)
+_FAMILY_TERMS: dict[str, re.Pattern[str]] = {k: re.compile(v, re.I) for k, v in {
+    "power_equipment": r"fuel[- ]cells?|\bsofc\b|solid[- ]oxide|gas turbines?|turbines?\b|"
+                       r"transformers?\b|switchgear|reciprocating engines?|gas engines?|"
+                       r"generators?\b|inverters?|electrical equipment|power equipment|"
+                       r"grid equipment|power solutions?",
+    "utilities_power": r"\butilit(?:y|ies)\b|power producer|nuclear power|\bppas?\b|"
+                       r"power purchase|independent power|ratepayers?|electric(?:ity)? "
+                       r"suppl(?:y|ier)",
+    "oil_gas": r"midstream|pipelines?\b|\blng\b|natural gas producer|oil producer|"
+               r"upstream|refin(?:er|ery|ing)|drilling",
+    "semis_hardware": r"semiconductors?|\bchips?\b|\bgpus?\b|accelerators?|\bdram\b|"
+                      r"\bnand\b|\bhbm\b|foundr(?:y|ies)|wafers?|\bservers?\b|"
+                      r"networking equipment|optical (?:modules?|components?)",
+    "software_internet": r"software|\bsaas\b|\bcloud\b|hyperscalers?|search engine|"
+                         r"social media|online advertising|internet",
+    "airlines": r"airlines?|air carriers?|aviation|passenger flights?",
+    "transport": r"railroads?|trucking|shipping lines?|freight|logistics",
+    "financials": r"\bbanks?\b|lenders?|insurers?|asset managers?|brokerages?",
+    "healthcare": r"pharmaceuticals?|\bdrugs?\b|biotech|hospitals?|medical devices?",
+    "materials": r"\bmining\b|miners?\b|copper|lithium|\bsteel\b|aluminium|aluminum|"
+                 r"chemicals?\b|cement",
+    "autos": r"automakers?|carmakers?|\bev makers?\b|vehicle makers?",
+    "real_estate": r"\breits?\b|real estate|propert(?:y|ies) developer",
+    "consumer": r"retailers?|apparel|restaurants?|consumer goods|beverages?",
+    "telecom": r"telecom|wireless carriers?|fiber network",
+}.items()}
+
+#: what each family the SOURCE describes may plausibly be, as an ISSUER family (generous)
+_COMPATIBLE: dict[str, frozenset[str]] = {
+    "power_equipment": frozenset({"power_equipment", "industrials", "semis_hardware",
+                                  "utilities_power", "oil_gas"}),
+    "utilities_power": frozenset({"utilities_power", "power_equipment", "oil_gas",
+                                  "industrials"}),
+    "oil_gas": frozenset({"oil_gas", "utilities_power", "power_equipment", "industrials",
+                          "materials"}),
+    "semis_hardware": frozenset({"semis_hardware", "software_internet", "power_equipment",
+                                 "industrials", "telecom"}),
+    "software_internet": frozenset({"software_internet", "semis_hardware", "telecom",
+                                    "consumer"}),
+    "airlines": frozenset({"airlines", "transport"}),
+    "transport": frozenset({"transport", "airlines", "industrials"}),
+    "financials": frozenset({"financials", "real_estate"}),
+    "healthcare": frozenset({"healthcare"}),
+    "materials": frozenset({"materials", "oil_gas", "industrials"}),
+    "autos": frozenset({"autos", "industrials", "power_equipment", "semis_hardware"}),
+    "real_estate": frozenset({"real_estate", "financials"}),
+    "consumer": frozenset({"consumer", "software_internet"}),
+    "telecom": frozenset({"telecom", "software_internet", "semis_hardware"}),
+}
+
+
+def context_families(text: str) -> set[str]:
+    """The business families a source passage describes, by strong terms only."""
+    return {fam for fam, rx in _FAMILY_TERMS.items() if rx.search(text or "")}
+
+
+def sic_families(sic: int | None) -> set[str]:
+    """An issuer's business family from its SEC SIC code (ranges of the standard SIC divisions);
+    empty when unknown — an unknown SIC vetoes nothing."""
+    if sic is None:
+        return set()
+    out: set[str] = set()
+    ranges = (
+        (1000, 1099, "materials"), (1300, 1399, "oil_gas"), (1400, 1499, "materials"),
+        (1500, 1799, "industrials"), (2000, 2399, "consumer"), (2400, 2799, "materials"),
+        (2800, 2829, "materials"), (2830, 2836, "healthcare"), (2840, 2899, "materials"),
+        (2900, 2999, "oil_gas"), (3000, 3399, "materials"), (3400, 3499, "industrials"),
+        (3510, 3519, "power_equipment"), (3520, 3569, "industrials"),
+        (3570, 3579, "semis_hardware"), (3580, 3599, "industrials"),
+        (3600, 3629, "power_equipment"), (3630, 3659, "consumer"),
+        (3660, 3679, "semis_hardware"), (3680, 3699, "power_equipment"),
+        (3710, 3716, "autos"), (3720, 3799, "industrials"), (3810, 3839, "semis_hardware"),
+        (3840, 3851, "healthcare"), (3852, 3999, "consumer"), (4000, 4499, "transport"),
+        (4500, 4599, "airlines"), (4600, 4699, "oil_gas"), (4700, 4799, "transport"),
+        (4800, 4899, "telecom"), (4900, 4919, "utilities_power"), (4920, 4925, "oil_gas"),
+        (4926, 4999, "utilities_power"), (5000, 5199, "industrials"), (5200, 5960, "consumer"),
+        (5961, 5961, "software_internet"), (5961, 5961, "consumer"), (5962, 5999, "consumer"),
+        (6000, 6499, "financials"), (6500, 6553, "real_estate"), (6700, 6797, "financials"),
+        (6798, 6798, "real_estate"), (6799, 6799, "financials"), (7000, 7359, "consumer"),
+        (7370, 7379, "software_internet"), (7380, 7999, "consumer"), (8000, 8099, "healthcare"),
+        (8100, 8999, "industrials"))
+    for lo, hi, fam in ranges:
+        if lo <= sic <= hi:
+            out.add(fam)
+    return out
+
+
+def identity_conflict(context: str, sic: int | None,
+                      sic_description: str | None) -> str | None:
+    """Why the issuer cannot be the company the source describes — or None (no conflict, or not
+    decidable: no business stated, or no SIC on file)."""
+    ctx = context_families(context)
+    issuer = sic_families(sic)
+    if not ctx or not issuer:
+        return None
+    allowed = set().union(*(_COMPATIBLE[f] for f in ctx))
+    if issuer & allowed:
+        return None
+    return (f"the source describes {' / '.join(sorted(ctx)).replace('_', ' ')} business; the "
+            f"issuer's SEC industry is SIC {sic} {sic_description or ''}".rstrip()
+            + f" ({' / '.join(sorted(issuer)).replace('_', ' ')}) — not the same company")
 
 
 def instrument_of(title: str | None) -> InstrumentClass:
@@ -152,7 +271,9 @@ def parse_cover(doc_html: str) -> list[CoverLine]:
         sym = d.get("dei:TradingSymbol")
         if sym and sym.strip().lower() in ("n/a", "none", "-"):
             sym = None
-        out.append(CoverLine(symbol=sym.strip().upper() if sym else None,
+        if sym:  # the filing's own typography ("“CBRE”") is not part of the symbol
+            sym = sym.strip().strip("\"'“”‘’").strip()
+        out.append(CoverLine(symbol=sym.upper() if sym else None,
                              title=d.get("dei:Security12bTitle"),
                              exchange=d.get("dei:SecurityExchangeName")))
     return out
@@ -288,6 +409,13 @@ class SecResolver:
         return result
 
     # -- resolution -------------------------------------------------------------------------------
+    def sic(self, cik10: str) -> tuple[int | None, str | None]:
+        sub = self.submissions(cik10)
+        if not sub:
+            return None, None
+        raw = str(sub.get("sic") or "").strip()
+        return (int(raw) if raw.isdigit() else None), (sub.get("sicDescription") or None)
+
     def resolve(self, m: Mention, *, as_of: date) -> SecurityResolution:
         idx = self.index()
         now = datetime.now(tz=UTC)
@@ -325,6 +453,9 @@ class SecResolver:
         written = _tokens(m.name_as_written)
         cands: dict[str, str] = {}
         method = ""
+        hint = (m.ticker_hint or "").strip().upper()
+        # a hint naming a listing the SEC data does not hold = the company is listed elsewhere
+        foreign_hint = bool(hint) and hint not in idx.by_ticker and hint not in idx.funds
         if m.ticker_hint and m.ticker_hint.upper() in idx.by_ticker:
             cik, name, _ = idx.by_ticker[m.ticker_hint.upper()]
             if written and _prefix_match(written, _tokens(name)):
@@ -336,11 +467,37 @@ class SecResolver:
                     cands[cik] = name
             method = "SEC registrant-name prefix match"
             if len(cands) > 1 and m.issuer_name_hint:
-                hint = _tokens(m.issuer_name_hint)
-                narrowed = {c: n for c, n in cands.items() if _tokens(n) == hint}
+                ihint = _tokens(m.issuer_name_hint)
+                narrowed = {c: n for c, n in cands.items() if _tokens(n) == ihint}
                 if len(narrowed) == 1:
                     cands = narrowed
                     method += " narrowed by the model's issuer hint (exact registrant name)"
+            if foreign_hint and cands:
+                exact = {c: n for c, n in cands.items() if _tokens(n) == written}
+                if not exact:
+                    return res(ResolutionStatus.UNRESOLVED,
+                               method + "; refused — the hint names a non-SEC listing",
+                               note=f"the extraction's hint {hint!r} is not an SEC-listed "
+                                    f"ticker (a listing elsewhere); "
+                                    f"{m.name_as_written!r} only partially matches "
+                                    + "; ".join(sorted(cands.values())[:3])
+                                    + " — a partial name is not identity: not resolved")
+                cands = exact
+                method += " (exact registrant name; the hint names a non-SEC listing)"
+        described = " ".join((m.quote, m.role_detail))  # what the source says of THIS company
+        if len(cands) > 1 and context_families(described):
+            # choosing between registrants: an issuer whose own industry IS among the described
+            # businesses first (the generous table is for vetoes — it lets a brewer through a
+            # sentence that names cloud customers); else the only one not in conflict
+            fams = context_families(described)
+            fit = {c: n for c, n in cands.items() if sic_families(self.sic(c)[0]) & fams}
+            if len(fit) != 1:
+                fit = {c: n for c, n in cands.items()
+                       if identity_conflict(described, *self.sic(c)) is None
+                       and sic_families(self.sic(c)[0])}
+            if len(fit) == 1:
+                cands = fit
+                method += "; narrowed by the source's described business (SEC SIC)"
         if len(cands) > 1:
             return res(ResolutionStatus.AMBIGUOUS, method,
                        note="matches " + "; ".join(f"{n} (CIK {c})" for c, n in
@@ -353,6 +510,15 @@ class SecResolver:
             return res(ResolutionStatus.UNRESOLVED, "no SEC-listed registrant matches the name")
 
         cik, name = next(iter(cands.items()))
+        sic, sic_desc = self.sic(cik)
+        conflict = identity_conflict(described, sic, sic_desc)
+        if conflict:
+            return res(ResolutionStatus.UNRESOLVED, method + "; identity refused",
+                       note=f"{m.name_as_written!r} → {name} (CIK {cik}) refused: {conflict}"
+                            + (f"; the extraction's hint {hint!r} names a listing the SEC "
+                               f"data does not hold" if foreign_hint else ""))
+        if sic is not None:
+            method += f"; identity checked against the issuer's SEC industry (SIC {sic})"
         current = sorted(idx.by_cik.get(cik, []), key=lambda x: (x[1] not in _MAJOR, x[0]))
         fpi = self.is_foreign_private_issuer(cik)
         if fpi:
