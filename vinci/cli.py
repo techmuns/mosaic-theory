@@ -835,7 +835,7 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         compute_anchor,
         preserve_operator_tag,
     )
-    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
     from vinci.dossier.refresh import _rerender_only
     from vinci.dossier.schemas import Dossier
     from vinci.edgar.client import EdgarClient
@@ -872,6 +872,8 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             elif ciq.facts:
                 print(f"  {t}: CIQ bridge available ({len(ciq.facts)} facts, "
                       f"{len(ciq.checks)} checks passed)")
+        except CiqAmbiguousError:
+            raise   # two exports of one kind is not "no workbook" — the operator clears it first
         except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
             print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
         anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,

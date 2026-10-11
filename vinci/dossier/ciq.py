@@ -220,6 +220,44 @@ class CiqUnavailableError(RuntimeError):
     """A needed CIQ workbook/subsheet is absent or a parse tool missing — fail loud, never fake."""
 
 
+class CiqAmbiguousError(RuntimeError):
+    """A name's folder holds MORE THAN ONE export of a kind the reader takes ONE of (2026-10-11).
+
+    THE LOADER PICKED THE FIRST BY SORT ORDER, AND THE STALE FILE SORTS FIRST. CIQ renamed a
+    same-kind export between pulls in 3 of the 6 archived re-exports — BRBR's and UBER's comps
+    went "…Inc .xls" → "…Inc.xls", GOOGL's Key Developments `.xls` → `.rtf` — so a re-export copied
+    in beside the old file leaves two, and the space sorts before the dot: the August comps would
+    have priced UBER with nothing said. Only the archive-then-mirror sync prevented it, twice.
+
+    NOT A `CiqUnavailableError`, ON PURPOSE. Every reader catches that one and degrades to a
+    missing section; an ambiguous folder is not an absent export, and a page assembled on a guess
+    between two exports is exactly what this exists to stop. It propagates and stops the name."""
+
+
+#: Kinds a folder LEGITIMATELY holds several of — read whole through
+#: :meth:`CiqBundle.all_workbooks`, and exempt from the one-export rule by name, never by a
+#: heuristic. `customers` matches BOTH of CIQ's business-relationship exports (`… Customers.rtf`
+#: and `… Suppliers.rtf`, on every name — its one reader picks the Customers file by name);
+#: `transcript` holds one file per earnings call.
+MULTI_FILE_KINDS = frozenset({"customers", "transcript"})
+
+_AMBIGUITY_REMEDY = ("keep ONE export per kind: move the stale one(s) to "
+                     "data/manual/ciq-archive/replaced-<YYYY-MM-DD>/<TICKER>/ and re-run")
+
+
+def ambiguous_exports(workbooks: tuple[CiqWorkbook, ...] | list[CiqWorkbook]) -> list[str]:
+    """Every single-file kind (by period type, for financials) the workbooks hold more than once,
+    each with the files it found — empty when every kind is held once."""
+    groups: dict[tuple[str, str | None], list[str]] = {}
+    for w in workbooks:
+        if w.kind not in MULTI_FILE_KINDS:
+            groups.setdefault((w.kind, w.freq), []).append(w.path.name)
+    return [f"{kind}{f' ({freq})' if freq else ''}: {sorted(names)}"
+            for (kind, freq), names in sorted(groups.items(),
+                                               key=lambda kv: (kv[0][0], str(kv[0][1])))
+            if len(names) > 1]
+
+
 def clean_num(cell: Any) -> float | None:
     """A CIQ numeric cell → float, or None when UNAVAILABLE (empty / '-' / 'NM' / 'Entitlement'
     / 'NA') — never coerced to 0 or a value (notes lines 61, 74)."""
@@ -341,15 +379,49 @@ class CiqBundle:
                 except CiqParseError:
                     freq = None
             wbs.append(CiqWorkbook(kind=kind, path=p, fmt=fmt, freq=freq))
+        # REFUSED AT CONSTRUCTION, before any reader runs: several readers sit inside broad
+        # handlers that turn a raise into a missing section, so the one place a guess between two
+        # exports cannot become a quiet page is here.
+        if dups := ambiguous_exports(wbs):
+            raise CiqAmbiguousError(
+                f"{ticker}: the CIQ folder holds more than one export of a kind read as one — "
+                f"{'; '.join(dups)}. {_AMBIGUITY_REMEDY}")
         return cls(ticker=ticker, workbooks=tuple(wbs), _cache=cache,
                    unrecognised=tuple(unrecognised))
 
     def workbook(self, kind: str, *, freq: str | None = None) -> CiqWorkbook | None:
+        """The ONE export of ``kind`` (of period type ``freq``, for financials), or None.
+
+        NEVER A PICK BETWEEN SEVERAL (2026-10-11). This returned the first candidate by sort
+        order, and with ``freq`` it fell back to the first of ANY period type — the shape that once
+        served AORT's annual workbook to a quarterly request. Now several candidates refuse
+        (:class:`CiqAmbiguousError`); a LONE export whose period type is unread still answers, as
+        before. `MULTI_FILE_KINDS` keep their old answer — they are read through
+        :meth:`all_workbooks`."""
         cands = [w for w in self.workbooks if w.kind == kind]
         if not cands:
             return None
+        if kind in MULTI_FILE_KINDS:
+            if freq is not None:
+                return next((w for w in cands if w.freq == freq), None) or cands[0]
+            return cands[0]
+        names = sorted(w.path.name for w in cands)
         if freq is not None:
-            return next((w for w in cands if w.freq == freq), None) or cands[0]
+            match = [w for w in cands if w.freq == freq]
+            if len(match) == 1:
+                return match[0]
+            if len(cands) == 1:
+                return cands[0]
+            raise CiqAmbiguousError(
+                f"{self.ticker}: {kind} ({freq}) — "
+                + (f"{len(match)} exports of that period type: {sorted(w.path.name for w in match)}"
+                   if match else f"none of that period type among {names}, and another period "
+                   "type is never substituted")
+                + f". {_AMBIGUITY_REMEDY}")
+        if len(cands) > 1:
+            raise CiqAmbiguousError(
+                f"{self.ticker}: {kind} — {len(cands)} exports {names}, read as one. "
+                f"{_AMBIGUITY_REMEDY}")
         return cands[0]
 
     def all_workbooks(self, kind: str) -> tuple[CiqWorkbook, ...]:
