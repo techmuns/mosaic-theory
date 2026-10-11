@@ -313,6 +313,20 @@ def test_case_a_a_full_pdf_upgrades_the_partial_preview(pipe: Pipeline, stated_u
     assert rec is not None and rec.status == "UPGRADED" and rec.article_id == pre.article_id
 
 
+def test_a_preview_upgraded_in_the_same_run_is_not_called_preview_only(pipe: Pipeline) -> None:
+    """Observed 2026-10-11 (Citi ETF): the run said "2 article(s) … 1 read only as a preview"
+    for ONE article whose preview and full report were both read that run."""
+    from vinci.theme_intelligence.report import research_verification
+
+    _ingest_preview(pipe)
+    ingest_file(pipe, SA_FULL, _sa(url=PREVIEW_URL), as_of=AS_OF, fixture=_full_extraction())
+    assert pipe.run is not None
+    v = research_verification(pipe.store, pipe.run)
+    assert v["articles"] == 2  # two ledgers — one per version read
+    assert "over the 1 article(s), 2 version(s)" in v["summary"]
+    assert v["articles_preview_only"] == 0 and "read only as a preview" not in v["summary"]
+
+
 def test_case_a_the_same_upgrade_imported_again_adds_nothing(pipe: Pipeline,
                                                              tmp_path: Path) -> None:
     _ingest_preview(pipe)

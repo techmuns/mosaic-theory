@@ -131,7 +131,19 @@ def research_verification(store: Store, run: WeeklyRun,
     open_f = [(r, f) for r, f in figures if f.status == "uncaptured"]
     open_b = [(r, b) for r, b in blocks if b.status == "unreviewed"]
     not_run = sum(1 for r in reps if not r.pass_ran)
-    partial = sum(r.counts.get("articles_partial", 0) for r in runs)
+    # read only as a preview = the LATEST version of it these runs analysed is PARTIAL — a page
+    # whose fuller report was read in the same week was read in full (Citi's ETF page, 2026-10-11)
+    by_article: dict[str, list[str]] = {}
+    for rep in reps:
+        av0 = store.article_version(rep.article_version_id)
+        by_article.setdefault(av0.article_id if av0 else rep.article_version_id,
+                              []).append(rep.article_version_id)
+    partial = 0
+    for aid, vids in by_article.items():
+        order = [v.version_id for v in store.article_versions(aid)]
+        last = store.article_version(max(vids, key=lambda x: order.index(x) if x in order else -1))
+        if last is not None and last.retrieval_state is RetrievalState.PARTIAL:
+            partial += 1
     unreadable = sum(r.counts.get("articles_blocked", 0) + r.counts.get("articles_no_body", 0)
                      for r in runs)
     causes: dict[str, int] = {}
@@ -140,7 +152,12 @@ def research_verification(store: Store, run: WeeklyRun,
     status = ("NOTHING_ANALYSED" if not reps else
               "INCOMPLETE" if open_f or open_b or not_run else
               "VERIFIED_WITHIN_PREVIEW" if partial else "FULLY_VERIFIED")
-    population = (f"over the {len(reps)} article(s) this run analysed: {len(open_f)} of "
+    # a ledger is per article VERSION: a preview and its fuller version are one article read twice
+    n_articles = len({(av.article_id if (av := store.article_version(r.article_version_id))
+                       else r.article_version_id) for r in reps})
+    read = (f"{n_articles} article(s)" if n_articles == len(reps)
+            else f"{n_articles} article(s), {len(reps)} version(s)")
+    population = (f"over the {read} this run analysed: {len(open_f)} of "
                   f"{len(figures)} stated figure(s) and {len(open_b)} of {len(blocks)} argument "
                   f"paragraph(s) open")
     summary = {
