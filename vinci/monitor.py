@@ -562,10 +562,10 @@ def sector_note(*, ticker: str, sic: str | None, frozen_sector: str | None) -> s
 _AMENDED_RE = re.compile(r"\[amended (\d{4}-\d{2}-\d{2})")
 
 
-def last_evidence_date(record: dict[str, Any]) -> tuple[date | None, str | None]:
-    """The newest date the scenario record's evidence reflects: its underwrite date, or a LATER
-    ``[amended YYYY-MM-DD …]`` tag on any leg reason (the visible-amendment convention). Returns
-    ``(date, source)``; ``(None, None)`` when the record states no date at all (fail-honest)."""
+def _evidence_dates(record: dict[str, Any]) -> list[tuple[date, str]]:
+    """Every date the record states for its evidence — the underwrite date and each visible
+    ``[amended YYYY-MM-DD …]`` tag — with where it came from. One reader, so the bound below and
+    the note naming what it dropped cannot disagree about which dates the record carries."""
     dates: list[tuple[date, str]] = []
     raw = record.get("underwrite_date")
     if raw:
@@ -573,10 +573,36 @@ def last_evidence_date(record: dict[str, Any]) -> tuple[date | None, str | None]
     for leg, s in (record.get("scenarios") or {}).items():
         for m in _AMENDED_RE.finditer(str(s.get("reason") or "")):
             dates.append((date.fromisoformat(m.group(1)), f"{leg} reason amendment"))
+    return dates
+
+
+def last_evidence_date(record: dict[str, Any], *,
+                       as_of: date | None = None) -> tuple[date | None, str | None]:
+    """The newest date the scenario record's evidence reflects: its underwrite date, or a LATER
+    ``[amended YYYY-MM-DD …]`` tag on any leg reason (the visible-amendment convention). Returns
+    ``(date, source)``; ``(None, None)`` when the record states no date at all (fail-honest).
+
+    ``as_of`` BOUNDS IT TO THE DAY BEING BUILT (2026-10-11). The record is read as it stands
+    today, so re-cutting a past monitor day read an amendment written AFTER that day as evidence
+    the day already had — the committed 2026-07-20 day carries WERN's 2026-07-21 amendment and
+    EPAM's and SMPL's 2026-07-21 underwrites, because it was cut on the 21st. A date after
+    ``as_of`` is not evidence on ``as_of``; when every date is after it, the record states no
+    evidence for that day and this returns ``(None, None)`` — the caller says why
+    (:func:`evidence_after`). Omitted, the latest date is returned, as before."""
+    dates = [t for t in _evidence_dates(record) if as_of is None or t[0] <= as_of]
     if not dates:
         return None, None
     best = max(dates, key=lambda t: t[0])
     return best[0], best[1]
+
+
+def evidence_after(record: dict[str, Any], *, as_of: date) -> list[tuple[date, str]]:
+    """The record's evidence dates AFTER ``as_of``, oldest first — what :func:`last_evidence_date`
+    leaves out of a day built before them. Non-empty means the record was underwritten or amended
+    after that day, so its legs and triggers are read as they stand NOW, not as they stood then: a
+    past day can bound a date, but it cannot un-write a record. The monitor names these in the
+    day's notes rather than leaving a missing evidence date to read as a record with no date."""
+    return sorted(t for t in _evidence_dates(record) if t[0] > as_of)
 
 
 def next_expected_print(filing_dates: list[date], *,
@@ -711,17 +737,25 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
     earnings filings. A filing dated AFTER the record's last evidence date sets ``unread_print``
     — a flag for the human, never a verdict on any trigger.
 
+    ``today`` IS THE DAY THE ROW DESCRIBES, AND NOTHING DATED AFTER IT IS READ (2026-10-11). EDGAR
+    answers with everything filed up to the moment of the call, so re-running `--ref 2026-09-22`
+    on 10-11 wrote IT's 10-08 8-K and WERN's 10-06 and 10-08 8-Ks into the 09-22 day as unread
+    prints — lookahead into a dated record. Filings after ``today`` are dropped here, in the pure
+    function, so the bound holds for every caller rather than at one fetch site; the record's
+    evidence date is bounded the same way (:func:`last_evidence_date`).
+
     ``mechanical`` is the name's committed dossier mechanical layer, SUPPLIED BY THE CALLER rather
     than read here — the same rule the scoring package follows for baskets, and for the same
     reason: this module resolves neither config nor paths, so a reader that had to find a dossier
     would put file layout inside a pure function. Absent, the measured criteria are reported
     UNKNOWN with that as their stated cause, never silently skipped.
     """
-    ev, ev_src = last_evidence_date(record)
+    ev, ev_src = last_evidence_date(record, as_of=today)
+    known = [f for f in filings if f[1] <= today]
     newer = [f"{form} {d.isoformat()} acc {acc}"
-             for form, d, acc in sorted(filings, key=lambda t: t[1])
+             for form, d, acc in sorted(known, key=lambda t: t[1])
              if ev is not None and d > ev]
-    nxt, basis = next_expected_print([d for _, d, _ in filings], today=today)
+    nxt, basis = next_expected_print([d for _, d, _ in known], today=today)
     # (catalyst calendar) the analyst's DATED triggers: a deadline on/before today → the PASSED
     # flag list; a future one joins the display list with its date. Both verbatim + labeled —
     # the machine never adjudicates whether a trigger fired.

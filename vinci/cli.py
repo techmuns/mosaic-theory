@@ -2134,6 +2134,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # own previous output as a prior observation: that would let running the monitor twice extend a
     # streak, which is the exact defect the source_ref de-duplication exists to prevent, reached by
     # a different door.
+    #
+    # THE DAY BEING BUILT IS `now_date`, NOT `ref` (2026-10-11). The file is named for the session,
+    # so a weekend `--ref` (Sunday → Friday's session) compared against the calendar date read
+    # FRIDAY'S OWN FILE as a prior day — the self-read this rule exists to stop, through the
+    # weekend door.
     _mon_dir = root / "data" / "monitor"
     prior_days: list[dict[str, Any]] = []
     if _mon_dir.is_dir():
@@ -2142,11 +2147,15 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             # this directory (`_SNAPSHOT_DAY`), rather than a second ad-hoc rule naming the one
             # non-day file we happen to know about. `benchmark_assignments.json` is excluded by
             # not being a date, and so is the next artifact that lands beside it.
-            if not mon._SNAPSHOT_DAY.fullmatch(_p.stem) or _p.stem >= ref.isoformat():
+            if not mon._SNAPSHOT_DAY.fullmatch(_p.stem) or _p.stem >= now_date.isoformat():
                 continue
             prior_days.append(json.loads(_p.read_text()))
     edgar = EdgarClient.from_config(cfg)
-    for name in sorted({r["ticker"] for r in rows_raw} | _watch_tickers(root)):
+    # THE FRESHNESS SET IS THE BOOK AS OF THE DAY TOO (2026-10-11). It was drawn from the whole
+    # ledger, so a re-cut of 2026-07-20 gave GOOGL — entered 2026-08-14 — a BUY freshness row in a
+    # day whose book, three blocks up, already excludes it. Both the names and the verdict logged
+    # beside them now come from `asof_rows`, the same point-in-time read the book uses.
+    for name in sorted({r["ticker"] for r in asof_rows} | _watch_tickers(root)):
         rec_path = root / "scenarios" / f"{name}.json"
         if not rec_path.exists():
             continue
@@ -2160,7 +2169,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         v = record.get("verdict") or {}
         note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
                 if v.get("avoid_priced") else None)
-        logged = next((r["verdict"] for r in rows_raw if r["ticker"] == name), None)
+        logged = next((r["verdict"] for r in asof_rows if r["ticker"] == name), None)
         status = str(v.get("status") or "—")
         # THE DOSSIER IS RESOLVED HERE, not inside the monitor (ruling 3). `freshness_row` takes
         # the mechanical layer as a parameter for the same reason the scoring package takes its
@@ -2171,10 +2180,25 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         dpath = root / "data" / "dossiers" / name / "dossier.json"
         mech = (json.loads(dpath.read_text()).get("mechanical")
                 if dpath.is_file() else None)
+        # THE ROW DESCRIBES `now_date`, the session the snapshot is stamped with — not the calendar
+        # `ref` (2026-10-11), the same anchor the theme sweep below took on review 2026-08-31.
+        # `freshness_row` drops every filing and evidence date after it, so a re-cut of a past day
+        # reads only what was filed by then, and a weekend run cannot flag Saturday's deadline as
+        # passed in Friday's file.
         fresh.append(mon.freshness_row(
             ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
-            record=record, filings=filings, today=ref, watch_note=note, mechanical=mech,
+            record=record, filings=filings, today=now_date, watch_note=note, mechanical=mech,
             prior_days=prior_days))
+        # WHAT THE BOUND CANNOT DO, SAID ON THE DAY. A date is bounded; the record it sits in is
+        # read as it stands now. A record underwritten or amended after the day therefore puts
+        # today's legs and triggers into a past day's row, and an evidence date the bound dropped
+        # must not read as a record that states none.
+        if late := mon.evidence_after(record, as_of=now_date):
+            notes.append(
+                f"{name}: scenarios/{name}.json carries evidence dated after {now_date} ("
+                + "; ".join(f"{src} {d}" for d, src in late)
+                + ") — not read as this day's evidence; the record's legs and triggers are read "
+                  "as they stand today, not as they stood on this day")
 
     # DUAL MEASUREMENT (ratified §7, 2026-07-22). The CALL is scored at its horizon regardless of
     # whether the position was exited — an exit is a capital decision, not a retraction, and
