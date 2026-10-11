@@ -166,6 +166,8 @@ def test_the_weekly_report_takes_in_manual_runs_since_the_previous_scan(tmp_path
     assert f"uploaded {today}" in line and "analysed as of 2026-10-11" in line
     assert d.intake["manual"]["total"] == 2 and up.doc_id in " ".join(d.intake["manual"]["items"])
     assert d.kpi["manually_imported"] == 2
+    # verification covers the report's runs and says so — never "this run" for three
+    assert "this report's 3 runs analysed" in d.verification["summary"]
     html, md = render_dashboard_html(d), render_dashboard_md(d)
     assert "Research intake / manual action" in html and "How this evidence arrived" in html
     assert "## Research intake / manual action" in md

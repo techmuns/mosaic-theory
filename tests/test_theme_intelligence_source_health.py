@@ -214,6 +214,32 @@ def test_a_paywalled_preview_is_degraded_not_full(tmp_path: Path, store: Store) 
     assert h.manual_upload_recommended
 
 
+@pytest.mark.parametrize(("policy", "status"), [("fetch", HealthStatus.HEALTHY),
+                                                 ("request", HealthStatus.DEGRADED)])
+def test_a_page_linking_its_report_degrades_only_where_the_report_is_not_read(
+        tmp_path: Path, store: Store, policy: str, status: HealthStatus) -> None:
+    """Observed 2026-10-11: Citi read DEGRADED ("that report was not read", upload required)
+    although its policy fetches each page's linked report. Under "request" (Nomura) it is."""
+    s = src(linked_reports=policy)
+    web = healthy_web(s)
+    for slug, title in (("memory-prices", "Memory prices keep rising"),
+                        ("grid-queues", "Grid queues lengthen")):
+        page = article(title).replace(
+            "</article>", '<p>Must C: The Report</p><a href="https://pub-a.test/r.pdf">Download '
+                          'Here</a></article>')
+        web.pages[f"https://pub-a.test/articles/{slug}"] = (200, page)
+    h = check(store, fetcher(tmp_path, web), [s]).checks[0]
+    tests = {t.name: t for t in h.tests}
+    assert h.status is status, h.reason
+    if policy == "fetch":
+        assert tests["completeness"].result == "PASS" and "the scan READS it" in \
+            tests["completeness"].detail
+        assert not h.manual_upload_recommended
+    else:
+        assert tests["completeness"].result == "WARN" and "summarises" in h.reason
+        assert h.manual_upload_recommended
+
+
 # --- H.6 nothing new this week is QUIET, not unhealthy --------------------------------------------
 
 def test_an_accessible_channel_with_no_new_article_is_not_unhealthy(

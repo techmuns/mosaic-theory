@@ -157,7 +157,8 @@ def research_verification(store: Store, run: WeeklyRun,
                        else r.article_version_id) for r in reps})
     read = (f"{n_articles} article(s)" if n_articles == len(reps)
             else f"{n_articles} article(s), {len(reps)} version(s)")
-    population = (f"over the {read} this run analysed: {len(open_f)} of "
+    scope = "this run" if len(runs) == 1 else f"this report's {len(runs)} runs"
+    population = (f"over the {read} {scope} analysed: {len(open_f)} of "
                   f"{len(figures)} stated figure(s) and {len(open_b)} of {len(blocks)} argument "
                   f"paragraph(s) open")
     summary = {

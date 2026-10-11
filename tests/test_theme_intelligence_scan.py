@@ -234,6 +234,34 @@ def test_a_budget_cap_queues_the_rest_and_says_so(tmp_path: Path,
     assert len(pipe.store.candidates("QUEUED")) == 3  # this run's own three now wait in turn
 
 
+def test_a_candidate_later_ruled_out_of_the_window_leaves_the_review_list(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Observed 2026-10-11: 12 BofA pages stayed UNDATED on the dashboard's review list after a
+    scan had bounded them out of the window by their last modification — an OUT_OF_WINDOW
+    result was never written back over the stale row. A processed row is never touched."""
+    pipe = make_pipeline(tmp_path)
+    _fake_scan(monkeypatch, pipe, [])
+    undated, done = "https://example.test/hypothetical/undated", "https://example.test/hypothetical/done"
+    pipe.store.upsert_candidate(undated, "bofa_institutional", "UNDATED", {"note": "old"})
+    pipe.store.upsert_candidate(done, "bofa_institutional", "PROCESSED", {"note": "read"})
+    srcs = list(pipe.sources.values())
+
+    def discover(src: Any, f: Any, store: Any, *, window_from: date,
+                 window_to: date) -> Discovery:
+        cov = SourceCoverage(source_id=src.id, publisher=src.publisher, channel=src.channel,
+                             method="test", status="OK")
+        cands = [Candidate(url=u, source_id=src.id, status="OUT_OF_WINDOW",
+                           note="last modified 2025-09-26 — before the window")
+                 for u in (undated, done)] if src is srcs[0] else []
+        return Discovery(cov, cands)
+
+    monkeypatch.setattr(pipeline_mod, "discover_source", discover)
+    pipe.run_scan(window_from=WINDOW[0], window_to=WINDOW[1], as_of=WINDOW[1], max_articles=2)
+    assert pipe.store.candidate(undated)[0] == "OUT_OF_WINDOW"  # type: ignore[index]
+    assert pipe.store.candidate(done)[0] == "PROCESSED"  # type: ignore[index]
+    assert pipe.store.candidates("UNDATED") == []
+
+
 def test_an_interrupted_scan_resumes_where_it_stopped(tmp_path: Path,
                                                       monkeypatch: pytest.MonkeyPatch) -> None:
     pipe = make_pipeline(tmp_path)

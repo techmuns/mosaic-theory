@@ -120,6 +120,8 @@ class _Sample:
     notes: tuple[str, ...] = ()
     paywall: bool = False
     parser_fail: str = ""
+    #: partial only because it summarises a report it links to
+    linked_report: bool = False
 
     def line(self) -> str:
         if not self.read:
@@ -259,6 +261,8 @@ def _extract(src: SourceConfig, f: PoliteFetcher, o: _Obs,
                      blocks=len(doc.body_blocks), retrieval=doc.retrieval_state,
                      notes=tuple(doc.notes))
         sm.paywall = any("paywall" in n for n in doc.notes)
+        sm.linked_report = bool(doc.linked_reports) and not sm.paywall and not any(
+            "short body" in n for n in doc.notes)
         if doc.retrieval_state is RetrievalState.BLOCKED:
             sm.parser_fail = (f"{c.url} answered HTTP 200 ({sm.kb} KB) but the parser recovered "
                               f"{sm.words} words — its structure is not read")
@@ -341,7 +345,7 @@ def _dates(o: _Obs, scan: dict[str, Any]) -> None:
         o.tests["dates_authors"] = _t("dates_authors", "PASS", facts)
 
 
-def _completeness(o: _Obs, scan: dict[str, Any]) -> None:
+def _completeness(o: _Obs, scan: dict[str, Any], *, fetches_linked: bool = False) -> None:
     last = (f"; latest scan {scan['run_id']}: {scan['full']} full, {scan['partial']} preview / "
             f"partial, {scan['unreadable']} unreadable" if scan.get("run_id") else "")
     read = [x for x in o.samples if x.read and not x.parser_fail]
@@ -350,7 +354,11 @@ def _completeness(o: _Obs, scan: dict[str, Any]) -> None:
         return
     n = len(read)
     previews = [x for x in read if x.paywall]
-    partial = [x for x in read if x.retrieval is RetrievalState.PARTIAL and not x.paywall]
+    partial = [x for x in read if x.retrieval is RetrievalState.PARTIAL and not x.paywall
+               and not (fetches_linked and x.linked_report)]
+    fetched = [x for x in read if fetches_linked and x.linked_report]
+    last += (f"; {len(fetched)} sampled page(s) summarise a report they link to — the scan "
+             f"READS it (linked_reports = \"fetch\")" if fetched else "")
     if previews:
         why = f"{len(previews)} of {n} sampled article(s) are paywalled previews — only the " \
               f"preview is readable"
@@ -569,7 +577,7 @@ def check_source(src: SourceConfig, f: PoliteFetcher, store: Store, *, trigger: 
                 _extract(src, f, o, history)
             scan = _scan_stats(store, src.id)
             _dates(o, scan)
-            _completeness(o, scan)
+            _completeness(o, scan, fetches_linked=src.linked_reports == "fetch")
     finally:
         f.ttl_cap = cap
     freshness, newest, new = _freshness(o, window_from, prev)

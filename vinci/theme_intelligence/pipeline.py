@@ -765,7 +765,11 @@ class Pipeline:
                     queued_c = self.store.candidate(c.url)
                     if queued_c is not None and queued_c[0] == "QUEUED":
                         continue  # stays QUEUED until it is processed
-                    if c.status in ("IN_WINDOW", "INACCESSIBLE", "UNDATED"):
+                    # a candidate stored UNDATED / INACCESSIBLE that discovery now rules out of
+                    # the window is updated too — a stale row would stay on the review list
+                    stale = (queued_c is not None and queued_c[0] in ("UNDATED", "INACCESSIBLE")
+                             and c.status == "OUT_OF_WINDOW")
+                    if c.status in ("IN_WINDOW", "INACCESSIBLE", "UNDATED") or stale:
                         self.store.upsert_candidate(c.url, src.id, c.status, {
                             "source_id": src.id, "run_id": run.run_id, "title": c.title,
                             "listed_date": c.listed_date, "date_basis": c.date_basis,
