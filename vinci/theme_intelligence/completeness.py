@@ -37,7 +37,12 @@ from typing import Any
 from pydantic import Field, ValidationError
 
 from vinci.graph.llm import LlmError
-from vinci.theme_intelligence.config import COMPLETE_PROMPT_VERSION, LLM_MODEL, Taxonomy
+from vinci.theme_intelligence.config import (
+    COMPLETE_PROMPT_VERSION,
+    LLM_MODEL,
+    PROMPT_CACHE_PARTS,
+    Taxonomy,
+)
 from vinci.theme_intelligence.extract import (
     _X,
     Extraction,
@@ -627,7 +632,9 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                                    "LLM client")
             t0 = time.monotonic()
             try:
-                out = client.extract(system=system, user=user, tool=tool)
+                # a part of a split review resends the article: cache it (llm.py)
+                out = client.extract(system=system, user=user, tool=tool,
+                                     cache=PROMPT_CACHE_PARTS and b is not None)
             except LlmError as exc:
                 if not (_truncated(exc) and splittable):
                     raise

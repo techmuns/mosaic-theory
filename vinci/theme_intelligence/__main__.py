@@ -59,9 +59,9 @@ def _client(required: bool) -> ToolClient | None:
             raise SystemExit("ANTHROPIC_API_KEY is not set — extraction needs the LLM (cached "
                              "article versions still replay without it: pass --cache-only)")
         return None
-    from vinci.graph.llm import AnthropicLlmClient
+    from vinci.theme_intelligence.llm import ThemeLlmClient
 
-    return AnthropicLlmClient(model=LLM_MODEL, max_tokens=LLM_MAX_TOKENS)
+    return ThemeLlmClient(model=LLM_MODEL, max_tokens=LLM_MAX_TOKENS)
 
 
 def source_for_url(url: str, sources: tuple[SourceConfig, ...]) -> str:

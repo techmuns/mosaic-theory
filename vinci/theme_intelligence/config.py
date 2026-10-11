@@ -99,6 +99,14 @@ DOC_RETRY_COMPLETENESS_SHARE = 0.85
 #: a call's input is bounded at (characters / this) tokens — conservative for English prose and
 #: tables (~3.5-4 characters per token measured); a bound from size, never a billing cap
 CHARS_PER_TOKEN_BOUND = 2.5
+#: the parts of a split completeness review send the article as a cached first block (llm.py) —
+#: the same text, billed at a tenth after the first part. OFF until its evidence quality is shown
+#: equivalent (brief, 2026-10-11). Measured on Citi's ETF report, one run each over the same
+#: first-pass extraction: completeness cost $2.586 / $2.481 uncached (original / control) vs
+#: $1.418 cached; open figures 1 / 0 vs 2 of 252, open paragraphs 0 in all; claims the pass added
+#: 46 / 31 vs 26 — the cached run lowest, inside a spread the two uncached runs already show (15),
+#: so neither equivalence nor harm is shown. An operator decision; see the 2026-10-11 record.
+PROMPT_CACHE_PARTS = False
 
 
 @dataclass(frozen=True)
