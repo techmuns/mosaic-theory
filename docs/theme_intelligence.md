@@ -1,7 +1,7 @@
 # Theme intelligence — operator guide
 
 `vinci/theme_intelligence/` is a **research discovery and prioritisation** tool. It reads permitted
-public research pages from eight publisher channels, extracts their source-anchored evidence, named
+public research pages from seven publisher channels (five automatic, two manual-first), extracts their source-anchored evidence, named
 companies and risks, keeps a persistent, versioned registry of investment theses, and writes a
 decision-first weekly briefing of nine-section **Living Thesis Cards**.
 
@@ -22,13 +22,13 @@ no prices, returns or outcomes (including the unmerged #695 audit's).
 
 | command | what it does |
 |---|---|
-| `scan --days N` / `scan --from D --to D` | discover the window on all eight channels, analyse up to `--max-articles` (default 25; the rest are QUEUED and offered first next run), write the readout |
+| `scan --days N` / `scan --from D --to D` | discover the window on the five automatic channels (the two manual-first ones are health-checked only), analyse up to `--max-articles` (default 25; the rest are QUEUED and offered first next run), write the readout |
 | `scan --resume RUN_ID` | continue an interrupted scan with its ORIGINAL window and as-of; nothing is processed twice |
 | `article --url U --as-of D` | analyse one URL as of a date (publication-time replay: a later-published article is refused, a later-dated figure is blocked) |
 | `report --latest` / `--week 2026-10-05` or `2026-W41` / `--run RUN_ID` | re-render the dashboard and every card from the registry |
 | `qa --run RUN_ID\|latest` | re-check a run's stored records without any LLM (spans, figures, look-ahead, card facts, section order, hashes, triggers, coverage, render consistency) |
 | `backup` · `export-state --out D` · `import-state --src D` | consistent SQLite copy · append-only JSONL export (no article text) · rebuild a fresh registry from an export |
-| `sources` | print the eight configured channels |
+| `sources` | print the seven configured channels (and the retired ones, as history) |
 | `ingest-file --path F --source S [--url U] [--llm-permitted]` | import one supplied document (PDF / HTML / Markdown / text) through the SAME pipeline — see *Manual documents* below |
 | `ingest-inbox [--inbox D] [--source S]` | import every document in the private inbox; each file is filed under `processed/`, `held/`, `review/` or `rejected/` |
 | `documents [--status HELD]` | list the supplied documents and their status |
@@ -77,7 +77,13 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   draws from it (e.g. "sector and thematic selection matters more"). It needs no named stock and no
   earnings mechanism, and it is never forced into a buy thesis. A market-structure condition the
   article presents as a RISK (concentration, a correlation that could cause a simultaneous
-  drawdown) stays a market risk — never a record of either kind.
+  drawdown) stays a market risk — never a record of either kind. **A record is a market regime
+  only when its EVIDENCE measures equity-market structure** (correlation, dispersion, breadth,
+  price volatility) — on any node, the market-wide one included. A sector or macro mechanism
+  (regulation, capacity, demand, capex, rates) extracted as a regime is corrected to an investment
+  thesis (`RECORD_KIND_CORRECTED`, with the reason) and its earnings transmission is tested like
+  any other. Found 2026-10-11 on Citi's Gridlock and LatAm reports (record
+  `docs/records/2026-10-11-theme-intelligence-seven-sources.md`).
 - **Whole-article completeness.** A deterministic ledger lists every figure the article TEXT states
   (with its sign and unit; years, tenors such as "200-day", and numbers inside names such as "S&P
   500" are not figures) and every argument paragraph, BEFORE any model output is consulted. A
@@ -104,6 +110,12 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   equity OR a sector / theme the source names (a verified span containing the name). A sector
   opportunity needs no ticker. A company's role as the SOURCE states it (e.g. capex spender) is
   kept apart from the THESIS's reading of it (e.g. potential beneficiary), each labelled.
+- **Identity before ticker.** A registered ticker is not proof of identity. A company is matched
+  to an SEC registrant only when the SOURCE's own description (the quote and its role) is
+  compatible with the issuer's SEC industry (SIC); an incompatible match is refused, and a hint
+  naming a foreign listing never resolves by a partial name — the entity stays UNRESOLVED. Found
+  2026-10-11: Citi's "Delta" (a solid-oxide fuel-cell competitor — Delta Electronics, TWSE 2308,
+  not SEC-registered) had resolved to Delta Air Lines. Point-in-time listing checks still follow.
 - **Point-in-time securities.** A named company's exposure lines are the common-equity lines on the
   cover page of its latest 10-K / 10-Q / 20-F / 40-F filed on or before the as-of date
   (inline-XBRL `dei:TradingSymbol` / `Security12bTitle`). Preferred, depositary-preferred and debt
@@ -124,7 +136,7 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   microdata, meta author, the visible byline (multi-line titles joined) — plus people the article
   TEXT credits ("team led by …") as verified spans. A JSON-LD list that omits an author credited
   elsewhere on the page is recorded as AUTHOR_METADATA_DISCREPANCY; declared alternate language
-  versions (hreflang) are recorded (none of the eight channels' article pages declares one).
+  versions (hreflang) are recorded (none of the configured channels' article pages declares one).
 
 ### Evidence roles, inflections, verification status and dates (review round 3)
 
@@ -168,7 +180,13 @@ Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
   ingestion the run is a historical replay and says so — a simulated date is never called a
   detection.
 
-## The eight channels (editable: `vinci/theme_intelligence/config/sources.toml`)
+## The seven channels (editable: `vinci/theme_intelligence/config/sources.toml`)
+
+Seven approved publishers since 2026-10-11 (operator decision): Bank of America was removed —
+not replaced — and sits under `[[retired]]` as HISTORY only: no discovery, no health check, no
+upload request, no new import (`ingest-file` / `article` refuse it plainly); its earlier
+evidence, theses and runs stay in the registry untouched and are never requeued. Every count —
+health, coverage, intake — is derived from the configured seven, never hardcoded.
 
 Access as probed on 2026-10-09/10 with the honest research User-Agent (no browser spoofing, robots.txt
 honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
@@ -176,17 +194,19 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 | channel | discovery | state |
 |---|---|---|
 | Citi Must C | the page's embedded CMS data (`__NEXT_DATA__`): series items + CMS publishDate | OK — the page embeds its ~20 linked items; older ones are not listed there. Each page links its full report as a public PDF ("Download Here") — read automatically (`linked_reports = "fetch"`) |
-| BofA institutional insights | article cards on the insights page | OK, but most insight pages state **no publication date**: a page last modified before the window is out of it (said so); the rest are listed for date verification (`article --url U --published <verified date>`) |
 | J.P. Morgan Top Market Takeaways | listing cards with dates (sitemap lastmod as a fallback that can only rule a page OUT) | OK |
-| Morgan Stanley Research | entry page links | **BLOCKED** — the connection is dropped on every request, robots.txt included; reported every run, never bypassed |
+| Morgan Stanley Research | **manual-first** (`mode = "manual_first"`): a lightweight health check only; research arrives as authorised uploads | automated access **BLOCKED** — the connection is dropped on every request, robots.txt included; never bypassed, never retried inside its back-off |
 | Nomura Connects | `/articles/` + pagination, each page's own date | OK — pages that say "to read the full report, click here" point to the client portal: listed for an authorised upload, never fetched (`linked_reports = "request"`) |
 | TrendForce press center | listing pages `?page=N`, date in the article URL | OK |
 | SemiAnalysis | the newsletter's RSS feed (pubDate) | OK — paid posts carry a preview only and are recorded PARTIAL |
-| Goldman Sachs Research | entry page links | **BLOCKED** — HTTP 403 on entry, sitemap and insights |
+| Goldman Sachs Research | **manual-first**, as Morgan Stanley | automated access **BLOCKED** — HTTP 403 on entry, sitemap and insights |
 
-`expect_blocked = true` marks MS and GS as standing refusals: still attempted and reported BLOCKED
-every run, but they do not by themselves turn a run PARTIAL. Any other channel that fails does.
-It never conceals a channel: its health status stays BLOCKED (see below).
+Morgan Stanley and Goldman Sachs are **manual-first**: a scan does not attempt their discovery
+(coverage row `MANUAL_FIRST`), their automated access is still health-checked (`expect_blocked`
+marks the refusal as standing, so it never turns a run PARTIAL or re-alerts), and their research
+arrives by `ingest-file`. A week with nothing supplied says their research is MISSING, not absent.
+The health status stays BLOCKED — never concealed — and the KPI strip says it beside their name.
+Any automatic channel that fails turns the run PARTIAL.
 
 ## Source health monitoring (`health.py`)
 
@@ -308,6 +328,27 @@ python -m vinci.theme_intelligence documents --status HELD
   `DOC_COST_LIMIT_USD` ($30) it is HELD (COST) with the estimate and the command to proceed:
   `ingest-file --release <doc id> --max-cost N`. The same limit stops a scan from spending on a
   linked report unattended — it is stored, held and listed.
+- **Spending limits, checked before EVERY paid call** (`budget.py`). A run (scan $40, a manual
+  batch $100 — `--budget`), a document ($30 or `--max-cost`) and its retries + completeness
+  passes (85% of the document limit) each have a limit. Before a call its cost is BOUNDED — input
+  at (characters / 2.5) tokens priced as cache writes, plus the full output cap — and a call
+  whose bound does not fit the smallest remaining limit is never sent: the article is
+  checkpointed BUDGET_HELD (a scan stops and queues the rest), the answers already paid for stay
+  cached, and a re-run with a higher limit resumes without paying for them again. Actual cost is
+  recorded from the provider's usage; the manifest carries both (`spend_guard`). The bound is
+  conservative, not a provider-side billing cap.
+- **Why long reviews cost what they cost.** Every completeness part resends the WHOLE article (a
+  gap's account may cite any block): Gridlock's 22 parts sent 309,342–334,027 input tokens each,
+  $35.65 of the pass's $39.44. `config.PROMPT_CACHE_PARTS` would send the article as a cached
+  first block (same text, a tenth of the price after the first part; measured −45% on Citi's
+  ETF report); it ships OFF until its evidence quality is shown equivalent — one paired run left
+  that undecided (record above).
+- **Dates, never conflated.** Each article VERSION keeps the date its own document states and
+  where it was read; the card's sources table shows every version's date when they differ. A
+  report dated up to 30 days before the page that publishes it is ordinary
+  (`VERSION_DATES_DIFFER`, INFO, both kept); any other difference is flagged for review
+  (`PUBLICATION_DATE_CONFLICT`, listed for a metadata check). Upload time and analysis as-of are
+  separate fields; a replayed upload keeps the time it first arrived.
 - **Failures.** A document the model could not analyse (no key, no cached answer, an API error)
   is recorded FAILED with a plain message — never left RUNNING; an inbox file stays in the inbox.
   Imported again, it is analysed (RETRY), never mistaken for a duplicate of an analysis that did
@@ -454,24 +495,38 @@ measured for three Citi reports).
   review that fails its schema is dropped and named (`MALFORMED_ITEM_DROPPED`, WARN) — never
   coerced into a guessed value — and every valid item is kept. The paid answer is cached before it
   is validated. A malformed top level (not an answer at all) still fails the article loudly.
+- **Verification checks, corrected where the CHECK was wrong (2026-10-11).** A decline stated in
+  words beside a figure supplies its minus ("down ~27%" verifies as -27; "fell to 4%" is a level
+  and does not); a figure written with an ellipsis ("12 ... 30 or more") verifies when every
+  piece is verbatim, in order; a figure RESTATED in a chart caption, table or summary is captured
+  where the article states it — only when the completeness pass names that claim, it is verified,
+  and the three words beside the figure share a content word (or the same precise number is
+  written with the same unit). The same fact in different words stays OPEN for a human; a shared
+  number alone is never identity. On Citi's Gridlock report open figures fell 17 → 6 of 851, on
+  its ETF report 5 → 1 of 232, from cached answers; what stays open is listed with its cause.
 
 ## Limitations (also in the PR)
 
 - Morgan Stanley and Goldman Sachs refuse the honest User-Agent — BLOCKED, never bypassed. Their
   research reaches clients through entitled portals and licensed distribution (not probed or
   configured here); the dependable route is an entitled operator's `ingest-file`.
-- BofA insight pages mostly carry no publication date — bounded by last modification where it
-  rules a page out, otherwise listed for date verification; never placed in a window unverified.
+- Bank of America is retired (2026-10-11): its history is kept, nothing new is read or accepted.
 - SemiAnalysis paid posts expose a preview only — PARTIAL until an authorised full copy is
   uploaded (it then UPGRADES the same article).
 - Nomura's full reports sit on its client portal — requested, never fetched.
 - No OCR: a scanned page is flagged and the document PARTIAL; chart values are not read.
 - A figure-dense research PDF is expensive through the full pipeline ($46.67 measured for one
-  60-page report) — held above the per-document limit until the operator raises it.
+  60-page report) — held above the per-document limit until the operator raises it. The spend
+  guard bounds every call before it is sent; it is a conservative bound from the request's size,
+  not a provider-side billing cap. The article prompt cache that would cut a long review's cost
+  (one measured run: -45%) ships OFF until its evidence quality is shown equivalent.
 - Identity matching across formats is by text overlap: a heavily reformatted copy can fall to
   REVIEW, which a human resolves; nothing merges on a guess.
-- Local ↔ Actions sync is demonstrated against a local bare repository only; the GitHub state
-  branch does not exist yet.
+- State sync was demonstrated against the real private repository on a TEMPORARY branch
+  (`theme-intelligence-state-test-20261011`, synthetic registry); the PRODUCTION state branch
+  does not exist yet — the first scheduled run (after merge, once enabled) creates it. A pull
+  that replays a local document run keeps that run's paid-call records only in its pre-pull
+  backup (open).
 - Point-in-time listings rest on the issuer's cover-page tagging (required since 2019); a filing
   without tagged cover facts leaves the listing UNVERIFIED, so it never counts as an exposure.
   Fiscal-year windows ("FY27") are read as the calendar year — approximate, and said so.

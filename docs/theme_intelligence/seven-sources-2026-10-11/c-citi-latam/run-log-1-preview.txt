@@ -1,0 +1,5 @@
+run R-20261011T142309Z-article: PARTIAL — article PARTIAL_PROCESSED A-446cf596aeca
+  version AV-615a0cd5a1c66b28 PARTIAL 570 words
+  LINKED_REPORT_UPLOAD: https://www.citigroup.com/global/insights/latam-poised-for-take-off summarises a fuller report it links to (https://ir.citi.com/d-5vuJiD7Hf-CjTIizbzlF5UZLnoLYiNDtkJOFLKTY5LJi33HczLOEECds-yzdoP_vrAXLKFFra-g3SWYmkGRBExYlRjPNlj3AXff-z9kVA%3D); the channel's policy is to request it, never to fetch it — upload an authorised copy: python -m vinci.theme_intelligence ingest-file --path <report> --source citi_must_c --url https://www.citigroup.com/global/insights/latam-poised-for-take-off
+  TH-7F5295AC45 Weak dollar and strong commodities set up Latin American growth acceleration
+cost $0.0 · outputs data/theme_intelligence/v2/final2-c/runs/R-20261011T142309Z-article

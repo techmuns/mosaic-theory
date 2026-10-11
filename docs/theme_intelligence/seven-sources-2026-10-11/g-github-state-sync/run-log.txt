@@ -1,0 +1,322 @@
+
+===== preflight: the temporary branch does not exist yet
+$ git ls-remote --heads https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+remote: Invalid username or token. Password authentication is not supported for Git operations.
+fatal: Authentication failed for 'https://github.com/techmuns/mosaic-theory.git/'
+exit=128
+
+===== preflight: the temporary branch does not exist yet
+$ git ls-remote --heads https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+
+exit=0
+
+===== preflight: the PRODUCTION state branch does not exist (and is never touched)
+$ git ls-remote --heads https://github.com/techmuns/mosaic-theory.git theme-intelligence-state
+
+exit=0
+
+===== 1. operator machine: push the SYNTHETIC registry
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-operator state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC registry — state-sync deployment test (temporary, non-production)
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed 4df9c5c9176e onto theme-intelligence-state-test-20261011 (fast-forward from nothing): 1 runs, 1 articles, 1 theses, 0 documents
+exit=0
+
+===== 2. FRESH environment: restore the registry from the branch
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  rebuilt from theme-intelligence-state-test-20261011@4df9c5c9176e: 1 runs, 1 articles, 1 theses, 0 documents
+  no local document to replay — the branch holds every one
+exit=0
+
+===== 2b. fresh environment: status after the restore
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh state status --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state status — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  branch theme-intelligence-state-test-20261011 at 4df9c5c9176e0d3dee31138ff0eded24fbe6edcf; last pull/push based on 4df9c5c9176e0d3dee31138ff0eded24fbe6edcf
+  runs: 0 local only, 0 on the branch only; documents: 0 local only, 0 on the branch only
+exit=0
+
+===== 3. fresh environment: import a manual document (SYNTHETIC full report)
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh ingest-file --path tests/fixtures/theme_intelligence/synthetic_documents/semianalysis_full_synthetic.pdf --source semianalysis --llm-permitted --url https://example.test/synthetic/semianalysis/inference-keeps-memory-tight --as-of 2026-10-11 --budget 2
+run R-20261011T145342Z-ingest: ingest SUCCEEDED — semianalysis_full_synthetic.pdf
+  D-d84d23f59e316425  UPGRADED   article A-830a528c98ba  the operator states its URL; a fuller document for a PARTIAL article (title overlap 100%, held text found in the new document 0%, new text found in the held 0%; held 49 words (PARTIAL), new 260 words; dates 2026-09-28 vs 2026-09-28; the hel
+cost $0.5065 · outputs: data/theme_intelligence/v2/ghsync-fresh/runs/R-20261011T145342Z-ingest
+exit=0
+
+===== 4. fresh environment: push the derived state (fast-forward)
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC: manual upload from the fresh environment
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed 3f9809520583 onto theme-intelligence-state-test-20261011 (fast-forward from 4df9c5c9176e): 2 runs, 1 articles, 1 theses, 1 documents
+exit=0
+
+===== 5a. operator machine (stale since step 1): a local import of its own
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-operator ingest-file --path tests/fixtures/theme_intelligence/synthetic_documents/ms_report_synthetic.pdf --source ms_research --llm-permitted --as-of 2026-10-11 --budget 2
+run R-20261011T145550Z-ingest: ingest SUCCEEDED — ms_report_synthetic.pdf
+  D-737cf809ea03c04c  INGESTED   article A-22c4843c119d  no article of this publisher resembles it; pipeline PROCESSED
+      flagged: 1 running header / footer / page-number line(s) left out
+cost $0.3082 · outputs: data/theme_intelligence/v2/ghsync-operator/runs/R-20261011T145550Z-ingest
+exit=0
+
+===== 5b. operator machine: push on a stale base — must be REFUSED
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-operator state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state push refused: the branch moved since your last pull (based on 4df9c5c9176e0d3dee31138ff0eded24fbe6edcf, now 3f9809520583) — run `state pull` first (your local documents are replayed onto it), then push
+exit=1
+
+===== 5c. operator machine: pull — rebuild from the branch, replay its own import
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-operator state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  local registry backed up to data/theme_intelligence/v2/ghsync-operator/backups/registry-20261011T145653Z.db
+  rebuilt from theme-intelligence-state-test-20261011@3f9809520583: 2 runs, 1 articles, 1 theses, 1 documents
+  replay run R-20261011T145654Z-ingest (as of 2026-10-11):
+    D-737cf809ea03c04c (ms_report_synthetic.pdf): replayed — INGESTED
+exit=0
+
+===== 5d. operator machine: push again — fast-forward
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-operator state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC: operator import after pull + replay
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed 11ba544d0317 onto theme-intelligence-state-test-20261011 (fast-forward from 3f9809520583): 3 runs, 2 articles, 2 theses, 2 documents
+exit=0
+
+===== 6a. Actions-style runner: fetch the branch into a fresh checkout
+$ git clone --quiet --branch theme-intelligence-state-test-20261011 --single-branch https://github.com/techmuns/mosaic-theory.git data/theme_intelligence/v2/ghsync-actions/checkout
+
+exit=0
+
+===== 6b. runner: import the state as the weekly workflow does
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions/data import-state --src data/theme_intelligence/v2/ghsync-actions/checkout/registry
+imported into data/theme_intelligence/v2/ghsync-actions/data/registry.db (schema 4)
+exit=0
+
+===== 6c. runner: the simulated scheduled scan (live discovery + health, --max-articles 0: no model call)
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions/data scan --days 10 --max-articles 0
+run R-20261011T145710Z-scan: scan execution SUCCEEDED · window 2026-10-02..2026-10-11 · as-of 2026-10-11
+  citi_must_c          OK       discovered  20 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window  20 · inaccessible   0 · errors  0
+  jpm_tmt              OK       discovered  51 · in window   1 · undated   0 · new   1 · known   0 · processed   0 · queued   1 · out-of-window  50 · inaccessible   0 · errors  0
+  ms_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+  nomura_connects      OK       discovered  14 · in window   1 · undated   1 · new   1 · known   0 · processed   0 · queued   1 · out-of-window  12 · inaccessible   0 · errors  0
+  trendforce           OK       discovered   5 · in window   2 · undated   0 · new   2 · known   0 · processed   0 · queued   2 · out-of-window   3 · inaccessible   0 · errors  0
+  semianalysis         OK       discovered  20 · in window   2 · undated   0 · new   2 · known   0 · processed   0 · queued   2 · out-of-window  18 · inaccessible   0 · errors  0
+  gs_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+counts {'articles_queued': 6, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 38, 'http_cache_hits': 13}
+source health (checked at the start of this scan) — Sources healthy: 2/7 | Degraded: 3 | Blocked: 2 | Errors: 0
+research verification INCOMPLETE — NOT fully verified — over the 2 article(s), 3 version(s) this report's 4 runs analysed: 0 of 21 stated figure(s) and 1 of 17 argument paragraph(s) open; 1 completeness pass(es) did not run; causes: pass_not_run 1. Open material is never used as evidence, so it can hold a thesis back but never raise its research action
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/ghsync-actions/data/runs/R-20261011T145710Z-scan
+exit=0
+
+===== 6d. runner: QA of that run
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions/data qa --run latest
+[PASS] run status recorded: status SUCCEEDED; counts {'articles_queued': 6, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 38, 'http_cache_hits': 13}
+  [PASS] no unverified claim is linked to a thesis: 23 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 0 of 0 verified claim(s) in 0 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 0 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 0 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 0 article(s)
+  [PASS] every reported figure captured or judged immaterial: 0 figure(s) accounted for
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 0 article(s)
+  [PASS] source health recorded for every scanned channel: 7 channel(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] every configured source reported with consistent counts: 7 sources
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/ghsync-actions/data/runs/R-20261011T145710Z-scan
+QA R-20261011T145710Z-scan: 22/22 passed · scan execution SUCCEEDED · research verification NOTHING_ANALYSED — no article was analysed in this run
+exit=0
+
+===== 8a. fresh environment (now stale): the HTML edition of the same report
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh ingest-file --path tests/fixtures/theme_intelligence/synthetic_documents/ms_report_synthetic.html --source ms_research --llm-permitted --as-of 2026-10-11 --budget 2
+run R-20261011T150313Z-ingest: ingest SUCCEEDED — ms_report_synthetic.html
+  D-ff11efe9f6404cc4  INGESTED   article A-00c934a9db6b  no article of this publisher resembles it; pipeline PROCESSED
+cost $0.4661 · outputs: data/theme_intelligence/v2/ghsync-fresh/runs/R-20261011T150313Z-ingest
+exit=0
+
+===== 8b. its document records before the pull
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh documents
+D-d84d23f59e316425  UPGRADED  semianalysis       pdf      2026-09-28 article A-830a528c98ba  semianalysis_full_synthetic.pdf
+D-ff11efe9f6404cc4  INGESTED  ms_research        html     2026-10-01 article A-00c934a9db6b  ms_report_synthetic.html
+exit=0
+
+===== 8c. push on a stale base — must be REFUSED
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state push refused: the branch moved since your last pull (based on 3f98095205836a28943d09935e1a1dd269a41da4, now 11ba544d0317) — run `state pull` first (your local documents are replayed onto it), then push
+exit=1
+
+===== 8d. pull — the branch holds the PDF edition: the replayed HTML is the same text
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  local registry backed up to data/theme_intelligence/v2/ghsync-fresh/backups/registry-20261011T150500Z.db
+  rebuilt from theme-intelligence-state-test-20261011@11ba544d0317: 3 runs, 2 articles, 2 theses, 2 documents
+  replay run R-20261011T150501Z-ingest (as of 2026-10-11):
+    D-ff11efe9f6404cc4 (ms_report_synthetic.html): replayed — REVIEW (was INGESTED)
+exit=0
+
+===== 8e. its document records after the replay (name + arrival kept)
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh documents
+D-737cf809ea03c04c  INGESTED  ms_research        pdf      2026-10-01 article A-22c4843c119d  737cf809ea03c04c0a851836c1ef92fa481d06f1a7d973ff1ea5185008dd3226.pdf
+D-d84d23f59e316425  UPGRADED  semianalysis       pdf      2026-09-28 article A-830a528c98ba  semianalysis_full_synthetic.pdf
+D-ff11efe9f6404cc4  REVIEW    ms_research        html     2026-10-01 article A-22c4843c119d  ms_report_synthetic.html
+exit=0
+
+===== 8f. push again — fast-forward
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-fresh state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC: second operator import after pull + replay
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed 2cf1f7e9b0a0 onto theme-intelligence-state-test-20261011 (fast-forward from 11ba544d0317): 4 runs, 2 articles, 2 theses, 3 documents
+exit=0
+
+===== 10a. a second fresh runner: fetch the branch
+$ git clone --quiet --branch theme-intelligence-state-test-20261011 --single-branch https://github.com/techmuns/mosaic-theory.git data/theme_intelligence/v2/ghsync-actions-2/checkout
+
+exit=0
+
+===== 10b. runner: import the state
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions-2/data import-state --src data/theme_intelligence/v2/ghsync-actions-2/checkout/registry
+imported into data/theme_intelligence/v2/ghsync-actions-2/data/registry.db (schema 4)
+exit=0
+
+===== 10c. runner: the simulated scheduled scan (no model call)
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions-2/data scan --days 10 --max-articles 0
+run R-20261011T150523Z-scan: scan execution SUCCEEDED · window 2026-10-02..2026-10-11 · as-of 2026-10-11
+  citi_must_c          OK       discovered  20 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window  20 · inaccessible   0 · errors  0
+  jpm_tmt              OK       discovered  51 · in window   1 · undated   0 · new   1 · known   0 · processed   0 · queued   1 · out-of-window  50 · inaccessible   0 · errors  0
+  ms_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+  nomura_connects      OK       discovered  14 · in window   1 · undated   1 · new   1 · known   0 · processed   0 · queued   1 · out-of-window  12 · inaccessible   0 · errors  0
+  trendforce           OK       discovered   5 · in window   2 · undated   0 · new   2 · known   0 · processed   0 · queued   2 · out-of-window   3 · inaccessible   0 · errors  0
+  semianalysis         OK       discovered  20 · in window   2 · undated   0 · new   2 · known   0 · processed   0 · queued   2 · out-of-window  18 · inaccessible   0 · errors  0
+  gs_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+counts {'articles_queued': 6, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 38, 'http_cache_hits': 13}
+source health (checked at the start of this scan) — Sources healthy: 2/7 | Degraded: 3 | Blocked: 2 | Errors: 0
+research verification INCOMPLETE — NOT fully verified — over the 2 article(s), 3 version(s) this report's 5 runs analysed: 0 of 21 stated figure(s) and 1 of 17 argument paragraph(s) open; 1 completeness pass(es) did not run; causes: pass_not_run 1. Open material is never used as evidence, so it can hold a thesis back but never raise its research action
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/ghsync-actions-2/data/runs/R-20261011T150523Z-scan
+exit=0
+
+===== 10d. runner: QA of that run
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions-2/data qa --run latest
+[PASS] run status recorded: status SUCCEEDED; counts {'articles_queued': 6, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 38, 'http_cache_hits': 13}
+  [PASS] no unverified claim is linked to a thesis: 23 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 0 of 0 verified claim(s) in 0 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 0 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 0 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 0 article(s)
+  [PASS] every reported figure captured or judged immaterial: 0 figure(s) accounted for
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 0 article(s)
+  [PASS] source health recorded for every scanned channel: 7 channel(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] every configured source reported with consistent counts: 7 sources
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/ghsync-actions-2/data/runs/R-20261011T150523Z-scan
+QA R-20261011T150523Z-scan: 22/22 passed · scan execution SUCCEEDED · research verification NOTHING_ANALYSED — no article was analysed in this run
+exit=0
+
+===== 10e. runner: the document records it restored
+$ .venv/bin/python -m vinci.theme_intelligence --data-dir data/theme_intelligence/v2/ghsync-actions-2/data documents
+D-737cf809ea03c04c  INGESTED  ms_research        pdf      2026-10-01 article A-22c4843c119d  737cf809ea03c04c0a851836c1ef92fa481d06f1a7d973ff1ea5185008dd3226.pdf
+D-d84d23f59e316425  UPGRADED  semianalysis       pdf      2026-09-28 article A-830a528c98ba  semianalysis_full_synthetic.pdf
+D-ff11efe9f6404cc4  REVIEW    ms_research        html     2026-10-01 article A-22c4843c119d  ms_report_synthetic.html
+exit=0
+
+===== 11a. every file the branch holds
+$ git ls-tree -r --name-only HEAD
+registry/article_versions.jsonl
+registry/articles.jsonl
+registry/candidates.jsonl
+registry/change_events.jsonl
+registry/claims.jsonl
+registry/completeness.jsonl
+registry/contributions.jsonl
+registry/documents.jsonl
+registry/evidence_sources.jsonl
+registry/extractions.jsonl
+registry/llm_calls.jsonl
+registry/mentions.jsonl
+registry/meta.jsonl
+registry/relations.jsonl
+registry/runs.jsonl
+registry/security_resolutions.jsonl
+registry/snapshots.jsonl
+registry/source_health.jsonl
+registry/theses.jsonl
+registry/thesis_claim_links.jsonl
+registry/thesis_versions.jsonl
+registry/verification_issues.jsonl
+exit=0
+
+===== 11b. privacy scan of the pushed tree
+22 file(s), every one .json / .jsonl: True []
+a PDF's bytes: absent
+an HTML page: absent
+the synthetic page banner (article text): absent
+a GitHub token: absent
+a fine-grained token: absent
+an OAuth token: absent
+an Anthropic key: absent
+a credential helper user: absent
+an env key name: absent
+an auth header: absent
+article version blocks carrying text: 0
+
+===== 12. thesis versions + provenance, operator vs runner
+-- operator machine
+   TH-0B867D3317 v1 as of 2026-10-11 sha db3e4a88f840 prior — — Initial record — created from A-830a528c98ba
+   TH-0B867D3317 v2 as of 2026-10-11 sha 1a986b387303 prior db3e4a88f840 — A-830a528c98ba: contradictory ×1, new ×10
+   TH-A90A29D80F v1 as of 2026-10-11 sha a94e2e730442 prior — — Initial record — created from A-22c4843c119d
+   A-22c4843c119d AV-f3e4d068906d7d83 FULL document date 2026-10-01 (the document text (page 1-2))
+   A-830a528c98ba AV-695ffbd28f09b41d PARTIAL document date 2026-09-28 (feed pubDate (synthetic))
+   A-830a528c98ba AV-aa901547bae5c778 FULL document date 2026-09-28 (the document text (page 1-2))
+   D-737cf809ea03c04c INGESTED 737cf809ea03c04c0a851836c1ef92fa481d06f1a7d973ff1ea5185008dd3226.pdf received 2026-10-11 14:56:54 UTC sha 737cf809ea03 history 1
+   D-d84d23f59e316425 UPGRADED semianalysis_full_synthetic.pdf received 2026-10-11 14:53:42 UTC sha d84d23f59e31 history 1
+-- runner (restored from GitHub)
+   TH-0B867D3317 v1 as of 2026-10-11 sha db3e4a88f840 prior — — Initial record — created from A-830a528c98ba
+   TH-0B867D3317 v2 as of 2026-10-11 sha 1a986b387303 prior db3e4a88f840 — A-830a528c98ba: contradictory ×1, new ×10
+   TH-A90A29D80F v1 as of 2026-10-11 sha a94e2e730442 prior — — Initial record — created from A-22c4843c119d
+   A-22c4843c119d AV-f3e4d068906d7d83 FULL document date 2026-10-01 (the document text (page 1-2))
+   A-830a528c98ba AV-695ffbd28f09b41d PARTIAL document date 2026-09-28 (feed pubDate (synthetic))
+   A-830a528c98ba AV-aa901547bae5c778 FULL document date 2026-09-28 (the document text (page 1-2))
+   D-737cf809ea03c04c INGESTED 737cf809ea03c04c0a851836c1ef92fa481d06f1a7d973ff1ea5185008dd3226.pdf received 2026-10-11 14:56:54 UTC sha 737cf809ea03 history 1
+   D-d84d23f59e316425 UPGRADED semianalysis_full_synthetic.pdf received 2026-10-11 14:53:42 UTC sha d84d23f59e31 history 1
+   D-ff11efe9f6404cc4 REVIEW ms_report_synthetic.html received 2026-10-11 15:03:13 UTC sha ff11efe9f640 history 2
+
+===== 7a. the branch history
+$ git log --oneline --format=%H %s origin/theme-intelligence-state-test-20261011
+11ba544d03170580f4da989b9d06a2118cb05e66 SYNTHETIC: operator import after pull + replay
+3f98095205836a28943d09935e1a1dd269a41da4 SYNTHETIC: manual upload from the fresh environment
+4df9c5c9176e0d3dee31138ff0eded24fbe6edcf SYNTHETIC registry — state-sync deployment test (temporary, non-production)
+exit=0
+
+===== 7b. a non-fast-forward push (rewind to the first commit) — must be REJECTED
+$ git push https://github.com/techmuns/mosaic-theory.git 4df9c5c9176e0d3dee31138ff0eded24fbe6edcf:refs/heads/theme-intelligence-state-test-20261011
+To https://github.com/techmuns/mosaic-theory.git
+ ! [rejected]        4df9c5c9176e0d3dee31138ff0eded24fbe6edcf -> theme-intelligence-state-test-20261011 (fetch first)
+error: failed to push some refs to 'https://github.com/techmuns/mosaic-theory.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+exit=1
+
+===== 9. after the test: the PRODUCTION state branch still does not exist
+$ git ls-remote --heads https://github.com/techmuns/mosaic-theory.git theme-intelligence-state
+
+exit=0
+
+===== 9b. the temporary branch (left for review; delete command in the record)
+$ git ls-remote --heads https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+2cf1f7e9b0a0d309f35c1efe38388d129ccfa187	refs/heads/theme-intelligence-state-test-20261011
+exit=0

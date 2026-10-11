@@ -1,0 +1,5 @@
+run R-20261011T144200Z-article: scan execution PARTIAL — article PARTIAL_PROCESSED
+  TH-1373DCCE1F  SKIP         (was —           ) NEW       novelty_unverified       Active and differentiated ETFs drive next phase of U.S. ETF industry growth
+research verification FULLY_VERIFIED — every figure and argument paragraph accounted for, full text read (over the 1 article(s), 2 version(s) this run analysed: 0 of 252 stated figure(s) and 0 of 162 argument paragraph(s) open)
+cost $2.8654 · tokens {'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 385924, 'output_tokens': 37430}
+outputs: data/theme_intelligence/v2/cachecontrol-b2/runs/R-20261011T144200Z-article

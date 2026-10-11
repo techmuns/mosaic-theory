@@ -359,6 +359,22 @@ PR (CLAUDE.md: coin-time translation).
 - **State pull / push** (theme intelligence, `state.py`) — plain words: *carry the one registry
   between the operator's machine and the state branch*; push is fast-forward only, pull replays
   local documents the branch lacks.
+- **Manual-first channel** (theme intelligence, sources.toml `mode = "manual_first"`) — plain
+  words: *a publisher whose research arrives as uploads; its automated access is only
+  health-checked, never retried for full text*.
+- **Retired source** (theme intelligence, sources.toml `[[retired]]`) — plain words: *a removed
+  publisher kept as history: nothing new is read, checked, requested or accepted from it*.
+- **Spend guard / call bound** (theme intelligence, `budget.py`) — plain words: *the worst-case
+  cost of one model call, computed from its size before it is sent, refused if it does not fit
+  the run / document / retry limit left*.
+- **Identity before ticker** (theme intelligence, `securities.identity_conflict`) — plain words:
+  *a company is matched to a registrant only if the source's description fits the issuer's SEC
+  industry; otherwise it stays unresolved*.
+- **Restated figure** (theme intelligence, `completeness.states_figure`) — plain words: *a number
+  repeated in a caption, table or summary, counted as captured where the prose states it*.
+- **Version dates** (theme intelligence, `ArticleVersion.document_date`, `SourceRef.version_dates`)
+  — plain words: *each version of an article keeps the date its own document states and where
+  it was read*.
 
 ## Local setup (every laptop, every contributor)
 

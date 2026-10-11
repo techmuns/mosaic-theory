@@ -1,0 +1,10 @@
+== final-b2 A-d8bce0154d69 run R-20261011T141958Z-article PARTIAL cost $0.0
+   spend guard: limit $10.0 spent $0.0 paid calls 0 bound total $0 actual $0 over-bound 0 refusals 0
+   1 theses citing it — actions {'SKIP': 1} — kinds {'investment_thesis': 1}
+   TH-1373DCCE1F investment_thesis  SKIP         Active and differentiated ETFs drive next phase of U.S. ETF industry growth
+   VERSION_DATES_DIFFER: the article is dated 2026-04-10 (Next.js page data publishDate (this page's own entry)); this version's document states 2026-04-08 (the document text (page 1-2)) — 2 day(s) before: a report dated before the page that publishes it; both kept
+   companies:
+     Citigroup Global Markets Inc.  → —          UNRESOLVED 
+   AV-16c30c3205b23791: 1 of 232 figures open, 0 of 144 paragraphs open; 4 restated figures captured where stated; causes {'capture_not_verified': 1}
+     FIG b017 '$10 trillion' [capture_not_verified]
+   AV-6fec183b75098414: 0 of 20 figures open, 0 of 18 paragraphs open; 0 restated figures captured where stated; causes {}
