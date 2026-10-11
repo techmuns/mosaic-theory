@@ -94,6 +94,48 @@ P/E is GAAP-struck with 3 of 4 quarters material).
 - **Two QA flags were added:** an uncited decisive-against, and the refused exhibit above.
 - **The covenant digest and the operating-driver rows** were rewritten.
 
+**TWO OPERATOR RULINGS THIS PASS NEEDED (2026-10-11).**
+
+1. **AN UNCITED DECISIVE POINT — DISCLOSED, NOT RE-ROLLED.** The new synthesis's decisive
+   evidence_against[1] (the FY26 EPS cuts) carries a `source_ref` that is a peer-heterogeneity note,
+   not a source.
+   - The assembler had already marked the point `cited: false` and flagged it UNCITED.
+   - The citation-integrity pin (`test_multiples_vintage`, since #460) refused ANY untraceable
+     reference, while its own docstring guards a point still reading as source-verified.
+   - Since 2026-08-17 no committed page had carried such a point.
+   - **Ruled:** narrow the pin to that invariant. An untraceable reference passes only when DISCLOSED
+     (`cited: false` and the UNCITED flag quoting the claim), the 2026-08-07 precedent ("the flags
+     stay on the page for the human"). A `cited: true` point that resolves to nothing fails as
+     before.
+   - **The rule is pinned both ways** on UBER's real point: disclosed passes; claimed or unflagged
+     fails. Three mutants on it, all killed.
+2. **A NEW MONITOR DAY, NOT A RE-CUT.** `test_panel_emit` requires the latest monitor day's panels to
+   equal what today's pages emit, and UBER's page moved two of its panels.
+   - **#657 had re-cut the dated day.** Doing that here would have written later information into a
+     record dated 2026-09-22: IT's 2026-10-08 8-K, WERN's 2026-10-06 and 10-08 8-Ks, and UBER's
+     10-09 multiple. The monitor's "newer filings" are not bounded by `--ref`.
+   - **Ruled:** mark the book on a new day. The book's prices (GOOGL, IT, SMPL, VRRM) were refreshed
+     2026-10-07 → 10-09 (12 bars), then `vinci monitor --ref 2026-10-09` was run and mirrored.
+   - **The new day:** 5 rows and 124 panels, with no filing or evidence dated after 2026-10-09 (the
+     latest filing is 10-08). BUY−AVOID spread +44.70 pp, diagnostic, with no row at horizon.
+   - **2026-09-22 is unchanged.**
+
+**THE TEST-ONLY COMMIT** (four pins, each keeping its invariant):
+- **The cap-drift pin** named UBER's own drift, and UBER now reconciles. It is now MEASURED over every
+  drifting page (15 of 26), like its sibling.
+- **The R4-proposal pin's R1 stand-in** kept the page's reason, which is now the machine's own text.
+  It now carries R1's own (CONSTRUCTED) reason.
+- **The valuation-basis test lost my own value pin** (UBER's snapshot over 30 days old), a value pin on
+  a living artifact, which the test-layer rule forbids.
+- **The citation pin** was narrowed as ruled.
+
+**Three tests now SKIP that ran before, each by design:**
+- `test_ev_bridge` and `test_pe_eps_basis` pin the extractor against FROZEN exports by hash, and
+  UBER's on-disk export is now a different file. The frozen cases stand; the other names' cases still
+  run.
+- `test_latest_col_provenance` skips because its premise cleared: UBER's new export no longer lands
+  on a non-period column.
+
 **HOW VERIFIED.**
 - **The sync:** sha256 equal on 11 of 11 files between Drive and the live folder, and the archive
   holds the replaced set (10 files, the old-named comps among them).
@@ -108,7 +150,7 @@ P/E is GAAP-struck with 3 of 4 quarters material).
   - UBER prices: +3 bars.
   - The companyfacts fixture moved one line, SEC's `entityName` capitalisation ("UBER
     TECHNOLOGIES, INC." → "Uber Technologies, Inc").
-- **Suite:** `pytest -m "not network"` on the freshly-committed artifacts. Counts are in the PR.
+- **Suite:** `pytest -m "not network"` on the freshly-committed artifacts. Counts are in the PR. The first run failed 5 (four pins above, and the panel-emit check that the new monitor day answers).
 
 **BOUNDARY.**
 - **Scope:** one page, UBER, 2026-10-11.
@@ -122,4 +164,10 @@ P/E is GAAP-struck with 3 of 4 quarters material).
   file out. A re-export that leaves an old file under a different name would assemble on the wrong
   one with nothing said.
 - **The operator's re-tag reason is replaced** (above; STATE row 10).
+- **The monitor's lookahead, reported and not fixed here.** A day re-run with `--ref` takes "newer
+  filings" up to TODAY, not up to its date.
+  - The panel-emit pin forces a re-run whenever a page moves.
+  - So any re-cut of a past day can write later information into it, as #657's may have done on
+    2026-09-29.
+  - Avoided here by writing a new day.
 - **Uber's Q3 report (around 11-02) will stale this page.**
