@@ -47,27 +47,45 @@ def _snapshot(ticker: str) -> str:
     return lines[0]
 
 
-def test_ubers_drift_is_stated_on_the_page_not_left_to_the_reader() -> None:
-    """THE REGRESSION, on UBER's real committed artifact. The page carried the cap and the price
-    side by side and never said they disagree.
+def test_a_drifting_name_states_its_drift_on_the_page() -> None:
+    """THE REGRESSION, on every drifting committed artifact. UBER's page carried the cap and the
+    price side by side and never said they disagree.
 
-    THE MAGNITUDE IS ASSERTED AS STATED, NOT AS A NUMBER (2026-08-18) — the same lesson the
-    sibling below already records. This pinned `-13.2%` and `$78.54`, both of which are functions
-    of the LIVE CMP: the cap and its implied $68.18/sh come from a frozen panel, the CMP moves with
-    the market, so the gap moves whenever bars refresh. It read -9.1% against a $74.99 close after
-    a routine refresh and the pin broke on PRICE MOVEMENT rather than on the page going quiet —
-    which is the failure this test exists to catch. What it owns is that the page SAYS the
-    disagreement rather than leaving a reader to divide two numbers; the size is data."""
+    MEASURED, NOT NAMED (2026-10-11). This pinned UBER's own figures ("implies $68.18/sh", cap
+    $139.3B); the 2026-10-11 CIQ re-export struck UBER's cap on the same close as its price, so UBER
+    now RECONCILES and correctly carries no mark — the pin broke on the page becoming right, which
+    is the sibling test's lesson (2026-08-13) arriving here. What this owns is that EVERY page whose
+    cap and price disagree SAYS so, with the implied price and the magnitude, beside the cap; which
+    names drift is data (15 of 26 on 2026-10-11, NFLX -2.3% to MVST +57.1%)."""
     import re
 
-    line = _snapshot("UBER")
-    assert "implies $68.18/sh" in line, "the cap's implied price is not on the page"
-    assert re.search(r"\([+-]?\d+\.\d%\)", line), (
-        f"no drift magnitude on the page — a vintage alone does not say how far apart they are: "
-        f"{line!r}")
-    assert "$139.3B" in line, "the cap itself no longer renders beside its implied price"
-    # the mark sits WITH the cap, not appended to the line, so the pairing is unambiguous
-    assert line.index("cap $139.3B") < line.index("implies $68.18/sh") < line.index("52-wk")
+    from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
+    from vinci.dossier.schemas import SourceStatus
+
+    checked = 0
+    for folder in sorted(DOSSIERS.iterdir()):
+        if not (folder / "dossier.json").is_file():
+            continue
+        si = _dossier(folder.name).mechanical.stock_info
+        if si is None or not all(f.status is SourceStatus.PRESENT
+                   for f in (si.market_cap, si.shares_out, si.price)):
+            continue
+        recon = reconcile_cap(cap_musd=si.market_cap.value, shares=si.shares_out.value,
+                              spot=si.price.value)
+        if (recon is None or recon.gap is None or abs(recon.gap) <= RECONCILE_TOLERANCE
+                or recon.corporate_action):
+            continue                       # reconciling names and share-basis breaks are elsewhere
+        checked += 1
+        line = _snapshot(folder.name)
+        implied = f"implies ${recon.implied_price:,.2f}/sh"
+        assert implied in line, (
+            f"{folder.name}: the cap's implied price is not on the page: {line!r}")
+        assert re.search(r"\([+-]?\d+\.\d%\)", line), (
+            f"{folder.name}: no drift magnitude on the page — a vintage alone does not say how far "
+            f"apart they are: {line!r}")
+        # the mark sits WITH the cap, not appended to the line, so the pairing is unambiguous
+        assert line.index("cap ") < line.index(implied) < line.index("52-wk"), folder.name
+    assert checked, "no committed name drifts — this pin checked nothing"
 
 
 def test_a_reconciling_name_says_nothing() -> None:

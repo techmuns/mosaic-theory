@@ -421,7 +421,6 @@ def test_todays_multiple_names_its_snapshot_and_its_value_at_the_page_price() ->
         assert cm["value_at_page_price"] == pytest.approx(at_price, rel=1e-6)
         assert cm["days_price_after_snapshot"] == doc["date_semantics"][
             "price_days_after_valuation_snapshot"]
-    assert _page("UBER")["valuation_basis"]["current_multiple"]["days_price_after_snapshot"] > 30
 
 
 def test_a_multiple_off_its_snapshot_is_not_carried_to_the_page_price() -> None:
