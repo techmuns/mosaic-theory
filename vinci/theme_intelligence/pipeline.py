@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from vinci.graph.llm import LlmError
+from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
 from vinci.theme_intelligence.completeness import (
     CompletenessOutput,
     CompletenessResult,
@@ -129,7 +130,9 @@ class Pipeline:
         self.store = store or Store(self.paths.db)
         self.sources = {s.id: s for s in sources}
         self.taxonomy = taxonomy
-        self.client = client
+        #: every paid model call goes through the spend guard (budget.py) — bound, check, record
+        self.guard = SpendGuard()
+        self.client: Any = GuardedClient(client, self.guard) if client is not None else None
         self.fetcher = fetcher or PoliteFetcher(self.paths.http_cache)
         for s in sources:
             self.fetcher.set_host_floor(s.entry_url, s.min_crawl_delay_s)
@@ -165,6 +168,7 @@ class Pipeline:
             output_dir=str(self.paths.runs / rid))
         self.store.upsert_run(run)
         self.run = run
+        self.guard.start_run(mode)
         return run
 
     def finish_run(self, status: RunStatus, *, error: str | None = None) -> WeeklyRun:
@@ -195,6 +199,10 @@ class Pipeline:
         run.fetch_seconds = round(self.fetcher.stats.seconds, 1)
         run.counts["llm_calls"] = len(calls)
         run.counts["llm_calls_cached"] = sum(1 for c in calls if c.get("cached"))
+        run.spend = self.guard.summary()
+        if self.guard.refusals:
+            run.warnings.append(f"spend guard: {len(self.guard.refusals)} paid call(s) refused "
+                                f"for want of budget — {self.guard.refusals[0]}")
         run.counts["http_requests"] = self.fetcher.stats.requests
         run.counts["http_cache_hits"] = self.fetcher.stats.cache_hits
         run.finished_at = datetime.now(tz=UTC)
@@ -241,6 +249,14 @@ class Pipeline:
         try:
             rr = review_card(card, claims, client=self.client, cache_dir=self.paths.llm_cache,
                              run_id=self.run.run_id)
+        except BudgetExceeded as exc:  # refused for want of budget: said, never pretended
+            issues.append(VerificationIssue(
+                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "budget")[:14],
+                run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
+                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
+                detail=f"pass-2 review not run — budget: {exc}",
+                created_at=datetime.now(tz=UTC)))
+            return ReviewOutcome(issues)
         except RuntimeError as exc:  # no client and no cache: say so, never pretend reviewed
             issues.append(VerificationIssue(
                 issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "noreview")[:14],
@@ -371,9 +387,24 @@ class Pipeline:
     def process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,
                          source_id: str, as_of: date, fixture: dict[str, Any] | None = None,
                          publisher_override: str | None = None,
-                         completeness_fixture: dict[str, Any] | None = None) -> ArticleResult:
+                         completeness_fixture: dict[str, Any] | None = None,
+                         cost_limit: float | None = None) -> ArticleResult:
         """Everything after parsing. Tests and replays enter here with an already-parsed
-        document (e.g. an authentic excerpt) — the same code path the live fetch takes."""
+        document (e.g. an authentic excerpt) — the same code path the live fetch takes.
+        `cost_limit`: this document's actual-spend limit (default config.DOC_COST_LIMIT_USD)."""
+        assert self.run is not None
+        self.guard.begin_document(article_id_for(doc.canonical_url), cost_limit)
+        try:
+            return self._process_document(doc, fr, url=url, source_id=source_id, as_of=as_of,
+                                          fixture=fixture, publisher_override=publisher_override,
+                                          completeness_fixture=completeness_fixture)
+        finally:
+            self.guard.end_document()
+
+    def _process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,
+                          source_id: str, as_of: date, fixture: dict[str, Any] | None,
+                          publisher_override: str | None,
+                          completeness_fixture: dict[str, Any] | None) -> ArticleResult:
         assert self.run is not None
         src = self.sources.get(source_id)
         publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
@@ -428,6 +459,8 @@ class Pipeline:
 
         try:
             xres = self._extract(doc, publisher, as_of, fixture, self._registry_context())
+        except BudgetExceeded as exc:
+            return self._budget_held(url, aid, version.version_id, exc)
         except InvalidAnswerError as exc:  # paid and unusable: record the spend, then fail loud
             for u in exc.usages:
                 self._llm_call("extract-invalid", aid, False, u, cost_of(exc.model, u), 0.0,
@@ -462,8 +495,11 @@ class Pipeline:
         # WHOLE-ARTICLE completeness: the ledger is read from the TEXT first; pass 1b accounts
         # for every gap; its additions go through the same verification as pass 1
         ledger = scan_article(doc)
-        comp, comp_note = self._complete(doc, xres, ledger, publisher, as_of, aid,
-                                         fixture is not None, completeness_fixture)
+        try:
+            comp, comp_note = self._complete(doc, xres, ledger, publisher, as_of, aid,
+                                             fixture is not None, completeness_fixture)
+        except BudgetExceeded as exc:
+            return self._budget_held(url, aid, version.version_id, exc)
         merged = merge_completeness(xres.extraction, comp.output if comp else None)
         for d in merged.dropped:
             self._issue("article", aid, IssueSeverity.WARN, "MALFORMED_ITEM_DROPPED",
@@ -514,6 +550,17 @@ class Pipeline:
         return ArticleResult(url, "PARTIAL_PROCESSED" if state is RetrievalState.PARTIAL
                              else "PROCESSED", aid, version.version_id, outcomes,
                              extraction_cost=xres.cost_usd)
+
+    def _budget_held(self, url: str, aid: str, version_id: str,
+                     exc: BudgetExceeded) -> ArticleResult:
+        """CHECKPOINT: nothing about the article is written; the answers already paid for stay
+        in the content-addressed cache, so a re-run with a higher limit resumes without paying
+        for them again."""
+        self._issue("article", aid, IssueSeverity.WARN, "BUDGET_HELD",
+                    f"{url} — not analysed: {exc}. Resume with a higher limit (scan --budget / "
+                    f"ingest-file --max-cost); answers already paid for are reused from the cache")
+        self._count("articles_budget_held")
+        return ArticleResult(url, "BUDGET_HELD", aid, version_id, note=str(exc))
 
     def _applied(self, aid: str, version_id: str) -> bool:
         rows = self.store.conn.execute(
@@ -681,11 +728,14 @@ class Pipeline:
                     publisher: str | None = None, html: str | None = None,
                     fixture: dict[str, Any] | None = None,
                     html_note: str = "supplied fixture HTML",
-                    published: date | None = None) -> tuple[WeeklyRun, ArticleResult]:
+                    published: date | None = None,
+                    budget: float | None = None) -> tuple[WeeklyRun, ArticleResult]:
         """One article — fetched, or an operator-supplied copy (`html`): the manual-upload route
         for a BLOCKED or DEGRADED channel, through the SAME pipeline. An upload never changes the
         channel's health record: one document is not proof the channel's coverage is complete."""
         self.start_run("article", as_of=as_of, window_from=as_of, window_to=as_of)
+        if budget is not None:
+            self.guard.run_limit = budget
         try:
             res = self.process_url(url, source_id=source_id, as_of=as_of, html=html,
                                    fixture=fixture, publisher_override=publisher,
@@ -701,7 +751,7 @@ class Pipeline:
         return self.finish_run(status), res
 
     def run_scan(self, *, window_from: date, window_to: date, as_of: date, max_articles: int,
-                 resume_run_id: str | None = None) -> WeeklyRun:
+                 resume_run_id: str | None = None, budget: float | None = None) -> WeeklyRun:
         """Discover every source's window, then process in-window candidates up to the budget.
 
         RESUMABLE: after every article the run's checkpoint (url → outcome) is saved; `--resume`
@@ -724,8 +774,11 @@ class Pipeline:
                                   f"{len(prior.checkpoint)} article(s) already done are skipped")
             self.run = prior
             self.store.upsert_run(prior)
+            self.guard.start_run("scan")
         else:
             self.start_run("scan", as_of=as_of, window_from=window_from, window_to=window_to)
+        if budget is not None:
+            self.guard.run_limit = budget
         run = self.run
         assert run is not None
         try:
@@ -813,8 +866,18 @@ class Pipeline:
                     todo.append((c.url, c.source_id, c.date_basis))
                     seen.add(c.url)
             done = queued = failures = 0
+            out_of_budget = False
             for url, sid, why in todo:
                 if url in run.checkpoint:
+                    continue
+                if out_of_budget:  # the budget is spent: the rest wait for the next run
+                    known = self.store.candidate(url)
+                    self.store.upsert_candidate(url, sid, "QUEUED", {
+                        **(known[1] if known else {}), "source_id": sid,
+                        "run_id": run.run_id, "reason": "spend guard: run budget exhausted"})
+                    queued += 1
+                    if sid in cov:
+                        cov[sid].queued += 1
                     continue
                 if done >= max_articles:
                     known = self.store.candidate(url)
@@ -839,6 +902,18 @@ class Pipeline:
                     res = self.process_url(url, source_id=sid, as_of=as_of, listed=(
                         (cand.listed_date, cand.date_basis)
                         if cand is not None and cand.listed_date is not None else None))
+                if res.status == "BUDGET_HELD":  # checkpointed: offered first next run
+                    out_of_budget = True
+                    self.store.upsert_candidate(url, sid, "QUEUED", {
+                        "source_id": sid, "run_id": run.run_id,
+                        "reason": f"spend guard: {res.note[:200]}"})
+                    queued += 1
+                    if sid in cov:
+                        cov[sid].queued += 1
+                    run.warnings.append(f"spend guard: the run budget is exhausted — "
+                                        f"{res.note[:200]}; the remaining candidates are QUEUED "
+                                        f"(resume with --budget)")
+                    continue
                 done += 1
                 run.checkpoint[url] = res.status
                 self.store.upsert_candidate(url, sid, res.status, {
@@ -867,7 +942,7 @@ class Pipeline:
                 run.warnings.append(f"source(s) failed this run: {', '.join(failing)}")
             if degraded:
                 run.warnings.append(f"source(s) partially covered: {', '.join(degraded)}")
-            status = (RunStatus.PARTIAL if failing or degraded or failures
+            status = (RunStatus.PARTIAL if failing or degraded or failures or out_of_budget
                       else RunStatus.SUCCEEDED)
             return self.finish_run(status)
         except KeyboardInterrupt:

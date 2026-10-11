@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import StrEnum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -863,6 +863,8 @@ class WeeklyRun(Mutable):
     warnings: list[str] = Field(default_factory=list)
     output_dir: str | None = None
     checkpoint: dict[str, str] = Field(default_factory=dict)
+    #: the spend guard's record: limits, every paid call's bound and actual cost, refusals
+    spend: dict[str, Any] = Field(default_factory=dict)
 
 
 class Snapshot(Frozen):

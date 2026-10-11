@@ -123,7 +123,8 @@ def cmd_article(a: argparse.Namespace) -> int:
               f"not proof its coverage is complete)")
     run, res = pipe.run_article(a.url, as_of=_iso(a.as_of), source_id=sid, html=html,
                                 fixture=fixture, publisher=a.publisher, html_note=note,
-                                published=_iso(a.published) if a.published else None)
+                                published=_iso(a.published) if a.published else None,
+                                budget=a.budget)
     print(f"run {run.run_id}: scan execution {run.status.value} — article {res.status} "
           f"{res.note}".rstrip())
     for o in res.outcomes:
@@ -165,7 +166,7 @@ def cmd_scan(a: argparse.Namespace) -> int:
     pipe = Pipeline(Path(a.data_dir), sources=sources, taxonomy=taxonomy, client=client,
                     review=not a.no_review)
     run = pipe.run_scan(window_from=w_from, window_to=w_to, as_of=as_of,
-                        max_articles=a.max_articles, resume_run_id=a.resume)
+                        max_articles=a.max_articles, resume_run_id=a.resume, budget=a.budget)
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
     print(f"run {run.run_id}: scan execution {run.status.value} · window {w_from}..{w_to} · "
           f"as-of {as_of}")
@@ -348,6 +349,8 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
                             llm_permitted=permitted)
     as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
     run = pipe.start_run("ingest", as_of=as_of)
+    if a.budget is not None:
+        pipe.guard.run_limit = a.budget
     try:
         res = ingest_file(pipe, path, declared, as_of=as_of, force_new=a.as_new,
                           same_as=a.same_as, duplicate_of=a.duplicate_of,
@@ -388,6 +391,8 @@ def cmd_ingest_inbox(a: argparse.Namespace) -> int:
     pipe = _ingest_pipeline(a)
     as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
     run = pipe.start_run("ingest", as_of=as_of)
+    if a.budget is not None:
+        pipe.guard.run_limit = a.budget
     failed = 0
     for f in files:
         declared = declared_from(sidecar(f), a.source)
@@ -487,6 +492,8 @@ def main(argv: list[str] | None = None) -> int:
                                         "publication date (used only then; labelled "
                                         "operator-verified)")
     ar.add_argument("--fixture", help="use this extraction JSON instead of the LLM")
+    ar.add_argument("--budget", type=float, help="USD this run may spend on the model "
+                                                 "(default config.BATCH_BUDGET_USD)")
     ar.add_argument("--cache-only", action="store_true", help="never call the LLM")
     ar.add_argument("--no-review", action="store_true", help="skip the pass-2 LLM review")
     ar.add_argument("--out")
@@ -500,6 +507,8 @@ def main(argv: list[str] | None = None) -> int:
     sc.add_argument("--sources", help="comma-separated source ids (default: every active "
                                       "channel)")
     sc.add_argument("--max-articles", type=int, default=DEFAULT_MAX_ARTICLES_PER_RUN)
+    sc.add_argument("--budget", type=float, help="USD this scan may spend on the model "
+                                                 "(default config.SCAN_BUDGET_USD)")
     sc.add_argument("--resume", help="resume an interrupted run id")
     sc.add_argument("--cache-only", action="store_true")
     sc.add_argument("--no-review", action="store_true")
@@ -525,6 +534,8 @@ def main(argv: list[str] | None = None) -> int:
                                             "recorded, nothing added")
     same.add_argument("--as-new", action="store_true", help="a new article, whatever it resembles")
     ig.add_argument("--release", help="process a HELD / REVIEW document by its id")
+    ig.add_argument("--budget", type=float, help="USD this run may spend on the model "
+                                                 "(default config.BATCH_BUDGET_USD)")
     ig.add_argument("--max-cost", type=float,
                     help="USD: analyse even when the estimate exceeds the per-document limit "
                          "(default config.DOC_COST_LIMIT_USD)")
@@ -537,6 +548,8 @@ def main(argv: list[str] | None = None) -> int:
     ib.add_argument("--inbox", help="default: <data-dir>/inbox")
     ib.add_argument("--source", help="default source for files without a .meta.json")
     ib.add_argument("--max-cost", type=float, help="USD per document (default: the limit)")
+    ib.add_argument("--budget", type=float, help="USD for the whole batch "
+                                                 "(default config.BATCH_BUDGET_USD)")
     ib.add_argument("--as-of")
     ib.add_argument("--cache-only", action="store_true")
     ib.add_argument("--no-review", action="store_true")

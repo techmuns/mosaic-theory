@@ -387,7 +387,13 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     res: ArticleResult = pipe.process_document(
         doc, fr, url=doc.canonical_url, source_id=declared.source_id,
         as_of=as_of or now.date(), publisher_override=None if src else publisher,
-        fixture=fixture, completeness_fixture=completeness_fixture)
+        fixture=fixture, completeness_fixture=completeness_fixture,
+        cost_limit=max_cost if max_cost is not None else None)
+    if res.status == "BUDGET_HELD":
+        return finish("HELD", f"BUDGET: {res.note} — analysed nothing; resume with "
+                              f"ingest-file --release {doc_id} --max-cost N (or a larger "
+                              f"--budget): answers already paid for are reused",
+                      res.article_id, basis=match.basis)
     if read.date_disagreement and res.article_id:
         pipe._issue("article", res.article_id, IssueSeverity.WARN,  # noqa: SLF001
                     "PUBLICATION_DATE_DISAGREES", read.date_disagreement)

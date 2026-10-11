@@ -90,6 +90,15 @@ DOC_COST_FIXED_USD = 2.0
 #: a document whose HIGH estimate exceeds this is HELD (COST) until `--max-cost` raises it —
 #: also for a linked report the scan would fetch automatically
 DOC_COST_LIMIT_USD = 30.0
+#: ACTUAL-spend limits checked before every paid call (budget.py): a weekly scan, a manual batch
+#: (ingest-file / ingest-inbox / article), and — within a document's limit — the share its
+#: retries and completeness passes may take. Face-validity constants; the CLI raises them.
+SCAN_BUDGET_USD = 40.0
+BATCH_BUDGET_USD = 100.0
+DOC_RETRY_COMPLETENESS_SHARE = 0.85
+#: a call's input is bounded at (characters / this) tokens — conservative for English prose and
+#: tables (~3.5-4 characters per token measured); a bound from size, never a billing cap
+CHARS_PER_TOKEN_BOUND = 2.5
 
 
 @dataclass(frozen=True)

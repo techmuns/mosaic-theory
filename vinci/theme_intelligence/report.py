@@ -1315,6 +1315,7 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
         "cost_usd": run.cost_usd,
         "cost_note": ("UNKNOWN — a call's model has no price entry" if run.cost_usd is None
                       else "list price; cached calls cost 0"),
+        "spend_guard": run.spend,
         "sources": [json.loads(sc.model_dump_json()) for sc in run.sources],
         "warnings": run.warnings,
         "verification": d.validation,
