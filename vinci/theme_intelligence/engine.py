@@ -163,18 +163,26 @@ def segment_of(h: VerifiedHypothesis, claims: dict[str, Claim], taxonomy: Taxono
 
 #: what an equity-market STRUCTURE measure looks like in a claim's quote or metric
 _MARKET_STRUCTURE = re.compile(
-    r"correlation|dispersion|\bbreadth\b|volatilit|\bvix\b|% of (?:the )?stocks|share of "
+    r"correlation|dispersion|\bbreadth\b|\bvix\b|% of (?:the )?stocks|share of "
     r"stocks|stocks? (?:trading )?(?:above|below)|moving average|\bbeta\b|index concentration|"
-    r"equal[- ]weight", re.I)
+    r"equal[- ]weight|"
+    # volatility OF PRICES — "political volatility" is not market structure (Citi LatAm,
+    # 2026-10-11: the only match on a fiscal-credibility record)
+    r"(?:implied|realized|realised|market|equity|equities|stock|index|price|return)s?\s+"
+    r"volatilit|volatilit\w*\s+(?:index|of (?:the )?(?:market|index|stocks|equities|returns))",
+    re.I)
 
 
 def record_kind(h: VerifiedHypothesis, claims: dict[str, Claim]) -> tuple[ThesisKind, str | None]:
-    """MARKET_REGIME only for equity-market structure: a market-wide record (`macro_market`), or a
-    sector record whose evidence MEASURES market structure (correlation, dispersion, breadth,
-    volatility). A sector mechanism — regulation, capacity, demand, costs — is an investment
-    thesis, so its earnings transmission is tested like any other. (The reason when corrected.)"""
+    """MARKET_REGIME only for equity-market structure: a record whose evidence MEASURES it
+    (correlation, dispersion, breadth, price volatility) — on any node, the market-wide one
+    included. A sector or macro mechanism — regulation, capacity, demand, capex, rates — is an
+    investment thesis, so its earnings transmission is tested like any other. Observed
+    2026-10-11: Citi's "LatAm capex demand broadens across energy, minerals, infrastructure and
+    agriculture" sat on `macro_market` and was kept a regime by node alone. (The reason when
+    corrected.)"""
     raw = h.raw
-    if raw.kind is not ThesisKind.MARKET_REGIME or raw.value_chain_node == "macro_market":
+    if raw.kind is not ThesisKind.MARKET_REGIME:
         return raw.kind, None
     ev = [claims[c] for c in (*h.supporting, *h.dislocation, *h.catalyst) if c in claims]
     if any(_MARKET_STRUCTURE.search(f"{c.metric or ''} {c.quote}") for c in ev):
