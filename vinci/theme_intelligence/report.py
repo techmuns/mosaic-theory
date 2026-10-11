@@ -753,6 +753,10 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     blocked = [s for s in automatic if s["status"] in ("BLOCKED", "ERROR")]
     accessible = [s for s in automatic if s["status"] in ("OK", "PARTIAL")]
     manual_first = [s for s in d.sources if s["status"] == "MANUAL_FIRST"]
+    # a manual-first channel's AUTOMATED access is still health-checked: say what it found, so
+    # "blocked: none" (of the automatic channels) never reads as "nothing is blocked" beside a
+    # health block counting it blocked (observed 2026-10-11, the seven-source dashboard)
+    access = {r["source_id"]: r["status"] for r in d.source_health.get("rows", [])}
     # Every count below is over the theses THIS RUN created or changed (all sections, the
     # archived included) and its EVENTS: a SKIP is archived at once, so counting active theses
     # could never show one; and a thesis created and challenged in one run sits under NEW, so
@@ -765,7 +769,9 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     return {
         "accessible_sources": None if manual else f"{len(accessible)} of {len(automatic)}",
         "manual_first_sources": None if manual else (
-            ", ".join(names.get(s["source_id"], s["source_id"]) for s in manual_first)
+            ", ".join(names.get(s["source_id"], s["source_id"])
+                      + (f" [automated access {access[s['source_id']]}]"
+                         if s["source_id"] in access else "") for s in manual_first)
             or "none"),
         "blocked_sources": None if manual else (
             ", ".join(names.get(s["source_id"], s["source_id"]) for s in blocked) or "none"),
@@ -927,7 +933,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
           if k.get("accessible_sources") is None else
           [("Accessible sources", str(k["accessible_sources"]),
             "automatic channels read this run"),
-           ("Blocked sources", str(k["blocked_sources"])),
+           ("Blocked automatic channels", str(k["blocked_sources"])),
            ("Manual-first sources", str(k.get("manual_first_sources") or "none"),
             "health-checked only — research arrives as uploads")])
     kp += [("Articles analyzed", f"{k.get('articles_full', 0)} full · "
@@ -1134,7 +1140,7 @@ def render_dashboard_md(d: Dashboard) -> str:
     md += ([("- Sources: single article (manual URL) — no source discovery")]
            if k.get("accessible_sources") is None else
            [f"- Accessible sources: {k['accessible_sources']} (automatic channels)",
-            f"- Blocked sources: {k['blocked_sources']}",
+            f"- Blocked automatic channels: {k['blocked_sources']}",
             f"- Manual-first sources (health check only; research arrives as uploads): "
             f"{k.get('manual_first_sources') or 'none'}"])
     md += [f"- Articles analyzed: {k.get('articles_full', 0)} full · "

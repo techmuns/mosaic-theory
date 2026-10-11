@@ -314,10 +314,14 @@ def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_cod
     html = render_dashboard_html(d)
     blocked = list(pipe.sources.values())[1].publisher
     auto = [s for s in pipe.sources.values() if s.mode == "automatic"]
-    manual_first = ", ".join(s.publisher for s in pipe.sources.values()
-                             if s.mode == "manual_first")
+    # a manual-first channel's automated access is still checked and SAID (observed 2026-10-11:
+    # "Blocked sources: none" printed beside a health block counting the manual-first two blocked)
+    access = {r["source_id"]: r["status"] for r in d.source_health["rows"]}
+    manual_first = ", ".join(f"{s.publisher} [automated access {access[s.id]}]"
+                             for s in pipe.sources.values() if s.mode == "manual_first")
+    assert all(s.id in access for s in pipe.sources.values() if s.mode == "manual_first")
     for label, value in (("Accessible sources", f"{len(auto) - 1} of {len(auto)}"),
-                         ("Blocked sources", blocked),
+                         ("Blocked automatic channels", blocked),
                          ("Manual-first sources", manual_first),
                          ("Articles analyzed", "2 full · 0 partial"),
                          ("Research Now / Watch / Skip", None),
