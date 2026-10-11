@@ -151,6 +151,8 @@ class _Obs:
     sample_notes: tuple[str, ...] = ()
     full_text: bool = False
     decisive: str = ""  # the test that set the status
+    #: the sampled articles the completeness test found partial — the ones an upload would fix
+    incomplete: list[_Sample] = field(default_factory=list)
 
 
 def _t(name: str, result: Literal["PASS", "WARN", "FAIL", "SKIP"], detail: str) -> HealthTest:
@@ -359,6 +361,7 @@ def _completeness(o: _Obs, scan: dict[str, Any], *, fetches_linked: bool = False
     fetched = [x for x in read if fetches_linked and x.linked_report]
     last += (f"; {len(fetched)} sampled page(s) summarise a report they link to — the scan "
              f"READS it (linked_reports = \"fetch\")" if fetched else "")
+    o.incomplete = previews or partial
     if previews:
         why = f"{len(previews)} of {n} sampled article(s) are paywalled previews — only the " \
               f"preview is readable"
@@ -421,18 +424,31 @@ def _status(o: _Obs) -> tuple[HealthStatus, str]:
     return HealthStatus.HEALTHY, "discovery, a full-text article, its date and byline all read"
 
 
+#: affected articles listed per action; more are counted, never silently dropped
+AFFECTED_SHOWN = 10
+
+
 def _affected(o: _Obs, store: Store, sid: str) -> tuple[str, ...]:
     """Articles affected, as KNOWN — a URL with the title the listing gave, never an invented
-    one."""
+    one. A completeness failure names the sampled articles that WERE partial, not the first
+    sample (observed 2026-10-11: Citi's action named its LatAm page — whose report the scan
+    reads itself — while the partial page was a 96-word teaser)."""
     out = []
-    if o.sample is not None:
+    if o.decisive == "completeness" and o.incomplete:
+        out += [x.cand.url + (f" — {x.title or x.cand.title}" if (x.title or x.cand.title)
+                              else " — title not known") for x in o.incomplete]
+    elif o.sample is not None:
         out.append(o.sample.url + (f" — {o.sample.title}" if o.sample.title else
                                    " — title not known"))
     for url, st, meta in store.candidates():
         if meta.get("source_id") == sid and st in ("INACCESSIBLE", "BLOCKED", "NO_BODY"):
             t = meta.get("title")
             out.append(url + (f" — {t}" if t else " — title not known"))
-    return tuple(dict.fromkeys(out))[:10]
+    out = list(dict.fromkeys(out))
+    if len(out) > AFFECTED_SHOWN:
+        return (*out[:AFFECTED_SHOWN],
+                f"… and {len(out) - AFFECTED_SHOWN} more (showing {AFFECTED_SHOWN} of {len(out)})")
+    return tuple(out)
 
 
 def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
@@ -775,15 +791,21 @@ def render_text(run: HealthRun, configured: list[SourceConfig]) -> str:
     if s["new_alerts"]:
         out += ["", "Changes needing attention:"]
         for r in s["new_alerts"]:
-            out.append(f"  [{r['alert']}] {r['publisher']}: {'; '.join(r['changes'])}")
+            # a PERSISTENT failure changed nothing — say what persists (observed 2026-10-11:
+            # "[PERSISTENT_FAILURE] Citi: " printed with an empty detail)
+            what = "; ".join(r["changes"]) or (
+                f"still {r['status']} after {r['consecutive_failed_checks']} consecutive "
+                f"check(s) — {r['reason'][:160]}")
+            out.append(f"  [{r['alert']}] {r['publisher']}: {what}")
     att = list(s["attention"])
     if att:
         out += ["", "Next actions:"]
         for r in att:
             out.append(f"  {r['publisher']} ({r['status']}): {r['next_action']}")
             if r["manual_action"]:
-                out.append(f"      {r['manual_action']['kind']}: "
-                           + "; ".join(r["manual_action"]["affected"][:3]))
+                aff = r["manual_action"]["affected"]
+                out.append(f"      {r['manual_action']['kind']}: " + "; ".join(aff[:3])
+                           + (f" (showing 3 of {len(aff)})" if len(aff) > 3 else ""))
     if run.delivery:
         out += ["", f"Alerts: {run.delivery}"]
     return "\n".join(out)

@@ -24,6 +24,7 @@ from vinci.theme_intelligence.health import (
     BLOCKED_RECHECK_HOURS,
     HOOK_ENV,
     check_sources,
+    render_text,
     summary,
     to_json,
 )
@@ -608,3 +609,51 @@ def test_the_same_page_read_far_shorter_than_before_is_a_parser_failure(
               now=T0 + timedelta(days=7)).checks[0]
     assert h.status is HealthStatus.DEGRADED and "extraction collapsed" in h.reason
     assert any("parser failure suspected" in c for c in h.changes)
+
+
+# --- the seven-source live check, 2026-10-11 ------------------------------------------------
+
+def test_an_upload_request_names_the_page_that_was_partial_not_the_first_sample(
+        tmp_path: Path, store: Store) -> None:
+    """Observed 2026-10-11 (live check): Citi's next action asked for an upload of its LatAm
+    page — whose linked report the scan READS ("fetch") — while the partial page was a 96-word
+    teaser. The page linking its report is sampled first here; the teaser second."""
+    s = src(linked_reports="fetch")
+    web = healthy_web(s)
+    web.pages["https://pub-a.test/articles/memory-prices"] = (200, article(
+        "Memory prices keep rising").replace(
+        "</article>", '<p>Must C: The Report</p><a href="https://pub-a.test/r.pdf">Download '
+                      'Here</a></article>'))
+    web.pages["https://pub-a.test/articles/grid-queues"] = (200, article("Grid queues lengthen",
+                                                                         paras=2))
+    h = check(store, fetcher(tmp_path, web), [s]).checks[0]
+    assert h.status is HealthStatus.DEGRADED and "short body" in h.reason
+    assert h.manual_action is not None
+    assert [a.split(" — ")[0] for a in h.manual_action.affected] == [
+        "https://pub-a.test/articles/grid-queues"]
+
+
+def test_a_persistent_failure_says_what_persists_and_a_cut_list_says_it_is_cut(
+        tmp_path: Path, store: Store) -> None:
+    """Observed 2026-10-11 (live check): "[PERSISTENT_FAILURE] Citi: " printed with nothing
+    after it — a persistent failure changes nothing, so its changes list is empty."""
+    s = src()
+    web = healthy_web(s)
+    f = fetcher(tmp_path, web)
+    check(store, f, [s])
+    web.pages[s.entry_url] = (403, "")  # access refused from now on
+    for i in range(12):  # twelve known articles the channel could not serve
+        store.upsert_candidate(f"https://pub-a.test/articles/x{i:02d}", s.id, "INACCESSIBLE",
+                               {"source_id": s.id, "title": f"Article {i}"})
+    runs = [check(store, f, [s], now=T0 + timedelta(days=d), force=True) for d in (1, 2, 3)]
+    text = render_text(runs[-1], [s])
+    alerts = [h.alert for r in runs for h in r.checks]
+    assert "PERSISTENT_FAILURE" in alerts, alerts
+    persistent = runs[alerts.index("PERSISTENT_FAILURE")]
+    line = next(x for x in render_text(persistent, [s]).splitlines() if "[PERSISTENT_FAILURE]" in x)
+    assert line.split(": ", 1)[1].startswith("still BLOCKED after"), line
+    h = runs[-1].checks[0]
+    assert h.manual_action is not None
+    assert h.manual_action.affected[-1].startswith("… and ")  # the record states its cut
+    assert "(showing 10 of" in h.manual_action.affected[-1]
+    assert "(showing 3 of" in text  # and so does the printed report
