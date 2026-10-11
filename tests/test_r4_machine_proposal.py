@@ -71,8 +71,12 @@ def _r1(doc: dict[str, Any]) -> Anchor:
     operator's (AMZN and UBER carry R4 since 2026-10-09), and the proposal is made on R1's read,
     never on a tag — reading the tag would make "unchanged" look like "proposed"."""
     a = Anchor.model_validate(doc["anchor"])
+    # ...and R1's own REASON: since a re-assembly writes the machine's R4 reason onto a page whose
+    # tag it agrees with (AMZN #700, UBER 2026-10-11), the committed reason IS the proposal's, so a
+    # stand-in keeping it could not show the proposal moving the reason (CONSTRUCTED)
     return a.model_copy(update={"recipe_hint": "R1_midcycle_margin_evebitda" if a.applicable
-                                else "R2_NEEDED"})
+                                else "R2_NEEDED",
+                                "reason": "CONSTRUCTED: R1's own reason for its applicable bit"})
 
 
 # --- the count IS the prose's count -------------------------------------------------------------
