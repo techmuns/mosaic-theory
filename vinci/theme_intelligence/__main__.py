@@ -6,6 +6,10 @@
     python -m vinci.theme_intelligence report --latest | --week 2026-W41 | --run <RUN_ID>
     python -m vinci.theme_intelligence qa --run <RUN_ID|latest>
     python -m vinci.theme_intelligence sources [--check-health [--json] [--force]]
+    python -m vinci.theme_intelligence ingest-file --path report.pdf --source ms_research \
+        [--url U] [--title T] [--author A] [--published YYYY-MM-DD] [--llm-permitted]
+    python -m vinci.theme_intelligence ingest-inbox [--inbox DIR] [--source S]
+    python -m vinci.theme_intelligence documents [--status HELD]
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
 
 Exit status: 0 = the run succeeded; 2 = PARTIAL (some source or article could not be processed —
@@ -19,6 +23,7 @@ import json
 import sys
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlparse
 
 from vinci.theme_intelligence.config import (
@@ -284,6 +289,128 @@ def cmd_sources(a: argparse.Namespace) -> int:
     return 0
 
 
+_INBOX_DIRS = {"INGESTED": "processed", "UPGRADED": "processed", "DUPLICATE": "processed",
+               "HELD": "held", "REVIEW": "review", "REJECTED": "rejected"}
+
+
+def _ingest_pipeline(a: argparse.Namespace) -> Any:
+    from vinci.theme_intelligence.pipeline import Pipeline
+
+    client = None if a.cache_only else _client(required=False)
+    return Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=client, review=not a.no_review)
+
+
+def _print_ingest(res: Any) -> None:
+    print(f"  {res.doc_id}  {res.status:<10} article {res.article_id or '—'}  {res.note[:240]}")
+    for i in res.issues[:6]:
+        print(f"      flagged: {i[:200]}")
+    if len(res.issues) > 6:
+        print(f"      … {len(res.issues) - 6} more flagged item(s) on the document record")
+
+
+def cmd_ingest_file(a: argparse.Namespace) -> int:
+    """One manually supplied document through the SHARED pipeline (see ingest.py)."""
+    from vinci.theme_intelligence.documents import Declared, DocumentError
+    from vinci.theme_intelligence.ingest import ingest_file
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = _ingest_pipeline(a)
+    permitted = True if a.llm_permitted else False if a.llm_not_permitted else None
+    if a.release:
+        rec = pipe.store.document(a.release)
+        if rec is None or rec.stored_path is None:
+            raise SystemExit(f"no stored document {a.release}")
+        path = Path(a.data_dir) / rec.stored_path
+        d = rec.declared
+        declared = Declared(
+            source_id=rec.source_id, url=d.get("url"), title=d.get("title"),
+            authors=tuple(x.strip() for x in d.get("authors", "").split(";") if x.strip()),
+            published=_iso(d["published"]) if d.get("published") else None,
+            llm_permitted=permitted)
+    else:
+        if not (a.path and a.source):
+            raise SystemExit("--path and --source are required (or --release <doc id>)")
+        path = Path(a.path)
+        declared = Declared(source_id=a.source, url=a.url, title=a.title,
+                            authors=tuple(a.author or ()),
+                            published=_iso(a.published) if a.published else None,
+                            llm_permitted=permitted)
+    as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
+    run = pipe.start_run("ingest", as_of=as_of)
+    try:
+        res = ingest_file(pipe, path, declared, as_of=as_of, force_new=a.as_new,
+                          same_as=a.same_as)
+    except DocumentError as exc:
+        pipe.finish_run(RunStatus.FAILED, error=str(exc))
+        print(f"refused: {exc}")
+        return 1
+    run = pipe.finish_run(RunStatus.SUCCEEDED if res.status in (
+        "INGESTED", "UPGRADED", "DUPLICATE", "HELD", "REVIEW") else RunStatus.PARTIAL)
+    print(f"run {run.run_id}: ingest {run.status.value} — {path.name}")
+    _print_ingest(res)
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · outputs: "
+          f"{out['dir']}")
+    return _EXIT[run.status]
+
+
+def cmd_ingest_inbox(a: argparse.Namespace) -> int:
+    """Every document in the private inbox, as one run. Each file's statements come from a
+    `<file>.meta.json` beside it (or --source for all); the file then moves to processed/,
+    held/, review/ or rejected/ — never anywhere tracked by git."""
+    from vinci.theme_intelligence.documents import SUPPORTED, Declared, DocumentError
+    from vinci.theme_intelligence.ingest import declared_from, ingest_file, sidecar
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    inbox = Path(a.inbox) if a.inbox else Path(a.data_dir) / "inbox"
+    inbox.mkdir(mode=0o700, parents=True, exist_ok=True)
+    files = sorted(f for f in inbox.iterdir() if f.is_file()
+                   and f.suffix.lower() in (*SUPPORTED, ".docx"))
+    if not files:
+        print(f"inbox {inbox}: nothing to import")
+        return 0
+    pipe = _ingest_pipeline(a)
+    as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
+    run = pipe.start_run("ingest", as_of=as_of)
+    failed = 0
+    for f in files:
+        declared = declared_from(sidecar(f), a.source)
+        if declared is None and f.suffix.lower() in SUPPORTED:
+            print(f"  {f.name}: skipped — no source stated (add {f.name}.meta.json or --source)")
+            continue
+        try:
+            if declared is None:  # an unsupported format: refused whatever its source
+                declared = Declared(source_id="unknown")
+            res = ingest_file(pipe, f, declared, as_of=as_of)
+        except DocumentError as exc:
+            print(f"  {f.name}: refused — {exc}")
+            failed += 1
+            dest_dir = inbox / "rejected"
+        else:
+            _print_ingest(res)
+            dest_dir = inbox / _INBOX_DIRS.get(res.status, "processed")
+        dest_dir.mkdir(mode=0o700, exist_ok=True)
+        f.rename(dest_dir / f.name)
+        meta = f.with_name(f.name + ".meta.json")
+        if meta.exists():
+            meta.rename(dest_dir / meta.name)
+    run = pipe.finish_run(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"run {run.run_id}: ingest {run.status.value} · {len(files)} file(s) · cost "
+          f"${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · outputs: {out['dir']}")
+    return _EXIT[run.status]
+
+
+def cmd_documents(a: argparse.Namespace) -> int:
+    st = Store(Paths(Path(a.data_dir)).db)
+    for d in st.documents(a.status):
+        print(f"{d.doc_id}  {d.status:<9} {d.source_id:<18} {d.fmt:<8} "
+              f"{(d.published.isoformat() if d.published else 'undated'):<10} "
+              f"article {d.article_id or '—':<15} {d.filename}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m vinci.theme_intelligence")
     p.add_argument("--data-dir", default=str(DEFAULT_DATA_DIR))
@@ -328,6 +455,41 @@ def main(argv: list[str] | None = None) -> int:
     sc.add_argument("--no-review", action="store_true")
     sc.add_argument("--out")
     sc.set_defaults(fn=cmd_scan)
+
+    ig = sub.add_parser("ingest-file", help="import one manually supplied document "
+                                            "(PDF / HTML / Markdown / text)")
+    ig.add_argument("--path")
+    ig.add_argument("--source", help="the publisher channel id (sources.toml)")
+    ig.add_argument("--url", help="the article's original URL, when it has one")
+    ig.add_argument("--title")
+    ig.add_argument("--author", action="append", help="repeatable")
+    ig.add_argument("--published", help="YYYY-MM-DD — used only when the document states none")
+    lic = ig.add_mutually_exclusive_group()
+    lic.add_argument("--llm-permitted", action="store_true",
+                     help="its licence allows third-party LLM processing (else it is HELD)")
+    lic.add_argument("--llm-not-permitted", action="store_true")
+    ig.add_argument("--as-of", help="analysis as-of (default: today, UTC)")
+    same = ig.add_mutually_exclusive_group()
+    same.add_argument("--same-as", help="the article id this document is a version of")
+    same.add_argument("--as-new", action="store_true", help="a new article, whatever it resembles")
+    ig.add_argument("--release", help="process a HELD / REVIEW document by its id")
+    ig.add_argument("--cache-only", action="store_true")
+    ig.add_argument("--no-review", action="store_true")
+    ig.add_argument("--out")
+    ig.set_defaults(fn=cmd_ingest_file)
+
+    ib = sub.add_parser("ingest-inbox", help="import every document in the private inbox")
+    ib.add_argument("--inbox", help="default: <data-dir>/inbox")
+    ib.add_argument("--source", help="default source for files without a .meta.json")
+    ib.add_argument("--as-of")
+    ib.add_argument("--cache-only", action="store_true")
+    ib.add_argument("--no-review", action="store_true")
+    ib.add_argument("--out")
+    ib.set_defaults(fn=cmd_ingest_inbox)
+
+    dc = sub.add_parser("documents", help="list the manually supplied documents")
+    dc.add_argument("--status")
+    dc.set_defaults(fn=cmd_documents)
 
     rp = sub.add_parser("report", help="re-render the weekly dashboard + cards")
     g = rp.add_mutually_exclusive_group()

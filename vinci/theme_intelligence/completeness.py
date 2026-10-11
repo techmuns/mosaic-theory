@@ -63,7 +63,7 @@ from vinci.theme_intelligence.verify import VerifiedExtraction, in_hyphenated_na
 
 #: Block kinds whose text is scanned for figures, and those that carry ARGUMENT text.
 FIGURE_KINDS = frozenset({"paragraph", "list_item", "heading", "chart_title", "chart_description",
-                          "other"})
+                          "other", "table"})  # a manual document's tables: every value counted
 ARGUMENT_KINDS = frozenset({"paragraph", "list_item"})
 #: An argument block has at least this many words (shorter paragraphs are labels / captions).
 ARGUMENT_MIN_WORDS = 12

@@ -301,6 +301,9 @@ class Engine:
 
         groups: dict[str, list[VerifiedHypothesis]] = {}
         segments: dict[str, str] = {}
+        # theses this article's EARLIER versions contributed to (before this version applies)
+        earlier = list(dict.fromkeys(c.thesis_id for c in st.contributions(
+            article_id=ctx.article.article_id)))
         for h in ve.hypotheses:
             seg = segment_of(h, claims, self.taxonomy)
             key = thesis_key(h, seg)
@@ -322,6 +325,15 @@ class Engine:
                                          f"article — merged as one thesis contribution"))
             risks = [r for r in ve.risks if not r.related or h.raw.local_id in r.related]
             existing = st.thesis_by_key(key)
+            if existing is None and (prior := self._same_article_thesis(h, segments[key],
+                                                                        earlier)):
+                existing = prior
+                st.add_issue(self._issue(
+                    ctx, "thesis", prior.thesis_id, IssueSeverity.INFO, "SAME_ARTICLE_VERSION",
+                    f"a later version of {ctx.article.article_id} names segment(s) "
+                    f"{segments[key] or 'none'}; its earlier version created this thesis "
+                    f"(segment {prior.key_segment or 'none'}) — updated, never a second thesis "
+                    f"from one article"))
             if existing is None:
                 out = self._create(ctx, key, h, claims, mentions, resolutions, risks,
                                    segments[key])
@@ -333,6 +345,26 @@ class Engine:
             outcomes.extend(self._challenge_competitors(ctx, tid, claims, mentions, resolutions,
                                                         created_now))
         return outcomes
+
+    def _same_article_thesis(self, h: VerifiedHypothesis, segment: str,
+                             earlier: list[str]) -> Thesis | None:
+        """The thesis an EARLIER VERSION of this same article created for this hypothesis, when
+        the fuller version's evidence names more (or fewer) segments — a preview naming none,
+        its full text naming DRAM. Every other identity dimension must match and the segment
+        sets must nest; disjoint segments are different claims and stay separate theses."""
+        raw = h.raw
+        new = set(filter(None, segment.split("+")))
+        for tid in earlier:
+            t = self.store.thesis(tid)
+            if t is None or (t.key_node, t.key_mechanism, t.key_direction.value,
+                             t.key_geography, t.key_review) != (
+                    raw.value_chain_node, raw.mechanism, raw.direction.value,
+                    norm_geo(raw.geography), review_tag(h)):
+                continue
+            old = set(filter(None, t.key_segment.split("+")))
+            if old <= new or new <= old:
+                return t
+        return None
 
     # -- create -------------------------------------------------------------------------------
     def _create(self, ctx: ArticleContext, key: str, h: VerifiedHypothesis,

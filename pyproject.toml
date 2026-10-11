@@ -14,6 +14,7 @@ dependencies = [
     "anthropic>=0.112",   # graph-track extraction; top-level `cache_control` (#665) verified on 0.112.0
     "beautifulsoup4>=4.12",  # 10-K HTML → text for the graph extractor
     "xlrd>=2.0",          # legacy .xls (BIFF) CIQ Financials/Estimates workbooks (dossier)
+    "pdfplumber>=0.11,<0.12",  # theme intelligence: manually supplied research PDFs (text, tables, pages)
 ]
 
 [project.optional-dependencies]

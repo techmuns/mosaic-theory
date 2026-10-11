@@ -38,6 +38,7 @@ from vinci.theme_intelligence.schemas import (
     ChangeEvent,
     Claim,
     CompletenessReport,
+    DocumentRecord,
     EvidenceSource,
     Mention,
     SecurityResolution,
@@ -139,6 +140,14 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "BEGIN SELECT RAISE(ABORT, 'source_health is append-only'); END",
         "CREATE TRIGGER source_health_no_delete BEFORE DELETE ON source_health "
         "BEGIN SELECT RAISE(ABORT, 'source_health is append-only'); END",
+    ]),
+    # v4 (2026-10-11): MANUAL DOCUMENTS — one row per supplied file (by its bytes): what the
+    # operator stated, what it became (ingested / upgraded / duplicate / review / held), its
+    # private stored copy. Mutable like `articles` (a held file is later released); its status
+    # history rides in the payload.
+    (4, [
+        "CREATE TABLE documents (doc_id TEXT PRIMARY KEY, sha256 TEXT NOT NULL UNIQUE,"
+        " status TEXT NOT NULL, payload TEXT NOT NULL)",
     ]),
 ]
 
@@ -526,6 +535,24 @@ class Store:
                 out[h.source_id] = h
         return out
 
+    def upsert_document(self, d: DocumentRecord) -> None:
+        self.conn.execute(
+            "INSERT INTO documents (doc_id, sha256, status, payload) VALUES (?, ?, ?, ?) "
+            "ON CONFLICT(doc_id) DO UPDATE SET status=excluded.status, payload=excluded.payload",
+            (d.doc_id, d.sha256, d.status, _dump(d)))
+
+    def document(self, doc_id: str) -> DocumentRecord | None:
+        r = self._rows("SELECT payload FROM documents WHERE doc_id=?", [doc_id], DocumentRecord)
+        return r[0] if r else None
+
+    def document_by_sha(self, sha256: str) -> DocumentRecord | None:
+        r = self._rows("SELECT payload FROM documents WHERE sha256=?", [sha256], DocumentRecord)
+        return r[0] if r else None
+
+    def documents(self, status: str | None = None) -> list[DocumentRecord]:
+        rows = self._rows("SELECT payload FROM documents ORDER BY doc_id", [], DocumentRecord)
+        return [d for d in rows if status is None or d.status == status]
+
     def completeness_for_run(self, run_id: str) -> list[CompletenessReport]:
         return self._rows("SELECT payload FROM completeness WHERE run_id=? ORDER BY "
                           "article_version_id", [run_id], CompletenessReport)
@@ -567,7 +594,7 @@ class Store:
               "mentions", "security_resolutions", "theses", "thesis_versions",
               "thesis_claim_links", "contributions", "relations", "change_events", "runs",
               "snapshots", "verification_issues", "llm_calls", "candidates", "completeness",
-              "source_health")
+              "source_health", "documents")
 
     def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY

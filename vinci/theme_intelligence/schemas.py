@@ -21,7 +21,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 3
+DB_SCHEMA_VERSION = 4
 
 
 class Frozen(BaseModel):
@@ -350,6 +350,8 @@ class Block(Frozen):
     sha256: str
     section: str | None = None  # nearest preceding heading
     order: int
+    #: the PAGE of a manual document (PDF) the block was read from — None for a web page
+    page: int | None = None
 
 
 class Article(Frozen):
@@ -1037,3 +1039,36 @@ class SourceHealthCheck(Frozen):
     @property
     def manual_upload_recommended(self) -> bool:
         return self.manual_action is not None and self.manual_action.kind == "UPLOAD_REQUIRED"
+
+
+# --- manual documents (hybrid ingestion) --------------------------------------------------------
+
+class DocumentRecord(Mutable):
+    """One manually supplied FILE (identified by its bytes), what the operator stated about it,
+    and what it became: INGESTED (a new article) · UPGRADED (a fuller version of an article
+    already held) · DUPLICATE (the same file, or the same text in another format — no new
+    contribution) · REVIEW (an ambiguous match: a human decides) · HELD (third-party LLM
+    processing not authorised under its licence) · REJECTED (unreadable)."""
+
+    doc_id: str  # "D-" + the first 16 hex of the file's sha256
+    sha256: str
+    filename: str  # the name it arrived with — never used as metadata
+    fmt: str
+    size: int
+    received_at: datetime  # wall clock, UTC — never a publication date
+    source_id: str
+    publisher: str
+    declared: dict[str, str] = Field(default_factory=dict)  # the operator's statements
+    status: str
+    article_id: str | None = None
+    version_id: str | None = None
+    match_basis: str = ""  # why it was matched (or not) to an article already held
+    title: str | None = None
+    published: date | None = None
+    published_source: str | None = None
+    pages: int | None = None
+    tables: int = 0
+    issues: tuple[str, ...] = ()  # what could not be read — scanned pages, charts, tables
+    stored_path: str | None = None  # the private copy (git-ignored data dir), relative
+    run_id: str | None = None
+    history: list[str] = Field(default_factory=list)  # status changes, each dated

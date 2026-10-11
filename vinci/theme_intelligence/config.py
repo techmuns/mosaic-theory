@@ -100,6 +100,10 @@ class SourceConfig:
     #: a standing, documented access refusal: still attempted and reported BLOCKED every run, but
     #: it does not by itself turn the run PARTIAL (a NEW failure of any other channel does)
     expect_blocked: bool = False
+    #: may a MANUALLY SUPPLIED document of this publisher be sent to the third-party LLM?
+    #: permitted | not_permitted | unknown — anything but "permitted" HOLDS the document for
+    #: review unless the operator states, for that document, that its licence allows it
+    manual_llm_processing: str = "unknown"
 
 
 @dataclass(frozen=True)
@@ -180,9 +184,14 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
                 feed_url=s.get("feed_url"),
                 max_date_checks=int(s.get("max_date_checks", 12)),
                 expect_blocked=bool(s.get("expect_blocked", False)),
+                manual_llm_processing=str(s.get("manual_llm_processing", "unknown")),
             ))
         except KeyError as exc:
             raise ConfigError(f"source entry missing {exc}: {s}") from exc
+    for sc in out:
+        if sc.manual_llm_processing not in ("permitted", "not_permitted", "unknown"):
+            raise ConfigError(f"{sc.id}: manual_llm_processing must be permitted | "
+                              f"not_permitted | unknown")
     ids = [s.id for s in out]
     if len(ids) != len(set(ids)):
         raise ConfigError(f"duplicate source ids: {ids}")
