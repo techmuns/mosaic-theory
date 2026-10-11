@@ -5,6 +5,7 @@
     python -m vinci.theme_intelligence article --url <URL> --as-of 2026-02-09
     python -m vinci.theme_intelligence report --latest | --week 2026-W41 | --run <RUN_ID>
     python -m vinci.theme_intelligence qa --run <RUN_ID|latest>
+    python -m vinci.theme_intelligence sources [--check-health [--json] [--force]]
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
 
 Exit status: 0 = the run succeeded; 2 = PARTIAL (some source or article could not be processed —
@@ -32,6 +33,7 @@ from vinci.theme_intelligence.config import (
     load_taxonomy,
 )
 from vinci.theme_intelligence.extract import ToolClient
+from vinci.theme_intelligence.fetch import PoliteFetcher
 from vinci.theme_intelligence.schemas import RunStatus
 from vinci.theme_intelligence.store import Store
 
@@ -98,8 +100,15 @@ def cmd_article(a: argparse.Namespace) -> int:
     pipe = Pipeline(Path(a.data_dir), sources=sources, taxonomy=taxonomy, client=client,
                     review=not a.no_review)
     sid = a.source or source_for_url(a.url, sources)
+    note = (f"operator-supplied copy — a MANUAL UPLOAD of an authorized document "
+            f"({Path(a.html).name})" if a.html else "supplied fixture HTML")
+    h = pipe.store.latest_health().get(sid)
+    if a.html and h is not None and h.status.value in ("BLOCKED", "DEGRADED"):
+        print(f"channel {sid} is {h.status.value} ({h.reason[:100]}) — this upload is analysed "
+              f"through the same pipeline; the channel's health is unchanged (one document is "
+              f"not proof its coverage is complete)")
     run, res = pipe.run_article(a.url, as_of=_iso(a.as_of), source_id=sid, html=html,
-                                fixture=fixture, publisher=a.publisher)
+                                fixture=fixture, publisher=a.publisher, html_note=note)
     print(f"run {run.run_id}: scan execution {run.status.value} — article {res.status} "
           f"{res.note}".rstrip())
     for o in res.outcomes:
@@ -152,6 +161,8 @@ def cmd_scan(a: argparse.Namespace) -> int:
               f"out-of-window {sc.skipped_out_of_window:>3} · inaccessible {sc.inaccessible:>3} · "
               f"errors {len(sc.errors):>2}" + (f" — {sc.errors[0][:120]}" if sc.errors else ""))
     print(f"counts {run.counts}")
+    hs = out["dashboard"].source_health
+    print(f"source health (checked at the start of this scan) — {hs.get('line', 'not checked')}")
     v = out["dashboard"].verification
     print(f"research verification {v['status']} — {v['summary']}")
     print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · tokens {run.tokens}")
@@ -226,9 +237,50 @@ def cmd_import(a: argparse.Namespace) -> int:
     return 0
 
 
+def _health_fetcher(paths: Paths) -> PoliteFetcher:
+    """The fetcher a manual health check uses (a seam for tests — no other behaviour)."""
+    return PoliteFetcher(paths.http_cache)
+
+
+def _selected(spec: str | None) -> tuple[SourceConfig, ...]:
+    sources = load_sources()
+    if not spec:
+        return sources
+    wanted = set(spec.split(","))
+    unknown = wanted - {s.id for s in sources}
+    if unknown:
+        raise SystemExit(f"unknown source id(s): {sorted(unknown)}")
+    return tuple(s for s in sources if s.id in wanted)
+
+
 def cmd_sources(a: argparse.Namespace) -> int:
-    for s in load_sources():
-        print(f"{s.id:<20} {s.adapter:<18} {s.reliability:<7} {s.entry_url}")
+    """List the channels with their last-known health, or (`--check-health`) CHECK them now:
+    bounded, LLM-free, persisted. Exit 0 when the check ran — the report says what is wrong."""
+    from vinci.theme_intelligence.health import check_sources, render_text, to_json
+
+    sources = _selected(a.sources)
+    paths = Paths(Path(a.data_dir))
+    paths.ensure()
+    st = Store(paths.db)
+    if not a.check_health:
+        latest = st.latest_health()
+        for s in sources:
+            h = latest.get(s.id)
+            print(f"{s.id:<20} {s.adapter:<18} {s.reliability:<7} "
+                  f"{(h.status.value if h else 'UNKNOWN'):<9} "
+                  f"{(h.checked_at.strftime('%Y-%m-%d %H:%M') if h else 'never checked'):<16} "
+                  f"{s.entry_url}")
+        return 0
+    w_to = datetime.now(tz=UTC).date()
+    w_from = w_to - timedelta(days=a.days - 1)
+    run = check_sources(list(sources), _health_fetcher(paths), st, trigger="manual",
+                        window_from=w_from, window_to=w_to, force=a.force)
+    if a.json:
+        print(json.dumps(to_json(run, list(sources)), indent=1, sort_keys=True, default=str))
+    else:
+        print(f"source health — window {w_from}..{w_to} (newest-article freshness), "
+              f"{len(sources)} channel(s)")
+        print(render_text(run, list(sources)))
     return 0
 
 
@@ -238,7 +290,16 @@ def main(argv: list[str] | None = None) -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("init").set_defaults(fn=cmd_init)
-    sub.add_parser("sources").set_defaults(fn=cmd_sources)
+    so = sub.add_parser("sources", help="list the channels, or check their health")
+    so.add_argument("--check-health", action="store_true",
+                    help="check every channel now (bounded, LLM-free) and record the result")
+    so.add_argument("--json", action="store_true", help="machine-readable report")
+    so.add_argument("--force", action="store_true",
+                    help="re-test a channel that refused access less than 24h ago")
+    so.add_argument("--sources", help="comma-separated source ids (default: all eight)")
+    so.add_argument("--days", type=int, default=DEFAULT_SCAN_DAYS,
+                    help="freshness window ending today")
+    so.set_defaults(fn=cmd_sources)
 
     ar = sub.add_parser("article", help="analyse one article URL (publication-time replay)")
     ar.add_argument("--url", required=True)
@@ -246,7 +307,9 @@ def main(argv: list[str] | None = None) -> int:
     ar.add_argument("--source", help="source id (default: matched on the URL host)")
     ar.add_argument("--publisher", help="publisher name for a URL outside the eight channels "
                                         "(default: the matched channel's publisher, else UNKNOWN)")
-    ar.add_argument("--html", help="use this saved HTML instead of fetching")
+    ar.add_argument("--html", help="use this saved HTML instead of fetching — the MANUAL "
+                                   "UPLOAD route for an authorized copy of an article a "
+                                   "blocked or degraded channel will not serve")
     ar.add_argument("--fixture", help="use this extraction JSON instead of the LLM")
     ar.add_argument("--cache-only", action="store_true", help="never call the LLM")
     ar.add_argument("--no-review", action="store_true", help="skip the pass-2 LLM review")

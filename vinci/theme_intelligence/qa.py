@@ -29,7 +29,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from vinci.theme_intelligence.cards import card_sha
@@ -277,6 +277,13 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 if open_blocks else "ok"))
     add(QaCheck("every analysed article names its author(s)", not no_author,
                 _fail_list(no_author) or f"{len(article_ids)} article(s)"))
+
+    # source health: a scan checks every channel it covers at its start (runs from schema v3) ---
+    if run.mode == "scan" and run.db_schema_version >= 3:
+        known = store.latest_health(until=run.finished_at or datetime.now(tz=UTC))
+        unchecked = [sc.source_id for sc in run.sources if sc.source_id not in known]
+        add(QaCheck("source health recorded for every scanned channel", not unchecked,
+                    _fail_list(unchecked) or f"{len(run.sources)} channel(s)"))
 
     # append-only triggers ------------------------------------------------------------------------
     trig = {r[0] for r in store.conn.execute(

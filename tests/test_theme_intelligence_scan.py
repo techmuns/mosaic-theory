@@ -42,6 +42,23 @@ from vinci.theme_intelligence.schemas import RetrievalState, RunStatus, SourceCo
 WINDOW = (date(2026, 10, 1), date(2026, 10, 10))
 
 
+class LiveNetworkError(BaseException):
+    """A BaseException on purpose: the scan's broad `except Exception` must not swallow it."""
+
+
+@pytest.fixture(autouse=True)
+def _offline(monkeypatch: pytest.MonkeyPatch) -> None:
+    """No test here may reach a real host. Observed 2026-10-11: the scan's new source-health pass
+    went to the eight LIVE publishers from these offline tests (minutes of crawl delays) because
+    `_fake_scan` stubbed discovery but not the health check."""
+    import httpx
+
+    def refuse(self: Any, request: Any) -> Any:
+        raise LiveNetworkError(f"live network request in an offline test: {request.url}")
+
+    monkeypatch.setattr(httpx.HTTPTransport, "handle_request", refuse)
+
+
 class FakeFetcher:
     def __init__(self, pages: dict[str, str | None]) -> None:
         self.pages = pages
@@ -170,7 +187,24 @@ def _fake_scan(monkeypatch: pytest.MonkeyPatch, pipe: Pipeline, urls: list[str],
                             mechanism="demand_volume_shift", supporting=["c1"])])
         return ingest(self, art.doc(), x, as_of=as_of)
 
+    def health(sources: Any, f: Any, store: Any, *, trigger: str, window_from: date,
+               window_to: date, run_id: str | None = None, **_: Any) -> Any:
+        """The scan's source-health pass, offline: one UNKNOWN row per channel (the check itself
+        is exercised against a scripted web in test_theme_intelligence_source_health.py)."""
+        from vinci.theme_intelligence.health import HealthRun
+        from vinci.theme_intelligence.schemas import HealthStatus, SourceHealthCheck
+
+        rows = [SourceHealthCheck(
+            check_id=f"SH-test-{run_id}-{s.id}", source_id=s.id, publisher=s.publisher,
+            checked_at=datetime.now(tz=UTC), trigger=trigger, run_id=run_id,
+            status=HealthStatus.UNKNOWN, reason="not checked (no network in tests)",
+            next_action="—") for s in sources]
+        for h in rows:
+            store.add_health_check(h)
+        return HealthRun(checks=rows)
+
     monkeypatch.setattr(pipeline_mod, "discover_source", discover)
+    monkeypatch.setattr(pipeline_mod, "check_sources", health)
     monkeypatch.setattr(Pipeline, "process_url", process_url)
     return processed
 

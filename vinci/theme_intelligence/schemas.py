@@ -21,7 +21,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 2
+DB_SCHEMA_VERSION = 3
 
 
 class Frozen(BaseModel):
@@ -932,3 +932,105 @@ class VerificationIssue(Frozen):
     code: str
     detail: str
     created_at: datetime
+
+
+# --- source health (Priority 1A) ----------------------------------------------------------------
+
+class HealthStatus(StrEnum):
+    """A publisher channel's OPERATIONAL health — exactly one per check. Never inferred from an
+    entry page answering 200: discovery, a real article's extraction and its metadata are tested."""
+
+    HEALTHY = "HEALTHY"  # discovery and permitted full-text extraction work as expected
+    DEGRADED = "DEGRADED"  # partly works: previews, missing dates, partial extraction, parsing
+    BLOCKED = "BLOCKED"  # access denied, or cannot safely proceed under access / robots policy
+    ERROR = "ERROR"  # temporary technical failure, timeout, unexpected response, malfunction
+    UNKNOWN = "UNKNOWN"  # not yet checked, or too little evidence
+
+
+class Freshness(StrEnum):
+    """CONTENT freshness, tracked apart from health: a quiet week is not an unhealthy source."""
+
+    FRESH = "FRESH"  # the newest dated article falls inside the check window
+    QUIET = "QUIET"  # discovery works; nothing dated inside the window
+    UNKNOWN = "UNKNOWN"  # no dated article to judge by
+
+
+class HealthTest(Frozen):
+    #: access | discovery | extraction | dates_authors | completeness | freshness |
+    #: parser_integrity
+    name: str
+    result: Literal["PASS", "WARN", "FAIL", "SKIP"]
+    detail: str
+
+
+class ManualAction(Frozen):
+    """What the operator must do while automatic retrieval is BLOCKED or DEGRADED."""
+
+    kind: Literal["UPLOAD_REQUIRED", "MANUAL_REVIEW"]
+    issue: str
+    #: affected articles as discovered — "url — title as listed"; a title is never invented
+    affected: tuple[str, ...] = ()
+    action: str
+
+
+class SourceHealthCheck(Frozen):
+    """One immutable health observation of one channel (append-only `source_health` table)."""
+
+    check_id: str
+    source_id: str
+    publisher: str
+    checked_at: datetime
+    trigger: str  # manual | scan
+    run_id: str | None = None
+    status: HealthStatus
+    reason: str
+    next_action: str
+    expect_blocked: bool = False
+    tests: tuple[HealthTest, ...] = ()
+    freshness: Freshness = Freshness.UNKNOWN
+    newest_article_date: date | None = None
+    window_from: date | None = None
+    window_to: date | None = None
+    #: discovery: unique article URLs found, how many carry a listing date / title, in window
+    discovered: int = 0
+    dated: int = 0
+    titled: int = 0
+    in_window: int = 0
+    new_since_last_check: int | None = None
+    discovered_urls: tuple[str, ...] = ()  # capped; see `discovered_urls_truncated`
+    discovered_urls_truncated: bool = False
+    #: the first article read of those sampled to test extraction (never fabricated)
+    sample_url: str | None = None
+    sample_title: str | None = None
+    sample_published: date | None = None
+    sample_authors: tuple[str, ...] = ()
+    sample_words: int | None = None
+    sample_retrieval: str | None = None
+    sample_notes: tuple[str, ...] = ()
+    #: every sampled article, one line each: words, retrieval, date, byline — or why not read
+    samples: tuple[str, ...] = ()
+    #: words read per sampled page — a LATER check compares the same page with itself
+    sample_words_by_url: tuple[tuple[str, int], ...] = ()
+    #: the latest SCAN that covered this channel: its articles by retrieval outcome
+    last_scan_run_id: str | None = None
+    last_scan_full: int = 0
+    last_scan_partial: int = 0
+    last_scan_undated: int = 0
+    last_scan_unreadable: int = 0
+    #: carried forward from earlier checks when this one did not succeed at them
+    last_successful_discovery: datetime | None = None
+    last_successful_extraction: datetime | None = None
+    last_verified_publication_date: date | None = None
+    consecutive_failed_checks: int = 0
+    status_since: datetime | None = None
+    manual_action: ManualAction | None = None
+    #: what changed since the previous check of this channel (first check: "first check")
+    changes: tuple[str, ...] = ()
+    #: NEW_FAILURE | PERSISTENT_FAILURE | RECOVERED | KNOWN_RESTRICTION | "" (nothing new)
+    alert: str = ""
+    notified: str = ""  # what the notification hook did with the alert, if one was raised
+    requests: int = 0  # HTTP requests this check made (a bounded check — never a crawl)
+
+    @property
+    def manual_upload_recommended(self) -> bool:
+        return self.manual_action is not None and self.manual_action.kind == "UPLOAD_REQUIRED"

@@ -42,6 +42,7 @@ from vinci.theme_intelligence.schemas import (
     Mention,
     SecurityResolution,
     Snapshot,
+    SourceHealthCheck,
     ThemeRelation,
     Thesis,
     ThesisClaimLink,
@@ -59,7 +60,7 @@ _V1_APPEND_ONLY = (
     "snapshots", "verification_issues", "llm_calls",
 )
 #: Every append-only history table at the current schema.
-APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness")
+APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health")
 
 #: (version, statements). Version 1 is the initial schema. A later change APPENDS a new entry —
 #: never edits an applied one (a DB that already ran step N would silently diverge from one that
@@ -127,6 +128,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "BEGIN SELECT RAISE(ABORT, 'completeness is append-only'); END",
         "CREATE TRIGGER completeness_no_delete BEFORE DELETE ON completeness "
         "BEGIN SELECT RAISE(ABORT, 'completeness is append-only'); END",
+    ]),
+    # v3 (2026-10-11): SOURCE HEALTH — one immutable observation per channel per check (status,
+    # the seven tests, carried timestamps, changes, alert). Its history is what detects a change.
+    (3, [
+        "CREATE TABLE source_health (check_id TEXT PRIMARY KEY, source_id TEXT NOT NULL,"
+        " checked_at TEXT NOT NULL, payload TEXT NOT NULL)",
+        "CREATE INDEX ix_health_source ON source_health(source_id, checked_at)",
+        "CREATE TRIGGER source_health_no_update BEFORE UPDATE ON source_health "
+        "BEGIN SELECT RAISE(ABORT, 'source_health is append-only'); END",
+        "CREATE TRIGGER source_health_no_delete BEFORE DELETE ON source_health "
+        "BEGIN SELECT RAISE(ABORT, 'source_health is append-only'); END",
     ]),
 ]
 
@@ -494,6 +506,26 @@ class Store:
         return self._rows("SELECT payload FROM completeness WHERE article_version_id=? ORDER BY "
                           "run_id", [article_version_id], CompletenessReport)
 
+    def add_health_check(self, h: SourceHealthCheck) -> bool:
+        return self._append("source_health", {"check_id": h.check_id, "source_id": h.source_id,
+                                              "checked_at": h.checked_at.isoformat()}, h)
+
+    def health_checks(self, source_id: str | None = None,
+                      run_id: str | None = None) -> list[SourceHealthCheck]:
+        """Oldest first."""
+        rows = self._rows("SELECT payload FROM source_health" + (
+            " WHERE source_id=?" if source_id else "") + " ORDER BY checked_at, check_id",
+            [source_id] if source_id else [], SourceHealthCheck)
+        return [h for h in rows if run_id is None or h.run_id == run_id]
+
+    def latest_health(self, *, until: datetime | None = None) -> dict[str, SourceHealthCheck]:
+        """The newest check of every channel (recorded no later than `until`, when given)."""
+        out: dict[str, SourceHealthCheck] = {}
+        for h in self.health_checks():
+            if until is None or h.checked_at <= until:
+                out[h.source_id] = h
+        return out
+
     def completeness_for_run(self, run_id: str) -> list[CompletenessReport]:
         return self._rows("SELECT payload FROM completeness WHERE run_id=? ORDER BY "
                           "article_version_id", [run_id], CompletenessReport)
@@ -534,7 +566,8 @@ class Store:
     TABLES = ("meta", "articles", "article_versions", "extractions", "evidence_sources", "claims",
               "mentions", "security_resolutions", "theses", "thesis_versions",
               "thesis_claim_links", "contributions", "relations", "change_events", "runs",
-              "snapshots", "verification_issues", "llm_calls", "candidates", "completeness")
+              "snapshots", "verification_issues", "llm_calls", "candidates", "completeness",
+              "source_health")
 
     def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY

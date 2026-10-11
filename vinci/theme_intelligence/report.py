@@ -76,6 +76,16 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
                          "NOTHING_ANALYSED")
 
 
+def source_health_as_of(store: Store, run: WeeklyRun) -> dict[str, Any]:
+    """Every configured channel's latest health record written no later than the run finished
+    (a scan checks its channels at its start) — a never-checked channel counts UNKNOWN."""
+    from vinci.theme_intelligence.config import load_sources
+    from vinci.theme_intelligence.health import summary
+
+    until = run.finished_at or datetime.now(tz=UTC)
+    return summary(list(store.latest_health(until=until).values()), list(load_sources()))
+
+
 def research_verification(store: Store, run: WeeklyRun) -> dict[str, Any]:
     """The run's RESEARCH-VERIFICATION status, never folded into its execution status (review of
     PR #703, round 3). Over the completeness ledgers THIS RUN recorded — one per analysed article
@@ -317,6 +327,8 @@ class Dashboard:
     kpi: dict[str, Any] = field(default_factory=dict)
     #: the RESEARCH-VERIFICATION status (see `research_verification`) — apart from run status
     verification: dict[str, Any] = field(default_factory=dict)
+    #: SOURCE HEALTH as of the run (see `health.summary`) — apart from execution and verification
+    source_health: dict[str, Any] = field(default_factory=dict)
 
 
 def _sources_line(store: Store, tid: str, run_id: str) -> list[str]:
@@ -495,6 +507,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         validation=val, generated=generated)
     d.kpi = kpis(d, store)
     d.verification = research_verification(store, run)
+    d.source_health = source_health_as_of(store, run)
     return d
 
 
@@ -589,6 +602,9 @@ padding:10px 12px;border-radius:8px;font-weight:700;margin:0 0 12px}
 .kpi small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
 .vstat{border:1px solid var(--line);border-left:4px solid var(--watch);border-radius:8px;
 padding:8px 12px;margin:0 0 12px}
+.sh{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 12px}
+.sh ul{margin:6px 0 0;padding-left:18px}.sh li{margin:4px 0}
+.sh .pill{margin-right:6px}.sh table{font-size:12px}
 .kpi span{display:block;color:var(--muted);
 font-size:12px}
 .cat{margin:18px 0 6px;font:700 14px/1.3 ui-sans-serif,system-ui;text-transform:uppercase;
@@ -696,6 +712,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
         f'<div class="kpi"><span>{e(t[0])}</span><b>{e(t[1])}</b>'
         + (f"<small>{e(t[2])}</small>" if len(t) > 2 else "") + "</div>" for t in kp)
         + "</div>")
+    parts.append(_health_html(d.source_health, print_mode))
     if d.sources:
         parts.append('<details class="sec"' + (" open" if print_mode else "")
                      + '><summary>Source coverage (' + str(len(d.sources)) + ')</summary><table>'
@@ -770,6 +787,61 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
             + "<div class=wrap>" + "".join(parts) + "</div>" + script + "</body></html>")
 
 
+_HEALTH_PILL = {"HEALTHY": "skip", "DEGRADED": "watch", "BLOCKED": "now", "ERROR": "now",
+                "UNKNOWN": "dir"}
+
+
+def _health_html(h: dict[str, Any], print_mode: bool) -> str:
+    """The compact block: the counts line, NEW changes prominently, only the channels needing
+    attention (reason, action, affected article if known), and all eight on demand. Reasons are
+    composed sentences — never a stack trace."""
+    if not h:
+        return ""
+    when = (f"checked {h['checked_at'][:16].replace('T', ' ')} UTC"
+            if h.get("checked_at") else "not checked yet")
+    out = [f'<div class="sh"><div class="k">Research source health</div><div><b>'
+           f'{e(h["line"])}</b> <small class="note">{e(when)} — the health of the publisher '
+           f'channels, apart from the scan\'s execution and research verification</small></div>']
+    if h.get("new_alerts"):
+        out.append('<div class="banner">Source-health changes: ' + " · ".join(
+            e(f"{r['publisher']} [{r['alert'].replace('_', ' ').lower()}] — "
+              f"{'; '.join(r['changes'])}") for r in h["new_alerts"]) + "</div>")
+    if h.get("attention"):
+        items = []
+        for r in h["attention"]:
+            ma = r.get("manual_action")
+            items.append(
+                f'<li><b>{e(r["publisher"])}</b> <span class="pill '
+                f'{_HEALTH_PILL.get(r["status"], "dir")}">{e(r["status"])}</span>'
+                + (" <small>(known standing restriction)</small>" if r["expect_blocked"]
+                   and r["status"] == "BLOCKED" else "")
+                + f'<div class="note">{e(r["reason"])}</div>'
+                + (f'<div class="note"><b>{e(ma["kind"].replace("_", " ").title())}</b>: '
+                   f'{e(ma["action"])}' + (f" — affected: {e('; '.join(ma['affected'][:2]))}"
+                                           if ma["affected"] else "") + "</div>"
+                   if ma else f'<div class="note">{e(r["next_action"])}</div>') + "</li>")
+        out.append("<ul>" + "".join(items) + "</ul>")
+    rows = "".join(
+        f"<tr><td>{e(r['publisher'])}</td><td>{e(r['status'])}</td><td>{e(r['freshness'])}"
+        f"{(' · newest ' + e(r['newest_article_date'])) if r['newest_article_date'] else ''}</td>"
+        f"<td>{e((r['checked_at'] or '—')[:16].replace('T', ' '))}</td>"
+        f"<td>{e((r['last_successful_discovery'] or '—')[:10])}</td>"
+        f"<td>{e((r['last_successful_extraction'] or '—')[:10])}</td>"
+        f"<td>{e(r['last_verified_publication_date'] or '—')}</td>"
+        f"<td>{r['discovered']} / {r['in_window']}</td>"
+        f"<td>{r['consecutive_failed_checks']}</td>"
+        f"<td>{'yes' if r['manual_upload_recommended'] else '—'}</td></tr>"
+        for r in h["rows"])
+    out.append('<details class="sec"' + (" open" if print_mode else "")
+               + f'><summary>All {h["total"]} publishers — last successful checks</summary>'
+               "<table><tr><th>Publisher</th><th>Health</th><th>Freshness</th><th>Last checked "
+               "(UTC)</th><th>Last discovery OK</th><th>Last full-text OK</th><th>Last verified "
+               "publication date</th><th>Discovered / listing-dated in window</th>"
+               "<th>Consecutive failed checks</th><th>Manual upload</th></tr>" + rows
+               + "</table></details>")
+    return "".join(out) + "</div>"
+
+
 def render_dashboard_md(d: Dashboard) -> str:
     run = d.run
     v = d.verification or {}
@@ -799,6 +871,29 @@ def render_dashboard_md(d: Dashboard) -> str:
            f"this run's events; a thesis new this run can also be challenged in it",
            f"- Reported figures not yet captured: {k.get('figures_uncaptured', 0)} of "
            f"{k.get('figures_in_articles', 0)}", ""]
+    h = d.source_health
+    if h:
+        md += ["## Research source health", "", f"**{h['line']}** — "
+               + (f"checked {h['checked_at'][:16].replace('T', ' ')} UTC"
+                  if h.get("checked_at") else "not checked yet")
+               + "; the channels' health, apart from execution and research verification", ""]
+        md += [f"- **Change — {r['publisher']}** [{r['alert']}]: {'; '.join(r['changes'])}"
+               for r in h.get("new_alerts", [])]
+        for r in h.get("attention", []):
+            ma = r.get("manual_action")
+            md.append(f"- **{r['publisher']}** — {r['status']}: {r['reason']} → "
+                      + (f"{ma['kind']}: {ma['action']}" if ma else r["next_action"]))
+        md += ["", "| Publisher | Health | Freshness | Last checked | Last discovery OK | "
+               "Last full-text OK | Last verified publication date | Discovered / "
+               "listing-dated in window | Consecutive failed | Manual upload |",
+               "|---|---|---|---|---|---|---|---|---|---|"]
+        md += [f"| {r['publisher']} | {r['status']} | {r['freshness']} | "
+               f"{(r['checked_at'] or '—')[:16]} | {(r['last_successful_discovery'] or '—')[:10]}"
+               f" | {(r['last_successful_extraction'] or '—')[:10]} | "
+               f"{r['last_verified_publication_date'] or '—'} | {r['discovered']} / "
+               f"{r['in_window']} | {r['consecutive_failed_checks']} | "
+               f"{'yes' if r['manual_upload_recommended'] else '—'} |" for r in h["rows"]]
+        md.append("")
     if d.sources:
         md += ["## Source coverage", "",
               "| Source | Status | Discovered | In window | Undated | New | Processed | Queued | "
@@ -931,6 +1026,9 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
         "warnings": run.warnings,
         "verification": d.validation,
         "research_verification": dict(d.verification),
+        "source_health": {k: d.source_health[k] for k in ("line", "counts", "checked_at",
+                                                          "attention", "new_alerts")
+                          if k in d.source_health},
         "theses_in_registry": len(d.archive),
         "outputs": sorted(str(p.relative_to(out)) for p in out.rglob("*") if p.is_file()),
         "output_dir": str(out),

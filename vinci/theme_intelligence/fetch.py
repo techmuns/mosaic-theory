@@ -87,6 +87,9 @@ class PoliteFetcher:
         self._last: dict[str, float] = {}
         self._host_floor: dict[str, float] = {}
         self.stats = FetchStats()
+        #: when set, no cached copy older than this is served — a source-health check tests the
+        #: LIVE site (its fresh answers are cached, so the scan that follows does not refetch)
+        self.ttl_cap: float | None = None
 
     # -- policy ----------------------------------------------------------------------------------
     def set_host_floor(self, url: str, seconds: float) -> None:
@@ -175,6 +178,8 @@ class PoliteFetcher:
 
     # -- fetch -----------------------------------------------------------------------------------
     def fetch(self, url: str, *, ttl_s: float | None = 7 * 86_400.0) -> FetchResult:
+        if self.ttl_cap is not None:
+            ttl_s = self.ttl_cap if ttl_s is None else min(ttl_s, self.ttl_cap)
         hit = self.cached(url, ttl_s)
         if hit is not None:
             return hit

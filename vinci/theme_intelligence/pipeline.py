@@ -50,7 +50,7 @@ from vinci.theme_intelligence.config import (
     SourceConfig,
     Taxonomy,
 )
-from vinci.theme_intelligence.discovery import Discovery, discover_source
+from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
 from vinci.theme_intelligence.engine import ArticleContext, Engine, ThesisOutcome
 from vinci.theme_intelligence.extract import (
     COMPACT_MAX_CLAIMS,
@@ -62,6 +62,7 @@ from vinci.theme_intelligence.extract import (
     run_extraction,
 )
 from vinci.theme_intelligence.fetch import FetchResult, PoliteFetcher
+from vinci.theme_intelligence.health import HealthRun, check_sources
 from vinci.theme_intelligence.parse import ParsedDocument, parse_document
 from vinci.theme_intelligence.schemas import (
     DB_SCHEMA_VERSION,
@@ -72,11 +73,13 @@ from vinci.theme_intelligence.schemas import (
     CardContent,
     Claim,
     FieldStatus,
+    HealthStatus,
     IssueSeverity,
     RetrievalState,
     RunStatus,
     SecurityResolution,
     Snapshot,
+    SourceCoverage,
     ThesisStatus,
     VerificationIssue,
     WeeklyRun,
@@ -133,6 +136,8 @@ class Pipeline:
         self.resolver = resolver or SecResolver(self.paths.http_cache)
         self.review = review
         self.run: WeeklyRun | None = None
+        #: the source-health pass taken at the start of the current scan (None before one)
+        self.health: HealthRun | None = None
         self._calls = 0
         # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
         # review, and says so in the validation log rather than passing silently
@@ -253,7 +258,8 @@ class Pipeline:
                     html: str | None = None, fixture: dict[str, Any] | None = None,
                     publisher_override: str | None = None,
                     listed: tuple[date, str] | None = None,
-                    completeness_fixture: dict[str, Any] | None = None) -> ArticleResult:
+                    completeness_fixture: dict[str, Any] | None = None,
+                    html_note: str = "supplied fixture HTML") -> ArticleResult:
         assert self.run is not None
         src = self.sources.get(source_id)
         publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
@@ -265,7 +271,7 @@ class Pipeline:
             else:
                 body = html.encode()
                 fr = FetchResult(url=url, final_url=url, status=200,
-                                 state=RetrievalState.FULL, note="supplied fixture HTML",
+                                 state=RetrievalState.FULL, note=html_note,
                                  content=body, content_type="text/html", fetched_at=now,
                                  sha256=hashlib.sha256(body).hexdigest(), cache_path=None,
                                  from_cache=False, seconds=0.0)
@@ -598,11 +604,16 @@ class Pipeline:
     # -- convenience ------------------------------------------------------------------------------
     def run_article(self, url: str, *, as_of: date, source_id: str = "manual",
                     publisher: str | None = None, html: str | None = None,
-                    fixture: dict[str, Any] | None = None) -> tuple[WeeklyRun, ArticleResult]:
+                    fixture: dict[str, Any] | None = None,
+                    html_note: str = "supplied fixture HTML") -> tuple[WeeklyRun, ArticleResult]:
+        """One article — fetched, or an operator-supplied copy (`html`): the manual-upload route
+        for a BLOCKED or DEGRADED channel, through the SAME pipeline. An upload never changes the
+        channel's health record: one document is not proof the channel's coverage is complete."""
         self.start_run("article", as_of=as_of, window_from=as_of, window_to=as_of)
         try:
             res = self.process_url(url, source_id=source_id, as_of=as_of, html=html,
-                                   fixture=fixture, publisher_override=publisher)
+                                   fixture=fixture, publisher_override=publisher,
+                                   html_note=html_note)
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
                                                     f"{traceback.format_exc()[-1500:]}")
@@ -642,13 +653,41 @@ class Pipeline:
         run = self.run
         assert run is not None
         try:
+            # SOURCE HEALTH first, at the start of every new scan (manual or scheduled): bounded,
+            # LLM-free, persisted — and never able to stop the scan
+            if not resume_run_id:
+                try:
+                    self.health = check_sources(
+                        list(self.sources.values()), self.fetcher, self.store, trigger="scan",
+                        run_id=run.run_id, window_from=window_from, window_to=window_to)
+                except Exception as exc:  # noqa: BLE001 — the scan goes on; the gap is said
+                    self.health = None
+                    run.warnings.append(f"source-health check failed ({type(exc).__name__}) — "
+                                        f"the scan continued without it")
+            denied = {h.source_id: h for h in (self.health.checks if self.health else [])
+                      if h.status is HealthStatus.BLOCKED
+                      and any(t.name == "access" and t.result == "FAIL" for t in h.tests)}
             # what earlier runs QUEUED is read FIRST, before discovery touches the table, and
             # it is offered ahead of this run's own candidates
             carried = [(url, meta) for url, _st, meta in self.store.candidates("QUEUED")]
             discoveries: list[Discovery] = []
             for src in self.sources.values():
-                d = discover_source(src, self.fetcher, self.store, window_from=window_from,
-                                    window_to=window_to)
+                h = denied.get(src.id)
+                if h is not None:  # refused at the endpoint moments ago — never asked twice
+                    bcov = SourceCoverage(
+                        source_id=src.id, publisher=src.publisher, channel=src.channel,
+                        method=METHOD.get(src.adapter, src.adapter), checked_at=h.checked_at,
+                        status="BLOCKED", errors=[f"{h.reason} (source-health check "
+                                                  f"{h.check_id})"])
+                    if src.expect_blocked:
+                        bcov.warnings.append("standing access limitation recorded in "
+                                            "sources.toml — this channel refuses the honest "
+                                            "research User-Agent; it is reported every run, "
+                                            "never bypassed")
+                    d = Discovery(bcov, [])
+                else:
+                    d = discover_source(src, self.fetcher, self.store, window_from=window_from,
+                                        window_to=window_to)
                 discoveries.append(d)
                 for c in d.candidates:
                     queued_c = self.store.candidate(c.url)
