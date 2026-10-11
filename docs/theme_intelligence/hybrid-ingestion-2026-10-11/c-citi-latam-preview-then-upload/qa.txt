@@ -1,0 +1,21 @@
+  [PASS] run status recorded: status SUCCEEDED; counts {'figures_in_articles': 319, 'figures_uncaptured': 1, 'claims_added_by_completeness': 91, 'theses_added_by_completeness': 11, 'articles_processed': 1, 'claims_extracted': 118, 'claims_verified': 116, 'mentions': 37, 'theses_created': 13, 'theses_updated': 1, 'attributions_only': 0, 'documents_upgraded': 1, 'llm_calls': 34, 'llm_calls_cached': 0, 'http_requests': 0, 'http_cache_hits': 0}
+  [PASS] no unverified claim is linked to a thesis: 137 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 145 of 145 verified claim(s) in 1 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 14 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 14 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 1 article(s)
+  [FAIL] every reported figure captured or judged immaterial: OPEN — 1 of 324 figure(s): A-446cf596aeca b157 '23' [capture_not_verified]
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 1 article(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/hybrid-c/runs/R-20261011T101121Z-ingest
+QA R-20261011T101121Z-ingest: 19/20 passed · scan execution SUCCEEDED · research verification INCOMPLETE — NOT fully verified — over the 1 article(s) this run analysed: 1 of 319 stated figure(s) and 0 of 208 argument paragraph(s) open; causes: capture_not_verified 1. Open material is never used as evidence, so it can hold a thesis back but never raise its research action

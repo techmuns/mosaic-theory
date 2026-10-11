@@ -1,0 +1,1849 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-09-28",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T10:16:27.774568Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-28",
+   "latest_article_date": "2026-09-28",
+   "region": "China",
+   "research_action": "WATCH",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-B121174B17",
+   "title": "GLM-5 attention config suggests optimization for Chinese Moore Threads accelerators, not NVIDIA"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-b2ab8d44618580",
+     "C-783b9d67b5d351",
+     "C-1d7c092f10529c",
+     "C-2e8f496792631e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "GLM-5 uses H=64 query heads giving arithmetic intensity 120.8 FLOP/B, versus the H~=128 ridge point for H800 at 258.2 FLOP/B; SemiAnalysis suspects this targets Moore Threads MTT S4000 (~128 FLOP/B), corroborated by Moore Threads' GLM-5.3-Flash day-0 support. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1d7c092f10529c",
+     "C-2e8f496792631e",
+     "C-783b9d67b5d351"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article infers GLM-5 may be designed for different (likely Chinese) hardware than DeepSeek's H800-tuned configuration. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If leading Chinese open-weight models are being tuned to domestic silicon's roofline, it points to growing demand substitution away from NVIDIA/H800-class hardware toward Chinese accelerators, though the article offers only a circumstantial, inferential link."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b2ab8d44618580"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "H800's practical arithmetic intensity is 258.2 FLOP/B (865 TFLOP/s practical peak, 3.35 TB/s bandwidth per DeepSeek), implying the MLA head count ridge point is H~=128."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-783b9d67b5d351"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "GLM-5's MLA configuration (d=512, r=64, b=2, H=64) yields an arithmetic intensity of 120.8 FLOP/B."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cbda404494f3f3"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "DeepSeek V3.2 MLA configuration uses head dimension d=512, RoPE dimension r=64, and 2 bytes per parameter."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8fe66a8b4e720d"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "GLM-5 increases the QK NoPE dimension from 128 to 192, with ablations showing superiority under iso-FLOP and iso-parameter constraints."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c796f7d94f2e89"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The change raises the SDPA head dimension from 192 to 256, still a 33% FLOP reduction after the head-count reduction."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-93d2cc2b57ea52"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "MHA mode has 42x higher memory cost; MQA mode has up to 3.4x higher FLOPs."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 8 pieces of evidence from A-c051303aa7e1 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:16 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b2ab8d44618580",
+     "C-783b9d67b5d351",
+     "C-1d7c092f10529c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Chinese model developers tune attention configurations to the arithmetic-intensity ridge point of specific accelerators. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1d7c092f10529c"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "If GLM-5 is optimized for Moore Threads MTT S4000, demand for that accelerator (and software support like day-0 GLM-5.3-Flash) could rise relative to NVIDIA parts. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Article does not quantify any earnings, revenue or share-shift effect for any named vendor."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b059",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1d7c092f10529c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "arithmetic intensity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "suspect",
+     "Moore Threads MTT S4000"
+    ],
+    "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000, which is about 128 FLOP/B. Moore Threads\u2019 collaboration with Z.ai, such as GLM-5.3-Flash day 0 support , corroborates our theory.",
+    "role": "supports",
+    "unit": "FLOP/B",
+    "value": 128.0,
+    "value_text": "about 128 FLOP/B"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b059",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2e8f496792631e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "number of query heads",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "half the number",
+     "may be designed for different hardware"
+    ],
+    "quote": "The fact that GLM-5 has H = 64, half the number of query heads, implies that GLM-5 may be designed for different hardware.",
+    "role": "supports",
+    "unit": "heads",
+    "value": 64.0,
+    "value_text": "64"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b059",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-783b9d67b5d351",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "GLM-5 arithmetic intensity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "d=512, r=64, b=2, H=64"
+    ],
+    "quote": "If we plug in GLM-5\u2019s configuration (d = 512, r = 64, b = 2, H = 64), we get an arithmetic intensity of 120.8 FLOP/B.",
+    "role": "supports",
+    "unit": "FLOP/B",
+    "value": 120.8,
+    "value_text": "120.8"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b060",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8fe66a8b4e720d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "QK NoPE dimension",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "iso-FLOP and iso-parameter ablations"
+    ],
+    "quote": "GLM-5 increases the QK NoPE dimension from 128 to 192, as ablations show the configuration is superior under iso-FLOP and iso-parameter constraints",
+    "role": "supports",
+    "unit": "dimensions",
+    "value": 192.0,
+    "value_text": "128 to 192"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-93d2cc2b57ea52",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "MHA vs MQA memory cost",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": null,
+    "qualifiers": [
+     "MHA mode",
+     "memory cost"
+    ],
+    "quote": "MHA mode has lower FLOPs but 42x higher memory cost, MQA mode has lower memory cost but up to 3.4x higher FLOPs.",
+    "role": "supports",
+    "unit": "x",
+    "value": 42.0,
+    "value_text": "42x"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b058",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b2ab8d44618580",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "H800 arithmetic intensity",
+    "measured_as_of": null,
+    "origin": "DeepSeek",
+    "period": null,
+    "qualifiers": [
+     "865 TFLOP/s practical peak",
+     "3.35 TB/s bandwidth",
+     "implies H~=128"
+    ],
+    "quote": "H800\u2019s practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+    "role": "supports",
+    "unit": "FLOP/B",
+    "value": 258.2,
+    "value_text": "258.2"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b060",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c796f7d94f2e89",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "SDPA FLOP reduction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "head dimension 192 to 256",
+     "after head number reduction"
+    ],
+    "quote": "This increases the SDPA head dimension from 192 to 256, which is still a 33% FLOP reduction after considering the head number reduction.",
+    "role": "supports",
+    "unit": "%",
+    "value": 33.0,
+    "value_text": "33%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b056",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cbda404494f3f3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "MLA config (DeepSeek V3.2)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "d=512",
+     "r=64",
+     "b=2"
+    ],
+    "quote": "the DeepSeek V3.2 configuration d = 512, r = 64, b = 2",
+    "role": "supports",
+    "unit": null,
+    "value": 512.0,
+    "value_text": "d = 512, r = 64, b = 2"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2dd2f298c71b9d",
+     "name_as_written": "GB300",
+     "other_securities": [],
+     "quote": "GB300 delivers the lowest modeled serving cost",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GPU system benchmarked as lowest-cost at 150 tps in InferenceX"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-34ce6b28851eb6",
+     "name_as_written": "GB200",
+     "other_securities": [],
+     "quote": "still leaves it ahead of GB200 on cost efficiency",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GPU system benchmarked in InferenceX serving-cost comparison"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2f8f16d4f425dc",
+     "name_as_written": "MI355X",
+     "other_securities": [],
+     "quote": "compared with $0.049 for MI355X running ATOM",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "AMD GPU benchmarked against NVIDIA in serving-cost comparison"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c61613b05c245b",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "In comparison with AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "hardware vendor whose MI355X is compared against NVIDIA systems"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-18aafa1ff1028a",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "developer of DeepSeek Sparse Attention and V3.2 compared against GLM-5"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8b8aa7e97474f9",
+     "name_as_written": "SGLang",
+     "other_securities": [],
+     "quote": "the SGLang team designed HiSparse",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "team/engine behind HiSparse hierarchical memory system"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ed66e3b10b27ee",
+     "name_as_written": "vLLM",
+     "other_securities": [],
+     "quote": "vLLM keeping the first decoding step on a consistent CUDA graph execution path",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "open-source inference engine referenced for optimizations"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-86905dfc28f8aa",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: InferenceX | SemiAnalysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "publisher of the article and owner of InferenceX benchmark platform"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-275a983fa8dcfc",
+     "name_as_written": "InferenceX",
+     "other_securities": [],
+     "quote": "In our realtime benchmark board InferenceX",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "SemiAnalysis's realtime benchmark platform used for serving-cost estimates"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2774b4ca845156",
+     "name_as_written": "ATOM",
+     "other_securities": [],
+     "quote": "$0.049 for MI355X running ATOM",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "inference engine for AMD MI355X in benchmarks"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7debe17e096e37",
+     "name_as_written": "TileRT",
+     "other_securities": [],
+     "quote": "TileRT is a low-latency LLM inference engine",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Low-latency LLM inference engine that supported AMD MI355X first for GLM-5.3"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2975ddb7655591",
+     "name_as_written": "MI335X",
+     "other_securities": [],
+     "quote": "2x the P90 interactivity than the best FP4 MI335X config",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "AMD GPU config used as interactivity comparator against FP8 TileRT MI355X"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-30fcd13a4cd6a5",
+     "name_as_written": "GB300 NVL72",
+     "other_securities": [],
+     "quote": "Comparing to GB300 NVL72, it brings a 40% uplift in interactivity",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GB300 NVL72 rack-scale system used as interactivity comparator"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8e4e50029e0282",
+     "name_as_written": "slime",
+     "other_securities": [],
+     "quote": "Z.ai uses slime , one of the best open-source RL training frameworks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Open-source RL training framework used by Z.ai as post-training infrastructure"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bc3ad598f54875",
+     "name_as_written": "PyTorch",
+     "other_securities": [],
+     "quote": "stores teacher weights as PyTorch tensors pinned to CPU memory",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Framework whose tensors are used in slime's teacher-switching implementation"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-b52130af2769a8",
+     "name_as_written": "NVIDIA GPUs",
+     "other_securities": [],
+     "quote": "Ultra-High Interactivity on NVIDIA GPUs?",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "GPU maker referenced in TileRT interactivity analysis"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-25a5614a5b7552",
+     "name_as_written": "Moore Threads MTT S4000",
+     "other_securities": [],
+     "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Chinese GPU suspected as GLM-5's target hardware"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-fc03e3eff390c7",
+     "name_as_written": "H800",
+     "other_securities": [],
+     "quote": "MLA\u2019s SDPA arithmetic intensity during decode is roughly at the ridge point of H800",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GPU whose roofline DeepSeek designed around"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-2fea7554655073",
+     "name_as_written": "DeepSeek V3.2",
+     "other_securities": [],
+     "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "DeepSeek model that introduced DeepSeek Sparse Attention, compared to GLM-5"
+    }
+   ],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-4cac927d79e3f0",
+     "name_as_written": "Moore Threads",
+     "other_securities": [],
+     "quote": "Moore Threads\u2019 collaboration with Z.ai",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Chinese GPU vendor collaborating with Z.ai, suspected target hardware for GLM-5"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-25100ed28a87c6",
+     "name_as_written": "Z.ai",
+     "other_securities": [],
+     "quote": "here we explain the design of Z.ai\u2019s GLM-5 model series",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "developer of the GLM-5 model series analyzed in the article"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "AI accelerators",
+    "semiconductors"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-1d7c092f10529c"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "No near-term catalyst stated; the inference rests on model architecture analysis and a collaboration (Moore Threads day-0 support). \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-b2ab8d44618580",
+      "C-783b9d67b5d351",
+      "C-1d7c092f10529c"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "Model-hardware co-design tuned to domestic accelerator roofline could structurally support Chinese AI silicon demand over multi-year horizons. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-8fe66a8b4e720d",
+      "C-783b9d67b5d351"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The H=64 choice could reflect other design trade-offs (iso-FLOP/iso-parameter ablations favoring QK NoPE dimension) rather than hardware targeting, so the Moore Threads inference remains a suspicion."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 SIBLING with TH-B931F456C4: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "GLM-5.x models shown to run primarily on NVIDIA hardware at scale"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No meaningful Moore Threads deployment or revenue tied to Z.ai"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: If GLM-5's reduced query-head count (H=64, arithmetic intensity 120.8 FLOP/B) reflects design for domestic accelerators rather than H800"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether GLM-5 is actually deployed on Moore Threads MTT S4000 in production volume"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether any share shift away from NVIDIA/H800 materializes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Moore Threads is privately held / not clearly listed, so no direct listed-equity read; the hardware-targeting link is association, not demonstrated causation"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence GLM-5.x remains predominantly served on NVIDIA/H-series GPUs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Attention config attributed to pure algorithmic ablation with no hardware intent"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Verify whether Z.ai production serving of GLM-5.x runs on Moore Threads MTT S4000 and quantify any accelerator volume/share implications versus NVIDIA."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Confirmed large-scale GLM-5.x deployment on Moore Threads hardware"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Expanded Moore Threads\u2013Z.ai hardware collaboration announcements"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is speculative in the source; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-c051303aa7e1",
+    "authors": [
+     "Kimbo Chen",
+     "Alec Ibarra",
+     "Wenyao Gao",
+     "Pratt Bhatt",
+     "Bryan Shan",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-cbda404494f3f3",
+     "C-b2ab8d44618580",
+     "C-783b9d67b5d351",
+     "C-8fe66a8b4e720d",
+     "C-c796f7d94f2e89",
+     "C-93d2cc2b57ea52",
+     "C-1d7c092f10529c",
+     "C-2e8f496792631e"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-28T19:26:41Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Inside GLM-5.3: How Sparse Attention Affects DRAM Memory TAM",
+    "upstream_origins": [
+     "DeepSeek",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 10:43 UTC from the registry (ti-engine-2; run R-20261011T101628Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-09-28",
+   "change_summary": "Initial record \u2014 created from A-c051303aa7e1",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-09-28",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T10:16:27.774568Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-28",
+     "latest_article_date": "2026-09-28",
+     "region": "China",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-B121174B17",
+     "title": "GLM-5 attention config suggests optimization for Chinese Moore Threads accelerators, not NVIDIA"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-b2ab8d44618580",
+       "C-783b9d67b5d351",
+       "C-1d7c092f10529c",
+       "C-2e8f496792631e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "GLM-5 uses H=64 query heads giving arithmetic intensity 120.8 FLOP/B, versus the H~=128 ridge point for H800 at 258.2 FLOP/B; SemiAnalysis suspects this targets Moore Threads MTT S4000 (~128 FLOP/B), corroborated by Moore Threads' GLM-5.3-Flash day-0 support. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1d7c092f10529c",
+       "C-2e8f496792631e",
+       "C-783b9d67b5d351"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article infers GLM-5 may be designed for different (likely Chinese) hardware than DeepSeek's H800-tuned configuration. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If leading Chinese open-weight models are being tuned to domestic silicon's roofline, it points to growing demand substitution away from NVIDIA/H800-class hardware toward Chinese accelerators, though the article offers only a circumstantial, inferential link."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b2ab8d44618580"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "H800's practical arithmetic intensity is 258.2 FLOP/B (865 TFLOP/s practical peak, 3.35 TB/s bandwidth per DeepSeek), implying the MLA head count ridge point is H~=128."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-783b9d67b5d351"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "GLM-5's MLA configuration (d=512, r=64, b=2, H=64) yields an arithmetic intensity of 120.8 FLOP/B."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cbda404494f3f3"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "DeepSeek V3.2 MLA configuration uses head dimension d=512, RoPE dimension r=64, and 2 bytes per parameter."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8fe66a8b4e720d"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "GLM-5 increases the QK NoPE dimension from 128 to 192, with ablations showing superiority under iso-FLOP and iso-parameter constraints."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c796f7d94f2e89"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The change raises the SDPA head dimension from 192 to 256, still a 33% FLOP reduction after the head-count reduction."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-93d2cc2b57ea52"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "MHA mode has 42x higher memory cost; MQA mode has up to 3.4x higher FLOPs."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 8 pieces of evidence from A-c051303aa7e1 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:16 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b2ab8d44618580",
+       "C-783b9d67b5d351",
+       "C-1d7c092f10529c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Chinese model developers tune attention configurations to the arithmetic-intensity ridge point of specific accelerators. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1d7c092f10529c"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "If GLM-5 is optimized for Moore Threads MTT S4000, demand for that accelerator (and software support like day-0 GLM-5.3-Flash) could rise relative to NVIDIA parts. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Article does not quantify any earnings, revenue or share-shift effect for any named vendor."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1d7c092f10529c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "arithmetic intensity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "suspect",
+       "Moore Threads MTT S4000"
+      ],
+      "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000, which is about 128 FLOP/B. Moore Threads\u2019 collaboration with Z.ai, such as GLM-5.3-Flash day 0 support , corroborates our theory.",
+      "role": "supports",
+      "unit": "FLOP/B",
+      "value": 128.0,
+      "value_text": "about 128 FLOP/B"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2e8f496792631e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "number of query heads",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "half the number",
+       "may be designed for different hardware"
+      ],
+      "quote": "The fact that GLM-5 has H = 64, half the number of query heads, implies that GLM-5 may be designed for different hardware.",
+      "role": "supports",
+      "unit": "heads",
+      "value": 64.0,
+      "value_text": "64"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-783b9d67b5d351",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "GLM-5 arithmetic intensity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "d=512, r=64, b=2, H=64"
+      ],
+      "quote": "If we plug in GLM-5\u2019s configuration (d = 512, r = 64, b = 2, H = 64), we get an arithmetic intensity of 120.8 FLOP/B.",
+      "role": "supports",
+      "unit": "FLOP/B",
+      "value": 120.8,
+      "value_text": "120.8"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b060",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8fe66a8b4e720d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "QK NoPE dimension",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "iso-FLOP and iso-parameter ablations"
+      ],
+      "quote": "GLM-5 increases the QK NoPE dimension from 128 to 192, as ablations show the configuration is superior under iso-FLOP and iso-parameter constraints",
+      "role": "supports",
+      "unit": "dimensions",
+      "value": 192.0,
+      "value_text": "128 to 192"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-93d2cc2b57ea52",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "MHA vs MQA memory cost",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": null,
+      "qualifiers": [
+       "MHA mode",
+       "memory cost"
+      ],
+      "quote": "MHA mode has lower FLOPs but 42x higher memory cost, MQA mode has lower memory cost but up to 3.4x higher FLOPs.",
+      "role": "supports",
+      "unit": "x",
+      "value": 42.0,
+      "value_text": "42x"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b058",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b2ab8d44618580",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "H800 arithmetic intensity",
+      "measured_as_of": null,
+      "origin": "DeepSeek",
+      "period": null,
+      "qualifiers": [
+       "865 TFLOP/s practical peak",
+       "3.35 TB/s bandwidth",
+       "implies H~=128"
+      ],
+      "quote": "H800\u2019s practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+      "role": "supports",
+      "unit": "FLOP/B",
+      "value": 258.2,
+      "value_text": "258.2"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b060",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c796f7d94f2e89",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "SDPA FLOP reduction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "head dimension 192 to 256",
+       "after head number reduction"
+      ],
+      "quote": "This increases the SDPA head dimension from 192 to 256, which is still a 33% FLOP reduction after considering the head number reduction.",
+      "role": "supports",
+      "unit": "%",
+      "value": 33.0,
+      "value_text": "33%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cbda404494f3f3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "MLA config (DeepSeek V3.2)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "d=512",
+       "r=64",
+       "b=2"
+      ],
+      "quote": "the DeepSeek V3.2 configuration d = 512, r = 64, b = 2",
+      "role": "supports",
+      "unit": null,
+      "value": 512.0,
+      "value_text": "d = 512, r = 64, b = 2"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2dd2f298c71b9d",
+       "name_as_written": "GB300",
+       "other_securities": [],
+       "quote": "GB300 delivers the lowest modeled serving cost",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GPU system benchmarked as lowest-cost at 150 tps in InferenceX"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-34ce6b28851eb6",
+       "name_as_written": "GB200",
+       "other_securities": [],
+       "quote": "still leaves it ahead of GB200 on cost efficiency",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GPU system benchmarked in InferenceX serving-cost comparison"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2f8f16d4f425dc",
+       "name_as_written": "MI355X",
+       "other_securities": [],
+       "quote": "compared with $0.049 for MI355X running ATOM",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "AMD GPU benchmarked against NVIDIA in serving-cost comparison"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c61613b05c245b",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "In comparison with AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "hardware vendor whose MI355X is compared against NVIDIA systems"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-18aafa1ff1028a",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "developer of DeepSeek Sparse Attention and V3.2 compared against GLM-5"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8b8aa7e97474f9",
+       "name_as_written": "SGLang",
+       "other_securities": [],
+       "quote": "the SGLang team designed HiSparse",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "team/engine behind HiSparse hierarchical memory system"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ed66e3b10b27ee",
+       "name_as_written": "vLLM",
+       "other_securities": [],
+       "quote": "vLLM keeping the first decoding step on a consistent CUDA graph execution path",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "open-source inference engine referenced for optimizations"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-86905dfc28f8aa",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: InferenceX | SemiAnalysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "publisher of the article and owner of InferenceX benchmark platform"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-275a983fa8dcfc",
+       "name_as_written": "InferenceX",
+       "other_securities": [],
+       "quote": "In our realtime benchmark board InferenceX",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "SemiAnalysis's realtime benchmark platform used for serving-cost estimates"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2774b4ca845156",
+       "name_as_written": "ATOM",
+       "other_securities": [],
+       "quote": "$0.049 for MI355X running ATOM",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "inference engine for AMD MI355X in benchmarks"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7debe17e096e37",
+       "name_as_written": "TileRT",
+       "other_securities": [],
+       "quote": "TileRT is a low-latency LLM inference engine",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Low-latency LLM inference engine that supported AMD MI355X first for GLM-5.3"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2975ddb7655591",
+       "name_as_written": "MI335X",
+       "other_securities": [],
+       "quote": "2x the P90 interactivity than the best FP4 MI335X config",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "AMD GPU config used as interactivity comparator against FP8 TileRT MI355X"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-30fcd13a4cd6a5",
+       "name_as_written": "GB300 NVL72",
+       "other_securities": [],
+       "quote": "Comparing to GB300 NVL72, it brings a 40% uplift in interactivity",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GB300 NVL72 rack-scale system used as interactivity comparator"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8e4e50029e0282",
+       "name_as_written": "slime",
+       "other_securities": [],
+       "quote": "Z.ai uses slime , one of the best open-source RL training frameworks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source RL training framework used by Z.ai as post-training infrastructure"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bc3ad598f54875",
+       "name_as_written": "PyTorch",
+       "other_securities": [],
+       "quote": "stores teacher weights as PyTorch tensors pinned to CPU memory",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Framework whose tensors are used in slime's teacher-switching implementation"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-b52130af2769a8",
+       "name_as_written": "NVIDIA GPUs",
+       "other_securities": [],
+       "quote": "Ultra-High Interactivity on NVIDIA GPUs?",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "GPU maker referenced in TileRT interactivity analysis"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-25a5614a5b7552",
+       "name_as_written": "Moore Threads MTT S4000",
+       "other_securities": [],
+       "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese GPU suspected as GLM-5's target hardware"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-fc03e3eff390c7",
+       "name_as_written": "H800",
+       "other_securities": [],
+       "quote": "MLA\u2019s SDPA arithmetic intensity during decode is roughly at the ridge point of H800",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GPU whose roofline DeepSeek designed around"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-2fea7554655073",
+       "name_as_written": "DeepSeek V3.2",
+       "other_securities": [],
+       "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "DeepSeek model that introduced DeepSeek Sparse Attention, compared to GLM-5"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4cac927d79e3f0",
+       "name_as_written": "Moore Threads",
+       "other_securities": [],
+       "quote": "Moore Threads\u2019 collaboration with Z.ai",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese GPU vendor collaborating with Z.ai, suspected target hardware for GLM-5"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-25100ed28a87c6",
+       "name_as_written": "Z.ai",
+       "other_securities": [],
+       "quote": "here we explain the design of Z.ai\u2019s GLM-5 model series",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "developer of the GLM-5 model series analyzed in the article"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "AI accelerators",
+      "semiconductors"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-1d7c092f10529c"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "No near-term catalyst stated; the inference rests on model architecture analysis and a collaboration (Moore Threads day-0 support). \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-b2ab8d44618580",
+        "C-783b9d67b5d351",
+        "C-1d7c092f10529c"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "Model-hardware co-design tuned to domestic accelerator roofline could structurally support Chinese AI silicon demand over multi-year horizons. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-8fe66a8b4e720d",
+        "C-783b9d67b5d351"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The H=64 choice could reflect other design trade-offs (iso-FLOP/iso-parameter ablations favoring QK NoPE dimension) rather than hardware targeting, so the Moore Threads inference remains a suspicion."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 SIBLING with TH-B931F456C4: same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "GLM-5.x models shown to run primarily on NVIDIA hardware at scale"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No meaningful Moore Threads deployment or revenue tied to Z.ai"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: If GLM-5's reduced query-head count (H=64, arithmetic intensity 120.8 FLOP/B) reflects design for domestic accelerators rather than H800"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether GLM-5 is actually deployed on Moore Threads MTT S4000 in production volume"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any share shift away from NVIDIA/H800 materializes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Moore Threads is privately held / not clearly listed, so no direct listed-equity read; the hardware-targeting link is association, not demonstrated causation"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence GLM-5.x remains predominantly served on NVIDIA/H-series GPUs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Attention config attributed to pure algorithmic ablation with no hardware intent"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Verify whether Z.ai production serving of GLM-5.x runs on Moore Threads MTT S4000 and quantify any accelerator volume/share implications versus NVIDIA."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Confirmed large-scale GLM-5.x deployment on Moore Threads hardware"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Expanded Moore Threads\u2013Z.ai hardware collaboration announcements"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is speculative in the source; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-c051303aa7e1",
+      "authors": [
+       "Kimbo Chen",
+       "Alec Ibarra",
+       "Wenyao Gao",
+       "Pratt Bhatt",
+       "Bryan Shan",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-cbda404494f3f3",
+       "C-b2ab8d44618580",
+       "C-783b9d67b5d351",
+       "C-8fe66a8b4e720d",
+       "C-c796f7d94f2e89",
+       "C-93d2cc2b57ea52",
+       "C-1d7c092f10529c",
+       "C-2e8f496792631e"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-28T19:26:41Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Inside GLM-5.3: How Sparse Attention Affects DRAM Memory TAM",
+      "upstream_origins": [
+       "DeepSeek",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53"
+     }
+    ]
+   },
+   "content_sha": "fc1d64212a2f6ab46f28c4a03bf30f5f372368cfe20e992514beb1c861d70485",
+   "created_at": "2026-10-11T10:16:27.777537Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is speculative in the source; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-cbda404494f3f3",
+       "C-b2ab8d44618580",
+       "C-783b9d67b5d351",
+       "C-8fe66a8b4e720d",
+       "C-c796f7d94f2e89",
+       "C-93d2cc2b57ea52"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-be1f970bf8cb",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 2 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-cbda404494f3f3",
+       "C-b2ab8d44618580",
+       "C-783b9d67b5d351",
+       "C-8fe66a8b4e720d",
+       "C-c796f7d94f2e89",
+       "C-93d2cc2b57ea52"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-cbda404494f3f3: measured 2026-09-28 (0 days before the as-of); C-b2ab8d44618580: measured 2026-09-28 (0 days before the as-of); C-783b9d67b5d351: measured 2026-09-28 (0 days before the as-of); C-8fe66a8b4e720d: measured 2026-09-28 (0 days before the as-of); showing 4 of 6); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 6 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "speculative"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is speculative in the source; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T101627Z-article",
+   "thesis_id": "TH-B121174B17",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

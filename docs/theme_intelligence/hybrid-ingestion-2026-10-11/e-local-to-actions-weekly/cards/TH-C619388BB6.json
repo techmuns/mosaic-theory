@@ -1,0 +1,1797 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T08:31:47.309261Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "market_regime",
+   "last_material_update": "2026-10-07",
+   "latest_article_date": "2026-10-07",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "REVIEW_NEEDED",
+   "thesis_id": "TH-C619388BB6",
+   "title": "Global central banks resume hiking but Nomura sees far fewer hikes than markets price"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-0fe4d26cfa02b0",
+     "C-19f7a8348c0282",
+     "C-d647b287b5c3ea",
+     "C-b7c453657464af",
+     "C-3d0f18b36f90a0",
+     "C-90bdc1b9bb0c82"
+    ],
+    "provenance": "FORECAST",
+    "text": "Nomura forecasts a resumption of rate hikes (Fed one hike in December then hold through 2027; ECB two hikes to 3.00%; BOJ two hikes to 1.75%; none for BoE/BoC) but significantly fewer than markets price. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-3eab4182c17e81",
+     "C-0fe4d26cfa02b0"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Nomura frames its forecasts as diverging from consensus, implying markets have over-priced hikes given rates are near neutral and inflation is cost-push."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A large gap between Nomura's dovish-relative forecasts and market pricing across multiple central banks signals potential rate-market mispricing worth investigating across rates and FX-sensitive equities."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0fe4d26cfa02b0"
+     ],
+     "original_date": "2026-10-07",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Nomura has added rate hikes to its global monetary policy forecasts but still forecasts significantly fewer hikes than markets are pricing."
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d647b287b5c3ea"
+     ],
+     "original_date": "2026-10-07",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Nomura expects two more BOJ hikes vs market consensus of four or more. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-19f7a8348c0282"
+     ],
+     "original_date": "2026-10-07",
+     "period": "December 2026 and March 2027",
+     "provenance": "FORECAST",
+     "text": "Nomura expects two more ECB hikes in December 2026 and March 2027, vs market expectations of two to three more. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b7c453657464af"
+     ],
+     "original_date": "2026-10-07",
+     "period": "December 2026",
+     "provenance": "FORECAST",
+     "text": "Nomura expects another 25bp Fed hike in December. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3d0f18b36f90a0"
+     ],
+     "original_date": "2026-10-07",
+     "period": "December 2026 and March 2027",
+     "provenance": "FORECAST",
+     "text": "Nomura expects the ECB to hike in December 2026 and March 2027, bringing the deposit rate to 3.00%. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-90bdc1b9bb0c82"
+     ],
+     "original_date": "2026-10-07",
+     "period": "December 2026 and March 2027",
+     "provenance": "FORECAST",
+     "text": "Nomura expects BOJ hikes in December 2026 and March 2027 to 1.75% in its main scenario with 60% probability. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 16 pieces of evidence from A-131d13deb534 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0fe4d26cfa02b0",
+     "C-3eab4182c17e81",
+     "C-b595c30e7a10e2"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Sticky inflation and rising oil prices prompt central banks to resume hiking cycles."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+   },
+   {
+    "claim_ids": [
+     "C-0fe4d26cfa02b0",
+     "C-d647b287b5c3ea"
+    ],
+    "provenance": "FORECAST",
+    "step": "market_reaction",
+    "text": "Nomura's forecasts imply markets have over-priced the number of hikes relative to Nomura's view. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b057",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2bc38ef2b597fa",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Korea terminal rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "two more hikes"
+    ],
+    "quote": "we expect two more rate hikes in Korea , bringing the terminal rate to 3.50%",
+    "role": "supports",
+    "unit": "%",
+    "value": 3.5,
+    "value_text": "3.50%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b041",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-53de1fc3c52103",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "ECB deposit rate",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "September 2026",
+    "qualifiers": [],
+    "quote": "The ECB raised the depo rate in September to 2.50%",
+    "role": "supports",
+    "unit": "%",
+    "value": 2.5,
+    "value_text": "2.50%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-af4a94128abc84",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Fed inflation target",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "well above",
+     "risks skewed to the upside"
+    ],
+    "quote": "Core inflation remains well above the Fed\u2019s 2% target, with risks skewed to the upside",
+    "role": "supports",
+    "unit": "%",
+    "value": 2.0,
+    "value_text": "2%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b057",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b53b98a2695a01",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "India rate hikes",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "Q4",
+    "qualifiers": [],
+    "quote": "In India , a faster rise in food and oil prices alongside firming core inflation momentum point to two hikes in Q4.",
+    "role": "supports",
+    "unit": "hikes",
+    "value": 2.0,
+    "value_text": "two hikes"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b7c453657464af",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Fed rate hike",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 2026",
+    "qualifiers": [],
+    "quote": "We now expect the Fed to deliver another 25 basis point (bp) hike in December.",
+    "role": "supports",
+    "unit": "bp",
+    "value": 25.0,
+    "value_text": "25 basis point"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d647b287b5c3ea",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "BOJ rate hikes",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "market consensus four or more"
+    ],
+    "quote": "Two more hikes from the Bank of Japan against a market consensus of four or more",
+    "role": "supports",
+    "unit": "hikes",
+    "value": 2.0,
+    "value_text": "Two"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-131d13deb534",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d9b6bcb89e55df",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "core PCE inflation",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "above",
+     "essentially stuck"
+    ],
+    "quote": "core personal consumption expenditure (PCE) essentially stuck at above 3% y-o-y",
+    "role": "supports",
+    "unit": "% y-o-y",
+    "value": 3.0,
+    "value_text": "above 3%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-19f7a8348c0282",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "ECB rate hikes",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 2026 and March 2027",
+    "qualifiers": [
+     "market two to three more"
+    ],
+    "quote": "Two more hikes by the European Central Bank in December 2026 and March 2027, compared with market expectations for two to three more hikes",
+    "role": "catalyst",
+    "unit": "hikes",
+    "value": 2.0,
+    "value_text": "Two"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b038",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3d0f18b36f90a0",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "ECB deposit rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 2026 and March 2027",
+    "qualifiers": [
+     "terminal depo rate"
+    ],
+    "quote": "We now expect the Bank to raise rates in December 2026 and March 2027, bringing the depo rate to 3.00%.",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 3.0,
+    "value_text": "3.00%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b050",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-90bdc1b9bb0c82",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "BOJ policy rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 2026 and March 2027",
+    "qualifiers": [
+     "main scenario 60% probability"
+    ],
+    "quote": "We expect the BOJ to raise its policy rate in December 2026 and March 2027, bringing it to 1.75% in our main scenario with 60% probability.",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 1.75,
+    "value_text": "1.75%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0fe4d26cfa02b0",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "policy rate hikes vs market pricing",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "sticky inflation",
+     "renewed rise in oil prices",
+     "significantly fewer than market"
+    ],
+    "quote": "we have incorporated additional rate hikes into our global monetary policy forecasts, though still significantly fewer than what markets are pricing",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3eab4182c17e81",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Nomura views the current moves as a resumption of hiking cycles, noting most policy rates are near or above neutral and inflation is largely cost-push.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "resumption not start",
+     "near or above neutral",
+     "cost-push inflation"
+    ],
+    "quote": "we view this is a resumption \u2013 rather than the start \u2013 of hiking cycles, as most policy rates are already near or above neutral levels and much of the current inflation is cost-push in nature",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-509411d2be3902",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "core inflation",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September",
+    "qualifiers": [
+     "rose slightly",
+     "no second-round effects yet"
+    ],
+    "quote": "Core inflation rose slightly in September, but there are not yet signs of second-round inflation effects.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b039",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-87bd1184a40e8e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Excluding Ireland, euro area growth has been quite stable since the start of 2024.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since the start of 2024",
+    "qualifiers": [
+     "excluding Ireland",
+     "quite stable"
+    ],
+    "quote": "if we exclude volatile Ireland from our calculations, growth has been quite stable since the start of 2024",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b039",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-aa472bfdb1ffcd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "GDP growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "Q2",
+    "qualifiers": [
+     "accelerated",
+     "despite headwinds"
+    ],
+    "quote": "GDP growth accelerated in Q2, despite widely expected headwinds from the Iran war and higher energy prices",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b026",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d34c1703fb90c8",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "rate hikes vs consensus",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "fewer than consensus"
+    ],
+    "quote": "Fewer hikes than consensus for Australia, India and Korea",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-131d13deb534",
+     "cik": "0001163653",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d1111cffa89e4d",
+     "name_as_written": "Nomura",
+     "other_securities": [],
+     "quote": "This content has been prepared by Nomura",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research note"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cc5bd9689782b2",
+     "name_as_written": "Takaichi cabinet",
+     "other_securities": [],
+     "quote": "The Takaichi cabinet\u2019s decision to not issue a second FY26 supplementary budget",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Japanese cabinet whose fiscal budget decision informs Japan's public investment and growth outlook"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-536086286f497d",
+     "name_as_written": "US Federal Reserve",
+     "other_securities": [],
+     "quote": "A hike in December by the US Federal Reserve",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US central bank whose policy rate Nomura forecasts"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-7c5a9ee787bff1",
+     "name_as_written": "European Central Bank",
+     "other_securities": [],
+     "quote": "Two more hikes by the European Central Bank",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Euro area central bank whose policy rate Nomura forecasts"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-7d0b8728e31b8f",
+     "name_as_written": "Bank of Japan",
+     "other_securities": [],
+     "quote": "Two more hikes from the Bank of Japan",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Japan central bank whose policy rate Nomura forecasts"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-735185f01101e2",
+     "name_as_written": "Bank of England",
+     "other_securities": [],
+     "quote": "None for the Bank of England",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "UK central bank whose policy Nomura forecasts (no hikes)"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-496cb318bf0b2a",
+     "name_as_written": "Bank of Canada",
+     "other_securities": [],
+     "quote": "Bank of Canada",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Canada central bank whose policy Nomura forecasts (no hikes)"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [],
+   "sectors": [
+    "rates",
+    "monetary policy"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "December 2026 and March 2027 central bank meetings [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-19f7a8348c0282",
+      "C-3d0f18b36f90a0",
+      "C-90bdc1b9bb0c82"
+     ],
+     "provenance": "FORECAST",
+     "text": "Nomura expects fewer hikes than markets over the next few quarters, with key decisions in December 2026 and March 2027. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-3eab4182c17e81"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Most policy rates are already near or above neutral and inflation is largely cost-push, which Nomura believes will weigh on growth over time and limit further hikes."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-d647b287b5c3ea"
+     ],
+     "provenance": "FORECAST",
+     "text": "Markets are pricing materially more hikes (three more from the Fed, four or more from the BOJ, around four each for BoE/BoC)."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Core PCE accelerating further above 3%"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Central banks delivering more hikes than Nomura forecasts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Sustained rise in oil prices feeding second-round inflation effects"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-071ebde5e2cce6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Elevated oil prices, El Ni\u00f1o and rising memory prices pose upside risks to Asian inflation, keeping most Asian central banks hawkish. (scope: Asia ex-Japan inflation and monetary policy; upside inflation risk factors.)"
+    },
+    {
+     "claim_ids": [
+      "C-b595c30e7a10e2"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Renewed Middle East tensions have driven a sharp rise in energy prices with the potential for crude to stay elevated and cause broader inflation spillovers. (scope: Global inflation risk from energy/oil prices tied to geopolitics.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether inflation proves cost-push and transitory as Nomura assumes rather than persistent"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The path of oil prices given Middle East tensions"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether consensus/market pricing converges toward Nomura's view"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Inflation proves persistent and demand-driven"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Central banks signal more aggressive tightening"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Compare Nomura's hike forecasts against current market-implied forward curves for each central bank to size the dislocation and identify rate-sensitive equity exposures."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Market pricing moves sharply toward Nomura's fewer-hikes view"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Inflation data confirms cost-push/transitory thesis"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-131d13deb534",
+    "authors": [
+     "Rob Subbaraman (Head of Global Macro Research)",
+     "Aichi Amemiya (Senior US Economist)",
+     "George Buckley (Chief UK & Euro Area Economist)",
+     "Ting Lu (Chief China Economist)",
+     "Kyohei Morita (Chief Economist, Japan)",
+     "Euben Paracuelles (Week Ahead Podcast Host and Chief ASEAN Economist)",
+     "Jeremy Schwartz",
+     "Sonal Varma (Chief Economist, India and Asia ex-Japan)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-19f7a8348c0282",
+     "C-3d0f18b36f90a0",
+     "C-90bdc1b9bb0c82",
+     "C-0fe4d26cfa02b0",
+     "C-3eab4182c17e81",
+     "C-d647b287b5c3ea",
+     "C-b7c453657464af",
+     "C-af4a94128abc84",
+     "C-aa472bfdb1ffcd",
+     "C-87bd1184a40e8e",
+     "C-509411d2be3902",
+     "C-d34c1703fb90c8",
+     "C-d9b6bcb89e55df",
+     "C-53de1fc3c52103",
+     "C-2bc38ef2b597fa",
+     "C-b53b98a2695a01",
+     "C-071ebde5e2cce6",
+     "C-b595c30e7a10e2"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-07T03:25:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Nomura",
+    "retrieval_state": "FULL",
+    "title": "Central Banks Recalibrating Monetary Policies",
+    "upstream_origins": [
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies/"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 11:03 UTC from the registry (ti-engine-2; run R-20261011T110031Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-131d13deb534",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T08:31:47.309261Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "market_regime",
+     "last_material_update": "2026-10-07",
+     "latest_article_date": "2026-10-07",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "REVIEW_NEEDED",
+     "thesis_id": "TH-C619388BB6",
+     "title": "Global central banks resume hiking but Nomura sees far fewer hikes than markets price"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0fe4d26cfa02b0",
+       "C-19f7a8348c0282",
+       "C-d647b287b5c3ea",
+       "C-b7c453657464af",
+       "C-3d0f18b36f90a0",
+       "C-90bdc1b9bb0c82"
+      ],
+      "provenance": "FORECAST",
+      "text": "Nomura forecasts a resumption of rate hikes (Fed one hike in December then hold through 2027; ECB two hikes to 3.00%; BOJ two hikes to 1.75%; none for BoE/BoC) but significantly fewer than markets price. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3eab4182c17e81",
+       "C-0fe4d26cfa02b0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Nomura frames its forecasts as diverging from consensus, implying markets have over-priced hikes given rates are near neutral and inflation is cost-push."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A large gap between Nomura's dovish-relative forecasts and market pricing across multiple central banks signals potential rate-market mispricing worth investigating across rates and FX-sensitive equities."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0fe4d26cfa02b0"
+       ],
+       "original_date": "2026-10-07",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Nomura has added rate hikes to its global monetary policy forecasts but still forecasts significantly fewer hikes than markets are pricing."
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d647b287b5c3ea"
+       ],
+       "original_date": "2026-10-07",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Nomura expects two more BOJ hikes vs market consensus of four or more. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-19f7a8348c0282"
+       ],
+       "original_date": "2026-10-07",
+       "period": "December 2026 and March 2027",
+       "provenance": "FORECAST",
+       "text": "Nomura expects two more ECB hikes in December 2026 and March 2027, vs market expectations of two to three more. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b7c453657464af"
+       ],
+       "original_date": "2026-10-07",
+       "period": "December 2026",
+       "provenance": "FORECAST",
+       "text": "Nomura expects another 25bp Fed hike in December. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3d0f18b36f90a0"
+       ],
+       "original_date": "2026-10-07",
+       "period": "December 2026 and March 2027",
+       "provenance": "FORECAST",
+       "text": "Nomura expects the ECB to hike in December 2026 and March 2027, bringing the deposit rate to 3.00%. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-90bdc1b9bb0c82"
+       ],
+       "original_date": "2026-10-07",
+       "period": "December 2026 and March 2027",
+       "provenance": "FORECAST",
+       "text": "Nomura expects BOJ hikes in December 2026 and March 2027 to 1.75% in its main scenario with 60% probability. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 16 pieces of evidence from A-131d13deb534 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0fe4d26cfa02b0",
+       "C-3eab4182c17e81",
+       "C-b595c30e7a10e2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Sticky inflation and rising oil prices prompt central banks to resume hiking cycles."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+     },
+     {
+      "claim_ids": [
+       "C-0fe4d26cfa02b0",
+       "C-d647b287b5c3ea"
+      ],
+      "provenance": "FORECAST",
+      "step": "market_reaction",
+      "text": "Nomura's forecasts imply markets have over-priced the number of hikes relative to Nomura's view. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b057",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2bc38ef2b597fa",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Korea terminal rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "two more hikes"
+      ],
+      "quote": "we expect two more rate hikes in Korea , bringing the terminal rate to 3.50%",
+      "role": "supports",
+      "unit": "%",
+      "value": 3.5,
+      "value_text": "3.50%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b041",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-53de1fc3c52103",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ECB deposit rate",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "September 2026",
+      "qualifiers": [],
+      "quote": "The ECB raised the depo rate in September to 2.50%",
+      "role": "supports",
+      "unit": "%",
+      "value": 2.5,
+      "value_text": "2.50%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-af4a94128abc84",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Fed inflation target",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "well above",
+       "risks skewed to the upside"
+      ],
+      "quote": "Core inflation remains well above the Fed\u2019s 2% target, with risks skewed to the upside",
+      "role": "supports",
+      "unit": "%",
+      "value": 2.0,
+      "value_text": "2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b057",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b53b98a2695a01",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "India rate hikes",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "Q4",
+      "qualifiers": [],
+      "quote": "In India , a faster rise in food and oil prices alongside firming core inflation momentum point to two hikes in Q4.",
+      "role": "supports",
+      "unit": "hikes",
+      "value": 2.0,
+      "value_text": "two hikes"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b7c453657464af",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Fed rate hike",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 2026",
+      "qualifiers": [],
+      "quote": "We now expect the Fed to deliver another 25 basis point (bp) hike in December.",
+      "role": "supports",
+      "unit": "bp",
+      "value": 25.0,
+      "value_text": "25 basis point"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d647b287b5c3ea",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "BOJ rate hikes",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "market consensus four or more"
+      ],
+      "quote": "Two more hikes from the Bank of Japan against a market consensus of four or more",
+      "role": "supports",
+      "unit": "hikes",
+      "value": 2.0,
+      "value_text": "Two"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-131d13deb534",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d9b6bcb89e55df",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "core PCE inflation",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "above",
+       "essentially stuck"
+      ],
+      "quote": "core personal consumption expenditure (PCE) essentially stuck at above 3% y-o-y",
+      "role": "supports",
+      "unit": "% y-o-y",
+      "value": 3.0,
+      "value_text": "above 3%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-19f7a8348c0282",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "ECB rate hikes",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 2026 and March 2027",
+      "qualifiers": [
+       "market two to three more"
+      ],
+      "quote": "Two more hikes by the European Central Bank in December 2026 and March 2027, compared with market expectations for two to three more hikes",
+      "role": "catalyst",
+      "unit": "hikes",
+      "value": 2.0,
+      "value_text": "Two"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3d0f18b36f90a0",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "ECB deposit rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 2026 and March 2027",
+      "qualifiers": [
+       "terminal depo rate"
+      ],
+      "quote": "We now expect the Bank to raise rates in December 2026 and March 2027, bringing the depo rate to 3.00%.",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 3.0,
+      "value_text": "3.00%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b050",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-90bdc1b9bb0c82",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "BOJ policy rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 2026 and March 2027",
+      "qualifiers": [
+       "main scenario 60% probability"
+      ],
+      "quote": "We expect the BOJ to raise its policy rate in December 2026 and March 2027, bringing it to 1.75% in our main scenario with 60% probability.",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 1.75,
+      "value_text": "1.75%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0fe4d26cfa02b0",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "policy rate hikes vs market pricing",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "sticky inflation",
+       "renewed rise in oil prices",
+       "significantly fewer than market"
+      ],
+      "quote": "we have incorporated additional rate hikes into our global monetary policy forecasts, though still significantly fewer than what markets are pricing",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3eab4182c17e81",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Nomura views the current moves as a resumption of hiking cycles, noting most policy rates are near or above neutral and inflation is largely cost-push.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "resumption not start",
+       "near or above neutral",
+       "cost-push inflation"
+      ],
+      "quote": "we view this is a resumption \u2013 rather than the start \u2013 of hiking cycles, as most policy rates are already near or above neutral levels and much of the current inflation is cost-push in nature",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-509411d2be3902",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "core inflation",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September",
+      "qualifiers": [
+       "rose slightly",
+       "no second-round effects yet"
+      ],
+      "quote": "Core inflation rose slightly in September, but there are not yet signs of second-round inflation effects.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-87bd1184a40e8e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Excluding Ireland, euro area growth has been quite stable since the start of 2024.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since the start of 2024",
+      "qualifiers": [
+       "excluding Ireland",
+       "quite stable"
+      ],
+      "quote": "if we exclude volatile Ireland from our calculations, growth has been quite stable since the start of 2024",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aa472bfdb1ffcd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "GDP growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "Q2",
+      "qualifiers": [
+       "accelerated",
+       "despite headwinds"
+      ],
+      "quote": "GDP growth accelerated in Q2, despite widely expected headwinds from the Iran war and higher energy prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d34c1703fb90c8",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "rate hikes vs consensus",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "fewer than consensus"
+      ],
+      "quote": "Fewer hikes than consensus for Australia, India and Korea",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-131d13deb534",
+       "cik": "0001163653",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1111cffa89e4d",
+       "name_as_written": "Nomura",
+       "other_securities": [],
+       "quote": "This content has been prepared by Nomura",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research note"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cc5bd9689782b2",
+       "name_as_written": "Takaichi cabinet",
+       "other_securities": [],
+       "quote": "The Takaichi cabinet\u2019s decision to not issue a second FY26 supplementary budget",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Japanese cabinet whose fiscal budget decision informs Japan's public investment and growth outlook"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-536086286f497d",
+       "name_as_written": "US Federal Reserve",
+       "other_securities": [],
+       "quote": "A hike in December by the US Federal Reserve",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US central bank whose policy rate Nomura forecasts"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-7c5a9ee787bff1",
+       "name_as_written": "European Central Bank",
+       "other_securities": [],
+       "quote": "Two more hikes by the European Central Bank",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Euro area central bank whose policy rate Nomura forecasts"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-7d0b8728e31b8f",
+       "name_as_written": "Bank of Japan",
+       "other_securities": [],
+       "quote": "Two more hikes from the Bank of Japan",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Japan central bank whose policy rate Nomura forecasts"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-735185f01101e2",
+       "name_as_written": "Bank of England",
+       "other_securities": [],
+       "quote": "None for the Bank of England",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "UK central bank whose policy Nomura forecasts (no hikes)"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-496cb318bf0b2a",
+       "name_as_written": "Bank of Canada",
+       "other_securities": [],
+       "quote": "Bank of Canada",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Canada central bank whose policy Nomura forecasts (no hikes)"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "rates",
+      "monetary policy"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "December 2026 and March 2027 central bank meetings [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-19f7a8348c0282",
+        "C-3d0f18b36f90a0",
+        "C-90bdc1b9bb0c82"
+       ],
+       "provenance": "FORECAST",
+       "text": "Nomura expects fewer hikes than markets over the next few quarters, with key decisions in December 2026 and March 2027. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-3eab4182c17e81"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Most policy rates are already near or above neutral and inflation is largely cost-push, which Nomura believes will weigh on growth over time and limit further hikes."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-d647b287b5c3ea"
+       ],
+       "provenance": "FORECAST",
+       "text": "Markets are pricing materially more hikes (three more from the Fed, four or more from the BOJ, around four each for BoE/BoC)."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Core PCE accelerating further above 3%"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Central banks delivering more hikes than Nomura forecasts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Sustained rise in oil prices feeding second-round inflation effects"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-071ebde5e2cce6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Elevated oil prices, El Ni\u00f1o and rising memory prices pose upside risks to Asian inflation, keeping most Asian central banks hawkish. (scope: Asia ex-Japan inflation and monetary policy; upside inflation risk factors.)"
+      },
+      {
+       "claim_ids": [
+        "C-b595c30e7a10e2"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Renewed Middle East tensions have driven a sharp rise in energy prices with the potential for crude to stay elevated and cause broader inflation spillovers. (scope: Global inflation risk from energy/oil prices tied to geopolitics.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether inflation proves cost-push and transitory as Nomura assumes rather than persistent"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The path of oil prices given Middle East tensions"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether consensus/market pricing converges toward Nomura's view"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Inflation proves persistent and demand-driven"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Central banks signal more aggressive tightening"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Compare Nomura's hike forecasts against current market-implied forward curves for each central bank to size the dislocation and identify rate-sensitive equity exposures."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Market pricing moves sharply toward Nomura's fewer-hikes view"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Inflation data confirms cost-push/transitory thesis"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-131d13deb534",
+      "authors": [
+       "Rob Subbaraman (Head of Global Macro Research)",
+       "Aichi Amemiya (Senior US Economist)",
+       "George Buckley (Chief UK & Euro Area Economist)",
+       "Ting Lu (Chief China Economist)",
+       "Kyohei Morita (Chief Economist, Japan)",
+       "Euben Paracuelles (Week Ahead Podcast Host and Chief ASEAN Economist)",
+       "Jeremy Schwartz",
+       "Sonal Varma (Chief Economist, India and Asia ex-Japan)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-19f7a8348c0282",
+       "C-3d0f18b36f90a0",
+       "C-90bdc1b9bb0c82",
+       "C-0fe4d26cfa02b0",
+       "C-3eab4182c17e81",
+       "C-d647b287b5c3ea",
+       "C-b7c453657464af",
+       "C-af4a94128abc84",
+       "C-aa472bfdb1ffcd",
+       "C-87bd1184a40e8e",
+       "C-509411d2be3902",
+       "C-d34c1703fb90c8",
+       "C-d9b6bcb89e55df",
+       "C-53de1fc3c52103",
+       "C-2bc38ef2b597fa",
+       "C-b53b98a2695a01",
+       "C-071ebde5e2cce6",
+       "C-b595c30e7a10e2"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-07T03:25:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Nomura",
+      "retrieval_state": "FULL",
+      "title": "Central Banks Recalibrating Monetary Policies",
+      "upstream_origins": [
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies/"
+     }
+    ]
+   },
+   "content_sha": "8461a42ed00df52d1b094be091120a32d4f176a7a1da0d9c08baa2bf07c9c87c",
+   "created_at": "2026-10-11T08:31:47.313907Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-0fe4d26cfa02b0",
+       "C-d647b287b5c3ea",
+       "C-b7c453657464af",
+       "C-af4a94128abc84",
+       "C-aa472bfdb1ffcd",
+       "C-509411d2be3902",
+       "C-d34c1703fb90c8",
+       "C-d9b6bcb89e55df",
+       "C-53de1fc3c52103",
+       "C-2bc38ef2b597fa",
+       "C-b53b98a2695a01",
+       "C-19f7a8348c0282",
+       "C-3d0f18b36f90a0",
+       "C-90bdc1b9bb0c82"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "14"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-b1b554fedeb9",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "a market-regime record argues a market structure, not an earnings mechanism",
+      "value": "n/a (market-regime record)"
+     },
+     {
+      "claim_ids": [
+       "C-b7c453657464af",
+       "C-19f7a8348c0282",
+       "C-3d0f18b36f90a0",
+       "C-90bdc1b9bb0c82",
+       "C-aa472bfdb1ffcd",
+       "C-509411d2be3902",
+       "C-d9b6bcb89e55df",
+       "C-53de1fc3c52103"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "8 claim(s) inside the next 2-4 quarters (C-b7c453657464af: forecast window 2026-12-01..2026-12-31 (december 2026); C-19f7a8348c0282: forecast window 2026-12-01..2027-03-31 (december 2026; march 2027); C-3d0f18b36f90a0: forecast window 2026-12-01..2027-03-31 (december 2026; march 2027); C-90bdc1b9bb0c82: forecast window 2026-12-01..2027-03-31 (december 2026; march 2027); showing 4 of 8); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 3 offered but NOT counted (opinion, forecast figure or stale reading): C-19f7a8348c0282, C-3d0f18b36f90a0, C-90bdc1b9bb0c82",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T083033Z-scan",
+   "thesis_id": "TH-C619388BB6",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

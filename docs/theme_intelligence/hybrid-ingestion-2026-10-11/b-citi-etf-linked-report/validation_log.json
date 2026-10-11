@@ -1,0 +1,242 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:55.965617Z",
+  "detail": "s07.8: Cited spans support the $20T/$23T AUM and 10% Active share figures, but 'tokenization' specifically and 'AUM growth mainly by returns offsetting outflows' are not in the cited spans (C-32bcdf240d3ae2, C-215e13ee9f1276). | 'Bear case: new fund structures or tokenization disrupt the ETF industry (as ETFs did to mutual funds'",
+  "issue_id": "VI-07d79529f84fd2",
+  "ref_id": "TH-1373DCCE1F:s07.8",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:41:55.965693Z",
+  "detail": "s03.3: first check NUMBER_NOT_IN_CITED_CLAIMS (s03.3 prints '2035', which none of its cited claims carry: 'Active ETFs could account for 40% of U.S. ETF industry revenue by 2035 on 21% of AUM, materially boo) \u2014 re-anchored to C-3a77a452004665; after re-anchoring: supported",
+  "issue_id": "VI-14d67f90cd993a",
+  "ref_id": "TH-1373DCCE1F:s03.3",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:41:55.968124Z",
+  "detail": "b017: '$10 trillion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'A year ago, we opined on the roadmap to the next $10 trillion in U.S.'",
+  "issue_id": "VI-195e6a76b8719c",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:53.878742Z",
+  "detail": "s07.3: Disruption and bear-case AUM figures supported, but 'returns offsetting outflows' is not supported by any cited span. | 'New forms of investment funds or technologies could disrupt the ETF industry much as ETFs disrupted '",
+  "issue_id": "VI-2e253e5f8c1e13",
+  "ref_id": "TH-1373DCCE1F:s07.3",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHORS_FROM_TEXT",
+  "created_at": "2026-10-11T10:41:53.825253Z",
+  "detail": "credited in the article text, not in page metadata: Drew Pettit (article text b015: 'a team of strategists led by Drew Pettit')",
+  "issue_id": "VI-2f77de95cbfb1f",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-10-11T10:41:55.608706Z",
+  "detail": "295 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 6 parts",
+  "issue_id": "VI-30adb5d9378614",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:41:55.968079Z",
+  "detail": "b016: '$40 trillion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'ETF Strategy industry breaching the $40 trillion mark in ten years.'",
+  "issue_id": "VI-3c3da676349c63",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:41:53.878822Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: Cited spans support ETFs taking share from mutual funds and active strategies being key, but 'active strategies reclaim share from index products' is not) \u2014 re-anchored to C-d202765cfef533; after re-anchoring: supported",
+  "issue_id": "VI-43977f1d8de28a",
+  "ref_id": "TH-1373DCCE1F:s03.0",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:53.878739Z",
+  "detail": "s06.1: The AUM figures ($25tn 2030, $42tn 2035) are supported. But 'As the industry matures, growth naturally decelerates and becomes more balanced between flows and returns' is not supported by any cited span. | 'As the industry matures, growth naturally decelerates and becomes more balanced between flows and re'",
+  "issue_id": "VI-48ab963164c037",
+  "ref_id": "TH-1373DCCE1F:s06.1",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:41:55.615501Z",
+  "detail": "b2.k2_7: quote found in b096, not the cited b098",
+  "issue_id": "VI-58214d1b5df1ff",
+  "ref_id": "C-dc449de7676e30",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:55.965608Z",
+  "detail": "s03.2: Cited spans support the -30% fee reduction forecast but do not establish that Active commands higher fees than Index/Passive; C-c70eb9d59a4365 is about revenue share, not relative fee levels. The relative-fee assertion is not supported by the cited spans. | 'Active commands higher fees than Index/Passive even amid ongoing fee compression (assumed -30% furth'",
+  "issue_id": "VI-61fc447f1760c3",
+  "ref_id": "TH-1373DCCE1F:s03.2",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:55.965613Z",
+  "detail": "s06.1: The cited span supports that recent AUM slightly exceeded the prior bull case, but 'indicating strong near-term momentum' is an added interpretation labelled as MEASURED OBSERVATION. | 'Recent annual U.S. ETF AUM have slightly exceeded the prior bull case, indicating strong near-term m'",
+  "issue_id": "VI-66efb2c5183403",
+  "ref_id": "TH-1373DCCE1F:s06.1",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:41:55.615916Z",
+  "detail": "b4.k4_11: as-of 2026-04-01 not found in the cited source note \u2014 dropped",
+  "issue_id": "VI-70ea33e96d9602",
+  "ref_id": "C-c0da3a8312a17b",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:41:55.968217Z",
+  "detail": "b052: '$40 trillion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'ETF AUM looks attainable by the end of this decade, with more than $40 trillion possible in ten years.'",
+  "issue_id": "VI-75b6d71d5d246c",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:53.878732Z",
+  "detail": "s01.0: Sentence says 'over $40 trillion by 2035 (base case)' implying base-case 2035 is >$40tn, but the cited base-case figure is $42 trillion in 2035 \u2014 which is consistent. However the 'over $40 trillion' span C-fd27b16196a52d is 'next 10 years' not specifically 2035; the base case 2035 figure of $42tn is the correct anchor and is cited (C-ff2fd5d0eeb8db). Acceptable. The 'approximate' figure label matches roughly 60%. Overall the claim is supported by its cited spans. | 'Citi projects U.S. ETF AUM reaching $25 trillion by 2030 (base case) and over $40 trillion by 2035, '",
+  "issue_id": "VI-a5e98cf159fa8a",
+  "ref_id": "TH-1373DCCE1F:s01.0",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:41:55.621942Z",
+  "detail": "h1 Active and differentiated ETFs drive next phase of cites ['C-aa5a380d9995fe'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-cb82c287ed119f",
+  "ref_id": "h1 Active and differentiated ETFs drive next phase of",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:53.878745Z",
+  "detail": "s07.4: Disruption and bear-case AUM figures supported, but 'growth relies on returns offsetting outflows' is not supported by cited spans. | 'New forms of investment funds or investment technologies could disrupt the ETF industry, as ETFs dis'",
+  "issue_id": "VI-d6a93bf0501007",
+  "ref_id": "TH-1373DCCE1F:s07.4",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:41:55.609711Z",
+  "detail": "c33: as-of 2026-04-01 not found in the cited source note \u2014 dropped",
+  "issue_id": "VI-d876d9258da0c3",
+  "ref_id": "C-6fd845fe5b90ca",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:53.878736Z",
+  "detail": "s03.0: First two clauses supported by cited spans. The clause 'active strategies reclaim share from index products' is not supported; cited span C-d202765cfef533 says active ETFs benefited from gaps index approaches overlooked, not that active strategies reclaim share from index products. Overstatement. | 'ETFs continue taking share from mutual funds as product innovation expands access and active strateg'",
+  "issue_id": "VI-d8ac077cb1f7e4",
+  "ref_id": "TH-1373DCCE1F:s03.0",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:41:55.968164Z",
+  "detail": "b052: '$25 trillion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'To us, $25 trillion in U.S.'",
+  "issue_id": "VI-db2a023fd3e119",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-10-11T10:41:53.825381Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-e0811d78528cb6",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHORS_FROM_TEXT",
+  "created_at": "2026-10-11T10:41:55.624000Z",
+  "detail": "credited in the article text, not in page metadata: Scott T Chronert (article text b016: 'Scott T Chronert'); Patrick Galvin, CFA (article text b016: 'Patrick Galvin, CFA')",
+  "issue_id": "VI-e12002bc607466",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:41:55.968023Z",
+  "detail": "b016: '$25 trillion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Our new Patrick Galvin, CFA base case calls for $25 trillion in assets by the end of this decade, with the U.S.'",
+  "issue_id": "VI-f251dab714921e",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-10-11T10:41:55.524894Z",
+  "detail": "model classifies institutional_research (Citi Research 'Must C' deep-dive report on the U.S. ETF industry, revamping AUM forecasting methodology and Active ETF market-share projecti); the record keeps publisher_commentary (channel default for citi_must_c)",
+  "issue_id": "VI-fc0408891d93bf",
+  "ref_id": "A-d8bce0154d69",
+  "run_id": "R-20261011T104153Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ }
+]

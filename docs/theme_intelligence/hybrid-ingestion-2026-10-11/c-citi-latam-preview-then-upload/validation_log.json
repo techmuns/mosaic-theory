@@ -1,0 +1,1232 @@
+[
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:43.029511Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 The cited span only states the ~50% convergence forecast; it says nothing about nearshoring, dollar-cycle shift or AI-driven services produ) \u2014 re-anchored to C-57c99c73105041; after re-anchoring: supported",
+  "issue_id": "VI-0b5e59676ac176",
+  "ref_id": "TH-BD4B215CA8:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:29:39.676447Z",
+  "detail": "b3.hx3_2 LatAm Hummingbird economies offer structural, comm cites ['C-53c5cfef1ab8f1'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-0d2840494a73ce",
+  "ref_id": "b3.hx3_2 LatAm Hummingbird economies offer structural, comm",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MALFORMED_ITEM_DROPPED",
+  "created_at": "2026-10-11T10:17:09.701192Z",
+  "detail": "extraction: mentions[5] dropped \u2014 entity_type: Input should be 'company', 'private_company', 'etf_or_fund', 'index', 'product', 'data_provider', 'publisher', 'government_or_agency', 'basket', 'other_organization' or 'sector' (got 'other')",
+  "issue_id": "VI-0de3b9fff99030",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:35:10.533669Z",
+  "detail": "b157: '23' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence \"Spending freezes and executive decrees can contribute at the margin (see Figure | | | ; | 23), as evidenced by the government's COP21.9tn expenditure reduction for 2026, but meaningful consolidation | | | ; | ultimately requires annual budg\"",
+  "issue_id": "VI-0de52eb5d4e301",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:31:04.255099Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence bundles ~8.8x forward P/E (C-56a7bca) and ~4.5% ERP (C-5bd4fb5) correctly, but 'high real carry' and the '~93% of GDP' debt constraint and t) \u2014 re-anchored to C-2ee630ba3b633f, C-2696e4dd0d55ff; after re-anchoring: supported",
+  "issue_id": "VI-14cedb4601b641",
+  "ref_id": "TH-3A53B04C0B:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:35:10.525032Z",
+  "detail": "s06.1: Cited span only says LatAm viewed through strategic importance and optionality; the specific structural advantages in resources, food, energy, logistics and 'multipolar world' framing are not in the cited span | \"LatAm's structural advantages in resources, food, energy and logistics position it to capture broad \"",
+  "issue_id": "VI-1533f1ee4ad521",
+  "ref_id": "TH-0D0AD5B0D7:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:34:06.922081Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 The cited span only concerns tight LatAm valuations following spread compression; it says nothing about renewed U.S. strategic focus on the) \u2014 re-anchored to C-9a9ff900b20781; after re-anchoring: supported",
+  "issue_id": "VI-153f92492617ec",
+  "ref_id": "TH-BE1AF62F71:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:43.029500Z",
+  "detail": "s07.0: first check REVIEW_PARTIAL (s07.0: The cited span is the convergence forecast and does not mention institutional gaps, fiscal space (Panama), or climate vulnerabilities. The '>3% for 35 ye) \u2014 re-anchored to C-53c5cfef1ab8f1; after re-anchoring: supported",
+  "issue_id": "VI-165986a584f0e8",
+  "ref_id": "TH-BD4B215CA8:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234545Z",
+  "detail": "s07.0: The cited span is about upside from credible improvement; it does not state that persistent inflation/fiscal concerns keep the risk premium high or could prevent normalization. This inverts/extends the cited span. | 'Persistent inflation and fiscal concerns keep the risk premium high and could prevent the normalizat'",
+  "issue_id": "VI-16a8598894d6b5",
+  "ref_id": "TH-EB2A081D45:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:18.510356Z",
+  "detail": "s06.1: Cited span only supports diversification; the claim that drivers are structural and insulated from politics is not in the cited span. | 'Vaca Muerta and mining drivers are largely structural and, especially Vaca Muerta, relatively insula'",
+  "issue_id": "VI-16a8e95dae60d1",
+  "ref_id": "TH-49B78DCABF:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.604697Z",
+  "detail": "b5.k5_7: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-186d911dde51ef",
+  "ref_id": "C-d1e544e50b39a9",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781211Z",
+  "detail": "s02.1: Cited span says debt sits close to the median of the global BB cohort at roughly 60%; it does not name Colombia. Country attribution not supported by the cited span. | 'Colombia debt roughly 60% of GDP, near global BB median \u27e8cited figures: approximate\u27e9'",
+  "issue_id": "VI-1c31b3b7f688f6",
+  "ref_id": "TH-BCAA34CC82:s02.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:54.755909Z",
+  "detail": "s03.2: The cited span supports the lower discount rates / risk premium benefit, but the claim about higher export revenues supporting earnings and valuations is not in the cited span. | 'Higher export revenues and lower discount rates support earnings and valuations of Peruvian equities'",
+  "issue_id": "VI-1f2f2ef46bc85b",
+  "ref_id": "TH-DA1F96C4BB:s03.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:05.495156Z",
+  "detail": "s07.0: first check REVIEW_UNSUPPORTED (s07.0: UNSUPPORTED \u2014 The cited span is about CPU exports driving import share; it does not mention auto exports being stagnant or a USMCA deal not being a U.S. ) \u2014 re-anchored to C-da8c5f9ee61ee3; after re-anchoring: supported",
+  "issue_id": "VI-20d4da5f075be1",
+  "ref_id": "TH-F4A90F739D:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:43.029524Z",
+  "detail": "s06.1: first check REVIEW_UNSUPPORTED (s06.1: UNSUPPORTED \u2014 The cited convergence span does not describe the growth model as structural/FDI/services/nearshoring nor contrast it with the 2003-2013 com) \u2014 re-anchored to C-cbd6500c3b660f; after re-anchoring: supported",
+  "issue_id": "VI-22dc0a873767e2",
+  "ref_id": "TH-BD4B215CA8:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "EXTRACTION_COMPACT",
+  "created_at": "2026-10-11T10:17:09.701615Z",
+  "detail": "the full extraction overran the output cap (21333 output tokens, discarded) \u2014 this article was extracted in the declared COMPACT mode (at most 25 claims); the completeness pass re-reads the whole article for what that leaves out",
+  "issue_id": "VI-234f1886b5bfbf",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781261Z",
+  "detail": "s03.2: Label MEASURED OBSERVATION but content is interpretive ('markets price fiscal credibility...spreads differ...selection matters'). Cited spans are only debt-level observations (93%, 60%); they do not state spreads differ or that markets price credibility. Label stronger than content and claim not in cited spans. | 'Markets price fiscal credibility, so sovereigns with similar debt trade at materially different spre'",
+  "issue_id": "VI-25335f3b570516",
+  "ref_id": "TH-BCAA34CC82:s03.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:43.029530Z",
+  "detail": "s03.1: first check REVIEW_PARTIAL (s03.1: The cited span supports convergence but not FDI being above a ~3% regional average or the services/high-tech export driver. The pool provides FDI-above-r) \u2014 re-anchored to C-bda00d3cf59ab4, C-d9615f979f3d93, C-43f0f16ddb4ea5, C-adeecea762b666; after re-anchoring: supported",
+  "issue_id": "VI-2644f2d68fe866",
+  "ref_id": "TH-BD4B215CA8:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.541530Z",
+  "detail": "c10: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-26f567250aa17f",
+  "ref_id": "C-56a7bca985d599",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:31.133145Z",
+  "detail": "s01.0: The label is MEASURED OBSERVATION, but the sentence also carries 'Citi sees scope for EPS growth plus multiple expansion if the macro backdrop materializes' \u2014 a conditional interpretation/opinion not present in the cited measured spans. The two cited spans support the <7%/~13% and 5.8x figures, but the 'Citi sees scope...' framing is not in the cited spans. | 'LatAm is under-represented in EM benchmarks (<7% of MSCI EM vs ~13% of EM GDP); Citi sees scope for '",
+  "issue_id": "VI-28be33e5f56f2c",
+  "ref_id": "TH-9E1F31CAD0:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:29:39.644873Z",
+  "detail": "b5.k5_18: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b195 (content overlap 100%; model quote was 'LatAm credit valuations are tight by historical standards following significant ')",
+  "issue_id": "VI-2f9c1327bd40c2",
+  "ref_id": "C-27f1480f56a75c",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-10-11T10:29:39.537118Z",
+  "detail": "466 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 10 parts",
+  "issue_id": "VI-321235d8871e47",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:29:39.614805Z",
+  "detail": "b5.k5_16: quote found in b187, not the cited b189; number check failed: value=11.0 value_text='eleventh' vs quote \u2014 quote 'core measures remain above headline inflation for the eleventh'",
+  "issue_id": "VI-3516384fb9bd31",
+  "ref_id": "C-0a54693e9e43ff",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:31:30.295933Z",
+  "detail": "s07.0: first check REVIEW_UNSUPPORTED (s07.0: UNSUPPORTED \u2014 The cited span is about UHNW wealth growth of around 5%, which has nothing to do with LatAm struggling to compete with tech/AI hubs or bein) \u2014 re-anchored to C-4f45f955cf91ba; after re-anchoring: supported",
+  "issue_id": "VI-351d831e90630c",
+  "ref_id": "TH-AAAE8338E0:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:00.639435Z",
+  "detail": "s06.2: Labeled MEASURED OBSERVATION but 'best in decades' and the structural/cyclical tailwind classification (minerals, mature macro) are interpretive and not in the cited figures (USD -9%, terms of trade index levels). | 'Conditions for higher LatAm growth are the best in decades; some tailwinds structural (minerals, mat'",
+  "issue_id": "VI-36c23886ba2391",
+  "ref_id": "TH-7F5295AC45:s06.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781224Z",
+  "detail": "s02.2: Span says interest payments absorb nearly one fifth but does not specify 'of revenue'; the card adds 'of revenue'. Countries Mexico and Brazil supported. | 'In Mexico and Brazil interest payments absorb nearly one fifth of revenue \u27e8cited figures: approximat'",
+  "issue_id": "VI-374b199597b9c6",
+  "ref_id": "TH-BCAA34CC82:s02.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781247Z",
+  "detail": "s02.4: Span supports ~COP40tn / 2.2% of GDP in fiscal savings; does not explicitly tie to Colombia's 'proposed fiscal bill' by name, though savings figure matches. | \"Colombia's proposed fiscal bill aims for ~COP40tn (2.2% of GDP) in savings \u27e8cited figures: forecast;\"",
+  "issue_id": "VI-37827f5e3c9a4a",
+  "ref_id": "TH-BCAA34CC82:s02.4",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:43.028719Z",
+  "detail": "s01.0: The cited spans support ~50% for three leading Hummingbirds and ~30% for the region by 2060. But the sentence adds many specifics (Panama, DR, Costa Rica, Paraguay named; FDI/services/nearshoring drivers; 'without a commodities boom'; 'constant growth' assumption) not in the two cited spans. | 'Panama, the Dominican Republic, Costa Rica and (to a lesser extent) Paraguay are converging toward U'",
+  "issue_id": "VI-37ed6e58fffb7e",
+  "ref_id": "TH-BD4B215CA8:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:29:39.604079Z",
+  "detail": "b4.k4_14: number check failed: value=21.9 value_text='COP21.9tn' vs quote \u2014 quote \"the government's COP21.9tn expenditure reduction for 2026\"",
+  "issue_id": "VI-390b4f04b5be42",
+  "ref_id": "C-de888cffe1325b",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:29:39.676481Z",
+  "detail": "b4.hx4_1 Fiscal credibility and execution dispersion drives cites b4.k4_14, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-39930802094d2a",
+  "ref_id": "b4.hx4_1 Fiscal credibility and execution dispersion drives",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:30:31.134154Z",
+  "detail": "s06.3: first check REVIEW_UNSUPPORTED (s06.3: UNSUPPORTED \u2014 The cited span only gives benchmark weight vs GDP; the claim that the region is positioned to regain relevance via broader re-rating driven) \u2014 re-anchored to C-e03c20c94ae247; after re-anchoring: supported",
+  "issue_id": "VI-3bdb037628de74",
+  "ref_id": "TH-9E1F31CAD0:s06.3",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:05.494520Z",
+  "detail": "s06.1: Cited span supports AI-assembly role but not 'privileged USMCA access'; however this is SOURCE OPINION framing largely consistent with cited content. | \"Mexico's privileged USMCA access and AI-assembly role position it as a structural nearshoring benefi\"",
+  "issue_id": "VI-3fa13c171a81a1",
+  "ref_id": "TH-F4A90F739D:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:43.029517Z",
+  "detail": "s06.0: first check REVIEW_UNSUPPORTED (s06.0: UNSUPPORTED \u2014 The cited span is the 50%-by-2060 forecast; it does not state the Hummingbirds have outpaced the regional average since the 1990s. Not supp) \u2014 re-anchored to C-a6c7bc45fe8d24; after re-anchoring: supported",
+  "issue_id": "VI-3fc6c21bf74235",
+  "ref_id": "TH-BD4B215CA8:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:35:10.524949Z",
+  "detail": "s02.0: Cited span mentions expanding energy capacity but does not mention 'security'; the 'seek security' element is unsupported | 'Energy and power (renewable, transitional and traditional) is a main area of capex interest as count'",
+  "issue_id": "VI-42eb5b81345dc1",
+  "ref_id": "TH-0D0AD5B0D7:s02.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:30:31.134109Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 The cited span only states LatAm's benchmark weight vs GDP; it says nothing about modest reallocation of global capital having a meaningful) \u2014 re-anchored to C-026859daf578a9; after re-anchoring: supported",
+  "issue_id": "VI-459872941b5dbc",
+  "ref_id": "TH-9E1F31CAD0:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:18.510300Z",
+  "detail": "s03.1: The 'driven by volumes not prices' claim is not in either cited span; it is an added assertion not supported by the cited forecasts. | 'Vaca Muerta could generate ~US$35bn exports by 2031 and mining US$36bn by 2035 vs ~US$12bn and US$8b'",
+  "issue_id": "VI-4640fca1eaa298",
+  "ref_id": "TH-49B78DCABF:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:31.133199Z",
+  "detail": "s03.1: Label MEASURED OBSERVATION is stronger than content. The claim about falling policy rates driving multiple expansion is an opinion/mechanism (from C-0c69ee358358be, a SOURCE OPINION, which is not even cited here). The cited spans (5.8x return; <7%/13% GDP) do not state that falling policy rates and capital reallocation support multiple expansion and benchmark representation. | 'Falling policy rates and capital reallocation support multiple expansion and benchmark representatio'",
+  "issue_id": "VI-47b6e4d47b8ccb",
+  "ref_id": "TH-9E1F31CAD0:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:06.920721Z",
+  "detail": "s02.1: Cited span supports tight valuations after compression, but 'light EM positioning leaving room for inflows' is not in the cited span and not found in the pool. | 'LatAm credit valuations are tight by historical standards after significant spread compression, with'",
+  "issue_id": "VI-47b93785ad01cc",
+  "ref_id": "TH-BE1AF62F71:s02.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:31:30.295228Z",
+  "detail": "s07.0: The 'difficult to compete with hyper-growth tech and AI hubs in North America and Asia' portion is supported by C-4f45f955cf91ba. But 'viewed mainly as a resource provider' is not in the cited spans, and the cited UHNW ~5% growth figure (C-f7dc8a11cf3b4b) is unrelated to the claim text. | 'LatAm struggles to compete with hyper-growth tech/AI hubs in North America and Asia; viewed mainly a'",
+  "issue_id": "VI-47d3bf321d71b5",
+  "ref_id": "TH-AAAE8338E0:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:06.920667Z",
+  "detail": "s01.0: Cited spans support tight valuations after compression and EM spreads near multi-year lows, but 'light EM positioning leaves room for incremental inflows' and 'liquid LatAm credits are seen as relative safe havens within EM' are not in the cited spans. | 'LatAm credit valuations are tight after significant spread compression with EM spreads near multi-ye'",
+  "issue_id": "VI-4900c3ca851e97",
+  "ref_id": "TH-BE1AF62F71:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:29:39.666119Z",
+  "detail": "b7.k7_4: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b288 (content overlap 100%; model quote was \"Peru remains one of the world's largest producers of copper and an important sou\")",
+  "issue_id": "VI-4b121ae3e719fa",
+  "ref_id": "C-e24cf29260c3b6",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:44.896094Z",
+  "detail": "s06.1: Cited span supports only the corporate tax cut; copper leadership and 'multi-year re-rating path' are not in the cited span. | 'Copper leadership and tax-reform-driven investment certainty support a multi-year re-rating path. \u27e8c'",
+  "issue_id": "VI-4c83851666cbe2",
+  "ref_id": "TH-F21991785D:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MALFORMED_ITEM_DROPPED",
+  "created_at": "2026-10-11T10:29:39.537688Z",
+  "detail": "completeness pass: part 6: added_mentions[4] dropped \u2014 entity_type: Input should be 'company', 'private_company', 'etf_or_fund', 'index', 'product', 'data_provider', 'publisher', 'government_or_agency', 'basket', 'other_organization' or 'sector' (got 'other')",
+  "issue_id": "VI-4f4f684e637ddb",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:22.390332Z",
+  "detail": "s06.0: First span supports LatAm high-carry FX attracting inflows; the BCB span supports an easing-pause/hike risk. But 'election politics' as a near-term risk is not in either cited span. | 'LatAm high-carry FX attracting inflows, but easing and election politics are near-term risks to watc'",
+  "issue_id": "VI-4fc1b3147f9cf3",
+  "ref_id": "TH-4C9C960EBD:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:29:39.676349Z",
+  "detail": "b3.hx3_1 Mexico the nearshoring and AI-supply-chain benefic: sector exposure 'manufacturing' is not a verbatim span naming it ('primarily driven by manufacturing, trade integration and supply-chain reconfigur') \u2014 dropped",
+  "issue_id": "VI-502a8fdf245eb6",
+  "ref_id": "b3.hx3_1 Mexico the nearshoring and AI-supply-chain benefic",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:31:30.295201Z",
+  "detail": "s02.1: The cited span supports the copper/electrification/grid/infrastructure/energy-transition portion. The wheat/corn/soybean price rise 2026-27 forecast is not in the cited span and is not found in the pool. | 'Copper demand should benefit from electrification, power-grid expansion, infrastructure investment a'",
+  "issue_id": "VI-545cc7e467b83a",
+  "ref_id": "TH-AAAE8338E0:s02.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:34:45.235773Z",
+  "detail": "s06.0: first check REVIEW_UNSUPPORTED (s06.0: UNSUPPORTED \u2014 Cited span is about inflation/fiscal improvement affecting valuations; it says nothing about BanRep's hawkish stance, services inflation, d) \u2014 re-anchored to C-7f916a42a44c1d; after re-anchoring: supported",
+  "issue_id": "VI-555d183f283465",
+  "ref_id": "TH-EB2A081D45:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:00.639455Z",
+  "detail": "s07.8: The claim that favorable conditions are 'beyond the region's control and may not last' is not supported by the cited spans (120-year little convergence; growth stuck near 2%). Those spans support the execution-risk illustration but not the 'beyond control / may not last' assertion. | \"Favorable external conditions underpinning the growth thesis are beyond the region's control and may\"",
+  "issue_id": "VI-5564812c01a278",
+  "ref_id": "TH-7F5295AC45:s07.8",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:32:05.495133Z",
+  "detail": "s06.0: first check REVIEW_UNSUPPORTED (s06.0: UNSUPPORTED \u2014 The cited span only discusses the ten-year window to extend USMCA; it says nothing about investment slowing amid review uncertainty or a pi) \u2014 re-anchored to C-33103e6bd26f05; after re-anchoring: supported",
+  "issue_id": "VI-56558498bff8ba",
+  "ref_id": "TH-F4A90F739D:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:22.390303Z",
+  "detail": "s02.1: The cited span supports '4.5%' but says nothing about 'the most cuts in the region since the peak'; that comparative claim is unsupported by the cited span. | \"Chile's policy rate is now 4.5% after the most cuts in the region since the peak\"",
+  "issue_id": "VI-5f891334dbb708",
+  "ref_id": "TH-4C9C960EBD:s02.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:29:39.667223Z",
+  "detail": "h4 LatAm the diversification beneficiary of AI-concen: sector exposure 'LatAm mineral resources' is not a verbatim span naming it (\"Latin America's mineral endowment spans virtually every input critical to AI inf\") \u2014 dropped",
+  "issue_id": "VI-60bac92c7bdb1e",
+  "ref_id": "h4 LatAm the diversification beneficiary of AI-concen",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:34:06.922102Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 The cited span is about tight valuations after spread compression; it does not mention higher commodity prices, geopolitical distance, or L) \u2014 re-anchored to C-9462b4c4139168; after re-anchoring: supported",
+  "issue_id": "VI-626a83a3905a5f",
+  "ref_id": "TH-BE1AF62F71:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781196Z",
+  "detail": "s02.0: Span supports 'roughly 93% of GDP' for Brazil, but 'above every other BB sovereign' is not in the cited span (which only says IMF-comparable). | 'Brazil debt roughly 93% of GDP, above every other BB sovereign \u27e8cited figures: approximate\u27e9'",
+  "issue_id": "VI-62cbf91a2bbb2e",
+  "ref_id": "TH-BCAA34CC82:s02.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781236Z",
+  "detail": "s02.3: Cited span states a projected 2027 deficit of 9.4% of GDP but does not attribute it to Colombia; country attribution not in cited span. | 'Colombia projected 2027 deficit of 9.4% of GDP \u27e8cited figures: forecast\u27e9'",
+  "issue_id": "VI-669059589a7f18",
+  "ref_id": "TH-BCAA34CC82:s02.3",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:35:10.525044Z",
+  "detail": "s07.0: Cited span lists regulatory clarity and policy consistency for long-term investments but does not support 'most often cite' as the leading/binding constraint | 'Clients most often cite regulatory clarity and policy consistency as binding constraints for further'",
+  "issue_id": "VI-66cf2a2fce237d",
+  "ref_id": "TH-0D0AD5B0D7:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:43.028772Z",
+  "detail": "s07.0: The '>3% per-capita growth for 35 years is historically exceptional' is directly supported, but 'institutional gaps, limited fiscal space (especially Panama) and climate vulnerabilities' constraints are not in the cited spans. | 'Institutional gaps, limited fiscal space (especially Panama) and climate vulnerabilities could const'",
+  "issue_id": "VI-6a2b4141f67621",
+  "ref_id": "TH-BD4B215CA8:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:54.755898Z",
+  "detail": "s03.1: The cited span establishes Peru as a major producer but does not state that a stronger commodity cycle lifts export volumes and revenues. | \"Stronger commodity cycle lifts Peru's export volumes and revenues.\"",
+  "issue_id": "VI-6a4073ce3e71ea",
+  "ref_id": "TH-DA1F96C4BB:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.614809Z",
+  "detail": "b5.k5_16: quote found in b187, not the cited b189",
+  "issue_id": "VI-6cc779f80d1c08",
+  "ref_id": "C-0a54693e9e43ff",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:54.755833Z",
+  "detail": "s01.0: The cited spans support Peru being a large copper producer and a beneficiary of lower risk premiums, but the specific claims about 'benign inflation', 'a predictable BCRP framework', and the causal chain lifting 'exports, fiscal accounts and domestic activity' are not in the cited spans. | \"Peru is one of the world's largest copper producers with benign inflation and a predictable BCRP fra\"",
+  "issue_id": "VI-6e38ad4136160c",
+  "ref_id": "TH-DA1F96C4BB:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:00.639368Z",
+  "detail": "s01.1: Labeled MEASURED OBSERVATION but the cited spans (stakes high for 660m people; growth stuck near 2%) do not support a framing of a 'significant opportunity for faster growth and convergence, while cautioning success is not guaranteed.' That framing is interpretive/opinion and not in the two cited figures. | 'The article frames the current environment as a significant opportunity for faster growth and conver'",
+  "issue_id": "VI-6e9956a8efb441",
+  "ref_id": "TH-7F5295AC45:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:31:04.254246Z",
+  "detail": "s03.1: UNSUPPORTED \u2014 Cited span only states four 25bp cuts brought the rate to 14.0%; nothing about weaker USD, BRL support, easing enablement, USD equity returns, or earnings revisions. Labelled MEASURED OBSERVATION but content is an unsupported causal/interpretive chain. | 'Weaker USD supports BRL, enables easing and enhances USD equity returns; earnings revisions provide '",
+  "issue_id": "VI-7098ee3a683704",
+  "ref_id": "TH-3A53B04C0B:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:33:44.896777Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 The claim that Citi raised its IPSA target reflecting stronger earnings and higher trend-growth expectations is not supported by the single) \u2014 re-anchored to C-e82817be497182; after re-anchoring: supported",
+  "issue_id": "VI-7188fe65b07fe2",
+  "ref_id": "TH-F21991785D:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-10-11T10:29:39.676614Z",
+  "detail": "b6.hx6_1 Argentina at the start of a long virtuous cycle le names 'Vaca Muerta', which is not a verified source mention \u2014 removed from its affected list",
+  "issue_id": "VI-7ac90cfd44b911",
+  "ref_id": "b6.hx6_1 Argentina at the start of a long virtuous cycle le",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234517Z",
+  "detail": "s03.2: The cited span supports outsized valuation impact from credible inflation/fiscal improvement, but the characterization of a 'depressed, high-risk-premium starting point' is not in the cited span. | 'Credible improvement in inflation/fiscal trends could drive outsized multiple expansion from a depre'",
+  "issue_id": "VI-7ea0752514b48c",
+  "ref_id": "TH-EB2A081D45:s03.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234536Z",
+  "detail": "s06.1: C-b5c09c3b9b97f7 supports meaningful exposure to the commodity cycle through oil exports. The 'weaker dollar and improving EM capital flows' part is not in the cited spans here (that is in C-bf34e90f924a4a, not cited); C-fb67da459ee71b is about valuations. | 'Colombia retains meaningful exposure to the commodity cycle through oil exports and could benefit fr'",
+  "issue_id": "VI-7f2c6f79e9a5e6",
+  "ref_id": "TH-EB2A081D45:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:29:39.676484Z",
+  "detail": "b4.hx4_1 Fiscal credibility and execution dispersion drives cites b5.k5_16, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-80bc0968f8f3a7",
+  "ref_id": "b4.hx4_1 Fiscal credibility and execution dispersion drives",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:44.896047Z",
+  "detail": "s03.0: Cited spans support trend growth raise and tax cut, but 'spur mining/electricity investment' is not in the cited spans. | 'Reconstruction Law and tax reform aim to raise trend growth and spur mining/electricity investment \u27e8'",
+  "issue_id": "VI-81f33213525730",
+  "ref_id": "TH-F21991785D:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:22.390312Z",
+  "detail": "s02.4: The cited span supports high domestic rates keeping a floor under fixed income allocations in Brazil, but 'while alternatives scale for UHNW investors' is not in the cited span. | 'In Brazil, high domestic interest rates keep a massive floor under fixed income allocations, while a'",
+  "issue_id": "VI-8c550214cdbc0c",
+  "ref_id": "TH-4C9C960EBD:s02.4",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:33:44.896759Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence states 'Citi raised its 12-month IPSA target to 13,000' but the cited spans only cover the tax cut and trend-growth figures; the IPSA target) \u2014 re-anchored to C-e82817be497182; after re-anchoring: supported",
+  "issue_id": "VI-8c786e8f8e1765",
+  "ref_id": "TH-F21991785D:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:22.390325Z",
+  "detail": "s03.2: The cited span describes a 'capital shift' not specifically 'leveraged flows'; 'leveraged' overstates the span's scope. | 'Leveraged flows shift from CEEMEA and Asia into LatAm FX'",
+  "issue_id": "VI-8cb4e578f8f91f",
+  "ref_id": "TH-4C9C960EBD:s03.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:29:39.577626Z",
+  "detail": "c20: quote not in block \u2014 quote 'The result is a projected 2027 deficit of 9.4% of GDP'",
+  "issue_id": "VI-8e42ed93bf02b5",
+  "ref_id": "C-efc81f6e946403",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:34:06.933825Z",
+  "detail": "s07.0 prints '2027', which none of its cited claims carry: 'Politics remains the principal source of volatility for Argentine assets, and the 2027 election cycl'",
+  "issue_id": "VI-906d941b554b68",
+  "ref_id": "TH-49B78DCABF:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.624799Z",
+  "detail": "b5.k5_17: quote found in b255, not the cited b190",
+  "issue_id": "VI-918c8a5685c584",
+  "ref_id": "C-5c9ed7fe52714b",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:05.494544Z",
+  "detail": "s07.4: Cited span only supports 'regulatory clarity and policy consistency'; the long list of other binding constraints (infrastructure/logistics, energy, security, stakeholder engagement, FX/rate volatility, talent gaps) is not in the cited span. | 'Binding execution constraints \u2014 regulatory clarity and policy inconsistency, infrastructure/logistic'",
+  "issue_id": "VI-925d07c145c4c3",
+  "ref_id": "TH-F4A90F739D:s07.4",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:44.895953Z",
+  "detail": "s01.1: Cited spans support the IPSA target raise and trend-growth figure, but 'stronger earnings expectations' as a driver is not in the cited spans. | 'Citi raised its IPSA target reflecting stronger earnings and higher trend-growth expectations. \u27e8cite'",
+  "issue_id": "VI-96d80bbf740a3d",
+  "ref_id": "TH-F21991785D:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:31.133233Z",
+  "detail": "s07.0: Label MEASURED OBSERVATION, but content is not measured. The cited span (5.8x return) does not support any of the sentence's claims: 'return to 2000s peak levels is not the base case' is a SOURCE OPINION (available in pool as C-026859daf578a9) and the El Nino/hawkish rates/China/trade risks are not in the cited span at all. | 'A return to 2000s peak levels is not the base case; El Nino, hawkish global rates, slower China and '",
+  "issue_id": "VI-97524ce22421ae",
+  "ref_id": "TH-9E1F31CAD0:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:43.028764Z",
+  "detail": "s03.1: FDI figures and the ~3% regional average are supported by cited spans, but the claim that FDI and services/high-tech exports 'drive above-average per-capita growth' is a causal forecast not stated in the cited spans; the 50% span is the only forecast and does not establish this driver mechanism. Label FORECAST is appropriate. | 'FDI inflows (above the ~3% regional average) and services/high-tech exports drive above-average per-'",
+  "issue_id": "VI-99134a4150e958",
+  "ref_id": "TH-BD4B215CA8:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234527Z",
+  "detail": "s06.0: C-7f916a42a44c1d supports that dynamics delayed rate normalization and kept discount rates elevated relative to peers. But 'BanRep's hawkish stance and persistent services inflation' as the specific cause is not supported by the cited spans; C-fb67da459ee71b is about valuations. | \"BanRep's hawkish stance and persistent services inflation have delayed rate normalization and kept d\"",
+  "issue_id": "VI-9ba2041c34a1d4",
+  "ref_id": "TH-EB2A081D45:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:05.494506Z",
+  "detail": "s03.1: Cited span supports CPU exports driving import-share gain, but adds 'manufacturing volumes' which is not in the cited span. | \"Mexico's CPU exports and manufacturing volumes to the U.S. rise, increasing its U.S. import share.\"",
+  "issue_id": "VI-9f71eef528374f",
+  "ref_id": "TH-F4A90F739D:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781287Z",
+  "detail": "s07.5: Cited span only supports 'regulatory clarity and policy consistency'. The long list of additional constraints (infrastructure/logistics, energy, security, stakeholder engagement, FX/rate volatility, talent gaps) is not in the cited span. | 'Binding execution constraints \u2014 regulatory clarity and policy inconsistency, infrastructure/logistic'",
+  "issue_id": "VI-a28a00e55ea55b",
+  "ref_id": "TH-BCAA34CC82:s07.5",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:34:45.235740Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 Cited span is about inflation/fiscal improvement affecting valuations, not about commodity demand, weaker dollar, oil-exposed economy, or c) \u2014 re-anchored to C-bf34e90f924a4a; after re-anchoring: supported",
+  "issue_id": "VI-a42ade4576224d",
+  "ref_id": "TH-EB2A081D45:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:05.494450Z",
+  "detail": "s01.0: The cited spans support only the CPU-exports-driving-import-share claim and the USMCA ten-year clause. They do NOT support that Mexico has 'substantially increased its share of U.S. imports' quantitatively or that it is 'the largest U.S. trading partner' \u2014 those facts are not in the cited spans. | 'Mexico has substantially increased its share of U.S. imports, consolidating its position as the larg'",
+  "issue_id": "VI-a581d85aa17567",
+  "ref_id": "TH-F4A90F739D:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:30:31.134141Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 The claim that stronger GDP and currency appreciation historically drive faster EPS growth in USD is not in the cited span, which only repo) \u2014 re-anchored to C-0c69ee358358be; after re-anchoring: supported",
+  "issue_id": "VI-a761607211eabe",
+  "ref_id": "TH-9E1F31CAD0:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:33:22.390293Z",
+  "detail": "s01.1: UNSUPPORTED \u2014 The cited span is about a past capital shift; it says nothing about watching whether rotation continues or reverses, nor about easing and politics. This framing is not in the cited span. | 'Investors should watch whether rotation into high-yielding LatAm FX continues or reverses as easing '",
+  "issue_id": "VI-a7f4844443b630",
+  "ref_id": "TH-4C9C960EBD:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:54.755884Z",
+  "detail": "s02.1: The cited span supports Peru being among the largest beneficiaries of lower regional risk premiums, but the specific reasons 'given low debt, policy credibility and stable monetary framework' are not in the cited span. | 'Peru could be among the largest beneficiaries of lower regional risk premiums given low debt, policy'",
+  "issue_id": "VI-aae397376cb9fa",
+  "ref_id": "TH-DA1F96C4BB:s02.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234492Z",
+  "detail": "s01.1: The cited span supports the multiple-expansion-on-normalization part, but 'earnings leveraged to commodity activity and domestic demand' and the 'high-beta recovery profile' framing are not in the cited span. | 'Colombia offers a high-beta recovery profile \u2014 earnings leveraged to commodity activity and domestic'",
+  "issue_id": "VI-aef0a94a007f7b",
+  "ref_id": "TH-EB2A081D45:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:34:06.922113Z",
+  "detail": "s06.1: first check REVIEW_UNSUPPORTED (s06.1: UNSUPPORTED \u2014 The cited span says nothing about geographic distance from conflict, stronger institutions, or commodity exposure underpinning LatAm's stan) \u2014 re-anchored to C-6c490bc419fbd2; after re-anchoring: supported",
+  "issue_id": "VI-b25d2ef8a69295",
+  "ref_id": "TH-BE1AF62F71:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:22.390259Z",
+  "detail": "s01.0: The cited span supports the capital shift from CEEMEA and Asia into LatAm FX driven by higher nominal rates and lower energy-price sensitivity, but adds 'with LatAm currencies ranking high on carry-to-vol' which is not in the cited span. | 'Higher nominal rates and lower energy-price sensitivity have engineered a capital shift from CEEMEA '",
+  "issue_id": "VI-b6ca164e7d9b75",
+  "ref_id": "TH-4C9C960EBD:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:29:39.666996Z",
+  "detail": "h1 Weak dollar and strong commodities set up Latin Am cites ['C-b0d7a55bb03023'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-b703f55674b26a",
+  "ref_id": "h1 Weak dollar and strong commodities set up Latin Am",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.666206Z",
+  "detail": "b7.k7_9: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-b7db51ed713c20",
+  "ref_id": "C-f5664c63182d20",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:31:04.255120Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Labelled MEASURED OBSERVATION. The cited span only reports four cuts to 14.0%; the BCB easing-pause-in-early-2027 claim is a forecast found in pool C-b03) \u2014 re-anchored to C-b03568e1182037; after re-anchoring: supported",
+  "issue_id": "VI-b9027e7e2b21c8",
+  "ref_id": "TH-3A53B04C0B:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:29:39.676611Z",
+  "detail": "b5.hx5_3 LatAm credit as a tight-valuation safe haven withi cites ['C-767657b5784a06'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-bb0176e7f16be2",
+  "ref_id": "b5.hx5_3 LatAm credit as a tight-valuation safe haven withi",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:35:10.525004Z",
+  "detail": "s06.0: Cited span says companies moving from evaluating toward investment plans but does not mention 'nearshoring' specifically nor that pace varies by sector and country | 'Nearshoring discussions moving from evaluation toward investment plans, though pace varies by sector'",
+  "issue_id": "VI-bb440efd2ac6c0",
+  "ref_id": "TH-0D0AD5B0D7:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:06.920826Z",
+  "detail": "s06.0: Cited span supports tight valuations, but 'supportive technical backdrop and safe-haven perception' is not in the cited span; safe-haven perception is in the pool. | 'Supportive technical backdrop and safe-haven perception support LatAm credit despite tight valuation'",
+  "issue_id": "VI-c017a8bac9dc5c",
+  "ref_id": "TH-BE1AF62F71:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234438Z",
+  "detail": "s01.0: The cited span only supports that any credible improvement in inflation/fiscal trends could have an outsized impact on valuations (the asymmetry claim). The claims about commodity/oil leverage, demanding a substantial risk premium, and persistent inflation/fiscal concerns are not in the cited span. | 'Colombia combines commodity (oil) leverage with potential for valuation re-rating; investors demand '",
+  "issue_id": "VI-c028610b5b5f15",
+  "ref_id": "TH-EB2A081D45:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:06.920750Z",
+  "detail": "s03.2: Cited spans support spreads near multi-year lows and tight valuations, but 'room for incremental inflows given light positioning' is not in the cited spans or pool. | 'Spreads compress to multi-year lows with room for incremental inflows given light positioning'",
+  "issue_id": "VI-c1cddc43756ac5",
+  "ref_id": "TH-BE1AF62F71:s03.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:18.510494Z",
+  "detail": "s07.0: Labelled MEASURED OBSERVATION but the claims about politics being the principal source of volatility and the 2027 election turning binary are not in the cited span, which only covers Milei's confidence reading. | 'Politics remains the principal source of volatility for Argentine assets, and the 2027 election cycl'",
+  "issue_id": "VI-c46c2d9c316ea9",
+  "ref_id": "TH-49B78DCABF:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:31:30.295216Z",
+  "detail": "s02.4: Cited span supports that LatAm is viewed through strategic importance/optionality, but the specifics (copper, lithium, nearshoring, energy/food supply, critical resource provider in a multipolar world) go beyond the span. | 'As the world sources critical minerals (copper, lithium), nearshoring and energy/food supply, LatAm '",
+  "issue_id": "VI-c5435c3c586b9f",
+  "ref_id": "TH-AAAE8338E0:s02.4",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:31:30.295149Z",
+  "detail": "s01.0: The cited span only supports the diversification/underrepresentation figure (<7% of MSCI EM vs ~13% of EM GDP). The claim about mineral endowment (copper, lithium) feeding AI infrastructure and the 'relatively better positioned' AI argument is not in the cited span. Labelled MEASURED OBSERVATION but asserts Citi's argument/interpretation. | 'Citi argues LatAm is relatively better positioned in the AI boom: its mineral endowment (copper, lit'",
+  "issue_id": "VI-cbb9c6ed43fa2e",
+  "ref_id": "TH-AAAE8338E0:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:22.390318Z",
+  "detail": "s03.0: The cited spans establish earlier/higher hiking but do not state LatAm has 'higher-than-average EM carry'; the carry conclusion goes beyond the cited observations. Carry levels appear elsewhere in the pool but not an EM-average comparison. | 'Asynchronous monetary cycle leaves LatAm with higher-than-average EM carry'",
+  "issue_id": "VI-cc72e0f1cd1051",
+  "ref_id": "TH-4C9C960EBD:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:35:10.525063Z",
+  "detail": "s07.8: Cited span only supports regulatory clarity and policy consistency; the long list of other constraints (infrastructure bottlenecks, energy cost, security, stakeholder engagement, FX/rate volatility, talent gaps) and 'most commonly cited' are not in the cited span | 'Binding execution constraints \u2014 regulatory clarity and policy inconsistency, infrastructure/logistic'",
+  "issue_id": "VI-cdc20f235d1191",
+  "ref_id": "TH-0D0AD5B0D7:s07.8",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:33:44.896785Z",
+  "detail": "s03.1: first check REVIEW_UNSUPPORTED (s03.1: UNSUPPORTED \u2014 Claim about stronger earnings underpinning a higher IPSA target is not in the cited trend-growth span. | 'Stronger earnings expectations un) \u2014 re-anchored to C-e82817be497182; after re-anchoring: supported",
+  "issue_id": "VI-ceda11298239ed",
+  "ref_id": "TH-F21991785D:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SAME_KEY_IN_ARTICLE",
+  "created_at": "2026-10-11T10:32:43.031765Z",
+  "detail": "2 hypotheses share one identity key in one article \u2014 merged as one thesis contribution",
+  "issue_id": "VI-cee86cc73e5f8a",
+  "ref_id": "macro_market|dispersion_selection|positive|Latin America",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:29:39.667126Z",
+  "detail": "h3 Brazil equities geared to USD turn and post-electi cites c21, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-d271db5770960e",
+  "ref_id": "h3 Brazil equities geared to USD turn and post-electi",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:00.639418Z",
+  "detail": "s01.2: Labeled MEASURED OBSERVATION but includes 'best growth conditions in decades' and 'success depends on reform,' which are opinion/interpretation not in the cited measured figures. The cited figures (9% USD weakening, Peru 145, 2% growth, +4pp convergence) do not establish the 'best in decades' or reform claim. | \"\u27e8update 2026-09-14 \u00b7 Citi\u27e9 Citi argues a weak USD and record terms of trade create LatAm's best grow\"",
+  "issue_id": "VI-d3d27d0825c5c4",
+  "ref_id": "TH-7F5295AC45:s01.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:31:04.254297Z",
+  "detail": "s03.2: The ETF shares ~72% figure is supported, but 'First rally leg driven by foreign passive flows and multiple expansion' is not in the cited span. | 'First rally leg driven by foreign passive flows and multiple expansion; ETF shares up ~72% since Dec'",
+  "issue_id": "VI-d557ac282f3d39",
+  "ref_id": "TH-3A53B04C0B:s03.2",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:43.028751Z",
+  "detail": "s01.1: The convergence being 'written initially by the Hummingbirds, before the region' and the 'if they invest in reforms' conditionality are not in the two cited forecast spans, which only give the 50%/30% figures. | \"LatAm's convergence might be written initially by the Hummingbirds, before the region as a whole, if\"",
+  "issue_id": "VI-d6efe77ade8d18",
+  "ref_id": "TH-BD4B215CA8:s01.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781271Z",
+  "detail": "s06.0: Cited forecast spans support the deficit/savings figures, but the claim about adjustment feasibility being political and delivery uncertain ahead of elections is not present in the cited spans. | 'Fiscal adjustment feasibility is increasingly political; near-term delivery uncertain in Brazil and '",
+  "issue_id": "VI-d7c62628c9d1aa",
+  "ref_id": "TH-BCAA34CC82:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:30:17.966994Z",
+  "detail": "s07.0 prints '2000', which none of its cited claims carry: 'A return to 2000s peak levels is not the base case; El Nino, hawkish global rates, slower China and '",
+  "issue_id": "VI-db08314cad68e4",
+  "ref_id": "TH-9E1F31CAD0:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:30:00.639446Z",
+  "detail": "s07.7: Labeled MEASURED OBSERVATION but the claim 'The 2000s bonanza was wasted without investment or productivity' and 'convergence is not guaranteed' are opinion/interpretation not present in the two cited spans (USD ~20% weakened; growth stuck at 2%). | 'The 2000s bonanza was wasted without investment or productivity; tailwinds are partly cyclical and b'",
+  "issue_id": "VI-db9e20d7124420",
+  "ref_id": "TH-7F5295AC45:s07.7",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:29:40.128745Z",
+  "detail": "s07.7 prints '2000', which none of its cited claims carry: 'The 2000s bonanza was wasted without investment or productivity; tailwinds are partly cyclical and b'",
+  "issue_id": "VI-dc1780fd99a6c8",
+  "ref_id": "TH-7F5295AC45:s07.7",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:44.896072Z",
+  "detail": "s03.1: 'Stronger earnings expectations' as the driver of the higher IPSA target is not supported by the cited spans, which only cover trend growth and the target value. | 'Stronger earnings expectations underpin a higher IPSA target \u27e8cited figures: forecast; approximate\u27e9'",
+  "issue_id": "VI-de7f5ae8c4dfb0",
+  "ref_id": "TH-F21991785D:s03.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.645182Z",
+  "detail": "b6.k6_10: as-of 2026-06-30 not found in the cited source note \u2014 dropped",
+  "issue_id": "VI-dff6ee77a2fc5e",
+  "ref_id": "C-6d6cb74209edb4",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "AUTHORS_FROM_TEXT",
+  "created_at": "2026-10-11T10:29:39.680591Z",
+  "detail": "credited in the article text, not in page metadata: Felipe Juncal (article text b036: 'Felipe Juncal LatAm Economics'); Andr\u00e9s Cardona (article text b200: 'Andr\u00e9s Cardona'); Luis Costa (article text b164: 'Luis Costa'); Donato Guarino (article text b195: 'Donato Guarino')",
+  "issue_id": "VI-e1bb78470c8173",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:29:39.604473Z",
+  "detail": "b5.k5_4: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-e27ac698f8dcdc",
+  "ref_id": "C-8abaca2ad4e340",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "MALFORMED_ITEM_DROPPED",
+  "created_at": "2026-10-11T10:29:39.537920Z",
+  "detail": "completeness pass: part 6: figure_reviews: b262#13000 is not a gap of this part \u2014 verdict ignored",
+  "issue_id": "VI-ebcb3c0c8fbc7b",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:34:54.755924Z",
+  "detail": "s06.0: UNSUPPORTED \u2014 The cited span is only about Peru being a producer of copper/metals. It says nothing about benign underlying inflation, a predictable central bank, or dependence on commodity-cycle continuation. | 'Macro backdrop supportive with benign underlying inflation and a predictable central bank, but the t'",
+  "issue_id": "VI-f15114d13dd33e",
+  "ref_id": "TH-DA1F96C4BB:s06.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:29:39.602515Z",
+  "detail": "c21: quote not in block \u2014 quote 'At roughly 93% of GDP on an IMF-comparable basis, debt stands above every other '",
+  "issue_id": "VI-f747fdc2ecd704",
+  "ref_id": "C-87afc177b1f102",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-10-11T10:17:09.701737Z",
+  "detail": "model classifies institutional_research (Citi Research report by named economists and strategists analyzing LatAm macro, FX, credit and equity strategy with figures and forecasts.); the record keeps publisher_commentary (channel default for citi_must_c)",
+  "issue_id": "VI-f8a23efd557fd8",
+  "ref_id": "A-446cf596aeca",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:33:04.781129Z",
+  "detail": "s01.0: Line carries SOURCE OPINION label (weakest cited is C-85ad2f5e315415 opinion), acceptable. Content: 'roughly 93% of GDP' and 'roughly 60% of GDP' and 'nearly one fifth' and '2027 deficit 9.4%' all supported; broad synthesis about markets pricing credibility is interpretive but consistent with opinion span. Multiple numeric claims supported; label is weaker than some figures, which is allowed. Minor: synthesis goes somewhat beyond cited spans but within SOURCE OPINION latitude. | 'LatAm enters this cycle with stronger macro frameworks but weaker public balance sheets; higher debt'",
+  "issue_id": "VI-f8ac19e199762b",
+  "ref_id": "TH-BCAA34CC82:s01.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:32:05.494530Z",
+  "detail": "s07.0: The USMCA-deal-not-a-priority portion matches C-da8c5f9ee61ee3, but 'auto exports to the U.S. have remained broadly stagnant' is not supported by either cited span (CPU span covers CPUs, not autos). | 'Auto exports to the U.S. have remained broadly stagnant and a USMCA deal does not currently appear a'",
+  "issue_id": "VI-fe25a89ea7e20f",
+  "ref_id": "TH-F4A90F739D:s07.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:34:45.234506Z",
+  "detail": "s03.0: C-bf34e90f924a4a supports stronger commodity demand, weaker dollar and improving capital flows into high-carry EM. But the span refers to 'The country could benefit' generally; the card phrasing 'oil-exposed economy' is an added specification not in the cited spans (C-fb67da459ee71b is about valuations, not commodity demand). | \"Stronger commodity demand and weaker dollar improve Colombia's oil-exposed economy and capital flows\"",
+  "issue_id": "VI-ff4d82a56da2eb",
+  "ref_id": "TH-EB2A081D45:s03.0",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:34:45.235785Z",
+  "detail": "s06.1: first check REVIEW_UNSUPPORTED (s06.1: UNSUPPORTED \u2014 Cited span about inflation/fiscal valuation impact does not support claims about commodity cycle exposure via oil exports, weaker dollar be) \u2014 re-anchored to C-b5c09c3b9b97f7; after re-anchoring: supported",
+  "issue_id": "VI-fff44fd3477786",
+  "ref_id": "TH-EB2A081D45:s06.1",
+  "run_id": "R-20261011T101121Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ }
+]

@@ -1,0 +1,21 @@
+  [PASS] run status recorded: status SUCCEEDED; counts {'figures_in_articles': 851, 'figures_uncaptured': 17, 'claims_added_by_completeness': 234, 'theses_added_by_completeness': 12, 'articles_processed': 1, 'claims_extracted': 266, 'claims_verified': 264, 'mentions': 68, 'theses_created': 16, 'theses_updated': 0, 'attributions_only': 0, 'documents_ingested': 1, 'llm_calls': 51, 'llm_calls_cached': 0, 'http_requests': 0, 'http_cache_hits': 0}
+  [PASS] no unverified claim is linked to a thesis: 301 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 273 of 273 verified claim(s) in 1 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 16 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 16 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 1 article(s)
+  [FAIL] every reported figure captured or judged immaterial: OPEN — 17 of 851 figure(s): A-82a8a9210bae b060 '50' [capture_not_verified]; A-82a8a9210bae b060 '24%' [capture_not_verified]; A-82a8a9210bae b093 '~$400 billion' [capture_not_verified]; A-82a8a9210bae b095 '80%' [verification_failed]; A-82a8a9210bae b095 '24-48' [verification_failed]; A-82a8a9210bae b095 '12 - 30' [capture_not_verified]; A-82a8a9210bae b095 'five years' [verification_failed]; A-82a8a9210bae b126 '~27%' [verification_failed]; A-82a8a9210bae b127 '~27%' [capture_not_verified]; A-82a8a9210bae b185 '12' [verification_failed]; A-82a8a9210bae b185 '30' [verification_failed]; A-82a8a9210bae b195 '2,358' [capture_not_verified] … (showing 12 of 17)
+  [FAIL] every argument block accounted for: OPEN — 4 block(s): A-82a8a9210bae b153 [account_names_no_record]; A-82a8a9210bae b329 [account_names_no_record]; A-82a8a9210bae b483 [account_names_no_record]; A-82a8a9210bae b486 [account_names_no_record]
+  [PASS] every analysed article names its author(s): 1 article(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/hybrid-a/runs/R-20261011T100624Z-ingest
+QA R-20261011T100624Z-ingest: 18/20 passed · scan execution SUCCEEDED · research verification INCOMPLETE — NOT fully verified — over the 1 article(s) this run analysed: 17 of 851 stated figure(s) and 4 of 292 argument paragraph(s) open; causes: account_names_no_record 4, capture_not_verified 8, verification_failed 9. Open material is never used as evidence, so it can hold a thesis back but never raise its research action

@@ -1,0 +1,1852 @@
+{
+ "archive": [
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-126BEECA00.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "dispersion_selection",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-126BEECA00",
+   "title": "Uneven US regional power-market regulation makes regional selection drive grid/generation returns",
+   "versions": 1
+  },
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-4BC577D53A.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-02",
+   "mechanism": "dispersion_selection",
+   "node": "macro_market",
+   "region": "US",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-4BC577D53A",
+   "title": "Low stock correlation makes sector and thematic selection the key diversifier within equities",
+   "versions": 1
+  },
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-98FD8D046C.html",
+   "direction": "negative",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-02",
+   "mechanism": "policy_regulation",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-98FD8D046C",
+   "title": "Rate rise and datacenter moratoriums have pressured utilities exposed to the AI trade",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-0F127079D1.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-15",
+   "mechanism": "policy_regulation",
+   "node": "ai_infrastructure.datacenter_physical",
+   "region": "US",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-0F127079D1",
+   "title": "Datacenter moratoriums barely dent the US AI buildout pipeline",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-110E3113B1.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-110E3113B1",
+   "title": "Speed-to-power drives BYOG gas generation equipment multi-year growth cycle",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-1F366737A1.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.power_grid",
+   "region": "Global",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-1F366737A1",
+   "title": "AI datacenter power buildout drives multi-year transformer and grid equipment demand",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-566BFB9D39.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "cost_inflation",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-566BFB9D39",
+   "title": "Low-cost US natural gas gives US a structural advantage in powering datacenters",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-5EDF9760FB.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "valuation_rerating",
+   "node": "ai_infrastructure.datacenter_physical",
+   "region": "Europe",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-5EDF9760FB",
+   "title": "Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-7F02181484.html",
+   "direction": "positive",
+   "evidence_direction": "WEAKER",
+   "last_material_update": "2026-09-15",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.power_grid",
+   "region": "United States (esp. Texas)",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-7F02181484",
+   "title": "Grid friction pushes datacenters behind-the-meter, benefiting on-site generation suppliers",
+   "versions": 2
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-DDEE0B7EF0.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "competitive_share_shift",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-DDEE0B7EF0",
+   "title": "Fuel cells gain niche data-center power share on speed and grid-constraint advantages",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-426034EB2D.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.power_grid",
+   "region": "Global",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-426034EB2D",
+   "title": "Nuclear and SMR interest rising as supportive policy and power demand grow",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-5BA11D6167.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.power_grid",
+   "region": "Global",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-5BA11D6167",
+   "title": "Energy infrastructure is a multi-year structural growth story across four pillars",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-6EFAD379CB.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "capex_spending_cycle",
+   "node": "macro_market",
+   "region": "US, South Korea, Taiwan",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-6EFAD379CB",
+   "title": "Selective continued exposure to US, South Korea, Taiwan AI capex theme",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-8178B565CB.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.power_grid",
+   "region": "China",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8178B565CB",
+   "title": "China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-BAA07551ED.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "competitive_share_shift",
+   "node": "ai_infrastructure.hyperscaler_capex",
+   "region": "US",
+   "sector": "Hyperscaler / cloud AI capital expenditure and the companies spending it",
+   "status": "ACTIVE",
+   "thesis_id": "TH-BAA07551ED",
+   "title": "Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-C0F7401B12.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-C0F7401B12",
+   "title": "US gas pipeline underinvestment creates attractive midstream growth capex cycle",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-C840A76413.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.power_grid",
+   "region": "Europe",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-C840A76413",
+   "title": "European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-CA02B7A83B.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "supply_constraint",
+   "node": "ai_infrastructure.power_grid",
+   "region": "Global",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-CA02B7A83B",
+   "title": "Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-CE04BAA34C.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.materials_commodities",
+   "region": "Global ex-US",
+   "sector": "Materials and commodities consumed by the AI build",
+   "status": "ACTIVE",
+   "thesis_id": "TH-CE04BAA34C",
+   "title": "Energy security accelerates renewables, EVs and energy storage demand globally",
+   "versions": 1
+  },
+  {
+   "action": "SKIP",
+   "card": "cards/TH-D803766B8B.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-06-28",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.power_grid",
+   "region": "Australia",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-D803766B8B",
+   "title": "Australia develops behind-the-meter gas power market for data centers",
+   "versions": 1
+  }
+ ],
+ "archived_total": 0,
+ "articles_blocked": 0,
+ "articles_partial": 0,
+ "articles_read": 1,
+ "attributions_only": 0,
+ "banner": null,
+ "categories": {
+  "ARCHIVED": [],
+  "CHALLENGED": [],
+  "DOWNGRADED": [],
+  "NEW": [
+   {
+    "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-126BEECA00.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-1531955ab5c112: scheduled event window 2027-03-01..2027-03-31 (march 2027); C-c0d5bb4d67ed8c: scheduled event window 2026-11-01..2026-11-30 (november 2026); source-named exposure(s): sector: electric wires and generation investments, sector: SPP; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:45 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "market_regime",
+    "last_material_update": "2026-06-28",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Map which listed US utilities and transmission/generation developers have the greatest exposure to the fastest-moving regions (MISO, SPP ERAS, ERCOT batch study) versus constrained ones (CAISO), and test timing against the PJM procurement and FERC conference catalysts.",
+    "other_named": [
+     "ERCOT [not a security]",
+     "PJM [not a security]",
+     "CAISO [not a security]",
+     "SPP [not a security]",
+     "FERC [not a security]",
+     "NYISO [not a security]",
+     "BPA (Bonneville Power Administration) [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "NOW all conditions met \u2014 near-term window(s) C-1531955ab5c112: scheduled event window 2027-03-01..2027-03-31 (march 2027); C-c0d5bb4d67ed8c: scheduled event window 2026-11-01..2026-11-30 (november 2026); source-named exposure(s): sector: electric wires and generation investments, sector: SPP; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "sector_exposures": [
+     "electric wires and generation investments (positive)",
+     "SPP (positive)"
+    ],
+    "sectors": [
+     "utilities",
+     "electric wires",
+     "power generation"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-126BEECA00",
+    "title": "Uneven US regional power-market regulation makes regional selection drive grid/generation returns",
+    "version": 1,
+    "what_changed": [
+     "ERCOT transmission infrastructure can handle ~150-160GW of load before expansion.",
+     "ERCOT current utilization is about 95GW.",
+     "In ERCOT, loads of 75MW+ must go through the large load interconnection process.",
+     "Texas regulators must prepare for organic load growth of 2-2.5% as the economy grows.",
+     "Backup generation runs 24/7 whereas large-scale gas generation permits allow ~40% utilization.",
+     "Large-scale gas generation permits in Texas allow about 40% utilization.",
+     "showing 6 of 12 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] ERCOT transmission infrastructure can handle ~150-160GW of load before expansion. \u27e8cited figures: approximate\u27e9 [C-b054bcdc03bc3f]",
+     "[novelty_unverified] ERCOT current utilization is about 95GW. \u27e8cited figures: approximate\u27e9 [C-7beb31da292be0]",
+     "[novelty_unverified] In ERCOT, loads of 75MW+ must go through the large load interconnection process. [C-04dc48c7a526e4]",
+     "[novelty_unverified] Texas regulators must prepare for organic load growth of 2-2.5% as the economy grows. \u27e8cited figures: forecast\u27e9 [C-5bff6afbeb5d1e]",
+     "[novelty_unverified] Backup generation runs 24/7 whereas large-scale gas generation permits allow ~40% utilization. [C-d3c0ce0d007ef1]",
+     "[novelty_unverified] Large-scale gas generation permits in Texas allow about 40% utilization. \u27e8cited figures: approximate\u27e9 [C-d706e86347b7ce]",
+     "[novelty_unverified] showing 6 of 12 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Research Now \u2014 every condition met (an investigation, not a trade)"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-110E3113B1.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:41 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "GE Vernova (GEV) (GEV)",
+     "Cummins (CMI) (CMI)",
+     "Siemens Energy (UNRESOLVED)",
+     "Doosan Enerbility (UNRESOLVED)",
+     "Bloom Energy (BE) (BE)",
+     "Caterpillar (CAT)",
+     "Baker Hughes (BKR)"
+    ],
+    "named_instruments": [],
+    "next_action": "Assess data-center exposure as share of CAT, CMI, GEV, Bloom Energy order books and whether backlogs support estimates.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "Power generation equipment (positive)"
+    ],
+    "sectors": [
+     "power generation equipment",
+     "gas turbines",
+     "reciprocating engines",
+     "fuel cells"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-110E3113B1",
+    "title": "Speed-to-power drives BYOG gas generation equipment multi-year growth cycle",
+    "version": 1,
+    "what_changed": [
+     "Global gas turbine orders spiked to ~100GW in 2025 from ~58GW in 2024",
+     "128 onsite gas power projects totaling 133GW announced globally",
+     "Caterpillar targeting ~65GW combined turbine/engine capacity by 2030, up from ~22GW in 2022",
+     "GE Vernova indicated April 2026 large gas turbine lead times were ~three years",
+     "GE Vernova projects data centers will be 25% of its orders by 2026",
+     "BTM power from third-party suppliers forecast to grow toward 25GW in 2030",
+     "showing 6 of 38 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Global gas turbine orders spiked to ~100GW in 2025 from ~58GW in 2024 \u27e8cited figures: approximate\u27e9 [C-74295ca0180812]",
+     "[novelty_unverified] 128 onsite gas power projects totaling 133GW announced globally [C-3ac27489991e79]",
+     "[novelty_unverified] Caterpillar targeting ~65GW combined turbine/engine capacity by 2030, up from ~22GW in 2022 \u27e8cited figures: forecast; approximate\u27e9 [C-b7e1041a7db4e2]",
+     "[novelty_unverified] GE Vernova indicated April 2026 large gas turbine lead times were ~three years \u27e8cited figures: approximate\u27e9 [C-82121b5cd4dd20]",
+     "[novelty_unverified] GE Vernova projects data centers will be 25% of its orders by 2026 \u27e8cited figures: forecast\u27e9 [C-154fe686463659]",
+     "[novelty_unverified] BTM power from third-party suppliers forecast to grow toward 25GW in 2030 \u27e8cited figures: forecast\u27e9 [C-ada0f64e85082b]",
+     "[novelty_unverified] showing 6 of 38 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-1F366737A1.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:40 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "Hitachi Energy (UNRESOLVED)",
+     "Siemens Energy (UNRESOLVED)",
+     "GE Vernova (GEV) (GEV)",
+     "HSH (UNRESOLVED)",
+     "TBEA (UNRESOLVED)",
+     "Prolec GE (UNRESOLVED)",
+     "Ariston Advisory (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check whether listed transformer OEMs' order backlogs, margins and valuations reflect the forecast shortage.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "Power infrastructure equipment (positive)",
+     "transformers (positive)"
+    ],
+    "sectors": [
+     "power infrastructure equipment",
+     "transformers",
+     "utilities"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-1F366737A1",
+    "title": "AI datacenter power buildout drives multi-year transformer and grid equipment demand",
+    "version": 1,
+    "what_changed": [
+     "US generator step-up transformer demand rose >270% since 2019",
+     "Transformer prices rose about 80% over five years",
+     "Power transformers had a 30% supply deficit in 2025",
+     "Wood Mackenzie estimates a 707.5 GVA annual transformer shortfall in 2025.",
+     "Citi estimates the cumulative transformer shortage will peak in 2028 at 1,698.8 GVA.",
+     "The 2028 cumulative transformer shortage equals 47% of that year's annual supply.",
+     "showing 6 of 89 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] US generator step-up transformer demand rose >270% since 2019 [C-f23ee236b5e0fe]",
+     "[novelty_unverified] Transformer prices rose about 80% over five years \u27e8cited figures: approximate\u27e9 [C-37c71ee8a2f059]",
+     "[novelty_unverified] Power transformers had a 30% supply deficit in 2025 [C-fb50d7181e74f3]",
+     "[novelty_unverified] Wood Mackenzie estimates a 707.5 GVA annual transformer shortfall in 2025. \u27e8cited figures: forecast\u27e9 [C-7ce25d3b8b2386]",
+     "[novelty_unverified] Citi estimates the cumulative transformer shortage will peak in 2028 at 1,698.8 GVA. \u27e8cited figures: forecast\u27e9 [C-00f7514a1c90eb]",
+     "[novelty_unverified] The 2028 cumulative transformer shortage equals 47% of that year's annual supply. \u27e8cited figures: forecast\u27e9 [C-239dd86ce6192d]",
+     "[novelty_unverified] showing 6 of 89 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-566BFB9D39.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:45 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "WMB (UNRESOLVED)",
+     "KMI (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Track Henry Hub vs Asian LNG/European gas spreads and LNG export capacity additions to gauge durability of the US gas cost advantage for datacenter power.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [],
+    "sectors": [
+     "US midstream",
+     "natural gas",
+     "power generation"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-566BFB9D39",
+    "title": "Low-cost US natural gas gives US a structural advantage in powering datacenters",
+    "version": 1,
+    "what_changed": [
+     "US Henry Hub gas prices generally range $2\u2013$4/MMBtu",
+     "Asian LNG and European gas prices surged to ~$20/MMBtu or higher",
+     "Asian LNG and European gas prices fell to around $8/MMBtu in recent years",
+     "A global LNG glut by end of decade should bring Asia/Europe gas prices to $5\u2013$8/MMBtu, though not certain"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] US Henry Hub gas prices generally range $2\u2013$4/MMBtu [C-29a5962ffa392f]",
+     "[novelty_unverified] Asian LNG and European gas prices surged to ~$20/MMBtu or higher \u27e8cited figures: approximate\u27e9 [C-445d4b3dbf6426]",
+     "[novelty_unverified] Asian LNG and European gas prices fell to around $8/MMBtu in recent years \u27e8cited figures: approximate\u27e9 [C-891e9990715f30]",
+     "[novelty_unverified] A global LNG glut by end of decade should bring Asia/Europe gas prices to $5\u2013$8/MMBtu, though not certain \u27e8cited figures: forecast\u27e9 [C-35d66fba10f861]"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-5EDF9760FB.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:46 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Identify European utilities/developers holding decommissioned coal or grid-connected sites and assess embedded-connection asset value.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; verification hold)"
+    ],
+    "sector_exposures": [
+     "decommissioned coal sites (positive)"
+    ],
+    "sectors": [
+     "decommissioned coal sites",
+     "grid connected sites"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-5EDF9760FB",
+    "title": "Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value",
+    "version": 1,
+    "what_changed": [
+     "About 83GW of retired coal capacity exists across Europe",
+     "Theoretically ~50GW of Europe's retired coal capacity is suitable for conversion (powered land)"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] About 83GW of retired coal capacity exists across Europe \u27e8cited figures: approximate\u27e9 [C-2c27568925e086]",
+     "[novelty_unverified] Theoretically ~50GW of Europe's retired coal capacity is suitable for conversion (powered land) \u27e8cited figures: forecast; approximate\u27e9 [C-e50181f260d58d]"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: near-term relevance not shown by any dated window; no verified dislocation or catalyst; verification hold"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-DDEE0B7EF0.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; verification hold)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:43 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "Bloom Energy (BE) (BE)",
+     "Ceres Power (UNRESOLVED)",
+     "Weichai (UNRESOLVED)",
+     "Delta (DAL)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check Bloom Energy and SOFC peers' order backlog, utilization and margin trajectory against the ~7GW-by-2030 install expectation and scandium supply exposure.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; verification hold)"
+    ],
+    "sector_exposures": [
+     "fuel cells (positive)"
+    ],
+    "sectors": [
+     "fuel cells",
+     "solid oxide fuel cells"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-DDEE0B7EF0",
+    "title": "Fuel cells gain niche data-center power share on speed and grid-constraint advantages",
+    "version": 1,
+    "what_changed": [
+     "Fuel cells have compact footprints of ~15 acres per 1GW",
+     "New greenfield CCGT projects estimated at approximately $3,000/kW overnight cost",
+     "CCGT footprint is ~40 acres per 1GW, versus ~15 acres for fuel cells",
+     "Bloom Energy systems demonstrate ~5.5 year median stack lifetimes",
+     "BE stack lifetime is expected to increase by two years with technology advancement",
+     "Lazard's June 2025 LCOE analysis high-end CCGT cost was $1,600/kW",
+     "showing 6 of 19 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Fuel cells have compact footprints of ~15 acres per 1GW \u27e8cited figures: approximate\u27e9 [C-4cbd767cdd24d1]",
+     "[novelty_unverified] New greenfield CCGT projects estimated at approximately $3,000/kW overnight cost \u27e8cited figures: forecast; approximate\u27e9 [C-528f4986fe0f76]",
+     "[novelty_unverified] CCGT footprint is ~40 acres per 1GW, versus ~15 acres for fuel cells \u27e8cited figures: approximate\u27e9 [C-48bb77fc8560fd]",
+     "[novelty_unverified] Bloom Energy systems demonstrate ~5.5 year median stack lifetimes \u27e8cited figures: approximate\u27e9 [C-e683f912f76c6c]",
+     "[novelty_unverified] BE stack lifetime is expected to increase by two years with technology advancement \u27e8cited figures: forecast\u27e9 [C-17889229d0b2c6]",
+     "[novelty_unverified] Lazard's June 2025 LCOE analysis high-end CCGT cost was $1,600/kW [C-c5967a6fdaa47e]",
+     "[novelty_unverified] showing 6 of 19 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst; premise is conditional in the source; verification hold"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-426034EB2D.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:44 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "GE Vernova (GEV) (GEV)",
+     "MIR (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Assess order backlogs and nuclear/SMR exposure of GEV and MIR and track policy incentives (IRA, DOE Title 17) driving utility-scale nuclear and life extensions.",
+    "other_named": [
+     "Department of Energy [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "Nuclear power (positive)"
+    ],
+    "sectors": [
+     "nuclear",
+     "utilities",
+     "power generation equipment"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-426034EB2D",
+    "title": "Nuclear and SMR interest rising as supportive policy and power demand grow",
+    "version": 1,
+    "what_changed": [
+     "China aims to build 150 new nuclear reactors by 2035",
+     "Citi sees growing interest in utility-scale nuclear and SMRs, with GEV and MIR poised to play key roles as investment ramps"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] China aims to build 150 new nuclear reactors by 2035 \u27e8cited figures: forecast\u27e9 [C-a961166a45cc6d]",
+     "[novelty_unverified] Citi sees growing interest in utility-scale nuclear and SMRs, with GEV and MIR poised to play key roles as investment ramps [C-3681e2a159c01e]"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-5BA11D6167.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:48 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "COP28 (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Map listed companies across grid hardware, nuclear, renewables and storage supply chains against the cited investment-need figures.",
+    "other_named": [
+     "IEA [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "Renewables (positive)"
+    ],
+    "sectors": [
+     "grid and infrastructure modernization",
+     "nuclear power",
+     "renewables",
+     "battery and storage"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-5BA11D6167",
+    "title": "Energy infrastructure is a multi-year structural growth story across four pillars",
+    "version": 1,
+    "what_changed": [
+     "IEA estimates annual grid investment must increase to over $600 billion by 2030",
+     "The COP28 pledge to triple renewable capacity by 2030 implies over $1.2 trillion in average annual investment",
+     "IEA projects the global energy storage market must expand six-fold by 2030",
+     "ERCOT's pipeline of projects seeking grid connection increased six-fold in the last 18 months"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] IEA estimates annual grid investment must increase to over $600 billion by 2030 \u27e8cited figures: forecast\u27e9 [C-93457010971dfd]",
+     "[novelty_unverified] The COP28 pledge to triple renewable capacity by 2030 implies over $1.2 trillion in average annual investment \u27e8cited figures: forecast\u27e9 [C-5089ec5bb303a6]",
+     "[novelty_unverified] IEA projects the global energy storage market must expand six-fold by 2030 \u27e8cited figures: forecast\u27e9 [C-e93a01420e05a3]",
+     "[novelty_unverified] ERCOT's pipeline of projects seeking grid connection increased six-fold in the last 18 months [C-a673dd25b5c771]"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-6EFAD379CB.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:49 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Assess valuation and positioning metrics (price-to-book) for Korea/Taiwan semiconductor names against the AI capex cycle outlook.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "sector_exposures": [
+     "memory (South Korea) (positive)",
+     "logic chips (Taiwan) (positive)",
+     "The hyperscaler companies (positive)",
+     "The entire power infrastructure value chain (positive)"
+    ],
+    "sectors": [
+     "semiconductors",
+     "hyperscalers",
+     "power infrastructure"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-6EFAD379CB",
+    "title": "Selective continued exposure to US, South Korea, Taiwan AI capex theme",
+    "version": 1,
+    "what_changed": [],
+    "what_changed_audit": [],
+    "why_action": "Skip \u2014 no verified material evidence"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-8178B565CB.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:47 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Identify listed Chinese nuclear, hydro and pumped-storage equipment makers and map exposure to the approved pipeline.",
+    "other_named": [
+     "National Nuclear Safety Administration [not a security]",
+     "NEA [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "China Power Plant Equipment (positive)"
+    ],
+    "sectors": [
+     "China Power Plant Equipment",
+     "nuclear",
+     "hydro",
+     "coal"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-8178B565CB",
+    "title": "China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand",
+    "version": 1,
+    "what_changed": [
+     "China expected to add 100GW of pumped storage capacity in 2026E-30E",
+     "China approved 31 new nuclear units in 2022 to 2024",
+     "In April 2025 China approved 10 new nuclear reactors across five coastal projects at an estimated Rmb200bn outlay",
+     "Nuclear equipment makers take around 2-5 years from order to revenue recognition",
+     "Steam generator and turbine generator production takes 2-3 years",
+     "China projected to add 15GW of hydro capacity per year in 2026E-30E",
+     "showing 6 of 12 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] China expected to add 100GW of pumped storage capacity in 2026E-30E \u27e8cited figures: forecast\u27e9 [C-8a687aaae56cbc]",
+     "[novelty_unverified] China approved 31 new nuclear units in 2022 to 2024 [C-41056c2ca41028]",
+     "[novelty_unverified] In April 2025 China approved 10 new nuclear reactors across five coastal projects at an estimated Rmb200bn outlay \u27e8cited figures: forecast\u27e9 [C-826b5f2dd693d3]",
+     "[novelty_unverified] Nuclear equipment makers take around 2-5 years from order to revenue recognition \u27e8cited figures: approximate\u27e9 [C-41baee3df04560]",
+     "[novelty_unverified] Steam generator and turbine generator production takes 2-3 years [C-700edb79035930]",
+     "[novelty_unverified] China projected to add 15GW of hydro capacity per year in 2026E-30E \u27e8cited figures: forecast\u27e9 [C-ce6ca16afe08e3]",
+     "[novelty_unverified] showing 6 of 12 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-BAA07551ED.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:43 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "AWS (UNRESOLVED)",
+     "Microsoft (MSFT)",
+     "Google (UNRESOLVED)",
+     "Meta (META)"
+    ],
+    "named_instruments": [],
+    "next_action": "Assess whether hyperscalers' and infrastructure owners' power/compute reservations translate into measurable pricing power or margin advantage versus model labs.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "sector_exposures": [
+     "hyperscalers (positive)"
+    ],
+    "sectors": [
+     "AI infrastructure",
+     "hyperscalers",
+     "AI model developers"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-BAA07551ED",
+    "title": "Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs",
+    "version": 1,
+    "what_changed": [
+     "The market is bifurcating between those who secure physical power/compute capacity and those who must buy access, strengthening hyperscalers and infrastructure owners relative to model labs",
+     "Lower inference costs would drive higher overall compute demand and datacenter utilization, consistent with Jevons Paradox"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] The market is bifurcating between those who secure physical power/compute capacity and those who must buy access, strengthening hyperscalers and infrastructure owners relative to model labs [C-dfbceb8a6fedad]",
+     "[novelty_unverified] Lower inference costs would drive higher overall compute demand and datacenter utilization, consistent with Jevons Paradox [C-9021be046c00eb]"
+    ],
+    "why_action": "Skip \u2014 no verified material evidence"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-C0F7401B12.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:42 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "WMB (UNRESOLVED)",
+     "KMI (UNRESOLVED)",
+     "DTM (UNRESOLVED)",
+     "TRP (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Review named midstream operators' sanctioned backlogs, financing needs and whether build multiples hold.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [],
+    "sectors": [
+     "US midstream",
+     "natural gas infrastructure"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-C0F7401B12",
+    "title": "US gas pipeline underinvestment creates attractive midstream growth capex cycle",
+    "version": 1,
+    "what_changed": [
+     "Midstream coverage sanctioned ~$38bn of power-demand-tied projects over three years",
+     "Midstream annual capex forecast >2x the prior five years over next five years",
+     "Pipeline projects commercialized at ~5-6x build multiples",
+     "US natural gas demand is outpacing infrastructure by nearly 2x due to years of underinvestment.",
+     "Recent large pipeline open seasons were 2-3x oversubscribed versus initial capacity (DTM/TRP).",
+     "US Utilities team forecasts 96GW net natural gas generation needed; data centers 1/3 of demand growth",
+     "showing 6 of 15 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Midstream coverage sanctioned ~$38bn of power-demand-tied projects over three years \u27e8cited figures: approximate\u27e9 [C-dcd68e6fe94281]",
+     "[novelty_unverified] Midstream annual capex forecast >2x the prior five years over next five years \u27e8cited figures: forecast\u27e9 [C-8d25596cc854b3]",
+     "[novelty_unverified] Pipeline projects commercialized at ~5-6x build multiples \u27e8cited figures: approximate\u27e9 [C-9b015d8c599df0]",
+     "[novelty_unverified] US natural gas demand is outpacing infrastructure by nearly 2x due to years of underinvestment. \u27e8cited figures: approximate\u27e9 [C-a6092c5c5bae05]",
+     "[novelty_unverified] Recent large pipeline open seasons were 2-3x oversubscribed versus initial capacity (DTM/TRP). [C-01855f9e943739]",
+     "[novelty_unverified] US Utilities team forecasts 96GW net natural gas generation needed; data centers 1/3 of demand growth \u27e8cited figures: forecast\u27e9 [C-9bd249731dc0b8]",
+     "[novelty_unverified] showing 6 of 15 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-C840A76413.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:45 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Identify listed European regulated grid operators and T&D equipment makers and check whether consensus grid-capex forecasts reflect this cycle.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "European Utilities and Renewables (positive)"
+    ],
+    "sectors": [
+     "European Utilities and Renewables",
+     "power transmission and distribution"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-C840A76413",
+    "title": "European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal",
+    "version": 1,
+    "what_changed": [
+     "Even after 3x growth, European data centre demand would account for only ~6% of total demand",
+     "Data centres account for about 2% of current European power demand",
+     "A further 2-3% of European demand comes from DC projects under construction or latent capacity",
+     "European data centre demand growth estimates are broadly 1-3x by 2030",
+     "Portugal's Start Campus has 0.2 GW under construction",
+     "Portugal's Start Campus has a 1.2GW pipeline"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Even after 3x growth, European data centre demand would account for only ~6% of total demand \u27e8cited figures: forecast; approximate\u27e9 [C-33a4cc8c517538]",
+     "[novelty_unverified] Data centres account for about 2% of current European power demand \u27e8cited figures: approximate\u27e9 [C-801f5050b6d3d4]",
+     "[novelty_unverified] A further 2-3% of European demand comes from DC projects under construction or latent capacity \u27e8cited figures: forecast\u27e9 [C-996c3bcf59e5c5]",
+     "[novelty_unverified] European data centre demand growth estimates are broadly 1-3x by 2030 \u27e8cited figures: forecast; approximate\u27e9 [C-f4f4eb38bac412]",
+     "[novelty_unverified] Portugal's Start Campus has 0.2 GW under construction [C-ccd14de6ad768d]",
+     "[novelty_unverified] Portugal's Start Campus has a 1.2GW pipeline \u27e8cited figures: forecast\u27e9 [C-8d8f983df676c3]"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-CA02B7A83B.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:43 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "market_regime",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "CBRE (\u201cCBRE\u201d)"
+    ],
+    "named_instruments": [],
+    "next_action": "Assess which listed EPC, utility and equipment firms flag labor availability as a binding constraint on project schedules and margins.",
+    "other_named": [
+     "Bureau of Labor Statistics (BLS) [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "data centers (neutral)"
+    ],
+    "sectors": [
+     "data centers",
+     "utilities",
+     "power infrastructure equipment"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-CA02B7A83B",
+    "title": "Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout",
+    "version": 1,
+    "what_changed": [
+     "The U.S. faces a shortage of at least 222,600 workers in various trades per BLS.",
+     "The skilled labor shortage is unlikely to clear before 2030 for structural reasons."
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] The U.S. faces a shortage of at least 222,600 workers in various trades per BLS. \u27e8cited figures: forecast\u27e9 [C-9734b6ab7dd044]",
+     "[novelty_unverified] The skilled labor shortage is unlikely to clear before 2030 for structural reasons. [C-cad51f9ea928a5]"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-CE04BAA34C.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:42 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [
+     "Renault (UNRESOLVED)",
+     "Volvo (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Identify listed battery, ESS and EV suppliers exposed to the forecast demand and check valuations against raw-material cost risk.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "Chinese clean-tech (positive)",
+     "Energy Storage Systems (ESS) (positive)"
+    ],
+    "sectors": [
+     "renewables",
+     "electric vehicles",
+     "energy storage systems",
+     "Chinese clean-tech"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-CE04BAA34C",
+    "title": "Energy security accelerates renewables, EVs and energy storage demand globally",
+    "version": 1,
+    "what_changed": [
+     "Global battery demand projected to reach 6,005 GWh by 2030 (23% CAGR)",
+     "Global EV sales grew 20% in 2025 to more than 20 million",
+     "Europe EV sales rose ~30% in 2025 to 4.2 million",
+     "China EVs accounted for ~55% of new car sales (13 million+)",
+     "Europe EV production rose ~30% to ~3.2 million",
+     "China produced ~75% of global EV output (~16 million)",
+     "showing 6 of 35 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Global battery demand projected to reach 6,005 GWh by 2030 (23% CAGR) \u27e8cited figures: forecast\u27e9 [C-a313db7ac2496a]",
+     "[novelty_unverified] Global EV sales grew 20% in 2025 to more than 20 million [C-b2331d0750f9c0]",
+     "[novelty_unverified] Europe EV sales rose ~30% in 2025 to 4.2 million \u27e8cited figures: approximate\u27e9 [C-10ecc80a6fd8f4, C-7a449852ae4a58, C-80e610e94f109c]",
+     "[novelty_unverified] China EVs accounted for ~55% of new car sales (13 million+) \u27e8cited figures: approximate\u27e9 [C-4e6bfa7e1bc4b5]",
+     "[novelty_unverified] Europe EV production rose ~30% to ~3.2 million \u27e8cited figures: approximate\u27e9 [C-21d54b13a68936]",
+     "[novelty_unverified] China produced ~75% of global EV output (~16 million) \u27e8cited figures: approximate\u27e9 [C-d4bf12bad77dda]",
+     "[novelty_unverified] showing 6 of 35 pieces of evidence from A-82a8a9210bae \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   },
+   {
+    "action": "SKIP",
+    "analysis_as_of": "2026-10-11",
+    "article_date": "2026-06-28",
+    "card": "cards/TH-D803766B8B.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-11 10:48 UTC",
+    "flags": [],
+    "intake": [
+     "manual upload (D-c6f361d4d57a6196 \u201cCiti Overcoming Gridlock 2.0.pdf\u201d, uploaded 2026-10-11, A-82a8a9210bae)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-06-28",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Identify listed Australian gas and generation providers positioned for BYOG data-center power demand.",
+    "other_named": [
+     "AEMO [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "sector_exposures": [
+     "behind-the-meter power market in Australia (positive)"
+    ],
+    "sectors": [
+     "electricity generation",
+     "natural gas",
+     "utilities"
+    ],
+    "sources": [
+     "Citi \u2014 Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; Scott Gruber; Jenny Ping; Ryan Levine; Spiro Dounis \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (article date 2026-06-28) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-D803766B8B",
+    "title": "Australia develops behind-the-meter gas power market for data centers",
+    "version": 1,
+    "what_changed": [
+     "AEMO highlighted 5.4GW of data center-related grid connection requests in Australia",
+     "Australian data center energy consumption is forecast to be 6% of NEM grid consumption by FY30",
+     "Australian data center energy consumption is expected to reach 34.5 TWh by FY50",
+     "60% of the 5.4GW of Australian DC connection requests are in New South Wales",
+     "Australian data center average energy draw was ~600MW in 1Q 2026"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] AEMO highlighted 5.4GW of data center-related grid connection requests in Australia [C-af937a886df9fa]",
+     "[novelty_unverified] Australian data center energy consumption is forecast to be 6% of NEM grid consumption by FY30 \u27e8cited figures: forecast\u27e9 [C-eafa99e415ae3b]",
+     "[novelty_unverified] Australian data center energy consumption is expected to reach 34.5 TWh by FY50 \u27e8cited figures: forecast\u27e9 [C-33d82c8d3fd280]",
+     "[novelty_unverified] 60% of the 5.4GW of Australian DC connection requests are in New South Wales [C-a51a34167cb4b0]",
+     "[novelty_unverified] Australian data center average energy draw was ~600MW in 1Q 2026 \u27e8cited figures: approximate\u27e9 [C-0b887189edb7a0]"
+    ],
+    "why_action": "Skip \u2014 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   }
+  ],
+  "UNCHANGED BUT MATERIAL": [],
+  "UPGRADED": []
+ },
+ "caveats": [
+  "NUMBER_NOT_IN_SPAN C-c4e5387e88f82f: b5.k5_3: number check failed: value=None value_text='12 ... 30 or more' vs quote \u2014 quote 'wait times can extend to 12 months, or even 30 or more'",
+  "NUMBER_NOT_IN_SPAN C-2882fc3a5de5cf: b11.k11_2: number check failed: value=-20.0 value_text='~20%' vs quote \u2014 quote 'with industrial demand down ~20%'",
+  "ARGUMENT_UNACCOUNTED A-82a8a9210bae: b153: pass 1b called it covered \u2014 'Durability concern/early-2000s overbuild is already carried as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "NUMBER_NOT_IN_SPAN C-0cb1739790eb5f: b11.k11_1: number check failed: value=-10.0 value_text='~10%' vs quote \u2014 quote 'EU27+UK demand down ~10% over the past 15 years'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b126: '~27%' \u2014 a claim quotes it (C-448a5ba8c162b0) but failed verification, so it is never used as evidence \u2014 sentence 'EV sales in 1Q 2026 were down ~27% YoY.4 Subsequently, European new EV registrations rose 34% YoY in April 2026, the fi\u2026 [+60 chars \u2014 full text in the JSON export]",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b208: '10' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'We forecast global high voltage power transformer supply to rise 59% in 2025-2028 and 95% in 2025-2030, taking into account the expansion plans of the global top-\u2026 [+30 chars \u2014 full text in the JSON export]",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b185: '12' \u2014 a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidence \u2014 sentence 'Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b093: '~$400 billion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '~$400 billion Large Unit Lead Times ='",
+  "UNSUPPORTED_ENTITY h2 Speed-to-power drives BYOG gas generation equipmen: h2 Speed-to-power drives BYOG gas generation equipmen names 'GE Vernova', which is not a verified source mention \u2014 removed from its affected list",
+  "ARGUMENT_UNACCOUNTED A-82a8a9210bae: b329: pass 1b called it covered \u2014 'Scandium supply-chain constraint already captured as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "ARGUMENT_UNACCOUNTED A-82a8a9210bae: b483: pass 1b called it covered \u2014 'Valuation caution restates stretched-valuation market risk already recorded.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b095: 'five years' \u2014 a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substa\u2026 [+128 chars \u2014 full text in the JSON export]",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b095: '24-48' \u2014 a claim quotes it (C-c22794633f809c) but failed verification, so it is never used as evidence \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations\u2026 [+123 chars \u2014 full text in the JSON export]",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b203: '30%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Wood Mackenzie estimates that power transformers are in a supply deficit of 30% based on annual supply and demand estimates in 2025.'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b095: '80%' \u2014 a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations,\u2026 [+121 chars \u2014 full text in the JSON export]",
+  "SPAN_NOT_FOUND C-c22794633f809c: b3.k3_2: quote not in block \u2014 quote 'Large Unit Lead Times = 24-48 months'",
+  "SPAN_NOT_FOUND C-f346d263647623: b3.k3_1: quote not in block \u2014 quote 'Prices are about 80% higher over the last five years'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b423: '~20%' \u2014 a claim quotes it (C-2882fc3a5de5cf) but failed verification, so it is never used as evidence \u2014 sentence 'At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years,\u2026 [+35 chars \u2014 full text in the JSON export]",
+  "ARGUMENT_UNACCOUNTED A-82a8a9210bae: b486: pass 1b called it covered \u2014 'Positioning/concentration caution restates stretched-valuation/positioning market risk already recorded.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b127: '~27%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'The U.S. is the exception: 1Q 2026 sales were down ~27% YoY, although the decline slowed from 4Q 2025.'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b423: '15' \u2014 a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence \u2014 sentence 'At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, wi\u2026 [+33 chars \u2014 full text in the JSON export]",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b095: '12 - 30' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand\u2026 [+84 chars \u2014 full text in the JSON export]",
+  "NO_VERIFIED_SUPPORT b12.hx12_3 Selective continued exposure to US, South Korea, T: b12.hx12_3 Selective continued exposure to US, South Korea, T has no verified supporting claim \u2014 promotion held",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b195: '2,358' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '2025 market share by capacity total 2,358.5GVA'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b060: '50' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '| 50-GW+ of data center capacity was | | | | 24% CAGR increase since | | | | | | | | | | The Midwest Independent ; | | | | | | | | | | | | | | | System Operator (\u2026 [+32 chars \u2014 full text in the JSON export]",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b185: '30' \u2014 a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidence \u2014 sentence 'Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.'",
+  "NUMBER_NOT_IN_SPAN C-448a5ba8c162b0: b3.k3_15: number check failed: value=-27.0 value_text='~27%' vs quote \u2014 quote 'U.S. EV sales in 1Q 2026 were down ~27% YoY'",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b423: '~10%' \u2014 a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence \u2014 sentence 'At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years,\u2026 [+35 chars \u2014 full text in the JSON export]",
+  "NUMBER_NOT_IN_SPAN C-31eb74ab24d35a: b2.k2_18: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b185 (content overlap 67%; claimed figure present; model quote was 'Unit Lead Times = 12 - 30+ months'); number check failed: value\u2026 [+127 chars \u2014 full text in the JSON export]",
+  "UNSUPPORTED_ENTITY b8.hx8_1 Fuel cells gain niche data-center power share on s: b8.hx8_1 Fuel cells gain niche data-center power share on s names 'Doosan', which is not a verified source mention \u2014 removed from its affected list",
+  "FIGURE_UNCAPTURED A-82a8a9210bae: b060: '24%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '| 50-GW+ of data center capacity was | | | | 24% CAGR increase since | | | | | | | | | | The Midwest Independent ; | | | | | | | | | | | | | | | System Operator\u2026 [+33 chars \u2014 full text in the JSON export]",
+  "UNSUPPORTED_ENTITY h2 Speed-to-power drives BYOG gas generation equipmen: h2 Speed-to-power drives BYOG gas generation equipmen names 'Caterpillar (CAT)', which is not a verified source mention \u2014 removed from its affected list"
+ ],
+ "generated": "Generated 2026-10-11 11:00 UTC from the registry (ti-engine-2; run R-20261011T100624Z-ingest, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "intake": {
+  "automatic": {
+   "items": [],
+   "total": 0
+  },
+  "awaiting_documents": {
+   "items": [
+    "SemiAnalysis \u2014 \u201cEveryone Says Datacenter Moratoriums Are Killing the US Buildout. We Mapped All 300 of Them\u201d (published 2026-09-15; 3607 words read) [A-c59b789dbac0]"
+   ],
+   "total": 1
+  },
+  "coverage_gaps": {
+   "items": [
+    "Citi: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "Bank of America: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "J.P. Morgan Private Bank: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "Morgan Stanley: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "Nomura: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "TrendForce: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "SemiAnalysis: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "Goldman Sachs: coverage UNKNOWN (UNKNOWN) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing"
+   ],
+   "total": 8
+  },
+  "line": "0 analysed automatically \u00b7 1 imported manually \u00b7 1 partial awaiting a complete document \u00b7 0 publisher(s) blocked or degraded \u00b7 0 needing an upload \u00b7 0 needing a metadata or licence check \u00b7 8 coverage gap(s)",
+  "manual": {
+   "items": [
+    "Citi \u2014 \u201cOvercoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security\u201d (Citi Overcoming Gridlock 2.0.pdf; pdf, 60 page(s)) \u2014 INGESTED, manual upload; published 2026-06-28 (the document text (page 1-2)); uploaded 2026-10-11 10:06 UTC; analysed as of 2026-10-11; original held privately on this machine; article A-82a8a9210bae [D-c6f361d4d57a6196]"
+   ],
+   "total": 1
+  },
+  "needs_metadata": {
+   "items": [],
+   "total": 0
+  },
+  "needs_upload": {
+   "items": [],
+   "total": 0
+  },
+  "publishers": {
+   "items": [],
+   "total": 0
+  },
+  "runs": [
+   "R-20261011T100624Z-ingest (ingest, as of 2026-10-11, SUCCEEDED)"
+  ]
+ },
+ "kpi": {
+  "accessible_sources": null,
+  "archived": 0,
+  "articles_blocked": 0,
+  "articles_full": 1,
+  "articles_partial": 0,
+  "blocked_sources": null,
+  "challenged": 0,
+  "downgraded": 0,
+  "figures_in_articles": 851,
+  "figures_uncaptured": 17,
+  "manually_imported": 1,
+  "new": 16,
+  "queued": 0,
+  "research_now": 1,
+  "skip": 10,
+  "theses_this_run": 16,
+  "upgraded": 0,
+  "watch": 5
+ },
+ "no_material_change": [],
+ "notes": [],
+ "report_runs": [
+  "R-20261011T100624Z-ingest"
+ ],
+ "run": {
+  "as_of": "2026-10-11",
+  "checkpoint": {},
+  "complete_prompt_version": "ti-complete-1",
+  "cost_usd": 46.6736,
+  "counts": {
+   "articles_processed": 1,
+   "attributions_only": 0,
+   "claims_added_by_completeness": 234,
+   "claims_extracted": 266,
+   "claims_verified": 264,
+   "documents_ingested": 1,
+   "figures_in_articles": 851,
+   "figures_uncaptured": 17,
+   "http_cache_hits": 0,
+   "http_requests": 0,
+   "llm_calls": 51,
+   "llm_calls_cached": 0,
+   "mentions": 68,
+   "theses_added_by_completeness": 12,
+   "theses_created": 16,
+   "theses_updated": 0
+  },
+  "db_schema_version": 4,
+  "engine_version": "ti-engine-2",
+  "extract_prompt_version": "ti-extract-6",
+  "fetch_seconds": 0.0,
+  "finished_at": "2026-10-11T10:49:13.211741Z",
+  "llm_model": "claude-opus-4-8",
+  "llm_provider": "anthropic",
+  "llm_seconds": 2247.9,
+  "mode": "ingest",
+  "output_dir": "data/theme_intelligence/v2/hybrid-a/runs/R-20261011T100624Z-ingest",
+  "parser_version": "ti-parse-5",
+  "review_prompt_version": "ti-review-4",
+  "run_id": "R-20261011T100624Z-ingest",
+  "sources": [],
+  "started_at": "2026-10-11T10:06:24.797124Z",
+  "status": "SUCCEEDED",
+  "tokens": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 8117094,
+   "output_tokens": 243527
+  },
+  "warnings": [],
+  "window_from": null,
+  "window_to": null
+ },
+ "source_health": {
+  "attention": [
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Citi",
+    "reason": "not checked yet",
+    "source_id": "citi_must_c",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Bank of America",
+    "reason": "not checked yet",
+    "source_id": "bofa_institutional",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "J.P. Morgan Private Bank",
+    "reason": "not checked yet",
+    "source_id": "jpm_tmt",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Morgan Stanley",
+    "reason": "not checked yet",
+    "source_id": "ms_research",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Nomura",
+    "reason": "not checked yet",
+    "source_id": "nomura_connects",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "TrendForce",
+    "reason": "not checked yet",
+    "source_id": "trendforce",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "SemiAnalysis",
+    "reason": "not checked yet",
+    "source_id": "semianalysis",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Goldman Sachs",
+    "reason": "not checked yet",
+    "source_id": "gs_research",
+    "status": "UNKNOWN",
+    "tests": []
+   }
+  ],
+  "checked_at": null,
+  "counts": {
+   "BLOCKED": 0,
+   "DEGRADED": 0,
+   "ERROR": 0,
+   "HEALTHY": 0,
+   "UNKNOWN": 8
+  },
+  "line": "Sources healthy: 0/8 | Degraded: 0 | Blocked: 0 | Errors: 0 | Unknown: 8",
+  "new_alerts": [],
+  "rows": [
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Citi",
+    "reason": "not checked yet",
+    "source_id": "citi_must_c",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Bank of America",
+    "reason": "not checked yet",
+    "source_id": "bofa_institutional",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "J.P. Morgan Private Bank",
+    "reason": "not checked yet",
+    "source_id": "jpm_tmt",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Morgan Stanley",
+    "reason": "not checked yet",
+    "source_id": "ms_research",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Nomura",
+    "reason": "not checked yet",
+    "source_id": "nomura_connects",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "TrendForce",
+    "reason": "not checked yet",
+    "source_id": "trendforce",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": false,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "SemiAnalysis",
+    "reason": "not checked yet",
+    "source_id": "semianalysis",
+    "status": "UNKNOWN",
+    "tests": []
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": null,
+    "consecutive_failed_checks": 0,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": null,
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": null,
+    "next_action": "run `sources --check-health`",
+    "publisher": "Goldman Sachs",
+    "reason": "not checked yet",
+    "source_id": "gs_research",
+    "status": "UNKNOWN",
+    "tests": []
+   }
+  ],
+  "total": 8
+ },
+ "sources": [],
+ "sources_checked": 0,
+ "sources_failed": [],
+ "themes_created": 16,
+ "themes_updated": 0,
+ "totals_active": {
+  "RESEARCH NOW": 3,
+  "SKIP": 10,
+  "WATCH": 7
+ },
+ "validation": {
+  "BLOCK": 29,
+  "HOLD": 1,
+  "INFO": 55,
+  "WARN": 104
+ },
+ "verification": {
+  "articles": 1,
+  "articles_preview_only": 0,
+  "articles_unreadable": 0,
+  "figures": 851,
+  "figures_open": 17,
+  "open_causes": {
+   "account_names_no_record": 4,
+   "capture_not_verified": 8,
+   "verification_failed": 9
+  },
+  "open_items": [
+   "AV-51c14867d6652aa1 b060 figure '50' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b060 figure '24%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b093 figure '~$400 billion' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b095 figure '80%' \u2014 verification_failed: a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b095 figure '24-48' \u2014 verification_failed: a claim quotes it (C-c22794633f809c) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b095 figure '12 - 30' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b095 figure 'five years' \u2014 verification_failed: a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b126 figure '~27%' \u2014 verification_failed: a claim quotes it (C-448a5ba8c162b0) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b127 figure '~27%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b185 figure '12' \u2014 verification_failed: a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b185 figure '30' \u2014 verification_failed: a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b195 figure '2,358' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b203 figure '30%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b208 figure '10' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-51c14867d6652aa1 b423 figure '~10%' \u2014 verification_failed: a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b423 figure '15' \u2014 verification_failed: a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b423 figure '~20%' \u2014 verification_failed: a claim quotes it (C-2882fc3a5de5cf) but failed verification, so it is never used as evidence",
+   "AV-51c14867d6652aa1 b153 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Durability concern/early-2000s overbuild is already carried as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+   "AV-51c14867d6652aa1 b329 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Scandium supply-chain constraint already captured as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+   "AV-51c14867d6652aa1 b483 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Valuation caution restates stretched-valuation market risk already recorded.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+   "AV-51c14867d6652aa1 b486 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Positioning/concentration caution restates stretched-valuation/positioning market risk already recorded.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked"
+  ],
+  "paragraphs": 292,
+  "paragraphs_open": 4,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 1 article(s) this run analysed: 17 of 851 stated figure(s) and 4 of 292 argument paragraph(s) open; causes: account_names_no_record 4, capture_not_verified 8, verification_failed 9. Open material is never used as evidence, so it can hold a thesis back but never raise its research action"
+ },
+ "window": "\u2014 \u2192 \u2014 (as of 2026-10-11, mode ingest)"
+}

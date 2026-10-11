@@ -1,0 +1,15 @@
+runs: [('R-20261011T104153Z-article', 'article', '2026-10-11', 'PARTIAL', 0.0)]
+ARTICLE A-d8bce0154d69 Citi — 'Sizing the ETF Opportunity: Active ETFs Move to Center Stage'
+   url https://www.citigroup.com/global/insights/sizing-the-etf-opportunity-active-etfs-move-to-center-stage
+   published 2026-04-10 (Next.js page data publishDate (this page's own entry)); authors ['Drew Pettit', 'Scott T Chronert', 'Patrick Galvin, CFA']
+   version AV-6fec183b75098414 PARTIAL 965 words retrieved 2026-10-11 08:08 — fetched (cache); no alternate publication versions declared (hreflang); publication date '2026-04-10' carries no timezone; the page summarises a fuller report i
+   version AV-16c30c3205b23791 FULL 15673 words retrieved 2026-10-11 10:41 — linked report fetched automatically from https://ir.citi.com/J-Y51CHv-fMRqIBiZ3N5L4-MLBXEWIasfQMR9GUjacbbRbPp3BvSW0R_fElwvC-GcxSTj_4H8mvdCf5mMroZJguGYO9_PyyNt0v
+DOCUMENT D-d63e0bd383d6fce6 UPGRADED pdf 34pp 0 tables — linked-report-d63e0bd383d6fce6.pdf
+   article A-d8bce0154d69 version AV-16c30c3205b23791; published 2026-04-08 (the document text (page 1-2)); received 2026-10-11 10:41 UTC
+   declared {'llm_permitted': 'True', 'via': 'linked report fetched automatically from https://ir.citi.com/J-Y51CHv-fMRqIBiZ3N5L4-MLBXEWIasfQMR9GUjacbbRbPp3BvSW0R_fElwvC-GcxSTj_4H8mvdCf5mMroZJguGYO9_PyyNt0vcV9kuvV0%3D (linked from https://www.citigroup.com/global/insights/sizing-the-etf-opportunity-active-etfs-move-to-center-stage; robots.txt obeyed)'}
+   basis: the fuller report article A-d8bce0154d69's own page links to
+   issues: 18 (showing 3): ['page 1: carries graphics (1 image(s), 16 vector object(s)) — chart labels are read as text', 'page 4: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text,', 'page 5: carries graphics (2 image(s), 4 vector object(s)) — chart labels are read as text,']
+THESIS TH-1373DCCE1F v2 SKIP MIXED ARCHIVED financials|competitive_share_shift|positive|US
+   Active and differentiated ETFs drive next phase of U.S. ETF industry growth
+   contributions: [('Citi', 'A-d8bce0154d69', 'contradictory'), ('Citi', 'A-d8bce0154d69', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters

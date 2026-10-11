@@ -339,6 +339,26 @@ PR (CLAUDE.md: coin-time translation).
 - **Research-verification status** (theme intelligence, `report.research_verification`) — plain
   words: *how much of what a run read is accounted for*, shown apart from whether the run
   executed; a completed scan with open gaps reads INCOMPLETE, never verified.
+- **Claim-level contradiction** (theme intelligence, `contradiction.py`) — plain words: *two theses
+  contradict only when a pair of their claims measures the same product, variable, period and
+  place and points opposite ways*; HBM up beside conventional DRAM down is compatible, and an
+  unclear pairing is held for review (CONTRADICTION_REVIEW), never applied.
+- **Manual document / ingest-file** (theme intelligence, `documents.py`, `ingest.py`) — plain
+  words: *a report the operator supplies, entering the same pipeline as a fetched article*;
+  identified before any model call as DUPLICATE, UPGRADED (a fuller version of the same article),
+  REVIEW (a human decides) or new; HELD until its licence allows third-party LLM processing.
+- **Same-article continuity** (theme intelligence, `engine._same_article_thesis`) — plain words:
+  *a later, fuller version of an article updates the thesis its earlier version created*, even when
+  it names more segments — never a twin thesis from one article.
+- **Linked report** (theme intelligence, `ParsedDocument.linked_reports`, sources.toml
+  `linked_reports`) — plain words: *the fuller report a page says it summarises and links to*:
+  fetched as a fuller version where the channel's policy is "fetch", otherwise listed for upload.
+- **Research intake** (theme intelligence, `report.research_intake`) — plain words: *what reached
+  the registry this week and by which route, and what needs a human*: ingestion coverage, a fourth
+  status beside execution, research verification and source health.
+- **State pull / push** (theme intelligence, `state.py`) — plain words: *carry the one registry
+  between the operator's machine and the state branch*; push is fast-forward only, pull replays
+  local documents the branch lacks.
 
 ## Local setup (every laptop, every contributor)
 

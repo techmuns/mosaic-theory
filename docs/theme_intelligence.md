@@ -29,6 +29,10 @@ no prices, returns or outcomes (including the unmerged #695 audit's).
 | `qa --run RUN_ID\|latest` | re-check a run's stored records without any LLM (spans, figures, look-ahead, card facts, section order, hashes, triggers, coverage, render consistency) |
 | `backup` · `export-state --out D` · `import-state --src D` | consistent SQLite copy · append-only JSONL export (no article text) · rebuild a fresh registry from an export |
 | `sources` | print the eight configured channels |
+| `ingest-file --path F --source S [--url U] [--llm-permitted]` | import one supplied document (PDF / HTML / Markdown / text) through the SAME pipeline — see *Manual documents* below |
+| `ingest-inbox [--inbox D] [--source S]` | import every document in the private inbox; each file is filed under `processed/`, `held/`, `review/` or `rejected/` |
+| `documents [--status HELD]` | list the supplied documents and their status |
+| `state pull\|push\|status --remote R` | carry the ONE registry between this machine and the state branch the scheduled run uses |
 
 Common flags: `--data-dir` (default `data/theme_intelligence`), `--cache-only` (never call the
 LLM: replay cached extractions only), `--no-review` (skip the pass-2 LLM review — the card then
@@ -171,11 +175,11 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 
 | channel | discovery | state |
 |---|---|---|
-| Citi Must C | the page's embedded CMS data (`__NEXT_DATA__`): series items + CMS publishDate | OK — the page embeds its ~20 linked items; older ones are not listed there |
-| BofA institutional insights | article cards on the insights page | OK, but the insight pages state **no publication date**, so they are counted UNDATED and never placed in a window (analyse one with `article --url`) |
+| Citi Must C | the page's embedded CMS data (`__NEXT_DATA__`): series items + CMS publishDate | OK — the page embeds its ~20 linked items; older ones are not listed there. Each page links its full report as a public PDF ("Download Here") — read automatically (`linked_reports = "fetch"`) |
+| BofA institutional insights | article cards on the insights page | OK, but most insight pages state **no publication date**: a page last modified before the window is out of it (said so); the rest are listed for date verification (`article --url U --published <verified date>`) |
 | J.P. Morgan Top Market Takeaways | listing cards with dates (sitemap lastmod as a fallback that can only rule a page OUT) | OK |
 | Morgan Stanley Research | entry page links | **BLOCKED** — the connection is dropped on every request, robots.txt included; reported every run, never bypassed |
-| Nomura Connects | `/articles/` + pagination, each page's own date | OK |
+| Nomura Connects | `/articles/` + pagination, each page's own date | OK — pages that say "to read the full report, click here" point to the client portal: listed for an authorised upload, never fetched (`linked_reports = "request"`) |
 | TrendForce press center | listing pages `?page=N`, date in the article URL | OK |
 | SemiAnalysis | the newsletter's RSS feed (pubDate) | OK — paid posts carry a preview only and are recorded PARTIAL |
 | Goldman Sachs Research | entry page links | **BLOCKED** — HTTP 403 on entry, sitemap and insights |
@@ -236,10 +240,106 @@ apart from the scan's execution status and the research-verification status.
   unreadable pages) or MANUAL_REVIEW (undated pages, an empty listing, a persistent error) item
   naming the publisher, the issue, the affected article if known (its URL and the title the
   listing gave — never an invented one) and the action. Upload an authorized copy through the
-  SAME pipeline: `article --url <article URL> --html <saved page> --as-of <date> --source <id>` —
-  labelled a manual upload in the article's provenance. An upload never changes the channel's
+  SAME pipeline: `ingest-file --path <report.pdf or saved page> --source <id> [--url <article
+  URL>]` (or, for a saved web page, `article --url <URL> --html <saved page>`) — labelled a manual
+  upload in the article's provenance. An upload never changes the channel's
   health: one document is not proof of its coverage. When automatic retrieval is shown to work
   again the item is lifted for future articles; uploaded articles stay in the registry.
+
+## Manual documents (`documents.py`, `ingest.py`)
+
+A report the operator holds — an institutional PDF from a blocked channel, the full text behind a
+preview, a saved page — enters the SAME pipeline, registry and weekly report as a fetched article:
+source attribution, whole-article completeness, number and citation verification, company /
+sector identification, thesis extraction, claim-level relationship rules, Research Now / Watch /
+Skip, the nine-section card, version history. **The route in never changes research priority**
+(pinned: the same report as a fetched page and as an upload gives the same thesis, action and
+rules).
+
+```bash
+python -m vinci.theme_intelligence ingest-file --path "/secure/research/report.pdf" --source ms_research --llm-permitted
+python -m vinci.theme_intelligence ingest-file --path full-post.pdf --source semianalysis --url https://newsletter.semianalysis.com/p/<post>
+python -m vinci.theme_intelligence ingest-inbox            # every file in data/theme_intelligence/inbox/
+python -m vinci.theme_intelligence documents --status HELD
+```
+
+- **Formats.** PDF (pdfplumber, a project dependency), HTML, Markdown, plain text. DOCX is refused
+  with a plain message (no compatible library is installed — save it as PDF).
+- **What is kept.** Text in reading order with a PAGE reference on every block; each table as ONE
+  block with its cells and values as printed (`$48.3bn`, `4Q26E`); footnotes; headings (a wrapped
+  heading is one heading); title, authors (metadata, front matter or a "By …" byline) and the
+  document's own date, each with where it was read. Running headers, footers and page numbers are
+  left out and counted.
+- **What is flagged, never dropped silently.** A page with no text layer (a scanned image — OCR is
+  not available here) makes the document PARTIAL; a page with charts says its plotted values are
+  not verifiable; a page that cannot be read is named. Numbers shown only in a chart are never
+  turned into evidence.
+- **Dates.** The publication date comes from the document's own text (page 1-2) or front matter —
+  NEVER from the upload time, the file name or the PDF's CreationDate / ModDate (a FILE date,
+  recorded as such). `--published` fills only a gap; when it disagrees with the document's own
+  date, the document's is used and the disagreement is listed for review.
+- **No URL.** An institutional PDF with no public link is identified by its content
+  (`urn:document:sha256:…`) and its publisher is the channel named by `--source`.
+- **Identity, before any model call.** The same FILE again (any name) → DUPLICATE, nothing
+  re-counted. The same TEXT in another format → DUPLICATE. A fuller document of an article held
+  PARTIAL (`--url` stated, or the same publisher's title, date and text) → **UPGRADED**: a new
+  version of the SAME article, re-extracted and re-checked; the earlier version is kept, and
+  claims it restates are REPEATED, never independent confirmations. A later version that names
+  more segments updates the thesis its earlier version created (same-article continuity), never a
+  twin. A document that contains a COMPLETE held article plus more (a printed web page with its
+  site furniture, an annex) → REVIEW. Any uncertain match → **REVIEW** — a human answers with
+  `--same-as <article>` (a fuller version), `--duplicate-of <article>` (the same: add nothing) or
+  `--as-new`; nothing merges automatically. A title overlap ALONE reviews only from 50% (a
+  publisher's titles share house words). A saved web page's own canonical link identifies the
+  article it names, without `--url`. On a registry pulled from the state branch the held text is
+  not on this machine, and the basis says so: comparison is by URL, title and date only.
+- **Licence — HELD until authorised.** A document's text goes to the third-party LLM only when the
+  operator states its licence allows it (`--llm-permitted`, per document) or the channel's
+  `manual_llm_processing = "permitted"` in `sources.toml`. Otherwise it is HELD: read, stored
+  privately, listed — never analysed and never evidence. `--llm-not-permitted` holds it explicitly.
+  Re-run with `--llm-permitted` (or `--release <doc id>`) once confirmed.
+- **Cost — estimated before any model call, limited per document.** The completeness pass
+  reviews every stated figure and argument paragraph the extraction did not capture, in parts of
+  50, each re-sending the whole text — so cost follows FIGURE DENSITY, not page count. Measured
+  (list price, 2026-10-11): Citi's 34-page ETF report with its page $3.80 (7 parts), its 57-page
+  LatAm report $9.47 (10 parts), its 60-page Gridlock report — 851 stated figures — $46.67 (22
+  parts, $39.44 of it completeness). Before any call the document is estimated (`up to N parts
+  for F figures and P paragraphs`, $0.4–$2.1 per part + $2, calibrated on those three); above
+  `DOC_COST_LIMIT_USD` ($30) it is HELD (COST) with the estimate and the command to proceed:
+  `ingest-file --release <doc id> --max-cost N`. The same limit stops a scan from spending on a
+  linked report unattended — it is stored, held and listed.
+- **Failures.** A document the model could not analyse (no key, no cached answer, an API error)
+  is recorded FAILED with a plain message — never left RUNNING; an inbox file stays in the inbox.
+  Imported again, it is analysed (RETRY), never mistaken for a duplicate of an analysis that did
+  not finish.
+- **Privacy.** The original is copied to `data/theme_intelligence/documents/<sha256>.<ext>`
+  (owner-only, git-ignored); its text lives only in the local registry, which exports WITHOUT
+  article text. Nothing prints document text. A test fails if any PDF / DOCX other than the
+  labelled synthetic fixtures is ever tracked by git.
+- **The inbox.** Put files in `data/theme_intelligence/inbox/` with an optional
+  `<file>.meta.json` (`source`, `url`, `title`, `authors`, `published`, `llm_permitted`);
+  `ingest-inbox` imports each and files it under `processed/`, `held/`, `review/` or
+  `rejected/`. A file with no source stated is left in place and named.
+- **Ready for licensed reports.** Morgan Stanley / Goldman Sachs / SemiAnalysis PDFs the operator
+  is entitled to use need no further development: `ingest-file --source ms_research|gs_research|
+  semianalysis --llm-permitted` once their licence permits third-party processing.
+
+## Research intake / manual action (dashboard)
+
+One compact section beside source health, **its own status** (ingestion coverage — apart from
+source health and research verification), each list with its population and "showing X of Y":
+articles analysed automatically; articles imported manually (published · uploaded · analysed-as-of
+kept apart, and whether the original is on this machine); partial articles awaiting a complete
+document; publishers blocked or degraded; known articles needing an upload (a linked report the
+channel will not let us fetch, a blocked channel's affected article); articles needing a metadata
+or licence check (undated pages, HELD and REVIEW documents, a date disagreement); and coverage
+gaps (a blocked channel's coverage is UNKNOWN — no new article from it is not evidence it
+published nothing; truncated discovery; the queue). Every row of the ranked list says how its
+evidence arrived (automatic / manual upload / linked report fetched automatically).
+
+**One weekly report.** A scan's dashboard takes in every manual-ingest or single-article run since
+the previous scan, so an upload on Wednesday is in Monday's ranked list. An article published last
+month and uploaded today shows *Published* last month — never as new this week.
 
 ## Scheduling
 
@@ -263,6 +363,35 @@ branch history is the backup and the audit trail; a FAILED or PARTIAL run commit
 and readout too. Article full text is never committed (the export blanks it; block hashes and the
 short verbatim claim quotes stay as provenance), and the raw-page cache is not carried between
 runs.
+
+**Manual documents and the scheduled run — ONE registry (`state.py`).** Actions cannot reach the
+operator's machine, and the operator's documents must never be committed. So the state branch stays
+the only registry of record, and the operator carries it:
+
+```bash
+python -m vinci.theme_intelligence state pull --remote git@github.com:techmuns/mosaic-theory.git
+python -m vinci.theme_intelligence ingest-file --path report.pdf --source ms_research --llm-permitted
+python -m vinci.theme_intelligence state push
+```
+
+- `state pull` rebuilds the local registry from the branch (the local one backed up first), then
+  REPLAYS every local document the branch does not hold yet from its private copy, through the same
+  pipeline (an unchanged document's model calls come from the LLM cache). It refuses — unless
+  `--force`, with the backup kept — to discard a local scan or article run it cannot replay.
+- `state push` exports the registry WITHOUT article text, refuses a tree holding anything but
+  derived JSONL (no PDF, page, database or article text), and is FAST-FORWARD ONLY: if the
+  scheduled run committed since your pull, it refuses — pull again (the replay is safe), then
+  push. Credentials are git's own; a printed URL is masked.
+- The next scheduled scan restores that registry and its weekly report includes the uploads. On
+  the runner the original documents are absent, and every surface says so: the intake list marks
+  the original as not on that machine, and QA counts a claim whose text is not held as "not
+  re-checkable here" — never re-verified.
+
+| where | what runs |
+|---|---|
+| this machine | `ingest-file`, `ingest-inbox`, `documents`, `state pull/push/status`, `article`, `scan`, `report`, `qa` |
+| GitHub Actions | the weekly `scan` (restore → gate → scan → QA → export → commit to the state branch); manual documents arrive only through a `state push` |
+| needs configuration | the `theme-intelligence-state` branch exists only after the first workflow run or the first `state push` (none yet); the cron needs `THEME_INTELLIGENCE_SCHEDULE_ENABLED=true`; a push needs the operator's git credentials for the repository; secure cloud document storage is NOT configured — originals stay on the operator's machine |
 
 **Local / server — `bin/theme-intelligence-weekly`.** Runs the same pipeline against
 `data/theme_intelligence/registry.db`, takes a dated backup first, appends to
@@ -311,7 +440,8 @@ the model inside `<untrusted_article>` and is treated as data; the tool schema h
 could ride on. Measured costs (list price, 2026-10-10, all passes — extraction, completeness, card
 reviews): a J.P. Morgan article ≈ $0.68; a TrendForce release ≈ $0.88; a long SemiAnalysis preview
 ≈ $1.24, or $1.35 when one answer had to be set aside and asked again. A cached answer costs
-nothing.
+nothing. Long research PDFs cost far more: see *Manual documents → Cost* ($3.80 to $46.67
+measured for three Citi reports).
 
 - **Long articles.** An extraction that overruns the output cap (21,333 tokens, the SDK's
   non-streaming ceiling) is retried ONCE in a declared COMPACT mode — at most 25 claims, issue
@@ -327,9 +457,21 @@ nothing.
 
 ## Limitations (also in the PR)
 
-- Morgan Stanley and Goldman Sachs refuse the honest User-Agent — BLOCKED, never bypassed.
-- BofA insight pages carry no publication date — UNDATED, never placed in a window.
-- SemiAnalysis paid posts expose a preview only — PARTIAL, never analysed as full text.
+- Morgan Stanley and Goldman Sachs refuse the honest User-Agent — BLOCKED, never bypassed. Their
+  research reaches clients through entitled portals and licensed distribution (not probed or
+  configured here); the dependable route is an entitled operator's `ingest-file`.
+- BofA insight pages mostly carry no publication date — bounded by last modification where it
+  rules a page out, otherwise listed for date verification; never placed in a window unverified.
+- SemiAnalysis paid posts expose a preview only — PARTIAL until an authorised full copy is
+  uploaded (it then UPGRADES the same article).
+- Nomura's full reports sit on its client portal — requested, never fetched.
+- No OCR: a scanned page is flagged and the document PARTIAL; chart values are not read.
+- A figure-dense research PDF is expensive through the full pipeline ($46.67 measured for one
+  60-page report) — held above the per-document limit until the operator raises it.
+- Identity matching across formats is by text overlap: a heavily reformatted copy can fall to
+  REVIEW, which a human resolves; nothing merges on a guess.
+- Local ↔ Actions sync is demonstrated against a local bare repository only; the GitHub state
+  branch does not exist yet.
 - Point-in-time listings rest on the issuer's cover-page tagging (required since 2019); a filing
   without tagged cover facts leaves the listing UNVERIFIED, so it never counts as an exposure.
   Fiscal-year windows ("FY27") are read as the calendar year — approximate, and said so.

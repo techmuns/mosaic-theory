@@ -1,0 +1,40 @@
+===== hybrid-d-1.log
+run R-20261011T100759Z-article: scan execution SUCCEEDED — article PROCESSED
+  TH-1C1CAEA8AF  WATCH        (was —           ) NEW       novelty_unverified       AI server demand sustains DRAM and NAND contract price increases into 4Q26
+  TH-BC52646E83  RESEARCH NOW (was —           ) NEW       novelty_unverified       Enterprise SSD demand from CSP AI inference drives accelerating price growth
+research verification FULLY_VERIFIED — every figure and argument paragraph accounted for, full text read (over the 1 article(s) this run analysed: 0 of 7 stated figure(s) and 0 of 17 argument paragraph(s) open)
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/hybrid-d/runs/R-20261011T100759Z-article
+exit=0
+
+===== hybrid-d-2.log
+run R-20261011T100806Z-ingest: ingest SUCCEEDED — TrendForce 20260930-13258 AI server memory.html
+  D-bac61ba06ddc5cc9  DUPLICATE  article A-decec490fcdd  the same text is already registered (another file or format) — no new contribution
+cost $0.0 · outputs: data/theme_intelligence/v2/hybrid-d/runs/R-20261011T100806Z-ingest
+exit=0
+
+===== hybrid-d-3.log
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+run R-20261011T100807Z-ingest: ingest SUCCEEDED — TrendForce 20260930-13258 AI server memory.pdf
+  D-6602664c37c93fa6  REVIEW     article A-decec490fcdd  contains the held COMPLETE article plus more — another edition, an appendix or page furniture: a human decides (title overlap 100%, held text found in the new document 99%, new text found in the held 72%; held 962 words (FULL), new 1461 wor
+      flagged: page 1: carries graphics (3 image(s), 110 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 2: carries graphics (3 image(s), 114 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 3: carries graphics (6 image(s), 32 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 5: carries graphics (0 image(s), 42 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 6: carries graphics (5 image(s), 58 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: 4 running header / footer / page-number line(s) left out
+cost $0.0 · outputs: data/theme_intelligence/v2/hybrid-d/runs/R-20261011T100807Z-ingest
+exit=0
+
+===== hybrid-d-4.log
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+run R-20261011T100901Z-ingest: ingest SUCCEEDED — TrendForce 20260930-13258 AI server memory.pdf
+  D-6602664c37c93fa6  DUPLICATE  article A-decec490fcdd  the operator states it duplicates article A-decec490fcdd — no new contribution
+      flagged: page 1: carries graphics (3 image(s), 110 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 2: carries graphics (3 image(s), 114 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 3: carries graphics (6 image(s), 32 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 5: carries graphics (0 image(s), 42 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 6: carries graphics (5 image(s), 58 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: 4 running header / footer / page-number line(s) left out
+cost $0.0 · outputs: data/theme_intelligence/v2/hybrid-d/runs/R-20261011T100901Z-ingest
+exit=0

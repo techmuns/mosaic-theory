@@ -1,0 +1,1892 @@
+[
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:41:52.857197Z",
+  "detail": "s03.1 prints '200', which none of its cited claims carry: 'Gas turbine orders spike to ~100GW in 2025; OEMs expand capacity by 20-200%. \u27e8cited figures: approxi'",
+  "issue_id": "VI-006f9121ef2c80",
+  "ref_id": "TH-110E3113B1:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:40:43.805015Z",
+  "detail": "b5.k5_3: number check failed: value=None value_text='12 ... 30 or more' vs quote \u2014 quote 'wait times can extend to 12 months, or even 30 or more'",
+  "issue_id": "VI-015de7835e84cf",
+  "ref_id": "C-c4e5387e88f82f",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.807032Z",
+  "detail": "b8.k8_2: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-016009e771ab05",
+  "ref_id": "C-278a0923c9ce16",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:40:43.875093Z",
+  "detail": "b11.k11_2: number check failed: value=-20.0 value_text='~20%' vs quote \u2014 quote 'with industrial demand down ~20%'",
+  "issue_id": "VI-01d5efbd4cbb5f",
+  "ref_id": "C-2882fc3a5de5cf",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:40:43.879682Z",
+  "detail": "h2 Speed-to-power drives BYOG gas generation equipmen cites ['C-0296bda8930a7f'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-04cb2cd5dcc573",
+  "ref_id": "h2 Speed-to-power drives BYOG gas generation equipmen",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:44:44.971463Z",
+  "detail": "s01.0: The sentence states BE assumed capital cost of $5,000/kW, but no cited span provides that figure; the cited spans cover footprint, lifetime, CCGT $3,000/kW and ~100MW in ~120 days. The ~7GW-by-2030 install figure is also stated but not in the cited spans (though present in pool as C-24225ed24c6af0). Also cites a stack-lifetime span not relevant to this claim. | 'Fuel cells offer fast time-to-power (~100MW in ~120 days), compact footprint (~15 acres/GW vs ~40 fo'",
+  "issue_id": "VI-04d45a390c6bec",
+  "ref_id": "TH-DDEE0B7EF0:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:46:35.912215Z",
+  "detail": "s07.0: first check REVIEW_UNSUPPORTED (s07.0: UNSUPPORTED \u2014 Cited span (1-3x growth estimate by 2030) does not mention bragawatts, connection queues, or energy costs. Labelled FORECAST but the conten) \u2014 re-anchored to C-e055c1bcde6f13; after re-anchoring: supported",
+  "issue_id": "VI-06d1528d38f78a",
+  "ref_id": "TH-C840A76413:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:49:06.470931Z",
+  "detail": "s03.0: The cited spans are grid/renewables/storage investment-need figures; they do not mention AI datacenter buildout or energy security as drivers. The attribution of these specific drivers is not supported by the cited spans. | 'Massive capital spending required for electrification, AI datacenter buildout and energy security. \u27e8'",
+  "issue_id": "VI-06f99da7bd4a7d",
+  "ref_id": "TH-5BA11D6167:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "ARGUMENT_UNACCOUNTED",
+  "created_at": "2026-10-11T10:49:13.205376Z",
+  "detail": "b153: pass 1b called it covered \u2014 'Durability concern/early-2000s overbuild is already carried as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "issue_id": "VI-072787c67ae581",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:40:43.875033Z",
+  "detail": "b11.k11_1: number check failed: value=-10.0 value_text='~10%' vs quote \u2014 quote 'EU27+UK demand down ~10% over the past 15 years'",
+  "issue_id": "VI-0b77f59983185f",
+  "ref_id": "C-0cb1739790eb5f",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204595Z",
+  "detail": "b126: '~27%' \u2014 a claim quotes it (C-448a5ba8c162b0) but failed verification, so it is never used as evidence \u2014 sentence 'EV sales in 1Q 2026 were down ~27% YoY.4 Subsequently, European new EV registrations rose 34% YoY in April 2026, the first month to fully reflect the oil shock from the Iran war.'",
+  "issue_id": "VI-0eda92a937aeb7",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371060Z",
+  "detail": "s03.2: The ~80% price rise over five years is supported, but 'amid shortage, benefiting OEM revenue' is an added interpretation not in the cited span. | 'Prices rise ~80% over five years amid shortage, benefiting OEM revenue. \u27e8cited figures: approximate\u27e9'",
+  "issue_id": "VI-14b04e22ac8f0b",
+  "ref_id": "TH-1F366737A1:s03.2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.927023Z",
+  "detail": "b12.hx12_2 Energy infrastructure is a multi-year structural g: sector exposure 'Grid and infrastructure modernization' is not a verbatim span naming it ('companies providing the essential hardware, software, and services for grid expa') \u2014 dropped",
+  "issue_id": "VI-14dbe58b0e6bc6",
+  "ref_id": "b12.hx12_2 Energy infrastructure is a multi-year structural g",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:47:17.056204Z",
+  "detail": "s01.0: Sentence makes several claims (bypass interconnection queues, premiums on decommissioned sites) that are NOT in the two cited spans, which only cover ~83GW retired coal and ~50GW suitable for conversion. The premium/queue claims are supported elsewhere in the pool. | '~83GW of retired coal capacity exists across Europe with ~50GW theoretically suitable for conversion'",
+  "issue_id": "VI-159db67bb711ee",
+  "ref_id": "TH-5EDF9760FB:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:40:43.879590Z",
+  "detail": "h1 AI datacenter power buildout drives multi-year tra cites ['C-e201246db09274'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-17757720861a55",
+  "ref_id": "h1 AI datacenter power buildout drives multi-year tra",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.301889Z",
+  "detail": "b2.k2_15: re-anchored: the quote stopped short of its figure; extended to the verbatim source sentence (model quote was 'Critical Component Lead Times = Demand increased more')",
+  "issue_id": "VI-19e87f42a7e534",
+  "ref_id": "C-20a805cc28e478",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.205136Z",
+  "detail": "b208: '10' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'We forecast global high voltage power transformer supply to rise 59% in 2025-2028 and 95% in 2025-2030, taking into account the expansion plans of the global top-10 suppliers (see Figure 14).'",
+  "issue_id": "VI-1b66a036d37b98",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.875312Z",
+  "detail": "b11.k11_12: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-1b9706b346b616",
+  "ref_id": "C-826b5f2dd693d3",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371070Z",
+  "detail": "s06.2: Cited span supports peak in 2028 at 1,698.8 GVA but does not attribute it to Citi; 'Citi estimates' is added. | 'Dislocation evidence: Citi estimates the cumulative transformer shortage will peak in 2028 at 1,698.'",
+  "issue_id": "VI-1c5fef78a7e88a",
+  "ref_id": "TH-1F366737A1:s06.2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204787Z",
+  "detail": "b185: '12' \u2014 a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidence \u2014 sentence 'Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.'",
+  "issue_id": "VI-1d72647a9db58c",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:16.384572Z",
+  "detail": "s07.8: The cited spans support ESS battery demand growing at 28% CAGR to 2,093 GWh, but do not support the claim about lithium/copper/aluminium cost inflation pressuring IRR or ESS project progress; that content is unsupported by the cited spans. | 'Surging raw-material cost inflation (lithium, copper, aluminium) could pressure the IRR of ESS proje'",
+  "issue_id": "VI-220e4fa3c69a1f",
+  "ref_id": "TH-CE04BAA34C:s07.8",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371065Z",
+  "detail": "s06.0: The ~30% deficit is supported, but 'lead times of 24-48 months' is not in the cited span; the source span cites 18-36 months, not 24-48. 'Supporting pricing power' is also added interpretation. | 'Lead times of 24-48 months and ~30% deficit persist near term, supporting pricing power for transfor'",
+  "issue_id": "VI-2232af9b375e09",
+  "ref_id": "TH-1F366737A1:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:43:16.385421Z",
+  "detail": "s03.1: first check REVIEW_PARTIAL (s03.1: Cited span supports the 23% CAGR to 6,005 GWh but says nothing about ESS share rising to ~35%. | 'Global battery demand grows at 23% CAGR to 6,005 GWh by) \u2014 re-anchored to C-cd7a14ee20ef5f; after re-anchoring: supported",
+  "issue_id": "VI-23c969e05eb6f8",
+  "ref_id": "TH-CE04BAA34C:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204047Z",
+  "detail": "b093: '~$400 billion' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '~$400 billion Large Unit Lead Times ='",
+  "issue_id": "VI-24ef75c33e3235",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266940Z",
+  "detail": "s07.0: The cited span (CAT/CMI capacity targets) does not state a market debate about absorbing capacity buildout; this is an interpretation not in the cited span. | 'Market debates whether there will be enough incremental demand to absorb the large capacity buildout'",
+  "issue_id": "VI-26c2616cb7afa4",
+  "ref_id": "TH-110E3113B1:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:44:21.200700Z",
+  "detail": "s01.0 prints '7', which none of its cited claims carry: 'Fuel cells offer fast time-to-power (~100MW in ~120 days), compact footprint (~15 acres/GW vs ~40 fo'",
+  "issue_id": "VI-29814c3db388e1",
+  "ref_id": "TH-DDEE0B7EF0:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:44:44.972603Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence cites spans only for footprint (~15/~40 acres) and CCGT ~$3,000/kW. The time-to-power claim (~100MW in ~120 days), BE capital cost $5,000/kW) \u2014 re-anchored to C-7560d4d2dbe743; after re-anchoring: STILL UNSUPPORTED \u2014 withheld",
+  "issue_id": "VI-2a67c04dbb0770",
+  "ref_id": "TH-DDEE0B7EF0:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266921Z",
+  "detail": "s03.2: The 25% of 2026 orders is supported, but 'boosting manufacturer revenue' is an added interpretation not in the cited span. | 'GE Vernova projects data centers at 25% of 2026 orders, boosting manufacturer revenue. \u27e8cited figure'",
+  "issue_id": "VI-2b1bc0b1f192e7",
+  "ref_id": "TH-110E3113B1:s03.2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.875769Z",
+  "detail": "b12.k12_1: re-anchored: the quote stopped short of its figure; extended to the verbatim source sentence (model quote was 'with 98')",
+  "issue_id": "VI-2b6b99d280d8e7",
+  "ref_id": "C-ede4658218fb92",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:47.363087Z",
+  "detail": "s03.0: ~25% CAGR is supported, but 'with grid connection constraints' is not in any cited span; the cited spans describe consumption share/absolute figures and CAGR, not constraints. | 'Australian DC energy demand grows at ~25% CAGR with grid connection constraints. \u27e8cited figures: for'",
+  "issue_id": "VI-2c28e6a7899a28",
+  "ref_id": "TH-D803766B8B:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:49:06.470935Z",
+  "detail": "s06.0: The cited span supports the six-fold pipeline increase in 18 months, but 'signals near-term grid demand surge' is an interpretation beyond the measured span while labelled MEASURED OBSERVATION. | \"ERCOT's six-fold connection pipeline increase in 18 months signals near-term grid demand surge.\"",
+  "issue_id": "VI-2c6db9e5c71b39",
+  "ref_id": "TH-5BA11D6167:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266932Z",
+  "detail": "s06.1: The cited span (CAT capacity target) does not support 'little oversupply risk through 2030' or 'loosen in early 2030s'; that claim is supported by pool span C-0296bda8930a7f. | 'Little oversupply risk through 2030; supply/demand may loosen in early 2030s. \u27e8cited figures: foreca'",
+  "issue_id": "VI-2d6eaccc3d598f",
+  "ref_id": "TH-110E3113B1:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:54.250086Z",
+  "detail": "s03.0: Cited span only supports a shortage of trade workers; it does not state that overlapping demand across data centers, utilities, renewables and semis competes for a shared pool of trades. | 'Overlapping demand across data centers, utilities, renewables and semis competes for a shared pool o'",
+  "issue_id": "VI-2e2b016ee784e0",
+  "ref_id": "TH-CA02B7A83B:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:16.384536Z",
+  "detail": "s06.0: Cited span only supports global EV sales growth; it does not support reacceleration in Europe/Asia or the US 1Q 2026 down ~27% YoY claim. | 'EV sales reaccelerating in Europe and Asia; US an exception with 1Q 2026 down ~27% YoY.'",
+  "issue_id": "VI-2ec4f5c5e5f4c3",
+  "ref_id": "TH-CE04BAA34C:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:43.218437Z",
+  "detail": "s06.0: Cited span supports ~$38bn sanctioned and record capex budgets, but 'surprising to the upside' and 'balance sheets stretched, may need external financing' are not in the cited span. | 'Commercial pace accelerating and surprising to the upside; balance sheets stretched, may need extern'",
+  "issue_id": "VI-2f82817446daad",
+  "ref_id": "TH-C0F7401B12:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:44:44.971601Z",
+  "detail": "s06.0: Cited footprint span does not support fast time-to-power or avoiding HV/MV equipment bottlenecks; label MEASURED OBSERVATION overstates an interpretive 'near-term advantage' claim. Time-to-power is supported by pool C-7560d4d2dbe743 but HV/MV bottleneck claim not clearly present. | 'Fuel cells deliver fast time-to-power and avoid HV/MV equipment bottlenecks, a near-term advantage a'",
+  "issue_id": "VI-306099fe440758",
+  "ref_id": "TH-DDEE0B7EF0:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.171985Z",
+  "detail": "c15: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b298 (content overlap 64%; claimed figure present; model quote was 'the market for behind-the-meter power from third-party suppliers will grow towar')",
+  "issue_id": "VI-309efc465ef71a",
+  "ref_id": "C-ada0f64e85082b",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:47:17.056245Z",
+  "detail": "s01.1: UNSUPPORTED \u2014 The only cited span (~50GW suitable for conversion) does not support claims about control of grid-connected sites being a structural advantage or speed-to-power being the critical determinant. The structural-advantage claim exists at C-893cf020f4cdd1 in the pool. | 'The article frames control of grid-connected/powered-land sites as a structural advantage where spee'",
+  "issue_id": "VI-31e8095ecf0eda",
+  "ref_id": "TH-5EDF9760FB:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-10-11T10:40:43.879600Z",
+  "detail": "h2 Speed-to-power drives BYOG gas generation equipmen names 'GE Vernova', which is not a verified source mention \u2014 removed from its affected list",
+  "issue_id": "VI-32ffd0bd278ea0",
+  "ref_id": "h2 Speed-to-power drives BYOG gas generation equipmen",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:03.306691Z",
+  "detail": "s03.0: The cited span only supports the coal tendering drop (30-40GW pa). The claim about adding nuclear/hydro/pumped storage and shifting coal to peak-shaving is not in the single cited span. | \"China's all-of-the-above strategy adds nuclear, hydro and pumped storage while shifting coal to peak\"",
+  "issue_id": "VI-33097ed5397257",
+  "ref_id": "TH-8178B565CB:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:42:59.515564Z",
+  "detail": "s06.0 prints '2026', which none of its cited claims carry: 'EV sales reaccelerating in Europe and Asia; US an exception with 1Q 2026 down ~27% YoY.'",
+  "issue_id": "VI-3707f574621b32",
+  "ref_id": "TH-CE04BAA34C:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.902888Z",
+  "detail": "b8.hx8_1 Fuel cells gain niche data-center power share on s: sector exposure 'SOFC' is not a verbatim span naming it ('CCGTs remain structurally more cost competitive, leaving fuel cells reliant on n') \u2014 dropped",
+  "issue_id": "VI-37765a8b796903",
+  "ref_id": "b8.hx8_1 Fuel cells gain niche data-center power share on s",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "ARGUMENT_UNACCOUNTED",
+  "created_at": "2026-10-11T10:49:13.205411Z",
+  "detail": "b329: pass 1b called it covered \u2014 'Scandium supply-chain constraint already captured as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "issue_id": "VI-38def7871ad381",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:48:03.307988Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Labelled MEASURED OBSERVATION but the sentence draws an inference ('imply sustained demand into 2026E-30E') extending a measured 2-5yr cycle into a forec) \u2014 re-anchored to C-ce6ca16afe08e3; after re-anchoring: supported",
+  "issue_id": "VI-3a4bce1adfb995",
+  "ref_id": "TH-8178B565CB:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-10-11T10:40:42.930237Z",
+  "detail": "1060 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 22 parts",
+  "issue_id": "VI-3aa2861c833756",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:46:35.912195Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 Cited span only states DC account for ~2% of current demand. It does not support claims about electrification investment cycle in transport) \u2014 re-anchored to C-728bc86ca236a6; after re-anchoring: supported",
+  "issue_id": "VI-3ba8b14e624cd1",
+  "ref_id": "TH-C840A76413:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:47:17.057281Z",
+  "detail": "s06.0: first check REVIEW_UNSUPPORTED (s06.0: UNSUPPORTED \u2014 Cited span is the ~83GW retired coal figure; it does not mention UK transactions demonstrating premiums for decommissioned coal sites. Misl) \u2014 re-anchored to C-5ecf4c72061abc; after re-anchoring: supported",
+  "issue_id": "VI-3c55fc05aabc99",
+  "ref_id": "TH-5EDF9760FB:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:42:12.267604Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Order spike (~100GW) and ~3-year lead times are supported as measured observations; 'support near-term demand strength and backlogs' is an interpretation) \u2014 re-anchored to C-a6003238027398; after re-anchoring: supported",
+  "issue_id": "VI-3c66425ecdf0e4",
+  "ref_id": "TH-110E3113B1:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "ARGUMENT_UNACCOUNTED",
+  "created_at": "2026-10-11T10:49:13.205541Z",
+  "detail": "b483: pass 1b called it covered \u2014 'Valuation caution restates stretched-valuation market risk already recorded.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "issue_id": "VI-3cd7596710d7e4",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.902680Z",
+  "detail": "h4 Energy security accelerates renewables, EVs and en: sector exposure 'renewables and energy storage' is not a verbatim span naming it ('accelerating Europe, China and emerging markets. investment in renewables and en') \u2014 dropped",
+  "issue_id": "VI-3d27bf710b8250",
+  "ref_id": "h4 Energy security accelerates renewables, EVs and en",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266903Z",
+  "detail": "s03.1: 'OEMs expand capacity by 20-200%' is not supported by cited spans; CAT ~22GW to ~65GW is ~195% and CMI ~55GW but no base given in cited span. The specific '20-200%' range is not derivable from cited spans alone. | 'Gas turbine orders spike to ~100GW in 2025; OEMs expand capacity by 20-200%. \u27e8cited figures: approxi'",
+  "issue_id": "VI-3e10c6e44e0ac7",
+  "ref_id": "TH-110E3113B1:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:54.250095Z",
+  "detail": "s06.1: Cited span says 'for structural reasons' but does not enumerate retirements, too few apprentices, or competing demand; those specific causes are not in the cited span. | 'Structural causes (retirements, too few apprentices, competing demand) make this a multi-year constr'",
+  "issue_id": "VI-3feb346baebd7f",
+  "ref_id": "TH-CA02B7A83B:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:41:10.929251Z",
+  "detail": "s06.0 prints '24', which none of its cited claims carry: 'Lead times of 24-48 months and ~30% deficit persist near term, supporting pricing power for transfor'",
+  "issue_id": "VI-4118a9dc86103a",
+  "ref_id": "TH-1F366737A1:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:46:35.911464Z",
+  "detail": "s06.0: The cited span only gives the 1-3x growth estimate; 'weak underlying European demand' and 'bragawatts risk' are not supported by this single cited span. Bragawatts is covered elsewhere (C-e055c1bcde6f13) but not cited here. | 'Weak underlying European demand and bragawatts risk mean near-term DC-driven upside is limited. \u27e8cit'",
+  "issue_id": "VI-428edb5391872c",
+  "ref_id": "TH-C840A76413:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204548Z",
+  "detail": "b095: 'five years' \u2014 a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, substations, and grid sin'",
+  "issue_id": "VI-4632bbbdb90802",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.926729Z",
+  "detail": "b11.hx11_1 European grid expansion is primary beneficiary of  cites b11.k11_2, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-4661150c3ac625",
+  "ref_id": "b11.hx11_1 European grid expansion is primary beneficiary of ",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204230Z",
+  "detail": "b095: '24-48' \u2014 a claim quotes it (C-c22794633f809c) but failed verification, so it is never used as evidence \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, substations, and grid sin'",
+  "issue_id": "VI-4887a8c4813692",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:43:54.250388Z",
+  "detail": "s03.1: first check REVIEW_UNSUPPORTED (s03.1: UNSUPPORTED \u2014 The cited span only states the BLS trade worker shortage figure; it does not say that attracting trades from other industries raises develo) \u2014 re-anchored to C-6f5ee8dc6212cd; after re-anchoring: supported",
+  "issue_id": "VI-492e2e5247d6cd",
+  "ref_id": "TH-CA02B7A83B:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.037038Z",
+  "detail": "c5: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b176 (content overlap 100%; claimed figure present; model quote was 'The U.S. data center electrical equipment market is projected to grow from $20 b')",
+  "issue_id": "VI-49682351e32953",
+  "ref_id": "C-fc596422d9ffc1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "TRANSMISSION_RECLASSIFIED",
+  "created_at": "2026-10-11T10:40:43.879745Z",
+  "detail": "h3 US gas pipeline underinvestment creates attractive: step 'margins' describes a price / valuation move with no fundamental \u2014 re-filed as market_reaction (a market response, not an earnings mechanism): 'Tight market yields ~5-6x build multiples, supporting project returns.'",
+  "issue_id": "VI-4b0b20f045b571",
+  "ref_id": "h3 US gas pipeline underinvestment creates attractive",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:44:44.971561Z",
+  "detail": "s03.0: UNSUPPORTED \u2014 Cited span only gives footprint figures; it does not support the claim that grid constraints and speed-to-power needs drive data centers toward onsite fuel cell generation. Label MEASURED OBSERVATION also overstates an interpretive claim. | 'Grid constraints and speed-to-power needs drive data centers toward onsite fuel cell generation. \u27e8ci'",
+  "issue_id": "VI-4c1676db39e60d",
+  "ref_id": "TH-DDEE0B7EF0:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.926551Z",
+  "detail": "b9.hx9_2 Low-cost US natural gas gives US a structural adva: sector exposure 'U.S. midstream' is not a verbatim span naming it ('Natural gas as a power solution is globally relevant, but much more competitive ') \u2014 dropped",
+  "issue_id": "VI-4ca720de821453",
+  "ref_id": "b9.hx9_2 Low-cost US natural gas gives US a structural adva",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:47.363095Z",
+  "detail": "s06.0: The 5.4GW and ~600MW figures are supported, but 'signal large latent demand' is an interpretation/inference, not a measured observation; labelling it MEASURED OBSERVATION is stronger than the content. | 'Grid connection requests of 5.4GW vs ~600MW current draw signal large latent demand. \u27e8cited figures:'",
+  "issue_id": "VI-4cfddad568c5fc",
+  "ref_id": "TH-D803766B8B:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371075Z",
+  "detail": "s06.4: Cited spans support a US 30% deficit in 2025 and market growth to 2030, but not a 'global transformer shortage forecast to persist toward 2030 despite capacity additions by top OEMs'; the global-and-persistence claim is unsupported by the cited spans. | 'Global transformer shortage forecast to persist toward 2030 despite capacity additions by top OEMs. '",
+  "issue_id": "VI-4d2490b8ad9fb5",
+  "ref_id": "TH-1F366737A1:s06.4",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.205093Z",
+  "detail": "b203: '30%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Wood Mackenzie estimates that power transformers are in a supply deficit of 30% based on annual supply and demand estimates in 2025.'",
+  "issue_id": "VI-50abe76b22553f",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204188Z",
+  "detail": "b095: '80%' \u2014 a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, substations, and grid sin'",
+  "issue_id": "VI-50adad42e1e86d",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:49:06.470895Z",
+  "detail": "s01.1: Claims 'four pillars form the backbone of the energy transition' but the single cited span only covers grid investment; the four-pillar framing is not in the cited span. | 'Citi Wealth sees compelling opportunities across four pillars that form the backbone of the energy t'",
+  "issue_id": "VI-524eb124c048cf",
+  "ref_id": "TH-5BA11D6167:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.779015Z",
+  "detail": "b3.k3_2: quote not in block \u2014 quote 'Large Unit Lead Times = 24-48 months'",
+  "issue_id": "VI-5305c6307f9aa3",
+  "ref_id": "C-c22794633f809c",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:44:44.971652Z",
+  "detail": "s07.11: UNSUPPORTED \u2014 Cited span is about ~5.5 year stack lifetime, which does not support any claim about scandium supply-chain dependence, China/Russia production, or constraint risk. Label MEASURED OBSERVATION overstates. | 'Scandium supply-chain dependence (largely produced in China and Russia as a mining byproduct) expose'",
+  "issue_id": "VI-532218510aba72",
+  "ref_id": "TH-DDEE0B7EF0:s07.11",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.902708Z",
+  "detail": "h4 Energy security accelerates renewables, EVs and en cites b3.k3_15, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-55c41008121e5e",
+  "ref_id": "h4 Energy security accelerates renewables, EVs and en",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.806318Z",
+  "detail": "b6.k6_25: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-5674aba2dc3dd5",
+  "ref_id": "C-9456b0404a7568",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-10-11T10:13:05.996540Z",
+  "detail": "model classifies institutional_research (Citi Research multi-team report on power infrastructure, AI datacenter buildout and energy security, with equity and commodity research view); the record keeps publisher_commentary (channel default for citi_must_c)",
+  "issue_id": "VI-571673bb196642",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:47:17.056261Z",
+  "detail": "s03.1: The cited premium span (C-5ecf4c72061abc) specifies UK transactions, but the sentence generalizes to 'decommissioned coal sites' without the UK scope. The ~83GW span does not support the premium claim. | 'Decommissioned coal sites command significant premiums due to embedded grid connections. \u27e8cited figu'",
+  "issue_id": "VI-58f34ff9797b70",
+  "ref_id": "TH-5EDF9760FB:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371082Z",
+  "detail": "s07.7: The ~40-50% demand swings and 1GW+ load drops are supported, but the cited spans do not support the specific claim of a 'NERC Level 3 alert' being triggered; that detail appears only in the scope note, not the cited spans. | \"Reliability risk from AI data centers' large, volatile load (~40-50% demand swings; NERC Level 3 ale\"",
+  "issue_id": "VI-5c01cb6af1774a",
+  "ref_id": "TH-1F366737A1:s07.7",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266883Z",
+  "detail": "s02.1: Cited span says '128 global projects totaling 133GW announced' without the 'onsite gas power' qualifier; the card adds 'onsite gas power projects' which is not in the cited span. | '128 onsite gas power projects totaling 133GW announced globally'",
+  "issue_id": "VI-5c0d98fd871af1",
+  "ref_id": "TH-110E3113B1:s02.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:42:12.267575Z",
+  "detail": "s07.8: first check REVIEW_PARTIAL (s07.8: ~40-50% demand swings and 1GW+ load drops are supported as measured observations. However 'NERC Level 3 alert after 1GW+ sudden load drops' and 'May 2026) \u2014 re-anchored to C-33a4cc8c517538, C-9bd249731dc0b8, C-154fe686463659; after re-anchoring: supported",
+  "issue_id": "VI-5c4689f4584f0d",
+  "ref_id": "TH-110E3113B1:s07.8",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.608397Z",
+  "detail": "b3.k3_1: quote not in block \u2014 quote 'Prices are about 80% higher over the last five years'",
+  "issue_id": "VI-5faaa34c23393e",
+  "ref_id": "C-f346d263647623",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.805980Z",
+  "detail": "b6.k6_10: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-62581fc3bc9924",
+  "ref_id": "C-e4dd299c465514",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.205246Z",
+  "detail": "b423: '~20%' \u2014 a claim quotes it (C-2882fc3a5de5cf) but failed verification, so it is never used as evidence \u2014 sentence 'At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, with industrial demand down ~20%).'",
+  "issue_id": "VI-62b7073ecc9c5d",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.879521Z",
+  "detail": "h1 AI datacenter power buildout drives multi-year tra cites b3.k3_2, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-631c3156dbad81",
+  "ref_id": "h1 AI datacenter power buildout drives multi-year tra",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.807178Z",
+  "detail": "b8.k8_6: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-63fc4f0a331aa0",
+  "ref_id": "C-d676ca9a1c7960",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:44:44.972618Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 The only cited span is the ~5.5yr stack lifetime, which says nothing about fuel cells being reliant on niche advantages with limited upside) \u2014 re-anchored to C-24225ed24c6af0; after re-anchoring: STILL UNSUPPORTED \u2014 withheld",
+  "issue_id": "VI-6540df8bda66e3",
+  "ref_id": "TH-DDEE0B7EF0:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.804282Z",
+  "detail": "b3.k3_18: quote found in b111, not the cited b104",
+  "issue_id": "VI-65cff1bebed313",
+  "ref_id": "C-dfbceb8a6fedad",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.806976Z",
+  "detail": "b8.k8_1: quote matched after typographic normalisation (quotes/dashes/spaces)",
+  "issue_id": "VI-6657101151898c",
+  "ref_id": "C-a1e68eeeedfbb0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.879518Z",
+  "detail": "h1 AI datacenter power buildout drives multi-year tra cites b3.k3_1, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-67e2dd11772cb8",
+  "ref_id": "h1 AI datacenter power buildout drives multi-year tra",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:44:21.200703Z",
+  "detail": "s01.0 prints '2030', which none of its cited claims carry: 'Fuel cells offer fast time-to-power (~100MW in ~120 days), compact footprint (~15 acres/GW vs ~40 fo'",
+  "issue_id": "VI-67ffbc945b8a75",
+  "ref_id": "TH-DDEE0B7EF0:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:44:44.971617Z",
+  "detail": "s06.1: Cited span only supports CCGT $3,000/kW cost; it does not establish that CCGTs are structurally more cost-competitive leaving fuel cells reliant on niche advantages with limited upside. | 'CCGTs remain structurally more cost-competitive, leaving fuel cells reliant on niche advantages with'",
+  "issue_id": "VI-690c3bfde4e5fd",
+  "ref_id": "TH-DDEE0B7EF0:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "ARGUMENT_UNACCOUNTED",
+  "created_at": "2026-10-11T10:49:13.205654Z",
+  "detail": "b486: pass 1b called it covered \u2014 'Positioning/concentration caution restates stretched-valuation/positioning market risk already recorded.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "issue_id": "VI-69e22058cfe93c",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204750Z",
+  "detail": "b127: '~27%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'The U.S. is the exception: 1Q 2026 sales were down ~27% YoY, although the decline slowed from 4Q 2025.'",
+  "issue_id": "VI-6af47013da0f6b",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266839Z",
+  "detail": "s01.0: Claims '128 onsite projects' but cited span C-3ac27489991e79 says '128 global projects' with no 'onsite' qualifier; also 'CAT/CMI expanding capacity sharply' is supported only for CAT (~65GW from ~22GW) via cited span, CMI target ~55GW present but no 2022 base; mostly within scope. | 'Grid delays push datacenters toward bring-your-own-generation; global gas turbine orders spiked to ~'",
+  "issue_id": "VI-6f4138b3409ec6",
+  "ref_id": "TH-110E3113B1:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.205211Z",
+  "detail": "b423: '15' \u2014 a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence \u2014 sentence 'At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, with industrial demand down ~20%).'",
+  "issue_id": "VI-705cbcb608b1ff",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:41:10.929259Z",
+  "detail": "s06.0 prints '48', which none of its cited claims carry: 'Lead times of 24-48 months and ~30% deficit persist near term, supporting pricing power for transfor'",
+  "issue_id": "VI-7578c143375539",
+  "ref_id": "TH-1F366737A1:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.926723Z",
+  "detail": "b11.hx11_1 European grid expansion is primary beneficiary of : sector exposure 'Power transmission and distribution' is not a verbatim span naming it ('significant reinforcement of transmission and distribution networks') \u2014 dropped",
+  "issue_id": "VI-763459e3fdcc06",
+  "ref_id": "b11.hx11_1 European grid expansion is primary beneficiary of ",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:47:17.056271Z",
+  "detail": "s07.0: The cited span says 'theoretically ~50GW suitable for conversion'; the word 'theoretically' implies limits, but the sentence's explicit claims about site-specific constraints limiting realisable capacity go beyond what the span states. | 'Conversion of retired coal sites is subject to site-specific constraints, limiting realisable capaci'",
+  "issue_id": "VI-779d1f7c29a08a",
+  "ref_id": "TH-5EDF9760FB:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204398Z",
+  "detail": "b095: '12 - 30' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, substations, and grid sin'",
+  "issue_id": "VI-78c91c818435c3",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:41:28.371338Z",
+  "detail": "s07.7: first check REVIEW_PARTIAL (s07.7: The ~40-50% demand swings and 1GW+ drops are supported, but 'NERC Level 3 alert' is not in the cited spans; the scope note mentions May 2026 but no cited) \u2014 re-anchored to C-33a4cc8c517538, C-9bd249731dc0b8, C-154fe686463659; after re-anchoring: supported",
+  "issue_id": "VI-78d18e637f7dfa",
+  "ref_id": "TH-1F366737A1:s07.7",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.804356Z",
+  "detail": "b4.k4_1: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-7b47633c2abe4b",
+  "ref_id": "C-9734b6ab7dd044",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.037182Z",
+  "detail": "c9: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-7dc4f34dccb085",
+  "ref_id": "C-83254e9245b982",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:43:16.385456Z",
+  "detail": "s02.2: first check REVIEW_PARTIAL (s02.2: Cited span only says EV sales rose ~30% in 2025; it does not contain the '4.2 million' figure or Europe scope. | 'Europe EV sales rose ~30% in 2025 to 4.) \u2014 re-anchored to C-7a449852ae4a58, C-80e610e94f109c; after re-anchoring: supported",
+  "issue_id": "VI-7e0fb40983d30b",
+  "ref_id": "TH-CE04BAA34C:s02.2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:42:43.218937Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: The cited span gives 96GW net gas generation and data centers = 1/3 of power demand growth, but does not state the ~15 bcf/d incremental gas demand figur) \u2014 re-anchored to C-51ba3538169269; after re-anchoring: supported",
+  "issue_id": "VI-7f1d0aeb07fd83",
+  "ref_id": "TH-C0F7401B12:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.879528Z",
+  "detail": "h1 AI datacenter power buildout drives multi-year tra cites b5.k5_3, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-7f590c6b60b85b",
+  "ref_id": "h1 AI datacenter power buildout drives multi-year tra",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371024Z",
+  "detail": "s02.4: Cited span says 'peak in 2028 at 1,698.8 GVA' but does not attribute the estimate to Citi; card adds 'Citi estimates' which is not in the cited span. | 'Citi estimates the cumulative transformer shortage will peak in 2028 at 1,698.8 GVA. \u27e8cited figures:'",
+  "issue_id": "VI-7f6696783d5299",
+  "ref_id": "TH-1F366737A1:s02.4",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:46:19.574807Z",
+  "detail": "s01.0 prints '10', which none of its cited claims carry: 'In Europe, where power demand fell ~10% over 15 years and data centres are only ~2% of demand (~6% e'",
+  "issue_id": "VI-809ef69ef2f310",
+  "ref_id": "TH-C840A76413:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.926910Z",
+  "detail": "b11.hx11_3 China all-of-the-above power buildout drives nucle: sector exposure 'coal' is not a verbatim span naming it ('we expect tendering volume in China to drop to 30-40GW pa') \u2014 dropped",
+  "issue_id": "VI-80ae5551d2e403",
+  "ref_id": "b11.hx11_3 China all-of-the-above power buildout drives nucle",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:40:43.902901Z",
+  "detail": "b8.hx8_1 Fuel cells gain niche data-center power share on s cites ['C-528f4986fe0f76', 'C-c5967a6fdaa47e', 'C-24225ed24c6af0'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-85b5cfd4cb184b",
+  "ref_id": "b8.hx8_1 Fuel cells gain niche data-center power share on s",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:16.384465Z",
+  "detail": "s01.1: Sentence claims sustained tailwinds for NEV penetration and ESS demand, but the only cited span is a general battery demand projection to 6,005 GWh; it does not specifically support NEV penetration or ESS demand claims. | 'Energy security creates sustained tailwinds for higher NEV penetration and stronger ESS demand over '",
+  "issue_id": "VI-87be03057bff84",
+  "ref_id": "TH-CE04BAA34C:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:19.207054Z",
+  "detail": "s01.1: Cited span supports GEV/MIR as beneficiaries in nuclear/SMRs, but says nothing about rising power demand or supportive policy as drivers. | 'The article points investors toward utility-scale nuclear and SMR developers and equipment suppliers'",
+  "issue_id": "VI-8cd5cf354eae23",
+  "ref_id": "TH-426034EB2D:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:40.606504Z",
+  "detail": "s01.0: The sentence ranges Asian LNG/European gas at $5-$20/MMBtu and US at $2-$4. The cited spans give $8 and ~$20 and a $5-$8 forecast; a $5 low comes from the forecast span, so the $5-$20 composite is defensible but the line is labelled FORECAST while mixing MEASURED OBSERVATIONs and a FORECAST \u2014 FORECAST is the weakest label among them, which is permitted. The overstatement is 'almost always much lower' as a blanket claim not directly stated. | 'US Henry Hub gas prices ($2\u2013$4/MMBtu) are almost always much lower than Asian LNG and European gas ('",
+  "issue_id": "VI-8cd6cdbc6c3430",
+  "ref_id": "TH-566BFB9D39:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.926970Z",
+  "detail": "b12.hx12_1 Australia develops behind-the-meter gas power mark: sector exposure 'gas as a critical bridging fuel' is not a verbatim span naming it ('gas as playing a critical role in fulfilling the rising demand for data center p') \u2014 dropped",
+  "issue_id": "VI-8cf9e9155d6f97",
+  "ref_id": "b12.hx12_1 Australia develops behind-the-meter gas power mark",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NO_VERIFIED_SUPPORT",
+  "created_at": "2026-10-11T10:40:43.927142Z",
+  "detail": "b12.hx12_3 Selective continued exposure to US, South Korea, T has no verified supporting claim \u2014 promotion held",
+  "issue_id": "VI-902fc8ba71cef2",
+  "ref_id": "b12.hx12_3 Selective continued exposure to US, South Korea, T",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "HOLD"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:19.207141Z",
+  "detail": "s07.0: The cited span supports 'past projects faced significant delays and cost overruns' but does not state 'SMRs still need time to commercialize'; the span instead notes a clear path to cost reduction. | 'Past projects faced significant delays and cost overruns and SMRs still need time to commercialize.'",
+  "issue_id": "VI-903a5063a39010",
+  "ref_id": "TH-426034EB2D:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:47.363042Z",
+  "detail": "s01.0: The ~25% CAGR, 5.4GW grid connection requests, and gas-as-bridging-fuel/behind-the-meter market are supported by cited spans. However, the sentence combines a FORECAST label but cites 5.4GW (MEASURED OBSERVATION) and the behind-the-meter/gas-bridge claim is a SOURCE OPINION not present in the cited spans (C-8d7af786963e28 is not cited here); the gas-bridging-fuel claim is not in any cited span. | 'Australian data center energy demand is forecast to grow at ~25% CAGR with 5.4GW of grid connection '",
+  "issue_id": "VI-913f9b6b31dbf3",
+  "ref_id": "TH-D803766B8B:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:44:44.972626Z",
+  "detail": "s03.1: first check REVIEW_UNSUPPORTED (s03.1: UNSUPPORTED \u2014 Cited span is the ~5.5yr stack lifetime, which has nothing to do with ~7GW installs by 2030. The 7GW/2030 figure does not appear in the sho) \u2014 re-anchored to C-24225ed24c6af0; after re-anchoring: supported",
+  "issue_id": "VI-91edd7fee1dc6b",
+  "ref_id": "TH-DDEE0B7EF0:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.806661Z",
+  "detail": "b7.k7_7: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-9325dfe2f1b289",
+  "ref_id": "C-ca620ee55f5eb0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.902573Z",
+  "detail": "h3 US gas pipeline underinvestment creates attractive: sector exposure 'U.S. Midstream & Energy Infrastructure' is not a verbatim span naming it ('U.S. natural gas pipeline capacity effectively full') \u2014 dropped",
+  "issue_id": "VI-94fc98273e28e3",
+  "ref_id": "h3 US gas pipeline underinvestment creates attractive",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:48:47.363532Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: The ~25% CAGR and grid connection constraints claims are not supported by the cited FY30 6% and FY50 34.5TWh spans, which do not state a CAGR or constrai) \u2014 re-anchored to C-3d3011b3ee03cf; after re-anchoring: supported",
+  "issue_id": "VI-9545c8ca71fa49",
+  "ref_id": "TH-D803766B8B:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:45:19.207878Z",
+  "detail": "s07.0: first check REVIEW_UNSUPPORTED (s07.0: UNSUPPORTED \u2014 The cited span does not mention past project delays, cost overruns, or SMRs needing time to commercialize. | 'Past projects faced significa) \u2014 re-anchored to C-3dea4b62ffbefa; after re-anchoring: supported",
+  "issue_id": "VI-978e1586b56d36",
+  "ref_id": "TH-426034EB2D:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204958Z",
+  "detail": "b195: '2,358' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '2025 market share by capacity total 2,358.5GVA'",
+  "issue_id": "VI-9b36ec556c2a0d",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:45:19.207843Z",
+  "detail": "s06.0: first check REVIEW_UNSUPPORTED (s06.0: UNSUPPORTED \u2014 The cited span says nothing about domestic new build being slow near-term or about life extensions/restarts being the nearer-term signal. |) \u2014 re-anchored to C-ffe12cab5bf25d; after re-anchoring: supported",
+  "issue_id": "VI-9dbf32945a2f55",
+  "ref_id": "TH-426034EB2D:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.203808Z",
+  "detail": "b060: '50' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '| 50-GW+ of data center capacity was | | | | 24% CAGR increase since | | | | | | | | | | The Midwest Independent ; | | | | | | | | | | | | | | | System Operator (MISO) had the fastest growth at'",
+  "issue_id": "VI-9eedc0a41ef2d7",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:40.606558Z",
+  "detail": "s03.1: The cited spans give price levels but do not support the interpretive claim that US gas-fired datacenter power is 'economically favorable' \u2014 this is an inference beyond the cited figures. Label FORECAST is acceptable. | 'Lower feedstock cost makes US gas-fired datacenter power economically favorable vs LNG-importing reg'",
+  "issue_id": "VI-9f63ebfc49c89b",
+  "ref_id": "TH-566BFB9D39:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:48:47.363527Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence states ~25% CAGR and that Citi expects a behind-the-meter gas bridging market, but none of the cited spans contain a 25% CAGR figure or the ) \u2014 re-anchored to C-3d3011b3ee03cf; after re-anchoring: supported",
+  "issue_id": "VI-a0b258f5b81157",
+  "ref_id": "TH-D803766B8B:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:16.384525Z",
+  "detail": "s03.0: The cited span only supports EV sales growth; it does not support the claim that countries are accelerating renewables, EVs and storage to cut import dependence after an oil shock. | 'Countries accelerate renewables, EVs and storage to cut import dependence after oil shock.'",
+  "issue_id": "VI-a363701a30ffb8",
+  "ref_id": "TH-CE04BAA34C:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:46:35.911394Z",
+  "detail": "s01.0: Claims power demand 'fell ~10% over 15 years' \u2014 no cited span supports this figure; the ~2%, 2-3%, and ~6% figures are supported. The demand-decline claim is uncited and not in the pool. | 'In Europe, where power demand fell ~10% over 15 years and data centres are only ~2% of demand (~6% e'",
+  "issue_id": "VI-a3c2f5360577c3",
+  "ref_id": "TH-C840A76413:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:47:17.057271Z",
+  "detail": "s03.1: first check REVIEW_UNSUPPORTED (s03.1: UNSUPPORTED \u2014 Cited span is only the ~83GW retired coal figure; it does not state that decommissioned coal sites command significant premiums due to embe) \u2014 re-anchored to C-5ecf4c72061abc; after re-anchoring: supported",
+  "issue_id": "VI-a3d9e16b048af4",
+  "ref_id": "TH-5EDF9760FB:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204923Z",
+  "detail": "b185: '30' \u2014 a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidence \u2014 sentence 'Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.'",
+  "issue_id": "VI-a6dcbf3968292b",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:40:43.779483Z",
+  "detail": "b3.k3_15: number check failed: value=-27.0 value_text='~27%' vs quote \u2014 quote 'U.S. EV sales in 1Q 2026 were down ~27% YoY'",
+  "issue_id": "VI-a8c8b4a14d29b6",
+  "ref_id": "C-448a5ba8c162b0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:43.218441Z",
+  "detail": "s06.3: The 35 bcf/d and build-multiple figures are supported, but 'favorable economics likely persist given demand growth and limited excess supply' is an added claim not in the cited spans. | 'Favorable economics likely persist given demand growth and limited excess supply; 35 bcf/d of new pi'",
+  "issue_id": "VI-aa9e66a183c5c6",
+  "ref_id": "TH-C0F7401B12:s06.3",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:46:35.912160Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 Cited span only supports that DC demand is ~6% even after 3x growth. It says nothing about grid expansion being the primary beneficiary, gr) \u2014 re-anchored to C-2c1bfa4b32f488; after re-anchoring: supported",
+  "issue_id": "VI-aab3ca71349748",
+  "ref_id": "TH-C840A76413:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:42:59.515567Z",
+  "detail": "s06.0 prints '27', which none of its cited claims carry: 'EV sales reaccelerating in Europe and Asia; US an exception with 1Q 2026 down ~27% YoY.'",
+  "issue_id": "VI-aac025ca67edb1",
+  "ref_id": "TH-CE04BAA34C:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:42:43.218942Z",
+  "detail": "s06.3: first check REVIEW_UNSUPPORTED (s06.3: UNSUPPORTED \u2014 The cited span is only about ~5-6x build multiples. It does not support 'favorable economics likely persist', 'limited excess supply', or t) \u2014 re-anchored to C-20d5dcdccaf57c; after re-anchoring: supported",
+  "issue_id": "VI-ab4af4b708181b",
+  "ref_id": "TH-C0F7401B12:s06.3",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:28.256195Z",
+  "detail": "s07.0: Cited span states lower inference costs drive higher compute demand/utilization (Jevons); it does not say value shifts toward model deployment rather than infrastructure control. That conclusion is not in the span. | 'Falling inference costs via open-weight models could shift value toward model deployment rather than'",
+  "issue_id": "VI-acf0c9c3d4faed",
+  "ref_id": "TH-BAA07551ED:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:44:44.971581Z",
+  "detail": "s03.2: The claim that economics depend on utilization, spark spread and contract structure is not in the cited spans; only the $3,000/kW and $1,600/kW figures support that CCGT cost comparison exists. | 'Economics depend on utilization, spark spread and contract structure; CCGT remains structurally chea'",
+  "issue_id": "VI-ae1f733d6032e3",
+  "ref_id": "TH-DDEE0B7EF0:s03.2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:42:59.515554Z",
+  "detail": "s06.0 prints '1', which none of its cited claims carry: 'EV sales reaccelerating in Europe and Asia; US an exception with 1Q 2026 down ~27% YoY.'",
+  "issue_id": "VI-ae6aec1d9abf94",
+  "ref_id": "TH-CE04BAA34C:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:44:21.200692Z",
+  "detail": "s01.0 prints '5,000', which none of its cited claims carry: 'Fuel cells offer fast time-to-power (~100MW in ~120 days), compact footprint (~15 acres/GW vs ~40 fo'",
+  "issue_id": "VI-ae7450925e0e43",
+  "ref_id": "TH-DDEE0B7EF0:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.301739Z",
+  "detail": "b2.k2_14: quote found in b179, not the cited b090",
+  "issue_id": "VI-ae91ae1888610b",
+  "ref_id": "C-c0306bb6f22781",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "AUTHORS_FROM_TEXT",
+  "created_at": "2026-10-11T10:40:43.939209Z",
+  "detail": "credited in the article text, not in page metadata: Anthony Yuen (article text b021: 'Anthony Yuen Head of Energy Strategy Commodities Research'); Pierre Lau, CFA (article text b187: 'Pierre Lau, CFA'); Andrew Kaplowitz (article text b286: 'Andrew Kaplowitz'); Scott Gruber (article text b298: 'Scott Gruber'); Jenny Ping (article text b422: 'Jenny Ping'); Ryan Levine (article text b372: 'Ryan Levine'); Spiro Dounis (article text b348: 'Spiro Dounis')",
+  "issue_id": "VI-b4668e7f441eb9",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:43:16.385466Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Cited span only supports global EV sales growth; it does not mention Europe/Asia reaccelerating or US 1Q 2026 down ~27% YoY. | 'EV sales reaccelerating i) \u2014 re-anchored to ; after re-anchoring: STILL UNSUPPORTED \u2014 withheld",
+  "issue_id": "VI-b618673ee4b526",
+  "ref_id": "TH-CE04BAA34C:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:40.606568Z",
+  "detail": "s06.0: Cited spans give US $2-$4 and ~$20 Asian/European levels but the claim that global LNG prices 'stay elevated' as a present-tense condition conflicts with the companion forecast that prices should fall; still roughly supported by the ~$20 span. Interpretive 'cheap and competitive' goes beyond figures. | 'US gas remains cheap and competitive for datacenter power while global LNG prices stay elevated. \u27e8ci'",
+  "issue_id": "VI-b65231eb287c2e",
+  "ref_id": "TH-566BFB9D39:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:16.384512Z",
+  "detail": "s02.4: Cited span only supports EV production rose ~30%; the ~3.2 million figure is not in the cited span. | 'Europe EV production rose ~30% to ~3.2 million \u27e8cited figures: approximate\u27e9'",
+  "issue_id": "VI-b77852b0952828",
+  "ref_id": "TH-CE04BAA34C:s02.4",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:48:47.363535Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 The only cited span is the 5.4GW connection requests figure. It does not support the claims that expansion is positive for all generation p) \u2014 re-anchored to C-8d7af786963e28; after re-anchoring: supported",
+  "issue_id": "VI-b931599daf9ba1",
+  "ref_id": "TH-D803766B8B:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:40.606534Z",
+  "detail": "s01.1: Labelled MEASURED OBSERVATION but states the article's argument/interpretation ('the article argues gas-as-power is much more competitive') and an inference about reinforcing US gas-fired/midstream exposure, which is interpretive not a measured observation. | 'The article argues gas-as-power is much more competitive in the US than Asia/Europe, reinforcing US '",
+  "issue_id": "VI-ba2a0fc6d1b2e4",
+  "ref_id": "TH-566BFB9D39:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.205171Z",
+  "detail": "b423: '~10%' \u2014 a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence \u2014 sentence 'At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, with industrial demand down ~20%).'",
+  "issue_id": "VI-bb0c89c0805d6b",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:46:19.574815Z",
+  "detail": "s01.0 prints '15', which none of its cited claims carry: 'In Europe, where power demand fell ~10% over 15 years and data centres are only ~2% of demand (~6% e'",
+  "issue_id": "VI-bb85564ba666cf",
+  "ref_id": "TH-C840A76413:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:03.306787Z",
+  "detail": "s07.0: Cited span supports the tendering decline to 30-40GW pa, but the 'shifts from primary generation to peak shaving' rationale is not in the cited span. | 'Coal-fired equipment tendering declines as coal shifts from primary generation to peak shaving.'",
+  "issue_id": "VI-bd3976fe2c261a",
+  "ref_id": "TH-8178B565CB:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:47:17.057239Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 Cited span (~50GW suitable for conversion) does not state that scarce, time-intensive new grid connections shift value to assets with embed) \u2014 re-anchored to C-893cf020f4cdd1; after re-anchoring: supported",
+  "issue_id": "VI-bd9bcaf235710a",
+  "ref_id": "TH-5EDF9760FB:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:42.931630Z",
+  "detail": "c3: re-anchored: the quote stopped short of its figure; extended to the verbatim source sentence (model quote was 'AI is the dominant source of tracked data center Declining PUE reflects ongoing ')",
+  "issue_id": "VI-be151296f52b3f",
+  "ref_id": "C-4d8153c9da5a8e",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:55.954528Z",
+  "detail": "s06.0: Cited spans support PJM stage 1/stage 2 procurement timelines and July 23 conference, but the sentence references an 'ERCOT batch study selection' milestone and 'FERC conference'; the cited spans do not mention ERCOT batch study. Pool C-3ffd15a522d5e2 covers ERCOT batch study but not a selection milestone date. | 'Near-term regulatory milestones (ERCOT batch study selection, PJM reliability backstop procurement s'",
+  "issue_id": "VI-be227589d15cc6",
+  "ref_id": "TH-126BEECA00:s06.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:42:12.267594Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: The cited span about third-party suppliers growing to 25GW with data center deployment does not establish that grid connection delays push developers to ) \u2014 re-anchored to C-4ace4d44710d22, C-3009279380bba8; after re-anchoring: supported",
+  "issue_id": "VI-bfd9da5929d35f",
+  "ref_id": "TH-110E3113B1:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:47:17.057289Z",
+  "detail": "s06.1: first check REVIEW_UNSUPPORTED (s06.1: UNSUPPORTED \u2014 Cited ~50GW span does not support the claim that control of grid-connected sites is a structural advantage where new connections are scarce) \u2014 re-anchored to C-893cf020f4cdd1; after re-anchoring: supported",
+  "issue_id": "VI-c1b6f1b7d374b5",
+  "ref_id": "TH-5EDF9760FB:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:47:40.468467Z",
+  "detail": "s01.0 prints '24', which none of its cited claims carry: 'China pursues an all-of-the-above strategy: 31 nuclear units approved 2022-24 plus 10 more in April '",
+  "issue_id": "VI-c8aef451d7b2a2",
+  "ref_id": "TH-8178B565CB:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:19.207102Z",
+  "detail": "s03.0: Cited span supports renewed focus on nuclear/SMRs with GEV/MIR, but does not mention rising power demand or supportive policy as the drivers. | 'Rising power demand and supportive policy renew focus on utility-scale nuclear and SMRs.'",
+  "issue_id": "VI-c962a00258f0bc",
+  "ref_id": "TH-426034EB2D:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.807466Z",
+  "detail": "b8.k8_21: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-cb1d9ed4576a1b",
+  "ref_id": "C-2e6fd8a6ce7222",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:44:44.971633Z",
+  "detail": "s07.0: Cited span only gives CCGT $3,000/kW; it does not mention SOFC competition or limited adoption/player upside. | 'CCGT structural cost advantage and increasing SOFC competition could limit fuel-cell adoption and in'",
+  "issue_id": "VI-cc6ddb7ff6207f",
+  "ref_id": "TH-DDEE0B7EF0:s07.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:45:19.207124Z",
+  "detail": "s06.1: UNSUPPORTED \u2014 Neither cited span states a timeline of 'more significant commercial development over the next decade'; the cited spans do not mention a decade or progression timeline. | 'SMRs and utility-scale nuclear are expected to progress toward more significant commercial developme'",
+  "issue_id": "VI-cd261742454811",
+  "ref_id": "TH-426034EB2D:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.902561Z",
+  "detail": "h3 US gas pipeline underinvestment creates attractive: sector exposure 'US Midstream & Energy Infrastructure' is not a verbatim span naming it ('U.S. Midstream & Energy Infrastructure') \u2014 dropped",
+  "issue_id": "VI-cd40d4ab320608",
+  "ref_id": "h3 US gas pipeline underinvestment creates attractive",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:41:28.371348Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence bundles '~30% supply deficit in 2025', 'step-up transformers +270% since 2019', and 'prices +80% over five years' \u2014 all supported \u2014 plus 'OE) \u2014 re-anchored to C-b7e1041a7db4e2; after re-anchoring: supported",
+  "issue_id": "VI-cd82eb84cffcc4",
+  "ref_id": "TH-1F366737A1:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:41:52.857187Z",
+  "detail": "s03.1 prints '20', which none of its cited claims carry: 'Gas turbine orders spike to ~100GW in 2025; OEMs expand capacity by 20-200%. \u27e8cited figures: approxi'",
+  "issue_id": "VI-ce817be90c3213",
+  "ref_id": "TH-110E3113B1:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:43:16.385444Z",
+  "detail": "s06.1: first check REVIEW_PARTIAL (s06.1: Cited span supports battery demand CAGR but not NEV penetration rising from 25% in 2025 to 45% by 2030 or ESS growing fastest. | 'NEV penetration project) \u2014 re-anchored to C-d4f54f25922e77, C-36fe43337ea082; after re-anchoring: supported",
+  "issue_id": "VI-d0cee1ad28eb82",
+  "ref_id": "TH-CE04BAA34C:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:03.306767Z",
+  "detail": "s03.2: Cited span supports the 2-5 year nuclear revenue cycle only. 'hydro equipment makers' and 'article does not quantify issuer earnings' are not in the cited span. | 'Chinese nuclear/hydro equipment makers recognise revenue over 2-5 year cycles; article does not quan'",
+  "issue_id": "VI-d106ab5782a874",
+  "ref_id": "TH-8178B565CB:s03.2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.926726Z",
+  "detail": "b11.hx11_1 European grid expansion is primary beneficiary of  cites b11.k11_1, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-d15714294cf6a9",
+  "ref_id": "b11.hx11_1 European grid expansion is primary beneficiary of ",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:44:44.971526Z",
+  "detail": "s01.1: UNSUPPORTED \u2014 Cited spans (~5.5 year stack lifetime, ~7GW installs by 2030) do not support the characterization that the article frames fuel cells as reliant on niche advantages with limited upside for individual players. | 'The article frames fuel cells as reliant on niche advantages with limited upside for individual play'",
+  "issue_id": "VI-d241b7948a7597",
+  "ref_id": "TH-DDEE0B7EF0:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:12.266953Z",
+  "detail": "s07.8: Cited spans support ~40-50% swings and 1GW+ load drops, but 'NERC Level 3 alert' and 'May 2026' escalation are stated in the scope and not covered by any cited span; the NERC Level 3/date claim is unsupported by cited spans. | \"Reliability risk from AI data centers' large, volatile load (~40-50% demand swings; NERC Level 3 ale\"",
+  "issue_id": "VI-d3e8c8f62308b8",
+  "ref_id": "TH-110E3113B1:s07.8",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.926443Z",
+  "detail": "b9.hx9_1 Nuclear and SMR interest rising as supportive poli: sector exposure 'commercial-utility-scale nuclear and small modular reactors (SMRs)' is not a verbatim span naming it ('interest in nuclear energy across both commercial-utility-scale nuclear and smal') \u2014 dropped",
+  "issue_id": "VI-d4c28c251c0a21",
+  "ref_id": "b9.hx9_1 Nuclear and SMR interest rising as supportive poli",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.278023Z",
+  "detail": "c17: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b349 (content overlap 100%; claimed figure present; model quote was 'Our natural gas focused Midstream coverage sanctioned ~$38bln of projects tied t')",
+  "issue_id": "VI-d86b340e8ea111",
+  "ref_id": "C-dcd68e6fe94281",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:40:43.902760Z",
+  "detail": "b3.hx3_1 Power scarcity bifurcates AI market, favoring hype cites ['C-9021be046c00eb'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-d86c9cb3ac4482",
+  "ref_id": "b3.hx3_1 Power scarcity bifurcates AI market, favoring hype",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:47.363075Z",
+  "detail": "s02.0: The cited span states 'grid connection requests for 5.4GW of data centre related power requirements' but does not attribute it to AEMO. The AEMO attribution is not supported by the cited span. | 'AEMO highlighted 5.4GW of data center-related grid connection requests in Australia'",
+  "issue_id": "VI-da024d37abffcd",
+  "ref_id": "TH-D803766B8B:s02.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-11T10:40:43.879513Z",
+  "detail": "h1 AI datacenter power buildout drives multi-year tra cites b2.k2_18, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-db581296a6adbf",
+  "ref_id": "h1 AI datacenter power buildout drives multi-year tra",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:46:35.911485Z",
+  "detail": "s06.1: Cited spans only support Start Campus 0.2GW under construction and 1.2GW pipeline (Portugal). The broader claim that grid expansion is a multi-year beneficiary with country-level tightness is an interpretation not contained in these two capacity figures. | 'Grid expansion is a multi-year beneficiary of electrification, with country-level system tightness ('",
+  "issue_id": "VI-dbfce7ecc00495",
+  "ref_id": "TH-C840A76413:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-11T10:40:43.927038Z",
+  "detail": "b12.hx12_2 Energy infrastructure is a multi-year structural g: sector exposure 'Battery and storage solutions' is not a verbatim span naming it ('companies involved in battery technology, manufacturing, and deployment') \u2014 dropped",
+  "issue_id": "VI-dcade34e1e327c",
+  "ref_id": "b12.hx12_2 Energy infrastructure is a multi-year structural g",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-11T10:40:43.503434Z",
+  "detail": "b2.k2_18: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b185 (content overlap 67%; claimed figure present; model quote was 'Unit Lead Times = 12 - 30+ months'); number check failed: value=None value_text='12 - 30+' vs quote \u2014 quote 'Depending on the voltage and class, wait times can extend to 12 months, or even '",
+  "issue_id": "VI-dde7ffa62220e8",
+  "ref_id": "C-31eb74ab24d35a",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:40.606548Z",
+  "detail": "s03.0: Cited span only gives US Henry Hub $2-$4/MMBtu; it says nothing about 'abundant low-cost US shale gas' causing prices to be 'structurally below imported-LNG markets' \u2014 the causal/comparative claim is not in the cited span. | 'Abundant low-cost US shale gas keeps Henry Hub prices structurally below imported-LNG markets.'",
+  "issue_id": "VI-dfcadce8c169ec",
+  "ref_id": "TH-566BFB9D39:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "EXTRACTION_COMPACT",
+  "created_at": "2026-10-11T10:13:05.996194Z",
+  "detail": "the full extraction overran the output cap (21333 output tokens, discarded) \u2014 this article was extracted in the declared COMPACT mode (at most 25 claims); the completeness pass re-reads the whole article for what that leaves out",
+  "issue_id": "VI-e56002fabf5f3a",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:43:54.250062Z",
+  "detail": "s01.1: Cited span only supports 'unlikely to clear before 2030 for structural reasons'; it does not mention apprenticeships, prefabrication, OEM field service, or that solutions ease labor gradually. Those specifics are not in the cited span. | 'The article frames labor as a gating constraint that solutions (apprenticeships, prefabrication, OEM'",
+  "issue_id": "VI-e5a0c3a39994ac",
+  "ref_id": "TH-CA02B7A83B:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-10-11T10:40:43.902813Z",
+  "detail": "b8.hx8_1 Fuel cells gain niche data-center power share on s names 'Doosan', which is not a verified source mention \u2014 removed from its affected list",
+  "issue_id": "VI-e696d4c5f9c6f4",
+  "ref_id": "b8.hx8_1 Fuel cells gain niche data-center power share on s",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.278754Z",
+  "detail": "b2.k2_10: re-anchored: the quote stopped short of its figure; extended to the verbatim source sentence (model quote was 'EVs represented ~ 40% of')",
+  "issue_id": "VI-e8a9f77837abf3",
+  "ref_id": "C-1af629cf91e142",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-11T10:41:28.371353Z",
+  "detail": "s03.1: first check REVIEW_PARTIAL (s03.1: Cited spans support the demand surge (+270%) and supply deficit (30%), but 'multi-year lead times' is not in the cited spans; it appears in pool spans. |) \u2014 re-anchored to C-d002149a224c66; after re-anchoring: supported",
+  "issue_id": "VI-e975a26fe71cd7",
+  "ref_id": "TH-1F366737A1:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:19.207084Z",
+  "detail": "s02.0: The cited span says '150 new reactors by 2035' without the word 'nuclear'; the card adds 'nuclear reactors' which is reasonable inference but not verbatim. Figure value 150 and date 2035 match. Minor scope addition. | 'China aims to build 150 new nuclear reactors by 2035 \u27e8cited figures: forecast\u27e9'",
+  "issue_id": "VI-e9cd3a36a3015e",
+  "ref_id": "TH-426034EB2D:s02.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:47.363101Z",
+  "detail": "s06.1: 34.5TWh by FY50 is supported, but 'multi-year growth' and 'a developing BYOG market' are not in the single cited span (C-33d82c8d3fd280 only covers FY50 consumption). | 'Multi-year growth with FY50 consumption of 34.5TWh and a developing BYOG market. \u27e8cited figures: for'",
+  "issue_id": "VI-ea1ac41f3f822d",
+  "ref_id": "TH-D803766B8B:s06.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.503441Z",
+  "detail": "b2.k2_18: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b185 (content overlap 67%; claimed figure present; model quote was 'Unit Lead Times = 12 - 30+ months')",
+  "issue_id": "VI-eb13c27f1384f7",
+  "ref_id": "C-31eb74ab24d35a",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-11T10:49:13.204004Z",
+  "detail": "b060: '24%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence '| 50-GW+ of data center capacity was | | | | 24% CAGR increase since | | | | | | | | | | The Midwest Independent ; | | | | | | | | | | | | | | | System Operator (MISO) had the fastest growth at'",
+  "issue_id": "VI-ee5cc8890b5805",
+  "ref_id": "A-82a8a9210bae",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:47:40.469034Z",
+  "detail": "s03.1 prints '41', which none of its cited claims carry: '15GW/yr hydro, 100GW pumped storage, 41 nuclear units approved drive equipment order volumes; coal t'",
+  "issue_id": "VI-f1efbec23d5848",
+  "ref_id": "TH-8178B565CB:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-10-11T10:40:43.874547Z",
+  "detail": "b9.k9_24: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b336 (content overlap 64%; model quote was 'growing focus on and interest in nuclear energy across both commercial-utility-s')",
+  "issue_id": "VI-f30186062aee4b",
+  "ref_id": "C-3681e2a159c01e",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:41:28.371054Z",
+  "detail": "s03.0: Cited spans give data center capacity and demand growth figures but do not support the comparative claim that demand grows 'faster than grid can expand'; that interpretation is unsupported by the cited spans. | 'AI datacenter buildout and electrification lift electricity demand faster than grid can expand.'",
+  "issue_id": "VI-f4c3271d1e125e",
+  "ref_id": "TH-1F366737A1:s03.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-11T10:40:43.805313Z",
+  "detail": "b5.k5_16: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-f665ba4ea76405",
+  "ref_id": "C-900d9abc5f57c2",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:48:03.306746Z",
+  "detail": "s03.1: Cited spans support 15GW/yr hydro, 100GW pumped storage, and coal tendering 30-40GW pa, but '41 nuclear units approved' is not supported by any cited span here (31 in 2022-24 + 10 in April 2025 spans not cited). | '15GW/yr hydro, 100GW pumped storage, 41 nuclear units approved drive equipment order volumes; coal t'",
+  "issue_id": "VI-f875b7de4de452",
+  "ref_id": "TH-8178B565CB:s03.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:42:43.218426Z",
+  "detail": "s01.1: The cited spans support >2x capex and 5-6x build multiples but do not state 'most attractive commercial environment in recent memory'; that qualitative superlative is not in the cited spans. | 'Rising gas demand and pipeline underinvestment create the most attractive commercial environment in '",
+  "issue_id": "VI-fb0549bdfd6be7",
+  "ref_id": "TH-C0F7401B12:s01.1",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-10-11T10:40:43.879595Z",
+  "detail": "h2 Speed-to-power drives BYOG gas generation equipmen names 'Caterpillar (CAT)', which is not a verified source mention \u2014 removed from its affected list",
+  "issue_id": "VI-fcfc76d7ce48e9",
+  "ref_id": "h2 Speed-to-power drives BYOG gas generation equipmen",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "hypothesis",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:45:19.206986Z",
+  "detail": "s01.0: The cited span only names GEV and MIR poised to play key roles as investment ramps in nuclear/SMRs; it does not mention policy, energy security or decarbonization goals. Those additions are unsupported by the cited span. | 'Citi notes growing focus on commercial-utility-scale nuclear and SMRs, with GEV and MIR poised to pl'",
+  "issue_id": "VI-fe4cadc666ce9c",
+  "ref_id": "TH-426034EB2D:s01.0",
+  "run_id": "R-20261011T100624Z-ingest",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]

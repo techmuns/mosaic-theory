@@ -1,0 +1,2107 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-09-15",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T10:16:43.578666Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-15",
+   "latest_article_date": "2026-09-15",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-0F127079D1",
+   "title": "Datacenter moratoriums barely dent the US AI buildout pipeline"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-66a506ba149999",
+     "C-3d4eff14d2a06c",
+     "C-fdeb40dc094c08",
+     "C-4471c5f1fa2d35",
+     "C-154c978ec7737a",
+     "C-2e9c0d8416bcd9"
+    ],
+    "provenance": "FORECAST",
+    "text": "SemiAnalysis's parcel-level audit finds that 300+ local moratoriums and NY's order delay only ~2.3GW genuinely, with just 1,525 MW (7.6% of restricted-boundary capacity) delayed at the local level, against a +38GW 2027 US delivery forecast. \u27e8cited figures: approximate; forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-8865118badc627",
+     "C-d3861d26eb1c59"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article concludes the buildout is not being legislated to a halt; capacity under construction or permitted for 2026 and most of 2027 is out of reach of moratoriums."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The moratorium narrative appears materially overstated as a near-term risk to datacenter capacity and the AI infrastructure supply chain, though the article quantifies no specific listed-company earnings or revenue effect."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4471c5f1fa2d35"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Of roughly 20GW inside restricted boundaries at the local level, only 1,525 MW is delayed \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2e9c0d8416bcd9"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Only 1,525 MW is directly delayed, which is 7.6% of capacity inside a restricted boundary \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3d4eff14d2a06c"
+     ],
+     "original_date": "2026-09-15",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "SemiAnalysis forecasts +38GW of US datacenter IT capacity delivered in 2027, more than double 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fdeb40dc094c08"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "SemiAnalysis estimates roughly 2.3GW of planned capacity is genuinely delayed by local moratoriums and NY's executive order \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-154c978ec7737a"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "300+ local instruments translate into just ~1,525 MW of actual project delay in the US \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4b193c269151c5"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Brownsville deannexed 444 acres to remove Elon's datacenter project from the city's moratorium jurisdiction."
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 10 pieces of evidence from A-c59b789dbac0 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:16 UTC, analysed as of 2026-09-15, from a source published 2026-09-15; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d5a8d1eccb53ee",
+     "C-66a506ba149999",
+     "C-f42d094cef95de"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "Hundreds of local moratoriums and four state actions are raising political/regulatory friction for datacenter development. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-3d4eff14d2a06c",
+     "C-fdeb40dc094c08",
+     "C-4471c5f1fa2d35",
+     "C-d3861d26eb1c59"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Parcel-level analysis shows only ~2.3GW genuinely delayed, so delivered datacenter capacity (+38GW in 2027) is largely unaffected. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Would imply datacenter capex/revenue for hyperscalers and suppliers proceeds roughly on plan, but the article quantifies no earnings effect."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-154c978ec7737a",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "actual project delay",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [],
+    "quote": "300+ local instruments translate into just ~1,525 MW of actual project delay in the US.",
+    "role": "supports",
+    "unit": "MW",
+    "value": 1525.0,
+    "value_text": "~1,525 MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b076",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2e9c0d8416bcd9",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "share of restricted capacity delayed",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [
+     "1,525 MW directly delayed"
+    ],
+    "quote": "Only 1,525 MW is directly delayed, which is 7.6% of the capacity sitting inside a restricted boundary",
+    "role": "supports",
+    "unit": "%",
+    "value": 7.6,
+    "value_text": "7.6%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3d4eff14d2a06c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "datacenter IT capacity delivered",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": "2027",
+    "qualifiers": [
+     "more than double that of 2026"
+    ],
+    "quote": "Our Datacenter Industry Model forecasts +38GW of Datacenter IT capacity delivered in the US in 2027, more than double that of 2026",
+    "role": "supports",
+    "unit": "GW",
+    "value": 38.0,
+    "value_text": "+38GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4471c5f1fa2d35",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "local capacity delayed",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [
+     "of roughly 20 GW inside a restricted boundary"
+    ],
+    "quote": "of the roughly 20 GW sitting inside a restricted boundary, only 1,525 MW is delayed",
+    "role": "supports",
+    "unit": "MW",
+    "value": 1525.0,
+    "value_text": "1,525 MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4b193c269151c5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "deannexed land",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "deannexed"
+    ],
+    "quote": "the city and Elon sneakily \u201cdeannexed\u201d the 444 acres in Brownsville",
+    "role": "supports",
+    "unit": "acres",
+    "value": 444.0,
+    "value_text": "444"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b074",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-82ece7aaf3043d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "pipeline exposure",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Although it has the highest number of restrictions, it carries effectively zero pipeline exposure",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "effectively zero"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b4ff70a617fa6d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "forecast stability",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "last 12 months",
+    "qualifiers": [
+     "barely moved"
+    ],
+    "quote": "Our forecast has barely moved over the last 12 months",
+    "role": "supports",
+    "unit": "months",
+    "value": 12.0,
+    "value_text": "12"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d43cb50ba8fa09",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "facility size",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "100+"
+    ],
+    "quote": "municipalities contemplated 100+ MW facilities",
+    "role": "supports",
+    "unit": "MW",
+    "value": 100.0,
+    "value_text": "100+"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fdeb40dc094c08",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "capacity genuinely delayed",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [
+     "local moratoriums and New York executive order"
+    ],
+    "quote": "we estimate that roughly 2.3 GW of planned capacity is genuinely delayed because of local moratoriums and New York\u2019s executive order",
+    "role": "supports",
+    "unit": "GW",
+    "value": 2.3,
+    "value_text": "roughly 2.3 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-393609689db8e7",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "statewide bills died",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "13 bills died in 2026, with almost none reaching a floor vote",
+    "role": "catalyst",
+    "unit": "bills",
+    "value": 13.0,
+    "value_text": "13"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d3861d26eb1c59",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Capacity already under construction or fully permitted is out of reach of moratoriums, covering all of 2026 and most of 2027",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "all of 2026 and most of 2027",
+    "qualifiers": [],
+    "quote": "Capacity already under construction, or fully permitted and about to start, is out of reach altogether",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c59b789dbac0",
+    "block_id": "b070",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a209f3c35393c4",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Ohio GOP gubernatorial nominee Vivek Ramaswamy pledged in August 2026 no new datacenter would be approved unless it eliminated residents' electricity bills",
+    "measured_as_of": null,
+    "origin": "@VivekGRamaswamy's X Post from Aug 6, 2026",
+    "period": "August 2026",
+    "qualifiers": [],
+    "quote": "Republican gubernatorial nominee Vivek Ramaswamy pledged in August that no new datacenter would be approved unless it eliminated electricity bills for nearby residents",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b782e689db9b78",
+     "name_as_written": "New York",
+     "other_securities": [],
+     "quote": "New York has stopped issuing environmental permits for datacenters",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "State that stopped issuing environmental permits for datacenters"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bb5669a6ec6c6d",
+     "name_as_written": "ERCOT",
+     "other_securities": [],
+     "quote": "Texas has paused the next step in its massive ERCOT interconnection queue",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Texas grid operator whose interconnection queue was paused"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f3825ab72474bf",
+     "name_as_written": "Elon",
+     "other_securities": [],
+     "quote": "Elon was planning a datacenter within city limits",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Named individual planning a Brownsville datacenter that was deannexed from the moratorium jurisdiction"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b734cfaf56d3cd",
+     "name_as_written": "AWS Atlanta",
+     "other_securities": [],
+     "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Project in incorporated city beyond county moratorium reach"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-babe87764258c2",
+     "name_as_written": "STACK Lithia Springs",
+     "other_securities": [],
+     "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "STACK Infrastructure project beyond county moratorium reach"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-09a6b1f054d054",
+     "name_as_written": "T5 Fairburn",
+     "other_securities": [],
+     "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "T5 Data Centers project beyond county moratorium reach"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f9baba9605e80a",
+     "name_as_written": "Gretchen Whitmer",
+     "other_securities": [],
+     "quote": "the datacenter tax exemption signed by Governor Gretchen Whitmer in December 2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Michigan Governor who signed datacenter tax exemption in December 2024"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-591e0b92617444",
+     "name_as_written": "Gallup",
+     "other_securities": [],
+     "quote": "According to Gallup",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Cited source for datacenter opponent concerns"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a5731780b4e324",
+     "name_as_written": "The Washington Post",
+     "other_securities": [],
+     "quote": "The Washington Post has documented datacenter opposition becoming an issue in state and local campaigns.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Cited source documenting datacenter opposition in campaigns"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6ed0937a52e479",
+     "name_as_written": "Vivek Ramaswamy",
+     "other_securities": [],
+     "quote": "Republican gubernatorial nominee Vivek Ramaswamy pledged in August",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Ohio GOP gubernatorial nominee who pledged strict datacenter conditions"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0a2cb89189122d",
+     "name_as_written": "Related Digital",
+     "other_securities": [],
+     "quote": "The Related Digital project in Saline Township similarly advanced after the developer sued the community",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Developer that advanced its project after suing over exclusionary zoning"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-82d8863077e818",
+     "name_as_written": "Project Flex",
+     "other_securities": [],
+     "quote": "the 180-day pause cannot affect the already-approved Project Flex",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Already-approved project in Lyon Township unaffected by the pause"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c3987313c51161",
+     "name_as_written": "SemiAnalysis Datacenter Industry Model",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Datacenter Industry Model , SemiAnalysis Moratoriums Tab",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Publisher's proprietary model underlying the analysis"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-895f08faa72948",
+     "name_as_written": "SemiAnalysis Tokenomics Model",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Tokenomics Model , Politics Tab",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Publisher's model underlying the sentiment survey"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0a9e091acf8192",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Datacenter Industry Model , SemiAnalysis Moratoriums Tab",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "The publisher of this report"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b827df78774998",
+     "name_as_written": "PJM",
+     "other_securities": [],
+     "quote": "datacenter-driven PJM capacity costs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "grid operator whose capacity costs drove Ohio residential bill increases"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-a4a89b3a1304a3",
+     "name_as_written": "AWS",
+     "other_securities": [],
+     "quote": "an AWS campus in Ohio",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potentially_harmed",
+     "role_detail": "Operator of an Ohio campus that is one of three projects with delayed MW"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-3c8eb47f58c80c",
+     "name_as_written": "Cannoli/Google",
+     "other_securities": [],
+     "quote": "The Cannoli/Google campus, for example, sits on industrial land where data processing was already a permitted use",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Google campus proceeding on pre-zoned industrial land in Michigan"
+    },
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-7fb9234bb9e5a5",
+     "name_as_written": "Microsoft Tyrone",
+     "other_securities": [],
+     "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Microsoft project beyond county moratorium reach"
+    }
+   ],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-c59b789dbac0",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-ed0fbd2eb59add",
+     "name_as_written": "NorthPoint",
+     "other_securities": [],
+     "quote": "NorthPoint\u2019s campus near Scranton, Pennsylvania",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "Developer whose Scranton-area campus is delayed into 2027 by a binding moratorium"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "datacenters",
+    "AI infrastructure"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "November 2026 elections [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-d3861d26eb1c59",
+      "C-3d4eff14d2a06c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "For all of 2026 and most of 2027, moratoriums are out of reach of capacity already under construction or permitted, so near-term delivery is largely protected. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-8865118badc627"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "SemiAnalysis maintains moratoriums could delay the buildout only if they become materially more widespread and restrictive."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-66a506ba149999"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The widespread media narrative holds that moratoriums are killing the US datacenter buildout, legislated to a halt one board at a time."
+    },
+    {
+     "claim_ids": [
+      "C-806db5272bc92a",
+      "C-f819f7ffa9280a",
+      "C-ae6c1af90fba3a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Public sentiment is significantly negative on datacenters (46% unfavorable) and could intensify opposition, potentially widening restrictions over time."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-806db5272bc92a"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "46% of voters view datacenters unfavorably (24% very unfavorably) vs 29% favorable"
+    },
+    {
+     "claim_ids": [
+      "C-f819f7ffa9280a"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "46% would oppose a new datacenter in their own city/town (30% strongly oppose)"
+    },
+    {
+     "claim_ids": [
+      "C-8865118badc627"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "SemiAnalysis view: moratoriums could delay the buildout but are not yet at scale"
+    },
+    {
+     "claim_ids": [
+      "C-8494c2e630a0c1"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In May 2026, Howell Township's board voted to extend its datacenter moratorium for an additional six months."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A sharp rise in enacted statewide moratoriums reaching floor votes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revocation (not just freezing) of already-granted datacenter approvals"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Upward revision to SemiAnalysis's genuinely-delayed GW estimate"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-806db5272bc92a",
+      "C-f819f7ffa9280a",
+      "C-8865118badc627",
+      "C-ae6c1af90fba3a",
+      "C-8de485a972d845"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Public sentiment is significantly negative on datacenters (46% unfavorable, 46% would oppose one locally), and SemiAnalysis warns this gap could widen with AI doomsday narratives, potentially making moratoriums materially more widespread and restrictive. (scope: US voter sentiment per SemiAnalysis's August 2026 Tokenomics survey; the article says moratoriums are not yet at scale but could delay the buildout if they become more widespread.)"
+    },
+    {
+     "claim_ids": [
+      "C-393609689db8e7",
+      "C-a209f3c35393c4"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Election-year politics (November 2026 midterms) could raise the political cost of approving datacenter projects, as candidates like Vivek Ramaswamy pledge strict conditions, potentially catalyzing new restrictions. (scope: US state and local campaigns; the article frames this as a catalyst for new restrictions rather than an established delay to capacity.)"
+    },
+    {
+     "claim_ids": [
+      "C-d3ed0dccf21bfb"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Regional clustering can make local moratorium activity self-reinforcing, with opposition arguments, advocacy groups, model ordinance language and political pressure spreading quickly among neighboring jurisdictions. (scope: Local datacenter moratoriums in regions experiencing rapid datacenter growth (e.g. Metro Atlanta); presented as a potential, not realized, escalation.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether moratoriums become materially more widespread and restrictive, which the article says would be needed to delay the buildout"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether any listed hyperscaler or datacenter supplier earnings/revenue actually change as a result"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the parcel-level exposure-vs-delay mapping holds for 2028+ projects not yet permitted"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Delivered 2027 capacity tracks the +38GW forecast"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Public sentiment toward datacenters improves"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Cross-check SemiAnalysis's ~2.3GW delayed estimate and 2027 +38GW delivery forecast against hyperscaler capex guidance and datacenter REIT/supplier backlog disclosures to see if any earnings effect is implied."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Statewide moratorium bills begin passing floor votes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SemiAnalysis raises its genuinely-delayed GW estimate in bi-weekly updates"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-c59b789dbac0",
+    "authors": [
+     "Maya Barkin",
+     "Reyk Knuhtsen",
+     "Jeremie Eliahou Ontiveros",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-393609689db8e7",
+     "C-a209f3c35393c4",
+     "C-3d4eff14d2a06c",
+     "C-fdeb40dc094c08",
+     "C-4471c5f1fa2d35",
+     "C-154c978ec7737a",
+     "C-2e9c0d8416bcd9",
+     "C-d3861d26eb1c59",
+     "C-b4ff70a617fa6d",
+     "C-4b193c269151c5",
+     "C-d43cb50ba8fa09",
+     "C-82ece7aaf3043d",
+     "C-806db5272bc92a",
+     "C-f819f7ffa9280a",
+     "C-8865118badc627",
+     "C-8494c2e630a0c1",
+     "C-ae6c1af90fba3a",
+     "C-d3ed0dccf21bfb"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-15T20:54:41Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Everyone Says Datacenter Moratoriums Are Killing the US Buildout. We Mapped All 300 of Them",
+    "upstream_origins": [
+     "@VivekGRamaswamy's X Post from Aug 6, 2026",
+     "SemiAnalysis Datacenter Industry Model",
+     "SemiAnalysis Tokenomics Model",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/everyone-says-datacenter-moratoriums"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 10:43 UTC from the registry (ti-engine-2; run R-20261011T101644Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-09-15",
+   "change_summary": "Initial record \u2014 created from A-c59b789dbac0",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-09-15",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T10:16:43.578666Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-15",
+     "latest_article_date": "2026-09-15",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-0F127079D1",
+     "title": "Datacenter moratoriums barely dent the US AI buildout pipeline"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-66a506ba149999",
+       "C-3d4eff14d2a06c",
+       "C-fdeb40dc094c08",
+       "C-4471c5f1fa2d35",
+       "C-154c978ec7737a",
+       "C-2e9c0d8416bcd9"
+      ],
+      "provenance": "FORECAST",
+      "text": "SemiAnalysis's parcel-level audit finds that 300+ local moratoriums and NY's order delay only ~2.3GW genuinely, with just 1,525 MW (7.6% of restricted-boundary capacity) delayed at the local level, against a +38GW 2027 US delivery forecast. \u27e8cited figures: approximate; forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-8865118badc627",
+       "C-d3861d26eb1c59"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article concludes the buildout is not being legislated to a halt; capacity under construction or permitted for 2026 and most of 2027 is out of reach of moratoriums."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The moratorium narrative appears materially overstated as a near-term risk to datacenter capacity and the AI infrastructure supply chain, though the article quantifies no specific listed-company earnings or revenue effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4471c5f1fa2d35"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Of roughly 20GW inside restricted boundaries at the local level, only 1,525 MW is delayed \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2e9c0d8416bcd9"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Only 1,525 MW is directly delayed, which is 7.6% of capacity inside a restricted boundary \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3d4eff14d2a06c"
+       ],
+       "original_date": "2026-09-15",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "SemiAnalysis forecasts +38GW of US datacenter IT capacity delivered in 2027, more than double 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fdeb40dc094c08"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "SemiAnalysis estimates roughly 2.3GW of planned capacity is genuinely delayed by local moratoriums and NY's executive order \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-154c978ec7737a"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "300+ local instruments translate into just ~1,525 MW of actual project delay in the US \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4b193c269151c5"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Brownsville deannexed 444 acres to remove Elon's datacenter project from the city's moratorium jurisdiction."
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 10 pieces of evidence from A-c59b789dbac0 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:16 UTC, analysed as of 2026-09-15, from a source published 2026-09-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d5a8d1eccb53ee",
+       "C-66a506ba149999",
+       "C-f42d094cef95de"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "Hundreds of local moratoriums and four state actions are raising political/regulatory friction for datacenter development. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3d4eff14d2a06c",
+       "C-fdeb40dc094c08",
+       "C-4471c5f1fa2d35",
+       "C-d3861d26eb1c59"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Parcel-level analysis shows only ~2.3GW genuinely delayed, so delivered datacenter capacity (+38GW in 2027) is largely unaffected. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Would imply datacenter capex/revenue for hyperscalers and suppliers proceeds roughly on plan, but the article quantifies no earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-154c978ec7737a",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "actual project delay",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [],
+      "quote": "300+ local instruments translate into just ~1,525 MW of actual project delay in the US.",
+      "role": "supports",
+      "unit": "MW",
+      "value": 1525.0,
+      "value_text": "~1,525 MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b076",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2e9c0d8416bcd9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "share of restricted capacity delayed",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [
+       "1,525 MW directly delayed"
+      ],
+      "quote": "Only 1,525 MW is directly delayed, which is 7.6% of the capacity sitting inside a restricted boundary",
+      "role": "supports",
+      "unit": "%",
+      "value": 7.6,
+      "value_text": "7.6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3d4eff14d2a06c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "datacenter IT capacity delivered",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": "2027",
+      "qualifiers": [
+       "more than double that of 2026"
+      ],
+      "quote": "Our Datacenter Industry Model forecasts +38GW of Datacenter IT capacity delivered in the US in 2027, more than double that of 2026",
+      "role": "supports",
+      "unit": "GW",
+      "value": 38.0,
+      "value_text": "+38GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4471c5f1fa2d35",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "local capacity delayed",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [
+       "of roughly 20 GW inside a restricted boundary"
+      ],
+      "quote": "of the roughly 20 GW sitting inside a restricted boundary, only 1,525 MW is delayed",
+      "role": "supports",
+      "unit": "MW",
+      "value": 1525.0,
+      "value_text": "1,525 MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4b193c269151c5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "deannexed land",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "deannexed"
+      ],
+      "quote": "the city and Elon sneakily \u201cdeannexed\u201d the 444 acres in Brownsville",
+      "role": "supports",
+      "unit": "acres",
+      "value": 444.0,
+      "value_text": "444"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b074",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-82ece7aaf3043d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "pipeline exposure",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Although it has the highest number of restrictions, it carries effectively zero pipeline exposure",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "effectively zero"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b4ff70a617fa6d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "forecast stability",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "last 12 months",
+      "qualifiers": [
+       "barely moved"
+      ],
+      "quote": "Our forecast has barely moved over the last 12 months",
+      "role": "supports",
+      "unit": "months",
+      "value": 12.0,
+      "value_text": "12"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d43cb50ba8fa09",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "facility size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "100+"
+      ],
+      "quote": "municipalities contemplated 100+ MW facilities",
+      "role": "supports",
+      "unit": "MW",
+      "value": 100.0,
+      "value_text": "100+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fdeb40dc094c08",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "capacity genuinely delayed",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [
+       "local moratoriums and New York executive order"
+      ],
+      "quote": "we estimate that roughly 2.3 GW of planned capacity is genuinely delayed because of local moratoriums and New York\u2019s executive order",
+      "role": "supports",
+      "unit": "GW",
+      "value": 2.3,
+      "value_text": "roughly 2.3 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-393609689db8e7",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "statewide bills died",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "13 bills died in 2026, with almost none reaching a floor vote",
+      "role": "catalyst",
+      "unit": "bills",
+      "value": 13.0,
+      "value_text": "13"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d3861d26eb1c59",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Capacity already under construction or fully permitted is out of reach of moratoriums, covering all of 2026 and most of 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "all of 2026 and most of 2027",
+      "qualifiers": [],
+      "quote": "Capacity already under construction, or fully permitted and about to start, is out of reach altogether",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c59b789dbac0",
+      "block_id": "b070",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a209f3c35393c4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Ohio GOP gubernatorial nominee Vivek Ramaswamy pledged in August 2026 no new datacenter would be approved unless it eliminated residents' electricity bills",
+      "measured_as_of": null,
+      "origin": "@VivekGRamaswamy's X Post from Aug 6, 2026",
+      "period": "August 2026",
+      "qualifiers": [],
+      "quote": "Republican gubernatorial nominee Vivek Ramaswamy pledged in August that no new datacenter would be approved unless it eliminated electricity bills for nearby residents",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b782e689db9b78",
+       "name_as_written": "New York",
+       "other_securities": [],
+       "quote": "New York has stopped issuing environmental permits for datacenters",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "State that stopped issuing environmental permits for datacenters"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bb5669a6ec6c6d",
+       "name_as_written": "ERCOT",
+       "other_securities": [],
+       "quote": "Texas has paused the next step in its massive ERCOT interconnection queue",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Texas grid operator whose interconnection queue was paused"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f3825ab72474bf",
+       "name_as_written": "Elon",
+       "other_securities": [],
+       "quote": "Elon was planning a datacenter within city limits",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Named individual planning a Brownsville datacenter that was deannexed from the moratorium jurisdiction"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b734cfaf56d3cd",
+       "name_as_written": "AWS Atlanta",
+       "other_securities": [],
+       "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Project in incorporated city beyond county moratorium reach"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-babe87764258c2",
+       "name_as_written": "STACK Lithia Springs",
+       "other_securities": [],
+       "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "STACK Infrastructure project beyond county moratorium reach"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-09a6b1f054d054",
+       "name_as_written": "T5 Fairburn",
+       "other_securities": [],
+       "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "T5 Data Centers project beyond county moratorium reach"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f9baba9605e80a",
+       "name_as_written": "Gretchen Whitmer",
+       "other_securities": [],
+       "quote": "the datacenter tax exemption signed by Governor Gretchen Whitmer in December 2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Michigan Governor who signed datacenter tax exemption in December 2024"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-591e0b92617444",
+       "name_as_written": "Gallup",
+       "other_securities": [],
+       "quote": "According to Gallup",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Cited source for datacenter opponent concerns"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a5731780b4e324",
+       "name_as_written": "The Washington Post",
+       "other_securities": [],
+       "quote": "The Washington Post has documented datacenter opposition becoming an issue in state and local campaigns.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Cited source documenting datacenter opposition in campaigns"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6ed0937a52e479",
+       "name_as_written": "Vivek Ramaswamy",
+       "other_securities": [],
+       "quote": "Republican gubernatorial nominee Vivek Ramaswamy pledged in August",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Ohio GOP gubernatorial nominee who pledged strict datacenter conditions"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0a2cb89189122d",
+       "name_as_written": "Related Digital",
+       "other_securities": [],
+       "quote": "The Related Digital project in Saline Township similarly advanced after the developer sued the community",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Developer that advanced its project after suing over exclusionary zoning"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-82d8863077e818",
+       "name_as_written": "Project Flex",
+       "other_securities": [],
+       "quote": "the 180-day pause cannot affect the already-approved Project Flex",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Already-approved project in Lyon Township unaffected by the pause"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c3987313c51161",
+       "name_as_written": "SemiAnalysis Datacenter Industry Model",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Datacenter Industry Model , SemiAnalysis Moratoriums Tab",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Publisher's proprietary model underlying the analysis"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-895f08faa72948",
+       "name_as_written": "SemiAnalysis Tokenomics Model",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Tokenomics Model , Politics Tab",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Publisher's model underlying the sentiment survey"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0a9e091acf8192",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Datacenter Industry Model , SemiAnalysis Moratoriums Tab",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "The publisher of this report"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b827df78774998",
+       "name_as_written": "PJM",
+       "other_securities": [],
+       "quote": "datacenter-driven PJM capacity costs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "grid operator whose capacity costs drove Ohio residential bill increases"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-a4a89b3a1304a3",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "an AWS campus in Ohio",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potentially_harmed",
+       "role_detail": "Operator of an Ohio campus that is one of three projects with delayed MW"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-3c8eb47f58c80c",
+       "name_as_written": "Cannoli/Google",
+       "other_securities": [],
+       "quote": "The Cannoli/Google campus, for example, sits on industrial land where data processing was already a permitted use",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Google campus proceeding on pre-zoned industrial land in Michigan"
+      },
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-7fb9234bb9e5a5",
+       "name_as_written": "Microsoft Tyrone",
+       "other_securities": [],
+       "quote": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Microsoft project beyond county moratorium reach"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-c59b789dbac0",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-ed0fbd2eb59add",
+       "name_as_written": "NorthPoint",
+       "other_securities": [],
+       "quote": "NorthPoint\u2019s campus near Scranton, Pennsylvania",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "Developer whose Scranton-area campus is delayed into 2027 by a binding moratorium"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "datacenters",
+      "AI infrastructure"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "November 2026 elections [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-d3861d26eb1c59",
+        "C-3d4eff14d2a06c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "For all of 2026 and most of 2027, moratoriums are out of reach of capacity already under construction or permitted, so near-term delivery is largely protected. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-8865118badc627"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SemiAnalysis maintains moratoriums could delay the buildout only if they become materially more widespread and restrictive."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-66a506ba149999"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The widespread media narrative holds that moratoriums are killing the US datacenter buildout, legislated to a halt one board at a time."
+      },
+      {
+       "claim_ids": [
+        "C-806db5272bc92a",
+        "C-f819f7ffa9280a",
+        "C-ae6c1af90fba3a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Public sentiment is significantly negative on datacenters (46% unfavorable) and could intensify opposition, potentially widening restrictions over time."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-806db5272bc92a"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "46% of voters view datacenters unfavorably (24% very unfavorably) vs 29% favorable"
+      },
+      {
+       "claim_ids": [
+        "C-f819f7ffa9280a"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "46% would oppose a new datacenter in their own city/town (30% strongly oppose)"
+      },
+      {
+       "claim_ids": [
+        "C-8865118badc627"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SemiAnalysis view: moratoriums could delay the buildout but are not yet at scale"
+      },
+      {
+       "claim_ids": [
+        "C-8494c2e630a0c1"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In May 2026, Howell Township's board voted to extend its datacenter moratorium for an additional six months."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A sharp rise in enacted statewide moratoriums reaching floor votes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revocation (not just freezing) of already-granted datacenter approvals"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Upward revision to SemiAnalysis's genuinely-delayed GW estimate"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-806db5272bc92a",
+        "C-f819f7ffa9280a",
+        "C-8865118badc627",
+        "C-ae6c1af90fba3a",
+        "C-8de485a972d845"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Public sentiment is significantly negative on datacenters (46% unfavorable, 46% would oppose one locally), and SemiAnalysis warns this gap could widen with AI doomsday narratives, potentially making moratoriums materially more widespread and restrictive. (scope: US voter sentiment per SemiAnalysis's August 2026 Tokenomics survey; the article says moratoriums are not yet at scale but could delay the buildout if they become more widespread.)"
+      },
+      {
+       "claim_ids": [
+        "C-393609689db8e7",
+        "C-a209f3c35393c4"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Election-year politics (November 2026 midterms) could raise the political cost of approving datacenter projects, as candidates like Vivek Ramaswamy pledge strict conditions, potentially catalyzing new restrictions. (scope: US state and local campaigns; the article frames this as a catalyst for new restrictions rather than an established delay to capacity.)"
+      },
+      {
+       "claim_ids": [
+        "C-d3ed0dccf21bfb"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Regional clustering can make local moratorium activity self-reinforcing, with opposition arguments, advocacy groups, model ordinance language and political pressure spreading quickly among neighboring jurisdictions. (scope: Local datacenter moratoriums in regions experiencing rapid datacenter growth (e.g. Metro Atlanta); presented as a potential, not realized, escalation.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether moratoriums become materially more widespread and restrictive, which the article says would be needed to delay the buildout"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any listed hyperscaler or datacenter supplier earnings/revenue actually change as a result"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the parcel-level exposure-vs-delay mapping holds for 2028+ projects not yet permitted"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delivered 2027 capacity tracks the +38GW forecast"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Public sentiment toward datacenters improves"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Cross-check SemiAnalysis's ~2.3GW delayed estimate and 2027 +38GW delivery forecast against hyperscaler capex guidance and datacenter REIT/supplier backlog disclosures to see if any earnings effect is implied."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Statewide moratorium bills begin passing floor votes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SemiAnalysis raises its genuinely-delayed GW estimate in bi-weekly updates"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-c59b789dbac0",
+      "authors": [
+       "Maya Barkin",
+       "Reyk Knuhtsen",
+       "Jeremie Eliahou Ontiveros",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-393609689db8e7",
+       "C-a209f3c35393c4",
+       "C-3d4eff14d2a06c",
+       "C-fdeb40dc094c08",
+       "C-4471c5f1fa2d35",
+       "C-154c978ec7737a",
+       "C-2e9c0d8416bcd9",
+       "C-d3861d26eb1c59",
+       "C-b4ff70a617fa6d",
+       "C-4b193c269151c5",
+       "C-d43cb50ba8fa09",
+       "C-82ece7aaf3043d",
+       "C-806db5272bc92a",
+       "C-f819f7ffa9280a",
+       "C-8865118badc627",
+       "C-8494c2e630a0c1",
+       "C-ae6c1af90fba3a",
+       "C-d3ed0dccf21bfb"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-15T20:54:41Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Everyone Says Datacenter Moratoriums Are Killing the US Buildout. We Mapped All 300 of Them",
+      "upstream_origins": [
+       "@VivekGRamaswamy's X Post from Aug 6, 2026",
+       "SemiAnalysis Datacenter Industry Model",
+       "SemiAnalysis Tokenomics Model",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/everyone-says-datacenter-moratoriums"
+     }
+    ]
+   },
+   "content_sha": "087933d3ac1e91485e19a8d287b464c058febae54340a060f778e498a73245a3",
+   "created_at": "2026-10-11T10:16:43.585992Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-3d4eff14d2a06c",
+       "C-fdeb40dc094c08",
+       "C-4471c5f1fa2d35",
+       "C-154c978ec7737a",
+       "C-2e9c0d8416bcd9",
+       "C-4b193c269151c5",
+       "C-393609689db8e7",
+       "C-a209f3c35393c4"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-9054521ac923, ES-bce994d021a4",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-3d4eff14d2a06c",
+       "C-393609689db8e7",
+       "C-a209f3c35393c4",
+       "C-4b193c269151c5"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-3d4eff14d2a06c: forecast window 2027-01-01..2027-12-31 (2027); C-393609689db8e7: measured 2026-09-15 (0 days before the as-of); C-a209f3c35393c4: measured 2026-08-31 (15 days before the as-of); C-4b193c269151c5: measured 2026-09-15 (0 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector"
+     },
+     {
+      "claim_ids": [
+       "C-393609689db8e7",
+       "C-a209f3c35393c4"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "2 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-806db5272bc92a",
+       "C-f819f7ffa9280a",
+       "C-8865118badc627",
+       "C-8494c2e630a0c1"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (4 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 8 supporting; 1 independent contradicting source(s) vs 3 supporting",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T101643Z-article",
+   "thesis_id": "TH-0F127079D1",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {
+  "s07.6": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.6 prints '2026', which none of its cited claims carry: 'Public sentiment is significantly negative on datacenters (46% unfavorable, 46% would oppose one loc'"
+ }
+}

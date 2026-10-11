@@ -1,0 +1,1184 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-09-30",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.memory"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T10:07:59.921806Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-30",
+   "latest_article_date": "2026-09-30",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-1C1CAEA8AF",
+   "title": "AI server demand sustains DRAM and NAND contract price increases into 4Q26"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-16cee603605784",
+     "C-32ea5263eaf8d7",
+     "C-513077cd369199",
+     "C-d96a9ee02f6b94"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce projects conventional DRAM contract prices to rise 10\u201315% QoQ and NAND Flash 15\u201320% QoQ in 4Q26, with server DRAM remaining undersupplied as suppliers prioritize advanced-process capacity for high-performance server products. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-16cee603605784",
+     "C-32ea5263eaf8d7",
+     "C-513077cd369199",
+     "C-da45c05ac3d0f7"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "AI server demand is the dominant driver sustaining memory contract price increases while consumer-side demand remains weak. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Memory suppliers face a tight server-driven supply-demand balance that supports further price gains in 4Q26, though the pace of increases is moderating from prior quarters; the article does not quantify the earnings impact for any named producer."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-16cee603605784"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "Conventional DRAM contract prices are projected to grow 10\u201315% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-32ea5263eaf8d7"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "NAND Flash contract prices are expected to increase 15\u201320% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d96a9ee02f6b94"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "Server DRAM is expected to remain undersupplied in 4Q26."
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-513077cd369199"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "SOURCE OPINION",
+     "text": "DRAM suppliers prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the market undersupplied."
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fb79ca97f95243"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "SOURCE OPINION",
+     "text": "Improving server CPU availability prompted CSPs and server OEMs to increase bit procurement to meet RDIMM demand for agentic AI workloads."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:07 UTC, analysed as of 2026-09-30, from a source published 2026-09-30; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-513077cd369199",
+     "C-d96a9ee02f6b94"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Suppliers prioritize advanced-process capacity for high-performance server products, keeping the market undersupplied."
+   },
+   {
+    "claim_ids": [
+     "C-fb79ca97f95243"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "CSPs and server OEMs increase bit procurement for RDIMM demand supporting agentic AI workloads."
+   },
+   {
+    "claim_ids": [
+     "C-16cee603605784",
+     "C-32ea5263eaf8d7"
+    ],
+    "provenance": "FORECAST",
+    "step": "pricing",
+    "text": "Conventional DRAM contract prices projected +10\u201315% QoQ and NAND Flash +15\u201320% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher contract prices would raise memory producers' revenue and margins, though the article does not quantify this."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a3c83ac2fd0aef",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "NAND Flash contract price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "overall"
+    ],
+    "quote": "Overall NAND Flash contract prices are projected to increase 15\u201320% QoQ.",
+    "role": "supports",
+    "unit": "% QoQ",
+    "value": null,
+    "value_text": "15\u201320%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-16cee603605784",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "conventional DRAM contract price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [],
+    "quote": "Conventional DRAM contract prices are projected to grow 10\u201315% QoQ in 4Q26",
+    "role": "catalyst",
+    "unit": "% QoQ",
+    "value": null,
+    "value_text": "10\u201315%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-513077cd369199",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "DRAM suppliers prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the market undersupplied.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "market undersupplied"
+    ],
+    "quote": "DRAM suppliers continue to prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the overall market undersupplied",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d96a9ee02f6b94",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "server DRAM supply balance",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "undersupplied"
+    ],
+    "quote": "Server DRAM is therefore expected to remain undersupplied in 4Q26.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fb79ca97f95243",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Improving server CPU availability prompted CSPs and server OEMs to increase bit procurement to meet RDIMM demand for agentic AI workloads.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "agentic AI workloads"
+    ],
+    "quote": "improving server CPU availability has prompted CSPs and server OEMs to increase bit procurement from suppliers to meet growing RDIMM demand for general servers supporting agentic AI workloads",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-decec490fcdd",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-38e499d89ffb04",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the memory industry report and its forecasts."
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-decec490fcdd",
+     "claim_ids": [
+      "C-16cee603605784",
+      "C-32ea5263eaf8d7"
+     ],
+     "direction": "positive",
+     "name": "Semiconductors",
+     "provenance": "FORECAST",
+     "quote": "Semiconductors"
+    }
+   ],
+   "sectors": [
+    "Semiconductors",
+    "DRAM",
+    "NAND Flash",
+    "Memory"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "4Q26 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-16cee603605784",
+      "C-32ea5263eaf8d7",
+      "C-d96a9ee02f6b94"
+     ],
+     "provenance": "FORECAST",
+     "text": "Contract prices rising 10\u201315% (DRAM) and 15\u201320% (NAND) QoQ in 4Q26, with server DRAM undersupplied. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-513077cd369199",
+      "C-a3a82f872d803a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI server and inference demand structurally diverts memory capacity away from consumer applications."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-dde03888a57b59",
+      "C-5f63772cac66a2",
+      "C-7783db62d8b780"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Weak consumer/PC/mobile demand and flexible supplier pricing could restrain the magnitude of increases in several segments."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-ddaab26d3b09f3"
+     ],
+     "provenance": "FORECAST",
+     "text": "The pace of DRAM contract price increases is expected to moderate in 4Q26."
+    },
+    {
+     "claim_ids": [
+      "C-dde03888a57b59"
+     ],
+     "provenance": "FORECAST",
+     "text": "Mobile DRAM price growth is expected to moderate in 4Q26 because substantial increases were already priced in during prior quarters."
+    },
+    {
+     "claim_ids": [
+      "C-5f63772cac66a2"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "For client SSDs, NAND Flash suppliers adopted a more flexible pricing stance, restraining price increases."
+    },
+    {
+     "claim_ids": [
+      "C-7783db62d8b780"
+     ],
+     "provenance": "FORECAST",
+     "text": "Weak module-maker purchasing is expected to limit NAND Flash wafer price growth to a modest increase."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM or NAND contract prices rising less than projected ranges in 4Q26"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Server DRAM supply catching up with demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CSP bit procurement slowing"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-da45c05ac3d0f7",
+      "C-99df65376f8282",
+      "C-5f63772cac66a2",
+      "C-bd752568eab007",
+      "C-7783db62d8b780"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Consumer-side memory demand (PC, mobile/smartphone, client SSD, eMMC/UFS, TVs, set-top boxes, wearables) remains weak, with buyers relying on inventories and OEMs resisting price increases, restraining the magnitude of price gains in those segments. (scope: Applies to consumer-facing memory segments in 4Q26; does not affect the AI-server-driven segments where supply remains tight.)"
+    },
+    {
+     "claim_ids": [
+      "C-43cbb7bcc2ece2",
+      "C-7783db62d8b780",
+      "C-32ea5263eaf8d7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "NAND Flash wafer prices have reached historical highs that downstream retail channels cannot absorb, prompting module makers to adopt a more cautious procurement stance and limiting wafer price growth to a modest increase. (scope: Applies to NAND Flash wafer market and module-maker procurement in 4Q26.) \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-80f2072b4fced7",
+      "C-ddaab26d3b09f3"
+     ],
+     "provenance": "FORECAST",
+     "text": "Price increases for some DRAM suppliers may lag the market average due to pricing mechanisms stipulated in long-term agreements. (scope: Supplier-specific; applies to producers with LTA-governed pricing in 4Q26.)"
+    },
+    {
+     "claim_ids": [
+      "C-5bc472e0144745",
+      "C-ddaab26d3b09f3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "For eMMC/UFS, demand is so weak that OEMs buy only minimum volumes to maintain supplier relationships, narrowing negotiations to price confirmation on small order volumes and limiting suppliers' ability to push through broader price increases. (scope: eMMC/UFS segment (smartphone, TV, set-top box, wearable applications) in 4Q26)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether price increases translate into higher earnings/margins at specific named producers (none named)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How much LTA pricing mechanisms dampen realized increases"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether 2027 supply tightness persists"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consumer demand weakness spreads to server segment"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Suppliers broadly adopt flexible pricing to clear inventory"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify the listed DRAM and NAND Flash producers and check how 4Q26 contract price forecasts map to consensus revenue and margin estimates."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Contract prices come in at or above the top of forecast ranges"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Server DRAM shortage worsens"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "2027 supply tightness confirmed"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: counter-evidence outweighs support)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-decec490fcdd",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-16cee603605784",
+     "C-32ea5263eaf8d7",
+     "C-513077cd369199",
+     "C-fb79ca97f95243",
+     "C-d96a9ee02f6b94",
+     "C-a3c83ac2fd0aef",
+     "C-ddaab26d3b09f3",
+     "C-dde03888a57b59",
+     "C-5f63772cac66a2",
+     "C-7783db62d8b780",
+     "C-da45c05ac3d0f7",
+     "C-99df65376f8282",
+     "C-bd752568eab007",
+     "C-43cbb7bcc2ece2",
+     "C-80f2072b4fced7",
+     "C-5bc472e0144745"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-30T15:52:15+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 10:43 UTC from the registry (ti-engine-2; run R-20261011T100759Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-09-30",
+   "change_summary": "Initial record \u2014 created from A-decec490fcdd",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-09-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.memory"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T10:07:59.921806Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-30",
+     "latest_article_date": "2026-09-30",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-1C1CAEA8AF",
+     "title": "AI server demand sustains DRAM and NAND contract price increases into 4Q26"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7",
+       "C-513077cd369199",
+       "C-d96a9ee02f6b94"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce projects conventional DRAM contract prices to rise 10\u201315% QoQ and NAND Flash 15\u201320% QoQ in 4Q26, with server DRAM remaining undersupplied as suppliers prioritize advanced-process capacity for high-performance server products. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7",
+       "C-513077cd369199",
+       "C-da45c05ac3d0f7"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "AI server demand is the dominant driver sustaining memory contract price increases while consumer-side demand remains weak. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Memory suppliers face a tight server-driven supply-demand balance that supports further price gains in 4Q26, though the pace of increases is moderating from prior quarters; the article does not quantify the earnings impact for any named producer."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-16cee603605784"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "Conventional DRAM contract prices are projected to grow 10\u201315% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-32ea5263eaf8d7"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "NAND Flash contract prices are expected to increase 15\u201320% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d96a9ee02f6b94"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "Server DRAM is expected to remain undersupplied in 4Q26."
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-513077cd369199"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "SOURCE OPINION",
+       "text": "DRAM suppliers prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the market undersupplied."
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fb79ca97f95243"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "SOURCE OPINION",
+       "text": "Improving server CPU availability prompted CSPs and server OEMs to increase bit procurement to meet RDIMM demand for agentic AI workloads."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:07 UTC, analysed as of 2026-09-30, from a source published 2026-09-30; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-513077cd369199",
+       "C-d96a9ee02f6b94"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Suppliers prioritize advanced-process capacity for high-performance server products, keeping the market undersupplied."
+     },
+     {
+      "claim_ids": [
+       "C-fb79ca97f95243"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "CSPs and server OEMs increase bit procurement for RDIMM demand supporting agentic AI workloads."
+     },
+     {
+      "claim_ids": [
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7"
+      ],
+      "provenance": "FORECAST",
+      "step": "pricing",
+      "text": "Conventional DRAM contract prices projected +10\u201315% QoQ and NAND Flash +15\u201320% QoQ in 4Q26. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher contract prices would raise memory producers' revenue and margins, though the article does not quantify this."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a3c83ac2fd0aef",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "NAND Flash contract price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "overall"
+      ],
+      "quote": "Overall NAND Flash contract prices are projected to increase 15\u201320% QoQ.",
+      "role": "supports",
+      "unit": "% QoQ",
+      "value": null,
+      "value_text": "15\u201320%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-16cee603605784",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "conventional DRAM contract price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [],
+      "quote": "Conventional DRAM contract prices are projected to grow 10\u201315% QoQ in 4Q26",
+      "role": "catalyst",
+      "unit": "% QoQ",
+      "value": null,
+      "value_text": "10\u201315%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-513077cd369199",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "DRAM suppliers prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the market undersupplied.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "market undersupplied"
+      ],
+      "quote": "DRAM suppliers continue to prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the overall market undersupplied",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d96a9ee02f6b94",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "server DRAM supply balance",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "undersupplied"
+      ],
+      "quote": "Server DRAM is therefore expected to remain undersupplied in 4Q26.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fb79ca97f95243",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Improving server CPU availability prompted CSPs and server OEMs to increase bit procurement to meet RDIMM demand for agentic AI workloads.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "agentic AI workloads"
+      ],
+      "quote": "improving server CPU availability has prompted CSPs and server OEMs to increase bit procurement from suppliers to meet growing RDIMM demand for general servers supporting agentic AI workloads",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-decec490fcdd",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-38e499d89ffb04",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the memory industry report and its forecasts."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-decec490fcdd",
+       "claim_ids": [
+        "C-16cee603605784",
+        "C-32ea5263eaf8d7"
+       ],
+       "direction": "positive",
+       "name": "Semiconductors",
+       "provenance": "FORECAST",
+       "quote": "Semiconductors"
+      }
+     ],
+     "sectors": [
+      "Semiconductors",
+      "DRAM",
+      "NAND Flash",
+      "Memory"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "4Q26 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-16cee603605784",
+        "C-32ea5263eaf8d7",
+        "C-d96a9ee02f6b94"
+       ],
+       "provenance": "FORECAST",
+       "text": "Contract prices rising 10\u201315% (DRAM) and 15\u201320% (NAND) QoQ in 4Q26, with server DRAM undersupplied. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-513077cd369199",
+        "C-a3a82f872d803a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI server and inference demand structurally diverts memory capacity away from consumer applications."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-dde03888a57b59",
+        "C-5f63772cac66a2",
+        "C-7783db62d8b780"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Weak consumer/PC/mobile demand and flexible supplier pricing could restrain the magnitude of increases in several segments."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ddaab26d3b09f3"
+       ],
+       "provenance": "FORECAST",
+       "text": "The pace of DRAM contract price increases is expected to moderate in 4Q26."
+      },
+      {
+       "claim_ids": [
+        "C-dde03888a57b59"
+       ],
+       "provenance": "FORECAST",
+       "text": "Mobile DRAM price growth is expected to moderate in 4Q26 because substantial increases were already priced in during prior quarters."
+      },
+      {
+       "claim_ids": [
+        "C-5f63772cac66a2"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "For client SSDs, NAND Flash suppliers adopted a more flexible pricing stance, restraining price increases."
+      },
+      {
+       "claim_ids": [
+        "C-7783db62d8b780"
+       ],
+       "provenance": "FORECAST",
+       "text": "Weak module-maker purchasing is expected to limit NAND Flash wafer price growth to a modest increase."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM or NAND contract prices rising less than projected ranges in 4Q26"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Server DRAM supply catching up with demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CSP bit procurement slowing"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-da45c05ac3d0f7",
+        "C-99df65376f8282",
+        "C-5f63772cac66a2",
+        "C-bd752568eab007",
+        "C-7783db62d8b780"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Consumer-side memory demand (PC, mobile/smartphone, client SSD, eMMC/UFS, TVs, set-top boxes, wearables) remains weak, with buyers relying on inventories and OEMs resisting price increases, restraining the magnitude of price gains in those segments. (scope: Applies to consumer-facing memory segments in 4Q26; does not affect the AI-server-driven segments where supply remains tight.)"
+      },
+      {
+       "claim_ids": [
+        "C-43cbb7bcc2ece2",
+        "C-7783db62d8b780",
+        "C-32ea5263eaf8d7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "NAND Flash wafer prices have reached historical highs that downstream retail channels cannot absorb, prompting module makers to adopt a more cautious procurement stance and limiting wafer price growth to a modest increase. (scope: Applies to NAND Flash wafer market and module-maker procurement in 4Q26.) \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-80f2072b4fced7",
+        "C-ddaab26d3b09f3"
+       ],
+       "provenance": "FORECAST",
+       "text": "Price increases for some DRAM suppliers may lag the market average due to pricing mechanisms stipulated in long-term agreements. (scope: Supplier-specific; applies to producers with LTA-governed pricing in 4Q26.)"
+      },
+      {
+       "claim_ids": [
+        "C-5bc472e0144745",
+        "C-ddaab26d3b09f3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "For eMMC/UFS, demand is so weak that OEMs buy only minimum volumes to maintain supplier relationships, narrowing negotiations to price confirmation on small order volumes and limiting suppliers' ability to push through broader price increases. (scope: eMMC/UFS segment (smartphone, TV, set-top box, wearable applications) in 4Q26)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether price increases translate into higher earnings/margins at specific named producers (none named)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How much LTA pricing mechanisms dampen realized increases"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether 2027 supply tightness persists"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consumer demand weakness spreads to server segment"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Suppliers broadly adopt flexible pricing to clear inventory"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the listed DRAM and NAND Flash producers and check how 4Q26 contract price forecasts map to consensus revenue and margin estimates."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Contract prices come in at or above the top of forecast ranges"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Server DRAM shortage worsens"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2027 supply tightness confirmed"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: counter-evidence outweighs support)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-decec490fcdd",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7",
+       "C-513077cd369199",
+       "C-fb79ca97f95243",
+       "C-d96a9ee02f6b94",
+       "C-a3c83ac2fd0aef",
+       "C-ddaab26d3b09f3",
+       "C-dde03888a57b59",
+       "C-5f63772cac66a2",
+       "C-7783db62d8b780",
+       "C-da45c05ac3d0f7",
+       "C-99df65376f8282",
+       "C-bd752568eab007",
+       "C-43cbb7bcc2ece2",
+       "C-80f2072b4fced7",
+       "C-5bc472e0144745"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-30T15:52:15+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html"
+     }
+    ]
+   },
+   "content_sha": "75fe50c76102d9f306dc74b2469c9fac2dd2795148dba11452cf9ef054760fe0",
+   "created_at": "2026-10-11T10:07:59.932594Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: counter-evidence outweighs support)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-d96a9ee02f6b94",
+       "C-a3c83ac2fd0aef",
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-d96a9ee02f6b94",
+       "C-a3c83ac2fd0aef",
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-d96a9ee02f6b94: forecast window 2026-10-01..2026-12-31 (4q26); C-a3c83ac2fd0aef: forecast window 2026-10-01..2026-12-31 (4q26); C-16cee603605784: forecast window 2026-10-01..2026-12-31 (4q26); C-32ea5263eaf8d7: forecast window 2026-10-01..2026-12-31 (4q26)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: Semiconductors",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-16cee603605784, C-32ea5263eaf8d7",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-a3c83ac2fd0aef",
+       "C-16cee603605784",
+       "C-32ea5263eaf8d7"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-a3c83ac2fd0aef: forecast window 2026-10-01..2026-12-31 (4q26) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Semiconductors already reflect NAND Flash contract price change of 15\u201320% QoQ in 4Q26?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [
+       "C-ddaab26d3b09f3",
+       "C-dde03888a57b59",
+       "C-5f63772cac66a2",
+       "C-7783db62d8b780"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (4 counter-claims in total); 3 distinct counter-observation(s) from the supporting sources vs 3 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: counter-evidence outweighs support)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T100759Z-article",
+   "thesis_id": "TH-1C1CAEA8AF",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}
