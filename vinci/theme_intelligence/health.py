@@ -463,7 +463,8 @@ def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
                                  affected=_affected(o, store, src.id), action=act)
     if d == "dates_authors":
         act = ("review: publication dates are not on the pages, so articles are counted UNDATED "
-               "and never placed in a window — analyse one on demand with `article --url`")
+               "and never placed in a window — VERIFY a date, then analyse the article with "
+               "`article --url <url> --published <verified date>` (listed on the dashboard)")
     else:
         act = ("review the listing — no article was found on an accessible page; do NOT conclude "
                "the publisher published nothing")

@@ -13,8 +13,9 @@
 # Access state as PROBED 2026-10-09 with the honest User-Agent in config.py (no spoofing, ever):
 #   citi_must_c       200 (articles in the page's __NEXT_DATA__ contentMap; robots.txt answers 403)
 #   bofa_institutional 200 (article cards on the insights page; the insight pages state NO
-#                          publication date, so they are counted UNDATED and never placed in a
-#                          window — analyse one on demand with `article --url`)
+#                          publication date: one last modified before the window is out of it;
+#                          the rest are listed UNDATED for date verification — analyse one with
+#                          `article --url <url> --published <verified date>`)
 #   jpm_tmt           200 (listing + sitemap with lastmod; robots Crawl-delay 10 for AI agents)
 #   ms_research       CONNECTION DROPPED on every request incl. robots.txt  -> BLOCKED
 #   nomura_connects   200 (/articles/ listing, paginated p2..pN; no feed; robots.txt 404)
