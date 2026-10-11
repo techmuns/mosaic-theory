@@ -89,6 +89,7 @@ from vinci.theme_intelligence.schemas import (
     ThemeRelation,
     Thesis,
     ThesisClaimLink,
+    ThesisKind,
     ThesisStatus,
     ThesisVersion,
     VerificationIssue,
@@ -158,6 +159,31 @@ def segment_of(h: VerifiedHypothesis, claims: dict[str, Claim], taxonomy: Taxono
              if any(re.search(rf"(?<![\w-]){re.escape(term)}(?![\w-])", blob, re.I)
                     for term in sg.terms)]
     return "+".join(sorted(found))
+
+
+#: what an equity-market STRUCTURE measure looks like in a claim's quote or metric
+_MARKET_STRUCTURE = re.compile(
+    r"correlation|dispersion|\bbreadth\b|volatilit|\bvix\b|% of (?:the )?stocks|share of "
+    r"stocks|stocks? (?:trading )?(?:above|below)|moving average|\bbeta\b|index concentration|"
+    r"equal[- ]weight", re.I)
+
+
+def record_kind(h: VerifiedHypothesis, claims: dict[str, Claim]) -> tuple[ThesisKind, str | None]:
+    """MARKET_REGIME only for equity-market structure: a market-wide record (`macro_market`), or a
+    sector record whose evidence MEASURES market structure (correlation, dispersion, breadth,
+    volatility). A sector mechanism — regulation, capacity, demand, costs — is an investment
+    thesis, so its earnings transmission is tested like any other. (The reason when corrected.)"""
+    raw = h.raw
+    if raw.kind is not ThesisKind.MARKET_REGIME or raw.value_chain_node == "macro_market":
+        return raw.kind, None
+    ev = [claims[c] for c in (*h.supporting, *h.dislocation, *h.catalyst) if c in claims]
+    if any(_MARKET_STRUCTURE.search(f"{c.metric or ''} {c.quote}") for c in ev):
+        return raw.kind, None
+    return ThesisKind.INVESTMENT_THESIS, (
+        f"extracted as a market-regime record on {raw.value_chain_node}, but none of its "
+        f"{len(ev)} evidence claim(s) measures equity-market structure (correlation, dispersion, "
+        f"breadth, volatility) — a sector mechanism is an investment thesis: its earnings "
+        f"transmission is tested like any other")
 
 
 def thesis_key(h: VerifiedHypothesis, segment: str = "") -> str:
@@ -299,6 +325,13 @@ class Engine:
         claims = {c.claim_id: c for c in ve.claims}
         mentions = {m.mention_id: m for m in ve.mentions}
 
+        for h in ve.hypotheses:  # the record type is checked before any thesis is touched
+            kind, why = record_kind(h, claims)
+            if why:
+                h.raw = h.raw.model_copy(update={"kind": kind})
+                st.add_issue(self._issue(ctx, "hypothesis", f"{ctx.version.version_id}:"
+                                         f"{h.raw.local_id}", IssueSeverity.INFO,
+                                         "RECORD_KIND_CORRECTED", f"“{h.raw.title}”: {why}"))
         groups: dict[str, list[VerifiedHypothesis]] = {}
         segments: dict[str, str] = {}
         # theses this article's EARLIER versions contributed to (before this version applies)
