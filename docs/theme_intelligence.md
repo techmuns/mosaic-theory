@@ -528,6 +528,26 @@ The pilot is ONE run a person starts, watches and reads — never the weekly sch
 single publisher's re-read shows as an independent confirmation; a card misses a section; or a
 document is analysed without its licence confirmed.
 
+### After the pilot (2026-10-12) — what changed, and what to read
+
+- **A malformed first answer is salvaged, never asked again.** Its other fields are kept; a list
+  written as broken JSON text is mended by deletion only (`ANSWER_SALVAGED` says what was
+  deleted); a hypothesis still unreadable is a dropped proposition — a coverage alert, so the run
+  reads INCOMPLETE. Answers an earlier run paid for and set aside (`<key>.invalid-N.json`) are
+  salvaged instead of paid for again.
+- **Near-term means the next four quarters.** Next year's undifferentiated full-year figure is a
+  *straddling* window: never near-term evidence, never SKIP-3 — WATCH. A page category line
+  ("Semiconductors") is a *bare label*, never an exposure (`SECTOR_LABEL_ONLY`).
+- **Re-grade stored theses** under the current rules — stored evidence only, $0:
+  `python -m vinci.theme_intelligence reassess --as-of YYYY-MM-DD [--thesis TH-…]`. A changed
+  action is a new version (DOWNGRADED / UPGRADED); the reviewed sentences are kept word for word.
+- **Review warnings sit on the line.** A line the card review questioned and left printed shows
+  `⚠ UNRESOLVED REVIEW — <why>` and is never labelled a verified fact; a conditional line
+  (could / may / might / would / if) is at most SOURCE OPINION.
+- **A stored preview recorded FULL** is corrected the next time its page is read (a scan, or
+  `article --url … --cache-only`): `RETRIEVAL_CORRECTED`, read as PARTIAL from then on, and the
+  theses it fed are re-graded at once. The original row, first-seen date and spend stand.
+
 ## Scheduling
 
 **GitHub Actions — `.github/workflows/theme-intelligence-weekly.yml`.** Actions is active on this

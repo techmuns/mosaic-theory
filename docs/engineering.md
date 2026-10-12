@@ -422,6 +422,22 @@ PR (CLAUDE.md: coin-time translation).
   trailing pages the readable document itself shows are fine-print disclosures (after the last
   section its contents list names), so the analysis text counts as complete for the research
   action while the document stays partial*.
+- **Deletion-only repair** (theme intelligence, `extract.repair_list_text`, `ANSWER_SALVAGED`) —
+  plain words: *a list the model wrote as broken JSON text is mended only by DELETING a stray
+  brace or an unkeyed value, never by inserting anything; a hypothesis still unreadable is named
+  lost and leaves the article INCOMPLETE*.
+- **Straddling window** (theme intelligence, `timewindow.straddles`) — plain words: *a forecast
+  window that runs past the next four quarters with most of it inside them (next year's
+  full-year figure read in October): not near-term evidence, and not longer-term only either*.
+- **Bare label** (theme intelligence, `verify.bare_label`, `SECTOR_LABEL_ONLY`) — plain words: *a
+  page line that says nothing but a sector's name (a category tag); it names a sector without
+  saying it is exposed, so it never anchors an exposure*.
+- **Reassess** (theme intelligence, `Engine.reassess`, `reassess` CLI) — plain words: *re-grade a
+  stored thesis under the current rules from its stored evidence — no article read, no model
+  call; a changed action is a new version*.
+- **Retrieval correction** (theme intelligence, `RETRIEVAL_CORRECTED`) — plain words: *a stored
+  version recorded FULL that the current reader finds is a preview is read as PARTIAL from then
+  on; its row, first-seen date and spend are never edited*.
 
 ## Local setup (every laptop, every contributor)
 
