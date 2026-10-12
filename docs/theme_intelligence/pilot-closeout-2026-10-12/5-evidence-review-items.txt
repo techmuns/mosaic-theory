@@ -1,0 +1,34 @@
+# P1 — the open evidence-review items, as the FRESH registry's weekly report shows them
+
+== the coverage review queue (fresh registry) — SOURCE evidence, marked UNASSESSED
+## Mechanism coverage — 10 alert(s) for review
+
+- ⚠ A-82a8a9210bae: proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — completeness part 4: named by the paid answer (malformed); its re-ask (reask-1) did not propose it again — its evidence was kept (see the facts below for any no thesis carries)
+- ⚠ A-82a8a9210bae: page 16: a risk the source states that no model pass listed — “The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI sector, while also” (on NO card — a sentence cut by a page break)
+- ⚠ A-82a8a9210bae: page 28: a risk the source states that no model pass listed — “However, there is community pushback, including noise quality and air quality, such that they often have tighter air permitting (Inside Climate News, Nov 2025),” (on NO card — a sentence cut by a page break)
+- ⚠ A-82a8a9210bae: page 40: a risk the source states that no model pass listed — “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as politics and weather which create timeline uncertainty.” (now in 07 of “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity” as the source's opinion — its paragraph holds that evidence; review)
+- ⚠ A-82a8a9210bae: page 41: a risk the source states that no model pass listed — “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching generation will come online, which could also lead to timeline mismatch and uncertainty around transmission buildout that would connect data centers to the grid.” (now in 07 of “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity” as the source's opinion — its paragraph holds that evidence; review)
+- ⚠ A-82a8a9210bae: page 45: a risk the source states that no model pass listed — “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital to execute on these growth opportunities pose uncertainty to data center growth.” (now in 07 of “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity” as the source's opinion — its paragraph holds that evidence; review)
+- ⚠ A-82a8a9210bae: page 52: a risk the source states that no model pass listed — “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” (now in 07 of “Citi Wealth sees multi-year structural energy infrastructure growth across four pillars”, “China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers” as the source's opinion — its paragraph holds that evidence; review)
+- ⚠ A-82a8a9210bae: page 7: 6 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 24%; approximately 110 GW; 109.5; 4.3 GW; 50-GW+; 43% — verified, UNASSESSED: no thesis or research action in this registry rests on it
+- ⚠ A-82a8a9210bae: page 16: 2 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 600GW; 1GW or more — verified, UNASSESSED: no thesis or research action in this registry rests on it
+- ⚠ A-82a8a9210bae: page 37: 4 verified material facts no thesis carries — a mechanism no card holds? Source evidence: $2 to $4; $8; ~$20; $5 to $8 — verified, UNASSESSED: no thesis or research action in this registry rests on it
+
+
+== page 37's previously established assessment — the reviewed card (re-read registry, TH-566BFB9D39), apart from the source evidence above
+**Version history:**
+- v1 as of 2026-10-11 — WATCH — evidence NEW — Initial record — created from A-82a8a9210bae (initial assessment — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst))
+- v2 as of 2026-10-11 — SKIP — evidence UNCHANGED — A-82a8a9210bae: re-verified ×4 (re-read) — re-assessed (WATCH → SKIP: F5_near_term_relevance not shown→longer_term_only)
+  - header.research_action: repeated — SKIP
+  - s01_bottom_line: no material change — The article argues gas-as-power is much more competitive in the US than Asia/Europe, reinforcing US gas-fired and midstream exposure. ⟨cited figures: approximat… [+2 chars — full text in the JSON export]
+
+_Generated 2026-10-12 09:23 UTC from the registry (ti-engine-4; run R-20261012T092257Z-i
+
+== page 16, 600GW vs 183GW — the decision (record): the source uses the figure for SPECULATIVE / duplicated queue requests ("over-study projects that may never be built"), not for bargaining power moving to whoever holds capacity — ambiguous, kept as a review item, NOT linked to the power-scarcity thesis (SKIP-1)
+
+== propositions with NO verified material evidence — never research opportunities
+## Not research opportunities (2) — no verified material evidence; each kept with its audit record (the proposition, why it was skipped, its card)
+
+- Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Taiwan — Skip — no verified material evidence · audit: `TH-051E7711B1` v1 · initial assessment — SKIP-1 no verified material evidence · card: cards/TH-051E7711B1.html
+- Power scarcity shifts bargaining power to hyperscalers and infrastructure owners over model labs — Skip — no verified material evidence · audit: `TH-4F00D4815E` v1 · initial assessment — SKIP-1 no verified material evidence · card: cards/TH-4F00D4815E.html
+

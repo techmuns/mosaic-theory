@@ -1,0 +1,76 @@
+# the re-read, BEFORE (previous code) and AFTER — what it did to each Gridlock thesis
+
+== BEFORE
+articles 3 (Gridlock: 1) · documents 1 · versions of A-82a8a9210bae: 2
+theses 22: version counts {1: 8, 2: 14}
+repeated quote+value rows on any card: 0
+links by class: {'novelty_unverified': 320, 'no material change': 24, 'new': 44, 'repeated': 181, 'correction': 3, 'contradictory': 8}
+SAME_ARTICLE_SIBLING flags: 1 (all listed)
+   TH-DDEE0B7EF0 / TH-F14CB7F84C (A-82a8a9210bae): SIBLING of “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”: 14 of its 17 sentence(s) were already on that thesis from an earlier version of this article, but it differs in 
+MECHANISM_COVERAGE alerts: 9 (all listed)
+   page 41: a risk the source states that no model pass listed — “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching genera
+   page 16: a risk the source states that no model pass listed — “The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI se
+   page 45: a risk the source states that no model pass listed — “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital 
+   sibling thesis: “Fuel cells gain data center share on speed-to-power despite CCGT cost edge” — SIBLING of “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”: 14 of
+   page 28: a risk the source states that no model pass listed — “However, there is community pushback, including noise quality and air quality, such that they often have tighter air permitting (Inside C
+   page 7: 4 verified material facts no thesis carries — a mechanism no card holds?
+   proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — completeness part 4: named by the paid answer (malforme
+   page 52: a risk the source states that no model pass listed — “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” (now in 07 of “Energy 
+   page 40: a risk the source states that no model pass listed — “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as poli
+paid-call ledger: 0 records
+CREATED                                              TH-051E7711B1            — -> SKIP         Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Ta
+CREATED (held for review: SAME_ARTICLE_SIBLING)      TH-F14CB7F84C            — -> WATCH        Fuel cells gain data center share on speed-to-power despite CCGT cost edge
+MATCHED — updated (attribution only)                 TH-5EDF9760FB        WATCH -> WATCH        Powered-land (grid-connected sites, converted coal) commands premiums as speed-t
+MATCHED — updated (new version)                      TH-1F366737A1        WATCH -> WATCH        AI datacenter power buildout drives multi-year transformer and grid equipment de
+MATCHED — updated (new version)                      TH-8178B565CB         SKIP -> SKIP         China all-of-the-above power buildout drives nuclear, hydro and pumped-storage e
+MATCHED — updated (new version)                      TH-BAA07551ED         SKIP -> SKIP         Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure ow
+MATCHED — updated (new version)                      TH-C0F7401B12         SKIP -> SKIP         US gas pipeline underinvestment creates attractive midstream growth capex cycle
+MATCHED — updated (new version)                      TH-CA02B7A83B         SKIP -> SKIP         Skilled-labor shortage is a persistent structural bottleneck on power and datace
+MATCHED — updated (new version)                      TH-CE04BAA34C         SKIP -> SKIP         Energy security accelerates renewables, EVs and energy storage demand globally
+RE-VERIFIED — re-assessed, new version               TH-566BFB9D39        WATCH -> SKIP         Low-cost US natural gas gives US a structural advantage in powering datacenters
+RE-VERIFIED — re-assessed, new version               TH-DDEE0B7EF0        WATCH -> WATCH        Fuel cells gain niche data-center power share on speed and grid-constraint advan
+UPDATED by key (attribution only)                    TH-C840A76413         SKIP -> SKIP         European grid expansion is primary beneficiary of electrification, even if datac
+UPDATED by key (new version)                         TH-110E3113B1        WATCH -> WATCH        Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+UPDATED by key (new version)                         TH-126BEECA00         SKIP -> SKIP         Uneven US regional power-market regulation makes regional selection drive grid/g
+UPDATED by key (new version)                         TH-426034EB2D         SKIP -> SKIP         Nuclear and SMR interest rising as supportive policy and power demand grow
+UPDATED by key (new version)                         TH-5BA11D6167         SKIP -> SKIP         Energy infrastructure is a multi-year structural growth story across four pillar
+UPDATED by key (new version)                         TH-D803766B8B         SKIP -> SKIP         Australia develops behind-the-meter gas power market for data centers
+untouched                                            TH-6EFAD379CB         SKIP -> SKIP         Selective continued exposure to US, South Korea, Taiwan AI capex theme
+
+18 Gridlock theses; independent-confirmation links on them: 0
+
+== AFTER
+articles 3 (Gridlock: 1) · documents 1 · versions of A-82a8a9210bae: 2
+theses 21: version counts {1: 7, 2: 14}
+repeated quote+value rows on any card: 0
+links by class: {'novelty_unverified': 302, 'no material change': 24, 'new': 47, 'repeated': 181, 'correction': 3, 'contradictory': 8}
+SAME_ARTICLE_SIBLING flags: 0 (all listed)
+MECHANISM_COVERAGE alerts: 8 (all listed)
+   proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — completeness part 4: named by the paid answer (malforme
+   page 45: a risk the source states that no model pass listed — “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital 
+   page 52: a risk the source states that no model pass listed — “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” (now in 07 of “Energy 
+   page 41: a risk the source states that no model pass listed — “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching genera
+   page 7: 4 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 24%; approximately 110 GW; 4.3 GW; 50-GW+ — verified, UNASSESSED: no thesis or research action in this
+   page 16: a risk the source states that no model pass listed — “The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI se
+   page 28: a risk the source states that no model pass listed — “However, there is community pushback, including noise quality and air quality, such that they often have tighter air permitting (Inside C
+   page 40: a risk the source states that no model pass listed — “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as poli
+paid-call ledger: 0 records
+CREATED                                              TH-051E7711B1            — -> SKIP         Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Ta
+MATCHED — updated (attribution only)                 TH-5EDF9760FB        WATCH -> WATCH        Powered-land (grid-connected sites, converted coal) commands premiums as speed-t
+MATCHED — updated (new version)                      TH-1F366737A1        WATCH -> WATCH        AI datacenter power buildout drives multi-year transformer and grid equipment de
+MATCHED — updated (new version)                      TH-8178B565CB         SKIP -> SKIP         China all-of-the-above power buildout drives nuclear, hydro and pumped-storage e
+MATCHED — updated (new version)                      TH-BAA07551ED         SKIP -> SKIP         Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure ow
+MATCHED — updated (new version)                      TH-C0F7401B12         SKIP -> SKIP         US gas pipeline underinvestment creates attractive midstream growth capex cycle
+MATCHED — updated (new version)                      TH-CA02B7A83B         SKIP -> SKIP         Skilled-labor shortage is a persistent structural bottleneck on power and datace
+MATCHED — updated (new version)                      TH-CE04BAA34C         SKIP -> SKIP         Energy security accelerates renewables, EVs and energy storage demand globally
+MATCHED — updated (new version)                      TH-DDEE0B7EF0        WATCH -> WATCH        Fuel cells gain niche data-center power share on speed and grid-constraint advan
+RE-VERIFIED — re-assessed, new version               TH-566BFB9D39        WATCH -> SKIP         Low-cost US natural gas gives US a structural advantage in powering datacenters
+UPDATED by key (attribution only)                    TH-C840A76413         SKIP -> SKIP         European grid expansion is primary beneficiary of electrification, even if datac
+UPDATED by key (new version)                         TH-110E3113B1        WATCH -> WATCH        Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+UPDATED by key (new version)                         TH-126BEECA00         SKIP -> SKIP         Uneven US regional power-market regulation makes regional selection drive grid/g
+UPDATED by key (new version)                         TH-426034EB2D         SKIP -> SKIP         Nuclear and SMR interest rising as supportive policy and power demand grow
+UPDATED by key (new version)                         TH-5BA11D6167         SKIP -> SKIP         Energy infrastructure is a multi-year structural growth story across four pillar
+UPDATED by key (new version)                         TH-D803766B8B         SKIP -> SKIP         Australia develops behind-the-meter gas power market for data centers
+untouched                                            TH-6EFAD379CB         SKIP -> SKIP         Selective continued exposure to US, South Korea, Taiwan AI capex theme
+
+17 Gridlock theses; independent-confirmation links on them: 0

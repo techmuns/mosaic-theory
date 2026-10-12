@@ -153,10 +153,16 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
 
 Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
 
-- **Thesis identity includes the SEGMENT.** node | mechanism | direction | geography, plus the
-  segment(s) within the node that the verified evidence's VERBATIM quotes name (configured in
-  `taxonomy.toml` `[[segment]]`: DRAM / HBM vs NAND / SSD on memory; grid-connected utilities vs
-  behind-the-meter / on-site generation on power). Never read from the model's wording.
+- **Thesis identity includes the SEGMENT — the thesis's economic SUBJECT** (`taxonomy.toml`
+  `[[segment]]`: DRAM / HBM vs NAND / SSD on memory; grid-connected utilities, behind-the-meter /
+  on-site generation and transformers / grid equipment on power). In order: the subject the
+  thesis statement names; else the segment of its product, or of the sectors the source names as
+  exposed; else segments at least a fifth of its verified quotes name. An incidental comparison
+  or customer application never sets it — unassigned rather than wrong (2026-10-12: Citi's
+  transformer thesis had been keyed on-site generation from one CCGT comparison in 67 claims).
+  A thesis a later reading reaches by another key, whose own segment under today's rule differs
+  from its key's, is re-keyed — same id, versions and evidence, the old key recorded
+  (`KEY_CORRECTED`), never onto a key another thesis holds.
 - **Evidence roles.** Only evidence of the SAME identity reaches a thesis's own history —
   *Direct confirmation* (new evidence, or an independent source) or *Repeated source*
   (attribution only). A related thesis is a registry LINK with a role, never evidence:
@@ -344,7 +350,11 @@ python -m vinci.theme_intelligence documents --status HELD
   updated, its id kept (`SAME_ARTICLE_MATCH`) — when direction, geography, mechanism family,
   segment, product and time horizon agree; a different value-chain node label is stated, never
   blocking (2026-10-12: on Citi's re-read the transformer story, 61 of 68 sentences, and six
-  more matched). Any other difference: a SIBLING — created, held for review (never RESEARCH NOW),
+  more matched). A different mechanism FAMILY on the same evidence — two thirds of EACH side's
+  sentences shared — is one causal chain read at two steps, not two theses (Citi's fuel cells:
+  "share gain" in one reading, "demand volume" in the next, 14 of 17 sentences the same; the
+  earlier id and mechanism kept); with evidence of its own on either side it may be a second,
+  separately falsifiable mechanism and goes to review, with what each would mean for earnings. Any other difference: a SIBLING — created, held for review (never RESEARCH NOW),
   flagged `SAME_ARTICLE_SIBLING` with the dimension that differs. Overlapping sentences alone never
   merge. A thesis whose sentences the new version re-states (at least half) but no hypothesis took
   is RE-VERIFIED and re-assessed under today's rules — a new version only when the assessment
@@ -369,7 +379,13 @@ python -m vinci.theme_intelligence documents --status HELD
   listed. Alerts are `MECHANISM_COVERAGE` issues and a section of research verification (which
   then reads INCOMPLETE); the full record is in the audit view and the JSON. Nothing is forced
   into a card and nothing merges by similarity. A proposition a paid answer named and its re-ask
-  did not propose again is listed as dropped, with that reason.
+  did not propose again is listed as dropped, with that reason. A page alert names the source's
+  figures as written and says they are UNASSESSED there — the source's evidence, kept apart from
+  any assessment a card holds.
+- **No verified material evidence → never a research opportunity** (`report.py`, 2026-10-12). A
+  proposition whose action rests on SKIP-1 is listed in its own section of the weekly page, "Not
+  research opportunities", with why and its card — never under NEW / UPGRADED / … It stays in the
+  counts, the archive and the printed record.
 - **One technology, one thesis** (`taxonomy.toml` products, `engine.product_signature`,
   2026-10-12). A thesis's PRODUCT is the one its own statement names, else the one at least a
   fifth of its cited claims name (a passing mention is not its subject). Two hypotheses on one
@@ -478,6 +494,39 @@ evidence arrived (automatic / manual upload / linked report fetched automaticall
 **One weekly report.** A scan's dashboard takes in every manual-ingest or single-article run since
 the previous scan, so an upload on Wednesday is in Monday's ranked list. An article published last
 month and uploaded today shows *Published* last month — never as new this week.
+
+## One supervised pilot — operator checklist (2026-10-12)
+
+The pilot is ONE run a person starts, watches and reads — never the weekly schedule.
+
+**Before**
+1. Keep the cron OFF (`THEME_INTELLIGENCE_SCHEDULE_ENABLED` unset). Never print a key; the run
+   reads `ANTHROPIC_API_KEY` and `SEC_USER_AGENT` from the environment.
+2. `sources --check-health` — read the table. Morgan Stanley and Goldman Sachs are manual-first:
+   their week arrives only as uploads (`ingest-file` / `ingest-inbox`), into the SAME registry.
+3. For each licensed report you will upload, confirm its third-party-LLM terms before passing
+   `--llm-permitted`; without it the document is HELD, never sent.
+4. Keep the $30 per-document limit (raise it only per document, with `--max-cost`) and set a run
+   budget for the scan; a HELD document or a refused call is the limit working.
+
+**The run**
+5. `state pull` (if the registry lives on the state branch), then one scan by hand with a small
+   `--max-articles` and a `--budget`, then `qa --run latest`. Note the run id.
+
+**Read, in this order**
+6. Research verification (INCOMPLETE is normal: it says what is open), then the mechanism-coverage
+   alerts — dropped propositions, uncarried facts with the source's figures (UNASSESSED), risks
+   the source states that no model pass listed.
+7. Research Now / Watch rows: open each card — 06 (timing), 07 (risks; SOURCE OPINION lines come
+   from the source's own words), 08 (the decision trace), 09 (sources and version history).
+8. Identity flags: `SAME_ARTICLE_SIBLING` (held for review), `KEY_CORRECTED`, `PRODUCT_SPLIT`;
+   then "Not research opportunities" (no verified material evidence) — never act on those.
+9. Record each verdict (confirm / override) and the run's actual spend (`manifest.json`
+   `cost_usd`, the paid-call ledger).
+
+**Stop and report if** a call is paid beyond the budget; one story yields two opportunities; a
+single publisher's re-read shows as an independent confirmation; a card misses a section; or a
+document is analysed without its licence confirmed.
 
 ## Scheduling
 

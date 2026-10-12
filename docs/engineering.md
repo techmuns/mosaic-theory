@@ -405,6 +405,16 @@ PR (CLAUDE.md: coin-time translation).
 - **Mechanism family** (theme intelligence, `taxonomy.toml` `family`) — plain words: *the kind of
   economics a mechanism label belongs to (volume, price / cost, competition, valuation, policy,
   market structure); two labels in one family are the same kind of claim*.
+- **One causal chain** (theme intelligence, `engine._identity_differences`,
+  `SAME_EVIDENCE_SHARE`) — plain words: *two readings of one article that rest on the same
+  evidence are one thesis even when they name different kinds of mechanism (share gain, demand
+  volume); only evidence of their own makes them a second claim to judge*.
+- **Key correction / subject segment** (theme intelligence, `engine.subject_segment`,
+  `KEY_CORRECTED`) — plain words: *a thesis's segment is what its statement, product or evidence
+  is about, never a passing mention; a key an older rule got wrong is fixed when a re-read reaches
+  the thesis — same id, history kept*.
+- **Not a research opportunity** (theme intelligence, weekly page) — plain words: *a proposition
+  with no verified material evidence (SKIP-1), listed apart from the opportunities with why*.
 - **Source-stated risk** (theme intelligence, `coverage.scan_source_risks`,
   `SOURCE_RISK_OMITTED`) — plain words: *a downside the report states in its own words that no
   model pass listed, put verbatim on the cards whose evidence sits in the same paragraph*.
