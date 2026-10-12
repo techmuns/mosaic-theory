@@ -62,7 +62,7 @@ from vinci.theme_intelligence.extract import (
     tool_parts,
     validate_items,
 )
-from vinci.theme_intelligence.parse import ParsedDocument
+from vinci.theme_intelligence.parse import GLYPH_CODE, ParsedDocument
 from vinci.theme_intelligence.schemas import BlockCheck, CompletenessReport, FigureCheck
 from vinci.theme_intelligence.verify import (
     VerifiedExtraction,
@@ -134,6 +134,8 @@ def _sentence_at(text: str, pos: int) -> str:
 
 def _skip_number(text: str, m: re.Match[str]) -> bool:
     num, unit, cur = m.group("num"), m.group("unit"), m.group("cur")
+    if text[max(0, m.start("num") - 5):m.start("num")].lower() == "(cid:":
+        return True  # a glyph code's number — undecodable font output, never a figure
     if in_hyphenated_name(text, m.start("num")):
         return True  # part of a name: "GLM-5.3", "COVID-19", "S-1"
     after = text[m.end():]
@@ -174,7 +176,8 @@ def scan_article(doc: ParsedDocument) -> Ledger:
     args: list[str] = []
     for b in doc.blocks:
         text = norm_text(b.text)
-        if b.kind in ARGUMENT_KINDS and len(text.split()) >= ARGUMENT_MIN_WORDS:
+        if b.kind in ARGUMENT_KINDS and len(GLYPH_CODE.sub(" ", text).split()) \
+                >= ARGUMENT_MIN_WORDS:  # glyph codes are no argument's words
             args.append(b.block_id)
         if b.kind not in FIGURE_KINDS:
             continue

@@ -16,6 +16,7 @@ They exist because the scenarios they test involve documents this repository mus
 | `ms_report_synthetic.html` | the same report saved as HTML | Case C — one report in two formats is one article |
 | `scanned_page_synthetic.pdf` | a report with a page that has no text layer | the scanned-page flag; PARTIAL |
 | `undated_synthetic.pdf` | a report that prints no publication date | no date from the file name or PDF metadata |
+| `glyph_mixed_synthetic.pdf` | a report whose text layer is partly undecodable — a font with no character map, read as `(cid:N)` codes (written byte by byte by `make_glyph_fixture.py`) | glyph quarantine: a clean page, a mixed page (readable lines, a mention of a CID, an undecodable table cell), an unreadable page |
 
 The real end-to-end demonstrations (public PDFs, live LLM extraction) are recorded in the build
 record and its worked-output folder, not here: those documents are not ours to redistribute.

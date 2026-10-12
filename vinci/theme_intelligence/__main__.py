@@ -354,7 +354,7 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
     try:
         res = ingest_file(pipe, path, declared, as_of=as_of, force_new=a.as_new,
                           same_as=a.same_as, duplicate_of=a.duplicate_of,
-                          max_cost=a.max_cost)
+                          max_cost=a.max_cost, reread=a.reread)
     except DocumentError as exc:
         pipe.finish_run(RunStatus.FAILED, error=str(exc))
         print(f"refused: {exc}")
@@ -534,6 +534,9 @@ def main(argv: list[str] | None = None) -> int:
                                             "recorded, nothing added")
     same.add_argument("--as-new", action="store_true", help="a new article, whatever it resembles")
     ig.add_argument("--release", help="process a HELD / REVIEW document by its id")
+    ig.add_argument("--reread", action="store_true",
+                    help="the same file, which the current reader reads differently from the "
+                         "version held: analyse it as a NEW VERSION of the same article")
     ig.add_argument("--budget", type=float, help="USD this run may spend on the model "
                                                  "(default config.BATCH_BUDGET_USD)")
     ig.add_argument("--max-cost", type=float,

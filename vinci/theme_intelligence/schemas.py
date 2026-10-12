@@ -1059,6 +1059,16 @@ class SourceHealthCheck(Frozen):
 
 # --- manual documents (hybrid ingestion) --------------------------------------------------------
 
+class QuarantinedText(Frozen):
+    """Undecodable glyph output left out of the analysis, one PDF page at a time: never sent to
+    the model, never counted as a figure or an argument — and never claimed as read."""
+
+    page: int
+    lines: int  # text lines left out
+    cells: int  # table cells left out
+    chars: int  # characters left out
+    sha256: str  # of the text left out (the lines and cells, in order) — what was excluded
+
 class DocumentRecord(Mutable):
     """One manually supplied FILE (identified by its bytes), what the operator stated about it,
     and what it became: INGESTED (a new article) · UPGRADED (a fuller version of an article
@@ -1088,3 +1098,5 @@ class DocumentRecord(Mutable):
     stored_path: str | None = None  # the private copy (git-ignored data dir), relative
     run_id: str | None = None
     history: list[str] = Field(default_factory=list)  # status changes, each dated
+    #: pages whose text layer held undecodable glyph output — what was left out of the analysis
+    quarantined: tuple[QuarantinedText, ...] = ()

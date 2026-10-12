@@ -9,7 +9,11 @@ title, authors and publication date WITH the place each was read from.
 What is flagged, never silently dropped: a page with no text layer (a scanned image — OCR is not
 available here), a page whose graphics carry values the text does not (charts: their labels are
 read, their plotted values are not), a table the extractor could not structure (its text is kept
-as paragraphs). Any such gap makes the document PARTIAL.
+as paragraphs), and text the PDF's fonts make undecodable — "(cid:N)" glyph codes, quarantined
+line by line and cell by cell (`parse.unreadable_glyphs`): left out of every model input, figure
+count and cost estimate, recorded per page (lines, cells, characters, the hash of what was left
+out), the page listed for visual / OCR review. Readable lines on the same page are kept. Any
+such gap makes the document PARTIAL.
 
 What is NEVER used as a publication date: the upload time, the file name, or the PDF's file
 metadata (CreationDate / ModDate say when the FILE was made). The date comes from the document's
@@ -31,8 +35,20 @@ from pathlib import Path
 from typing import Any
 
 from vinci.theme_intelligence.discovery import date_in_text
-from vinci.theme_intelligence.parse import ParsedDocument, parse_document
-from vinci.theme_intelligence.schemas import Author, Block, FieldStatus, RetrievalState
+from vinci.theme_intelligence.parse import (
+    GLYPH_MIN_CODES,
+    GLYPH_MIN_SHARE,
+    ParsedDocument,
+    parse_document,
+    unreadable_glyphs,
+)
+from vinci.theme_intelligence.schemas import (
+    Author,
+    Block,
+    FieldStatus,
+    QuarantinedText,
+    RetrievalState,
+)
 
 SUPPORTED = {".pdf": "pdf", ".html": "html", ".htm": "html", ".md": "markdown",
              ".markdown": "markdown", ".txt": "text"}
@@ -78,6 +94,8 @@ class DocumentRead:
     meta: dict[str, str] = field(default_factory=dict)  # the file's own metadata, as found
     #: the operator-stated publication date disagreed with the one the document states
     date_disagreement: str | None = None
+    #: undecodable glyph output left out, per page
+    quarantined: list[QuarantinedText] = field(default_factory=list)
 
 
 def file_sha256(path: Path) -> str:
@@ -214,8 +232,18 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 read.issues.append(f"page {n}: could not be read ({type(exc).__name__})")
                 partial = True
                 lines, tables = [], []
+            lines, tables, q = _quarantine(n, lines, tables)
+            if q is not None:
+                read.quarantined.append(q)
+                read.issues.append(
+                    f"page {n}: undecodable font glyphs (\"(cid:N)\" codes — the font has no "
+                    f"character map) left out of the analysis: {q.lines} line(s)"
+                    + (f" and {q.cells} table cell(s)" if q.cells else "")
+                    + f", {q.chars:,} characters (sha256 {q.sha256[:16]}); what they say is NOT "
+                      f"read — the page needs visual / OCR review")
+                partial = True
             words = sum(len(str(ln.get("text", "")).split()) for ln in lines)
-            if words < SCANNED_MAX_WORDS and page.images and not tables:
+            if words < SCANNED_MAX_WORDS and page.images and not tables and q is None:
                 read.issues.append(f"page {n}: no usable text layer ({len(page.images)} image(s)) "
                                    f"— a scanned page is NOT read: OCR is not available here")
                 partial = True
@@ -322,6 +350,59 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                    doc_date=doc_date, date_src="the document text (page 1-2)" if doc_date
                    else None, declared=declared, canonical=_canonical(declared, read),
                    partial=partial)
+
+
+def _quarantine(page: int, lines: list[dict[str, Any]],
+                tables: list[tuple[float, list[list[str | None]]]]
+                ) -> tuple[list[dict[str, Any]], list[tuple[float, list[list[str | None]]]],
+                           QuarantinedText | None]:
+    """One page's text lines and table cells, with the undecodable ones taken out — and the
+    record of what was taken out (None: nothing was).
+
+    A line goes when its text is mostly glyph codes, OR when most of its characters are set in
+    a font whose characters on this page are mostly glyph codes: such a font has no character
+    map, so even the glyphs it renders as letters are the wrong letters (observed 2026-10-12:
+    "XQ10.(cid:3)GI(cid:3):1G1…" — 100% one unnamed font, 95% of whose 34,761 characters on
+    the page were codes). A readable line in a decodable font survives, a stray code included."""
+    per_font: Counter[str] = Counter()
+    coded: Counter[str] = Counter()
+    for ln in lines:
+        for ch in ln.get("chars") or []:
+            f = str(ch.get("fontname", ""))
+            per_font[f] += 1
+            coded[f] += str(ch.get("text", "")).startswith("(cid:")
+    broken = {f for f, n in per_font.items()
+              if coded[f] >= GLYPH_MIN_CODES and coded[f] >= GLYPH_MIN_SHARE * n}
+    out: list[str] = []
+    kept = []
+    for ln in lines:
+        text = str(ln.get("text", ""))
+        chars = ln.get("chars") or []
+        in_broken = sum(1 for ch in chars if str(ch.get("fontname", "")) in broken)
+        if unreadable_glyphs(text) or (chars and in_broken >= GLYPH_MIN_SHARE * len(chars)):
+            out.append(text)
+        else:
+            kept.append(ln)
+    n_lines, n_cells = len(out), 0
+    clean: list[tuple[float, list[list[str | None]]]] = []
+    for top, table in tables:
+        rows: list[list[str | None]] = []
+        for row in table:
+            cells: list[str | None] = []
+            for c in row:
+                if c and unreadable_glyphs(c):
+                    out.append(c)
+                    n_cells += 1
+                    cells.append(None)
+                else:
+                    cells.append(c)
+            rows.append(cells)
+        clean.append((top, rows))
+    if not out:
+        return lines, tables, None
+    gone = "\n".join(out)
+    return kept, clean, QuarantinedText(page=page, lines=n_lines, cells=n_cells, chars=len(gone),
+                                        sha256=hashlib.sha256(gone.encode()).hexdigest())
 
 
 def _table_block(blocks: list[Block], table: list[list[str | None]], page: int,

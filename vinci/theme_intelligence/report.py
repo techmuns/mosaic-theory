@@ -168,13 +168,14 @@ def research_verification(store: Store, run: WeeklyRun,
         "FULLY_VERIFIED": f"every figure and argument paragraph accounted for, full text read "
                           f"({population})",
         "VERIFIED_WITHIN_PREVIEW": f"everything READ is accounted for, but {partial} article(s) "
-                                   f"were read only as a preview — the rest is unread, not "
-                                   f"verified ({population})",
+                                   f"were read only in part (a preview, or pages that could not "
+                                   f"be read) — the rest is unread, not verified ({population})",
         "INCOMPLETE": f"NOT fully verified — {population}"
                       + (f"; {not_run} completeness pass(es) did not run" if not_run else "")
                       + ("; causes: " + ", ".join(f"{k} {v}" for k, v in sorted(causes.items()))
                          if causes else "")
-                      + (f"; {partial} article(s) read only as a preview" if partial else "")
+                      + (f"; {partial} article(s) read only in part (a preview, or pages that "
+                         f"could not be read)" if partial else "")
                       + ". Open material is never used as evidence, so it can hold a thesis "
                         "back but never raise its research action",
         "NOTHING_ANALYSED": "no article was analysed in this run",
@@ -196,6 +197,19 @@ def _listed(items: list[str]) -> dict[str, Any]:
     """A list with its population: every entry is kept in the JSON; the page shows the first
     INTAKE_SHOW and says "showing X of Y"."""
     return {"total": len(items), "items": items}
+
+
+def _unread_pages(d: Any) -> str:
+    """'pages 54–60' / 'page 3' / 'pages 3, 7–9' — the pages whose text could not be read."""
+    pages = sorted(q.page for q in d.quarantined)
+    runs: list[list[int]] = []
+    for p in pages:
+        if runs and p == runs[-1][-1] + 1:
+            runs[-1].append(p)
+        else:
+            runs.append([p])
+    text = ", ".join(f"{r[0]}–{r[-1]}" if len(r) > 1 else f"{r[0]}" for r in runs)
+    return ("pages " if len(pages) > 1 else "page ") + text
 
 
 def _doc_line(store: Store, d: Any, as_of: dict[str, date]) -> str:
@@ -255,6 +269,9 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
             upload_issue[i.ref_id] = i.detail
     awaiting: list[str] = []
     needs_upload: list[str] = []
+    # a document whose pages could not be READ is not awaiting another document: those pages need
+    # a visual / OCR review (documents.py quarantines undecodable glyph output)
+    unread = {d.article_id: d for d in docs_all if d.quarantined and d.article_id}
     for a in store.articles():
         if a.source_id in retired:
             continue
@@ -265,6 +282,9 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
         line = (f"{a.publisher} — “{a.title or 'title UNKNOWN'}” (published "
                 f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'}; "
                 f"{vs[-1].body_word_count} words read) [{a.article_id}]")
+        if a.article_id in unread:
+            line += (f" — not a missing document: {_unread_pages(unread[a.article_id])} could "
+                     f"not be read (undecodable font glyphs) — visual / OCR review")
         awaiting.append(line)
         if a.article_id in upload_issue:
             needs_upload.append(f"{line} — {clip(upload_issue[a.article_id], 300)}")
@@ -275,6 +295,12 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
                                 + (f" — known: {'; '.join(ma['affected'][:3])}"
                                    if ma.get("affected") else ""))
     metadata: list[str] = []
+    for d in docs_all:
+        if d.quarantined:
+            metadata.append(
+                f"VISUAL / OCR REVIEW — {_doc_line(store, d, as_of)} — {_unread_pages(d)}: "
+                f"{sum(q.chars for q in d.quarantined):,} characters of undecodable font glyphs "
+                f"left out of the analysis; what those pages say is NOT read")
     for url, _st, rec in store.candidates("UNDATED"):
         if rec.get("source_id") in retired:
             continue

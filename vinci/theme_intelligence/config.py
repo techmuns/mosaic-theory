@@ -37,7 +37,7 @@ LLM_MAX_TOKENS = 21_333
 EXTRACT_PROMPT_VERSION = "ti-extract-6"
 COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
-PARSER_VERSION = "ti-parse-5"
+PARSER_VERSION = "ti-parse-6"  # 6: undecodable PDF glyphs quarantined
 ENGINE_VERSION = "ti-engine-2"
 
 #: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.

@@ -57,6 +57,27 @@ from vinci.theme_intelligence.schemas import (
     RetrievalState,
 )
 
+#: A PDF text layer's code for a glyph whose font carries no character map: the extractor
+#: cannot say which letter it is and writes "(cid:N)" instead. Observed 2026-10-11 on a real
+#: 60-page Citi report: its last 7 pages came out as 302,376 characters of such codes —
+#: 242,000 input tokens of nothing, resent in every model call, and 446 false "figures".
+GLYPH_CODE = re.compile(r"\(cid:\d+\)")
+#: a segment (a text line, a table cell) is UNREADABLE when at least this many codes cover at
+#: least this share of its non-space characters — one stray code (an unmapped ligature) or a
+#: sentence that merely MENTIONS a CID never qualifies
+GLYPH_MIN_CODES = 3
+GLYPH_MIN_SHARE = 0.5
+
+
+def unreadable_glyphs(text: str) -> bool:
+    """The segment is undecodable font output, not text."""
+    codes = GLYPH_CODE.findall(text)
+    if len(codes) < GLYPH_MIN_CODES:
+        return False
+    solid = len(re.sub(r"\s", "", text))
+    return sum(len(c) for c in codes) >= GLYPH_MIN_SHARE * max(1, solid)
+
+
 _BLOCK_TAGS = {"p", "h1", "h2", "h3", "h4", "h5", "h6", "li", "figcaption", "blockquote", "div",
                "section", "article", "td", "th", "dd", "dt", "span", "ul", "ol", "table", "tr",
                "figure", "header", "aside", "main"}

@@ -42,6 +42,7 @@ from vinci.theme_intelligence.config import (
     DOC_COST_FIXED_USD,
     DOC_COST_LIMIT_USD,
     DOC_COST_PER_PART_USD,
+    PARSER_VERSION,
 )
 from vinci.theme_intelligence.documents import (
     Declared,
@@ -288,14 +289,22 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
                 fixture: dict[str, Any] | None = None,
                 completeness_fixture: dict[str, Any] | None = None,
                 max_cost: float | None = None,
-                replay_of: DocumentRecord | None = None) -> IngestResult:
+                replay_of: DocumentRecord | None = None,
+                reread: bool = False) -> IngestResult:
     """Read, identify, gate and — when authorised — analyse one document through the shared
     pipeline. Requires a started run (`pipe.start_run("ingest", …)`).
 
     `replay_of`: the record a `state pull` replays — the file is read from its private copy
     (named by its hash), so the name it ARRIVED with and WHEN it arrived come from the record,
     never from the copy or the replay's clock (observed 2026-10-11 on the GitHub state test: a
-    replayed upload showed its hash as its name and the replay time as its upload time)."""
+    replayed upload showed its hash as its name and the replay time as its upload time).
+
+    `reread`: the same FILE again, which the current reader reads DIFFERENTLY from the version
+    held (a reader change: undecodable glyphs quarantined, 2026-10-12) — analysed again as a NEW
+    VERSION of the same article; the earlier version, its analysis and the document's arrival are
+    kept. Without it the same file is a DUPLICATE, and the note says when a re-read would differ.
+    The model's cached answers are keyed by the exact text, so a changed text is never answered
+    from a cache built on the old one."""
     assert pipe.run is not None
     now = datetime.now(tz=UTC)
     _require_active(pipe, declared)  # before the file is even read or stored
@@ -305,11 +314,26 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     publisher = src.publisher if src else declared.source_id
     prior = pipe.store.document_by_sha(read.sha256)
     arrived = prior or replay_of  # the record of the file's first arrival, if any
-    if prior is not None and prior.status not in ("HELD", "REVIEW"):
+    held_v = (pipe.store.article_version(prior.version_id)
+              if prior is not None and prior.version_id else None)
+    changed = held_v is not None and held_v.content_sha256 != read.doc.content_sha256
+    held_art = (pipe.store.article(prior.article_id)
+                if prior is not None and prior.article_id else None)
+    rereading = (reread and changed and held_art is not None and prior is not None
+                 and prior.status in ("INGESTED", "UPGRADED"))
+    if prior is not None and prior.status not in ("HELD", "REVIEW") and not rereading:
+        hint = ""
+        if changed and held_v is not None:
+            hint = (f" — the current reader ({PARSER_VERSION}) reads it differently from the held "
+                    f"version {held_v.version_id} ({held_v.parser_version}): import it again with "
+                    f"--reread to analyse it as a new version of the same article (the earlier "
+                    f"version and its analysis are kept)")
+        elif reread:
+            hint = " — re-read: the current reader's text is unchanged"
         return IngestResult(doc_id, "DUPLICATE", prior.article_id, prior.version_id,
                             note=f"the same file was imported as {prior.doc_id} on "
                                  f"{prior.received_at:%Y-%m-%d %H:%M} UTC ({prior.status}) — "
-                                 f"nothing re-counted")
+                                 f"nothing re-counted" + hint)
     rec = DocumentRecord(
         doc_id=doc_id, sha256=read.sha256, filename=arrived.filename if arrived else path.name,
         fmt=read.fmt, size=read.size,
@@ -324,7 +348,8 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         published=read.doc.published_at.date() if read.doc.published_at else None,
         published_source=read.doc.published_source, pages=read.pages, tables=read.tables,
         issues=tuple(read.issues), stored_path=_store_copy(pipe, path, read),
-        run_id=pipe.run.run_id, history=list(arrived.history) if arrived else [])
+        run_id=pipe.run.run_id, history=list(arrived.history) if arrived else [],
+        quarantined=tuple(read.quarantined))
 
     def finish(status: str, note: str, article_id: str | None = None,
                version_id: str | None = None, basis: str = "") -> IngestResult:
@@ -346,7 +371,14 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         return finish("DUPLICATE", f"the operator states it duplicates article {duplicate_of} "
                                    f"— no new contribution", duplicate_of,
                       basis=f"the operator states it duplicates article {duplicate_of}")
-    if same_as:
+    if rereading:
+        assert held_art is not None and held_v is not None and prior is not None
+        match = Match(RETRY, held_art, (
+            f"re-read of the same file ({prior.doc_id}) by the current reader "
+            f"({PARSER_VERSION}; the held version {held_v.version_id} was read by "
+            f"{held_v.parser_version}): its text changed — a new version of article "
+            f"{held_art.article_id}; the earlier version and its analysis are kept"))
+    elif same_as:
         held = pipe.store.article(same_as)
         if held is None:
             return finish("REVIEW", f"--same-as {same_as}: no such article")
@@ -410,6 +442,8 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     status = ("UPGRADED" if match.kind == UPGRADE and res.status in (
         "PROCESSED", "PARTIAL_PROCESSED") else "INGESTED" if res.status in (
         "PROCESSED", "PARTIAL_PROCESSED") else res.status)
+    if rereading and prior is not None and status in ("INGESTED", "UPGRADED"):
+        status = prior.status  # the same document: its standing is unchanged by a re-read
     return finish(status, f"{match.basis}; pipeline {res.status} {res.note}".strip(),
                   res.article_id, res.version_id, basis=match.basis)
 
