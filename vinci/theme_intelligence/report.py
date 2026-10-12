@@ -473,6 +473,12 @@ def _intake_labels(store: Store, tid: str, rids: set[str]) -> list[str]:
     return out
 
 
+#: the rule a proposition with NO verified material evidence fires — it is never a research
+#: opportunity, so the weekly page lists it apart from every category (2026-10-12)
+NO_EVIDENCE_RULE = "SKIP-1"
+NO_EVIDENCE_HELP = ("no verified material evidence; each kept with its audit record (the "
+                    "proposition, why it was skipped, its card)")
+
 CATEGORY_ORDER = (WeeklyCategory.NEW, WeeklyCategory.UPGRADED, WeeklyCategory.DOWNGRADED,
                   WeeklyCategory.CHALLENGED, WeeklyCategory.UNCHANGED_MATERIAL,
                   WeeklyCategory.ARCHIVED)
@@ -665,6 +671,9 @@ class Dashboard:
     intake: dict[str, Any] = field(default_factory=dict)
     #: the runs this report covers (a scan's report takes in the manual runs since the last scan)
     report_runs: list[str] = field(default_factory=list)
+    #: propositions resting on NO verified material evidence (SKIP-1): never research
+    #: opportunities, so kept out of the categories — listed apart, with why, for the audit
+    no_evidence: list[DashRow] = field(default_factory=list)
 
 
 def _sources_line(store: Store, tid: str, rids: set[str]) -> list[str]:
@@ -715,6 +724,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         by_thesis.setdefault(ev.thesis_id, []).append(ev)
     cats: dict[str, list[DashRow]] = {c.value: [] for c in CATEGORY_ORDER}
     no_material: list[str] = []
+    no_evidence: list[DashRow] = []
     for tid, evs in by_thesis.items():
         if tid not in asof:
             continue
@@ -780,6 +790,9 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             sector_exposures=[f"{x.name} ({x.direction.value})" for x in av.sector_exposures],
             why_action=why_action(cur.priority.rules_fired),
             rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit)
+        if any(r.startswith(NO_EVIDENCE_RULE) for r in cur.priority.rules_fired):
+            no_evidence.append(row)  # not an opportunity: never under NEW / UPGRADED / …
+            continue
         cats[cat.value].append(row)
     for rows in cats.values():  # ranked: action first, then the freshest material evidence
         rows.sort(key=lambda r: r.thesis_id)
@@ -842,6 +855,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         totals_active=totals, archived_total=sum(1 for t, _ in asof.values()
                                                  if t.status is ThesisStatus.ARCHIVED),
         caveats=caveats, categories=cats, no_material_change=no_material, archive=archive,
+        no_evidence=sorted(no_evidence, key=lambda r: r.thesis_id),
         validation=val, generated=generated)
     d.report_runs = [r.run_id for r in runs]
     d.source_health = source_health_as_of(store, run)
@@ -870,7 +884,7 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     # archived included) and its EVENTS: a SKIP is archived at once, so counting active theses
     # could never show one; and a thesis created and challenged in one run sits under NEW, so
     # counting sections hid the challenge (both observed in the 2026-10-10 weekly run).
-    rows = [r for rs in d.categories.values() for r in rs]
+    rows = [r for rs in d.categories.values() for r in rs] + d.no_evidence
 
     def rank(a: str) -> int:
         return ACTION_RANK[ResearchAction(a)]
@@ -1133,6 +1147,14 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
             parts.append('<details' + (" open" if print_mode else "") + f'><summary>show the '
                          f'other {len(rest)} of {n}</summary>'
                          + "".join(_row_html(r) for r in rest) + "</details>")
+    if d.no_evidence:
+        parts.append('<details class="sec"' + (" open" if print_mode else "")
+                     + f'><summary>Not research opportunities ({len(d.no_evidence)}) — '
+                       f'{e(NO_EVIDENCE_HELP)}</summary>'
+                     + "".join(f'<div class="s note">{e(r.title)} — {e(r.why_action)}'
+                               f'<span class="aud"> · {e(r.thesis_id)} v{r.version} · '
+                               f'{e(r.change_reason)}</span></div>' for r in d.no_evidence)
+                     + "</details>")
     if d.no_material_change:
         parts.append('<details class="sec"' + (" open" if print_mode else "")
                      + f'><summary>No material change this run ({len(d.no_material_change)})'
@@ -1373,6 +1395,10 @@ def render_dashboard_md(d: Dashboard) -> str:
                    f"- Audit: `{r.thesis_id}` v{r.version}"
                    + (f" · flags {', '.join(r.flags)}" if r.flags else "")
                    + f" · {r.change_reason} · card: {r.card}", ""]
+    if d.no_evidence:
+        md += [f"## Not research opportunities ({len(d.no_evidence)}) — {NO_EVIDENCE_HELP}", ""]
+        md += [f"- {r.title} — {r.why_action} · audit: `{r.thesis_id}` v{r.version} · "
+               f"{r.change_reason} · card: {r.card}" for r in d.no_evidence] + [""]
     if d.no_material_change:
         md += ["## No material change this run", ""] + [f"- {x}" for x in d.no_material_change]
         md.append("")
@@ -1398,9 +1424,12 @@ def render_dashboard_csv(d: Dashboard) -> str:
                 "sources", "sector_exposures", "named_companies", "named_instruments",
                 "private_named", "other_named", "sectors", "next_action", "why_action",
                 "change_reason", "last_material_update", "status", "flags", "card"])
-    for cat in CATEGORY_ORDER:
-        for r in d.categories.get(cat.value, []):
-            w.writerow([r.category, r.action, r.previous_action or "", r.thesis_id, r.version,
+    for cat_rows in [d.categories.get(cat.value, []) for cat in CATEGORY_ORDER] + [
+            d.no_evidence]:
+        for r in cat_rows:
+            w.writerow([r.category if r not in d.no_evidence
+                        else "NOT AN OPPORTUNITY (no verified material evidence)", r.action,
+                        r.previous_action or "", r.thesis_id, r.version,
                         r.title, r.kind, r.article_date or "", r.first_ingested or "",
                         r.analysis_as_of or "",
                         r.evidence_direction, " | ".join(r.what_changed),
@@ -1428,7 +1457,8 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
     cards = write_cards(store, out, generated=generated, theses=asof, until=run.finished_at)
     d = build_dashboard(store, run_id, cards=cards, generated=generated)
     (out / "dashboard.html").write_text(render_dashboard_html(d))
-    delta_ids = [r.thesis_id for rows in d.categories.values() for r in rows]
+    delta_ids = [r.thesis_id for rows in d.categories.values() for r in rows] + [
+        r.thesis_id for r in d.no_evidence]  # their cards stay in the printed record
     embedded = []
     for tid in delta_ids:
         if tid not in asof:

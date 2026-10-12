@@ -225,8 +225,11 @@ def test_verified_material_facts_no_thesis_carries_raise_an_alert_by_page(
     assert cov is not None
     groups = {(g.page, g.status): len(g.claim_ids) for g in cov.uncarried}
     assert groups == {(37, "unexplained"): 2, (40, "unexplained"): 1}
-    assert any(a.startswith("page 37: 2 verified material facts no thesis carries")
-               for a in cov.alerts)
+    p37 = [a for a in cov.alerts
+           if a.startswith("page 37: 2 verified material facts no thesis carries")]
+    assert len(p37) == 1
+    # the SOURCE's evidence named, every figure as written, kept apart from any assessment
+    assert "Source evidence: $2 to $4; ~$20 — verified, UNASSESSED" in p37[0]
     assert not any(a.startswith("page 40") for a in cov.alerts)  # a lone fact: listed only
     codes = [i.detail for i in pipe.store.issues(run_id=pipe.run.run_id)
              if i.code == "MECHANISM_COVERAGE"]
@@ -786,3 +789,56 @@ def test_the_same_sentence_scaled_two_ways_is_one_figure() -> None:
     assert same_sentence_reread(_c("h", "AV-1", q, 75000, "~75K"), _c("n", "AV-2", q, 75, "~75K"))
     assert not same_sentence_reread(_c("h", "AV-1", q, 75000, "~75K"),
                                     _c("n", "AV-2", q, 75, "~76K"))
+
+
+# --- P0 · a thesis's segment is its SUBJECT, never an incidental mention -------------------------
+
+@pytest.mark.parametrize("statement,product,quotes,expected,exposure", [
+    # transformer equipment: the statement names it — one CCGT comparison among ten never sets it
+    ("Transformer shortage drives demand and pricing for transformer makers", "",
+     ["lead times reached 4 years"] * 9 + ["a CCGT unit costs more"], "grid_equipment",
+     ()),
+    # gas turbines / reciprocating engines: no segment in the statement — the PRODUCT decides
+    ("Speed-to-power drives a multi-year cycle for gas generation equipment", "gas_turbines",
+     ["orders rose"], "onsite_generation", ()),
+    ("Engine makers win data-centre orders", "reciprocating_engines", ["orders rose"],
+     "onsite_generation", ()),
+    # fuel cells: named in the statement, whatever the cost comparison names
+    ("Fuel cells gain data center share despite the CCGT cost edge", "",
+     ["CCGT costs $3,000/kW"] * 5, "onsite_generation", ()),
+    # a cross-sector comparison in the evidence: below a fifth of the quotes — unassigned
+    ("Skilled-labor shortage constrains the power buildout", "",
+     ["electricians are scarce"] * 9 + ["unlike transformer makers, contractors cannot hire"],
+     "", ()),
+    # the evidence IS about it when a fifth or more of the quotes name it
+    ("Power demand outruns supply", "",
+     ["utilities raised capex"] * 3 + ["demand grew"] * 7, "grid_utilities", ()),
+    # the sectors the SOURCE names as exposed come before the evidence count
+    ("Power demand outruns supply", "", ["a CCGT unit"] * 9, "grid_utilities",
+     ("regulated utilities",)),
+])
+def test_a_thesis_segment_is_its_economic_subject(statement: str, product: str,
+                                                   quotes: list[str], expected: str,
+                                                   exposure: tuple[str, ...]) -> None:
+    from vinci.theme_intelligence.config import load_taxonomy
+    from vinci.theme_intelligence.engine import subject_segment
+
+    assert subject_segment("ai_infrastructure.power_grid", statement, product, exposure, quotes,
+                           load_taxonomy()) == expected
+
+
+def test_the_product_a_thesis_names_sets_its_segment_end_to_end(tmp_path: Path) -> None:
+    """No segment in the statement's words ("CCGT" is a gas-turbine PRODUCT term, not a segment
+    term) and none in its evidence: the product it is about places it — on-site generation."""
+    doc = Hypo(slug="ccgt-builders", publisher="Hypo Research P", published=AS_OF, blocks=[
+        ("paragraph", "Orders rose 40% in 2025 across new data-centre campuses in Texas.")])
+    x = extraction([claim("c1", "b001", "Orders rose 40% in 2025", "Orders +40%", value=40,
+                          value_text="40%", unit="%", period="2025")],
+                   [hyp("h1", "CCGT builders win data-centre orders",
+                        node="ai_infrastructure.power_grid", mechanism="demand_volume_shift",
+                        supporting=["c1"])])
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("article", as_of=AS_OF)
+    ingest(pipe, doc.doc(), x, as_of=AS_OF)
+    [t] = pipe.store.theses()
+    assert t.key_segment == "onsite_generation"

@@ -482,7 +482,7 @@ def test_the_kpis_count_this_runs_theses_and_events(tmp_path: Path) -> None:
     pipe.engine.archive_pass(run_id=run.run_id, as_of=W1)  # SKIP archived, as a run ends
     d = build_dashboard(pipe.store, run.run_id, cards={}, generated="t")
     k = kpis(d, pipe.store)
-    rows = [r for rs in d.categories.values() for r in rs]
+    rows = [r for rs in d.categories.values() for r in rs] + d.no_evidence
     assert k["theses_this_run"] == len(rows) == 6
     assert (k["research_now"], k["watch"], k["skip"]) == tuple(
         sum(1 for r in rows if r.action == a) for a in ("RESEARCH NOW", "WATCH", "SKIP"))
@@ -490,7 +490,17 @@ def test_the_kpis_count_this_runs_theses_and_events(tmp_path: Path) -> None:
     assert k["new"] == 6
     assert k["challenged"] == 1  # the DRAM-up thesis: created AND challenged this run
     assert not d.categories.get("CHALLENGED")  # …which the exclusive sections file under NEW
-    assert len(d.categories["ARCHIVED"]) == 1 and len(d.categories["NEW"]) == 5  # the SKIP
+    # no verified material evidence: COUNTED, but never filed as an opportunity in a category —
+    # listed apart, its audit kept (2026-10-12)
+    assert not d.categories.get("ARCHIVED") and len(d.categories["NEW"]) == 5
+    assert [r.title for r in d.no_evidence] == ["Optics demand rises"]
+    from vinci.theme_intelligence.report import render_dashboard_html, render_dashboard_md
+
+    md = render_dashboard_md(d)
+    new_section = md.split("## NEW", 1)[1].split("\n## ", 1)[0]
+    assert "Optics demand rises" not in new_section
+    assert "## Not research opportunities (1) — no verified material evidence" in md
+    assert "Not research opportunities (1)" in render_dashboard_html(d)
     assert d.totals_active.get("SKIP", 0) == 0  # the old strip's "Skip" could never count it
 
 

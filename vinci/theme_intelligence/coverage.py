@@ -286,6 +286,7 @@ def _uncarried(ve: VerifiedExtraction, report: CompletenessReport,
     for f in report.figures:
         figures.setdefault(f.block_id, []).append(f)
     groups: dict[tuple[int | None, str], tuple[list[str], list[str]]] = {}
+    written: dict[tuple[int | None, str], list[str]] = {}  # the source's figures, as written
     for c in material:
         if c.claim_id in linked or c.claim_id in as_risk:
             continue
@@ -304,9 +305,12 @@ def _uncarried(ve: VerifiedExtraction, report: CompletenessReport,
                 status, reason = "related", f"pass 1b related its paragraph to {', '.join(tids)}"
         ids, reasons = groups.setdefault((page.get(c.block_id), status), ([], []))
         ids.append(c.claim_id)
+        written.setdefault((page.get(c.block_id), status), []).append(
+            c.value_text or c.statement)
         if reason and reason not in reasons:
             reasons.append(reason)
-    return [EvidenceGroup(page=p, claim_ids=tuple(ids), status=s, reason="; ".join(rs)[:400])
+    return [EvidenceGroup(page=p, claim_ids=tuple(ids), status=s, reason="; ".join(rs)[:400],
+                          figures=tuple(written[(p, s)]))
             for (p, s), (ids, rs) in sorted(groups.items(), key=lambda kv: (kv[0][0] or 0,
                                                                               kv[0][1]))]
 

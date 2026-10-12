@@ -35,7 +35,7 @@ from __future__ import annotations
 import hashlib
 import re
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 
@@ -51,7 +51,7 @@ from vinci.theme_intelligence.cards import (
     sector_exposures_from,
     with_citations,
 )
-from vinci.theme_intelligence.config import ENGINE_VERSION, STALE_AFTER_DAYS, Taxonomy
+from vinci.theme_intelligence.config import ENGINE_VERSION, STALE_AFTER_DAYS, Segment, Taxonomy
 from vinci.theme_intelligence.contradiction import (
     AMBIGUOUS,
     CONTRADICTS,
@@ -153,22 +153,43 @@ def review_tag(h: VerifiedHypothesis) -> str:
     return ""
 
 
-def segment_of(h: VerifiedHypothesis, claims: dict[str, Claim], taxonomy: Taxonomy) -> str:
-    """The segment(s) within the node that the hypothesis's VERIFIED evidence names — read from
-    the verbatim quotes of its supporting / dislocation / catalyst claims and its source-named
-    sector spans, never from the model's wording. "" when the node defines no segments or the
-    evidence names none."""
-    segs = taxonomy.segments_of(h.raw.value_chain_node)
+def segment_of(h: VerifiedHypothesis, claims: dict[str, Claim], taxonomy: Taxonomy,
+               product: str = "") -> str:
+    """The segment(s) within the node the hypothesis is ABOUT (`subject_segment`), from its
+    statement, its product, the sector spans the source names, then its verified evidence."""
+    quotes = [claims[c].quote for c in (*h.supporting, *h.dislocation, *h.catalyst)
+              if c in claims and claims[c].span_verified]
+    return subject_segment(h.raw.value_chain_node, h.raw.title, product,
+                           [x.quote for x in h.sectors], quotes, taxonomy)
+
+
+def subject_segment(node: str, statement: str, product: str, exposure: Sequence[str],
+                    quotes: Sequence[str], taxonomy: Taxonomy) -> str:
+    """The segment(s) a thesis is ABOUT, in order: (1) the economic subject its statement names;
+    (2) the segment of its product, or of the sectors the source names as exposed; (3) segments
+    at least PRODUCT_MIN_SHARE of its verified quotes name. "" — unassigned — rather than a wrong
+    one: an incidental comparison, a customer application or industry background never sets it
+    (observed 2026-10-12: the transformer thesis keyed `onsite_generation` from one CCGT mention
+    in 67 cited claims, under the rule that took every segment any quote named)."""
+    segs = taxonomy.segments_of(node)
     if not segs:
         return ""
-    texts = [claims[c].quote for c in (*h.supporting, *h.dislocation, *h.catalyst)
-             if c in claims and claims[c].span_verified]
-    texts += [x.quote for x in h.sectors]
-    blob = " ".join(texts)
-    found = [sg.id for sg in segs
-             if any(re.search(rf"(?<![\w-]){re.escape(term)}(?![\w-])", blob, re.I)
-                    for term in sg.terms)]
+    found = _segments_named(statement, segs)
+    if not found and product:
+        found = _segments_named(" ".join(next((p.terms for p in taxonomy.products_of(node)
+                                               if p.id == product), ())), segs)
+    if not found and exposure:
+        found = _segments_named(" ".join(exposure), segs)
+    if not found and quotes:
+        counts = Counter(s for q in quotes for s in _segments_named(q, segs))
+        found = {s for s, n in counts.items() if n >= PRODUCT_MIN_SHARE * len(quotes)}
     return "+".join(sorted(found))
+
+
+def _segments_named(text: str, segs: Sequence[Segment]) -> set[str]:
+    return {sg.id for sg in segs
+            if any(re.search(rf"(?<![\w-]){re.escape(term)}(?![\w-])", text, re.I)
+                   for term in sg.terms)}
 
 
 #: what an equity-market STRUCTURE measure looks like in a claim's quote or metric
@@ -366,7 +387,7 @@ class Engine:
         earlier = list(dict.fromkeys(c.thesis_id for c in st.contributions(
             article_id=ctx.article.article_id)))
         for h in ve.hypotheses:
-            seg = segment_of(h, claims, self.taxonomy)
+            seg = segment_of(h, claims, self.taxonomy, self.product_signature(h, claims))
             key = thesis_key(h, seg)
             groups.setdefault(key, []).append(h)
             segments[key] = seg
@@ -416,7 +437,7 @@ class Engine:
                                                      f"({merged_notes.get(x.raw.local_id, 'kept')})"
                                                      for x in hs)))
             risks = [r for r in ve.risks if not r.related or h.raw.local_id in r.related]
-            existing = st.thesis_by_key(key)
+            existing = self._by_key(key)
             if existing is not None and not prod:
                 # the key is necessary, not sufficient: the thesis it names must be about the same
                 # PRODUCT, or share the source's sentences — else this is another proposition
@@ -429,8 +450,9 @@ class Engine:
                         f"evidence — a separate thesis"))
                     prod = ph
                     key = thesis_key(h, seg, prod)
-                    existing = st.thesis_by_key(key)
-            if existing is None and (prior := self._same_article_thesis(h, seg, prod, earlier)):
+                    existing = self._by_key(key)
+            if existing is None and (prior := self._same_article_thesis(h, seg, prod, earlier,
+                                                                        claims)):
                 existing = prior
                 st.add_issue(self._issue(
                     ctx, "thesis", prior.thesis_id, IssueSeverity.INFO, "SAME_ARTICLE_VERSION",
@@ -468,6 +490,8 @@ class Engine:
                         f"({ctx.article.article_id}): {review}"))
             else:
                 out = self._update(ctx, existing, h, claims, mentions, resolutions, risks)
+                if existing.identity != key:  # reached by another key: is its own one stale?
+                    self._correct_segment(ctx, out.thesis_id)
             outcomes.append(out)
             for x in hs:  # where every proposition of the source landed (mechanism coverage)
                 self.destinations[x.raw.local_id] = (
@@ -483,6 +507,7 @@ class Engine:
             if (tid not in touched and t is not None and t.status is not ThesisStatus.ARCHIVED
                     and (out2 := self._reverify(ctx, t, claims)) is not None):
                 outcomes.append(out2)
+                self._correct_segment(ctx, tid)
         return outcomes
 
     # -- identity -----------------------------------------------------------------------------
@@ -524,6 +549,50 @@ class Engine:
                                                        if lk.role in cited
                                                        and (c := self.store.claim(lk.claim_id))]))
 
+    def thesis_segment(self, t: Thesis) -> str:
+        """The segment a held thesis is about under TODAY's rule (`subject_segment`): its
+        statement, its product, then its cited evidence."""
+        cited = (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)
+        quotes = [c.quote for lk in self.store.links(t.thesis_id) if lk.role in cited
+                  and (c := self.store.claim(lk.claim_id)) is not None and c.span_verified]
+        return subject_segment(t.key_node, t.title, self.thesis_product(t), (), quotes,
+                               self.taxonomy)
+
+    def _by_key(self, key: str) -> Thesis | None:
+        """The thesis holding an identity key — or the one CREATED with it before its key was
+        corrected (its id is that key's hash): a former key finds its thesis, never a duplicate
+        that would overwrite it."""
+        t = self.store.thesis_by_key(key)
+        return t if t is not None else self.store.thesis(thesis_id_for(key))
+
+    def _correct_segment(self, ctx: ArticleContext, tid: str) -> None:
+        """A thesis a later reading reached by ANOTHER key, whose own segment under today's rule
+        differs from the one in its key (an earlier rule read it off an incidental mention), is
+        re-keyed — the same id, versions, evidence and history; the old key recorded. Never onto
+        a key another thesis holds (that is flagged for review instead)."""
+        t = self.store.thesis(tid)
+        if t is None:
+            return
+        seg = self.thesis_segment(t)
+        if seg == t.key_segment:
+            return
+        new = t.model_copy(update={"key_segment": seg})
+        holder = self.store.thesis_by_key(new.identity)
+        if holder is not None and holder.thesis_id != tid:
+            self.store.add_issue(self._issue(
+                ctx, "thesis", tid, IssueSeverity.WARN, "KEY_NOT_CORRECTED",
+                f"its segment under today's rule is {seg or 'none'} (key says "
+                f"{t.key_segment or 'none'}), but {holder.thesis_id} holds that key — review"))
+            return
+        why = (f"segment {t.key_segment or 'none'} → {seg or 'none (unassigned)'}: read from the "
+               f"thesis statement, product and evidence — never an incidental mention")
+        with self.store.tx():
+            self.store.rekey_thesis(new)
+            self.store.add_event(self._event(ctx, tid, None, "KEY_CORRECTED",
+                                             f"identity key {t.identity} → {new.identity} ({why})"))
+            self.store.add_issue(self._issue(ctx, "thesis", tid, IssueSeverity.INFO,
+                                             "KEY_CORRECTED", why))
+
     def _named_product(self, node: str, text: str) -> str:
         named = products_in(text, [p for p in self.taxonomy.products_of(node) if not p.covers])
         return next(iter(named)) if len(named) == 1 else ""
@@ -564,7 +633,7 @@ class Engine:
         if not mine:
             return None
         cited = (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)
-        best: tuple[Thesis, int] | None = None
+        best: tuple[Thesis, int, tuple[int, int, int, int]] | None = None
         for tid in earlier:
             t = self.store.thesis(tid)
             if t is None:
@@ -572,23 +641,35 @@ class Engine:
             held = [c for lk in self.store.links(tid) if lk.role in cited
                     and (c := self.store.claim(lk.claim_id))]
             shared = sum(1 for c in mine if any(same_sentence_reread(o, c) for o in held))
+            # the THESIS side too: how much of what it cites from this article comes back
+            here = list({c.claim_id: c for c in held
+                         if c.article_id == mine[0].article_id}.values())
+            back = sum(1 for o in here if any(same_sentence_reread(o, c) for c in mine))
             if shared and shared >= SIBLING_SHARE * len(mine) and (best is None
                                                                    or shared > best[1]):
-                best = (t, shared)
+                best = (t, shared, (shared, len(mine), back, len(here)))
         if best is None:
             return None
-        return best[0], self._identity_differences(h, seg, prod, claims, best[0]), best[1], \
-            len(mine)
+        return best[0], self._identity_differences(h, seg, prod, claims, best[0],
+                                                   best[2]), best[1], len(mine)
 
     def _identity_differences(self, h: VerifiedHypothesis, seg: str, prod: str,
-                              claims: dict[str, Claim], t: Thesis) -> tuple[list[str], list[str]]:
+                              claims: dict[str, Claim], t: Thesis,
+                              evidence: tuple[int, int, int, int] = (0, 0, 0, 0),
+                              ) -> tuple[list[str], list[str]]:
         """(where a hypothesis and a thesis are NOT the same economic claim, what is only
         labelled differently). Blocking: direction, geography, mechanism FAMILY (a label within
         one family is the same kind of economics), segment, product and time horizon. The
         value-chain NODE is not: two reads of the SAME sentences place one proposition at
         different nodes (observed 2026-10-12: a midstream capex cycle read as `energy`, then as
         `ai_infrastructure.power_grid`, 15 of 20 sentences the same) — it is stated, and the
-        thesis keeps its key."""
+        thesis keeps its key. Nor is the mechanism family when the two readings rest on the SAME
+        evidence (`evidence` = shared / this reading's / come back / the thesis's sentences, each
+        side at least SAME_EVIDENCE_SHARE): the source then shows ONE causal chain read at two
+        steps — Citi's fuel cells, "share gain" in one reading and "demand volume" in the next,
+        14 of 17 sentences the same. With evidence of their own on either side, the source may
+        hold two separately falsifiable mechanisms: a human decides, told what each would
+        mean for earnings."""
         raw = h.raw
         out: list[str] = []
         labels: list[str] = []
@@ -604,10 +685,24 @@ class Engine:
             out.append(f"geography ({norm_geo(raw.geography)} vs {t.key_geography})")
         fn, fo = self.taxonomy.family_of(raw.mechanism), self.taxonomy.family_of(t.key_mechanism)
         if fn != fo:
-            out.append(f"economic mechanism ({raw.mechanism}, {fn} vs {t.key_mechanism}, {fo})")
-        new = set(filter(None, seg.split("+")))
-        old = set(filter(None, t.key_segment.split("+")))
-        if not (new <= old or old <= new):
+            shared, n, back, held = evidence
+            if n and held and shared >= SAME_EVIDENCE_SHARE * n \
+                    and back >= SAME_EVIDENCE_SHARE * held:
+                labels.append(
+                    f"one causal chain read at two steps — {t.key_mechanism} "
+                    f"({FAMILY_CONSEQUENCE.get(fo, fo)}) and {raw.mechanism} "
+                    f"({FAMILY_CONSEQUENCE.get(fn, fn)}) on the same evidence ({shared} of this "
+                    f"reading's {n} sentences, {back} of the thesis's {held}): no second, "
+                    f"separately falsifiable mechanism in the source; the thesis keeps "
+                    f"{t.key_mechanism}")
+            else:
+                out.append(
+                    f"economic mechanism ({raw.mechanism}, {fn}: "
+                    f"{FAMILY_CONSEQUENCE.get(fn, fn)} — vs {t.key_mechanism}, {fo}: "
+                    f"{FAMILY_CONSEQUENCE.get(fo, fo)}); each reading cites evidence of its own "
+                    f"({n - shared} of {n} vs {held - back} of {held} sentences), so the source "
+                    f"may hold two separately falsifiable mechanisms")
+        if not (_nests(seg, t.key_segment) or _same_subject(seg, self.thesis_segment(t))):
             out.append(f"segment ({seg or 'none'} vs {t.key_segment or 'none'})")
         pn, po = prod or self.product_signature(h, claims), self.thesis_product(t)
         if pn and po and pn != po:
@@ -701,13 +796,15 @@ class Engine:
                              [ev.event_type])
 
     def _same_article_thesis(self, h: VerifiedHypothesis, segment: str, product: str,
-                             earlier: list[str]) -> Thesis | None:
+                             earlier: list[str], claims: dict[str, Claim]) -> Thesis | None:
         """The thesis an EARLIER VERSION of this same article created for this hypothesis, when
         the fuller version's evidence names more (or fewer) segments — a preview naming none,
         its full text naming DRAM. Every other identity dimension must match and the segment
-        sets must nest; disjoint segments are different claims and stay separate theses."""
+        sets must nest; disjoint segments are different claims and stay separate theses. When
+        the segments are not identical, the thesis must also hold one of the hypothesis's
+        sentences: a thesis with NO segment nests with every one, and would otherwise absorb any
+        story of the article on the same node, mechanism and place (2026-10-12)."""
         raw = h.raw
-        new = set(filter(None, segment.split("+")))
         for tid in earlier:
             t = self.store.thesis(tid)
             if t is None or (t.key_node, t.key_mechanism, t.key_direction.value,
@@ -715,8 +812,12 @@ class Engine:
                     raw.value_chain_node, raw.mechanism, raw.direction.value,
                     norm_geo(raw.geography), review_tag(h), product):
                 continue
-            old = set(filter(None, t.key_segment.split("+")))
-            if old <= new or new <= old:
+            # its key's segment, or its segment under today's rule (a key the earlier rule read
+            # off an incidental mention is corrected once matched — `_correct_segment`)
+            if not (_nests(segment, t.key_segment)
+                    or _same_subject(segment, self.thesis_segment(t))):
+                continue
+            if segment == t.key_segment or self._shares_evidence(h, t, claims):
                 return t
         return None
 
@@ -1567,6 +1668,35 @@ SIBLING_SHARE = 0.5
 #: 2026-10-12: fuel cells 8 of 17 claims, gas turbines 10 of 33 — vs the transformer thesis's
 #: one CCGT mention in 67 and the regulation thesis's one "utilities" in 10)
 PRODUCT_MIN_SHARE = 0.2
+#: two readings of one article rest on the SAME evidence when at least this share of EACH side's
+#: cited sentences is shared — then a different mechanism family is one causal chain read at two
+#: steps, not two theses (face validity, Citi Gridlock 2026-10-12: the fuel-cell readings, 14 of
+#: 17 sentences one way; a reading with a third of its evidence its own is a second claim to judge)
+SAME_EVIDENCE_SHARE = 2 / 3
+#: what each mechanism family means for a listed company's earnings — said when a human is asked
+#: whether two readings are one thesis or two separately falsifiable ones
+FAMILY_CONSEQUENCE = {
+    "volume": "earnings move with units or capacity sold",
+    "price_cost": "earnings move with prices or input costs",
+    "competition": "earnings move with share taken from rivals",
+    "valuation": "the share price moves with the multiple, not with earnings",
+    "policy": "rules change what can be earned",
+    "market_structure": "how the market prices the group",
+}
+
+
+def _nests(a: str, b: str) -> bool:
+    """Two segment sets ("x+y") where one contains the other — none nests with anything (a
+    preview naming no segment, its full text naming one: the same thesis)."""
+    sa, sb = set(filter(None, a.split("+"))), set(filter(None, b.split("+")))
+    return sa <= sb or sb <= sa
+
+
+def _same_subject(a: str, b: str) -> bool:
+    """A segment RE-DERIVED for a held thesis agrees only when equal, or both named and nested —
+    an unassigned one is no evidence of a shared subject (observed 2026-10-12: the transformer
+    reading matched the skilled-labour thesis, whose re-derived segment is none)."""
+    return a == b or (bool(a) and bool(b) and _nests(a, b))
 
 
 def _evidence_overlap(a: VerifiedHypothesis, b: VerifiedHypothesis) -> tuple[int, int]:

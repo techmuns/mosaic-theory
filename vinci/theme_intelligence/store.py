@@ -400,6 +400,12 @@ class Store:
             (t.thesis_id, self.thesis_key(t), t.status.value, t.current_version,
              t.model_dump_json()))
 
+    def rekey_thesis(self, t: Thesis) -> None:
+        """A thesis's identity key CORRECTED (engine._correct_segment): the same id, versions and
+        links — only the key it is found by changes. Raises on a key another thesis holds."""
+        self.conn.execute("UPDATE theses SET thesis_key=?, payload=? WHERE thesis_id=?",
+                          (self.thesis_key(t), t.model_dump_json(), t.thesis_id))
+
     def thesis(self, thesis_id: str) -> Thesis | None:
         r = self._rows("SELECT payload FROM theses WHERE thesis_id=?", [thesis_id], Thesis)
         return r[0] if r else None

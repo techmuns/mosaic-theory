@@ -367,6 +367,14 @@ class Aligning(Model):
                   period="2027")]
         if self.second.get("partial") and not first:  # re-states only c2 of the 3 it cited
             more = []
+        if self.second.get("first_more"):  # the FIRST reading cites c2-c4; the re-read only c2
+            more = [] if not first else [
+                claim("c3", "b007", "a 7% rise in reserve margins", "Reserve margins +7%",
+                      metric="reserve margin", value=7, value_text="7%", unit="%"),
+                claim("c4", "b003", "substation orders are projected to grow 12% in 2027",
+                      "Substation orders +12% in 2027", kind="forecast", epistemic="forecast",
+                      metric="substation orders", value=12, value_text="12%", unit="%",
+                      period="2027")]
         if self.second.get("extra") and not first:  # ONE sentence the first read did not cite
             more = [claim("c4", "b003", "substation orders are projected to grow 12% in 2027",
                           "Substation orders +12% in 2027", kind="forecast",
@@ -393,7 +401,8 @@ class Aligning(Model):
 
 def test_a_normal_reread_matches_the_mechanism_it_should_and_flags_the_one_it_keyed_anew(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    model = Aligning()
+    # the re-keyed transformer story brings a sentence of its OWN (c4): a second claim to judge
+    model = Aligning(second={"mechanism": "pricing_cycle", "extra": "1"})
     pipe = _pipe(tmp_path, model)
     with monkeypatch.context() as m:
         _unguarded(m)
@@ -485,8 +494,13 @@ def test_a_matched_reread_counts_a_sentence_read_twice_once(
 @pytest.mark.parametrize("second,dim", [
     ({"mechanism": "supply_constraint", "direction": "negative"}, "direction (negative vs "
                                                                    "positive)"),
-    ({"mechanism": "pricing_cycle"}, "economic mechanism (pricing_cycle, price_cost vs "
-                                     "supply_constraint, volume)"),
+    # another FAMILY with evidence of its own (c4): maybe a second, separately falsifiable
+    # mechanism — said with what each would mean for earnings
+    ({"mechanism": "pricing_cycle", "extra": "1"},
+     "economic mechanism (pricing_cycle, price_cost: earnings move with prices or input costs "
+     "— vs supply_constraint, volume: earnings move with units or capacity sold); each reading "
+     "cites evidence of its own (1 of 2 vs 0 of 1 sentences), so the source may hold two "
+     "separately falsifiable mechanisms"),
 ])
 def test_the_same_sentences_read_as_another_claim_are_held_for_review_never_merged(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, second: dict[str, str],
@@ -506,6 +520,181 @@ def test_the_same_sentences_read_as_another_claim_are_held_for_review_never_merg
     assert v is not None and v.priority.research_action is not ResearchAction.RESEARCH_NOW
     hold = next(f for f in v.priority.factors if f.factor_id == "F10_verification_hold")
     assert hold.value == "HOLD" and "identity under review" in hold.note
+
+
+@pytest.mark.parametrize("mechanism,family", [
+    ("pricing_cycle", "price_cost"),            # a shortage read as its price step
+    ("competitive_share_shift", "competition"),  # Citi's fuel cells: share gain vs volume
+])
+def test_the_same_evidence_read_as_another_step_of_the_chain_is_one_thesis(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mechanism: str, family: str) -> None:
+    """Editorial decision (2026-10-12, the two fuel-cell readings, 14 of 17 sentences shared):
+    two readings of ONE article that rest on the same evidence are one thesis — the earlier id
+    kept, its mechanism kept, the other label stated as a step of the same causal chain — unless
+    the evidence itself shows a second, separately falsifiable mechanism (the case above)."""
+    pipe = _pipe(tmp_path, Aligning(second={"mechanism": mechanism}))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    old = next(t for t in pipe.store.theses() if t.title == "Transformer shortage")
+    _ingest(pipe, reread=True)
+    assert len(pipe.store.theses()) == 2  # no second thesis, no duplicate opportunity
+    assert not [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"]
+    [match] = [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_MATCH"]
+    assert match.ref_id == old.thesis_id
+    assert "one causal chain read at two steps" in match.detail
+    assert f"{mechanism} (" in match.detail and "no second, separately falsifiable" in match.detail
+    kept = pipe.store.thesis(old.thesis_id)
+    assert kept is not None and kept.key_mechanism == old.key_mechanism == "supply_constraint"
+    for th in pipe.store.theses():
+        assert not [lk for lk in pipe.store.links(th.thesis_id)
+                    if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
+
+
+@pytest.mark.parametrize("second,code", [
+    # the same key but its segment: an earlier VERSION's thesis (one sentence shared suffices)
+    ({"mechanism": "supply_constraint"}, "SAME_ARTICLE_VERSION"),
+    ({"mechanism": "supply_constraint", "cross": "1"}, "SAME_ARTICLE_VERSION"),  # 1 of 3 only
+    # another label of the same family: matched on its sentences
+    ({"mechanism": "demand_volume_shift"}, "SAME_ARTICLE_MATCH"),
+])
+def test_a_key_read_off_an_incidental_mention_is_corrected_once_a_reread_reaches_it(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, second: dict[str, str],
+        code: str) -> None:
+    """The real transformer thesis was keyed `onsite_generation` by the earlier rule (one CCGT
+    comparison among 67 claims). Its re-read reaches it by another key: the SAME thesis is
+    updated, its key corrected to its own subject — same id, versions and evidence, the old key
+    recorded, and the old key still finds it (never a duplicate that would overwrite it). Both
+    routes compare its segment AS IT IS TODAY, never only the stale one in its key."""
+    from vinci.theme_intelligence import engine as engine_mod
+
+    pipe = _pipe(tmp_path, Aligning(cross=bool(second.pop("cross", "")), second=second))
+    real = engine_mod.segment_of
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        m.setattr(engine_mod, "segment_of",  # the EARLIER rule's reading, for this test
+                  lambda h, *a, **k: "onsite_generation" if "Transformer" in h.raw.title
+                  else real(h, *a, **k))
+        _ingest(pipe)
+    old = next(t for t in pipe.store.theses() if t.title == "Transformer shortage")
+    assert old.key_segment == "onsite_generation"
+    v1 = pipe.store.thesis_version(old.thesis_id, 1)
+    _ingest(pipe, reread=True)
+    assert len(pipe.store.theses()) == 2
+    t = pipe.store.thesis(old.thesis_id)
+    assert t is not None and t.key_segment == "grid_equipment"
+    assert t.identity.endswith("|seg:grid_equipment")
+    assert pipe.store.thesis_by_key(t.identity).thesis_id == old.thesis_id  # type: ignore[union-attr]
+    assert pipe.store.thesis_by_key(old.identity) is None
+    assert pipe.engine._by_key(old.identity).thesis_id == old.thesis_id  # type: ignore[union-attr]
+    assert pipe.store.thesis_version(old.thesis_id, 1) == v1  # history untouched
+    [ev] = [e for e in pipe.store.events(old.thesis_id) if e.event_type == "KEY_CORRECTED"]
+    assert old.identity in ev.detail and t.identity in ev.detail
+    assert [i.ref_id for i in pipe.store.issues() if i.code == "KEY_CORRECTED"] == [old.thesis_id]
+    assert [i.ref_id for i in pipe.store.issues()
+            if i.code in ("SAME_ARTICLE_VERSION", "SAME_ARTICLE_MATCH")] == [old.thesis_id]
+    assert [i.code for i in pipe.store.issues()
+            if i.code in ("SAME_ARTICLE_VERSION", "SAME_ARTICLE_MATCH")] == [code]
+
+
+def test_an_unassigned_segment_today_is_no_evidence_of_a_shared_subject(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The grid-capex thesis was keyed `grid_utilities` by an earlier reading; by today's rule
+    it names no segment. A re-read story naming ANOTHER segment on the same sentence is not
+    shown to be the same subject by that blank — held for review, never folded in."""
+    from vinci.theme_intelligence import engine as engine_mod
+
+    pipe = _pipe(tmp_path, Aligning())
+    real = engine_mod.segment_of
+
+    def read(stale: str):  # type: ignore[no-untyped-def]
+        return lambda h, *a, **k: stale if "Grid capex" in h.raw.title else real(h, *a, **k)
+
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        m.setattr(engine_mod, "segment_of", read("grid_utilities"))
+        _ingest(pipe)
+    grid = next(t for t in pipe.store.theses() if t.title == "Grid capex keeps rising")
+    assert grid.key_segment == "grid_utilities" and pipe.engine.thesis_segment(grid) == ""
+    with monkeypatch.context() as m:
+        m.setattr(engine_mod, "segment_of", read("grid_equipment"))
+        _ingest(pipe, reread=True)
+    assert not [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_VERSION"
+                and i.ref_id == grid.thesis_id]
+    sib = [i.detail for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"
+           and "Grid capex" in i.detail]
+    assert sib and "segment (grid_equipment vs grid_utilities)" in sib[0]
+
+
+def test_a_thesis_with_no_segment_never_absorbs_another_story_of_the_article(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A thesis with NO segment nests with every segment. The re-read transformer story, keyed
+    on the grid-capex thesis's node, mechanism and place, shares none of its sentences — it
+    is the transformer thesis's (whose sentence it re-states), never folded into grid capex."""
+    pipe = _pipe(tmp_path, Aligning(second={"mechanism": "capex_spending_cycle"}))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        first = _ingest(pipe)
+    by = {t.title: t for t in pipe.store.theses()}
+    grid, old = by["Grid capex keeps rising"], by["Transformer shortage"]
+    assert grid.key_segment == "" and grid.key_mechanism == "capex_spending_cycle"
+    again = _ingest(pipe, reread=True)
+    assert len(pipe.store.theses()) == 2
+    assert [i.ref_id for i in pipe.store.issues() if i.code == "SAME_ARTICLE_MATCH"] == [
+        old.thesis_id]
+    assert not [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_VERSION"]
+    claims = {c.claim_id: c for c in pipe.store.claims_for_article(first.article_id)}
+    on_grid = [claims[lk.claim_id].quote for lk in pipe.store.links(grid.thesis_id)
+               if claims[lk.claim_id].article_version_id == again.version_id]
+    assert not [q for q in on_grid if "transformer" in q]
+
+
+def test_another_family_on_part_of_the_earlier_theses_evidence_goes_to_review(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """SAME evidence means BOTH sides: the re-read cites one sentence, all of it on the earlier
+    thesis — but that thesis rests on two more the re-read leaves out. Read as another kind of
+    economics, it may be a second mechanism: held for review, never merged on one side's count."""
+    pipe = _pipe(tmp_path, Aligning(second={"mechanism": "pricing_cycle", "first_more": "1"}))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    _ingest(pipe, reread=True)
+    [sib] = [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"]
+    assert "evidence of its own (0 of 1 vs 2 of 3 sentences)" in sib.detail
+    assert not [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_MATCH"]
+
+
+def test_a_key_correction_never_takes_a_key_another_thesis_holds(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from datetime import date
+
+    from vinci.theme_intelligence import engine as engine_mod
+
+    pipe = _pipe(tmp_path, Aligning())
+    real = engine_mod.segment_of
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        m.setattr(engine_mod, "segment_of",
+                  lambda h, *a, **k: "onsite_generation" if "Transformer" in h.raw.title
+                  else real(h, *a, **k))
+        first = _ingest(pipe)
+    old = next(t for t in pipe.store.theses() if t.title == "Transformer shortage")
+    holder = old.model_copy(update={"thesis_id": "TH-HOLDER0000", "key_segment": "grid_equipment"})
+    with pipe.store.tx():
+        pipe.store.upsert_thesis(holder)
+    art = pipe.store.article(first.article_id)
+    assert art is not None
+    pipe.start_run("ingest", as_of=date(2026, 10, 12))
+    assert pipe.run is not None
+    ctx = engine_mod.ArticleContext(article=art, version=pipe.store.article_versions(
+        first.article_id)[-1], reliability="medium", run_id=pipe.run.run_id,
+        as_of=date(2026, 10, 12))
+    pipe.engine._correct_segment(ctx, old.thesis_id)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    kept = pipe.store.thesis(old.thesis_id)
+    assert kept is not None and kept.key_segment == "onsite_generation"  # left, never doubled
+    assert [i.code for i in pipe.store.issues() if i.ref_id == old.thesis_id
+            and i.code.startswith("KEY_")] == ["KEY_NOT_CORRECTED"]
 
 
 def test_one_shared_sentence_among_many_is_cross_citation_never_a_sibling(

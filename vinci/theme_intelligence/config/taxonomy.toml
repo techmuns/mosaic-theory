@@ -235,6 +235,16 @@ terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
          "onsite generation", "on-site power", "onsite power", "gas turbine", "gas turbines",
          "fuel cell", "fuel cells", "reciprocating engine", "reciprocating engines"]
 
+# The grid's own EQUIPMENT — what transformer and switchgear makers sell (2026-10-12: Citi's
+# transformer thesis was keyed on-site generation from one CCGT comparison in its evidence).
+[[segment]]
+node = "ai_infrastructure.power_grid"
+id = "grid_equipment"
+label = "Transformers / grid equipment"
+terms = ["transformer", "transformers", "switchgear", "substation", "substations",
+         "grid equipment", "high-voltage equipment", "electrical equipment", "circuit breaker",
+         "circuit breakers", "GOES", "grain-oriented electrical steel"]
+
 # PRODUCTS — finer than segments, for CLAIM-level contradiction checks (contradiction.py): two
 # claims contradict only when they speak about the same product, variable, period and geography
 # with opposite directions. Read from the verbatim quote (and the claim's metric / scope); the

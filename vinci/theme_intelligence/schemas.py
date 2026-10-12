@@ -944,6 +944,8 @@ class EvidenceGroup(Frozen):
     claim_ids: tuple[str, ...]
     status: str  # unexplained | excluded | related
     reason: str = ""
+    #: each claim's figure as the source wrote it (its statement when it has none) — one per id
+    figures: tuple[str, ...] = ()
 
 
 class SourceRiskFlag(Frozen):
@@ -995,8 +997,13 @@ class MechanismCoverage(Frozen):
                        f"“{r.sentence}” ({where})")  # whole: a cut quote misreads
         # a mechanism is argued with more than one fact; a lone uncarried figure is listed, not
         # alerted (face validity, 2026-10-12: Citi's p37 gas argument = 4 facts)
+        # the SOURCE's evidence is named (every figure, as written) and kept apart from any
+        # assessment: no thesis here carries it, so nothing has assessed it
         out += [f"page {g.page}: {len(g.claim_ids)} verified material facts no thesis carries — "
-                f"a mechanism no card holds?" for g in self.uncarried
+                f"a mechanism no card holds?"
+                + (f" Source evidence: {'; '.join(g.figures)} — verified, UNASSESSED: no thesis "
+                   f"or research action in this registry rests on it" if g.figures else "")
+                for g in self.uncarried
                 if g.status == "unexplained" and len(g.claim_ids) >= UNCARRIED_ALERT_MIN]
         return tuple(out)
 
