@@ -562,6 +562,16 @@ document is analysed without its licence confirmed.
   could invalidate it, the next check — then the nine sections in full.
 - **Audit view** (top right) shows evidence ids, engine codes and the decision trace. Print opens
   every section and prints the audit layer: the PDF is the complete record.
+- **Evidence links** (Audit view) reach their evidence: the key rows of section 04, or its
+  "Other evidence this card cites" table (counter-evidence, context). A link into a collapsed
+  section opens it.
+- **Section 05** lists the **business groups** the source names ("GPU and ASIC manufacturers")
+  apart from listed-company exposures — not companies; no ticker is implied, and they do not count
+  toward Research Now.
+- **The review queue** leads with the findings on the CURRENT cards (each shortened — the whole
+  finding is on its card line); incomplete sources, background alerts and **resolved or
+  historical** items (a figure that failed a since-corrected check; a review finding a later
+  version resolved) are collapsed below. History is never deleted: the stored records stand.
 - **Correct one card line from stored evidence** — $0, no model call — with an analyst
   correction: a JSON list of `{thesis_id, sentence_id, text, claim_ids, reason}` passed to
   `reassess --as-of YYYY-MM-DD --corrections FILE`. Each must cite verified claims the thesis

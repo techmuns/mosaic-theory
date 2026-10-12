@@ -448,6 +448,16 @@ PR (CLAUDE.md: coin-time translation).
 - **Named-index exclusion** (theme intelligence, `verify.without_named_indices`) — plain words:
   *the number inside a named index or period label ("S&P 500", "Q3", "1H27") is part of a name,
   not a figure the line asserts; every other number is still checked against its cited claims*.
+- **Business group** (theme intelligence, `cards.NamedGroup`, `named_groups`) — plain words: *a
+  group of businesses the source names ("GPU and ASIC manufacturers", "suppliers"), read verbatim
+  from paragraphs holding the thesis's verified evidence; never a company, never an exposure, no
+  ticker implied, and the research action never reads it*.
+- **Resolved finding** (theme intelligence, `report._resolved_by_relabel`) — plain words: *a card
+  review finding that questioned a fact label the line no longer carries (the re-grade relabelled
+  it SOURCE OPINION); shown on the line as history, never counted as open*.
+- **Historical figure** (theme intelligence, `superseded_items_plain`, `verify.number_passes`) —
+  plain words: *an open figure whose claim failed a number check that today's check passes; the
+  stored failure stands and the figure is still not evidence, but it is history, not an open gap*.
 
 ## Local setup (every laptop, every contributor)
 
