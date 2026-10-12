@@ -348,3 +348,15 @@ def test_one_unreadable_record_drops_its_row_not_the_day(
     assert set(_rows(snap)) == {"IT"}
     assert [n for n in snap["notes"]
             if n.startswith("RECORD WERN: bull reason amendment '2026-02-30'")]
+
+
+def test_the_command_refuses_a_back_dated_day_and_writes_nothing(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE REVIEW'S SHAPE (#708) through the real command over the real ledger: with a 2026-10-09
+    day committed, `--ref 2026-10-01` ⊖ is refused as BACK-DATED and ⊖ leaves no 2026-10-01 file —
+    a day never written could otherwise read today's pages into an earlier date."""
+    later = {"2026-10-09": {"as_of": "2026-10-09", "freshness": []}}
+    with pytest.raises(FileExistsError, match="BACK-DATED"):
+        _run(tmp_path, monkeypatch, "2026-10-01", [IT_REC], prior=later)
+    assert sorted(p.name for p in (tmp_path / "data/monitor").glob("2026-*.json")) == [
+        "2026-10-09.json"]

@@ -2289,9 +2289,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                                freshness=fresh, notes=notes, realized=realized_rows,
                                theme_falsifiers=theme_rows, panels=panel_rows)
     print(mon.render_table(snap))
-    # The CLI never rewrites a SUPERSEDED day: re-running the front of the book is routine, while
-    # replacing a day that later snapshots sit on top of would overwrite what the book recorded
-    # then. `write_snapshot` decides which case this is.
+    # The CLI never writes a day that a later day file sits after — neither a SUPERSEDED day nor a
+    # BACK-DATED one: re-running the front of the book is routine, while either would put today's
+    # pages into an earlier date. `write_snapshot` decides which case this is.
     path = mon.write_snapshot(snap, root=root)
     print(f"\nsnapshot written: {path}")
     return 0

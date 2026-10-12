@@ -936,22 +936,36 @@ def write_snapshot(
     data. Rewriting a day that later snapshots already sit on top of is the destructive case, and
     that is what this refuses.
 
-    Note that a past re-run now REPRODUCES: decisions and closes are both read as of the snapshot
-    date. So this is a guard against a future divergence (a code change, a ledger correction),
-    not against a known-bad rewrite.
+    AND A PAST RE-RUN DOES NOT REPRODUCE (2026-10-11, #707). Decisions, closes, filings and
+    evidence dates are read as of the day, but the panels, measured rows and record-read fields
+    read TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple. So this
+    guards a known lookahead, and since #708 it also refuses a BACK-DATED day that was never
+    written (below). What it cannot see is a re-cut of the NEWEST day after a later close whose
+    file does not exist yet — that needs the session calendar past the day, and is the operator's
+    rule (RUNBOOKS §j).
     """
     d = monitor_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     p = d / f"{snap.as_of.isoformat()}.json"
-    if p.exists() and not rewrite_history:
+    # A BACK-DATED DAY IS REFUSED TOO, NOT ONLY A REWRITTEN ONE (operator ruling 2026-10-12, review
+    # of #708). The guard used to fire only when `p` already existed, so `--ref 2026-10-01` between
+    # the committed 09-22 and 10-09 wrote a NEW file that read today's pages, records and cards into
+    # an October-1 day — the lookahead the ruling forbids, through the door the guard left open.
+    # Any day a later day file already sits after is refused, written or not; the front of the book
+    # (no later file) is still re-run freely. Docs: RUNBOOKS §j.
+    if not rewrite_history:
         later = sorted(f.stem for f in d.glob("*.json")
                        if _SNAPSHOT_DAY.fullmatch(f.stem) and f.stem > snap.as_of.isoformat())
         if later:
+            what = (f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
+                    f"(next: {later[0]}) — rewriting a superseded day replaces what the book "
+                    f"recorded then with what today's code and ledger produce"
+                    if p.exists() else
+                    f"{p} would be a BACK-DATED day: {len(later)} later snapshot(s) already exist "
+                    f"(next: {later[0]}), and a day written now reads today's pages, records and "
+                    f"cards into an earlier date (RUNBOOKS §j)")
             raise FileExistsError(
-                f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
-                f"(next: {later[0]}) — rewriting a superseded day replaces what the book recorded "
-                f"then with what today's code and ledger produce. Pass rewrite_history=True if "
-                f"that is genuinely what you mean.")
+                f"{what}. Pass rewrite_history=True if that is genuinely what you mean.")
     p.write_text(snap.model_dump_json(indent=2) + "\n")
     return p
 

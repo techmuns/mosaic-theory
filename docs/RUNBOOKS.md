@@ -636,11 +636,13 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
      page moved on 2026-10-11, and the book got `2026-10-09.json` beside an untouched `2026-09-22`.
    - **The newest committed day itself:** the run replaces the front of the book with the same
      session and better data, which `write_snapshot` allows.
-   - **A day with a later close after it is never re-run.** `write_snapshot` refuses only to
-     OVERWRITE such a day once a later day file exists. It does NOT refuse a past day that was never
-     written (e.g. `--ref 2026-10-01` while `2026-09-22` and `2026-10-09` are committed writes a new
-     back-dated file), nor a re-cut of the newest day before the later close has a file. The rule
-     covers both; nothing in code does.
+   - **A day with a later close after it is never re-run.**
+     - **Refused in code since #708:** any day that a later day FILE already sits after, whether it
+       is an overwrite or a back-dated day never written. `--ref 2026-10-01` while `2026-09-22` and
+       `2026-10-09` are committed stops with "BACK-DATED" and writes nothing.
+     - **Not visible to code:** a re-cut of the NEWEST day after a later close, before that close
+       has a file. Only an explicit past `--ref` reaches it (step 2's routine run never does), and
+       the window shuts once the later close's file exists. The rule covers it.
 2. **Run it with NO `--ref`** — `python -m vinci.cli monitor`. The date defaults to today: the day
    is FILED under the last session on or before it (`session_on_or_before`) and READS filings and
    evidence through today (`known_through = ref`). Passing `--ref <close>` on a later morning would
