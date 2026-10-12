@@ -234,6 +234,13 @@ def _coverage_detail(store: Store, cov: Any) -> dict[str, Any]:
                       + " · ".join(q(c) for c in g.claim_ids) for g in cov.uncarried],
         "risks": list(cov.risks),
         "unrecorded_names": list(cov.unrecorded_names),
+        "source_risks": [
+            f"page {r.page} {r.block_id}: “{clip(r.sentence, 200)}” → "
+            + (f"carried by: {r.represented_by!r}" if r.represented_by
+               else f"EXCLUDED (paragraph judged immaterial: {r.excluded})" if r.excluded
+               else f"FLAGGED on {', '.join(r.thesis_ids)}" if r.thesis_ids
+               else "ON NO CARD") for r in getattr(cov, "source_risks", ())],
+        "reverified": list(getattr(cov, "reverified", ())),
     }
 
 
@@ -1021,11 +1028,14 @@ def _coverage_html(v: dict[str, Any], print_mode: bool) -> str:
     for c in v["coverage"]:
         audit += (f'<div class="s"><b>{e(c["article_id"])}</b> — propositions '
                   f'{len(c["propositions"])}, uncarried fact group(s) {len(c["uncarried"])}, '
-                  f'risks {len(c["risks"])}, names not recorded '
-                  f'{len(c["unrecorded_names"])}</div>')
-        for label in ("propositions", "uncarried", "risks", "unrecorded_names"):
+                  f'risks {len(c["risks"])}, risks the source states '
+                  f'{len(c.get("source_risks", []))}, names not recorded '
+                  f'{len(c["unrecorded_names"])}, earlier theses re-verified '
+                  f'{len(c.get("reverified", []))}</div>')
+        for label in ("propositions", "uncarried", "risks", "source_risks", "unrecorded_names",
+                      "reverified"):
             audit += "".join(f'<div class="s note">{e(label.replace("_", " "))}: {e(x)}</div>'
-                             for x in c[label])
+                             for x in c.get(label, []))
     return ('<details class="sec"' + (" open" if print_mode else "")
             + f'><summary>Mechanism coverage — {len(alerts)} alert(s) for review</summary>'
             + body + f'<div class="aud">{audit}</div></details>')

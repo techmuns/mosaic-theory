@@ -302,6 +302,10 @@ def same_sentence_reread(held: Claim, new: Claim) -> bool:
     a, b = _nk(held.quote), _nk(new.quote)
     if a != b and (min(len(a), len(b)) < SAME_SENTENCE_MIN_CHARS or (a not in b and b not in a)):
         return False
+    if _nk(held.value_text) and _nk(held.value_text) == _nk(new.value_text):
+        # the figure as the SOURCE WROTE it: two reads scale one "~75K units" as 75,000 units and
+        # as 75 thousand units (observed 2026-10-12, Citi Gridlock re-read)
+        return True
     if held.value is not None and new.value is not None:
         return held.value == new.value
     return _nk(held.value_text) == _nk(new.value_text)

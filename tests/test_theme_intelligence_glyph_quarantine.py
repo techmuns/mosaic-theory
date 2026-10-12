@@ -336,10 +336,13 @@ class Aligning(Model):
     prompt and REUSES the grid-capex key, but keys the transformer story a new way. `cross`: the
     new thesis cites ONE earlier sentence among three of its own — cross-citation, no sibling."""
 
-    def __init__(self, cross: bool = False, orphan: bool = False) -> None:
+    def __init__(self, cross: bool = False, orphan: bool = False,
+                 second: dict[str, str] | None = None) -> None:
         super().__init__()
         self.cross = cross
         self.orphan = orphan  # the re-read answer proposes no transformer thesis at all
+        # how the re-read keys the transformer story (default: a PRICE mechanism — another family)
+        self.second = second or {"mechanism": "pricing_cycle"}
 
     def extract(self, *, system: str, user: str, tool: dict[str, Any],
                 cache: bool = False) -> dict[str, Any]:
@@ -362,6 +365,13 @@ class Aligning(Model):
                   "Substation orders +12% in 2027", kind="forecast", epistemic="forecast",
                   metric="substation orders", value=12, value_text="12%", unit="%",
                   period="2027")]
+        if self.second.get("partial") and not first:  # re-states only c2 of the 3 it cited
+            more = []
+        if self.second.get("extra") and not first:  # ONE sentence the first read did not cite
+            more = [claim("c4", "b003", "substation orders are projected to grow 12% in 2027",
+                          "Substation orders +12% in 2027", kind="forecast",
+                          epistemic="forecast", metric="substation orders", value=12,
+                          value_text="12%", unit="%", period="2027")]
         x = extraction(
             [claim("c1", "b003", grid, "Transmission capex +18% in 2026",
                    metric="transmission capex" if first else "US transmission spending",
@@ -371,8 +381,11 @@ class Aligning(Model):
             [hyp("h1", "Grid capex keeps rising", node=node, mechanism=mech, supporting=["c1"]),
              *([] if self.orphan and not first else [
                  hyp("h2", "Transformer shortage" if first else "Transformer prices re-rate",
-                     node="ai_infrastructure.power_grid",
-                     mechanism="supply_constraint" if first else "pricing_cycle",
+                     node="ai_infrastructure.power_grid" if first else self.second.get(
+                         "node", "ai_infrastructure.power_grid"),
+                     mechanism="supply_constraint" if first else self.second["mechanism"],
+                     direction="positive" if first else self.second.get("direction",
+                                                                         "positive"),
                      supporting=["c2", *(c["local_id"] for c in more)])])])
         Extraction.model_validate(x)
         return x
@@ -416,6 +429,85 @@ def test_a_normal_reread_matches_the_mechanism_it_should_and_flags_the_one_it_ke
                     if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
 
 
+@pytest.mark.parametrize("second,label", [
+    ({"mechanism": "demand_volume_shift"}, None),  # another label of the same (volume) family
+    ({"mechanism": "supply_constraint", "node": "ai_infrastructure.datacenter_physical"},
+     "different value-chain nodes (ai_infrastructure.datacenter_physical vs "
+     "ai_infrastructure.power_grid; the thesis keeps ai_infrastructure.power_grid)"),
+])
+def test_a_reread_that_relabels_the_same_economic_claim_updates_the_same_thesis(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, second: dict[str, str],
+        label: str | None) -> None:
+    """2026-10-12, the real Gridlock re-read: the transformer story's 61 of 68 sentences came back
+    under another key, and 5 more propositions under another value-chain NODE label — each had
+    created a second thesis. The same sentences + the same direction, geography, mechanism
+    family, segment, product and horizon are ONE thesis: updated, its id kept."""
+    pipe = _pipe(tmp_path, Aligning(second=second))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        first = _ingest(pipe)
+    old = next(t.thesis_id for t in pipe.store.theses() if t.title == "Transformer shortage")
+    again = _ingest(pipe, reread=True)
+    assert len(pipe.store.theses()) == 2  # no second thesis from one article
+    rid = pipe.store.runs()[-1].run_id
+    assert [c.run_id for c in pipe.store.contributions(old)].count(rid) == 1  # attributed to it
+    match = [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_MATCH"]
+    assert [i.ref_id for i in match] == [old]
+    assert (label in match[0].detail) if label else ("value-chain node" not in match[0].detail)
+    assert not [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"]
+    claims = {c.claim_id: c for c in pipe.store.claims_for_article(first.article_id)}
+    v2 = [lk for lk in pipe.store.links(old)
+          if claims[lk.claim_id].article_version_id == again.version_id]
+    assert v2 and all(lk.change_class is ChangeClass.REPEATED for lk in v2)
+    for th in pipe.store.theses():  # a re-read never confirms anything
+        assert not [lk for lk in pipe.store.links(th.thesis_id)
+                    if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
+
+
+def test_a_matched_reread_counts_a_sentence_read_twice_once(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """One sentence read again from another version is ONE piece of material evidence: the
+    re-read's one NEW sentence moves the count by one, never by two (the real re-read took the
+    low-cost US gas thesis's count 4 -> 8 with nothing new before this was pinned)."""
+    pipe = _pipe(tmp_path, Aligning(second={"mechanism": "demand_volume_shift", "extra": "1"}))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    old = next(t.thesis_id for t in pipe.store.theses() if t.title == "Transformer shortage")
+    _ingest(pipe, reread=True)
+    assert [i.ref_id for i in pipe.store.issues() if i.code == "SAME_ARTICLE_MATCH"] == [old]
+    f2 = {v.version: int(next(f.value for f in v.priority.factors
+                              if f.factor_id == "F2_material_evidence"))
+          for v in pipe.store.thesis_versions(old)}
+    assert f2 == {1: 1, 2: 2}
+
+
+@pytest.mark.parametrize("second,dim", [
+    ({"mechanism": "supply_constraint", "direction": "negative"}, "direction (negative vs "
+                                                                   "positive)"),
+    ({"mechanism": "pricing_cycle"}, "economic mechanism (pricing_cycle, price_cost vs "
+                                     "supply_constraint, volume)"),
+])
+def test_the_same_sentences_read_as_another_claim_are_held_for_review_never_merged(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, second: dict[str, str],
+        dim: str) -> None:
+    from vinci.theme_intelligence.schemas import ResearchAction, ThesisStatus
+
+    pipe = _pipe(tmp_path, Aligning(second=second))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    _ingest(pipe, reread=True)
+    new = next(t for t in pipe.store.theses() if t.title == "Transformer prices re-rate")
+    assert new.status is ThesisStatus.REVIEW_NEEDED
+    [sib] = [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"]
+    assert sib.ref_id == new.thesis_id and dim in sib.detail
+    v = pipe.store.thesis_version(new.thesis_id, new.current_version)
+    assert v is not None and v.priority.research_action is not ResearchAction.RESEARCH_NOW
+    hold = next(f for f in v.priority.factors if f.factor_id == "F10_verification_hold")
+    assert hold.value == "HOLD" and "identity under review" in hold.note
+
+
 def test_one_shared_sentence_among_many_is_cross_citation_never_a_sibling(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     pipe = _pipe(tmp_path, Aligning(cross=True))
@@ -442,6 +534,34 @@ def test_a_reread_fact_an_earlier_version_already_carries_is_no_coverage_alert(
     assert not [g for g in rep.coverage.uncarried if g.status == "unexplained"
                 and len(g.claim_ids) >= 2]
     assert not [a for a in rep.coverage.alerts if "no thesis carries" in a]
+    # … and the earlier thesis those sentences sit on is RE-VERIFIED and re-assessed (the real
+    # case: Citi's low-cost US gas thesis, WATCH -> SKIP-3 under the current timing rule)
+    old = next(t for t in pipe.store.theses() if t.title == "Transformer shortage")
+    assert rep.coverage.reverified == (old.thesis_id,)
+    ev = [e for e in pipe.store.events(old.thesis_id) if e.event_type in ("REASSESSED",
+                                                                          "ATTRIBUTION")]
+    assert ev
+    assert not [lk for lk in pipe.store.links(old.thesis_id)
+                if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
+
+
+def test_a_reread_restating_under_half_of_a_thesis_is_carried_not_reverified(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The re-read re-states ONE of the three sentences the earlier transformer thesis cites and
+    proposes nothing for it: too little to re-assess that thesis (under SIBLING_SHARE), yet the
+    sentence is still on the earlier card — carried, never an uncarried fact."""
+    pipe = _pipe(tmp_path, Aligning(orphan=True, second={"mechanism": "pricing_cycle",
+                                                         "partial": "1"}))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    again = _ingest(pipe, reread=True)
+    [rep] = pipe.store.completeness_for_run(pipe.store.runs()[-1].run_id)
+    assert rep.coverage is not None and rep.coverage.reverified == ()
+    restated = [c.claim_id for c in pipe.store.claims_for_article(again.article_id)
+                if c.article_version_id == again.version_id and c.value_text == "30 months"]
+    assert restated
+    assert not [g for g in rep.coverage.uncarried if set(restated) & set(g.claim_ids)]
 
 
 def _c(cid: str, version: str, quote: str, value: float | None, value_text: str | None, *,

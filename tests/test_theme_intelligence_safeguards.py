@@ -37,6 +37,7 @@ from vinci.theme_intelligence.schemas import (
     Epistemic,
     EvidenceDirection,
     Horizon,
+    IssueSeverity,
     QuarantinedText,
     ResearchAction,
     RetrievalState,
@@ -177,7 +178,9 @@ COVER_DOC = Hypo(slug="safeguard-coverage", publisher="Hypo Research C", publish
     ("paragraph", "Asian LNG prices did fall to around $8/MMBtu in recent years but surged to "
                   "~$20/MMBtu in the crisis."),
     ("paragraph", "Data center electricity demand rose 17% in 2025 according to the invented "
-                  "utility survey cited here.")])
+                  "utility survey cited here."),
+    ("paragraph", "Behind-the-meter installs of 100MW can be delivered in 120 days at new "
+                  "campuses, the invented survey adds.")])
 
 
 def _cover_extraction() -> dict[str, Any]:
@@ -204,10 +207,11 @@ def _cover_extraction() -> dict[str, Any]:
              mechanism="demand_volume_shift", supporting=["c3"])])
 
 
-def _covered(tmp_path: Path) -> tuple[Any, Any]:
+def _covered(tmp_path: Path, x: dict[str, Any] | None = None) -> tuple[Any, Any]:
     pipe = make_pipeline(tmp_path)
     pipe.start_run("article", as_of=AS_OF)
-    ingest(pipe, _paged(COVER_DOC, [1, 2, 3, 37, 37, 40]), _cover_extraction(), as_of=AS_OF)
+    ingest(pipe, _paged(COVER_DOC, [1, 2, 3, 37, 37, 40, 3]), x or _cover_extraction(),
+           as_of=AS_OF)
     assert pipe.run is not None
     [rep] = pipe.store.completeness_for_run(pipe.run.run_id)
     return pipe, rep
@@ -234,23 +238,119 @@ def test_verified_material_facts_no_thesis_carries_raise_an_alert_by_page(
     assert any("page 37" in a and "TH-" not in a for a in rv["coverage_alerts_plain"])
 
 
-def test_two_propositions_merged_on_one_key_with_distinct_evidence_are_flagged(
+def test_two_technologies_on_one_key_with_their_own_evidence_are_separate_theses(
         tmp_path: Path) -> None:
-    """The fuel-cell shape: one identity key, no shared evidence — merged by the identity rule,
-    never silently: the coverage report and the issue name both propositions."""
+    """The fuel-cell shape (Citi Gridlock, 2026-10-12): one identity key, no shared evidence, and
+    the evidence names different PRODUCTS (reciprocating engines vs fuel cells) — two theses, the
+    second qualified by its product; never merged. No product is special-cased."""
     pipe, rep = _covered(tmp_path)
     cov = rep.coverage
     assert cov is not None
     fates = {p.hypothesis_id: (p.fate, p.thesis_id) for p in cov.propositions}
-    assert fates["h1"][0] == "card" and fates["h2"][0] == "card"
+    assert fates["h2"][0] == "card" and fates["h3"][0] == "card"
+    assert fates["h3"][1] != fates["h2"][1]
+    fuel = pipe.store.thesis(fates["h3"][1])
+    gas = pipe.store.thesis(fates["h2"][1])
+    assert fuel is not None and fuel.key_product == "fuel_cells" and fuel.identity.endswith(
+        "|prod:fuel_cells")
+    assert gas is not None and gas.key_product == ""  # the first keeps the key it always had
+    assert not [a for a in cov.alerts if a.startswith("propositions merged")]
+    split = [i.detail for i in pipe.store.issues(run_id=pipe.run.run_id)
+             if i.code == "PRODUCT_SPLIT"]
+    assert len(split) == 1 and "(fuel_cells vs reciprocating_engines)" in split[0]
+    # the card's registry link says WHAT separates them — the product — never "a different
+    # geography (US vs US)" (the real fuel-cell card said so before this was pinned)
+    v = pipe.store.thesis_version(fuel.thesis_id, fuel.current_version)
+    assert v is not None
+    links = [s.text for s in v.content.s07_what_could_go_wrong.alternative_mechanisms
+             if s.text.startswith("Registry link") and "a different product" in s.text]
+    assert links == [s for s in links if "(fuel_cells vs reciprocating_engines)" in s] != []
+    assert gas.thesis_id in links[0]  # said on the link to the gas thesis, nowhere else
+    assert not [s.text for s in v.content.s07_what_could_go_wrong.alternative_mechanisms
+                if "(US vs US)" in s.text]
+
+
+def test_a_risk_naming_the_split_off_product_goes_with_its_thesis(tmp_path: Path) -> None:
+    """The scandium shape (Citi Gridlock, 2026-10-12): the model tied a fuel-cell supply-chain
+    risk to the gas-generation hypothesis; once fuel cells are their own thesis, the risk naming
+    them is on THAT card — never on the gas card. A risk naming neither stays where it was."""
+    x = _cover_extraction()
+    x["market_risks"] = [
+        {"statement": "Scandium supply concentration constrains SOFC production if scaled.",
+         "scope_qualification": "fuel-cell supply chain", "claim_ids": [],
+         "related_hypothesis_ids": ["h2"]},
+        {"statement": "Engine lead times could slip as campuses compete for slots.",
+         "scope_qualification": "engine supply", "claim_ids": [],
+         "related_hypothesis_ids": ["h2"]},
+        {"statement": "Recips and SOFC stacks share one constrained machining supply chain.",
+         "scope_qualification": "both technologies", "claim_ids": [],
+         "related_hypothesis_ids": ["h2"]}]
+    pipe, rep = _covered(tmp_path, x)
+    fates = {p.hypothesis_id: p.thesis_id for p in rep.coverage.propositions}
+
+    def risks(h: str) -> list[str]:
+        t = pipe.store.thesis(fates[h])
+        assert t is not None
+        v = pipe.store.thesis_version(t.thesis_id, t.current_version)
+        assert v is not None
+        return [r.text for r in v.content.s07_what_could_go_wrong.market_risks]
+
+    assert any("Scandium" in r for r in risks("h3")) and not any("Scandium" in r
+                                                                 for r in risks("h2"))
+    assert any("Engine lead times" in r for r in risks("h2"))
+    assert not any("Engine lead times" in r for r in risks("h3"))
+    # naming BOTH products: it is not the split-off product's alone — it stays where it was
+    assert any("machining" in r for r in risks("h2")) and not any("machining" in r
+                                                                  for r in risks("h3"))
+    [split] = [i.detail for i in pipe.store.issues(run_id=pipe.run.run_id)
+               if i.code == "PRODUCT_SPLIT"]
+    assert "1 market risk(s) naming fuel_cells follow it" in split
+
+
+def test_a_comparison_heavy_thesis_is_identified_by_the_product_its_statement_names() -> None:
+    """A fuel-cell thesis's evidence names CCGTs as often as fuel cells (cost comparisons; the
+    real one: 8 vs 7) — its own statement decides; the evidence count only when it names none."""
+    from vinci.theme_intelligence.config import load_taxonomy
+    from vinci.theme_intelligence.engine import Engine
+
+    eng = Engine.__new__(Engine)
+    eng.taxonomy = load_taxonomy()
+    node = "ai_infrastructure.power_grid"
+    assert eng._named_product(node, "Fuel cells gain data center share") == "fuel_cells"
+    assert eng._named_product(node, "Fuel cells gain share despite the CCGT cost edge") == ""
+    assert eng._named_product(node, "Speed-to-power drives gas generation equipment") == ""
+    assert eng._named_product(node, "Behind-the-meter power wins") == ""  # generic: not a product
+    # from the evidence: what it is ABOUT, never a passing mention (the real transformer thesis
+    # named a CCGT once in 67 claims and read as a gas-turbine thesis)
+    from tests.test_theme_intelligence_glyph_quarantine import _c
+
+    plain = [_c(f"p{i}", "AV-1", f"transformer lead times reached {30 + i} months", 30, "30")
+             for i in range(9)]
+    once = [_c("g", "AV-1", "a CCGT unit also ordered one", 1, "1")]
+    thrice = [_c(f"g{i}", "AV-1", f"CCGT order number {i} was placed", 1, "1") for i in range(3)]
+    assert eng._dominant_product(node, plain + once) == ""
+    assert eng._dominant_product(node, plain[:7] + thrice) == "gas_turbines"
+
+
+def test_one_key_with_distinct_evidence_but_no_distinguishing_product_merges_and_alerts(
+        tmp_path: Path) -> None:
+    """Without a product to tell them apart the identity rule merges them — and says so."""
+    x = _cover_extraction()
+    x["claims"].append(claim("c7", "b007", "Behind-the-meter installs of 100MW can be delivered "
+                                           "in 120 days", "100MW in 120 days", value=100,
+                             value_text="100MW", unit="MW"))
+    x["hypotheses"][2]["supporting_claim_ids"] = ["c7"]
+    x["hypotheses"][2]["bottom_line_fact"]["claim_ids"] = ["c7"]
+    x["hypotheses"][2]["title"] = "Speed-to-power wins data center share"  # names no product
+    pipe, rep = _covered(tmp_path, x)
+    cov = rep.coverage
+    assert cov is not None
+    fates = {p.hypothesis_id: (p.fate, p.thesis_id) for p in cov.propositions}
     assert fates["h3"] == ("merged", fates["h2"][1])
     merged = next(p for p in cov.propositions if p.hypothesis_id == "h3")
     assert "0 supporting claim(s) shared, 1 its own — DISTINCT EVIDENCE" in merged.detail
-    assert any(a.startswith("propositions merged: “Fuel cells gain data center share”")
+    assert any(a.startswith("propositions merged: “Speed-to-power wins data center share”")
                for a in cov.alerts)
-    same = [i.detail for i in pipe.store.issues(run_id=pipe.run.run_id)
-            if i.code == "SAME_KEY_IN_ARTICLE"]
-    assert len(same) == 1 and "Fuel cells gain data center share" in same[0]
 
 
 def test_a_carried_fact_and_a_merged_fact_raise_nothing(tmp_path: Path) -> None:
@@ -517,3 +617,172 @@ def test_a_figure_without_a_verdict_is_open_never_immaterial(tmp_path: Path) -> 
     [rep] = pipe.store.completeness_for_run(pipe.run.run_id)
     four = next(f for f in rep.figures if f.figure == "four years")
     assert four.status == "uncaptured" and four.open_cause == "no_account"
+
+
+# --- P1 · risks the source states that no model pass listed --------------------------------
+# INVENTED wording in the REAL constructions of Citi Gridlock (2026-10-12): "a portion of
+# announced capacity risks remaining 'bragawatts'" (p47), raw-material inflation that "might put
+# downward pressure on the IRR of ESS projects" (p33), "little risk of industry oversupply"
+# (p31, a risk said to be ABSENT), a sentence cut by a page break (p28)
+
+#: the real sentence is ~300 characters — an alert must carry it WHOLE (a cut quote misreads)
+IRR = ("Despite rising cost inflation in raw materials such as lithium, copper and aluminium that "
+       "might put downward pressure on the IRR of storage projects this year, bringing uncertainty "
+       "to the progress of those projects, we still expect secular demand growth for the storage "
+       "market over the medium term.")
+
+RISK_DOC = Hypo(slug="safeguard-risks", publisher="Hypo Research R", published=AS_OF, blocks=[
+    ("paragraph", "European grid operators plan to invest €40 billion in 2027 on network upgrades "
+                  "for new demand. Long connection queues and high energy costs are not easily "
+                  "resolved, so a portion of announced capacity risks remaining “bragawatts” "
+                  "rather than realised load."),
+    ("paragraph", "Storage installations rose 40% in 2025 to 90GWh across the region. " + IRR),
+    ("paragraph", "Gas engine orders reached 33.8GW in 2025 for new campuses. We see little "
+                  "risk of industry oversupply through 2030 for onsite backup and prime power."),
+    ("paragraph", "A repeat of the early-2000s gas overbuild is possible: demand expected then did "
+                  "not materialize, leaving excess capacity and a burden for ratepayers."),
+    ("paragraph", "Continued dependence on imported fuel adds headwinds for the net importers of "
+                  "the region over the decade ahead."),
+    ("paragraph", "Onsite turbines added 5GW of orders in 2025 at remote campuses. Community "
+                  "pushback over noise and air quality often brings tighter air permitting for "
+                  "the sites,"),
+    ("paragraph", "Cancellations jumped to 25 in 2025 from six in 2024, mainly due to power "
+                  "access and public pushback in some regions."),
+    ("paragraph", "Durability of long-term demand is the key consideration, because there was an "
+                  "overbuild of gas-fired generation around 2000 that later had to be written "
+                  "down."),
+    # the cleaned Gridlock run's shape: the model wrote the risk as an ALTERNATIVE MECHANISM, in
+    # fewer words than the source's sentence — carried on the card, never a duplicate line
+    ("paragraph", "Gas engine makers report that tight machining capacity at their forging "
+                  "suppliers could delay engine deliveries to new campuses well into next year, "
+                  "according to buyers surveyed for this note.")])
+
+
+def _risk_extraction() -> dict[str, Any]:
+    return extraction(
+        [claim("c1", "b001", "invest €40 billion in 2027 on network upgrades", "EU grid €40bn",
+               kind="forecast", epistemic="forecast", value=40, value_text="€40 billion",
+               unit="€bn", period="2027"),
+         claim("c2", "b002", "Storage installations rose 40% in 2025 to 90GWh",
+               "Storage +40%", value=40, value_text="40%", unit="%", period="2025"),
+         claim("c3", "b003", "Gas engine orders reached 33.8GW in 2025", "Engine orders 33.8GW",
+               value=33.8, value_text="33.8GW", unit="GW", period="2025"),
+         claim("c6", "b006", "Onsite turbines added 5GW of orders in 2025", "Turbines +5GW",
+               value=5, value_text="5GW", unit="GW", period="2025"),
+         # p14 shape: the risk sentence IS a cited piece of evidence — on the card already
+         claim("c7", "b007", "Cancellations jumped to 25 in 2025 from six in 2024, mainly due "
+                             "to power access and public pushback", "Cancellations 25",
+               value=25, value_text="25", unit="projects", period="2025"),
+         claim("c8", "b008", "written down", "Earlier gas build written down",
+               kind="assertion", epistemic="opinion")],
+        [hyp("h1", "European grid expansion", node="ai_infrastructure.power_grid",
+             mechanism="capex_spending_cycle", geography="Europe", supporting=["c1"]),
+         hyp("h2", "Storage demand accelerates", node="industrials",
+             mechanism="demand_volume_shift", geography="Global", supporting=["c2"]),
+         hyp("h3", "Onsite generation orders boom", node="ai_infrastructure.datacenter_physical",
+             mechanism="demand_volume_shift", supporting=["c3", "c6", "c7"])],
+        risks=[{"statement": "A repeat of the early-2000s gas overbuild: demand expected then "
+                             "did not materialize, leaving excess capacity and ratepayer burden",
+                "scope_qualification": "US gas generation", "claim_ids": [],
+                "related_hypothesis_ids": ["h3"]},
+               # p15 shape: the model's risk PARAPHRASES its paragraph (it cites the paragraph's
+               # claim) — the paragraph's risk sentence is carried though few words are shared
+               {"statement": "Plant buildout may outrun demand as in an earlier cycle",
+                "scope_qualification": "US gas generation", "claim_ids": ["c8"],
+                "related_hypothesis_ids": ["h3"]}])
+
+
+def _risked(tmp_path: Path) -> tuple[Any, Any, dict[str, Any]]:
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("article", as_of=AS_OF)
+    x = _risk_extraction()
+    # a SHORT generic line sharing a few words is not the source's risk (3 of 4 words shared
+    # with the bragawatts sentence — under RISK_SHARED_MIN): that sentence stays flagged
+    x["hypotheses"][0]["opposing_explanations"] = [{
+        "text": "Energy costs stay high", "provenance": "model_inference", "claim_ids": []}]
+    x["hypotheses"][2]["opposing_explanations"] = [{
+        "text": "Tight machining capacity could delay engine deliveries to new campuses",
+        "provenance": "model_inference", "claim_ids": []}]
+    ingest(pipe, _paged(RISK_DOC, [47, 33, 31, 15, 32, 28, 14, 16, 17]), x, as_of=AS_OF)
+    assert pipe.run is not None
+    [rep] = pipe.store.completeness_for_run(pipe.run.run_id)
+    assert rep.coverage is not None
+    fates = {p.hypothesis_id: p.thesis_id for p in rep.coverage.propositions}
+    cards = {}
+    for h, tid in fates.items():
+        assert tid is not None
+        v = pipe.store.thesis_version(tid, 1)
+        assert v is not None
+        cards[h] = v.content
+    return pipe, rep, cards
+
+
+def test_a_risk_the_source_states_beside_a_thesis_is_put_on_that_card_as_its_opinion(
+        tmp_path: Path) -> None:
+    pipe, rep, cards = _risked(tmp_path)
+
+    def risks(h: str) -> list[tuple[str, str]]:
+        return [(r.text, r.provenance.value) for r in cards[h].s07_what_could_go_wrong.market_risks]
+
+    brag = [r for r in risks("h1") if "bragawatts" in r[0]]
+    irr = [r for r in risks("h2") if "downward pressure on the IRR" in r[0]]
+    assert len(brag) == 1 and len(irr) == 1
+    assert brag[0][1] == irr[0][1] == "SOURCE OPINION"  # the source's opinion, never a fact
+    # only on the card whose evidence shares its paragraph — never on every card
+    assert not [r for r in risks("h1") if "IRR" in r[0]]
+    assert not [r for h in ("h2", "h3") for r in risks(h) if "bragawatts" in r[0]]
+    flagged = {i.ref_id for i in pipe.store.issues(run_id=pipe.run.run_id)
+               if i.code == "SOURCE_RISK_OMITTED"}
+    tid = {p.hypothesis_id: p.thesis_id for p in rep.coverage.propositions}
+    assert flagged == {tid["h1"], tid["h2"]}
+    alerts = [a for a in rep.coverage.alerts if "no model pass listed" in a]
+    assert any(a.startswith("page 47:") and "now in 07 of “European grid expansion”" in a
+               for a in alerts)
+    assert len(IRR) > 240 and any(f"“{IRR}”" in a for a in alerts)  # whole, never cut
+    # the placed line is checked like any card line and SURVIVES it: its scope names the page
+    # as system text — a bare "page 33" was read as a figure its claim lacks and withheld the
+    # real line (2026-10-12, Citi Gridlock's storage card)
+    withheld = [i for i in pipe.store.issues(run_id=pipe.run.run_id)
+                if i.scope == "card_sentence" and i.severity is IssueSeverity.BLOCK]
+    assert not withheld, [i.detail for i in withheld]
+
+
+def test_a_risk_said_to_be_absent_or_already_listed_is_not_flagged(tmp_path: Path) -> None:
+    _pipe, rep, _cards = _risked(tmp_path)
+    found = {r.page: r for r in rep.coverage.source_risks}
+    assert 31 not in found  # "little risk of industry oversupply": no risk stated
+    assert found[15].represented_by.startswith("proposed risk")  # the model's overbuild risk
+    # quoted as evidence on a card already (the p14 cancellations shape)
+    assert found[14].represented_by.startswith("evidence on its card")
+    # the model's risk drawn from the paragraph, in other words (the p15 durability shape)
+    assert found[16].represented_by.startswith("proposed risk drawn from this paragraph")
+    # an alternative mechanism on the card, shorter than the sentence it condenses
+    assert found[17].represented_by.startswith("alternative mechanism on its card")
+    assert not [a for a in rep.coverage.alerts if a.startswith(("page 31:", "page 15:",
+                                                                 "page 14:", "page 16:",
+                                                                 "page 17:"))]
+
+
+def test_a_risk_beside_no_thesis_or_cut_by_a_page_break_is_alerted_never_placed(
+        tmp_path: Path) -> None:
+    pipe, rep, cards = _risked(tmp_path)
+    found = {r.page: r for r in rep.coverage.source_risks}
+    assert found[32].thesis_ids == () and found[28].fragment and found[28].thesis_ids == ()
+    alerts = [a for a in rep.coverage.alerts if "no model pass listed" in a]
+    assert any(a.startswith("page 32:") and "on NO card — no thesis's evidence" in a
+               for a in alerts)
+    assert any(a.startswith("page 28:") and "cut by a page break" in a for a in alerts)
+    on_cards = [r.text for c in cards.values() for r in c.s07_what_could_go_wrong.market_risks]
+    assert not [t for t in on_cards if "imported fuel" in t or "pushback" in t]
+
+
+def test_the_same_sentence_scaled_two_ways_is_one_figure() -> None:
+    """Two reads of "EV sales reached ~75K units": 75,000 units and 75 thousand units (the real
+    Gridlock re-read, 2026-10-12) — one sentence, one figure as WRITTEN."""
+    from tests.test_theme_intelligence_glyph_quarantine import _c
+    from vinci.theme_intelligence.verify import same_sentence_reread
+
+    q = "EV sales reached ~75K units"
+    assert same_sentence_reread(_c("h", "AV-1", q, 75000, "~75K"), _c("n", "AV-2", q, 75, "~75K"))
+    assert not same_sentence_reread(_c("h", "AV-1", q, 75000, "~75K"),
+                                    _c("n", "AV-2", q, 75, "~76K"))

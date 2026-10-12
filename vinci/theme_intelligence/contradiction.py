@@ -103,7 +103,11 @@ def _matches(text: str, terms: Iterable[str]) -> list[tuple[int, int, str]]:
 def products_of(c: Claim, products: Iterable[Product]) -> set[str]:
     """The products a claim names — the MOST SPECIFIC term wins: a match inside a longer match
     ("DRAM" inside "conventional DRAM") is not counted."""
-    text = _text(c)
+    return products_in(_text(c), products)
+
+
+def products_in(text: str, products: Iterable[Product]) -> set[str]:
+    """`products_of` for a plain text (a risk statement)."""
     hits: list[tuple[int, int, str]] = []
     for p in products:
         hits += [(s, e, p.id) for s, e, _t in _matches(text, p.terms)]

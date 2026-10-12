@@ -275,16 +275,20 @@ class EvidenceRole(StrEnum):
 
 
 def identity_key(node: str, mechanism: str, direction: str, geography: str,
-                 segment: str = "", review: str = "") -> str:
+                 segment: str = "", review: str = "", product: str = "") -> str:
     """The ONE thesis identity: node | mechanism | direction | geography, plus the SEGMENT within
     the node when the taxonomy defines segments for it (evidence about NAND / SSD is not the same
-    claim as evidence about DRAM / HBM), plus a review tag for an unclassified (`other`) thesis.
-    Without a segment or review tag the key is exactly the first build's — its ids are kept."""
+    claim as evidence about DRAM / HBM), plus a review tag for an unclassified (`other`) thesis,
+    plus a PRODUCT only when one key held two technologies with distinct evidence (engine.py).
+    Without a segment, review tag or product the key is exactly the first build's — its ids are
+    kept."""
     key = f"{node}|{mechanism}|{direction}|{geography}"
     if segment:
         key += f"|seg:{segment}"
     if review:
         key += f"|review:{review}"
+    if product:
+        key += f"|prod:{product}"
     return key
 
 
@@ -757,11 +761,15 @@ class Thesis(Mutable):
     key_segment: str = ""
     #: the review tag of an unclassified (`other`) thesis — part of its identity
     key_review: str = ""
+    #: the PRODUCT that set this thesis apart from another on the same key (engine.py); "" for
+    #: every thesis that never needed it — their ids are unchanged
+    key_product: str = ""
 
     @property
     def identity(self) -> str:
         return identity_key(self.key_node, self.key_mechanism, self.key_direction.value,
-                            self.key_geography, self.key_segment, self.key_review)
+                            self.key_geography, self.key_segment, self.key_review,
+                            self.key_product)
 
 
 class ThesisVersion(Frozen):
@@ -938,6 +946,24 @@ class EvidenceGroup(Frozen):
     reason: str = ""
 
 
+class SourceRiskFlag(Frozen):
+    """A risk the SOURCE states in its own words (a verbatim sentence of a readable argument
+    paragraph) — the source's OPINION, never a measured fact — and what accounts for it."""
+    block_id: str
+    page: int | None
+    sentence: str
+    #: the proposed risk / counter-claim already carrying it (content-word overlap), or ""
+    represented_by: str = ""
+    #: when omitted: the theses whose evidence (or pass-1b account) is in the same paragraph —
+    #: the ONLY cards it is put on (07, labelled SOURCE OPINION); never every card
+    thesis_ids: tuple[str, ...] = ()
+    thesis_titles: tuple[str, ...] = ()
+    #: the completeness pass judged its paragraph immaterial: that reason (listed, not alerted)
+    excluded: str = ""
+    #: cut by a page / column break — alerted, never put on a card
+    fragment: bool = False
+
+
 class MechanismCoverage(Frozen):
     """coverage.py — every proposition and every verified material fact of the source accounted
     for: on a card, merged (stated), excluded with a reason, or an ALERT for review."""
@@ -945,6 +971,10 @@ class MechanismCoverage(Frozen):
     uncarried: tuple[EvidenceGroup, ...] = ()
     risks: tuple[str, ...] = ()  # each proposed market risk: on which card(s), or dropped why
     unrecorded_names: tuple[str, ...] = ()  # "<name> (<how the sentence names it>, <block>)"
+    #: every risk the SOURCE states in an argument paragraph, and what carries it (coverage.py)
+    source_risks: tuple[SourceRiskFlag, ...] = ()
+    #: earlier versions' theses this version re-verified and re-assessed (engine._reverify)
+    reverified: tuple[str, ...] = ()
 
     @property
     def alerts(self) -> tuple[str, ...]:
@@ -954,6 +984,15 @@ class MechanismCoverage(Frozen):
                 for p in self.propositions if p.fate == "merged" and "DISTINCT" in p.detail]
         out += [f"sibling thesis: “{p.title}” — {p.detail}"
                 for p in self.propositions if p.fate == "card" and p.detail.startswith("SIBLING")]
+        for r in self.source_risks:
+            if r.represented_by or r.excluded:
+                continue
+            where = (f"now in 07 of “{'”, “'.join(r.thesis_titles)}” as the source's opinion — "
+                     f"its paragraph holds that evidence; review" if r.thesis_titles
+                     else "on NO card — a sentence cut by a page break" if r.fragment
+                     else "on NO card — no thesis's evidence is in its paragraph")
+            out.append(f"page {r.page}: a risk the source states that no model pass listed — "
+                       f"“{r.sentence}” ({where})")  # whole: a cut quote misreads
         # a mechanism is argued with more than one fact; a lone uncarried figure is listed, not
         # alerted (face validity, 2026-10-12: Citi's p37 gas argument = 4 facts)
         out += [f"page {g.page}: {len(g.claim_ids)} verified material facts no thesis carries — "

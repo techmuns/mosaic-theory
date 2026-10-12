@@ -174,6 +174,9 @@ class RetiredSource:
 class TaxonomyItem:
     id: str
     label: str
+    #: a mechanism's FAMILY (taxonomy.toml): the kind of economics it describes, for identity
+    #: checks only — never sent to the model. A node carries none.
+    family: str = ""
 
 
 @dataclass(frozen=True)
@@ -220,6 +223,11 @@ class Taxonomy:
     @property
     def mechanism_ids(self) -> frozenset[str]:
         return frozenset(m.id for m in self.mechanisms)
+
+    def family_of(self, mechanism_id: str) -> str:
+        """The mechanism's family (taxonomy.toml); an unknown mechanism is its own family."""
+        return next((m.family or m.id for m in self.mechanisms if m.id == mechanism_id),
+                    mechanism_id)
 
     def ancestry(self, node_id: str) -> tuple[str, ...]:
         """`ai_infrastructure.memory` → (`ai_infrastructure`, `ai_infrastructure.memory`)."""
@@ -302,7 +310,8 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
 def load_taxonomy(path: Path | None = None) -> Taxonomy:
     raw = tomllib.loads((path or CONFIG_DIR / "taxonomy.toml").read_text())
     nodes = tuple(TaxonomyItem(str(n["id"]), str(n["label"])) for n in raw.get("node", []))
-    mechs = tuple(TaxonomyItem(str(m["id"]), str(m["label"])) for m in raw.get("mechanism", []))
+    mechs = tuple(TaxonomyItem(str(m["id"]), str(m["label"]), str(m.get("family", m["id"])))
+                  for m in raw.get("mechanism", []))
     if "other" not in {n.id for n in nodes} or "other" not in {m.id for m in mechs}:
         raise ConfigError("taxonomy must define an `other` node and mechanism (the REVIEW route)")
     node_ids = {n.id for n in nodes}

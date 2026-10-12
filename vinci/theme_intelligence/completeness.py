@@ -717,6 +717,17 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                    else " field by field from its malformed answer")
                 + " — not shown to later parts, so their requests stay exactly as paid; "
                   "re-ask only this part with `reask-part`")
+            if asked is not None:  # what the PAID original named and the re-ask did not again
+                try:
+                    _p, _b, gone0 = salvage_fields(CompletenessOutput, out)
+                except ValidationError:
+                    gone0 = []
+                again = {h.local_id for h in parsed.added_hypotheses}
+                gone += [LostItem(g.field, g.local_id, g.title,
+                                  note=f"named by the paid answer (malformed); its re-ask "
+                                       f"({asked.stem.rsplit('.', 1)[-1]}) did not propose it "
+                                       f"again")
+                         for g in gone0 if g.local_id not in again]
             lost += [(label, g) for g in gone]
         if b is not None:
             parsed, off = _own_reviews(parsed, b)

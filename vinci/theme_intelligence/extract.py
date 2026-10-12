@@ -712,6 +712,7 @@ class LostItem:
     field: str
     local_id: str
     title: str  # "" when the text gives none next to the id
+    note: str = ""  # why it is lost, when not "the field was malformed"
 
 
 def salvage_fields(cls: type[BaseModel], out: Any) -> tuple[Any, list[str], list[LostItem]]:

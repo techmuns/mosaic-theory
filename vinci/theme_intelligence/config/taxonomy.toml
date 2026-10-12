@@ -125,60 +125,79 @@ label = "Utilities outside AI power"
 id = "other"
 label = "None of the above — the thesis is created REVIEW_NEEDED"
 
+# MECHANISM FAMILIES — which profit mechanisms describe the same kind of economics, for
+# IDENTITY checks only (engine.py; never sent to the model): one story labelled
+# capex_spending_cycle in one answer and supply_constraint in the next is still a volume
+# story; a share shift is not. Face validity, never tuned on outcomes.
+
 [[mechanism]]
 id = "capex_spending_cycle"
+family = "volume"
 label = "Investment / capex growth or cuts change suppliers' revenue"
 
 [[mechanism]]
 id = "demand_volume_shift"
+family = "volume"
 label = "Unit demand / volume growth or decline"
 
 [[mechanism]]
 id = "pricing_cycle"
+family = "price_cost"
 label = "Contract or average selling price moves from the supply-demand balance"
 
 [[mechanism]]
 id = "supply_constraint"
+family = "volume"
 label = "Capacity or supply bottleneck limits output"
 
 [[mechanism]]
 id = "cost_inflation"
+family = "price_cost"
 label = "Input-cost changes squeeze or widen margins"
 
 [[mechanism]]
 id = "margin_expansion_adoption"
+family = "price_cost"
 label = "Margin / productivity gains from adopting a technology"
 
 [[mechanism]]
 id = "disruption_revenue_erosion"
+family = "competition"
 label = "A new technology erodes incumbents' revenue or terminal value"
 
 [[mechanism]]
 id = "valuation_dislocation"
+family = "valuation"
 label = "Prices or valuations moved without a matching change in fundamentals (indiscriminate selling or buying)"
 
 [[mechanism]]
 id = "valuation_rerating"
+family = "valuation"
 label = "Valuation recovery or re-rating as expectations change"
 
 [[mechanism]]
 id = "policy_regulation"
+family = "policy"
 label = "Policy, trade or regulatory change"
 
 [[mechanism]]
 id = "competitive_share_shift"
+family = "competition"
 label = "Market-share shift between competitors"
 
 [[mechanism]]
 id = "market_structure_risk"
+family = "market_structure"
 label = "Concentration, correlation or positioning risk at market level"
 
 [[mechanism]]
 id = "dispersion_selection"
+family = "market_structure"
 label = "Low correlation / narrow breadth widens dispersion, so sector, theme or stock selection drives returns"
 
 [[mechanism]]
 id = "other"
+family = "other"
 label = "None of the above — the thesis is created REVIEW_NEEDED"
 
 # SEGMENTS — finer identity WITHIN a node, read from the VERBATIM quotes of a hypothesis's
@@ -281,11 +300,37 @@ id = "grid_utilities"
 label = "Grid-connected utilities"
 terms = ["utility", "utilities", "ratepayer", "ratepayers", "rate base"]
 
+# On-site generation is three TECHNOLOGIES with different economics, suppliers and evidence
+# (2026-10-12: a fuel-cell share hypothesis merged into a gas-generation thesis on one key, 0 of
+# 17 supporting claims shared). The generic term covers them; a thesis whose evidence is
+# dominated by one technology is identified by it (engine.product_signature).
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "gas_turbines"
+label = "Gas turbines"
+terms = ["gas turbine", "gas turbines", "combustion turbine", "combustion turbines",
+         "aeroderivative", "aeroderivatives", "aeroderivative turbine", "aeroderivative turbines",
+         "CCGT", "CCGTs", "combined cycle", "combined-cycle", "heavy-duty turbine",
+         "heavy-duty turbines", "heavy-duty gas turbine", "heavy-duty gas turbines"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "reciprocating_engines"
+label = "Reciprocating engines"
+terms = ["reciprocating engine", "reciprocating engines", "recip", "recips", "gas engine",
+         "gas engines", "large engine", "large engines"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "fuel_cells"
+label = "Fuel cells"
+terms = ["fuel cell", "fuel cells", "SOFC", "SOFCs", "solid oxide", "solid-oxide"]
+
 [[product]]
 node = "ai_infrastructure.power_grid"
 id = "onsite_generation"
-label = "Behind-the-meter / on-site generation"
+label = "Behind-the-meter / on-site generation (generic)"
 terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
-         "onsite generation", "on-site power", "onsite power", "gas turbine", "gas turbines",
-         "fuel cell", "fuel cells", "reciprocating engine", "reciprocating engines"]
+         "onsite generation", "on-site power", "onsite power"]
+covers = ["gas_turbines", "reciprocating_engines", "fuel_cells"]
 

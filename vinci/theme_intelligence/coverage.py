@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from vinci.theme_intelligence.schemas import (
@@ -37,8 +38,15 @@ from vinci.theme_intelligence.schemas import (
     FigureCheck,
     MechanismCoverage,
     PropositionFate,
+    SourceRiskFlag,
 )
-from vinci.theme_intelligence.verify import norm_name, same_sentence_reread
+from vinci.theme_intelligence.verify import (
+    content_words,
+    norm_name,
+    overlap,
+    same_sentence_reread,
+    sentences,
+)
 
 if TYPE_CHECKING:
     from vinci.theme_intelligence.completeness import Merged
@@ -69,16 +77,163 @@ _NOT_ORG = frozenset(n.lower() for n in (
     "Citi Research", *(_MONTHS.split("|"))))
 
 
+#: How a SOURCE states a DOWNSIDE to its own argument — read from the verbatim text, never from the
+#: model. Constructions, not the bare word: "risk" is as often the argument itself ("the risks of
+#: continued dependence on imported oil" is the energy-security case) or a list item ("chip-policy
+#: risk"). Face validity (2026-10-12, Citi Gridlock): "a portion of announced capacity RISKS
+#: REMAINING 'bragawatts'", "raw-material inflation … MIGHT PUT DOWNWARD PRESSURE on the IRR of ESS
+#: projects", "demand … DID NOT MATERIALIZE", "EXECUTION RISK REMAINS", "POSE UNCERTAINTY". A bare
+#: "could lead to" is not one ("could lead to a further boom in the U.S. midstream space", p3).
+RISK_CUE = re.compile(
+    r"\b(?:risks\s+\w+ing\b|risks?\s+(?:that|remains?|persists?)\b|"
+    r"(?:there\s+is|poses?|posing|carr(?:y|ies))\s+(?:an?\s+|some\s+|the\s+)?(?:\w+\s+)?risk|"
+    r"(?:increased|increasing|rising|higher|growing|significant|material|key|execution|"
+    r"cancellation)\s+(?:\w+\s+)?risks?\b|risks?\s+to\s+(?:growth|demand|earnings|margins|our|the|"
+    r"this)\b|expos\w*\s+(?:\w+\s+){0,4}to\s+(?:\w+\s+){0,2}risks?\b|"
+    r"downward\s+pressure|headwinds?\b|(?:did|do|does|may|might|could|would)\s+not\s+"
+    r"materiali[sz]e|(?:may|might|could|would)\s+(?:also\s+)?(?:put|delay|derail|reduce|weigh|"
+    r"pressure|hurt|limit|slow|disrupt|undermine|erode|threaten)\b|overbuil[dt]|"
+    r"oversupply|excess\s+capacity|pushback|cost\s+overruns?|"
+    r"(?:creat|pos|bring|add|rais|introduc|lead)\w*\s+(?:to\s+)?(?:\w+\s+){0,3}uncertaint)",
+    re.I)
+#: a source that says a risk is ABSENT states no risk ("we see little risk of industry
+#: oversupply through 2030") — never flagged
+RISK_NEGATED = re.compile(
+    r"\b(?:little|low|limited|minimal|no|negligible|few)\s+(?:\w+\s+){0,2}risks?\b|\bde-?risk",
+    re.I)
+#: a risk sentence is REPRESENTED by a proposed risk / counter-claim / linked evidence quote
+#: sharing at least this share of its content words; a proposed risk is GROUNDED in a paragraph
+#: (and represents every risk sentence of it — one paragraph argues one risk) when it cites a
+#: claim of that paragraph or this share of its own words is in that paragraph
+RISK_REPRESENTED = 0.5
+#: a risk STATEMENT has at least this many words (a heading is not one)
+RISK_MIN_WORDS = 8
+#: a model-written line restates a source sentence when it shares at least this many content words
+#: AND RISK_REPRESENTED of the SHORTER text's — a paraphrase is shorter than the sentence it
+#: condenses ("Surging raw-material cost inflation (lithium, copper, aluminum) could pressure ESS
+#: project IRRs and progress": 9 of its 13 words in Citi's 30-word sentence, 0.69 — 0.30 of the
+#: sentence's). Evidence quotes are held to the sentence's own share: a quote may carry only the
+#: figure, not the risk clause beside it.
+RISK_SHARED_MIN = 4
+
+
+def _restates(sentence: set[str], line: set[str]) -> bool:
+    shared = len(sentence & line)
+    return bool(sentence and line) and shared >= RISK_SHARED_MIN and (
+        shared / min(len(sentence), len(line)) >= RISK_REPRESENTED)
+#: a sentence ending without terminal punctuation was cut by a page or column break — listed for
+#: review, never put on a card as if it were the source's whole statement
+_COMPLETE = re.compile(r"[.!?…][\"”’')\]]*\s*$")
+
+
+@dataclass(frozen=True)
+class SourceRisk:
+    """A risk the SOURCE states in its own words, in a readable argument paragraph."""
+    block_id: str
+    page: int | None
+    sentence: str
+    #: hypotheses whose verified evidence (or pass-1b account) is in the same paragraph
+    related: tuple[str, ...]
+    #: the proposed risk / counter-claim already carrying it, or ""
+    represented_by: str
+    #: the completeness pass judged the paragraph immaterial: its reason, or ""
+    excluded: str
+    #: cut by a page / column break (no terminal punctuation) — never put on a card
+    fragment: bool = False
+
+    @property
+    def omitted(self) -> bool:
+        return not self.represented_by and not self.excluded
+
+
+def scan_source_risks(doc: ParsedDocument, ve: VerifiedExtraction,
+                      report: CompletenessReport) -> list[SourceRisk]:
+    """Every risk the source states in a readable ARGUMENT paragraph (the completeness ledger's)
+    and whether a risk a model pass proposed, or a counter-claim, already carries it.
+    Deterministic, from the verbatim text, BEFORE any thesis is applied — pipeline.py puts an
+    omitted one on the cards of the hypotheses whose evidence shares ITS paragraph (`related`),
+    as the source's opinion; never on every card."""
+    claims = {c.claim_id: c for c in ve.verified_claims}
+    known = [f"proposed risk: {r.raw.statement}" for r in ve.risks]
+    known += [f"counter-evidence: {claims[c].quote}" for h in ve.hypotheses for c in h.counter
+              if c in claims]
+    # a card's ALTERNATIVE MECHANISM is in its 07 too (observed 2026-10-12: the cleaned Gridlock
+    # run wrote raw-material inflation on ESS returns as one — not a market risk, still carried)
+    known += [f"alternative mechanism on its card: {t.text}" for h in ve.hypotheses
+              for t in h.raw.opposing_explanations]
+    where: dict[str, set[str]] = {}
+    carried: dict[str, list[str]] = {}  # paragraph -> quotes a hypothesis cites from it
+    for h in ve.hypotheses:
+        for c in (*h.supporting, *h.dislocation, *h.catalyst, *h.counter):
+            if c in claims:
+                where.setdefault(claims[c].block_id, set()).add(h.raw.local_id)
+                carried.setdefault(claims[c].block_id, []).append(claims[c].quote)
+    hyp_ids = {h.raw.local_id for h in ve.hypotheses}
+    checks = {b.block_id: b for b in report.blocks}
+    for bid, bc in checks.items():
+        where.setdefault(bid, set()).update(i for i in bc.hypothesis_ids if i in hyp_ids)
+    blocks = {b.block_id: b for b in doc.blocks}
+    grounded: dict[str, str] = {}  # paragraph -> the proposed risk drawn from it
+    for r in ve.risks:
+        rw = content_words(r.raw.statement)
+        for bid in report.argument_blocks:
+            b = blocks.get(bid)
+            if b is not None and bid not in grounded and (
+                    any(claims[c].block_id == bid for c in r.claim_ids if c in claims)
+                    or overlap(rw, content_words(b.text)) >= RISK_REPRESENTED):
+                grounded[bid] = f"proposed risk drawn from this paragraph: {r.raw.statement}"
+    out: list[SourceRisk] = []
+    for bid in report.argument_blocks:
+        b = blocks.get(bid)
+        if b is None:
+            continue
+        for s in sentences(b.text):
+            if (not RISK_CUE.search(s) or RISK_NEGATED.search(s)
+                    or len(s.split()) < RISK_MIN_WORDS):
+                continue
+            words = content_words(s)
+            rep = next((k for k in known if _restates(words, content_words(k.partition(": ")[2]))),
+                       "")
+            rep = rep or next((f"evidence on its card: {q}" for q in carried.get(bid, ())
+                               if overlap(words, content_words(q)) >= RISK_REPRESENTED), "")
+            rep = rep or grounded.get(bid, "")
+            chk = checks.get(bid)
+            out.append(SourceRisk(
+                block_id=bid, page=b.page, sentence=s.strip(), related=tuple(sorted(where.get(
+                    bid, ()))), represented_by=rep,
+                excluded=chk.reason if chk is not None and chk.status == "immaterial" else "",
+                fragment=not _COMPLETE.search(s.strip())))
+    return out
+
+
+def _risk_flags(found: Sequence[SourceRisk], destinations: dict[str, tuple[str, str]],
+                store: Store) -> list[SourceRiskFlag]:
+    out = []
+    for r in found:
+        tids = tuple(sorted({destinations[h][0] for h in r.related if h in destinations}))
+        out.append(SourceRiskFlag(
+            block_id=r.block_id, page=r.page, sentence=r.sentence,
+            represented_by=r.represented_by, excluded=r.excluded, fragment=r.fragment,
+            thesis_ids=tids if r.omitted and not r.fragment else (),
+            thesis_titles=tuple(t.title for tid in tids if (t := store.thesis(tid)) is not None)
+            if r.omitted and not r.fragment else ()))
+    return out
+
+
 def coverage_of(*, doc: ParsedDocument, merged: Merged, ve: VerifiedExtraction,
                 report: CompletenessReport, destinations: dict[str, tuple[str, str]],
-                lost: Sequence[tuple[str, LostItem]], store: Store) -> MechanismCoverage:
+                lost: Sequence[tuple[str, LostItem]], store: Store,
+                risks_found: Sequence[SourceRisk] = (),
+                reverified: Sequence[str] = ()) -> MechanismCoverage:
     page = {b.block_id: b.page for b in doc.blocks}
     text = {b.block_id: b.text for b in doc.blocks}
     return MechanismCoverage(
         propositions=tuple(_propositions(merged, ve, destinations, lost)),
         uncarried=tuple(_uncarried(ve, report, destinations, page, store)),
         risks=tuple(_risks(merged, ve, destinations)),
-        unrecorded_names=tuple(_names(ve, text, store)))
+        unrecorded_names=tuple(_names(ve, text, store)),
+        source_risks=tuple(_risk_flags(risks_found, destinations, store)),
+        reverified=tuple(reverified))
 
 
 def _propositions(merged: Merged, ve: VerifiedExtraction, dest: dict[str, tuple[str, str]],
@@ -102,7 +257,9 @@ def _propositions(merged: Merged, ve: VerifiedExtraction, dest: dict[str, tuple[
         out.append(PropositionFate(
             hypothesis_id=item.local_id, title=item.title or "(no title in the malformed text)",
             fate="dropped",
-            detail=(f"named in completeness part {label}'s malformed {item.field} (not valid "
+            detail=(f"completeness part {label}: {item.note} — its evidence was kept (see the "
+                    f"facts below for any no thesis carries)" if item.note else
+                    f"named in completeness part {label}'s malformed {item.field} (not valid "
                     f"JSON) — its evidence was kept; re-ask only that part: reask-part --part "
                     f"{label}")))
     return out

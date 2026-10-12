@@ -547,8 +547,34 @@ def test_a_reask_sends_only_that_part_and_keeps_the_paid_original(
     for name, data in before.items():  # every paid answer kept as it was paid
         assert (tmp_path / "complete" / name).read_bytes() == data
     assert len(list((tmp_path / "complete").glob("*.reask-1.json"))) == 1
-    assert not res.lost and any("re-asked answer" in n for n in res.notes)
+    assert any("re-asked answer" in n for n in res.notes)
+    # the paid answer NAMED hx2_1; the re-asked answer proposed nothing — still accounted for,
+    # as lost with why (2026-10-12: Gridlock's regulatory-reform proposition, re-asked away)
+    assert [(lbl, it.local_id, it.title) for lbl, it in res.lost] == [
+        ("2", "hx2_1", "Charlie re-rating")]
+    assert "did not propose it again" in res.lost[0][1].note
     assert [c.label for c in res.calls if not c.cached] == ["2"]
+
+
+def test_a_reask_that_proposes_a_lost_item_again_does_not_list_it_as_lost(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    _run(doc, _MalformedPart(_pass1(bad_items=False)), tmp_path)
+    again = _MalformedPart(_pass1(bad_items=False), fixed=True)
+    good = hyp("hx2_1", "Charlie re-rating", node="ai_infrastructure",
+               mechanism="valuation_rerating", supporting=["k2_1"])
+    orig = again.extract
+
+    def _with_hyp(**k: Any) -> dict[str, Any]:
+        out = orig(**k)
+        if k["tool"]["name"] != "record_article_evidence":
+            out["added_hypotheses"] = [good]
+        return out
+
+    again.extract = _with_hyp  # type: ignore[method-assign]
+    res = _run(doc, None, tmp_path, reask="2", reask_client=again)
+    assert not [it for _l, it in res.lost if it.local_id == "hx2_1"]
 
 
 def test_a_whole_answer_is_never_re_asked(

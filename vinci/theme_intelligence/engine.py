@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
@@ -51,7 +52,13 @@ from vinci.theme_intelligence.cards import (
     with_citations,
 )
 from vinci.theme_intelligence.config import ENGINE_VERSION, STALE_AFTER_DAYS, Taxonomy
-from vinci.theme_intelligence.contradiction import AMBIGUOUS, CONTRADICTS, assess
+from vinci.theme_intelligence.contradiction import (
+    AMBIGUOUS,
+    CONTRADICTS,
+    assess,
+    products_in,
+    products_of,
+)
 from vinci.theme_intelligence.priority import ThesisState, compute_priority
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
@@ -197,10 +204,10 @@ def record_kind(h: VerifiedHypothesis, claims: dict[str, Claim]) -> tuple[Thesis
         f"transmission is tested like any other")
 
 
-def thesis_key(h: VerifiedHypothesis, segment: str = "") -> str:
+def thesis_key(h: VerifiedHypothesis, segment: str = "", product: str = "") -> str:
     raw = h.raw
     return identity_key(raw.value_chain_node, raw.mechanism, raw.direction.value,
-                        norm_geo(raw.geography), segment, review_tag(h))
+                        norm_geo(raw.geography), segment, review_tag(h), product)
 
 
 #: Regions a geography string names. "Global" overlaps every region; APAC contains its members.
@@ -322,6 +329,8 @@ class Engine:
         self.first_ingested: dict[str, datetime] = {}
         #: the last `apply`: hypothesis local id -> (thesis id, "" or how it was merged)
         self.destinations: dict[str, tuple[str, str]] = {}
+        #: the last `apply`: earlier versions' theses it re-verified and re-assessed (_reverify)
+        self.reverified: list[str] = []
 
     # -- public --------------------------------------------------------------------------------
     def apply(self, ctx: ArticleContext, ve: VerifiedExtraction,
@@ -341,6 +350,7 @@ class Engine:
         claims = {c.claim_id: c for c in ve.claims}
         mentions = {m.mention_id: m for m in ve.mentions}
         self.destinations = {}
+        self.reverified = []
 
         for h in ve.hypotheses:  # the record type is checked before any thesis is touched
             kind, why = record_kind(h, claims)
@@ -351,6 +361,7 @@ class Engine:
                                          "RECORD_KIND_CORRECTED", f"“{h.raw.title}”: {why}"))
         groups: dict[str, list[VerifiedHypothesis]] = {}
         segments: dict[str, str] = {}
+        products: dict[str, str] = {}
         # theses this article's EARLIER versions contributed to (before this version applies)
         earlier = list(dict.fromkeys(c.thesis_id for c in st.contributions(
             article_id=ctx.article.article_id)))
@@ -359,9 +370,30 @@ class Engine:
             key = thesis_key(h, seg)
             groups.setdefault(key, []).append(h)
             segments[key] = seg
+        # ONE KEY, TWO TECHNOLOGIES: a hypothesis whose evidence is all its own AND names another
+        # product than the first's is a different proposition — split, never merged (observed
+        # 2026-10-12: fuel-cell adoption merged into gas-generation equipment, 0 of 17 shared)
+        for key, hs in list(groups.items()):
+            first = self.product_signature(hs[0], claims)
+            for x in list(hs[1:]):
+                shared, distinct = _evidence_overlap(hs[0], x)
+                px = self.product_signature(x, claims)
+                if shared == 0 and distinct and px and first and px != first:
+                    k2 = thesis_key(x, segments[key], px)
+                    hs.remove(x)
+                    groups.setdefault(k2, []).append(x)
+                    segments[k2], products[k2] = segments[key], px
+                    moved = self._risks_follow_product(ve.risks, hs[0], x, first, px)
+                    st.add_issue(self._issue(
+                        ctx, "hypothesis", k2, IssueSeverity.INFO, "PRODUCT_SPLIT",
+                        f"“{x.raw.title}” and “{hs[0].raw.title}” share one identity key but no "
+                        f"supporting claim, and their evidence names different products ({px} vs "
+                        f"{first}) — separate theses"
+                        + (f"; {moved} market risk(s) naming {px} follow it" if moved else "")))
         outcomes: list[ThesisOutcome] = []
         created_now: list[str] = []
-        for key, hs in groups.items():
+        for key0, hs in groups.items():
+            key, seg, prod = key0, segments[key0], products.get(key0, "")
             h = hs[0]
             merged_notes: dict[str, str] = {}
             if len(hs) > 1:
@@ -385,21 +417,55 @@ class Engine:
                                                      for x in hs)))
             risks = [r for r in ve.risks if not r.related or h.raw.local_id in r.related]
             existing = st.thesis_by_key(key)
-            if existing is None and (prior := self._same_article_thesis(h, segments[key],
-                                                                        earlier)):
+            if existing is not None and not prod:
+                # the key is necessary, not sufficient: the thesis it names must be about the same
+                # PRODUCT, or share the source's sentences — else this is another proposition
+                pe, ph = self.thesis_product(existing), self.product_signature(h, claims)
+                if pe and ph and pe != ph and not self._shares_evidence(h, existing, claims):
+                    st.add_issue(self._issue(
+                        ctx, "hypothesis", key, IssueSeverity.INFO, "PRODUCT_SPLIT",
+                        f"“{h.raw.title}” has the key of {existing.thesis_id} “{existing.title}” "
+                        f"but its evidence names {ph}, that thesis's {pe}, and they share no "
+                        f"evidence — a separate thesis"))
+                    prod = ph
+                    key = thesis_key(h, seg, prod)
+                    existing = st.thesis_by_key(key)
+            if existing is None and (prior := self._same_article_thesis(h, seg, prod, earlier)):
                 existing = prior
                 st.add_issue(self._issue(
                     ctx, "thesis", prior.thesis_id, IssueSeverity.INFO, "SAME_ARTICLE_VERSION",
                     f"a later version of {ctx.article.article_id} names segment(s) "
-                    f"{segments[key] or 'none'}; its earlier version created this thesis "
+                    f"{seg or 'none'}; its earlier version created this thesis "
                     f"(segment {prior.key_segment or 'none'}) — updated, never a second thesis "
                     f"from one article"))
+            review = ""
+            if existing is None and (match := self._earlier_match(h, seg, prod, claims, earlier)):
+                old, (diffs, labels), shared, n = match
+                if not diffs:  # the same economic claim from the same article: update, keep its id
+                    existing = old
+                    st.add_issue(self._issue(
+                        ctx, "thesis", old.thesis_id, IssueSeverity.INFO, "SAME_ARTICLE_MATCH",
+                        f"a later version of {ctx.article.article_id} keyed “{h.raw.title}” as "
+                        f"{key}; {shared} of its {n} sentence(s) are already on this thesis and "
+                        f"direction, geography, mechanism family, segment, product and horizon "
+                        f"agree — updated, never a second thesis"
+                        + "".join(f"; {x}" for x in labels)))
+                else:  # the same sentences, a different claim on some dimension: a human decides
+                    review = (f"SIBLING of “{old.title}”: {shared} of its {n} sentence(s) were "
+                              f"already on that thesis from an earlier version of this article, "
+                              f"but it differs in {'; '.join(diffs)} — not merged, held for "
+                              f"review (never an independent research opportunity)")
             sibling = ""
             if existing is None:
-                out = self._create(ctx, key, h, claims, mentions, resolutions, risks,
-                                   segments[key])
+                out = self._create(ctx, key, h, claims, mentions, resolutions, risks, seg,
+                                   product=prod, review=review)
                 created_now.append(out.thesis_id)
-                sibling = self._same_article_sibling(ctx, out.thesis_id, key, earlier)
+                if review:
+                    sibling = review
+                    st.add_issue(self._issue(
+                        ctx, "thesis", out.thesis_id, IssueSeverity.WARN, "SAME_ARTICLE_SIBLING",
+                        f"{match[0].thesis_id if match else '?'} / {out.thesis_id} "
+                        f"({ctx.article.article_id}): {review}"))
             else:
                 out = self._update(ctx, existing, h, claims, mentions, resolutions, risks)
             outcomes.append(out)
@@ -409,34 +475,232 @@ class Engine:
         for tid in created_now:
             outcomes.extend(self._challenge_competitors(ctx, tid, claims, mentions, resolutions,
                                                         created_now))
+        # an EARLIER version's thesis this version proposed nothing for, whose sentences this
+        # version re-verifies, is kept and re-assessed — never silently left on the old reading
+        touched = {tid for tid, _ in self.destinations.values()} | set(created_now)
+        for tid in earlier:
+            t = st.thesis(tid)
+            if (tid not in touched and t is not None and t.status is not ThesisStatus.ARCHIVED
+                    and (out2 := self._reverify(ctx, t, claims)) is not None):
+                outcomes.append(out2)
         return outcomes
 
-    def _same_article_sibling(self, ctx: ArticleContext, tid: str, key: str,
-                              earlier: list[str]) -> str:
-        """A thesis a LATER version of an article just created, beside one its EARLIER version
-        created, on the same source sentences (verify.same_sentence_reread) — never merged (a
-        different identity key is a different thesis), but FLAGGED: the answer may simply have
-        keyed one story two ways. "" when there is none."""
-        st = self.store
-        new = [c for lk in st.links(tid) if (c := st.claim(lk.claim_id)) is not None]
-        for old_tid in earlier:
-            if old_tid == tid or (old := st.thesis(old_tid)) is None:
-                continue
-            olds = [c for lk in st.links(old_tid) if (c := st.claim(lk.claim_id)) is not None]
-            shared = sum(1 for c in new if any(same_sentence_reread(o, c) for o in olds))
-            if shared and shared >= SIBLING_SHARE * len(new):
-                note = (f"SIBLING of “{old.title}”: {shared} of its {len(new)} sentence(s) were "
-                        f"already on that thesis from an earlier version of this article, under "
-                        f"another identity key ({old.key_node}|{old.key_mechanism}|"
-                        f"{old.key_direction.value}|{old.key_geography} vs {key}) — not merged; "
-                        f"review whether it is one thesis")
-                st.add_issue(self._issue(ctx, "thesis", tid, IssueSeverity.WARN,
-                                         "SAME_ARTICLE_SIBLING",
-                                         f"{old_tid} / {tid} ({ctx.article.article_id}): {note}"))
-                return note
-        return ""
+    # -- identity -----------------------------------------------------------------------------
+    def product_signature(self, h: VerifiedHypothesis, claims: dict[str, Claim]) -> str:
+        """The PRODUCT a hypothesis is about (taxonomy `[[product]]` of its node, generic products
+        left out): the one its own statement names, when it names exactly one; else the one its
+        verified quotes name most ("" when none or a tie). The statement comes first because
+        evidence for one technology is often a COMPARISON with another — a fuel-cell thesis's
+        quotes name CCGTs as often as fuel cells (observed 2026-10-12: 8 vs 7)."""
+        return (self._named_product(h.raw.value_chain_node, h.raw.title)
+                or self._dominant_product(h.raw.value_chain_node,
+                                          [claims[c] for c in (*h.supporting, *h.dislocation,
+                                                               *h.catalyst) if c in claims]))
 
-    def _same_article_thesis(self, h: VerifiedHypothesis, segment: str,
+    def _risks_follow_product(self, risks: list[VerifiedRisk], kept: VerifiedHypothesis,
+                              split: VerifiedHypothesis, kept_product: str,
+                              split_product: str) -> int:
+        """A market risk the model tied to the hypothesis that KEPT the key, whose statement
+        names the split-off product and not the kept one, goes with the split-off thesis (a
+        fuel-cell supply-chain risk is not a risk to gas-turbine demand). Returns how many."""
+        prods = [p for p in self.taxonomy.products_of(kept.raw.value_chain_node) if not p.covers]
+        moved = 0
+        for r in risks:
+            if kept.raw.local_id not in r.related:
+                continue
+            named = products_in(r.raw.statement, prods)
+            if split_product in named and kept_product not in named:
+                r.related = [split.raw.local_id if i == kept.raw.local_id else i
+                             for i in r.related]
+                moved += 1
+        return moved
+
+    def thesis_product(self, t: Thesis) -> str:
+        if t.key_product:
+            return t.key_product
+        cited = (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)
+        return (self._named_product(t.key_node, t.title)
+                or self._dominant_product(t.key_node, [c for lk in self.store.links(t.thesis_id)
+                                                       if lk.role in cited
+                                                       and (c := self.store.claim(lk.claim_id))]))
+
+    def _named_product(self, node: str, text: str) -> str:
+        named = products_in(text, [p for p in self.taxonomy.products_of(node) if not p.covers])
+        return next(iter(named)) if len(named) == 1 else ""
+
+    def _dominant_product(self, node: str, claims: list[Claim]) -> str:
+        prods = [p for p in self.taxonomy.products_of(node) if not p.covers]
+        if not prods:
+            return ""
+        counts: Counter[str] = Counter()
+        n = 0
+        for c in claims:
+            if c.span_verified:
+                n += 1
+                counts.update(products_of(c, prods))
+        top = counts.most_common(2)
+        if not top or (len(top) == 2 and top[0][1] == top[1][1]) \
+                or top[0][1] < PRODUCT_MIN_SHARE * n:
+            return ""
+        return top[0][0]
+
+    def _shares_evidence(self, h: VerifiedHypothesis, t: Thesis,
+                         claims: dict[str, Claim]) -> bool:
+        held = [c for lk in self.store.links(t.thesis_id) if (c := self.store.claim(lk.claim_id))]
+        ids = {c.claim_id for c in held}
+        mine = [claims[c] for c in (*h.supporting, *h.dislocation, *h.catalyst) if c in claims]
+        return any(c.claim_id in ids or any(same_sentence_reread(o, c) for o in held)
+                   for c in mine)
+
+    def _earlier_match(self, h: VerifiedHypothesis, seg: str, prod: str,
+                       claims: dict[str, Claim],
+                       earlier: list[str],
+                       ) -> tuple[Thesis, tuple[list[str], list[str]], int, int] | None:
+        """The thesis an EARLIER version of this article created that already holds at least
+        SIBLING_SHARE of this hypothesis's sentences (the best such), with the identity
+        dimensions on which they differ — overlapping sentences alone never make them one."""
+        mine = [claims[c] for c in (*h.supporting, *h.dislocation, *h.catalyst)
+                if c in claims and claims[c].span_verified]
+        if not mine:
+            return None
+        cited = (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)
+        best: tuple[Thesis, int] | None = None
+        for tid in earlier:
+            t = self.store.thesis(tid)
+            if t is None:
+                continue
+            held = [c for lk in self.store.links(tid) if lk.role in cited
+                    and (c := self.store.claim(lk.claim_id))]
+            shared = sum(1 for c in mine if any(same_sentence_reread(o, c) for o in held))
+            if shared and shared >= SIBLING_SHARE * len(mine) and (best is None
+                                                                   or shared > best[1]):
+                best = (t, shared)
+        if best is None:
+            return None
+        return best[0], self._identity_differences(h, seg, prod, claims, best[0]), best[1], \
+            len(mine)
+
+    def _identity_differences(self, h: VerifiedHypothesis, seg: str, prod: str,
+                              claims: dict[str, Claim], t: Thesis) -> tuple[list[str], list[str]]:
+        """(where a hypothesis and a thesis are NOT the same economic claim, what is only
+        labelled differently). Blocking: direction, geography, mechanism FAMILY (a label within
+        one family is the same kind of economics), segment, product and time horizon. The
+        value-chain NODE is not: two reads of the SAME sentences place one proposition at
+        different nodes (observed 2026-10-12: a midstream capex cycle read as `energy`, then as
+        `ai_infrastructure.power_grid`, 15 of 20 sentences the same) — it is stated, and the
+        thesis keeps its key."""
+        raw = h.raw
+        out: list[str] = []
+        labels: list[str] = []
+        if t.key_review or review_tag(h):
+            out.append("an unclassified (`other`) thesis")
+        if t.key_node != raw.value_chain_node:
+            labels.append(f"the two reads place it at different value-chain nodes "
+                          f"({raw.value_chain_node} vs {t.key_node}; the thesis keeps "
+                          f"{t.key_node})")
+        if t.key_direction.value != raw.direction.value:
+            out.append(f"direction ({raw.direction.value} vs {t.key_direction.value})")
+        if not geographies_overlap(t.key_geography, norm_geo(raw.geography)):
+            out.append(f"geography ({norm_geo(raw.geography)} vs {t.key_geography})")
+        fn, fo = self.taxonomy.family_of(raw.mechanism), self.taxonomy.family_of(t.key_mechanism)
+        if fn != fo:
+            out.append(f"economic mechanism ({raw.mechanism}, {fn} vs {t.key_mechanism}, {fo})")
+        new = set(filter(None, seg.split("+")))
+        old = set(filter(None, t.key_segment.split("+")))
+        if not (new <= old or old <= new):
+            out.append(f"segment ({seg or 'none'} vs {t.key_segment or 'none'})")
+        pn, po = prod or self.product_signature(h, claims), self.thesis_product(t)
+        if pn and po and pn != po:
+            out.append(f"product ({pn} vs {po})")
+        definite = (Horizon.NEXT_2_4_QUARTERS, Horizon.LONGER_TERM)
+        if raw.horizon in definite and t.horizon in definite and raw.horizon != t.horizon:
+            out.append(f"time horizon ({raw.horizon.value} vs {t.horizon.value})")
+        return out, labels
+
+    def _reverify(self, ctx: ArticleContext, t: Thesis,
+                  claims: dict[str, Claim]) -> ThesisOutcome | None:
+        """A later version of the article re-states at least SIBLING_SHARE of the sentences this
+        thesis cites from it, though its analysis proposed nothing for them: the thesis is kept,
+        those sentences are linked as REPEATED (attribution, never a confirmation), and it is
+        RE-ASSESSED under the current rules — a new version only when the assessment changes."""
+        st = self.store
+        aid = ctx.article.article_id
+        cited = (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)
+        links = st.links(t.thesis_id)
+        own = [(lk, c) for lk in links if lk.role in cited
+               and (c := st.claim(lk.claim_id)) is not None and c.article_id == aid]
+        mine = [c for c in claims.values() if c.span_verified and c.article_id == aid
+                and c.article_version_id == ctx.version.version_id]
+        found: dict[str, LinkRole] = {}
+        restated = 0
+        for lk, old in own:
+            hit = next((c for c in mine if same_sentence_reread(old, c)), None)
+            if hit is not None:
+                restated += 1
+                found.setdefault(hit.claim_id, lk.role)
+        cid_contrib = "AC-" + _sha(ctx.version.version_id, t.thesis_id)[:14]
+        if (not own or restated < SIBLING_SHARE * len(own)
+                or any(c.contribution_id == cid_contrib for c in st.contributions(t.thesis_id))):
+            return None
+        prev_v = st.thesis_version(t.thesis_id, t.current_version)
+        assert prev_v is not None
+        held = {lk.claim_id for lk in links}
+        published = ctx.article.published_at.date() if ctx.article.published_at else ctx.as_of
+
+        def new_links(first: int) -> list[ThesisClaimLink]:
+            return [ThesisClaimLink(thesis_id=t.thesis_id, claim_id=cid, role=role,
+                                    first_version=first, change_class=ChangeClass.REPEATED,
+                                    independence_group=claims[cid].origin_id or aid)
+                    for cid, role in found.items() if cid not in held]
+
+        next_v = t.current_version + 1
+        item = ChangeItem(change_class=ChangeClass.REPEATED,
+                          text=(f"{LABEL_OPEN}re-read{LABEL_CLOSE} {restated} of the {len(own)} "
+                                f"sentence(s) this thesis cites from {aid} were re-verified in "
+                                f"version {ctx.version.version_id} ({ctx.version.parser_version}),"
+                                f" whose analysis proposed no thesis for them — kept and "
+                                f"re-assessed under the current rules; no new evidence"),
+                          provenance=Provenance.MODEL_INFERENCE,
+                          claim_ids=tuple(list(found)[:6]), article_id=aid,
+                          original_date=published.isoformat())
+        version = self._build_version(
+            ctx, t.model_copy(update={"current_version": next_v}), next_v, None, prev_v.content,
+            links + new_links(next_v), claims, {}, {}, [item],
+            f"re-read of {aid}: {restated} of {len(own)} cited sentence(s) re-verified, nothing "
+            f"new", "relative to the registry's prior version", EvidenceDirection.UNCHANGED,
+            prev_v.priority.research_action, prev_v.priority.factors, [], [], [],
+            change_summary=f"{aid}: re-verified ×{restated} (re-read) — re-assessed",
+            classes=dict.fromkeys(found, ChangeClass.REPEATED),
+            contribution=ChangeClass.REPEATED, prev_sha=prev_v.content_sha)
+        changed = (version.priority.research_action is not prev_v.priority.research_action
+                   or version.priority.rules_fired != prev_v.priority.rules_fired)
+        first = next_v if changed else t.current_version
+        contribution = ArticleThesisContribution(
+            contribution_id=cid_contrib, article_id=aid, thesis_id=t.thesis_id,
+            version=next_v if changed else None, contribution=ChangeClass.REPEATED,
+            claim_ids=tuple(found), run_id=ctx.run_id, as_of=ctx.as_of)
+        ev = self._event(ctx, t.thesis_id, next_v if changed else None,
+                         "REASSESSED" if changed else "ATTRIBUTION",
+                         f"re-read of {aid}: {restated} of {len(own)} cited sentence(s) "
+                         f"re-verified; " + (f"re-assessed {prev_v.priority.research_action.value}"
+                                             f" → {version.priority.research_action.value} under "
+                                             f"the current rules" if changed
+                                             else "assessment unchanged — no new version"))
+        with st.tx():
+            if changed:
+                st.upsert_thesis(t.model_copy(update={"current_version": next_v}))
+                st.add_thesis_version(version)
+            for lk in new_links(first):
+                st.add_link(lk)
+            st.add_contribution(contribution)
+            st.add_event(ev)
+        self.reverified.append(t.thesis_id)
+        return ThesisOutcome(t.thesis_id, t.title, False, next_v if changed else None,
+                             ChangeClass.REPEATED, version.priority.research_action,
+                             prev_v.priority.research_action, EvidenceDirection.UNCHANGED,
+                             [ev.event_type])
+
+    def _same_article_thesis(self, h: VerifiedHypothesis, segment: str, product: str,
                              earlier: list[str]) -> Thesis | None:
         """The thesis an EARLIER VERSION of this same article created for this hypothesis, when
         the fuller version's evidence names more (or fewer) segments — a preview naming none,
@@ -447,9 +711,9 @@ class Engine:
         for tid in earlier:
             t = self.store.thesis(tid)
             if t is None or (t.key_node, t.key_mechanism, t.key_direction.value,
-                             t.key_geography, t.key_review) != (
+                             t.key_geography, t.key_review, t.key_product) != (
                     raw.value_chain_node, raw.mechanism, raw.direction.value,
-                    norm_geo(raw.geography), review_tag(h)):
+                    norm_geo(raw.geography), review_tag(h), product):
                 continue
             old = set(filter(None, t.key_segment.split("+")))
             if old <= new or new <= old:
@@ -460,7 +724,8 @@ class Engine:
     def _create(self, ctx: ArticleContext, key: str, h: VerifiedHypothesis,
                 claims: dict[str, Claim], mentions: dict[str, Mention],
                 resolutions: dict[str, SecurityResolution],
-                risks: list[VerifiedRisk], segment: str = "") -> ThesisOutcome:
+                risks: list[VerifiedRisk], segment: str = "", *, product: str = "",
+                review: str = "") -> ThesisOutcome:
         raw = h.raw
         tid = thesis_id_for(key)
         other = raw.value_chain_node == "other" or raw.mechanism == "other"
@@ -472,12 +737,12 @@ class Engine:
             title=raw.title.strip(), sector=self.node_label.get(raw.value_chain_node,
                                                                 raw.value_chain_node),
             region=norm_geo(raw.geography),
-            status=ThesisStatus.REVIEW_NEEDED if other else ThesisStatus.ACTIVE,
+            status=ThesisStatus.REVIEW_NEEDED if other or review else ThesisStatus.ACTIVE,
             current_version=1, created_at=now, created_as_of=ctx.as_of,
             last_material_update=published,
             ancestry=self.taxonomy.ancestry(raw.value_chain_node),
             stance=raw.stance_in_source, horizon=raw.horizon, kind=raw.kind,
-            key_segment=segment, key_review=review_tag(h))
+            key_segment=segment, key_review=review_tag(h), key_product=product)
         assert thesis.identity == key, (thesis.identity, key)  # one identity, store and engine
         roles = self._roles(h, risks)
         links = [ThesisClaimLink(thesis_id=tid, claim_id=cid, role=role, first_version=1,
@@ -521,6 +786,8 @@ class Engine:
             events.append(self._event(ctx, tid, 1, "REVIEW_NEEDED",
                                       "taxonomy node or mechanism is `other` — a human must "
                                       "classify it; it will never merge by similarity"))
+        elif review:
+            events.append(self._event(ctx, tid, 1, "REVIEW_NEEDED", review))
         with self.store.tx():
             self.store.upsert_thesis(thesis)
             self.store.add_thesis_version(version)
@@ -844,6 +1111,10 @@ class Engine:
                 prev.s05_affected if prev else None))
         sources = self._sources(thesis.thesis_id, ctx, links, all_claims, contribution)
         hold_reasons = self._hold_reasons(links, all_claims)
+        if thesis.status is ThesisStatus.REVIEW_NEEDED and not thesis.key_review:
+            # an identity held for review is never an independent research opportunity
+            hold_reasons = [*hold_reasons, "identity under review — it may be the same thesis "
+                                           "as one an earlier version of this article created"]
 
         published = tuple((s.article_id, s.published_at.date()) for s in sources
                           if s.published_at is not None)
@@ -879,7 +1150,12 @@ class Engine:
             for lk in links:
                 c = all_claims.get(lk.claim_id)
                 if c is not None and c.span_verified:
-                    by_role.setdefault(lk.role, []).append(c)
+                    held = by_role.setdefault(lk.role, [])
+                    # one sentence read again from another version of the article is ONE piece
+                    # of evidence — never counted twice (observed 2026-10-12: a re-read took a
+                    # thesis's material evidence 4 → 8 with nothing new)
+                    if not any(same_sentence_reread(o, c) for o in held):
+                        held.append(c)
             timing_context = self._timing_context(by_role, all_claims, ctx.article.article_id)
             # the research-action gate needs the ANALYSIS text whole: a version whose only unread
             # pages are back matter BY THE DOCUMENT'S OWN CONTENTS LIST passes it, said so; it
@@ -1163,6 +1439,11 @@ class Engine:
                 diffs = claim_differences(t, o, t_windows,
                                           evidence_windows(self._evidence_of(o.thesis_id),
                                                            ctx.as_of), seg_label)
+                if t.key_product != o.key_product:  # one key, two technologies: say which
+                    pt, po = self.thesis_product(t), self.thesis_product(o)
+                    if (pt and po and pt != po) or not diffs:  # never "US vs US" for a product
+                        diffs = [*diffs, f"a different product ({pt or 'none named'} vs "
+                                         f"{po or 'none named'})"]
                 if opposite and not diffs:
                     # the same thesis claim predicted the opposite way — but a thesis is only
                     # weakened by CLAIMS that directly contradict its own (contradiction.py)
@@ -1281,6 +1562,11 @@ def _more_item(shown: int, total: int, article_id: str) -> ChangeItem:
 #: this share of its sentences already sat on that thesis (face validity, 2026-10-12: on Citi's
 #: re-read one shared sentence of twenty was cross-citation, 60 of 67 the same story re-keyed)
 SIBLING_SHARE = 0.5
+#: a product is what a thesis's evidence is ABOUT only when at least this share of its cited
+#: claims name it — a passing mention is not its subject (face validity, Citi Gridlock
+#: 2026-10-12: fuel cells 8 of 17 claims, gas turbines 10 of 33 — vs the transformer thesis's
+#: one CCGT mention in 67 and the regulation thesis's one "utilities" in 10)
+PRODUCT_MIN_SHARE = 0.2
 
 
 def _evidence_overlap(a: VerifiedHypothesis, b: VerifiedHypothesis) -> tuple[int, int]:

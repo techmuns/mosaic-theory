@@ -51,7 +51,7 @@ from vinci.theme_intelligence.config import (
     SourceConfig,
     Taxonomy,
 )
-from vinci.theme_intelligence.coverage import coverage_of
+from vinci.theme_intelligence.coverage import SourceRisk, coverage_of, scan_source_risks
 from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
 from vinci.theme_intelligence.engine import ArticleContext, Engine, ThesisOutcome
 from vinci.theme_intelligence.extract import (
@@ -60,6 +60,7 @@ from vinci.theme_intelligence.extract import (
     ExtractionResult,
     InvalidAnswerError,
     ToolClient,
+    XRisk,
     cost_of,
     run_extraction,
 )
@@ -90,8 +91,11 @@ from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.verify import (
     ReviewOutcome,
+    VerifiedExtraction,
+    VerifiedRisk,
     deterministic_card_checks,
     norm_name,
+    passage_claim,
     review_card,
     verify_extraction,
 )
@@ -538,15 +542,26 @@ class Pipeline:
                             f"{m.name_as_written}: {type(exc).__name__}: {str(exc)[:120]}")
         ctx = ArticleContext(article=article, version=version, reliability=reliability,
                              run_id=self.run.run_id, as_of=as_of)
+        # risks the SOURCE states that no model pass listed: on the cards of the hypotheses whose
+        # evidence shares their paragraph, as the source's opinion (coverage.py)
+        risks_found = scan_source_risks(doc, ve, report)
+        self._place_source_risks(ve, risks_found, doc, aid, version.version_id)
         outcomes = self.engine.apply(ctx, ve, resolutions)
         # every proposition and verified material fact accounted for (coverage.py) — alerts are
         # WARN issues for review; nothing here creates or merges a thesis
         cov = coverage_of(doc=doc, merged=merged, ve=ve, report=report,
                           destinations=self.engine.destinations,
-                          lost=comp.lost if comp else [], store=self.store)
+                          lost=comp.lost if comp else [], store=self.store,
+                          risks_found=risks_found, reverified=self.engine.reverified)
         report = report.model_copy(update={"coverage": cov})
         for alert in cov.alerts:
             self._issue("article", aid, IssueSeverity.WARN, "MECHANISM_COVERAGE", alert)
+        for r in cov.source_risks:  # each card it was put on carries the review flag
+            for tid in r.thesis_ids:
+                self._issue("thesis", tid, IssueSeverity.WARN, "SOURCE_RISK_OMITTED",
+                            f"page {r.page} ({r.block_id}) of {aid}: “{r.sentence}” — a risk "
+                            f"the source states beside this thesis's evidence that no model pass "
+                            f"listed; now in 07 as SOURCE OPINION — review")
         for name in cov.unrecorded_names:
             self._issue("article", aid, IssueSeverity.INFO, "NAMED_NOT_RECORDED",
                         f"{name} — named in a cited paragraph, not recorded as a mention")
@@ -571,6 +586,36 @@ class Pipeline:
         return ArticleResult(url, "PARTIAL_PROCESSED" if state is RetrievalState.PARTIAL
                              else "PROCESSED", aid, version.version_id, outcomes,
                              extraction_cost=xres.cost_usd)
+
+    def _place_source_risks(self, ve: VerifiedExtraction, found: list[SourceRisk],
+                            doc: ParsedDocument, aid: str, version_id: str) -> None:
+        """An OMITTED source risk (no proposed risk or counter-claim carries it; its paragraph not
+        judged immaterial) whose paragraph holds a hypothesis's evidence becomes a market risk of
+        THAT hypothesis only, citing its own verbatim sentence as SOURCE OPINION — never a
+        measured fact, never on every card. One with no such hypothesis stays an alert."""
+        assert self.run is not None
+        blocks = {b.block_id: b for b in doc.blocks}
+        for r in found:
+            if not r.omitted or r.fragment or not r.related or r.block_id not in blocks:
+                continue
+            pc = passage_claim(blocks[r.block_id], r.sentence, article_id=aid,
+                               article_version_id=version_id, origin_id=None,
+                               run_id=self.run.run_id)
+            if not pc.span_verified:
+                continue
+            pc = pc.model_copy(update={
+                "verification_notes": ("risk scan: a verbatim article sentence stating a risk "
+                                       "no model pass listed — the source's opinion",),
+                "extraction_id": f"RISKSCAN-{self.run.run_id}"})
+            if all(c.claim_id != pc.claim_id for c in ve.claims):
+                ve.claims.append(pc)
+            ve.risks.append(VerifiedRisk(
+                # the scope is SYSTEM-composed: ⟨…⟩, never read as a figure the line asserts
+                # (a bare "page 33" withheld the real line as a number its claim lacks)
+                raw=XRisk(statement=r.sentence,
+                          scope_qualification=f"⟨the source's own words, page {r.page} — a risk "
+                                              f"no model pass listed (risk scan)⟩"),
+                claim_ids=[pc.claim_id], related=list(r.related)))
 
     def _budget_held(self, url: str, aid: str, version_id: str,
                      exc: BudgetExceeded) -> ArticleResult:
