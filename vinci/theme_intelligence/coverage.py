@@ -252,6 +252,14 @@ def _propositions(merged: Merged, ve: VerifiedExtraction, dest: dict[str, tuple[
             detail=(f"not verified ({why[0].code} — see the run's issues)" if why
                     else "not verified — no thesis was applied for it")))
     for label, item in lost:
+        if item.field == "hypotheses":  # pass 1's own answer (a salvaged extraction)
+            lost_why = item.note or "the text is not valid JSON even after deletion-only repair"
+            out.append(PropositionFate(
+                hypothesis_id=item.local_id, title=item.title or "(no title in the malformed text)",
+                fate="dropped",
+                detail=(f"{label}: named in the answer's malformed hypotheses and not recoverable "
+                        f"without guessing ({lost_why}) — its evidence was kept; REVIEW REQUIRED")))
+            continue
         if item.field != "added_hypotheses":
             continue
         out.append(PropositionFate(

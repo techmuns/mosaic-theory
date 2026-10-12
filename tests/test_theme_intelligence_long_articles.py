@@ -44,6 +44,7 @@ from vinci.theme_intelligence.extract import (
     Extraction,
     InvalidAnswerError,
     run_extraction,
+    salvage_fields,
     validate_items,
 )
 from vinci.theme_intelligence.pipeline import Pipeline
@@ -179,61 +180,134 @@ def test_a_clean_answer_drops_nothing_and_a_malformed_top_level_still_fails_loud
 
 def _broken_like_live() -> dict[str, Any]:
     """The live failure's shape (2026-10-10, a SemiAnalysis extraction): `hypotheses` came back as
-    TEXT — and broken JSON at that (a stray "{" where a property name belongs), so nothing can
-    decode it without guessing."""
+    TEXT — and broken JSON at that (a stray "{" where a property name belongs)."""
     ans = _pass1(bad_items=False)
     ans["hypotheses"] = ('[{"local_id": "h1", "bottom_line_fact": {"text": "t", "claim_ids": '
                          '["c1"]}, {"bottom_line_inference": {"text": "i"}}]')
     return ans
 
 
-def test_an_answer_failing_at_the_top_level_is_set_aside_and_asked_once_more(
+def _slipped(slip: str) -> dict[str, Any]:
+    """The valid answer with `hypotheses` written as TEXT carrying ONE slip — the two live shapes
+    of the pilot's four paid J.P. Morgan answers (2026-10-12), or a shape outside them."""
+    ans = _pass1(bad_items=False)
+    h = ans["hypotheses"][0]
+    if slip == "unkeyed_bad_item":  # mendable text, but the item it gives fails its schema
+        h["horizon"], slip = "eventually", "unkeyed"
+    text = json.dumps([h])
+    fact = f'"bottom_line_fact": {json.dumps(h["bottom_line_fact"])}'
+    chain = f'"transmission_chain": {json.dumps(h["transmission_chain"])}'
+    assert fact in text and chain in text
+    if slip == "unkeyed":  # a second bottom line with no property name (3 of the 4 answers)
+        extra = {"text": "A second bottom line written without its property name.",
+                 "provenance": "source_stated", "claim_ids": ["c1"]}
+        text = text.replace(fact, f"{fact}, {json.dumps(extra)}")
+    elif slip == "stray_brace":  # the item closed before its remaining properties (1 of the 4)
+        text = text.replace(chain, chain + "}")
+    elif slip == "repeats":  # mending would give a property twice — refused, never overwritten
+        text = text.replace(chain, chain + '}, "title": "a second title"')
+    elif slip == "truncated":  # not one of the two shapes: nothing is guessed at
+        text = text[:len(text) // 2]
+    ans["hypotheses"] = text
+    return ans
+
+
+def _extract(fake: Any, cache: Path) -> Any:
+    return run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
+                          taxonomy=load_taxonomy(), client=fake, cache_dir=cache)
+
+
+@pytest.mark.parametrize("slip", ["unkeyed", "stray_brace"])
+def test_both_live_slips_are_mended_by_deletion_alone_to_the_original_hypothesis(
+        slip: str) -> None:
+    """The two shapes of all four paid J.P. Morgan answers: deleting the unkeyed value, or the
+    stray brace, gives back EXACTLY the hypothesis the answer meant — nothing inserted, and every
+    other field kept."""
+    want = Extraction.model_validate(_pass1(bad_items=False))
+    got, notes, lost = salvage_fields(Extraction, _slipped(slip), repair=True)
+    assert [h.model_dump() for h in got.hypotheses] == [h.model_dump() for h in want.hypotheses]
+    assert got.claims == want.claims and got.mentions == want.mentions and lost == []
+    mended = next(n for n in notes if n.startswith("hypotheses:"))
+    assert "RECOVERED by deletion only" in mended
+    if slip == "unkeyed":  # the deleted value is NAMED, its opening words kept for the reader
+        assert "deleted an unkeyed object" in mended and "A second bottom line" in mended
+    else:
+        assert "deleted a stray '}'" in mended
+    plain, _n, _l = salvage_fields(Extraction, _slipped(slip))  # completeness parts: unchanged
+    assert plain.hypotheses == []
+
+
+@pytest.mark.parametrize("slip", ["truncated", "repeats"])
+def test_a_slip_outside_the_two_shapes_is_discarded_whole_and_the_hypothesis_named_lost(
+        slip: str) -> None:
+    got, notes, lost = salvage_fields(Extraction, _slipped(slip), repair=True)
+    assert got.hypotheses == [] and len(got.claims) == 1  # the evidence is kept
+    assert [(li.field, li.local_id, li.title) for li in lost] == [
+        ("hypotheses", "h1", "Unit revenue up-cycle")]
+    assert any("the whole field discarded" in n for n in notes)
+
+
+def test_a_mended_item_that_still_fails_its_schema_is_named_lost() -> None:
+    got, _notes, lost = salvage_fields(Extraction, _slipped("unkeyed_bad_item"), repair=True)
+    assert got.hypotheses == [] and len(got.claims) == 1
+    assert [(li.local_id, li.title, li.note) for li in lost] == [
+        ("h1", "Unit revenue up-cycle",
+         "recovered from the malformed text, but the item fails its schema")]
+
+
+def test_the_2026_10_10_shape_needs_an_insertion_and_is_never_mended() -> None:
+    """Its item is never closed: only an INSERTED brace would mend it — refused, the hypothesis
+    named lost, the rest of the answer kept."""
+    got, notes, lost = salvage_fields(Extraction, _broken_like_live(), repair=True)
+    assert got.hypotheses == [] and len(got.claims) == 1
+    assert [(li.local_id, li.note) for li in lost] == [("h1", "")]
+    assert any("the whole field discarded" in n for n in notes)
+
+
+def test_a_malformed_answer_is_salvaged_never_asked_again_and_replays_at_no_cost(
         tmp_path: Path) -> None:
-    fake = FakeLlm([_broken_like_live(), _pass1(bad_items=False)])
-    got = run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
-                         taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
-    assert fake.calls == ["extract", "extract"] and not got.cached
-    assert len(got.extraction.hypotheses) == 1  # the re-ask's answer, never a repaired one
-    assert len(got.set_aside) == 1
-    note, usage = got.set_aside[0]
-    assert "set aside as" in note and "asked once more" in note and usage is not None
-    kept = sorted(x.name for x in (tmp_path / "extract").iterdir())
-    assert len(kept) == 2 and any(".invalid-1.json" in k for k in kept)  # kept for the record
-    again = FakeLlm(_broken_like_live())  # a replay reads the good answer: nothing re-paid
-    replay = run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
-                            taxonomy=load_taxonomy(), client=again, cache_dir=tmp_path)
-    assert again.calls == [] and replay.cached and replay.set_aside == []
+    """Pilot 2026-10-12: the identical re-ask reproduced the identical slip 4 of 4 times and the
+    article was lost. Now ONE call; the paid answer is kept as returned and salvaged."""
+    fake = FakeLlm([_slipped("unkeyed"), _pass1(bad_items=False)])
+    got = _extract(fake, tmp_path)
+    assert fake.calls == ["extract"] and not got.cached and got.usage is not None
+    assert len(got.extraction.hypotheses) == 1 and got.lost == []
+    assert got.salvaged[0].startswith("the answer failed its schema at the top level")
+    assert any("deleted an unkeyed object" in n for n in got.salvaged)
+    kept = list((tmp_path / "extract").iterdir())
+    on_disk = json.loads(kept[0].read_text())["output"]["hypotheses"]
+    assert len(kept) == 1 and on_disk == _slipped("unkeyed")["hypotheses"]  # as paid, unmended
+    again = FakeLlm(_pass1(bad_items=False))
+    replay = _extract(again, tmp_path)
+    assert again.calls == [] and replay.cached and replay.salvaged == got.salvaged
 
 
-def test_a_second_failure_fails_loud_with_both_calls_costed(tmp_path: Path) -> None:
-    fake = FakeLlm(_broken_like_live())
+def test_an_answer_that_is_not_an_object_fails_loud_with_its_one_call_costed(
+        tmp_path: Path) -> None:
+    fake = FakeLlm([["not", "an", "object"]])  # type: ignore[list-item]
     with pytest.raises(InvalidAnswerError) as err:
-        run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
-                       taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
-    assert fake.calls == ["extract", "extract"]  # asked once more, never a third time
-    assert len(err.value.usages) == 2 and all(u for u in err.value.usages)
-    assert len(list((tmp_path / "extract").glob("*.invalid-*.json"))) == 2
+        _extract(fake, tmp_path)
+    assert fake.calls == ["extract"] and len(err.value.usages) == 1 and err.value.usages[0]
+    good = FakeLlm(_pass1(bad_items=False))  # the same request is never paid for again
+    with pytest.raises(InvalidAnswerError) as cached:
+        _extract(good, tmp_path)
+    assert good.calls == [] and cached.value.usages == []
 
 
-def test_a_cached_invalid_answer_is_set_aside_and_asked_again(tmp_path: Path) -> None:
-    """An answer cached by a run before this fix (written before validation) must not fail the
-    article on every replay: it is set aside — paid earlier, so no cost this run — and asked
-    again; with no model client the refusal is loud."""
-    fake = FakeLlm(_broken_like_live())
-    with pytest.raises(InvalidAnswerError):
-        run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
-                       taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
-    for f in (tmp_path / "extract").glob("*.invalid-2.json"):  # restore one as a plain cache entry
-        f.rename(f.with_name(f.name.replace(".invalid-2.json", ".json")))
-    with pytest.raises(InvalidAnswerError) as no_client:
-        run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
-                       taxonomy=load_taxonomy(), client=None, cache_dir=tmp_path)
-    assert no_client.value.usages == []
-    good = FakeLlm(_pass1(bad_items=False))
-    got = run_extraction(LONG.doc(), publisher="P", as_of=AS_OF.isoformat(),
-                         taxonomy=load_taxonomy(), client=good, cache_dir=tmp_path)
-    assert good.calls == ["extract"] and len(got.extraction.hypotheses) == 1
-    assert [u for _, u in got.set_aside] == [None]  # paid by the earlier run
+def test_answers_an_earlier_run_set_aside_are_salvaged_never_paid_for_again(
+        tmp_path: Path) -> None:
+    """Before this change a refused answer was set aside as `<key>.invalid-N.json` and the request
+    re-asked — the pilot holds four such paid answers. A request with set-aside answers and no live
+    one salvages the newest that can be salvaged, with no model client at all."""
+    _extract(FakeLlm(_slipped("stray_brace")), tmp_path)
+    live = next((tmp_path / "extract").iterdir())
+    live.rename(live.with_name(live.stem + ".invalid-1.json"))
+    newest = live.with_name(live.stem + ".invalid-2.json")
+    newest.write_text(json.dumps({"model": "claude-opus-4-8", "prompt_version": "p",
+                                  "usage": None, "output": ["not", "an", "object"]}))
+    got = _extract(None, tmp_path)  # no client: nothing can be paid for
+    assert got.cached and len(got.extraction.hypotheses) == 1
+    assert ".invalid-1.json" in got.salvaged[0] and "not paid again" in got.salvaged[0]
 
 
 # --- 2. the completeness pass in parts --------------------------------------------------------
@@ -388,7 +462,7 @@ def test_a_feed_host_article_is_filed_under_its_channels_publisher_end_to_end(
     assert "SemiAnalysis" in card.read_text()
 
 
-# --- 5. end to end: a set-aside answer is costed and the article processed ---------------------
+# --- 5. end to end: a salvaged answer is costed once and the article processed ----------------
 
 def _pipe_with(tmp_path: Path, fake: FakeLlm) -> Pipeline:
     resolver = SecResolver(tmp_path / "sec", http=FrozenSecHttp(JPM_DIR))  # type: ignore[arg-type]
@@ -396,30 +470,50 @@ def _pipe_with(tmp_path: Path, fake: FakeLlm) -> Pipeline:
                     client=fake, resolver=resolver, review=False)  # type: ignore[arg-type]
 
 
-def test_a_set_aside_answer_is_costed_and_the_article_processed_end_to_end(
-        tmp_path: Path) -> None:
-    pipe = _pipe_with(tmp_path, FakeLlm([_broken_like_live(), _pass1(bad_items=False)]))
+def _process(pipe: Pipeline) -> str:
     run = pipe.start_run("article", as_of=AS_OF)
     doc = LONG.doc()
     pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
                           as_of=AS_OF, publisher_override=LONG.publisher)
+    return run.run_id
+
+
+def test_a_salvaged_answer_is_costed_once_and_the_article_processed_end_to_end(
+        tmp_path: Path) -> None:
+    pipe = _pipe_with(tmp_path, FakeLlm([_slipped("stray_brace"), _pass1(bad_items=False)]))
+    run_id = _process(pipe)
     assert len(pipe.store.theses()) == 1
-    issues = [i for i in pipe.store.issues(run_id=run.run_id) if i.code == "ANSWER_SET_ASIDE"]
-    assert len(issues) == 1 and issues[0].severity is IssueSeverity.WARN
-    calls = pipe.store.llm_calls(run.run_id)
-    assert sorted(c["purpose"] for c in calls) == ["complete", "extract", "extract-invalid"]
-    assert next(c for c in calls if c["purpose"] == "extract-invalid")["cost_usd"] > 0
+    salvaged = [i for i in pipe.store.issues(run_id=run_id) if i.code == "ANSWER_SALVAGED"]
+    assert salvaged and all(i.severity is IssueSeverity.WARN for i in salvaged)
+    assert any("deleted a stray '}'" in i.detail for i in salvaged)
+    calls = pipe.store.llm_calls(run_id)
+    assert sorted(c["purpose"] for c in calls) == ["complete", "extract"]  # one paid pass 1
+    assert next(c for c in calls if c["purpose"] == "extract")["cost_usd"] > 0
+
+
+def test_a_lost_hypothesis_is_named_for_review_and_never_silently_complete(
+        tmp_path: Path) -> None:
+    """A hypothesis the malformed text names but deletion-only repair cannot recover: its
+    evidence is kept and it is listed as a DROPPED proposition — a mechanism-coverage alert, so
+    research verification reads INCOMPLETE — REVIEW REQUIRED."""
+    pipe = _pipe_with(tmp_path, FakeLlm(_slipped("truncated")))
+    run_id = _process(pipe)
+    assert pipe.store.theses() == []
+    alerts = [i.detail for i in pipe.store.issues(run_id=run_id)
+              if i.code == "MECHANISM_COVERAGE"]
+    lost = [a for a in alerts if "proposition dropped: “Unit revenue up-cycle”" in a]
+    assert len(lost) == 1 and "pass 1:" in lost[0] and "REVIEW REQUIRED" in lost[0]
 
 
 def test_an_unusable_paid_answer_fails_loud_with_its_cost_recorded(tmp_path: Path) -> None:
-    pipe = _pipe_with(tmp_path, FakeLlm(_broken_like_live()))
+    pipe = _pipe_with(tmp_path, FakeLlm([["not", "an", "object"]]))  # type: ignore[list-item]
     run = pipe.start_run("article", as_of=AS_OF)
     doc = LONG.doc()
     with pytest.raises(InvalidAnswerError):
         pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
                               as_of=AS_OF, publisher_override=LONG.publisher)
     calls = pipe.store.llm_calls(run.run_id)
-    assert [c["purpose"] for c in calls] == ["extract-invalid", "extract-invalid"]
+    assert [c["purpose"] for c in calls] == ["extract-invalid"]  # one call, never re-asked
     assert all(c["cost_usd"] > 0 and not c["cached"] for c in calls)
 
 

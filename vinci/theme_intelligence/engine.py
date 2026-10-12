@@ -92,6 +92,7 @@ from vinci.theme_intelligence.schemas import (
     ResearchPriority,
     ResolutionStatus,
     RetrievalState,
+    SectorExposure,
     SecurityResolution,
     SourceRef,
     StanceInSource,
@@ -111,8 +112,10 @@ from vinci.theme_intelligence.verify import (
     VerifiedExtraction,
     VerifiedHypothesis,
     VerifiedRisk,
+    bare_label,
     card_sentences,
     label_for,
+    locate,
     overlap_anchor,
     passage_anchor,
     passage_claim,
@@ -1065,6 +1068,140 @@ class Engine:
                 self.store.add_event(ev)
             out.append(ev)
         return out
+
+    def reassess(self, thesis_id: str, *, run_id: str, as_of: date) -> ThesisOutcome | None:
+        """Re-apply the CURRENT research-action rules to a thesis's STORED evidence — no article
+        read, no model call. Asked for by the operator after the 2026-10-12 pilot, whose one
+        RESEARCH NOW rested on a page category tag as its exposure and on next year's full-year
+        forecast as its near-term window, both since corrected.
+
+        Every input comes from the registry: the linked, span-verified claims by role; the
+        current card's exposures, transmission and sources; the contributing version's retrieval
+        as read now; the previous priority's channel reliability and verification hold. A
+        sector exposure is re-checked against its stored block and REFUSED when that block is a
+        bare page label (`verify.bare_label`). A NEW VERSION is appended only when the action or
+        the exposures change: its reviewed sentences are kept word for word; the header, the
+        decision and the refused exposures change. None when nothing changes."""
+        t = self.store.thesis(thesis_id)
+        prev_v = self.store.thesis_version(thesis_id, t.current_version) if t else None
+        if t is None or prev_v is None:
+            raise ValueError(f"no thesis {thesis_id} with a current version to reassess")
+        card, prev = prev_v.content, prev_v.priority
+        links = self.store.links(thesis_id)
+        all_claims = {lk.claim_id: c for lk in links if (c := self.store.claim(lk.claim_id))}
+        by_role: dict[LinkRole, list[Claim]] = {}
+        for lk in links:
+            c = all_claims.get(lk.claim_id)
+            if c is not None and c.span_verified:
+                held = by_role.setdefault(lk.role, [])
+                if not any(same_sentence_reread(o, c) for o in held):
+                    held.append(c)
+        kept: list[SectorExposure] = []
+        refused: list[str] = []
+        for se in card.s05_affected.sector_exposures:
+            vs = self.store.article_versions(se.article_id)
+            homes = [b for b in (vs[-1].blocks if vs else ())
+                     if b.text and locate(se.quote, b.text)]
+            if homes and all(bare_label(b.kind, b.text, se.name) for b in homes):
+                refused.append(f"{se.name!r} rests only on a page label ({homes[0].block_id}: "
+                               f"{homes[0].text[:40]!r}) — refused")
+            else:
+                kept.append(se)
+        contributed = [c.article_id for c in self.store.contributions(thesis_id=thesis_id)
+                       if c.version == prev_v.version]
+        aid = contributed[0] if contributed else card.s09_sources[-1].article_id
+        versions = self.store.article_versions(aid)
+        if not versions:
+            raise ValueError(f"{thesis_id}: no stored version of its source {aid}")
+        av = versions[-1]
+        retrieval = (av.retrieval_state if av.retrieval_state is not RetrievalState.BLOCKED
+                     else RetrievalState.PARTIAL)
+        retrieval_note = ""
+        if retrieval is RetrievalState.PARTIAL and av.unread_back_matter:
+            retrieval = RetrievalState.FULL
+            retrieval_note = (f"analysis text complete — {av.unread_back_matter}; the document "
+                              f"itself stays PARTIAL")
+        factor = {f.factor_id: f for f in prev.factors}
+        hold = factor.get("F10_verification_hold")
+        holds = self._hold_reasons(links, all_claims) + (
+            [hold.note] if hold is not None and hold.value == "HOLD" else [])
+        reliability = factor["F1_source_reliability"].value
+        aff = card.s05_affected
+        state = ThesisState(
+            reliability=reliability,
+            supporting=tuple(by_role.get(LinkRole.SUPPORTS, [])),
+            counter=tuple(by_role.get(LinkRole.CONTRADICTS, [])),
+            dislocation=tuple(by_role.get(LinkRole.DISLOCATION, [])),
+            catalyst=tuple(by_role.get(LinkRole.CATALYST, [])),
+            listed_exposures=tuple((c.name_as_written, "/".join(
+                x.ticker for x in c.listings if x.pit_status is PitStatus.VERIFIED))
+                for c in aff.companies
+                if c.resolution_status is ResolutionStatus.LISTED_EQUITY
+                and c.role in EXPOSURE_ROLES
+                and any(x.pit_status is PitStatus.VERIFIED for x in c.listings)),
+            instrument_exposures=tuple(c.name_as_written for c in aff.instruments),
+            transmission=card.s03_transmission, horizon=t.horizon, stance=t.stance,
+            verification_hold=bool(holds), hold_reasons=tuple(holds), retrieval=retrieval,
+            retrieval_note=retrieval_note, kind=t.kind,
+            sector_exposures=tuple(se.name for se in kept),
+            unverified_listings=tuple(
+                c.name_as_written for c in aff.companies
+                if c.resolution_status is ResolutionStatus.LISTED_EQUITY
+                and c.role in EXPOSURE_ROLES
+                and not any(x.pit_status is PitStatus.VERIFIED for x in c.listings)),
+            as_of=as_of,
+            published=tuple((s.article_id, s.published_at.date()) for s in card.s09_sources
+                            if s.published_at is not None),
+            data_report_articles=tuple(s.article_id for s in card.s09_sources if s.article_class
+                                       is ArticleClass.INDUSTRY_DATA_REPORT),
+            timing_context=self._timing_context(by_role, all_claims, ""))
+        pr = compute_priority(state, previous=prev.research_action,
+                              evidence_direction=prev_v.evidence_direction,
+                              previous_factors=prev.factors)
+        if pr.research_action is prev.research_action and not refused:
+            return None
+        d = card.s08_decision
+        new_card = card.model_copy(update={
+            "header": card.header.model_copy(update={"research_action": pr.research_action,
+                                                     "analysis_as_of": as_of}),
+            "s05_affected": aff.model_copy(update={"sector_exposures": tuple(kept)}),
+            "s06_why_now": card.s06_why_now.model_copy(
+                update={"valuation_status": pr.valuation_status}),
+            "s08_decision": d.model_copy(update={
+                "research_action": pr.research_action,
+                "investment_readiness": pr.investment_readiness,
+                "readiness_note": pr.valuation_status, "rule_trace": pr.rules_fired})})
+        next_v = t.current_version + 1
+        summary = ("REASSESSED under the current research-action rules from stored evidence — no "
+                   "article read, no model call: " + pr.change_reason
+                   + ("; " + "; ".join(refused) if refused else ""))
+        version = ThesisVersion(
+            thesis_id=thesis_id, version=next_v, as_of=as_of, created_at=datetime.now(tz=UTC),
+            run_id=run_id, engine_version=ENGINE_VERSION, content=new_card, priority=pr,
+            evidence_direction=prev_v.evidence_direction, change_summary=summary,
+            diffs=tuple(FieldDiff(field_id=f, change_class=c, old=o, new=n, claim_ids=ids)
+                        for f, c, o, n, ids in diff_cards(card, new_card, {})),
+            prior_content_sha=prev_v.content_sha, content_sha=card_sha(new_card))
+        etype = event_type(prev.research_action, pr.research_action, {})
+        ev = ChangeEvent(event_id="CE-" + _sha(thesis_id, str(next_v), etype, run_id)[:14],
+                         thesis_id=thesis_id, version=next_v, event_type=etype, run_id=run_id,
+                         as_of=as_of, created_at=datetime.now(tz=UTC), detail=summary,
+                         diffs=version.diffs)
+        # the card review's findings on its lines stand — the lines are unchanged — so they are
+        # carried to this run, where the new version's card finds them
+        carried = [i.model_copy(update={"issue_id": "VI-" + _sha(run_id, i.issue_id)[:14],
+                                        "run_id": run_id, "created_at": datetime.now(tz=UTC)})
+                   for i in self.store.issues(run_id=prev_v.run_id)
+                   if i.scope == "card_sentence" and i.ref_id.partition(":")[0] == thesis_id]
+        with self.store.tx():
+            self.store.upsert_thesis(t.model_copy(update={"current_version": next_v}))
+            self.store.add_thesis_version(version)
+            self.store.add_event(ev)
+            for i in carried:
+                self.store.add_issue(i)
+        return ThesisOutcome(thesis_id, t.title, False, next_v, ChangeClass.NO_MATERIAL_CHANGE,
+                             pr.research_action, prev.research_action,
+                             prev_v.evidence_direction, [etype])
 
     # -- competing hypotheses -----------------------------------------------------------------
     def _challenge_competitors(self, ctx: ArticleContext, new_tid: str, claims: dict[str, Claim],

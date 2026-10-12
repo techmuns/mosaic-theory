@@ -24,6 +24,7 @@ from __future__ import annotations
 import hashlib
 import json
 import traceback
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -88,7 +89,7 @@ from vinci.theme_intelligence.schemas import (
     WeeklyRun,
 )
 from vinci.theme_intelligence.securities import SecResolver
-from vinci.theme_intelligence.store import Store
+from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
 from vinci.theme_intelligence.verify import (
     ReviewOutcome,
     VerifiedExtraction,
@@ -452,6 +453,24 @@ class Pipeline:
             self.store.upsert_article(article)
             if existing_v is None:
                 self.store.add_article_version(version)
+        if (existing_v is not None and existing_v.retrieval_state is RetrievalState.FULL
+                and state is RetrievalState.PARTIAL):
+            # the SAME content, recorded FULL, that the current parser reads as a preview: a
+            # correction record (append-only); the version, first-seen date and spend stand
+            self._issue("article_version", existing_v.version_id, IssueSeverity.WARN,
+                        RETRIEVAL_CORRECTED,
+                        f"{url} — version {existing_v.version_id} was recorded FULL at ingestion "
+                        f"({existing_v.retrieved_at.date().isoformat()}, parser "
+                        f"{existing_v.parser_version}); the current parser ({PARSER_VERSION}) "
+                        f"reads the same content as PARTIAL ({'; '.join(doc.notes[-1:])}) — it "
+                        f"is read as PARTIAL from now on")
+            self._count("retrieval_corrected")
+            existing_v = self.store.article_version(existing_v.version_id)
+            # a research action granted on "retrieval FULL" is re-graded at once ($0, stored
+            # evidence only): the decision follows the corrected label, never the old one
+            for tid in sorted({c.thesis_id for c in self.store.contributions(article_id=aid)}):
+                if self.engine.reassess(tid, run_id=self.run.run_id, as_of=as_of) is not None:
+                    self._count("theses_updated")
         version = existing_v or version
         if state is RetrievalState.BLOCKED:
             self._issue("article", aid, IssueSeverity.WARN, "NO_BODY",
@@ -489,11 +508,9 @@ class Pipeline:
         for d in xres.dropped:
             self._issue("article", aid, IssueSeverity.WARN, "MALFORMED_ITEM_DROPPED",
                         f"extraction: {d}")
-        for note, u in xres.set_aside:
-            if u is not None:  # billed this run, discarded
-                self._llm_call("extract-invalid", aid, False, u, cost_of(xres.model, u), 0.0,
-                               xres.model, xres.prompt_version)
-            self._issue("article", aid, IssueSeverity.WARN, "ANSWER_SET_ASIDE", note)
+        for note in xres.salvaged:  # never silent: what was decoded, mended or discarded
+            self._issue("article", aid, IssueSeverity.WARN, "ANSWER_SALVAGED",
+                        f"extraction: {note}")
         if xres.compact:
             out_t = (xres.truncated_usage or {}).get("output_tokens")
             self._issue("article", aid, IssueSeverity.WARN, "EXTRACTION_COMPACT",
@@ -551,7 +568,8 @@ class Pipeline:
         # WARN issues for review; nothing here creates or merges a thesis
         cov = coverage_of(doc=doc, merged=merged, ve=ve, report=report,
                           destinations=self.engine.destinations,
-                          lost=comp.lost if comp else [], store=self.store,
+                          lost=[("pass 1", li) for li in xres.lost]
+                          + (comp.lost if comp else []), store=self.store,
                           risks_found=risks_found, reverified=self.engine.reverified)
         report = report.model_copy(update={"coverage": cov})
         for alert in cov.alerts:
@@ -815,6 +833,30 @@ class Pipeline:
         status = RunStatus.SUCCEEDED if res.status in (
             "PROCESSED", "ALREADY_INGESTED", "DUPLICATE_CONTENT") else RunStatus.PARTIAL
         return self.finish_run(status), res
+
+    def run_reassess(self, *, as_of: date, thesis_ids: Sequence[str] = ()
+                     ) -> tuple[WeeklyRun, list[ThesisOutcome]]:
+        """Re-apply the current research-action rules to stored theses (`Engine.reassess`) — no
+        fetch, no model call, $0. Every listed thesis (default: every one not archived) is
+        re-graded from its stored evidence; a changed action or a refused exposure is a NEW
+        VERSION and a change event this run reports; nothing earlier is edited."""
+        run = self.start_run("reassess", as_of=as_of, window_from=as_of, window_to=as_of)
+        targets = list(thesis_ids) or [t.thesis_id for t in self.store.theses()
+                                       if t.status is not ThesisStatus.ARCHIVED]
+        outs: list[ThesisOutcome] = []
+        try:
+            for tid in targets:
+                o = self.engine.reassess(tid, run_id=run.run_id, as_of=as_of)
+                self._count("theses_reassessed")
+                if o is not None:
+                    outs.append(o)
+                    self._count("theses_updated")
+            self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+        return self.finish_run(RunStatus.SUCCEEDED), outs
 
     def run_scan(self, *, window_from: date, window_to: date, as_of: date, max_articles: int,
                  resume_run_id: str | None = None, budget: float | None = None) -> WeeklyRun:

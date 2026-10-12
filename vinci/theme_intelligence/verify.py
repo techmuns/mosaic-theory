@@ -142,6 +142,23 @@ def norm_text(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+#: block kinds a page's category or tag line is parsed as — never a heading, chart title or dek
+LABEL_LINE_KINDS = frozenset({"paragraph", "list_item", "tag"})
+_WORD = re.compile(r"[a-z0-9&]+")
+
+
+def bare_label(kind: str, text: str, name: str) -> bool:
+    """The block says NOTHING but the sector's name — a page's category or tag line (TrendForce's
+    "Semiconductors", pilot 2026-10-12). It names a sector without saying it is exposed, so it
+    cannot anchor a decision-bearing exposure. A heading, chart title or standfirst is never read
+    this way: a report's section heading names the section's subject (Citi's "China Power Plant
+    Equipment"), which a $0 check of 137 stored exposures across 138 local registries showed in
+    use; only TrendForce's category lines match this test."""
+    words = _WORD.findall(norm_text(text).lower())
+    return (kind in LABEL_LINE_KINDS and bool(words)
+            and set(words) <= set(_WORD.findall(norm_text(name).lower())))
+
+
 def norm_name(s: str) -> str:
     s = norm_text(s).lower()
     s = re.sub(r"\(.*?\)", " ", s)
@@ -789,6 +806,15 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
                                      "SECTOR_SPAN_NOT_FOUND",
                                      f"{ctx}: sector exposure {s.name!r} is not a verbatim span "
                                      f"naming it ({s.quote[:80]!r}) — dropped"))
+                continue
+            home = blocks.get(got[0])
+            if home is not None and bare_label(home.kind, home.text, s.name):
+                issues.append(_issue(run_id, "hypothesis", ctx, IssueSeverity.WARN,
+                                     "SECTOR_LABEL_ONLY",
+                                     f"{ctx}: sector exposure {s.name!r} rests only on a page "
+                                     f"label ({home.block_id}, a {home.kind} that reads "
+                                     f"{home.text[:60]!r}) — a category or tag names a sector, "
+                                     f"it does not say the sector is exposed; dropped"))
                 continue
             if any(norm_name(v.name) == norm_name(s.name) for v in sectors):
                 continue

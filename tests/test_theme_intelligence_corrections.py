@@ -262,7 +262,13 @@ def test_a_reaction_filed_as_margins_is_refiled_and_cannot_carry_transmission(
     ("NTM", date(2026, 2, 9), True),
     ("4Q26", date(2026, 10, 10), True),
     ("2026", date(2026, 2, 9), True),
-    ("2027", date(2026, 10, 10), True),
+    # NEXT year's undifferentiated full-year figure is not a 2-4-quarter window (pilot
+    # 2026-10-12: a 2027 price forecast carried the one RESEARCH NOW); its quarters inside the next
+    # four are, the fifth is not
+    ("2027", date(2026, 10, 10), False),
+    ("1H27", date(2026, 10, 10), True),
+    ("3Q27", date(2026, 10, 10), True),
+    ("4Q27", date(2026, 10, 10), False),
     ("2025-2031", date(2026, 2, 9), False),  # a long-range forecast is not near-term
     ("2027", date(2026, 2, 9), False),
     ("by 2030", date(2026, 2, 9), False),

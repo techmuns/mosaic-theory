@@ -209,6 +209,24 @@ def cmd_report(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_reassess(a: argparse.Namespace) -> int:
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=None, review=False)  # stored evidence only: no model client at all
+    run, outs = pipe.run_reassess(as_of=_iso(a.as_of), thesis_ids=a.thesis or ())
+    print(f"run {run.run_id}: {run.status.value} — {run.counts.get('theses_reassessed', 0)} "
+          f"thesis(es) reassessed from stored evidence, {len(outs)} changed; cost $0.00")
+    for o in outs:
+        was = o.previous_action.value if o.previous_action else "—"
+        print(f"  {o.thesis_id} v{o.new_version}: {was} → {o.action.value} "
+              f"({', '.join(o.events)}) — {o.title[:70]}")
+    out = write_run_outputs(pipe.store, run.run_id)
+    print(f"outputs: {out['dir']}")
+    return 0
+
+
 def cmd_qa(a: argparse.Namespace) -> int:
     from vinci.theme_intelligence.qa import run_qa
     from vinci.theme_intelligence.report import research_verification
@@ -626,6 +644,13 @@ def main(argv: list[str] | None = None) -> int:
     g.add_argument("--run")
     rp.add_argument("--out")
     rp.set_defaults(fn=cmd_report)
+
+    ra = sub.add_parser("reassess", help="re-grade stored theses under the current rules — "
+                                         "stored evidence only, no fetch, no model call ($0)")
+    ra.add_argument("--as-of", required=True, help="YYYY-MM-DD the rules are applied as of")
+    ra.add_argument("--thesis", action="append", help="a thesis id (repeatable; default: every "
+                                                      "thesis not archived)")
+    ra.set_defaults(fn=cmd_reassess)
 
     qa = sub.add_parser("qa", help="re-check a run's stored records")
     qa.add_argument("--run", default="latest")

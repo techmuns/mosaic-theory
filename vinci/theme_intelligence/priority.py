@@ -221,6 +221,10 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
     near_claims = list({c.claim_id: c for c in forward + disl + current}.values())
     long_range = [c for c in st.supporting + st.dislocation + st.catalyst
                   if timing[c.claim_id][0] == "long_range"]
+    # a window MOSTLY inside the next 4 quarters that runs past them (an undifferentiated full-year
+    # figure for next year): never near-term evidence, never longer-term only (timewindow)
+    straddling = list({c.claim_id: c for c in st.supporting + st.dislocation + st.catalyst
+                       if timing[c.claim_id][0] == "straddling"}.values())
     # the SOURCE's own long-dated statements beside the evidence the card cites: an omission from
     # the card can hide them, never cancel them (they can only hold a thesis back)
     own = {c.claim_id for c in st.supporting + st.dislocation + st.catalyst}
@@ -232,6 +236,8 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
     # the model's horizon LABEL is recorded, never decisive — in either direction
     if near_claims:
         near = "yes"
+    elif straddling:
+        near = "runs_past"
     elif long_range or context_long:
         near = "longer_term_only"
     else:
@@ -286,6 +292,8 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                              + (f" ({windows}" + (f"; showing 4 of {len(near_claims)}"
                                                   if len(near_claims) > 4 else "") + ")"
                                 if near_claims else "")
+                             + (f"; {len(straddling)} claim(s) whose window runs past them"
+                                if straddling else "")
                              + f"; {len(long_range)} long-range claim(s)"
                              + (f"; {len(context_long)} long-dated statement(s) of the source "
                                 f"beside the cited evidence, not on the card: "
@@ -297,7 +305,7 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                                 "evidence" if near == "not shown" else "")
                              + f"; model horizon label {st.horizon.value} (recorded, not "
                                f"decisive)"),
-                       claim_ids=ids(near_claims or long_range or context_long)),
+                       claim_ids=ids(near_claims or straddling or long_range or context_long)),
         PriorityFactor(factor_id="F6_recognizable_exposures",
                        value=f"{len(st.listed_exposures)} listed · {len(st.sector_exposures)} "
                              f"sector",
@@ -353,7 +361,13 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                f"{', '.join(ids(context_long)[:4])} — {timing[context_long[0].claim_id][1]})")]
     else:
         unmet: list[str] = []
-        if near != "yes":
+        if near == "runs_past":
+            unmet.append("near-term relevance not established — the dated window(s) run past the "
+                         "next 2-4 quarters (an undifferentiated full-year or multi-quarter figure "
+                         "is not a 2-4-quarter window): " + "; ".join(
+                             f"{c.claim_id}: {timing[c.claim_id][1]}" for c in straddling[:4])
+                         + (f" (showing 4 of {len(straddling)})" if len(straddling) > 4 else ""))
+        elif near != "yes":
             unmet.append("near-term relevance not shown by any dated window — timing UNKNOWN "
                          "in the source evidence; a review should establish it")
         if not st.listed_exposures and not st.sector_exposures:

@@ -4,8 +4,10 @@
 window a period string names ("NTM", "4Q26", "2H 2026", "2025-2031", "FY27", "September 2026",
 "next year") relative to the as-of date, and `timing_of` sorts one claim into
 
-  near_term   a forecast / scheduled event whose window starts within ~a year and ends within ~18
-              months of the as-of (config NEAR_TERM_*) — the next 2-4 quarters;
+  near_term   a forecast / scheduled event whose window ends within the next four quarters of the
+              as-of (config NEAR_TERM_*) — the next 2-4 quarters;
+  straddling  a window that runs past them with MOST of it inside them (an undifferentiated "2027"
+              in October 2026) — not near-term evidence, and not longer-term only;
   long_range  a forecast / event whose window reaches past that ("a 2025-2031 CAGR") — a forecast
               does NOT qualify merely because it is a forecast — or an opinion naming such a
               horizon ("unlikely to clear before 2030"); a view is never near-term evidence;
@@ -186,8 +188,19 @@ def is_near_term(w: Window, ref: date) -> bool:
             and w.end <= ref + timedelta(days=NEAR_TERM_END_DAYS))
 
 
+def straddles(w: Window, ref: date) -> bool:
+    """A window that runs PAST the next four quarters with MOST of it inside them — an
+    undifferentiated "2027" read in October 2026 (pilot 2026-10-12: nine and a half of its twelve
+    months). It is not a 2-4-quarter window, so it never shows near-term relevance; and it is not
+    longer-term only, so it never makes a thesis SKIP-3 either."""
+    horizon = ref + timedelta(days=NEAR_TERM_END_DAYS)
+    inside = (min(w.end, horizon) - max(w.start, ref)).days + 1
+    return w.end > horizon and 2 * inside > (w.end - w.start).days + 1
+
+
 def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
-    """(near_term | long_range | current | historical | undated, a note naming the window)."""
+    """(near_term | straddling | long_range | current | historical | undated, a note naming the
+    window)."""
     forward = c.epistemic is Epistemic.FORECAST or c.kind is ClaimKind.FORECAST
     w = window_of(c.period, ref)
     if w is None and (forward or c.kind is ClaimKind.EVENT):
@@ -199,12 +212,16 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
             return "historical", f"forecast window {w} has already ended"
         if is_near_term(w, ref):
             return "near_term", f"forecast window {w}"
+        if straddles(w, ref):
+            return "straddling", (f"forecast window {w} runs past the next 4 quarters (most of it "
+                                  f"inside them) — not a 2-4-quarter window")
         return "long_range", f"forecast window {w} reaches beyond the next 4 quarters"
     if c.epistemic is Epistemic.ACTUAL:
         if any(q.startswith("stale series") for q in c.qualifiers):
             return "historical", "stale series"
         if c.kind is ClaimKind.EVENT and w is not None and w.start > ref:
-            return ("near_term" if is_near_term(w, ref) else "long_range",
+            return ("near_term" if is_near_term(w, ref) else
+                    "straddling" if straddles(w, ref) else "long_range",
                     f"scheduled event window {w}")
         d = c.measured_as_of or (w.end if w is not None and w.end <= ref else None) or published
         if d is None:
@@ -220,6 +237,7 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     # only a forecast, an event or a measurement can show that.
     w = w or window_of(c.quote, ref)
     if w is not None and w.end > ref + timedelta(days=NEAR_TERM_END_DAYS):
-        return "long_range", (f"{c.epistemic.value} naming a window {w} beyond the next 4 "
-                              f"quarters (a view's horizon — never near-term evidence)")
+        return ("straddling" if straddles(w, ref) else "long_range",
+                f"{c.epistemic.value} naming a window {w} beyond the next 4 quarters (a view's "
+                f"horizon — never near-term evidence)")
     return "undated", f"{c.epistemic.value} — no time window"

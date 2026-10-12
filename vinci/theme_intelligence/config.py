@@ -37,10 +37,11 @@ LLM_MAX_TOKENS = 21_333
 EXTRACT_PROMPT_VERSION = "ti-extract-6"
 COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
-PARSER_VERSION = "ti-parse-6"  # 6: undecodable PDF glyphs quarantined
+PARSER_VERSION = "ti-parse-7"  # 7: the paywall marker searched in the whole page (6: glyphs)
 #: 3: a sentence read again from another version is REPEATED · 4: timing read beside the cited
-#: evidence (SKIP-3), same-article siblings flagged, mechanism coverage recorded
-ENGINE_VERSION = "ti-engine-4"
+#: evidence (SKIP-3), same-article siblings flagged, mechanism coverage recorded · 5: a window
+#: running past the next 4 quarters is not near-term, a page label is no exposure (pilot)
+ENGINE_VERSION = "ti-engine-5"
 
 #: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
 #: Cache writes bill 1.25x input and cache reads 0.1x input. Used for the run manifest's cost line;
@@ -69,10 +70,13 @@ STALE_AFTER_DAYS = 91
 
 #: THE RESEARCH HORIZON IN CALENDAR TERMS (face validity, never outcome-tuned). A card's horizon is
 #: the next 2-4 quarters, so a forecast or dated event counts as near-term only when its window
-#: STARTS within NEAR_TERM_START_DAYS of the as-of and ENDS within NEAR_TERM_END_DAYS — a calendar
-#: year already under way qualifies, "2025-2031" never does merely because it is a forecast.
+#: STARTS within NEAR_TERM_START_DAYS of the as-of and ENDS within NEAR_TERM_END_DAYS — the next
+#: four quarters. A calendar year already under way qualifies; "2025-2031" never does merely
+#: because it is a forecast, and nor does NEXT year's undifferentiated full-year figure: 549 days
+#: let "2027" count as near-term from July 2026 on, and the pilot's one RESEARCH NOW (2026-10-12)
+#: rested on exactly that — a 2027 price forecast read as a 2-4-quarter catalyst.
 NEAR_TERM_START_DAYS = 366
-NEAR_TERM_END_DAYS = 549
+NEAR_TERM_END_DAYS = 366
 #: A MEASURED observation is current evidence when its data date (or, if the source states none,
 #: the article's publication date) is at most one quarter before the as-of.
 CURRENT_OBSERVATION_DAYS = 92

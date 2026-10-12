@@ -41,6 +41,7 @@ from vinci.theme_intelligence.schemas import (
     DocumentRecord,
     EvidenceSource,
     Mention,
+    RetrievalState,
     SecurityResolution,
     Snapshot,
     SourceHealthCheck,
@@ -62,6 +63,8 @@ _V1_APPEND_ONLY = (
 )
 #: Every append-only history table at the current schema.
 APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health")
+#: the verification-issue code that corrects a version's retrieval state FULL -> PARTIAL
+RETRIEVAL_CORRECTED = "RETRIEVAL_CORRECTED"
 
 #: (version, statements). Version 1 is the initial schema. A later change APPENDS a new entry —
 #: never edits an applied one (a DB that already ran step N would silently diverge from one that
@@ -300,19 +303,37 @@ class Store:
             "content_sha256": v.content_sha256}, v)
 
     def article_versions(self, article_id: str) -> list[ArticleVersion]:
-        return self._rows("SELECT payload FROM article_versions WHERE article_id=? "
-                          "ORDER BY retrieved_at", [article_id], ArticleVersion)
+        return [self._as_read_now(v) for v in self._rows(
+            "SELECT payload FROM article_versions WHERE article_id=? ORDER BY retrieved_at",
+            [article_id], ArticleVersion)]
 
     def article_version(self, version_id: str) -> ArticleVersion | None:
         r = self._rows("SELECT payload FROM article_versions WHERE version_id=?", [version_id],
                        ArticleVersion)
-        return r[0] if r else None
+        return self._as_read_now(r[0]) if r else None
 
     def version_by_content(self, article_id: str, content_sha: str) -> ArticleVersion | None:
         r = self._rows("SELECT payload FROM article_versions WHERE article_id=? AND "
                        "content_sha256=? ORDER BY retrieved_at LIMIT 1", [article_id, content_sha],
                        ArticleVersion)
-        return r[0] if r else None
+        return self._as_read_now(r[0]) if r else None
+
+    def retrieval_corrected(self, version_id: str) -> bool:
+        """A RETRIEVAL_CORRECTED record (append-only, in `verification_issues`) names this
+        version: recorded FULL, read by the CURRENT parser as a preview."""
+        return any(i.code == RETRIEVAL_CORRECTED for i in self.issues(ref_id=version_id))
+
+    def _as_read_now(self, v: ArticleVersion) -> ArticleVersion:
+        """The version as the CURRENT parser reads it. Pilot 2026-10-12: a long SemiAnalysis
+        free preview was recorded FULL (its subscriber marker sat past the parser's old
+        20,000-character window). Its row is never edited — the original version, first-seen
+        date and spend stand — but every reader sees PARTIAL once the correction is recorded."""
+        if v.retrieval_state is RetrievalState.FULL and self.retrieval_corrected(v.version_id):
+            return v.model_copy(update={
+                "retrieval_state": RetrievalState.PARTIAL,
+                "retrieval_note": f"{v.retrieval_note}; CORRECTED to PARTIAL — recorded FULL at "
+                                  f"ingestion, read as a preview by the current parser"})
+        return v
 
     # -- extraction / evidence -------------------------------------------------------------------
     def add_extraction(self, extraction_id: str, article_version_id: str, model: str,

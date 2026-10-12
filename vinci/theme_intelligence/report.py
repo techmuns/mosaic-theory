@@ -73,13 +73,24 @@ COMPLETENESS_CAVEAT_CODES = frozenset({"FIGURE_UNCAPTURED", "ARGUMENT_UNACCOUNTE
 
 #: Research-verification statuses — how much of what a run READ is accounted for. Kept apart from
 #: the run's EXECUTION status (RunStatus): a scan can COMPLETE while what it read is not verified.
+#: the card review's WARNINGS on a line it left printed — shown on that line (pilot 2026-10-12:
+#: seven such lines printed with no qualification, two of them conditional opinions labelled
+#: MEASURED OBSERVATION)
+REVIEW_WARNINGS = frozenset({"REVIEW_PARTIAL", "REVIEW_INFERENCE_UNSUPPORTED"})
+
 VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLETE",
                          "NOTHING_ANALYSED")
 
 
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
-MANUAL_MODES = ("ingest", "article")
+MANUAL_MODES = ("ingest", "article", "reassess")
+
+
+def _no_discovery(mode: str) -> str:
+    return ("none read — a reassessment of stored evidence under the current rules (no fetch, no "
+            "model call)" if mode == "reassess" else
+            "single article (manual URL) — no source discovery")
 #: entries listed per intake list before "showing X of Y"
 INTAKE_SHOW = 12
 
@@ -547,22 +558,37 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
     articles = {c.article_id: a for c in contribs if (a := store.article(c.article_id))}
     sents = card_sentences(v.content)
     blocked: dict[str, str] = {}
+    flagged: dict[str, str] = {}
     for i in store.issues(run_id=v.run_id):
-        if i.severity is not IssueSeverity.BLOCK or i.scope != "card_sentence":
+        if i.scope != "card_sentence" or (i.severity is not IssueSeverity.BLOCK
+                                          and i.code not in REVIEW_WARNINGS):
             continue
         tid, _, sid = i.ref_id.partition(":")
         if tid != t.thesis_id or sid not in sents:
             continue
-        if repr(sents[sid][0][:100]) in i.detail:  # the issue names THIS version's sentence
+        if repr(sents[sid][0][:100]) not in i.detail:  # the issue names THIS version's sentence
+            continue
+        if i.severity is IssueSeverity.BLOCK:
             blocked[sid] = f"{i.code} — {i.detail}"
+        else:  # "<sid>: <the reviewer's problem> | '<sentence>'" — the problem, on the line
+            flagged[sid] = i.detail.partition(": ")[2].rpartition(" | ")[0] or i.detail
     status_note = None
     if t.status is not v.content.header.status:
         ev = _latest_status_event([x for x in store.events(thesis_id=t.thesis_id)
                                    if until is None or x.created_at <= until])
         status_note = (f"Registry status now {t.status.value}"
                        + (f" since {ev.as_of.isoformat()}: {ev.detail}" if ev else ""))
+    retrieval_now: dict[str, str] = {}
+    for s in v.content.s09_sources:
+        vs = store.article_versions(s.article_id) if s.retrieval_state is RetrievalState.FULL \
+            else []
+        if vs and store.retrieval_corrected(vs[-1].version_id):
+            retrieval_now[s.article_id] = (f"{vs[-1].retrieval_state.value} (corrected — recorded "
+                                           f"FULL at ingestion; the current reader finds only a "
+                                           f"preview)")
     return RenderContext(history=history, attributions=attributions, blocked=blocked,
-                         articles=articles, generated_note=generated, status_note=status_note)
+                         articles=articles, generated_note=generated, status_note=status_note,
+                         flagged=flagged, retrieval_now=retrieval_now)
 
 
 def _latest_status_event(events: list[ChangeEvent]) -> ChangeEvent | None:
@@ -846,7 +872,11 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         sources_checked=sum(1 for sc in run.sources if sc.status != "NOT_RUN"),
         sources_failed=failed,
         articles_read=sum(r.counts.get("articles_processed", 0) for r in runs),
-        articles_partial=sum(r.counts.get("articles_partial", 0) for r in runs),
+        # counted PARTIAL when analysed, plus any analysed as FULL that a correction record has
+        # since found to be a preview
+        articles_partial=sum(r.counts.get("articles_partial", 0) for r in runs) + len(
+            {x.article_version_id for r in runs for x in store.completeness_for_run(r.run_id)
+             if store.retrieval_corrected(x.article_version_id)}),
         articles_blocked=sum(r.counts.get("articles_blocked", 0)
                              + r.counts.get("articles_no_body", 0) for r in runs),
         themes_created=sum(r.counts.get("theses_created", 0) for r in runs),
@@ -1076,7 +1106,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                         + "</details>" if v.get("open_items") else "")
                      + _coverage_html(v, print_mode) + "</div>")
     k = d.kpi or {}
-    kp: list[tuple[str, ...]] = ([("Sources", "single article (manual URL) — no discovery")]
+    kp: list[tuple[str, ...]] = ([("Sources", _no_discovery(run["mode"]))]
           if k.get("accessible_sources") is None else
           [("Accessible sources", str(k["accessible_sources"]),
             "automatic channels read this run"),
@@ -1292,7 +1322,7 @@ def render_dashboard_md(d: Dashboard) -> str:
     if d.banner:
         md += ["", f"> **{d.banner}**", ""]
     k = d.kpi or {}
-    md += ([("- Sources: single article (manual URL) — no source discovery")]
+    md += ([f"- Sources: {_no_discovery(run['mode'])}"]
            if k.get("accessible_sources") is None else
            [f"- Accessible sources: {k['accessible_sources']} (automatic channels)",
             f"- Blocked automatic channels: {k['blocked_sources']}",

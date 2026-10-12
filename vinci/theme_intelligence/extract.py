@@ -627,15 +627,17 @@ class ExtractionResult:
     truncated_usage: dict[str, int] | None = None
     #: items of the answer that failed their schema and were DROPPED (path: error) — never coerced
     dropped: list[str] = field(default_factory=list)
-    #: answers SET ASIDE because their top level failed the schema, the request then asked once
-    #: more: (what happened, usage — None when an earlier run paid for it)
-    set_aside: list[tuple[str, dict[str, int] | None]] = field(default_factory=list)
+    #: the answer's TOP level failed its schema and it was SALVAGED field by field: what was
+    #: decoded, repaired (deletion only) or discarded, and which paid answer was used
+    salvaged: list[str] = field(default_factory=list)
+    #: items a discarded or unrepairable field NAMED — reported, never used as evidence
+    lost: list[LostItem] = field(default_factory=list)
 
 
 class InvalidAnswerError(ValueError):
-    """A model answer that fails its schema at the TOP level even item by item — for an
-    extraction, on the one re-ask too. Carries the usage of every call it billed THIS run, so
-    the run records the spend instead of reporting $0."""
+    """A model answer that fails its schema at the TOP level even FIELD BY FIELD (not an object
+    of the schema at all). Carries the usage of every call it billed THIS run, so the run records
+    the spend instead of reporting $0."""
 
     def __init__(self, what: str, exc: ValidationError, *,
                  usages: list[dict[str, int] | None], model: str, prompt_version: str) -> None:
@@ -715,7 +717,80 @@ class LostItem:
     note: str = ""  # why it is lost, when not "the field was malformed"
 
 
-def salvage_fields(cls: type[BaseModel], out: Any) -> tuple[Any, list[str], list[LostItem]]:
+#: the most deletions one malformed list may need before it is discarded whole instead
+MAX_REPAIRS = 4
+_UNKEYED = "Expecting property name enclosed in double quotes"
+#: `}` `,` `"name"` right before a `:` — a property pair where a LIST ITEM belongs
+_PAIR_AFTER_CLOSE = re.compile(r'\}(\s*,\s*"(?:[^"\\]|\\.)*"\s*)$')
+
+
+def _unique_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for k, v in pairs:
+        if k in out:
+            raise ValueError(f"property {k!r} given twice")
+        out[k] = v
+    return out
+
+
+def repair_list_text(text: str) -> tuple[list[Any] | None, list[str]]:
+    """DELETION-ONLY recovery of a list the model wrote as broken JSON TEXT. Observed in all four
+    paid pass-1 answers for one J.P. Morgan article (pilot 2026-10-12), in two shapes, each mended
+    by DELETING text, never by inserting it:
+
+    - an UNKEYED value inside an object — `"bottom_line_fact": {…}, {…}, "bottom_line_inference":
+      {…}`: a second value with no property name; the value is deleted and NAMED (its opening
+      words go in the note);
+    - a STRAY `}` that closes an item before its remaining properties — `…]}]}, "supporting_claim_
+      ids": […]`, a property pair where a list item belongs: the brace is deleted.
+
+    A repair stands only when the WHOLE text then decodes as a list with no property given twice;
+    its items are then validated one by one like any other answer, and verified downstream like
+    any other. Anything else returns None — the field is discarded whole, as before, and the items
+    its text names are reported lost. Returns (the list or None, the deletions made)."""
+    edits: list[str] = []
+    for _ in range(MAX_REPAIRS + 1):
+        try:
+            out = json.loads(text, object_pairs_hook=_unique_keys)
+        except json.JSONDecodeError as exc:
+            if len(edits) == MAX_REPAIRS:
+                return None, edits
+            pos = exc.pos
+            if exc.msg == _UNKEYED and text[pos:pos + 1] in ("{", "["):
+                try:
+                    _value, end = json.JSONDecoder().raw_decode(text, pos)
+                except json.JSONDecodeError:
+                    return None, edits
+                after = end + len(text[end:]) - len(text[end:].lstrip())
+                if text[after:after + 1] == ",":
+                    after += 1
+                    after += len(text[after:]) - len(text[after:].lstrip())
+                    mended = text[:pos] + text[after:]
+                elif text[after:after + 1] == "}" and text[:pos].rstrip().endswith(","):
+                    mended = text[:pos].rstrip()[:-1] + text[end:]
+                else:
+                    return None, edits
+                gone = re.sub(r"\s+", " ", text[pos:end])
+                edits.append(f"deleted an unkeyed {'object' if text[pos] == '{' else 'list'} at "
+                             f"characters {pos:,}–{end:,} ({end - pos:,} characters; it began "
+                             f"{gone[:90]!r})")
+                text = mended
+                continue
+            m = _PAIR_AFTER_CLOSE.search(text[:pos])
+            if exc.msg == "Expecting ',' delimiter" and text[pos:pos + 1] == ":" and m:
+                text = text[:m.start()] + text[m.start() + 1:]
+                edits.append(f"deleted a stray '}}' at character {m.start():,} that closed an item "
+                             f"before its remaining properties")
+                continue
+            return None, edits
+        except ValueError:  # a property given twice: the mended item would overwrite — refused
+            return None, edits
+        return (out, edits) if isinstance(out, list) else (None, edits)
+    return None, edits
+
+
+def salvage_fields(cls: type[BaseModel], out: Any, *,
+                   repair: bool = False) -> tuple[Any, list[str], list[LostItem]]:
     """Validate an answer whose TOP level failed FIELD BY FIELD, then item by item. Observed
     2026-10-12 on a paid completeness part: `added_hypotheses` came back as 4,420 characters of
     text that is not valid JSON, and the whole answer — 14 claims, 4 mentions, a risk and 50
@@ -723,15 +798,18 @@ def salvage_fields(cls: type[BaseModel], out: Any) -> tuple[Any, list[str], list
 
     A list field that arrived as TEXT is decoded when the text is valid JSON for a list (the
     model's own value, written as a string — nothing is invented) and its items are validated one
-    by one. A list field that cannot be read as a list is DISCARDED WHOLE, with the exact error
-    and the item ids its text names; nothing inside broken JSON is guessed at. Every other field
-    is kept, item by item (`validate_items`). Raises ValidationError when the answer is still not
-    an object of `cls`."""
+    by one. With `repair` (pass 1, since the 2026-10-12 pilot) a list that is NOT valid JSON is
+    first mended by deletion only (`repair_list_text`); an item it names that still fails its
+    schema is reported lost. A list field that cannot be read as a list is DISCARDED WHOLE, with
+    the exact error and the item ids its text names; nothing inside broken JSON is guessed at.
+    Every other field is kept, item by item (`validate_items`). Raises ValidationError when the
+    answer is still not an object of `cls`."""
     if not isinstance(out, dict):
         cls.model_validate(out)  # raises: not an object
     fixed = dict(out)
     notes: list[str] = []
     lost: list[LostItem] = []
+    mended: dict[str, list[Any]] = {}
     for name, f in cls.model_fields.items():
         spec = _model_spec(f.annotation)
         if name not in fixed or spec is None or spec[0] != "list" or isinstance(fixed[name], list):
@@ -741,6 +819,14 @@ def salvage_fields(cls: type[BaseModel], out: Any) -> tuple[Any, list[str], list
             try:
                 decoded = json.loads(v)
             except json.JSONDecodeError as exc:
+                got, edits = repair_list_text(v) if repair else (None, [])
+                if got is not None:
+                    notes.append(
+                        f"{name}: {len(v):,} characters of text where a list belongs, not valid "
+                        f"JSON ({exc.msg}, character {exc.pos:,}) — RECOVERED by deletion only: "
+                        + "; ".join(edits) + f"; its {len(got)} item(s) validated one by one")
+                    fixed[name] = mended[name] = got
+                    continue
                 ids = _LOCAL_ID.findall(v)
                 titles = dict(_TITLE_AFTER_ID.findall(v))
                 lost += [LostItem(name, i, titles.get(i, "")) for i in ids]
@@ -761,7 +847,27 @@ def salvage_fields(cls: type[BaseModel], out: Any) -> tuple[Any, list[str], list
                      f"{type(v).__name__} ({str(v)[:60]!r})")
         fixed[name] = []
     parsed, dropped = validate_items(cls, fixed)
+    for name, items in mended.items():  # an item the mended text names that its schema refused
+        kept = {getattr(x, "local_id", None) for x in getattr(parsed, name)}
+        lost += [LostItem(name, str(it["local_id"]), str(it.get("title") or "")[:300],
+                          note="recovered from the malformed text, but the item fails its schema")
+                 for it in items if isinstance(it, dict) and it.get("local_id")
+                 and it["local_id"] not in kept]
     return parsed, notes + dropped, lost
+
+
+def read_answer(out: Any) -> tuple[Extraction, list[str], list[str], list[LostItem]]:
+    """A pass-1 answer as (extraction, items dropped, salvage notes, items lost). Item by item;
+    an answer whose TOP level fails is SALVAGED field by field with the deletion-only list repair
+    (`salvage_fields(repair=True)`). Raises ValidationError only when nothing can be salvaged."""
+    try:
+        parsed, dropped = validate_items(Extraction, out)
+        return parsed, dropped, [], []
+    except ValidationError as exc:
+        top = first_error(exc)
+    parsed, notes, lost = salvage_fields(Extraction, out, repair=True)
+    return parsed, [], [f"the answer failed its schema at the top level ({top}) — salvaged "
+                        f"field by field"] + notes, lost
 
 
 def _keep(path: Path, model: str, prompt_version: str, usage: dict[str, int] | None,
@@ -771,47 +877,34 @@ def _keep(path: Path, model: str, prompt_version: str, usage: dict[str, int] | N
                                 "seconds": seconds, "output": out}, sort_keys=True, indent=1))
 
 
-def set_aside_answer(path: Path) -> Path:
-    """Move a cached answer that fails its schema to `<key>.invalid-N.json` — kept for the record,
-    out of the cache — so the request is asked again instead of failing on every replay."""
-    n = 1
-    while (dest := path.with_name(f"{path.stem}.invalid-{n}.json")).exists():
-        n += 1
-    path.rename(dest)
-    return dest
+def _set_aside(path: Path) -> list[Path]:
+    """Answers to this exact request that an EARLIER run paid for and set aside
+    (`<key>.invalid-N.json`, written before 2026-10-12, when a refused answer was re-asked) —
+    newest first."""
+    return sorted(path.parent.glob(f"{path.stem}.invalid-*.json"),
+                  key=lambda p: int(p.stem.rsplit("-", 1)[1]), reverse=True)
 
 
 def _ask(client: ToolClient, *, system: str, user: str, tool: dict[str, Any], path: Path,
          model: str, prompt_version: str, what: str,
-         set_aside: list[tuple[str, dict[str, int] | None]],
-         ) -> tuple[Extraction, list[str], dict[str, Any], dict[str, int] | None, float]:
-    """Ask; keep the paid answer FIRST; validate item by item. An answer whose TOP level fails is
-    set aside and the identical request asked ONCE more — a malformed answer is a slip of the
-    model, not a property of the article (observed 2026-10-10: a `hypotheses` list written out
-    as broken JSON text). A second failure raises InvalidAnswerError with both calls' usage; an
-    overrun (LlmError) propagates to the caller."""
-    billed: list[dict[str, int] | None] = []
-    for attempt in (1, 2):
-        t0 = time.monotonic()
-        out = client.extract(system=system, user=user, tool=tool)
-        seconds = time.monotonic() - t0
-        usage = getattr(client, "last_usage", None)
-        _keep(path, model, prompt_version, usage, seconds, out)
-        try:
-            parsed, dropped = validate_items(Extraction, out)
-        except ValidationError as exc:
-            billed.append(usage)
-            aside = set_aside_answer(path)
-            set_aside.append((f"{what}: the answer failed its schema at the top level "
-                              f"({first_error(exc)}) — set aside as {aside.name}"
-                              + ("; the request was asked once more" if attempt == 1 else ""),
-                              usage))
-            if attempt == 2:
-                raise InvalidAnswerError(what, exc, usages=billed, model=model,
-                                         prompt_version=prompt_version) from exc
-            continue
-        return parsed, dropped, out, usage, seconds
-    raise AssertionError("unreachable")
+         ) -> tuple[Extraction, list[str], list[str], list[LostItem], dict[str, Any],
+                    dict[str, int] | None, float]:
+    """Ask ONCE; keep the paid answer FIRST; read it (`read_answer`). An answer whose TOP level
+    fails is SALVAGED, never asked again: on 2026-10-12 the identical re-ask reproduced the
+    identical slip in four of four J.P. Morgan answers, and the article was lost with its evidence.
+    InvalidAnswerError (with the call's usage) only when nothing can be salvaged; an overrun
+    (LlmError) propagates to the caller."""
+    t0 = time.monotonic()
+    out = client.extract(system=system, user=user, tool=tool)
+    seconds = time.monotonic() - t0
+    usage = getattr(client, "last_usage", None)
+    _keep(path, model, prompt_version, usage, seconds, out)
+    try:
+        parsed, dropped, salvaged, lost = read_answer(out)
+    except ValidationError as exc:
+        raise InvalidAnswerError(what, exc, usages=[usage], model=model,
+                                 prompt_version=prompt_version) from exc
+    return parsed, dropped, salvaged, lost, out, usage, seconds
 
 
 #: A full extraction that overruns the output cap is retried ONCE in this declared compact mode.
@@ -866,38 +959,38 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
     cversion = prompt_version + "+compact"
     ckey = cache_key(model, cversion, ctool, csystem, user)
     cpath = cache_dir / "extract" / f"{ckey}.json"
-    set_aside: list[tuple[str, dict[str, int] | None]] = []
     for p, k, compact in ((path, key, False),
                           (cpath, ckey, True)):
-        if not p.exists():  # a truncation marker means the full answer never fits: go to compact
-            continue
-        rec = json.loads(p.read_text())
-        try:
-            parsed, dropped = validate_items(Extraction, rec["output"])
-        except ValidationError as exc:
-            if client is None:
-                raise InvalidAnswerError("cached extraction", exc, usages=[],
-                                         model=rec["model"],
-                                         prompt_version=rec["prompt_version"]) from exc
-            aside = set_aside_answer(p)  # paid by an earlier run: asked again below
-            set_aside.append((f"a cached extraction failed its schema at the top level "
-                              f"({first_error(exc)}) — set aside as {aside.name}; the request "
-                              f"was asked again", None))
-            continue
-        trunc = json.loads(marker.read_text()).get("usage") if marker.exists() else None
-        return ExtractionResult(parsed, rec["output"], f"X-{k[:16]}", rec["model"],
-                                rec["prompt_version"], True, rec.get("usage"), 0.0, 0.0,
-                                compact=compact, truncated_usage=trunc if compact else None,
-                                dropped=dropped, set_aside=set_aside)
+        # the cached answer; else answers to THIS request an earlier run paid for and set aside —
+        # salvaged, never paid for again (a truncation marker means no full answer: go to compact)
+        refused: ValidationError | None = None
+        for src in [p] if p.exists() else _set_aside(p):
+            rec = json.loads(src.read_text())
+            try:
+                parsed, dropped, salvaged, lost = read_answer(rec["output"])
+            except ValidationError as exc:
+                refused = exc
+                continue
+            if src != p:
+                salvaged.insert(0, f"this request's answer is the one an earlier run paid for "
+                                   f"and set aside ({src.name}) — the request is not paid again")
+            trunc = json.loads(marker.read_text()).get("usage") if marker.exists() else None
+            return ExtractionResult(parsed, rec["output"], f"X-{k[:16]}", rec["model"],
+                                    rec["prompt_version"], True, rec.get("usage"), 0.0, 0.0,
+                                    compact=compact, truncated_usage=trunc if compact else None,
+                                    dropped=dropped, salvaged=salvaged, lost=lost)
+        if refused is not None:  # paid, refused, nothing salvageable: never asked again
+            raise InvalidAnswerError("cached extraction", refused, usages=[], model=model,
+                                     prompt_version=prompt_version) from refused
     if client is None:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")
     trunc_usage: dict[str, int] | None = None
     if not marker.exists():
         try:
-            parsed, dropped, out, usage, seconds = _ask(
+            parsed, dropped, salvaged, lost, out, usage, seconds = _ask(
                 client, system=system, user=user, tool=tool, path=path, model=model,
-                prompt_version=prompt_version, what="extraction", set_aside=set_aside)
+                prompt_version=prompt_version, what="extraction")
         except LlmError as exc:
             if not _truncated(exc):
                 raise
@@ -909,13 +1002,14 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
         else:
             return ExtractionResult(parsed, out, f"X-{key[:16]}", model, prompt_version, False,
                                     usage, cost_of(model, usage), seconds, dropped=dropped,
-                                    set_aside=set_aside)
+                                    salvaged=salvaged, lost=lost)
     else:
         trunc_usage = json.loads(marker.read_text()).get("usage")
     # the declared COMPACT retry — a second truncation fails loud (LlmError), never half-kept
-    parsed, dropped, out, usage, seconds = _ask(
+    parsed, dropped, salvaged, lost, out, usage, seconds = _ask(
         client, system=csystem, user=user, tool=ctool, path=cpath, model=model,
-        prompt_version=cversion, what="compact extraction", set_aside=set_aside)
+        prompt_version=cversion, what="compact extraction")
     return ExtractionResult(parsed, out, f"X-{ckey[:16]}", model, cversion, False, usage,
                             cost_of(model, usage), seconds, compact=True,
-                            truncated_usage=trunc_usage, dropped=dropped, set_aside=set_aside)
+                            truncated_usage=trunc_usage, dropped=dropped, salvaged=salvaged,
+                            lost=lost)

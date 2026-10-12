@@ -25,9 +25,9 @@ import html
 import json
 import re
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
-from typing import Any
+from typing import Any, TypeVar
 
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
@@ -138,6 +138,46 @@ def labelled(s: CardSentence, claims: dict[str, Claim]) -> CardSentence:
         return s
     return s.model_copy(update={"text": f"{s.text} {LABEL_OPEN}cited figures: {tags}"
                                         f"{LABEL_CLOSE}"})
+
+
+#: A CONDITIONAL line says what could, might or would happen, or what follows IF — the source's
+#: argument, never a measured observation, whatever claims it cites. Capitalised "May" is the
+#: month and is not matched.
+_CONDITIONAL = re.compile(r"\b(?:could|might|would|may|if|Could|Might|Would|If)\b")
+_FACT_LABELS = frozenset({Provenance.MEASURED_OBSERVATION, Provenance.EXTERNALLY_VERIFIED,
+                          Provenance.ARTICLE_FACT})
+_L = TypeVar("_L", CardSentence, ChangeItem, TransmissionStep)
+
+
+def capped_label(prov: Provenance, text: str) -> Provenance:
+    """The label a line may carry: a conditional line is at most SOURCE OPINION."""
+    if prov in _FACT_LABELS and _CONDITIONAL.search(_FIG_SUFFIX.sub("", text)):
+        return Provenance.SOURCE_OPINION
+    return prov
+
+
+def capped_conditionals(card: CardContent) -> CardContent:
+    """Every line of the card under `capped_label`. Observed in the pilot (2026-10-12): two risk
+    lines on a Nomura card — "Rising UST yields could create a feedback loop…" — read MEASURED
+    OBSERVATION because the claims they cited were observations; the reviewer flagged both."""
+
+    def cap(xs: tuple[_L, ...]) -> tuple[_L, ...]:
+        return tuple(x if (p := capped_label(x.provenance, x.text)) is x.provenance
+                     else x.model_copy(update={"provenance": p}) for x in xs)
+
+    n, w, d = card.s06_why_now, card.s07_what_could_go_wrong, card.s08_decision
+    return card.model_copy(update={
+        "s01_bottom_line": cap(card.s01_bottom_line),
+        "s02_what_changed": card.s02_what_changed.model_copy(
+            update={"items": cap(card.s02_what_changed.items)}),
+        "s03_transmission": cap(card.s03_transmission),
+        "s06_why_now": n.model_copy(update={"near_term": cap(n.near_term),
+                                            "structural": cap(n.structural)}),
+        "s07_what_could_go_wrong": w.model_copy(update={
+            "counter_evidence": cap(w.counter_evidence),
+            "alternative_mechanisms": cap(w.alternative_mechanisms),
+            "market_risks": cap(w.market_risks)}),
+        "s08_decision": d.model_copy(update={"next_step": cap((d.next_step,))[0]})})
 
 
 def _labelled_item(it: ChangeItem, claims: dict[str, Claim]) -> ChangeItem:
@@ -371,12 +411,11 @@ def compose_card(ci: CardInputs) -> CardContent:
                    investment_readiness=pr.investment_readiness,
                    readiness_note=pr.valuation_status, rule_trace=pr.rules_fired)
 
-    return CardContent(header=header,
-                       s01_bottom_line=_dedupe(labelled(s, claims) for s in s01),
-                       s02_what_changed=s02,
-                       s03_transmission=s03, s04_key_evidence=s04, s05_affected=ci.affected,
-                       s06_why_now=s06, s07_what_could_go_wrong=s07, s08_decision=s08,
-                       s09_sources=tuple(ci.sources))
+    return capped_conditionals(CardContent(
+        header=header, s01_bottom_line=_dedupe(labelled(s, claims) for s in s01),
+        s02_what_changed=s02, s03_transmission=s03, s04_key_evidence=s04,
+        s05_affected=ci.affected, s06_why_now=s06, s07_what_could_go_wrong=s07,
+        s08_decision=s08, s09_sources=tuple(ci.sources)))
 
 
 def with_citations(card: CardContent, anchors: dict[str, list[str]],
@@ -416,7 +455,7 @@ def with_citations(card: CardContent, anchors: dict[str, list[str]],
     w = card.s07_what_could_go_wrong
     n0, n1 = len(w.counter_evidence), len(w.alternative_mechanisms)
     d = card.s08_decision
-    return card.model_copy(update={
+    return capped_conditionals(card.model_copy(update={  # a re-derived label is capped again
         "s01_bottom_line": s01,
         "s02_what_changed": card.s02_what_changed.model_copy(update={"items": tuple(items)}),
         "s03_transmission": tuple(s03),
@@ -432,7 +471,7 @@ def with_citations(card: CardContent, anchors: dict[str, list[str]],
             "market_risks": tuple(fix_sent(s, f"s07.{n0 + n1 + i}")
                                   for i, s in enumerate(w.market_risks))}),
         "s08_decision": d.model_copy(update={"next_step": fix_sent(d.next_step, "s08.next")}),
-    })
+    }))
 
 
 _PERCENT_UNITS = frozenset({"%", "percent", "per cent", "pct"})
@@ -569,6 +608,7 @@ table{border-collapse:collapse;width:100%;font-size:13px;margin:4px 0 10px}
 th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:top}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .q{color:var(--muted);font-style:italic}.withheld{color:var(--block);font-weight:600}
+.rw{color:var(--block);font-weight:600;font-size:.92em;margin:.15em 0 0}
 .note{color:var(--muted);font-size:13px}.sub{font-weight:700;font-size:12px;margin:10px 0 2px;
 color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .foot{color:var(--muted);font-size:12px;margin-top:10px}
@@ -664,6 +704,27 @@ class RenderContext:
     articles: dict[str, Article]
     generated_note: str
     status_note: str | None = None  # the CURRENT registry status, when it moved after this version
+    #: sentence id -> the card review's UNRESOLVED warning (it questioned the line, which stays
+    #: printed): shown ON the line, and the line is never labelled a verified fact
+    flagged: dict[str, str] = field(default_factory=dict)
+    #: article id -> its retrieval as READ NOW, when a correction record changed what this
+    #: version's source row stored (a preview recorded FULL)
+    retrieval_now: dict[str, str] = field(default_factory=dict)
+
+
+def shown_label(prov: Provenance, sid: str, rc: RenderContext) -> Provenance:
+    """The label a line is printed with: a line the review questioned is at most SOURCE OPINION
+    — a conditional opinion must never read as a verified measured observation."""
+    return Provenance.SOURCE_OPINION if sid in rc.flagged and prov in _FACT_LABELS else prov
+
+
+def _warn_html(sid: str, rc: RenderContext) -> str:
+    return (f'<div class="rw">⚠ UNRESOLVED REVIEW — {e(rc.flagged[sid])}</div>'
+            if sid in rc.flagged else "")
+
+
+def _warn_md(sid: str, rc: RenderContext) -> str:
+    return f" ⚠ **UNRESOLVED REVIEW — {rc.flagged[sid]}**" if sid in rc.flagged else ""
 
 
 def _refs(ids: Iterable[str]) -> str:
@@ -693,8 +754,9 @@ def _sent(s: CardSentence, sid: str, rc: RenderContext) -> str:
                 f'</span><span class="aud"> {e(rc.blocked[sid])}</span><details><summary '
                 f'class="note">audit text</summary><span class="q">{e(s.text)}</span></details>'
                 f'</div>')
-    return (f'<div class="s"><span class="b {_BADGE[s.provenance]}">{e(s.provenance.value)}'
-            f'</span>{ids_to_audit(e(s.text))}{_refs(s.claim_ids)}</div>')
+    p = shown_label(s.provenance, sid, rc)
+    return (f'<div class="s"><span class="b {_BADGE[p]}">{e(p.value)}'
+            f'</span>{ids_to_audit(e(s.text))}{_refs(s.claim_ids)}{_warn_html(sid, rc)}</div>')
 
 
 def _section(fid: str, title: str, body: str, *, print_mode: bool, summary: str = "") -> str:
@@ -767,14 +829,15 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         body = (f'<span class="withheld">WITHHELD — failed source verification</span>'
                 f'<span class="aud"> {e(rc.blocked[f"s02.{i}"])}</span>'
                 if f"s02.{i}" in rc.blocked else ids_to_audit(e(it.text)))
+        p = shown_label(it.provenance, f"s02.{i}", rc)
         return ('<div class="s">' + (f'<span class="tag">{e(tag)}</span>' if tag else "")
-                + f'<span class="b {_BADGE[it.provenance]}">{e(it.provenance.value)}</span>'
+                + f'<span class="b {_BADGE[p]}">{e(p.value)}</span>'
                 + body
                 + (f' <span class="note">(article date {e(it.original_date)}'
                    + (f"; period {e(it.period)}" if it.period else "") + ")</span>"
                    if it.original_date else "")
                 + f'<span class="aud"> <span class="cc">[{e(it.change_class.value)}]</span>'
-                  f'</span>{_refs(it.claim_ids)}</div>')
+                  f'</span>{_refs(it.claim_ids)}{_warn_html(f"s02.{i}", rc)}</div>')
     first = [item(i, it) for i, it in enumerate(wc.items)]
     shown, rest = first[:3], first[3:]
     bodies["s02_what_changed"] = (
@@ -892,7 +955,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     src_rows = "".join(
         f"<tr><td><a href=\"{e(s.url)}\">{e(s.title or 'title UNKNOWN')}</a>"
         f"<div class=note>{e(s.article_class.value.replace('_', ' '))} · retrieval "
-        f"{e(s.retrieval_state.value)}</div><div class=\"cc aud\">{e(s.article_id)}</div></td>"
+        f"{e(rc.retrieval_now.get(s.article_id, s.retrieval_state.value))}</div>"
+        f"<div class=\"cc aud\">{e(s.article_id)}</div></td>"
         f"<td>{e('; '.join(s.authors) if s.authors else 'UNKNOWN')}</td><td>{e(s.publisher)}</td>"
         f"<td>{e(s.published_at.date().isoformat() if s.published_at else 'UNKNOWN')}"
         + "".join(f"<div class=note>{e(x)}</div>" for x in s.version_dates) + "</td>"
@@ -943,7 +1007,8 @@ def _md_sents(ss: Iterable[CardSentence], prefix: str, rc: RenderContext,
         if sid in rc.blocked:
             out.append(f"- **WITHHELD — failed source verification:** {rc.blocked[sid]}")
         else:
-            out.append(f"- **{s.provenance.value}:** {s.text}{refs}")
+            out.append(f"- **{shown_label(s.provenance, sid, rc).value}:** {s.text}{refs}"
+                       + _warn_md(sid, rc))
     return out
 
 
@@ -963,11 +1028,13 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     for i, it in enumerate(wc.items):
         txt = (f"WITHHELD — {rc.blocked[f's02.{i}']}" if f"s02.{i}" in rc.blocked else it.text)
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
-        md.append("- " + (f"[{tag}] " if tag else "") + f"**{it.provenance.value}:** {txt}"
+        md.append("- " + (f"[{tag}] " if tag else "")
+                 + f"**{shown_label(it.provenance, f's02.{i}', rc).value}:** {txt}"
                  + (f" (article date {it.original_date}" + (f"; period {it.period}"
                                                               if it.period else "") + ")"
                     if it.original_date else "")
-                 + (" [" + ", ".join(it.claim_ids) + "]" if it.claim_ids else ""))
+                 + (" [" + ", ".join(it.claim_ids) + "]" if it.claim_ids else "")
+                 + _warn_md(f"s02.{i}", rc))
     md += ["", f"## {titles['s03_transmission']}"]
     for i, st in enumerate(card.s03_transmission):
         md += [f"- _{STEP_LABEL.get(st.step, st.step)}_ "
@@ -1053,7 +1120,8 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
         md.append(f"- [{s.title or 'title UNKNOWN'}]({s.url}) — "
                  f"{'; '.join(s.authors) if s.authors else 'author UNKNOWN'} — {s.publisher} — "
                  f"article date {art_date}"
-                 f" — {s.article_class.value} — retrieval {s.retrieval_state.value} — origins: "
+                 f" — {s.article_class.value} — retrieval "
+                 f"{rc.retrieval_now.get(s.article_id, s.retrieval_state.value)} — origins: "
                  f"{', '.join(s.upstream_origins) or '—'} — {s.contribution.value} "
                  f"({len(s.claim_ids)} claim refs; {s.article_id})")
     md.append("**Version history:**")
@@ -1078,6 +1146,7 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "attributions_without_version": [
             {"article_id": a, "contribution": c, "note": n} for a, c, n in rc.attributions],
         "withheld_sentences": rc.blocked,
+        "review_warnings": rc.flagged,
         "generated": rc.generated_note,
     }
 

@@ -32,7 +32,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from vinci.theme_intelligence.cards import card_sha
+from vinci.theme_intelligence.cards import capped_label, card_sha
 from vinci.theme_intelligence.config import load_sources
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
@@ -228,9 +228,11 @@ def run_qa(store: Store, run_id: str) -> QaResult:
         if unlinked:
             label_bad.append(f"{v.thesis_id} v{v.version}: cites claim(s) the thesis does not "
                              f"link: {', '.join(sorted(unlinked)[:3])}")
-        for sid, (_text, prov, cids) in card_sentences(v.content).items():
+        for sid, (text, prov, cids) in card_sentences(v.content).items():
             if prov in {p.value for p in SOURCE_LABELS} and prov != Provenance.ARTICLE_FACT.value:
                 want = label_for(cids, linked_claims)
+                if want is not None:  # a conditional line is at most SOURCE OPINION (cards)
+                    want = capped_label(want, text)
                 if want is not None and want.value != prov:
                     label_bad.append(f"{v.thesis_id} v{v.version} {sid}: {prov} but cites "
                                      f"{want.value}")
