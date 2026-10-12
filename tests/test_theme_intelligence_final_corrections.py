@@ -251,6 +251,70 @@ def test_a_finding_that_does_not_name_the_corrected_label_stays_open(
     assert resolved == {} and set(flagged) == {"s01.0", "s01.1"}
 
 
+#: FAIL-SAFE resolution (review of PR #703, 2026-10-12): a finding naming the label AND objecting
+#: to content was retired whole. Only a label-only finding is resolved by the relabel.
+LABEL_ONLY = ("Labelled MEASURED OBSERVATION but 'could lift the index' is conditional opinion, "
+              "stronger than warranted. The sector count is a cited observation; the inference is "
+              "not measured (test).")
+MIXED = ("Labelled MEASURED OBSERVATION but the line is conditional. The cited observations "
+         "support only parts; the index effect is not measured (test).")
+MIXED_SPAN = ("Labelled MEASURED OBSERVATION, and the 'equal-weight' clause is not in the cited "
+              "span (test).")
+AMBIGUOUS = ("Labelled MEASURED OBSERVATION but conditional. Check the wording against the sector "
+             "chart (test).")
+
+
+@pytest.mark.parametrize(("finding", "resolved_now"), [
+    (LABEL_ONLY, True),  # every clause is about the label, or affirms support
+    (MIXED, False),  # also: the cited spans support only part of the line
+    (MIXED_SPAN, False),  # also: a clause not in the cited span
+    (AMBIGUOUS, False),  # a clause that is neither about the label nor an affirmation
+])
+def test_only_a_label_only_finding_is_resolved_by_the_relabel(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, finding: str,
+        resolved_now: bool) -> None:
+    pipe = _relabelled(tmp_path, monkeypatch, finding)
+    (t,) = pipe.store.theses()
+    v = _one(pipe)
+    _b, flagged, _c, resolved = line_findings(pipe.store, t.thesis_id, v)
+    assert ("s01.0" in resolved) is resolved_now and ("s01.0" in flagged) is not resolved_now
+    kept = resolved["s01.0"][1] if resolved_now else flagged["s01.0"]
+    assert kept == finding  # the reviewer's words, whole, either way
+    v1 = pipe.store.thesis_version(t.thesis_id, 1)
+    assert v1 is not None and any(  # the original finding stands in its run, unedited
+        i.detail.startswith(f"s01.0: {finding} | ") for i in pipe.store.issues(run_id=v1.run_id))
+    run_dir, _ = _outputs(pipe, tmp_path)
+    soup = BeautifulSoup(next((run_dir / "cards").glob("TH-*[!t].html")).read_text(),
+                         "html.parser")
+    line = soup.select_one("#L-s01-0")
+    assert line is not None
+    text = line.get_text(" ")
+    if resolved_now:
+        assert "✓ Resolved" in text and "UNRESOLVED REVIEW" not in text
+    else:
+        assert "UNRESOLVED REVIEW" in text and "✓ Resolved" not in text
+        assert " ".join(finding.split()) in " ".join(text.split())  # shown whole on the line
+
+
+@pytest.mark.parametrize(("said", "scope"), [
+    ("Labelled MEASURED OBSERVATION but conditional", "label_only"),
+    ("Labelled MEASURED OBSERVATION — stronger label than content, which is opinion", "label_only"),
+    ("Labelled MEASURED OBSERVATION; the figures are supported; the inference is not measured",
+     "label_only"),
+    ("Labelled MEASURED OBSERVATION; it overstates the cited growth", "mixed"),
+    ("Labelled MEASURED OBSERVATION; the cited spans support only parts", "mixed"),
+    ("Labelled MEASURED OBSERVATION; the 2027 date is missing", "mixed"),
+    ("Labelled MEASURED OBSERVATION; the figures are supported only for 2026", "mixed"),
+    ("Labelled MEASURED OBSERVATION; the figures are supported but partly", "ambiguous"),
+    ("Labelled MEASURED OBSERVATION. Revisit later.", "ambiguous"),
+    ("The span does not show the index effect", "not_label"),
+])
+def test_a_finding_is_read_fail_safe_from_its_own_words(said: str, scope: str) -> None:
+    from vinci.theme_intelligence.report import finding_scope
+
+    assert finding_scope(said, "MEASURED OBSERVATION") == scope
+
+
 def _figure_case(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, value: float) -> Pipeline:
     """"five of the 11" read under the number rule of the day (digits only, beside digits): the
     claim fails, so figure '11' is open as `verification_failed`. Today's rule is then back."""

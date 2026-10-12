@@ -701,15 +701,59 @@ def line_findings(store: Store, thesis_id: str, v: ThesisVersion
     return blocked, flagged, corrected, _resolved_by_relabel(store, thesis_id, v, flagged, codes)
 
 
+#: a CONTENT objection — something the cited spans do not carry, which no relabel answers. Any one
+#: of these anywhere in a finding keeps it open, whatever else it says about the label.
+_CONTENT_OBJECTION = re.compile(
+    r"not in (?:the |any )?(?:cited |pool )?spans?|not (?:found|stated|shown|supported|reflected|"
+    r"in the (?:pool|source|article))|unsupported|no (?:pool )?span|"
+    r"does(?:n't| not) (?:say|show|state|support|mention)|support(?:s|ed)? only|only partly|"
+    r"only (?:part|partial)|partial(?:ly)? support|overstat|misstat|mix(?:es|ed|ing)? "
+    r"(?:scope|period|unit)|wrong (?:figure|number|period|unit|date|company|scope)|incorrect|"
+    r"contradict|omit|drops? (?:a |the )?qualifier|missing|absent|unverified", re.I)
+#: a clause about the LABEL — what a relabel to SOURCE OPINION answers
+_LABEL_TALK = re.compile(r"label|stronger than|conditional|opinion|forecast|projection|inference|"
+                         r"not measured|interpretation|speculat", re.I)
+#: a clause affirming support — counted only with no negation or hedge in it
+_AFFIRM = re.compile(r"\bsupport(?:s|ed)?\b|\bcited observations?\b|\b(?:are|is) cited\b|"
+                     r"\bmatch(?:es|ed)?\b|\bconsistent with\b", re.I)
+_HEDGE = re.compile(r"\bnot\b|\bno\b|n't\b|\bnever\b|\bonly\b|\bbut\b|\bwithout\b|"
+                    r"\blacks?\b|\bhowever\b|\bexcept\b|\bpart(?:ly|ial)?\b", re.I)
+
+
+def finding_scope(said: str, label: str) -> str:
+    """What a card-review finding objects to, read FAIL-SAFE from its own words:
+      "label_only"  — every clause is about the label `label` (which the finding names), or affirms
+                      support without a hedge: a relabel answers all of it;
+      "mixed"       — it names the label AND objects to content the cited spans do not carry;
+      "ambiguous"   — it names the label, but some clause is neither about the label nor a plain
+                      affirmation;
+      "not_label"   — it does not name `label` at all.
+    Only "label_only" may be resolved by a relabel; the other three stay open (review of PR #703,
+    2026-10-12: a finding naming the label and ALSO saying the cited spans "support only parts" was
+    retired whole)."""
+    if label.lower() not in said.lower():
+        return "not_label"
+    if _CONTENT_OBJECTION.search(said):
+        return "mixed"
+    for clause in re.split(r"(?<=[.;!?])\s+|\s+—\s+", said.strip()):
+        if not clause.strip(" .;:—"):
+            continue
+        if _LABEL_TALK.search(clause) or (_AFFIRM.search(clause) and not _HEDGE.search(clause)):
+            continue
+        return "ambiguous"
+    return "label_only"
+
+
 def _resolved_by_relabel(store: Store, thesis_id: str, v: ThesisVersion, flagged: dict[str, str],
                          codes: dict[str, str]) -> dict[str, tuple[str, str]]:
     """Review findings a LATER version resolved — moved out of `flagged`, kept as history. One
     case, and only when the record shows it: the review questioned a line's FACT label (its words
     name the label: "Labelled MEASURED OBSERVATION but … conditional") when the line carried it,
     and the line — the same words — now carries SOURCE OPINION, the label that finding asks for.
-    A finding about anything else, or whose words do not name the label, stays open. Observed
-    2026-10-12: Nomura's two conditional risk lines, relabelled by the re-grade, still read
-    UNRESOLVED REVIEW."""
+    FAIL-SAFE: only a finding about the label ALONE is resolved (`finding_scope`); one that also
+    objects to content, or that cannot be read as label-only, stays open with its words intact.
+    Observed 2026-10-12: Nomura's two conditional risk lines, relabelled by the re-grade, still
+    read UNRESOLVED REVIEW."""
     sents = card_sentences(v.content)
     out: dict[str, tuple[str, str]] = {}
     earlier = [x for x in store.thesis_versions(thesis_id) if x.version < v.version]
@@ -723,7 +767,7 @@ def _resolved_by_relabel(store: Store, thesis_id: str, v: ThesisVersion, flagged
                                     and flagged[sid] in i.detail
                                     for i in store.issues(run_id=ev.run_id)):
                 if then[text] in {p.value for p in _FACT_LABELS} \
-                        and then[text].lower() in flagged[sid].lower():
+                        and finding_scope(flagged[sid], then[text]) == "label_only":
                     out[sid] = (f"an earlier review (v{ev.version}) questioned its {then[text]} "
                                 f"label; this version labels it SOURCE OPINION",
                                 flagged.pop(sid))
