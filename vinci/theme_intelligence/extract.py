@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 import types
 from dataclasses import dataclass, field
@@ -698,6 +699,68 @@ def validate_items(cls: type[BaseModel], out: dict[str, Any]) -> tuple[Any, list
     level still fails loud (ValidationError)."""
     dropped: list[str] = []
     return cls.model_validate(_clean(cls, out, "", dropped)), dropped
+
+
+_LOCAL_ID = re.compile(r'"local_id"\s*:\s*"([^"]{1,40})"')
+_TITLE_AFTER_ID = re.compile(r'"local_id"\s*:\s*"([^"]{1,40})"\s*,\s*"title"\s*:\s*"([^"]{1,300})"')
+
+
+@dataclass(frozen=True)
+class LostItem:
+    """An item a discarded field NAMED — reported for audit (where the text says it), never used
+    as evidence."""
+    field: str
+    local_id: str
+    title: str  # "" when the text gives none next to the id
+
+
+def salvage_fields(cls: type[BaseModel], out: Any) -> tuple[Any, list[str], list[LostItem]]:
+    """Validate an answer whose TOP level failed FIELD BY FIELD, then item by item. Observed
+    2026-10-12 on a paid completeness part: `added_hypotheses` came back as 4,420 characters of
+    text that is not valid JSON, and the whole answer — 14 claims, 4 mentions, a risk and 50
+    reviews — was discarded with it.
+
+    A list field that arrived as TEXT is decoded when the text is valid JSON for a list (the
+    model's own value, written as a string — nothing is invented) and its items are validated one
+    by one. A list field that cannot be read as a list is DISCARDED WHOLE, with the exact error
+    and the item ids its text names; nothing inside broken JSON is guessed at. Every other field
+    is kept, item by item (`validate_items`). Raises ValidationError when the answer is still not
+    an object of `cls`."""
+    if not isinstance(out, dict):
+        cls.model_validate(out)  # raises: not an object
+    fixed = dict(out)
+    notes: list[str] = []
+    lost: list[LostItem] = []
+    for name, f in cls.model_fields.items():
+        spec = _model_spec(f.annotation)
+        if name not in fixed or spec is None or spec[0] != "list" or isinstance(fixed[name], list):
+            continue
+        v = fixed[name]
+        if isinstance(v, str):
+            try:
+                decoded = json.loads(v)
+            except json.JSONDecodeError as exc:
+                ids = _LOCAL_ID.findall(v)
+                titles = dict(_TITLE_AFTER_ID.findall(v))
+                lost += [LostItem(name, i, titles.get(i, "")) for i in ids]
+                notes.append(
+                    f"{name}: the whole field discarded — {len(v):,} characters of text where a "
+                    f"list belongs, not valid JSON ({exc.msg}: line {exc.lineno} column "
+                    f"{exc.colno}, character {exc.pos})"
+                    + (f"; it named {len(ids)} item(s): {', '.join(ids[:8])}"
+                       + (f" (showing 8 of {len(ids)})" if len(ids) > 8 else "") if ids else ""))
+                fixed[name] = []
+                continue
+            if isinstance(decoded, list):
+                notes.append(f"{name}: the list arrived as JSON text ({len(v):,} characters) — "
+                             f"decoded; its {len(decoded)} item(s) validated one by one")
+                fixed[name] = decoded
+                continue
+        notes.append(f"{name}: the whole field discarded — a list belongs here, the answer gave "
+                     f"{type(v).__name__} ({str(v)[:60]!r})")
+        fixed[name] = []
+    parsed, dropped = validate_items(cls, fixed)
+    return parsed, notes + dropped, lost
 
 
 def _keep(path: Path, model: str, prompt_version: str, usage: dict[str, int] | None,

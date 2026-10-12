@@ -423,9 +423,33 @@ def test_an_unusable_paid_answer_fails_loud_with_its_cost_recorded(tmp_path: Pat
     assert all(c["cost_usd"] > 0 and not c["cached"] for c in calls)
 
 
-def test_an_unusable_completeness_answer_leaves_the_pass_not_run_and_costed(
+def test_a_malformed_field_costs_that_field_never_the_completeness_pass(
         tmp_path: Path) -> None:
+    """Field by field since 2026-10-12: one malformed field no longer leaves the pass not run."""
     pipe = _pipe_with(tmp_path, FakeLlm(_pass1(bad_items=False), invalid=frozenset({""})))
+    run = pipe.start_run("article", as_of=AS_OF)
+    doc = LONG.doc()
+    pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
+                          as_of=AS_OF, publisher_override=LONG.publisher)
+    calls = {c["purpose"]: c for c in pipe.store.llm_calls(run.run_id)}
+    assert set(calls) == {"extract", "complete"} and calls["complete"]["cost_usd"] > 0
+    codes = [i.code for i in pipe.store.issues(run_id=run.run_id)]
+    assert "COMPLETENESS_PASS_NOT_RUN" not in codes
+    dropped = [i.detail for i in pipe.store.issues(run_id=run.run_id)
+               if i.code == "MALFORMED_ITEM_DROPPED"]
+    assert any("figure_reviews: the whole field discarded" in d for d in dropped)
+
+
+class _NotAnObject(FakeLlm):
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> Any:
+        out = super().extract(system=system, user=user, tool=tool, cache=cache)
+        return out if tool["name"] == "record_article_evidence" else ["not", "an", "object"]
+
+
+def test_an_answer_that_is_not_an_object_leaves_the_pass_not_run_and_costed(
+        tmp_path: Path) -> None:
+    pipe = _pipe_with(tmp_path, _NotAnObject(_pass1(bad_items=False)))
     run = pipe.start_run("article", as_of=AS_OF)
     doc = LONG.doc()
     pipe.process_document(doc, fetched(doc), url=doc.canonical_url, source_id="manual",
@@ -437,7 +461,7 @@ def test_an_unusable_completeness_answer_leaves_the_pass_not_run_and_costed(
             if i.code == "COMPLETENESS_PASS_NOT_RUN"] == ["COMPLETENESS_PASS_NOT_RUN"]
 
 
-def test_an_unusable_part_is_dropped_whole_and_its_gaps_stay_open(
+def test_a_malformed_part_keeps_its_valid_fields_and_its_bad_field_stays_open(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
     doc = LONG.doc()
@@ -447,7 +471,115 @@ def test_an_unusable_part_is_dropped_whole_and_its_gaps_stay_open(
                            taxonomy=load_taxonomy(), client=fake, cache_dir=tmp_path)
     assert [c.label for c in res.calls] == ["1", "2", "3"]  # the bad part's call is costed
     assert [d for d in res.dropped if d.startswith("part 3:")] == [
-        "part 3: the whole answer dropped — figure_reviews: Input should be a valid list; its "
-        "2 gaps stay open"]
+        "part 3: the answer failed as a whole (figure_reviews: Input should be a valid list) "
+        "— recovered field by field:",
+        "part 3: figure_reviews: the whole field discarded — 10 characters of text where a list "
+        "belongs, not valid JSON (Expecting value: line 1 column 1, character 0)"]
     reviewed = {r.figure_id for r in res.output.figure_reviews}
     assert "b008#9%" not in reviewed  # part 3's figure keeps no verdict
+    assert any(n.startswith("part 3: recovered") for n in res.notes)
+
+
+# --- a malformed FIELD costs that field (2026-10-12) ------------------------------------------
+
+#: the REAL shape: Citi Gridlock's completeness part 4 of 13 gave `added_hypotheses` as 4,420
+#: characters of text that is not valid JSON (an object where a key belonged)
+BROKEN_HYPOTHESES = ('[{"local_id": "hx2_1", "title": "Charlie re-rating", "bottom_line_fact": '
+                     '{"text": "t", "claim_ids": ["k2_1"]}, {"text": "u"}}]')
+
+
+class _MalformedPart(FakeLlm):
+    """Part 2 answers in the real malformed shape, beside a VALID added claim; `fixed` answers
+    the same request well formed (a re-ask)."""
+
+    def __init__(self, *a: Any, fixed: bool = False, **k: Any) -> None:
+        super().__init__(*a, **k)
+        self.fixed = fixed
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> dict[str, Any]:
+        out = super().extract(system=system, user=user, tool=tool, cache=cache)
+        m = re.search(r"This is part (\w+):", user)
+        if tool["name"] == "record_article_evidence" or not m or m.group(1) != "2":
+            return out
+        out["added_claims"] = [claim("k2_1", "b003", "unit revenue rose 4%",
+                                     "Charlie unit revenue +4%", value=4, value_text="4%",
+                                     unit="%", period="2026")]
+        out["added_hypotheses"] = [] if self.fixed else BROKEN_HYPOTHESES
+        return out
+
+
+def _run(doc: Any, client: Any, cache: Path, **kw: Any) -> Any:
+    return run_completeness(doc, Extraction.model_validate(_pass1(bad_items=False)),
+                            scan_article(doc), publisher="P", as_of=AS_OF.isoformat(),
+                            taxonomy=load_taxonomy(), client=client, cache_dir=cache, **kw)
+
+
+def test_a_recovered_part_keeps_its_content_out_of_later_requests_and_replays_free(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    fake = _MalformedPart(_pass1(bad_items=False))
+    res = _run(doc, fake, tmp_path)
+    assert [c.local_id for c in res.output.added_claims if c.local_id.startswith("b2.")] == [
+        "b2.k2_1"]  # the valid claim of the malformed answer is kept
+    assert [(lbl, it.local_id, it.title) for lbl, it in res.lost] == [
+        ("2", "hx2_1", "Charlie re-rating")]
+    assert any("added_hypotheses: the whole field discarded" in d and "hx2_1" in d
+               for d in res.dropped)
+    # later parts are shown what WHOLE answers added (part 1's k1_1), never the recovered part's
+    assert "k1_1" in fake.users["3"] and "k2_1" not in fake.users["3"]
+    # so a replay sends every request byte-identical: all from the cache, the same result
+    again = _run(doc, None, tmp_path)
+    assert all(c.cached for c in again.calls) and again.output == res.output
+
+
+def test_a_reask_sends_only_that_part_and_keeps_the_paid_original(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    paid = _MalformedPart(_pass1(bad_items=False))
+    _run(doc, paid, tmp_path)
+    before = {f.name: f.read_bytes() for f in (tmp_path / "complete").glob("*.json")}
+    fixed = _MalformedPart(_pass1(bad_items=False), fixed=True)
+    res = _run(doc, None, tmp_path, reask="2", reask_client=fixed)
+    assert fixed.calls == ["complete-2"] and fixed.users["2"] == paid.users["2"]
+    for name, data in before.items():  # every paid answer kept as it was paid
+        assert (tmp_path / "complete" / name).read_bytes() == data
+    assert len(list((tmp_path / "complete").glob("*.reask-1.json"))) == 1
+    assert not res.lost and any("re-asked answer" in n for n in res.notes)
+    assert [c.label for c in res.calls if not c.cached] == ["2"]
+
+
+def test_a_whole_answer_is_never_re_asked(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    _run(doc, FakeLlm(_pass1(bad_items=False)), tmp_path)  # every part well formed
+    again = FakeLlm(_pass1(bad_items=False))
+    with pytest.raises(RuntimeError, match="valid as a whole — nothing to re-ask"):
+        _run(doc, None, tmp_path, reask="2", reask_client=again)
+    assert again.calls == []
+
+
+def test_a_reask_sends_nothing_when_another_part_cannot_be_reproduced(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from vinci.theme_intelligence.completeness import (
+        COMPLETE_PROMPT_VERSION,
+        completeness_system,
+        completeness_tool,
+    )
+    from vinci.theme_intelligence.extract import cache_key
+
+    monkeypatch.setattr(completeness_mod, "GAPS_PER_CALL", 6)
+    doc = LONG.doc()
+    paid = _MalformedPart(_pass1(bad_items=False))
+    _run(doc, paid, tmp_path)
+    tax = load_taxonomy()
+    key3 = cache_key(paid.model, COMPLETE_PROMPT_VERSION, completeness_tool(tax),
+                     completeness_system(tax), paid.users["3"])
+    (tmp_path / "complete" / f"{key3}.json").unlink()  # part 3 can no longer be reproduced
+    fixed = _MalformedPart(_pass1(bad_items=False), fixed=True)
+    with pytest.raises(RuntimeError, match="no cached completeness pass"):
+        _run(doc, None, tmp_path, reask="2", reask_client=fixed)
+    assert fixed.calls == []  # nothing sent

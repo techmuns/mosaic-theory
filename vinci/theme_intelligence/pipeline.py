@@ -51,6 +51,7 @@ from vinci.theme_intelligence.config import (
     SourceConfig,
     Taxonomy,
 )
+from vinci.theme_intelligence.coverage import coverage_of
 from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
 from vinci.theme_intelligence.engine import ArticleContext, Engine, ThesisOutcome
 from vinci.theme_intelligence.extract import (
@@ -439,7 +440,9 @@ class Pipeline:
             document_date=(doc.stated_date[0] if doc.stated_date
                            else doc.published_at.date() if doc.published_at else None),
             document_date_source=(doc.stated_date[1] if doc.stated_date
-                                  else doc.published_source if doc.published_at else None))
+                                  else doc.published_source if doc.published_at else None),
+            unread_back_matter=doc.unread_back_matter if state is RetrievalState.PARTIAL
+            else "")
         existing_v = self.store.version_by_content(aid, doc.content_sha256)
         with self.store.tx():
             self.store.upsert_article(article)
@@ -536,6 +539,17 @@ class Pipeline:
         ctx = ArticleContext(article=article, version=version, reliability=reliability,
                              run_id=self.run.run_id, as_of=as_of)
         outcomes = self.engine.apply(ctx, ve, resolutions)
+        # every proposition and verified material fact accounted for (coverage.py) — alerts are
+        # WARN issues for review; nothing here creates or merges a thesis
+        cov = coverage_of(doc=doc, merged=merged, ve=ve, report=report,
+                          destinations=self.engine.destinations,
+                          lost=comp.lost if comp else [], store=self.store)
+        report = report.model_copy(update={"coverage": cov})
+        for alert in cov.alerts:
+            self._issue("article", aid, IssueSeverity.WARN, "MECHANISM_COVERAGE", alert)
+        for name in cov.unrecorded_names:
+            self._issue("article", aid, IssueSeverity.INFO, "NAMED_NOT_RECORDED",
+                        f"{name} — named in a cited paragraph, not recorded as a mention")
         self._record_completeness(aid, report)
         # the extraction record is the "applied" marker — written only AFTER the engine succeeds,
         # so a run that dies mid-article re-processes it (idempotently) instead of skipping it

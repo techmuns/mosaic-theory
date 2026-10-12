@@ -147,6 +147,9 @@ class ParsedDocument:
     #: links to the FULLER REPORT the page summarises: (anchor text, absolute url) — read only
     #: where the channel permits (sources.toml `linked_reports`), else listed for upload
     linked_reports: tuple[tuple[str, str], ...] = ()
+    #: set when the ONLY unread part is back matter by the document's own contents list (the
+    #: basis, said plainly) — see documents.classify_unread
+    unread_back_matter: str = ""
 
     @property
     def body_blocks(self) -> tuple[Block, ...]:

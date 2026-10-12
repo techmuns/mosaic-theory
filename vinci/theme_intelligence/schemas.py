@@ -395,6 +395,9 @@ class ArticleVersion(Frozen):
     #: and the report it links can be dated differently; both are kept, never conflated
     document_date: date | None = None
     document_date_source: str | None = None
+    #: the ONLY unread part is back matter by the document's own contents list (the basis) — the
+    #: analysis text is then complete for the research-action gate; the version stays PARTIAL
+    unread_back_matter: str = ""
 
 
 class EvidenceSource(Frozen):
@@ -918,6 +921,51 @@ class BlockCheck(Frozen):
     open_cause: str = ""
 
 
+class PropositionFate(Frozen):
+    """Where one proposition (a hypothesis a model pass proposed) of the source landed."""
+    hypothesis_id: str
+    title: str
+    fate: str  # card | merged | dropped
+    thesis_id: str | None = None
+    detail: str = ""
+
+
+class EvidenceGroup(Frozen):
+    """Verified material evidence of one page that no thesis carries."""
+    page: int | None
+    claim_ids: tuple[str, ...]
+    status: str  # unexplained | excluded | related
+    reason: str = ""
+
+
+class MechanismCoverage(Frozen):
+    """coverage.py — every proposition and every verified material fact of the source accounted
+    for: on a card, merged (stated), excluded with a reason, or an ALERT for review."""
+    propositions: tuple[PropositionFate, ...] = ()
+    uncarried: tuple[EvidenceGroup, ...] = ()
+    risks: tuple[str, ...] = ()  # each proposed market risk: on which card(s), or dropped why
+    unrecorded_names: tuple[str, ...] = ()  # "<name> (<how the sentence names it>, <block>)"
+
+    @property
+    def alerts(self) -> tuple[str, ...]:
+        out = [f"proposition dropped: “{p.title}” — {p.detail}" for p in self.propositions
+               if p.fate == "dropped"]
+        out += [f"propositions merged: “{p.title}” — {p.detail}"
+                for p in self.propositions if p.fate == "merged" and "DISTINCT" in p.detail]
+        out += [f"sibling thesis: “{p.title}” — {p.detail}"
+                for p in self.propositions if p.fate == "card" and p.detail.startswith("SIBLING")]
+        # a mechanism is argued with more than one fact; a lone uncarried figure is listed, not
+        # alerted (face validity, 2026-10-12: Citi's p37 gas argument = 4 facts)
+        out += [f"page {g.page}: {len(g.claim_ids)} verified material facts no thesis carries — "
+                f"a mechanism no card holds?" for g in self.uncarried
+                if g.status == "unexplained" and len(g.claim_ids) >= UNCARRIED_ALERT_MIN]
+        return tuple(out)
+
+
+#: unexplained verified material facts on one page from which coverage ALERTS (fewer are listed)
+UNCARRIED_ALERT_MIN = 2
+
+
 class CompletenessReport(Frozen):
     article_version_id: str
     run_id: str
@@ -934,6 +982,8 @@ class CompletenessReport(Frozen):
     #: the LLM re-read ran (False: only the deterministic ledger — the gap is then visible)
     pass_ran: bool = True
     note: str = ""
+    #: mechanism coverage after the theses were applied (coverage.py); None before 2026-10-12
+    coverage: MechanismCoverage | None = None
 
     @property
     def uncaptured(self) -> tuple[FigureCheck, ...]:
@@ -1068,6 +1118,11 @@ class QuarantinedText(Frozen):
     cells: int  # table cells left out
     chars: int  # characters left out
     sha256: str  # of the text left out (the lines and cells, in order) — what was excluded
+    size: float = 0.0  # the type size most of it was set in (a metric, not its content)
+    #: what the READABLE document says the page is (documents.classify_unread):
+    #: back_matter | possibly_material | unclassified — never read from the unreadable text
+    kind: str = "unclassified"
+    basis: str = ""
 
 class DocumentRecord(Mutable):
     """One manually supplied FILE (identified by its bytes), what the operator stated about it,

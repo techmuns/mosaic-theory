@@ -38,7 +38,9 @@ EXTRACT_PROMPT_VERSION = "ti-extract-6"
 COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
 PARSER_VERSION = "ti-parse-6"  # 6: undecodable PDF glyphs quarantined
-ENGINE_VERSION = "ti-engine-3"  # 3: a sentence read again from another version is REPEATED
+#: 3: a sentence read again from another version is REPEATED · 4: timing read beside the cited
+#: evidence (SKIP-3), same-article siblings flagged, mechanism coverage recorded
+ENGINE_VERSION = "ti-engine-4"
 
 #: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
 #: Cache writes bill 1.25x input and cache reads 0.1x input. Used for the run manifest's cost line;
@@ -79,14 +81,25 @@ CURRENT_OBSERVATION_DAYS = 92
 #: click below, and the heading prints "showing X of Y".
 DASHBOARD_ROWS_PER_CATEGORY = 12
 
-#: A supplied or linked DOCUMENT's model cost, estimated BEFORE any call from what the
-#: completeness pass will have to review: at most ceil((stated figures + argument paragraphs) /
-#: GAPS_PER_CALL) parts, each re-sending the whole text. Range per part (USD, list price) and
-#: the fixed part (extraction + card reviews) — CALIBRATED on three real reports (2026-10-11,
-#: claude-opus-4-8): Citi Gridlock 23 parts estimated / 22 run, $46.67; LatAm 11 / 10, $9.47;
-#: ETF 8 / 7, $3.80. A face-validity cost constant, never tuned on research outcomes.
-DOC_COST_PER_PART_USD = (0.4, 2.1)
-DOC_COST_FIXED_USD = 2.0
+#: A supplied or linked DOCUMENT's model cost, estimated BEFORE any call from the TEXT the reader
+#: will send — its characters, after undecodable glyph output is quarantined — and from what the
+#: completeness pass will review: at most ceil((stated figures + argument paragraphs) /
+#: GAPS_PER_CALL) parts, EACH re-sending the whole text (ingest.estimate_from).
+#:   HIGH: every call at its full output cap (LLM_MAX_TOKENS); input at the densest characters
+#:         per token measured (a completeness part — text, pass-1 record and ledger — 1.3; an
+#:         extraction 1.6); TWO extraction calls (a full answer and its compact retry); card
+#:         reviews at the high allowance.
+#:   LOW:  inputs at 2.0 / 2.4 characters per token, typical outputs, one extraction call.
+#: CALIBRATED 2026-10-12 on four measured analyses (claude-opus-4-8, list price; text characters
+#: / parts / cost): Citi Gridlock as first read 428,578 / 22 / $46.67; Gridlock cleaned 120,399 /
+#: 13 / $11.70; LatAm 162,407 / 10 / $9.47; ETF 101,793 / 7 / $3.80 — each inside its range.
+#: The old per-part constants ($0.4–$2.1 + $2) priced every part like the 309k-token glyph-laden
+#: Gridlock and held the cleaned report at $31 against $11.70 measured. A face-validity cost
+#: constant, never tuned on research outcomes; the per-call spend guard (budget.py) still bounds
+#: every call before it is sent, whatever this estimate says.
+DOC_COST_CHARS_PER_TOKEN = {"part": (2.0, 1.3), "extract": (2.4, 1.6)}  # (low, high)
+DOC_COST_OUTPUT_TOKENS_LOW = {"part": 4_000, "extract": 8_000}
+DOC_COST_REVIEWS_USD = (0.5, 5.0)  # card reviews (pass 2): measured $0.45–$3.17 a document
 #: a document whose HIGH estimate exceeds this is HELD (COST) until `--max-cost` raises it —
 #: also for a linked report the scan would fetch automatically
 DOC_COST_LIMIT_USD = 30.0

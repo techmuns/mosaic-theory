@@ -320,6 +320,8 @@ class Engine:
         #: thesis id -> when this registry FIRST ingested it, for a `state pull` replay: a thesis
         #: it re-creates keeps its original date, never the replay's clock
         self.first_ingested: dict[str, datetime] = {}
+        #: the last `apply`: hypothesis local id -> (thesis id, "" or how it was merged)
+        self.destinations: dict[str, tuple[str, str]] = {}
 
     # -- public --------------------------------------------------------------------------------
     def apply(self, ctx: ArticleContext, ve: VerifiedExtraction,
@@ -338,6 +340,7 @@ class Engine:
                 st.add_issue(i)
         claims = {c.claim_id: c for c in ve.claims}
         mentions = {m.mention_id: m for m in ve.mentions}
+        self.destinations = {}
 
         for h in ve.hypotheses:  # the record type is checked before any thesis is touched
             kind, why = record_kind(h, claims)
@@ -360,8 +363,15 @@ class Engine:
         created_now: list[str] = []
         for key, hs in groups.items():
             h = hs[0]
+            merged_notes: dict[str, str] = {}
             if len(hs) > 1:
                 for extra in hs[1:]:
+                    shared, distinct = _evidence_overlap(h, extra)
+                    merged_notes[extra.raw.local_id] = (
+                        f"merged with {h.raw.local_id} “{h.raw.title}” under one identity key — "
+                        f"{shared} supporting claim(s) shared, {distinct} its own"
+                        + (" — DISTINCT EVIDENCE: review whether it is the same thesis"
+                           if distinct > shared else ""))
                     h.supporting += [c for c in extra.supporting if c not in h.supporting]
                     h.dislocation += [c for c in extra.dislocation if c not in h.dislocation]
                     h.counter += [c for c in extra.counter if c not in h.counter]
@@ -369,7 +379,10 @@ class Engine:
                 st.add_issue(self._issue(ctx, "hypothesis", key, IssueSeverity.WARN,
                                          "SAME_KEY_IN_ARTICLE",
                                          f"{len(hs)} hypotheses share one identity key in one "
-                                         f"article — merged as one thesis contribution"))
+                                         f"article — merged as one thesis contribution: "
+                                         + "; ".join(f"“{x.raw.title}” "
+                                                     f"({merged_notes.get(x.raw.local_id, 'kept')})"
+                                                     for x in hs)))
             risks = [r for r in ve.risks if not r.related or h.raw.local_id in r.related]
             existing = st.thesis_by_key(key)
             if existing is None and (prior := self._same_article_thesis(h, segments[key],
@@ -381,17 +394,47 @@ class Engine:
                     f"{segments[key] or 'none'}; its earlier version created this thesis "
                     f"(segment {prior.key_segment or 'none'}) — updated, never a second thesis "
                     f"from one article"))
+            sibling = ""
             if existing is None:
                 out = self._create(ctx, key, h, claims, mentions, resolutions, risks,
                                    segments[key])
                 created_now.append(out.thesis_id)
+                sibling = self._same_article_sibling(ctx, out.thesis_id, key, earlier)
             else:
                 out = self._update(ctx, existing, h, claims, mentions, resolutions, risks)
             outcomes.append(out)
+            for x in hs:  # where every proposition of the source landed (mechanism coverage)
+                self.destinations[x.raw.local_id] = (
+                    out.thesis_id, merged_notes.get(x.raw.local_id, "") or sibling)
         for tid in created_now:
             outcomes.extend(self._challenge_competitors(ctx, tid, claims, mentions, resolutions,
                                                         created_now))
         return outcomes
+
+    def _same_article_sibling(self, ctx: ArticleContext, tid: str, key: str,
+                              earlier: list[str]) -> str:
+        """A thesis a LATER version of an article just created, beside one its EARLIER version
+        created, on the same source sentences (verify.same_sentence_reread) — never merged (a
+        different identity key is a different thesis), but FLAGGED: the answer may simply have
+        keyed one story two ways. "" when there is none."""
+        st = self.store
+        new = [c for lk in st.links(tid) if (c := st.claim(lk.claim_id)) is not None]
+        for old_tid in earlier:
+            if old_tid == tid or (old := st.thesis(old_tid)) is None:
+                continue
+            olds = [c for lk in st.links(old_tid) if (c := st.claim(lk.claim_id)) is not None]
+            shared = sum(1 for c in new if any(same_sentence_reread(o, c) for o in olds))
+            if shared and shared >= SIBLING_SHARE * len(new):
+                note = (f"SIBLING of “{old.title}”: {shared} of its {len(new)} sentence(s) were "
+                        f"already on that thesis from an earlier version of this article, under "
+                        f"another identity key ({old.key_node}|{old.key_mechanism}|"
+                        f"{old.key_direction.value}|{old.key_geography} vs {key}) — not merged; "
+                        f"review whether it is one thesis")
+                st.add_issue(self._issue(ctx, "thesis", tid, IssueSeverity.WARN,
+                                         "SAME_ARTICLE_SIBLING",
+                                         f"{old_tid} / {tid} ({ctx.article.article_id}): {note}"))
+                return note
+        return ""
 
     def _same_article_thesis(self, h: VerifiedHypothesis, segment: str,
                              earlier: list[str]) -> Thesis | None:
@@ -750,6 +793,26 @@ class Engine:
                              EvidenceDirection.WEAKER, [etype])
 
     # -- shared -------------------------------------------------------------------------------
+    def _timing_context(self, by_role: dict[LinkRole, list[Claim]],
+                        all_claims: dict[str, Claim], article_id: str) -> tuple[Claim, ...]:
+        """Verified source evidence beyond the card's selected citations, for the TIMING test
+        (priority.ThesisState.timing_context): the thesis's other linked claims (context,
+        counter …) and every verified claim in a paragraph its evidence sits in. Observed
+        2026-10-12: the same Citi sentence ("unlikely to clear before 2030") was a supporting,
+        long-dated claim in one run and an undated context line in the next, which turned SKIP-3
+        into WATCH."""
+        cited = (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)
+        blocks = {(c.article_id, c.block_id) for r in cited for c in by_role.get(r, [])}
+        pool: dict[str, Claim] = {c.claim_id: c for r, cs in by_role.items() if r not in cited
+                                  for c in cs}
+        others = {a for a, _b in blocks} - {article_id}
+        candidates = list(all_claims.values()) + [c for a in sorted(others)
+                                                  for c in self.store.claims_for_article(a)]
+        for c in candidates:
+            if c.span_verified and (c.article_id, c.block_id) in blocks:
+                pool.setdefault(c.claim_id, c)
+        return tuple(pool.values())
+
     def _build_version(self, ctx: ArticleContext, thesis: Thesis, version: int,
                        h: VerifiedHypothesis | None, prev: CardContent | None,
                        links: list[ThesisClaimLink], claims: dict[str, Claim],
@@ -817,6 +880,18 @@ class Engine:
                 c = all_claims.get(lk.claim_id)
                 if c is not None and c.span_verified:
                     by_role.setdefault(lk.role, []).append(c)
+            timing_context = self._timing_context(by_role, all_claims, ctx.article.article_id)
+            # the research-action gate needs the ANALYSIS text whole: a version whose only unread
+            # pages are back matter BY THE DOCUMENT'S OWN CONTENTS LIST passes it, said so; it
+            # stays PARTIAL everywhere else (verification still says "read only in part")
+            retrieval = (ctx.version.retrieval_state
+                         if ctx.version.retrieval_state is not RetrievalState.BLOCKED
+                         else RetrievalState.PARTIAL)
+            retrieval_note = ""
+            if retrieval is RetrievalState.PARTIAL and ctx.version.unread_back_matter:
+                retrieval = RetrievalState.FULL
+                retrieval_note = (f"analysis text complete — {ctx.version.unread_back_matter}; "
+                                  f"the document itself stays PARTIAL")
             state = ThesisState(
                 reliability=max((ctx.reliability, *self._source_reliabilities(thesis.thesis_id)),
                                 key=lambda r: {"high": 2, "medium": 1, "low": 0}[r]),
@@ -827,12 +902,11 @@ class Engine:
                 listed_exposures=listed, instrument_exposures=instruments,
                 transmission=draft.s03_transmission, horizon=thesis.horizon,
                 stance=thesis.stance, verification_hold=bool(holds),
-                hold_reasons=tuple(holds), retrieval=ctx.version.retrieval_state
-                if ctx.version.retrieval_state is not RetrievalState.BLOCKED
-                else RetrievalState.PARTIAL, kind=thesis.kind,
+                hold_reasons=tuple(holds), retrieval=retrieval, retrieval_note=retrieval_note,
+                kind=thesis.kind,
                 sector_exposures=tuple(s.name for s in affected.sector_exposures),
                 unverified_listings=unverified, as_of=ctx.as_of, published=published,
-                data_report_articles=data_reports)
+                data_report_articles=data_reports, timing_context=timing_context)
             pr = compute_priority(state, previous=previous, evidence_direction=direction,
                                   previous_factors=prev_factors)  # type: ignore[arg-type]
             return compose_card(CardInputs(**{**stub.__dict__, "priority": pr})), pr
@@ -1201,6 +1275,21 @@ def _more_item(shown: int, total: int, article_id: str) -> ChangeItem:
                       text=f"showing {shown} of {total} pieces of evidence from {article_id} — "
                            f"the rest are in 04 KEY EVIDENCE and the evidence ledger",
                       provenance=Provenance.UNKNOWN, article_id=article_id)
+
+
+#: a thesis a later version creates is a SIBLING of an earlier version's thesis when at least
+#: this share of its sentences already sat on that thesis (face validity, 2026-10-12: on Citi's
+#: re-read one shared sentence of twenty was cross-citation, 60 of 67 the same story re-keyed)
+SIBLING_SHARE = 0.5
+
+
+def _evidence_overlap(a: VerifiedHypothesis, b: VerifiedHypothesis) -> tuple[int, int]:
+    """(evidence `b` shares with `a`, evidence only `b` has) — supporting and dislocation claims,
+    counted before `b` is folded into `a`. Observed 2026-10-12: a fuel-cell share hypothesis and
+    a gas-generation equipment hypothesis shared one identity key and merged silently."""
+    sa = set(a.supporting) | set(a.dislocation)
+    sb = set(b.supporting) | set(b.dislocation)
+    return len(sb & sa), len(sb - sa)
 
 
 #: Sentences the DECISION rests on: the bottom line, the what-changed facts, the decision itself,

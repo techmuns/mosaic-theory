@@ -373,6 +373,41 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
     return _EXIT[run.status]
 
 
+def cmd_reask_part(a: argparse.Namespace) -> int:
+    """Pay for ONE completeness part again — never the whole document (see ingest.reask_part)."""
+    from vinci.theme_intelligence.budget import BudgetExceeded
+    from vinci.theme_intelligence.documents import DocumentError
+    from vinci.theme_intelligence.ingest import reask_part
+
+    a.no_review = True
+    pipe = _ingest_pipeline(a)
+    rec = pipe.store.document(a.doc)
+    run_as_of = (pipe.store.run(rec.run_id).as_of if rec is not None and rec.run_id
+                 and pipe.store.run(rec.run_id) is not None
+                 else datetime.now(tz=UTC).date())
+    run = pipe.start_run("ingest", as_of=run_as_of)
+    try:
+        res = reask_part(pipe, a.doc, a.part, max_cost=a.max_cost)
+    except (DocumentError, RuntimeError, BudgetExceeded) as exc:
+        pipe.finish_run(RunStatus.FAILED, error=str(exc))
+        print(f"refused — nothing sent: {exc}")
+        return 1
+    except Exception as exc:  # noqa: BLE001 — recorded FAILED, said plainly
+        pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}")
+        print(f"failed: {type(exc).__name__}: {exc}")
+        return 1
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    print(f"run {run.run_id}: re-asked part {res.part} of {res.doc_id} (article "
+          f"{res.article_id}, version {res.version_id}) — cost ${res.cost_usd:.4f}")
+    print(f"  {res.recovered}")
+    print(f"  kept as {res.kept_as} (the paid original is unchanged)")
+    for n in res.notes:
+        print(f"  {n[:240]}")
+    print("  used whenever this version is analysed again (a replay into a rebuilt registry, "
+          "or a re-read); the records already analysed are not rewritten")
+    return 0
+
+
 def cmd_ingest_inbox(a: argparse.Namespace) -> int:
     """Every document in the private inbox, as one run. Each file's statements come from a
     `<file>.meta.json` beside it (or --source for all); the file then moves to processed/,
@@ -546,6 +581,14 @@ def main(argv: list[str] | None = None) -> int:
     ig.add_argument("--no-review", action="store_true")
     ig.add_argument("--out")
     ig.set_defaults(fn=cmd_ingest_file)
+
+    rq = sub.add_parser("reask-part", help="pay for ONE completeness part whose answer failed, "
+                                           "not the whole document")
+    rq.add_argument("--doc", required=True, help="the document id (D-…)")
+    rq.add_argument("--part", required=True, help="the part label, e.g. 4")
+    rq.add_argument("--max-cost", type=float, required=True,
+                    help="USD this one call may cost (bounded before it is sent)")
+    rq.set_defaults(fn=cmd_reask_part, cache_only=False)
 
     ib = sub.add_parser("ingest-inbox", help="import every document in the private inbox")
     ib.add_argument("--inbox", help="default: <data-dir>/inbox")

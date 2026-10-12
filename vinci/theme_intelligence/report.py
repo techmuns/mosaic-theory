@@ -152,8 +152,17 @@ def research_verification(store: Store, run: WeeklyRun,
     causes: dict[str, int] = {}
     for x in [f for _, f in open_f] + [b for _, b in open_b]:
         causes[x.open_cause or "unclassified"] = causes.get(x.open_cause or "unclassified", 0) + 1
+    # MECHANISM COVERAGE (coverage.py): a proposition dropped, two merged on distinct evidence,
+    # or verified material facts no thesis carries — each an alert for review
+    coverage: list[tuple[Any, str]] = []
+    for rep in reps:
+        if rep.coverage is not None:
+            av1 = store.article_version(rep.article_version_id)
+            coverage.append((rep, av1.article_id if av1 else rep.article_version_id))
+    cov_alerts = [f"{aid}: {a}" for rep, aid in coverage
+                  for a in (rep.coverage.alerts if rep.coverage else ())]
     status = ("NOTHING_ANALYSED" if not reps else
-              "INCOMPLETE" if open_f or open_b or not_run else
+              "INCOMPLETE" if open_f or open_b or not_run or cov_alerts else
               "VERIFIED_WITHIN_PREVIEW" if partial else "FULLY_VERIFIED")
     # a ledger is per article VERSION: a preview and its fuller version are one article read twice
     n_articles = len({(av.article_id if (av := store.article_version(r.article_version_id))
@@ -176,6 +185,9 @@ def research_verification(store: Store, run: WeeklyRun,
                          if causes else "")
                       + (f"; {partial} article(s) read only in part (a preview, or pages that "
                          f"could not be read)" if partial else "")
+                      + (f"; mechanism coverage: {len(cov_alerts)} alert(s) for review — a "
+                         f"proposition dropped or merged on distinct evidence, or verified facts "
+                         f"no thesis carries" if cov_alerts else "")
                       + ". Open material is never used as evidence, so it can hold a thesis "
                         "back but never raise its research action",
         "NOTHING_ANALYSED": "no article was analysed in this run",
@@ -190,6 +202,38 @@ def research_verification(store: Store, run: WeeklyRun,
                        f"{f.open_cause or 'unclassified'}: {f.reason}" for r, f in open_f]
         + [f"{r.article_version_id} {b.block_id} paragraph — {b.open_cause or 'unclassified'}: "
            f"{b.reason}" for r, b in open_b],
+        "coverage_alerts": cov_alerts,
+        #: the same alerts by TITLE, for the first view (no engine ids there)
+        "coverage_alerts_plain": [
+            f"“{_title_of(store, aid)}”: {a}"
+            for rep, aid in coverage for a in (rep.coverage.alerts if rep.coverage else ())],
+        "coverage": [{"article_id": aid, "article_version_id": rep.article_version_id,
+                      **_coverage_detail(store, rep.coverage)}
+                     for rep, aid in coverage if rep.coverage is not None],
+    }
+
+
+def _title_of(store: Store, article_id: str) -> str:
+    a = store.article(article_id)
+    return (a.title if a is not None else None) or article_id
+
+
+def _coverage_detail(store: Store, cov: Any) -> dict[str, Any]:
+    """The full mechanism-coverage record of one article version, quotes resolved (on-demand
+    tier: every proposition, every uncarried fact, every risk, every unrecorded name)."""
+    def q(cid: str) -> str:
+        c = store.claim(cid)
+        return f"{cid} {c.value_text or ''} — {clip(c.quote, 160)!r}" if c else cid
+
+    return {
+        "propositions": [f"{p.fate.upper()} {p.hypothesis_id} “{p.title}” → "
+                         f"{p.thesis_id or '—'}" + (f" — {p.detail}" if p.detail else "")
+                         for p in cov.propositions],
+        "uncarried": [f"page {g.page}: {g.status.upper()} — {len(g.claim_ids)} fact(s)"
+                      + (f" — {g.reason}" if g.reason else "") + ": "
+                      + " · ".join(q(c) for c in g.claim_ids) for g in cov.uncarried],
+        "risks": list(cov.risks),
+        "unrecorded_names": list(cov.unrecorded_names),
     }
 
 
@@ -201,7 +245,11 @@ def _listed(items: list[str]) -> dict[str, Any]:
 
 def _unread_pages(d: Any) -> str:
     """'pages 54–60' / 'page 3' / 'pages 3, 7–9' — the pages whose text could not be read."""
-    pages = sorted(q.page for q in d.quarantined)
+    return _page_runs([q.page for q in d.quarantined])
+
+
+def _page_runs(pages_in: list[int]) -> str:
+    pages = sorted(pages_in)
     runs: list[list[int]] = []
     for p in pages:
         if runs and p == runs[-1][-1] + 1:
@@ -210,6 +258,30 @@ def _unread_pages(d: Any) -> str:
             runs.append([p])
     text = ", ".join(f"{r[0]}–{r[-1]}" if len(r) > 1 else f"{r[0]}" for r in runs)
     return ("pages " if len(pages) > 1 else "page ") + text
+
+
+_UNREAD_KIND = {"back_matter": "BACK MATTER (likely disclosures)",
+                "possibly_material": "POSSIBLY MATERIAL — research text may be missing",
+                "unclassified": "UNCLASSIFIED"}
+
+
+def _unread_kinds(d: Any) -> str:
+    """What the READABLE document says the unread pages are, kind by kind, with the basis."""
+    by: dict[str, list[Any]] = {}
+    for q in d.quarantined:
+        by.setdefault(getattr(q, "kind", "unclassified"), []).append(q)
+    parts = []
+    for kind in ("possibly_material", "unclassified", "back_matter"):
+        qs = by.get(kind)
+        if qs:
+            pages = _page_runs([q.page for q in qs])
+            parts.append(f"{pages}: {_UNREAD_KIND[kind]} — {qs[0].basis or 'no basis recorded'}")
+    return "; ".join(parts)
+
+
+def _only_back_matter(d: Any) -> bool:
+    return bool(d.quarantined) and all(getattr(q, "kind", "") == "back_matter"
+                                       for q in d.quarantined)
 
 
 def _doc_line(store: Store, d: Any, as_of: dict[str, date]) -> str:
@@ -283,6 +355,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
                 f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'}; "
                 f"{vs[-1].body_word_count} words read) [{a.article_id}]")
         if a.article_id in unread:
+            if _only_back_matter(unread[a.article_id]):
+                continue  # its analysis text is whole: a visual check, never an awaited document
             line += (f" — not a missing document: {_unread_pages(unread[a.article_id])} could "
                      f"not be read (undecodable font glyphs) — visual / OCR review")
         awaiting.append(line)
@@ -300,7 +374,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
             metadata.append(
                 f"VISUAL / OCR REVIEW — {_doc_line(store, d, as_of)} — {_unread_pages(d)}: "
                 f"{sum(q.chars for q in d.quarantined):,} characters of undecodable font glyphs "
-                f"left out of the analysis; what those pages say is NOT read")
+                f"left out of the analysis; what those pages say is NOT read. What the readable "
+                f"document says they are: {_unread_kinds(d)}")
     for url, _st, rec in store.candidates("UNDATED"):
         if rec.get("source_id") in retired:
             continue
@@ -936,6 +1011,26 @@ def _row_html(r: DashRow) -> str:
         + audit + "</div>")
 
 
+def _coverage_html(v: dict[str, Any], print_mode: bool) -> str:
+    """Mechanism coverage: the alerts, then (on demand) every article's full record."""
+    if not v.get("coverage"):
+        return ""
+    alerts = v.get("coverage_alerts_plain") or []
+    body = "".join(f'<div class="s note">⚠ {e(x)}</div>' for x in alerts)
+    audit = ""  # the full record names theses and claims by id: the audit view only
+    for c in v["coverage"]:
+        audit += (f'<div class="s"><b>{e(c["article_id"])}</b> — propositions '
+                  f'{len(c["propositions"])}, uncarried fact group(s) {len(c["uncarried"])}, '
+                  f'risks {len(c["risks"])}, names not recorded '
+                  f'{len(c["unrecorded_names"])}</div>')
+        for label in ("propositions", "uncarried", "risks", "unrecorded_names"):
+            audit += "".join(f'<div class="s note">{e(label.replace("_", " "))}: {e(x)}</div>'
+                             for x in c[label])
+    return ('<details class="sec"' + (" open" if print_mode else "")
+            + f'><summary>Mechanism coverage — {len(alerts)} alert(s) for review</summary>'
+            + body + f'<div class="aud">{audit}</div></details>')
+
+
 def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                           embedded_cards: list[str] | None = None) -> str:
     run = d.run
@@ -954,7 +1049,8 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                      + ('<details class="sec"' + (" open" if print_mode else "")
                         + f'><summary>Open items ({len(v["open_items"])})</summary>'
                         + "".join(f'<div class="s note">{e(x)}</div>' for x in v["open_items"])
-                        + "</details>" if v.get("open_items") else "") + "</div>")
+                        + "</details>" if v.get("open_items") else "")
+                     + _coverage_html(v, print_mode) + "</div>")
     k = d.kpi or {}
     kp: list[tuple[str, ...]] = ([("Sources", "single article (manual URL) — no discovery")]
           if k.get("accessible_sources") is None else
@@ -1234,6 +1330,14 @@ def render_dashboard_md(d: Dashboard) -> str:
     if v.get("open_items"):
         md += [f"## Research verification — open items ({len(v['open_items'])})", ""] + [
             f"- {x}" for x in v["open_items"]] + [""]
+    if v.get("coverage"):
+        md += [f"## Mechanism coverage — {len(v.get('coverage_alerts') or [])} alert(s) for "
+               f"review", ""] + [f"- ⚠ {x}" for x in v.get("coverage_alerts") or []] + [""]
+        for c in v["coverage"]:
+            md += [f"### {c['article_id']}", ""]
+            for label in ("propositions", "uncarried", "risks", "unrecorded_names"):
+                md += [f"- {label.replace('_', ' ')}: {x}" for x in c[label]]
+            md.append("")
     if d.caveats:
         md += ["## Unresolved caveats", ""] + [f"- {c}" for c in d.caveats] + [""]
     for cat in CATEGORY_ORDER:

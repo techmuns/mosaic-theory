@@ -7,7 +7,8 @@ window a period string names ("NTM", "4Q26", "2H 2026", "2025-2031", "FY27", "Se
   near_term   a forecast / scheduled event whose window starts within ~a year and ends within ~18
               months of the as-of (config NEAR_TERM_*) — the next 2-4 quarters;
   long_range  a forecast / event whose window reaches past that ("a 2025-2031 CAGR") — a forecast
-              does NOT qualify merely because it is a forecast;
+              does NOT qualify merely because it is a forecast — or an opinion naming such a
+              horizon ("unlikely to clear before 2030"); a view is never near-term evidence;
   current     a MEASURED observation dated at most one quarter before the as-of
               (config CURRENT_OBSERVATION_DAYS) — the condition exists now;
   historical  a measured observation older than that, or a forecast window already past;
@@ -50,7 +51,14 @@ _MONTHS = {m: i for i, ms in enumerate(
      ("oct", "october"), ("nov", "november"), ("dec", "december")], start=1) for m in ms}
 _ORD = {"first": 1, "second": 2, "third": 3, "fourth": 4, "1st": 1, "2nd": 2, "3rd": 3, "4th": 4}
 _COUNT = {"two": 2, "three": 3, "four": 4, "2": 2, "3": 3, "4": 4}
+_YEARS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
+          "nine": 9, "ten": 10, "fifteen": 15, "twenty": 20}
+_YEARS_WORD = "|".join(_YEARS)
 _YY = r"'?(\d{4}|\d{2})"
+
+
+def _years(tok: str) -> int:
+    return _YEARS[tok] if tok in _YEARS else int(tok)
 _MONTH_RE = "|".join(sorted(_MONTHS, key=len, reverse=True))
 
 
@@ -106,6 +114,20 @@ def window_of(text: str | None, ref: date) -> Window | None:
     take(r"\bnext\s+(two|three|four|2|3|4)\s+quarters\b",
          lambda m: (ref, ref + timedelta(days=92 * _COUNT[m.group(1)])))
     take(r"\b(?:next|coming)\s+quarter\b", lambda m: (ref, ref + timedelta(days=92)))
+    # relative MULTI-YEAR windows, read from the source's words (observed 2026-10-12: "over the
+    # next five years", "over the next decade" and "before 2030" were unread, so long-dated
+    # evidence looked undated and a SKIP-3 thesis read as WATCH)
+    take(rf"\b(?:next|coming|following)\s+({_YEARS_WORD}|\d{{1,2}})\s+years\b",
+         lambda m: (ref, ref + timedelta(days=round(365.25 * _years(m.group(1))))))
+    take(r"\b(?:next|coming)\s+decade\b", lambda m: (ref, ref + timedelta(days=3652)))
+    take(r"\b(?:the\s+)?end\s+of\s+(?:the|this)\s+decade\b",
+         lambda m: (ref, _year_end(ref.year // 10 * 10 + 9)))
+    take(r"\binto\s+the\s+((?:19|20)\d0)s\b",
+         lambda m: (ref, _year_end(int(m.group(1)) + 9)) if int(m.group(1)) + 9 >= ref.year
+         else None)
+    take(r"\bbefore\s+((?:19|20)\d{2})\b",
+         lambda m: (ref, _year_end(int(m.group(1)) - 1)) if int(m.group(1)) - 1 >= ref.year
+         else None)
     take(r"\b(?:year[- ]to[- ]date|ytd)\b", lambda m: (date(ref.year, 1, 1), ref))
     take(r"\b(?:this|current)\s+year\b", lambda m: (date(ref.year, 1, 1), _year_end(ref.year)))
     take(r"\bnext\s+year\b", lambda m: (date(ref.year + 1, 1, 1), _year_end(ref.year + 1)))
@@ -193,4 +215,11 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
         if age <= CURRENT_OBSERVATION_DAYS:
             return "current", f"measured {d.isoformat()} ({age} days before the as-of)"
         return "historical", f"measured {d.isoformat()} ({age} days before the as-of)"
+    # an opinion / mixed view that NAMES a horizon beyond the next 4 quarters ("unlikely to clear
+    # before 2030") is long-dated evidence of the thesis's timing. It never counts as near-term:
+    # only a forecast, an event or a measurement can show that.
+    w = w or window_of(c.quote, ref)
+    if w is not None and w.end > ref + timedelta(days=NEAR_TERM_END_DAYS):
+        return "long_range", (f"{c.epistemic.value} naming a window {w} beyond the next 4 "
+                              f"quarters (a view's horizon — never near-term evidence)")
     return "undated", f"{c.epistemic.value} — no time window"

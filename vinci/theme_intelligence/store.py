@@ -330,6 +330,11 @@ class Store:
             raise StoreIntegrityError(f"extraction {extraction_id} re-used for different output")
         return False
 
+    def extraction_ids(self, article_version_id: str) -> list[str]:
+        return [str(r[0]) for r in self.conn.execute(
+            "SELECT extraction_id FROM extractions WHERE article_version_id=? ORDER BY created_at",
+            (article_version_id,)).fetchall()]
+
     def extraction(self, extraction_id: str) -> dict[str, Any] | None:
         row = self.conn.execute("SELECT payload FROM extractions WHERE extraction_id=?",
                                 (extraction_id,)).fetchone()
@@ -423,6 +428,16 @@ class Store:
         return self._append("thesis_claim_links", {
             "thesis_id": link.thesis_id, "claim_id": link.claim_id, "role": link.role.value},
             link)
+
+    def linked_claim_ids(self, claim_ids: list[str]) -> set[str]:
+        """Which of these claims any thesis links to (any role)."""
+        out: set[str] = set()
+        for i in range(0, len(claim_ids), 500):
+            chunk = claim_ids[i:i + 500]
+            out |= {str(r[0]) for r in self.conn.execute(
+                f"SELECT DISTINCT claim_id FROM thesis_claim_links WHERE claim_id IN "
+                f"({','.join('?' * len(chunk))})", chunk).fetchall()}
+        return out
 
     def links(self, thesis_id: str) -> list[ThesisClaimLink]:
         return self._rows("SELECT payload FROM thesis_claim_links WHERE thesis_id=? ORDER BY "

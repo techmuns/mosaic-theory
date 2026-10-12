@@ -47,6 +47,7 @@ from vinci.theme_intelligence.extract import (
     _X,
     Extraction,
     InvalidAnswerError,
+    LostItem,
     ToolClient,
     XAffected,
     XClaim,
@@ -58,6 +59,7 @@ from vinci.theme_intelligence.extract import (
     cache_key,
     cost_of,
     first_error,
+    salvage_fields,
     system_prompt,
     tool_parts,
     validate_items,
@@ -564,6 +566,7 @@ class CompletenessCall:
     seconds: float
     cached: bool
     truncated: bool = False  # billed and discarded: the part was split and re-asked
+    kept_as: str = ""  # a re-asked answer: the file it was kept in, beside the paid original
 
 
 @dataclass
@@ -579,17 +582,34 @@ class CompletenessResult:
     calls: list[CompletenessCall] = field(default_factory=list)
     dropped: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)  # how the review was split, if it was
+    #: (part label, item) a malformed field NAMED and lost — for the coverage report
+    lost: list[tuple[str, LostItem]] = field(default_factory=list)
 
 
 def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publisher: str,
                      as_of: str, taxonomy: Taxonomy, client: ToolClient | None,
-                     cache_dir: Path) -> CompletenessResult:
+                     cache_dir: Path, reask: str | None = None,
+                     reask_client: ToolClient | None = None) -> CompletenessResult:
     """Pass 1b — one call, or, when the open gaps exceed GAPS_PER_CALL, consecutive PARTS. Each
     later part is shown what the earlier parts added (so it extends rather than duplicates them)
     and skipped if they already covered its gaps. A part that overruns the output cap is split
     ONCE into halves (the discarded call is recorded with its cost); a half that overruns again
     fails loud. Every call is cached by content; the paid answer is written before it is
-    validated, item by item."""
+    validated, item by item.
+
+    An answer whose TOP level fails is recovered FIELD BY FIELD (`salvage_fields`): only the
+    malformed field is lost, with its exact error. Such a part is NOT shown to later parts: what
+    a later part sees is then fixed by answers already paid for, so a replay — or a re-ask of
+    only that part (`reask-part`) — sends every other request byte-identical and pays for none
+    of them again. Its content still joins the result and is verified like any other.
+
+    `reask` (with `reask_client`; the `reask-part` command): send the IDENTICAL request of that
+    one part again — only when its cached answer fails as a whole — and keep the new answer
+    beside the original (`<key>.reask-N.json`). Every other part must come from the cache (no
+    `client`), which is also the proof the requests were reproduced exactly."""
+    if reask is not None:  # the whole chain must reproduce from the cache BEFORE anything is sent
+        run_completeness(doc, x, ledger, publisher=publisher, as_of=as_of, taxonomy=taxonomy,
+                         client=None, cache_dir=cache_dir)
     captured, anchored = first_pass_coverage(doc, x, ledger)
     tool = completeness_tool(taxonomy)
     system = completeness_system(taxonomy)
@@ -599,10 +619,13 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
     notes = ([] if queue == [None] else
              [f"{len(gaps)} open gaps after pass 1 (figures not captured + argument paragraphs "
               f"not anchored) exceed one call's {GAPS_PER_CALL} — reviewed in {len(queue)} parts"])
-    outputs: list[CompletenessOutput] = []
+    outputs: list[CompletenessOutput] = []  # the parts LATER parts are shown (see below)
+    final: list[CompletenessOutput] = []  # every part's usable content, in article order
     raws: list[dict[str, Any]] = []
     calls: list[CompletenessCall] = []
     dropped: list[str] = []
+    lost: list[tuple[str, LostItem]] = []
+    reask_done = False
     while queue:
         b = queue.pop(0)
         xk, cap, anc = x, captured, anchored
@@ -625,6 +648,10 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
             rec = json.loads(path.read_text())
             out = rec["output"]
             calls.append(CompletenessCall(label, rec.get("usage"), 0.0, 0.0, True))
+            if reask is not None and label == reask:
+                calls.append(_reask(path, out, label, reask_client, model=model, system=system,
+                                    user=user, tool=tool))
+                reask_done = True
         elif marker.exists() and splittable:  # known to overrun: split without paying again
             notes.append(_split_note(label, json.loads(marker.read_text()).get("usage")))
             queue[:0] = whole.halves()
@@ -658,26 +685,52 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                                         "usage": usage, "seconds": seconds, "output": out},
                                        sort_keys=True, indent=1))
             calls.append(CompletenessCall(label, usage, cost_of(model, usage), seconds, False))
+        what = f"part {b.label}" if b is not None else "the completeness answer"
+        whole_ok = True
         try:
             parsed, bad = validate_items(CompletenessOutput, out)
         except ValidationError as exc:
-            last = calls[-1]
-            if b is None:  # the single call: the pass did not run; its cost is recorded
-                raise InvalidAnswerError("completeness pass", exc,
-                                         usages=[] if last.cached else [last.usage],
-                                         model=model,
-                                         prompt_version=COMPLETE_PROMPT_VERSION) from exc
-            dropped.append(f"part {b.label}: the whole answer dropped — {first_error(exc)}; "
-                           f"its {len(b.gaps)} gaps stay open")
-            continue
+            # FIELD BY FIELD: a malformed field costs that field, never the whole paid answer.
+            # The answer stays in the cache as paid (audit); a re-asked answer, when the operator
+            # paid for one (`reask-part`), sits beside it and is used instead.
+            whole_ok = False
+            asked = latest_reask(path)
+            src = out if asked is None else json.loads(asked.read_text())["output"]
+            try:
+                parsed, bad, gone = salvage_fields(CompletenessOutput, src)
+            except ValidationError as exc2:
+                last = calls[-1]
+                if b is None:  # the single call: the pass did not run; its cost is recorded
+                    raise InvalidAnswerError("completeness pass", exc2,
+                                             usages=[] if last.cached else [last.usage],
+                                             model=model,
+                                             prompt_version=COMPLETE_PROMPT_VERSION) from exc2
+                dropped.append(f"part {b.label}: the whole answer dropped — "
+                               f"{first_error(exc2)}; its {len(b.gaps)} gaps stay open")
+                continue
+            bad = [f"the answer failed as a whole ({first_error(exc)}) — "
+                   + (f"the re-asked answer {asked.name} is used; the paid original is kept"
+                      if asked is not None else "recovered field by field") + ":"] + bad
+            notes.append(
+                f"{what}: recovered {_tally(parsed)}"
+                + (f" from the re-asked answer {asked.name}" if asked is not None
+                   else " field by field from its malformed answer")
+                + " — not shown to later parts, so their requests stay exactly as paid; "
+                  "re-ask only this part with `reask-part`")
+            lost += [(label, g) for g in gone]
         if b is not None:
             parsed, off = _own_reviews(parsed, b)
             parsed = _prefixed(parsed, f"b{b.label}.")
             bad += off
         dropped += [f"part {b.label}: {d}" if b else d for d in bad]
-        outputs.append(parsed)
+        if whole_ok:
+            outputs.append(parsed)
+        final.append(parsed)
         raws.append(out)
-    if not outputs:
+    if reask is not None and not reask_done:
+        raise RuntimeError(f"no completeness part {reask!r} with a cached answer — parts: "
+                           f"{', '.join(c.label or '(single)' for c in calls) or 'none'}")
+    if not final:
         raise RuntimeError("the completeness pass produced no answer")
     usage_sum: dict[str, int] = {}
     for c in calls:
@@ -686,10 +739,51 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                 usage_sum[k] = usage_sum.get(k, 0) + int(v)
     costs = [c.cost_usd for c in calls]
     return CompletenessResult(
-        _concat(outputs), raws[0] if len(raws) == 1 and len(calls) == 1 else {"parts": raws},
+        _concat(final), raws[0] if len(raws) == 1 and len(calls) == 1 else {"parts": raws},
         all(c.cached for c in calls), usage_sum or None,
         None if any(c is None for c in costs) else sum(c or 0.0 for c in costs),
-        sum(c.seconds for c in calls), model, calls=calls, dropped=dropped, notes=notes)
+        sum(c.seconds for c in calls), model, calls=calls, dropped=dropped, notes=notes,
+        lost=lost)
+
+
+def _reask(path: Path, out: Any, label: str, client: ToolClient | None, *, model: str,
+           system: str, user: str, tool: dict[str, Any]) -> CompletenessCall:
+    """Send one part's identical request again; keep the answer beside the paid original."""
+    try:
+        validate_items(CompletenessOutput, out)
+    except ValidationError:
+        pass
+    else:
+        raise RuntimeError(f"part {label}: its answer is valid as a whole — nothing to re-ask")
+    if client is None:
+        raise RuntimeError("re-asking a part needs an LLM client")
+    t0 = time.monotonic()
+    new = client.extract(system=system, user=user, tool=tool)
+    seconds = time.monotonic() - t0
+    usage = getattr(client, "last_usage", None)
+    n = 1
+    while (dest := path.with_name(f"{path.stem}.reask-{n}.json")).exists():
+        n += 1
+    dest.write_text(json.dumps({"model": model, "prompt_version": COMPLETE_PROMPT_VERSION,
+                                "usage": usage, "seconds": seconds, "output": new,
+                                "reask_of": path.name}, sort_keys=True, indent=1))
+    return CompletenessCall(label, usage, cost_of(model, usage), seconds, False,
+                            kept_as=str(dest))
+
+
+def latest_reask(path: Path) -> Path | None:
+    """The newest re-asked answer kept beside a cached part answer (`<key>.reask-N.json`, written
+    by `reask-part`), or None. The original paid answer is never overwritten."""
+    found = sorted(path.parent.glob(f"{path.stem}.reask-*.json"),
+                   key=lambda p: int(p.stem.rsplit("-", 1)[1]))
+    return found[-1] if found else None
+
+
+def _tally(out: CompletenessOutput) -> str:
+    return (f"{len(out.added_claims)} claim(s), {len(out.added_mentions)} mention(s), "
+            f"{len(out.added_risks)} risk(s), {len(out.added_hypotheses)} hypothesis(-es), "
+            f"{len(out.hypothesis_additions)} addition(s) to hypotheses, "
+            f"{len(out.figure_reviews)} figure and {len(out.block_reviews)} paragraph review(s)")
 
 
 def _split_note(label: str, usage: dict[str, int] | None) -> str:

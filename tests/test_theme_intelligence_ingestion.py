@@ -587,19 +587,18 @@ def test_a_document_estimated_above_the_cost_limit_is_held_until_raised(pipe: Pi
 
 
 def test_the_cost_estimate_reproduces_the_measured_reports() -> None:
-    """The calibration, pinned on the three real reports' measured parts and costs (list price,
-    2026-10-11): the estimated part count bounds the run's from above by at most one, and the
-    measured cost lies inside the estimated range — the constants cannot drift silently."""
-    import math
+    """The calibration, pinned on the real reports' measured parts and costs (list price; the
+    token-based model of 2026-10-12, config.DOC_COST_*): the estimated part count bounds the
+    run's from above by at most one, and the measured cost lies inside the estimated range — the
+    constants cannot drift silently."""
+    from vinci.theme_intelligence.ingest import estimate_from
 
-    from vinci.theme_intelligence.completeness import GAPS_PER_CALL
-    from vinci.theme_intelligence.config import DOC_COST_FIXED_USD, DOC_COST_PER_PART_USD
-
-    lo, hi = DOC_COST_PER_PART_USD
-    for gaps, run_parts, cost in ((1143, 22, 46.67), (527, 10, 9.47), (376, 7, 3.80)):
-        parts = math.ceil(gaps / GAPS_PER_CALL)  # gaps = stated figures + argument paragraphs
-        assert parts - 1 <= run_parts <= parts
-        assert lo * parts <= cost <= hi * parts + DOC_COST_FIXED_USD
+    for chars, figures, paragraphs, run_parts, cost in (
+            (428_578, 851, 292, 22, 46.67), (120_399, 403, 287, 13, 11.70),
+            (162_407, 319, 208, 10, 9.47), (101_793, 232, 144, 7, 3.80)):
+        est = estimate_from(chars, figures, paragraphs)
+        assert est.parts - 1 <= run_parts <= est.parts
+        assert est.low <= cost <= est.high
 
 
 def test_a_refused_licence_holds_and_a_channel_policy_permits(tmp_path: Path) -> None:

@@ -13,6 +13,7 @@ read by the real reader: a clean page; a MIXED page (readable lines, a line that
 from __future__ import annotations
 
 import hashlib
+import re
 from pathlib import Path
 from typing import Any
 
@@ -327,6 +328,120 @@ def test_a_reread_sentence_is_repeated_evidence_never_new_or_a_second_row(
     assert len(rows) == len(set(rows)) == 2  # one row per figure — never the 18% twice
     assert not [lk for lk in pipe.store.links(t.thesis_id)
                 if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
+
+
+class Aligning(Model):
+    """A NORMAL re-read — alignment hints ON (the production path; the 2026-10-12 real-PDF harness
+    had to switch them off to stay at $0). The second answer reads the registry candidates in its
+    prompt and REUSES the grid-capex key, but keys the transformer story a new way. `cross`: the
+    new thesis cites ONE earlier sentence among three of its own — cross-citation, no sibling."""
+
+    def __init__(self, cross: bool = False, orphan: bool = False) -> None:
+        super().__init__()
+        self.cross = cross
+        self.orphan = orphan  # the re-read answer proposes no transformer thesis at all
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> dict[str, Any]:
+        first = not self.users
+        super().extract(system=system, user=user, tool=tool, cache=cache)
+        if tool["name"] != "record_article_evidence":
+            return {}
+        grid = "Transmission capital expenditure rose 18% in 2026 to $42 billion"
+        lead = "transformer lead times reached 30 months in 2026"
+        node, mech = "ai_infrastructure.power_grid", "capex_spending_cycle"
+        if not first:  # align: take node / mechanism of the candidate this story matches
+            m = re.search(r"^- ([\w.]+)\|(\w+)\|positive\|US — Grid capex keeps rising$", user,
+                          re.M)
+            assert m is not None, "the re-read prompt must carry the registry candidates"
+            node, mech = m.group(1), m.group(2)
+        more = [] if not (self.cross or self.orphan) or (first and not self.orphan) else [
+            claim("c3", "b007", "a 7% rise in reserve margins", "Reserve margins +7%",
+                  metric="reserve margin", value=7, value_text="7%", unit="%"),
+            claim("c4", "b003", "substation orders are projected to grow 12% in 2027",
+                  "Substation orders +12% in 2027", kind="forecast", epistemic="forecast",
+                  metric="substation orders", value=12, value_text="12%", unit="%",
+                  period="2027")]
+        x = extraction(
+            [claim("c1", "b003", grid, "Transmission capex +18% in 2026",
+                   metric="transmission capex" if first else "US transmission spending",
+                   value=18, value_text="18%", unit="%", period="2026" if first else "CY2026"),
+             claim("c2", "b004", lead, "Transformer lead times 30 months", metric="lead time",
+                   value=30, value_text="30 months", period="2026"), *more],
+            [hyp("h1", "Grid capex keeps rising", node=node, mechanism=mech, supporting=["c1"]),
+             *([] if self.orphan and not first else [
+                 hyp("h2", "Transformer shortage" if first else "Transformer prices re-rate",
+                     node="ai_infrastructure.power_grid",
+                     mechanism="supply_constraint" if first else "pricing_cycle",
+                     supporting=["c2", *(c["local_id"] for c in more)])])])
+        Extraction.model_validate(x)
+        return x
+
+
+def test_a_normal_reread_matches_the_mechanism_it_should_and_flags_the_one_it_keyed_anew(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    model = Aligning()
+    pipe = _pipe(tmp_path, model)
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        first = _ingest(pipe)
+    v1_theses = {t.thesis_id: t.title for t in pipe.store.theses()}
+    assert sorted(v1_theses.values()) == ["Grid capex keeps rising", "Transformer shortage"]
+    sent = len(model.users)
+    again = _ingest(pipe, reread=True)
+    assert any("<registry_theses>" in u for u in model.users[sent:])  # alignment hints sent
+    # identity: one article, one document, two versions; the first version's records kept
+    assert len(pipe.store.articles()) == 1 and again.article_id == first.article_id
+    assert len(pipe.store.article_versions(first.article_id)) == 2
+    by_title = {t.title: t for t in pipe.store.theses()}
+    grid = by_title["Grid capex keeps rising"]
+    assert grid.thesis_id in v1_theses  # MATCHED: the aligned key updated the same thesis
+    claims = {c.claim_id: c for c in pipe.store.claims_for_article(first.article_id)}
+    v2_links = [lk for lk in pipe.store.links(grid.thesis_id)
+                if claims[lk.claim_id].article_version_id == again.version_id]
+    assert v2_links and all(lk.change_class is ChangeClass.REPEATED for lk in v2_links)
+    # the transformer story keyed anew: a SIBLING — created, never merged, and flagged
+    new = by_title["Transformer prices re-rate"]
+    assert new.thesis_id not in v1_theses and len(pipe.store.theses()) == 3
+    sib = [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"]
+    assert len(sib) == 1 and sib[0].ref_id == new.thesis_id
+    old = next(t for t, title in v1_theses.items() if title == "Transformer shortage")
+    assert sib[0].detail.startswith(f"{old} / {new.thesis_id}")
+    assert "SIBLING of “Transformer shortage”" in sib[0].detail
+    [rep] = pipe.store.completeness_for_run(pipe.store.runs()[-1].run_id)
+    assert rep.coverage is not None and any(a.startswith("sibling thesis: “Transformer prices")
+                                            for a in rep.coverage.alerts)
+    for t in pipe.store.theses():  # never a false independent confirmation
+        assert not [lk for lk in pipe.store.links(t.thesis_id)
+                    if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
+
+
+def test_one_shared_sentence_among_many_is_cross_citation_never_a_sibling(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    pipe = _pipe(tmp_path, Aligning(cross=True))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    _ingest(pipe, reread=True)
+    assert len(pipe.store.theses()) == 3  # created, not merged …
+    assert not [i for i in pipe.store.issues() if i.code == "SAME_ARTICLE_SIBLING"]  # … no flag
+
+
+def test_a_reread_fact_an_earlier_version_already_carries_is_no_coverage_alert(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The re-read proposes no transformer thesis; the earlier version's card still carries those
+    sentences — carried, so no 'facts no thesis carries' alert (2026-10-12: Citi's p37 gas
+    sentences on the first version's card)."""
+    pipe = _pipe(tmp_path, Aligning(orphan=True))
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        _ingest(pipe)
+    _ingest(pipe, reread=True)
+    [rep] = pipe.store.completeness_for_run(pipe.store.runs()[-1].run_id)
+    assert rep.coverage is not None
+    assert not [g for g in rep.coverage.uncarried if g.status == "unexplained"
+                and len(g.claim_ids) >= 2]
+    assert not [a for a in rep.coverage.alerts if "no thesis carries" in a]
 
 
 def _c(cid: str, version: str, quote: str, value: float | None, value_text: str | None, *,

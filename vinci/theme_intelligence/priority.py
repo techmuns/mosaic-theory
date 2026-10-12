@@ -99,6 +99,13 @@ class ThesisState:
     published: tuple[tuple[str, date], ...] = ()
     #: articles classed INDUSTRY DATA REPORT — a publisher reporting its own market data
     data_report_articles: tuple[str, ...] = ()
+    #: verified source evidence BEYOND the card's selected citations — the thesis's other linked
+    #: claims (context, counter) and the verified claims in the paragraphs its evidence sits in.
+    #: Read for LONG-DATED timing only (SKIP-3), never for near-term relevance: leaving a
+    #: long-dated sentence off the card must not upgrade a thesis.
+    timing_context: tuple[Claim, ...] = ()
+    #: why `retrieval` reads FULL for a PARTIAL document (only back matter unread), said plainly
+    retrieval_note: str = ""
 
 
 #: A claim states a CHANGE when its VERBATIM quote says so — read from the source, never from the
@@ -214,10 +221,18 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
     near_claims = list({c.claim_id: c for c in forward + disl + current}.values())
     long_range = [c for c in st.supporting + st.dislocation + st.catalyst
                   if timing[c.claim_id][0] == "long_range"]
+    # the SOURCE's own long-dated statements beside the evidence the card cites: an omission from
+    # the card can hide them, never cancel them (they can only hold a thesis back)
+    own = {c.claim_id for c in st.supporting + st.dislocation + st.catalyst}
+    for c in st.timing_context:
+        if c.claim_id not in own:
+            timing.setdefault(c.claim_id, timing_of(c, ref, pub.get(c.article_id)))
+    context_long = list({c.claim_id: c for c in st.timing_context if c.claim_id not in own
+                         and timing[c.claim_id][0] == "long_range"}.values())
     # the model's horizon LABEL is recorded, never decisive — in either direction
     if near_claims:
         near = "yes"
-    elif long_range:
+    elif long_range or context_long:
         near = "longer_term_only"
     else:
         near = "not shown"
@@ -271,9 +286,18 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                              + (f" ({windows}" + (f"; showing 4 of {len(near_claims)}"
                                                   if len(near_claims) > 4 else "") + ")"
                                 if near_claims else "")
-                             + f"; {len(long_range)} long-range claim(s); model horizon label "
-                               f"{st.horizon.value} (recorded, not decisive)"),
-                       claim_ids=ids(near_claims)),
+                             + f"; {len(long_range)} long-range claim(s)"
+                             + (f"; {len(context_long)} long-dated statement(s) of the source "
+                                f"beside the cited evidence, not on the card: "
+                                f"{', '.join(ids(context_long)[:4])}"
+                                + (f" (showing 4 of {len(context_long)})"
+                                   if len(context_long) > 4 else "")
+                                if context_long else "")
+                             + (" — timing UNKNOWN: no dated window anywhere in the source "
+                                "evidence" if near == "not shown" else "")
+                             + f"; model horizon label {st.horizon.value} (recorded, not "
+                               f"decisive)"),
+                       claim_ids=ids(near_claims or long_range or context_long)),
         PriorityFactor(factor_id="F6_recognizable_exposures",
                        value=f"{len(st.listed_exposures)} listed · {len(st.sector_exposures)} "
                              f"sector",
@@ -310,7 +334,8 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                        value="HOLD" if st.verification_hold else "clear",
                        note="; ".join(st.hold_reasons) or "no blocking verification issue"),
         PriorityFactor(factor_id="F11_retrieval", value=st.retrieval.value,
-                       note="PARTIAL text is never analysed as full"),
+                       note="PARTIAL text is never analysed as full"
+                            + (f"; {st.retrieval_note}" if st.retrieval_note else "")),
     )
 
     fired: list[str] = []
@@ -321,12 +346,16 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
         action, fired = ResearchAction.SKIP, ["SKIP-2 no fundamental transmission step (a price "
                                               "or valuation move is not one)"]
     elif near == "longer_term_only":
-        action, fired = ResearchAction.SKIP, ["SKIP-3 longer-term only — no dated window inside "
-                                              "the next 2-4 quarters"]
+        action, fired = ResearchAction.SKIP, [
+            "SKIP-3 longer-term only — no dated window inside the next 2-4 quarters"
+            + ("" if long_range else
+               f" (the long-dated window is the source's, beside the cited evidence: "
+               f"{', '.join(ids(context_long)[:4])} — {timing[context_long[0].claim_id][1]})")]
     else:
         unmet: list[str] = []
         if near != "yes":
-            unmet.append("near-term relevance not shown by any dated window")
+            unmet.append("near-term relevance not shown by any dated window — timing UNKNOWN "
+                         "in the source evidence; a review should establish it")
         if not st.listed_exposures and not st.sector_exposures:
             unmet.append("no source-named exposure (no point-in-time-verified listed company, no "
                          "sector the source names)")

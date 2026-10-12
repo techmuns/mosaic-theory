@@ -39,10 +39,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from vinci.theme_intelligence.config import (
-    DOC_COST_FIXED_USD,
+    DOC_COST_CHARS_PER_TOKEN,
     DOC_COST_LIMIT_USD,
-    DOC_COST_PER_PART_USD,
+    DOC_COST_OUTPUT_TOKENS_LOW,
+    DOC_COST_REVIEWS_USD,
+    LLM_MAX_TOKENS,
+    LLM_MODEL,
     PARSER_VERSION,
+    PRICE_PER_MTOK,
 )
 from vinci.theme_intelligence.documents import (
     Declared,
@@ -220,17 +224,33 @@ class CostEstimate:
 
 
 def estimate_cost(read: DocumentRead) -> CostEstimate:
-    """Deterministic, before any model call — see config.DOC_COST_PER_PART_USD."""
-    import math
-
-    from vinci.theme_intelligence.completeness import GAPS_PER_CALL, scan_article
+    """Deterministic, before any model call — from the text the reader will SEND (glyph output
+    already quarantined) and the ledger's gaps; see config.DOC_COST_CHARS_PER_TOKEN."""
+    from vinci.theme_intelligence.completeness import scan_article
 
     led = scan_article(read.doc)
-    gaps = len(led.figures) + len(led.argument_blocks)
-    parts = max(1, math.ceil(gaps / GAPS_PER_CALL))
-    lo, hi = DOC_COST_PER_PART_USD
-    return CostEstimate(parts, len(led.figures), len(led.argument_blocks),
-                        round(lo * parts, 2), round(hi * parts + DOC_COST_FIXED_USD, 2))
+    return estimate_from(sum(len(b.text) for b in read.doc.blocks), len(led.figures),
+                         len(led.argument_blocks))
+
+
+def estimate_from(chars: int, figures: int, paragraphs: int,
+                  model: str = LLM_MODEL) -> CostEstimate:
+    """The cost range of analysing `chars` characters of text with `figures` + `paragraphs`
+    ledger gaps (config.DOC_COST_* — the HIGH end prices every call at its output cap)."""
+    import math
+
+    from vinci.theme_intelligence.completeness import GAPS_PER_CALL
+
+    parts = max(1, math.ceil((figures + paragraphs) / GAPS_PER_CALL))
+    pin, pout = (p / 1_000_000 for p in PRICE_PER_MTOK[model])
+    (p_lo, p_hi), (x_lo, x_hi) = (DOC_COST_CHARS_PER_TOKEN["part"],
+                                  DOC_COST_CHARS_PER_TOKEN["extract"])
+    r_lo, r_hi = DOC_COST_REVIEWS_USD
+    low = (parts * (chars / p_lo * pin + DOC_COST_OUTPUT_TOKENS_LOW["part"] * pout)
+           + chars / x_lo * pin + DOC_COST_OUTPUT_TOKENS_LOW["extract"] * pout + r_lo)
+    high = (parts * (chars / p_hi * pin + LLM_MAX_TOKENS * pout)
+            + 2 * (chars / x_hi * pin + LLM_MAX_TOKENS * pout) + r_hi)
+    return CostEstimate(parts, figures, paragraphs, round(low, 2), round(high, 2))
 
 
 def _articles(pipe: Pipeline) -> list[Article]:
@@ -523,3 +543,80 @@ def declared_from(meta: dict[str, object], default_source: str | None) -> Declar
                     authors=authors,
                     published=date.fromisoformat(str(pub)) if pub else None,
                     llm_permitted=bool(lp) if lp is not None else None)
+
+
+# --- re-ask ONE completeness part ----------------------------------------------------------------
+
+@dataclass
+class ReaskResult:
+    doc_id: str
+    article_id: str
+    version_id: str
+    part: str
+    cost_usd: float | None
+    recovered: str  # what the part's usable content now is (counts), plainly
+    kept_as: str  # the file the new answer was written to, beside the paid original
+    notes: list[str] = field(default_factory=list)
+
+
+def reask_part(pipe: Pipeline, doc_id: str, part: str, *, max_cost: float) -> ReaskResult:
+    """Pay for ONE completeness part again — the part whose answer failed as a whole — instead
+    of the whole document. Its request is rebuilt from what the registry holds: the stored private
+    copy read by the current reader (refused when that text is not the analysed version's), the
+    extraction answer stored for that version, the run's as-of and the channel's publisher. Every
+    OTHER part must then be answered from the cache — a miss means the request could not be
+    reproduced exactly, and nothing is sent. The one call is bounded first and must fit
+    `max_cost` (stated by the operator; there is no default). The new answer is kept beside the
+    paid original (`<key>.reask-N.json`); it is used — field by field, verified like any answer —
+    whenever this article version is analysed again (a replay into a rebuilt registry, or a
+    re-read). The analysed version and its records are not rewritten here."""
+    from vinci.theme_intelligence.completeness import _tally, run_completeness, scan_article
+    from vinci.theme_intelligence.extract import Extraction, validate_items
+
+    st = pipe.store
+    rec = st.document(doc_id)
+    if rec is None or rec.stored_path is None or rec.version_id is None or not rec.article_id:
+        raise DocumentError(f"{doc_id}: no analysed, stored document")
+    version = st.article_version(rec.version_id)
+    art = st.article(rec.article_id)
+    run = st.run(rec.run_id) if rec.run_id else None
+    if version is None or art is None or run is None:
+        raise DocumentError(f"{doc_id}: its article version, article or run is missing")
+    d = rec.declared
+    read = read_document(pipe.paths.root / rec.stored_path, Declared(
+        source_id=rec.source_id, url=d.get("url"), title=d.get("title"),
+        authors=tuple(x.strip() for x in d.get("authors", "").split(";") if x.strip()),
+        published=date.fromisoformat(d["published"]) if d.get("published") else None))
+    if read.doc.content_sha256 != version.content_sha256:
+        raise DocumentError(f"{doc_id}: the current reader reads this file differently from the "
+                            f"analysed version {version.version_id} — re-read it first "
+                            f"(ingest-file --reread); nothing sent")
+    doc = read.doc
+    if st.article_versions(art.article_id)[0].version_id != version.version_id:
+        doc = _as_version_of(doc, art, rec)  # a later version was analysed under these
+    xid = next((i for i in st.extraction_ids(version.version_id) if i.startswith("X-")), None)
+    raw = st.extraction(xid) if xid else None
+    if raw is None:
+        raise DocumentError(f"{doc_id}: no stored extraction for {version.version_id}")
+    x, _bad = validate_items(Extraction, raw)
+    src = pipe.sources.get(rec.source_id)
+    publisher = src.publisher if src else rec.publisher
+    pipe.guard.begin_document(f"{doc_id} part {part}", limit=max_cost)
+    try:
+        res = run_completeness(doc, x, scan_article(doc), publisher=publisher,
+                               as_of=run.as_of.isoformat(), taxonomy=pipe.taxonomy,
+                               client=None, cache_dir=pipe.paths.llm_cache, reask=part,
+                               reask_client=pipe.client)
+    finally:
+        pipe.guard.end_document()
+    paid = [c for c in res.calls if not c.cached]
+    for c in paid:
+        pipe._llm_call(f"complete-{c.label}-reask", art.article_id, False, c.usage,  # noqa: SLF001
+                       c.cost_usd, c.seconds, res.model, res.prompt_version)
+    mine = [n for n in res.notes if n.startswith(f"part {part}:")]
+    kept = [Path(c.kept_as) for c in paid if c.kept_as]
+    return ReaskResult(doc_id, art.article_id, version.version_id, part,
+                       sum(c.cost_usd or 0.0 for c in paid) if paid else 0.0,
+                       mine[0] if mine else _tally(res.output),
+                       str(kept[-1].relative_to(pipe.paths.root)) if kept else "",
+                       [d for d in res.dropped if d.startswith(f"part {part}:")])

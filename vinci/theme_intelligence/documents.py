@@ -139,7 +139,8 @@ def _byline(texts: list[str]) -> list[Author]:
 
 def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title_src: str | None,
             authors: list[Author], doc_date: date | None, date_src: str | None,
-            declared: Declared, canonical: str, partial: bool) -> DocumentRead:
+            declared: Declared, canonical: str, partial: bool,
+            back_matter: str = "") -> DocumentRead:
     """Assemble the ParsedDocument: the document's own metadata first, the operator's statement
     only where the document is silent — every value says where it was read."""
     notes = list(read.issues)
@@ -174,8 +175,71 @@ def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title
         published_source=pub_src,
         published_status=FieldStatus.KNOWN if published else FieldStatus.UNKNOWN,
         modified_at=None, modified_source=None, blocks=tuple(blocks), retrieval_state=state,
-        notes=notes, stated_date=(doc_date, pub_src or "?") if doc_date else None)
+        notes=notes, stated_date=(doc_date, pub_src or "?") if doc_date else None,
+        unread_back_matter=back_matter if state is RetrievalState.PARTIAL else "")
     return read
+
+
+#: An unread page is FINE PRINT when it holds at least this many times the median readable
+#: page's characters, in type smaller than the body (disclosures: Citi's Gridlock appendix ran
+#: 13,229–56,781 characters a page at 9pt, its analysis pages a few thousand at 10pt).
+FINE_PRINT_DENSITY = 2.0
+_CONTENTS_HEAD = re.compile(r"^\s*(?:table\s+of\s+)?contents\s*$", re.I)
+_PAGE_NO = re.compile(r"(?<![\w.,$€£%/-])(\d{1,3})(?![\w.,%/-])")
+
+
+def _contents_pages(blocks: list[Block], last_page: int) -> list[int]:
+    """The page numbers the document's own contents list names (its 'Contents' heading and the
+    entries on that page), within the document's `last_page` pages; [] when it has none."""
+    for i, b in enumerate(blocks):
+        if b.kind == "heading" and _CONTENTS_HEAD.match(b.text):
+            out: list[int] = []
+            for nb in blocks[i + 1:]:
+                if nb.page != b.page:
+                    break
+                out += [int(x) for x in _PAGE_NO.findall(nb.text) if 1 <= int(x) <= last_page]
+            return out
+    return []
+
+
+def classify_unread(blocks: list[Block], quarantined: list[QuarantinedText],
+                    page_chars: list[int], body_size: float) -> list[QuarantinedText]:
+    """What the READABLE document says each unread page is — never what the unread text says:
+      back_matter       no readable analysis follows it, it is set in fine print (denser and
+                        smaller than the body) and — when the document has a contents list — it
+                        comes after the last section that list names;
+      possibly_material readable analysis follows it, or the contents list names a section that
+                        starts at or after it;
+      unclassified      anything else — a visual check decides."""
+    analysis = sorted({b.page for b in blocks if b.page and b.kind in ("paragraph", "list_item")
+                       and len(b.text.split()) >= 12})
+    listed = _contents_pages(blocks, max([len(page_chars), *(q.page for q in quarantined)]))
+    readable = sorted(c for i, c in enumerate(page_chars, 1)
+                      if c and i not in {q.page for q in quarantined})
+    median = readable[len(readable) // 2] if readable else 0
+    out = []
+    for q in quarantined:
+        after = [p for p in analysis if p > q.page]
+        fine = (median > 0 and q.chars >= FINE_PRINT_DENSITY * median
+                and 0 < q.size < body_size)
+        if after:
+            kind, basis = "possibly_material", (f"readable analysis follows it (page {after[0]}) "
+                                                f"— what it says is NOT read")
+        elif listed and max(listed) >= q.page:
+            kind, basis = "possibly_material", (f"the document's contents list names a section "
+                                                f"starting on page {max(listed)} — NOT read")
+        elif fine:
+            kind, basis = "back_matter", (
+                f"no readable analysis follows it; fine print ({q.chars:,} characters at "
+                f"{q.size:g}pt vs a median readable page of {median:,} at {body_size:g}pt)"
+                + (f"; after the last section the contents list names (page {max(listed)})"
+                   if listed else "; the document has no contents list to confirm it")
+                + " — likely disclosures; a visual check confirms")
+        else:
+            kind, basis = "unclassified", "neither placed by the document nor fine print — a " \
+                                          "visual check decides"
+        out.append(q.model_copy(update={"kind": kind, "basis": basis}))
+    return out
 
 
 # --- PDF -----------------------------------------------------------------------------------------
@@ -221,6 +285,8 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
         tables_by_page: list[list[tuple[float, list[list[str | None]]]]] = []
         sizes: list[float] = []
         partial = False
+        causes: set[str] = set()  # why the document is PARTIAL, other than undecodable glyphs
+        page_chars: list[int] = []  # readable characters per page (a metric for classify_unread)
         for n, page in enumerate(pdf.pages, 1):
             try:
                 found = page.find_tables()
@@ -231,6 +297,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
             except Exception as exc:  # noqa: BLE001 — one bad page never loses the document
                 read.issues.append(f"page {n}: could not be read ({type(exc).__name__})")
                 partial = True
+                causes.add("unreadable page")
                 lines, tables = [], []
             lines, tables, q = _quarantine(n, lines, tables)
             if q is not None:
@@ -247,6 +314,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 read.issues.append(f"page {n}: no usable text layer ({len(page.images)} image(s)) "
                                    f"— a scanned page is NOT read: OCR is not available here")
                 partial = True
+                causes.add("scanned page")
             vectors = len(page.curves) + len(page.rects)
             if (page.images or vectors >= CHART_MIN_OBJECTS) and words >= SCANNED_MAX_WORDS:
                 read.issues.append(
@@ -257,6 +325,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 for ch in ln.get("chars", []) or []:
                     if ch.get("size"):
                         sizes.append(float(ch["size"]))
+            page_chars.append(sum(len(str(ln.get("text", ""))) for ln in lines))
             lines_by_page.append(lines)
             tables_by_page.append(tables)
         body_size = Counter(round(s, 1) for s in sizes).most_common(1)[0][0] if sizes else 0.0
@@ -346,10 +415,21 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 for a in re.split(r"[;,]| and ", read.meta.get("Author", "")) if a.strip()
                 and not _GENERIC_TITLE.search(a)])
     doc_date = _date_from(page1_texts[:80])
+    back = ""
+    if read.quarantined:
+        read.quarantined = classify_unread(blocks, read.quarantined, page_chars, body_size)
+        for q in read.quarantined:
+            read.issues.append(f"page {q.page}: unread — {q.kind.replace('_', ' ')}: {q.basis}")
+        listed = _contents_pages(blocks, read.pages or 0)
+        if (not causes and listed and all(q.kind == "back_matter" for q in read.quarantined)):
+            pages = [q.page for q in read.quarantined]
+            back = (f"pages {min(pages)}–{max(pages)} unread, all back matter: after the last "
+                    f"section the document's contents list names (page {max(listed)}), set in "
+                    f"fine print, with no readable analysis after them")
     return _finish(read, blocks=blocks, title=title, title_src=title_src, authors=authors,
                    doc_date=doc_date, date_src="the document text (page 1-2)" if doc_date
                    else None, declared=declared, canonical=_canonical(declared, read),
-                   partial=partial)
+                   partial=partial, back_matter=back)
 
 
 def _quarantine(page: int, lines: list[dict[str, Any]],
@@ -375,12 +455,14 @@ def _quarantine(page: int, lines: list[dict[str, Any]],
               if coded[f] >= GLYPH_MIN_CODES and coded[f] >= GLYPH_MIN_SHARE * n}
     out: list[str] = []
     kept = []
+    sizes: Counter[float] = Counter()  # the type size of what goes — a METRIC, never its text
     for ln in lines:
         text = str(ln.get("text", ""))
         chars = ln.get("chars") or []
         in_broken = sum(1 for ch in chars if str(ch.get("fontname", "")) in broken)
         if unreadable_glyphs(text) or (chars and in_broken >= GLYPH_MIN_SHARE * len(chars)):
             out.append(text)
+            sizes.update(round(float(ch["size"]), 1) for ch in chars if ch.get("size"))
         else:
             kept.append(ln)
     n_lines, n_cells = len(out), 0
@@ -402,7 +484,8 @@ def _quarantine(page: int, lines: list[dict[str, Any]],
         return lines, tables, None
     gone = "\n".join(out)
     return kept, clean, QuarantinedText(page=page, lines=n_lines, cells=n_cells, chars=len(gone),
-                                        sha256=hashlib.sha256(gone.encode()).hexdigest())
+                                        sha256=hashlib.sha256(gone.encode()).hexdigest(),
+                                        size=sizes.most_common(1)[0][0] if sizes else 0.0)
 
 
 def _table_block(blocks: list[Block], table: list[list[str | None]], page: int,
