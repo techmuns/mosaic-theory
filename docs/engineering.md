@@ -438,6 +438,16 @@ PR (CLAUDE.md: coin-time translation).
 - **Retrieval correction** (theme intelligence, `RETRIEVAL_CORRECTED`) — plain words: *a stored
   version recorded FULL that the current reader finds is a preview is read as PARTIAL from then
   on; its row, first-seen date and spend are never edited*.
+- **Analyst correction** (theme intelligence, `SentenceCorrection`, `reassess --corrections`,
+  `ANALYST_CORRECTION`) — plain words: *the operator's replacement text for ONE card line, citing
+  verified claims the thesis already links and passing the card's number check — or refused
+  whole; its label is derived from those claims, and the reason shows on the line*.
+- **Price context** (theme intelligence, `WhatCouldGoWrong.price_context`,
+  `cards.refile_price_moves`) — plain words: *a share-price or index performance line the source
+  states; market context, never counted as evidence for or against an earnings thesis*.
+- **Named-index exclusion** (theme intelligence, `verify.without_named_indices`) — plain words:
+  *the number inside a named index or period label ("S&P 500", "Q3", "1H27") is part of a name,
+  not a figure the line asserts; every other number is still checked against its cited claims*.
 
 ## Local setup (every laptop, every contributor)
 

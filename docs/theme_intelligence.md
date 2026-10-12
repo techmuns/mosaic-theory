@@ -548,6 +548,28 @@ document is analysed without its licence confirmed.
   `article --url … --cache-only`): `RETRIEVAL_CORRECTED`, read as PARTIAL from then on, and the
   theses it fed are re-graded at once. The original row, first-seen date and spend stand.
 
+### Reading the weekly page and the thesis card (2026-10-12 redesign)
+
+- **The weekly page** opens on the research: the week, a summary (Research Now / Watch / Skip,
+  review items, verification, articles read), then every thesis of the week as a card — its
+  mechanism, what changed, the effect on profits, why it is (or is not) Research Now, the next
+  question, the source and its dates. A thesis new and re-graded in one week is ONE card showing
+  both events. The navigation reaches the activity, the review queue, sources, the archive and
+  **Operations & audit** (run ids, engine codes, upload commands, the validation log).
+- **The Living Thesis Card** opens with its header (action, horizon, the three dates, and a
+  **Review required** link to each questioned or withheld line) and **At a glance** — the
+  thesis, what changed, the effect on profits, the strongest evidence, why this action, what
+  could invalidate it, the next check — then the nine sections in full.
+- **Audit view** (top right) shows evidence ids, engine codes and the decision trace. Print opens
+  every section and prints the audit layer: the PDF is the complete record.
+- **Correct one card line from stored evidence** — $0, no model call — with an analyst
+  correction: a JSON list of `{thesis_id, sentence_id, text, claim_ids, reason}` passed to
+  `reassess --as-of YYYY-MM-DD --corrections FILE`. Each must cite verified claims the thesis
+  already links and pass the card's number check, or the run fails and nothing is applied. The
+  sentence ids are the card's own (`s01.0` …; Audit view shows them). The corrected line carries
+  "Corrected by the analyst — <reason>"; the earlier version stands in the history. Keep the
+  corrections file private: it may quote licensed text.
+
 ## Scheduling
 
 **GitHub Actions — `.github/workflows/theme-intelligence-weekly.yml`.** Actions is active on this
