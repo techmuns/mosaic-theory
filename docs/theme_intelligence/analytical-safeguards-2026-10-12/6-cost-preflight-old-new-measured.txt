@@ -1,0 +1,5 @@
+report                                    old estimate    new estimate  measured  held at $30 old/new
+Gridlock, first read (glyph codes in)  $ 9.20–$ 50.30  $28.54–$ 58.92  $ 46.67  HELD/HELD  (measured inside the new range; 23 parts estimated, 22 run)
+Gridlock, cleaned                      $ 5.60–$ 31.40  $ 6.56–$ 20.77  $ 11.70  HELD/ok  (measured inside the new range; 14 parts estimated, 13 run)
+LatAm                                  $ 4.40–$ 25.10  $ 6.60–$ 19.82  $  9.47  ok/ok  (measured inside the new range; 11 parts estimated, 10 run)
+ETF                                    $ 3.20–$ 18.80  $ 3.75–$ 14.10  $  3.80  ok/ok  (measured inside the new range; 8 parts estimated, 7 run)

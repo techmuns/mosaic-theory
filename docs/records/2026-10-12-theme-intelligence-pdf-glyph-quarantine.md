@@ -152,3 +152,16 @@ comparisons and the identity runs made no model call).
   evidence WATCH — reported, not changed (prioritisation not reopened).
 - *Quarantined pages are not read.* Falsifier: a document whose undecodable pages carry theme
   evidence — the VISUAL / OCR REVIEW line is the control.
+
+## Amendments
+
+- **2026-10-12 — a claim above is WRONG.** "1 silently absent: … over four years from 2025 to 2028
+  (page 22 — a word-number, outside the ledger's digit-based count)" — the ledger DOES read counted
+  periods written in words (`completeness._WORD_FIG`); "four years" was in the cleaned run's ledger
+  and judged IMMATERIAL by pass 1b with a stated reason ("capacity addition timing assumption,
+  modeling context"). A recorded materiality judgment that differed from the baseline's, not a
+  silent loss. Found while acting on the review that followed;
+  `docs/records/2026-10-12-theme-intelligence-analytical-safeguards.md` and
+  `docs/theme_intelligence/analytical-safeguards-2026-10-12/9-risks-companies-numbers-investigated.txt`.
+  The same follow-up fixed the part-salvage, mechanism-coverage, SKIP-3 timing, sibling, preflight
+  and unread-page limitations listed above.

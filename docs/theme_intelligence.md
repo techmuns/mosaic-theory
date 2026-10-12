@@ -108,6 +108,15 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   is recorded, never decisive. A DISLOCATION must be a mispricing measured in the last quarter and
   a CATALYST a dated event inside the window — an opinion or a forecast figure offered as either is
   listed and not counted.
+- **Missing timing never upgrades a thesis** (2026-10-12). Windows written in words are read
+  ("over the next five years", "next decade", "before 2030", "into the 2030s", "by the end of
+  the decade"); an opinion naming a horizon beyond the next 4 quarters ("unlikely to clear before
+  2030") is long-dated evidence, never near-term. "Longer-term only" (SKIP-3) also reads the
+  thesis's other linked claims and the verified claims in the paragraphs its evidence sits in —
+  for LONG-dated timing only — so a card that leaves the source's horizon out cannot turn SKIP
+  into WATCH. With no dated window anywhere the thesis stays WATCH and says "timing UNKNOWN in the
+  source evidence; a review should establish it". (Observed on Citi's Gridlock re-analysis:
+  midstream capex, skilled labour and nuclear read WATCH until these rules restored SKIP-3.)
 - **Exposure.** RESEARCH NOW needs a source-named exposure: a point-in-time-verified listed common
   equity OR a sector / theme the source names (a verified span containing the name). A sector
   opportunity needs no ticker. A company's role as the SOURCE states it (e.g. capex spender) is
@@ -310,6 +319,16 @@ python -m vinci.theme_intelligence documents --status HELD
   weekly report lists it under research intake as **VISUAL / OCR REVIEW**, never as a missing
   document. No OCR is attempted, and no claim of full verification is made. The file and its
   sha256 are unchanged; only the text the model is sent changes.
+- **What an unread page is — from the READABLE document only** (`documents.classify_unread`,
+  2026-10-12). Each quarantined page is BACK MATTER (no readable analysis after it; fine print —
+  at least twice the median readable page's characters, in type smaller than the body; and, when
+  the document has a contents list, after the last section it names), POSSIBLY MATERIAL (analysis
+  follows it, or the contents list names a section there) or UNCLASSIFIED. The visual-check line
+  says which, and why. Only when EVERY unread page is back matter by the document's own contents
+  list does the research-action gate read the analysis text as whole (F11 says so) — the document
+  stays PARTIAL, research verification still says "read only in part", and it is no longer listed
+  as awaiting a complete document. Citi's Gridlock pages 54–60: back matter (13–57k characters a
+  page at 9pt vs a median 2,430 at 10pt, after page 51, the contents list's last section).
 - **Re-reading a document the current reader reads differently** (`--reread`). The same file
   again is a DUPLICATE; when today's reader would read it differently (e.g. a report imported
   before the quarantine), the DUPLICATE says so and names `--reread`. `ingest-file --path <file>
@@ -320,7 +339,30 @@ python -m vinci.theme_intelligence documents --status HELD
   earlier version already gave a thesis is REPEATED evidence — one row, never "new", never a
   confirmation — however the new answer labels it. The new text is a new prompt, so the analysis
   is paid for again (the cache never answers changed text); the cost limit applies as for any
-  import. Unchanged text → DUPLICATE ("unchanged"), nothing sent.
+  import. Unchanged text → DUPLICATE ("unchanged"), nothing sent. A thesis the new version creates
+  beside one its earlier version created, holding at least half of the same sentences, is a
+  SIBLING: created (a different identity key is a different thesis), never merged, and flagged
+  `SAME_ARTICLE_SIBLING` for a human — the answer may have keyed one story two ways.
+- **A malformed answer field costs that field, never the answer** (`extract.salvage_fields`,
+  2026-10-12). A completeness answer whose top level fails is read field by field, then item by
+  item: a list given as valid JSON text is decoded; a field that is neither is discarded with the
+  exact error and the ids its text names (listed, never used). The rest is verified like any
+  answer; a review naming a discarded claim stays open. Such a part is not shown to later parts,
+  so their requests stay exactly as paid (a replay costs $0). To pay for that ONE part again:
+  `python -m vinci.theme_intelligence reask-part --doc <D-…> --part <N> --max-cost <USD>` — the
+  whole chain must reproduce from the cache first (else nothing is sent), the one call is bounded
+  against `--max-cost` (required), and the answer is kept beside the paid original and used the
+  next time that version is analysed (a replay or a re-read); nothing analysed is rewritten.
+- **Mechanism coverage — nothing the source argues disappears unnoticed** (`coverage.py`). After
+  the theses are applied, every proposition a model pass proposed is ON A CARD, MERGED under one
+  identity key (both named, with shared vs own evidence — distinct evidence is an alert) or
+  DROPPED with why; every VERIFIED material fact (figure, forecast, event, metric) that no thesis
+  carries — nor an earlier version's card, nor a market risk — is listed by page, and two or more
+  on a page ALERT ("a mechanism no card holds?"). Every proposed market risk shows its card(s);
+  organisations a cited paragraph names as examples or as a dated source but nobody recorded are
+  listed. Alerts are `MECHANISM_COVERAGE` issues and a section of research verification (which
+  then reads INCOMPLETE); the full record is in the audit view and the JSON. Nothing is forced
+  into a card and nothing merges by similarity.
 - **Dates.** The publication date comes from the document's own text (page 1-2) or front matter —
   NEVER from the upload time, the file name or the PDF's CreationDate / ModDate (a FILE date,
   recorded as such). `--published` fills only a gap; when it disagrees with the document's own
@@ -350,9 +392,14 @@ python -m vinci.theme_intelligence documents --status HELD
   50, each re-sending the whole text — so cost follows FIGURE DENSITY, not page count. Measured
   (list price, 2026-10-11): Citi's 34-page ETF report with its page $3.80 (7 parts), its 57-page
   LatAm report $9.47 (10 parts), its 60-page Gridlock report — 851 stated figures — $46.67 (22
-  parts, $39.44 of it completeness). Before any call the document is estimated (`up to N parts
-  for F figures and P paragraphs`, $0.4–$2.1 per part + $2, calibrated on those three); above
-  `DOC_COST_LIMIT_USD` ($30) it is HELD (COST) with the estimate and the command to proceed:
+  parts, $39.44 of it completeness), and $11.70 once its undecodable appendix was quarantined.
+  Before any call the document is estimated from the TEXT IT WILL SEND (after quarantine) and its
+  parts (`ingest.estimate_from`, `config.DOC_COST_*`, 2026-10-12): the HIGH end prices every call
+  at its full output cap and at the densest characters-per-token measured, with two extraction
+  calls and $5 of card reviews. Measured inside every range: Gridlock first read $28.54–$58.92
+  ($46.67), cleaned $6.56–$20.77 ($11.70 — the old per-part estimate held it at $31.40), LatAm
+  $6.60–$19.82 ($9.47), ETF $3.75–$14.10 ($3.80). Above `DOC_COST_LIMIT_USD` ($30) it is HELD
+  (COST) with the estimate and the command to proceed:
   `ingest-file --release <doc id> --max-cost N`. The same limit stops a scan from spending on a
   linked report unattended — it is stored, held and listed.
 - **Spending limits, checked before EVERY paid call** (`budget.py`). A run (scan $40, a manual

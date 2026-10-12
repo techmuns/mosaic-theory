@@ -383,6 +383,19 @@ PR (CLAUDE.md: coin-time translation).
   words: *the same file analysed again because today's reader reads it differently: a new version
   of the same article, nothing earlier rewritten, and a sentence read again is repeated evidence,
   never new*.
+- **Mechanism coverage** (theme intelligence, `coverage.py`, `MechanismCoverage`) — plain words:
+  *after an analysis, a check that every argument the model proposed ended on a card (or was
+  merged / dropped, said why) and that verified facts no card carries are flagged by page*.
+- **Salvage / re-ask a part** (theme intelligence, `extract.salvage_fields`, `reask-part`) — plain
+  words: *a model answer with one broken field keeps its other fields; paying again for only the
+  one review chunk whose answer broke, never the whole document*.
+- **Sibling thesis** (theme intelligence, `SAME_ARTICLE_SIBLING`) — plain words: *a new thesis a
+  re-read created that repeats at least half the sentences of a thesis the earlier reading
+  created — kept separate, flagged for a human*.
+- **Back matter** (theme intelligence, `documents.classify_unread`) — plain words: *unreadable
+  trailing pages the readable document itself shows are fine-print disclosures (after the last
+  section its contents list names), so the analysis text counts as complete for the research
+  action while the document stays partial*.
 
 ## Local setup (every laptop, every contributor)
 

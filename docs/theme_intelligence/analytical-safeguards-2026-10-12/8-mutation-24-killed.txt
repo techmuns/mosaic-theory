@@ -1,0 +1,24 @@
+completeness.py  KILLED   'if True:'                                               1 failed, 55 passed in 0.59s
+completeness.py  KILLED   'raise exc'                                              1 failed, 52 passed in 0.58s
+completeness.py  KILLED   'if False:  # the whole chain must reproduce'            1 failed, 58 passed in 0.62s
+completeness.py  KILLED   'asked = None'                                           1 failed, 56 passed in 0.62s
+completeness.py  KILLED   'pass'                                                   1 failed, 57 passed in 0.63s
+extract.py       KILLED   'if False:'                                              1 failed, 1 passed in 0.37s
+extract.py       KILLED   'pass'                                                   1 failed in 0.37s
+coverage.py      KILLED   'if c.claim_id in as_risk:'                              1 failed, 3 passed in 0.41s
+coverage.py      KILLED   'pass'                                                   1 failed, 80 passed in 1.33s
+schemas.py       KILLED   'UNCARRIED_ALERT_MIN = 1'                                1 failed, 3 passed in 0.42s
+engine.py        KILLED   '+ "")'                                                  1 failed, 4 passed in 0.43s
+engine.py        KILLED   'if shared:'                                             1 failed, 79 passed in 1.26s
+engine.py        KILLED   'sibling = ""'                                           1 failed, 78 passed in 1.20s
+coverage.py      KILLED   'if (not name or key in seen or key in recorded'         1 failed, 6 passed in 0.45s
+priority.py      KILLED   'elif long_range:'                                       1 failed, 18 passed in 0.47s
+timewindow.py    KILLED   'pass'                                                   1 failed, 9 passed in 0.47s
+timewindow.py    KILLED   'if False:'                                              1 failed, 17 passed in 0.46s
+engine.py        KILLED   'if False:'                                              1 failed, 20 passed in 0.52s
+documents.py     KILLED   ')'                                                      1 failed, 91 passed in 1.43s
+documents.py     KILLED   'elif False:'                                            1 failed, 23 passed in 0.47s
+engine.py        KILLED   'if False:'                                              1 failed, 25 passed in 0.48s
+ingest.py        KILLED   '+ 1 * (chars / x_hi * pin + LLM_MAX_TOKENS * pout) +'   1 failed, 30 passed in 0.50s
+report.py        KILLED   'return bool(d.quarantined) and any(getattr(q, "kind"'   1 failed, 24 passed in 0.47s
+report.py        KILLED   '+ (f"; " if False else "") + (f"{len(cov_alerts)}"'     1 failed, 3 passed in 0.43s

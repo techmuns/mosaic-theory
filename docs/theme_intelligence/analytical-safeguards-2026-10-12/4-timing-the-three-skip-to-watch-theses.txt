@@ -1,0 +1,21 @@
+== US midstream gas capex
+   baseline (the $46.67 run's answers)    SKIP   TH-C0F7401B12 — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+   paid cleaned run, before the fix       WATCH  TH-3EA660BB0A — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no s
+   cleaned answers + safeguards ($0)      SKIP   TH-3EA660BB0A — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+      decided by C-fdcfc570796a4b: long_range — forecast window 2026-10-11..2031-10-11 (next five years) reaches beyond the next 4 quarters
+         “We forecast annual capex over the next five years to be >2x the prior five years”
+
+== Skilled-labour shortage
+   baseline (the $46.67 run's answers)    SKIP   TH-CA02B7A83B — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+   paid cleaned run, before the fix       WATCH  TH-B1F096684F — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; retrieval PARTIAL; verification hol
+   cleaned answers + safeguards ($0)      SKIP   TH-B1F096684F — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+      decided by C-66b954907a5d9f: long_range — opinion naming a window 2026-10-11..2029-12-31 (before 2030) beyond the next 4 quarters (a view's horizon — never near-term evidence)
+         “The shortage is unlikely to clear before 2030 for structural reasons: retirements, too few apprentices relative to demand”
+
+== Nuclear / SMR
+   baseline (the $46.67 run's answers)    SKIP   TH-426034EB2D — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+   paid cleaned run, before the fix       WATCH  TH-426034EB2D — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; retrieval PARTIAL; verification hol
+   cleaned answers + safeguards ($0)      SKIP   TH-426034EB2D — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+      decided by C-d884c6354d469f: long_range — forecast window 2026-10-11..2036-10-10 (next decade) reaches beyond the next 4 quarters
+         “continue to progress toward more significant commercial development over the next decade”
+

@@ -1,0 +1,138 @@
+== baseline (final-a) [final-a R-20261011T141624Z-ingest]
+   open: 6 of 851 figures, 4 of 292 paragraphs; causes {'capture_not_verified': 3, 'verification_failed': 3, 'account_names_no_record': 4}
+   theses 16 {'WATCH': 5, 'SKIP': 11}; verified claims 272; mentions 68
+     TH-1F366737A1 WATCH  'AI datacenter power buildout drives multi-year transformer and grid eq' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+     TH-D803766B8B SKIP   'Australia develops behind-the-meter gas power market for data centers' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-8178B565CB SKIP   'China all-of-the-above power buildout drives nuclear, hydro and pumped' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-5BA11D6167 SKIP   'Energy infrastructure is a multi-year structural growth story across f' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-CE04BAA34C SKIP   'Energy security accelerates renewables, EVs and energy storage demand ' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-C840A76413 SKIP   'European grid expansion is primary beneficiary of electrification, eve' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-DDEE0B7EF0 WATCH  'Fuel cells gain niche data-center power share on speed and grid-constr' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; verification hold)
+     TH-566BFB9D39 WATCH  'Low-cost US natural gas gives US a structural advantage in powering da' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no s
+     TH-426034EB2D SKIP   'Nuclear and SMR interest rising as supportive policy and power demand ' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-BAA07551ED SKIP   'Power scarcity bifurcates AI market, favoring hyperscalers and infrast' — SKIP-1 no verified material evidence
+     TH-5EDF9760FB WATCH  'Powered-land (grid-connected sites, converted coal) commands premiums ' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; verification hold)
+     TH-6EFAD379CB SKIP   'Selective continued exposure to US, South Korea, Taiwan AI capex theme' — SKIP-1 no verified material evidence
+     TH-CA02B7A83B SKIP   'Skilled-labor shortage is a persistent structural bottleneck on power ' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-110E3113B1 WATCH  'Speed-to-power drives BYOG gas generation equipment multi-year growth ' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+     TH-C0F7401B12 SKIP   'US gas pipeline underinvestment creates attractive midstream growth ca' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-126BEECA00 SKIP   'Uneven US regional power-market regulation makes regional selection dr' — SKIP-2 no fundamental transmission step (a price or valuation move is not one)
+   (no mechanism coverage recorded — before 2026-10-12)
+== paid cleaned (glyph-paid) [glyph-paid R-20261012T050655Z-ingest]
+   open: 27 of 403 figures, 27 of 287 paragraphs; causes {'verification_failed': 5, 'no_account': 48, 'account_names_no_record': 1}
+   theses 14 {'SKIP': 8, 'WATCH': 6}; verified claims 246; mentions 52
+     TH-B4AE1EA1AA SKIP   'Australian data center demand creates behind-the-meter gas power marke' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-F59A0872CA SKIP   'China all-of-the-above power buildout drives nuclear, hydro and storag' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-051E7711B1 SKIP   'Citi Wealth recommends selective AI capex/supply-chain exposure in US,' — SKIP-1 no verified material evidence
+     TH-5BA11D6167 SKIP   'Citi Wealth sees multi-year structural energy infrastructure growth ac' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-EA64717B05 SKIP   'Energy security accelerates EV and ESS battery demand, boosting Chines' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-C840A76413 SKIP   'European grid expansion is primary beneficiary of electrification and ' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-3EA660BB0A WATCH  'Gas demand surge drives record midstream capex and strong project retu' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no s
+     TH-426034EB2D WATCH  'Nuclear revival, including SMRs, lifts equipment makers over the comin' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; retrieval PARTIAL; verification hol
+     TH-4F00D4815E SKIP   'Power scarcity shifts bargaining power to hyperscalers and infrastruct' — SKIP-1 no verified material evidence
+     TH-9F45C42C9E WATCH  'Power-ready land (retired coal sites) commands premiums on scarce grid' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no s
+     TH-B1F096684F WATCH  'Skilled-labor shortages constrain data center and power buildout into ' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; retrieval PARTIAL; verification hol
+     TH-110E3113B1 WATCH  'Speed-to-power demand drives multi-year cycle for gas generation equip' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL; verification hold)
+     TH-2312D83A80 WATCH  'Transformer shortage drives multi-year demand and pricing for transfor' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)
+     TH-01EB1E98A3 SKIP   'Uneven U.S. regional power regulation creates selective wires and gene' — SKIP-2 no fundamental transmission step (a price or valuation move is not one)
+   (no mechanism coverage recorded — before 2026-10-12)
+== safeguards replay [glyph-safeguards4 R-20261012T072027Z-ingest]
+   open: 6 of 403 figures, 5 of 287 paragraphs; causes {'verification_failed': 5, 'capture_not_verified': 1, 'no_account': 1, 'account_names_no_record': 4}
+   theses 14 {'SKIP': 11, 'WATCH': 3}; verified claims 247; mentions 56
+     TH-B4AE1EA1AA SKIP   'Australian data center demand creates behind-the-meter gas power marke' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-F59A0872CA SKIP   'China all-of-the-above power buildout drives nuclear, hydro and storag' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-051E7711B1 SKIP   'Citi Wealth recommends selective AI capex/supply-chain exposure in US,' — SKIP-1 no verified material evidence
+     TH-5BA11D6167 SKIP   'Citi Wealth sees multi-year structural energy infrastructure growth ac' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-EA64717B05 SKIP   'Energy security accelerates EV and ESS battery demand, boosting Chines' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-C840A76413 SKIP   'European grid expansion is primary beneficiary of electrification and ' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-3EA660BB0A SKIP   'Gas demand surge drives record midstream capex and strong project retu' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-426034EB2D SKIP   'Nuclear revival, including SMRs, lifts equipment makers over the comin' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-4F00D4815E SKIP   'Power scarcity shifts bargaining power to hyperscalers and infrastruct' — SKIP-1 no verified material evidence
+     TH-9F45C42C9E WATCH  'Power-ready land (retired coal sites) commands premiums on scarce grid' — WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window — timing UNKNOWN in the source evidence; a review should establish it; no
+     TH-B1F096684F SKIP   'Skilled-labor shortages constrain data center and power buildout into ' — SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+     TH-110E3113B1 WATCH  'Speed-to-power demand drives multi-year cycle for gas generation equip' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+     TH-2312D83A80 WATCH  'Transformer shortage drives multi-year demand and pricing for transfor' — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)
+     TH-01EB1E98A3 SKIP   'Uneven U.S. regional power regulation creates selective wires and gene' — SKIP-2 no fundamental transmission step (a price or valuation move is not one)
+   PROPOSITIONS (16):
+     card    h1         TH-2312D83A80  'Transformer shortage drives multi-year demand and pricing for tr'
+     card    h2         TH-110E3113B1  'Speed-to-power demand drives multi-year cycle for gas generation'
+     card    h3         TH-3EA660BB0A  'Gas demand surge drives record midstream capex and strong projec'
+     card    h4         TH-EA64717B05  'Energy security accelerates EV and ESS battery demand, boosting '
+     card    b3.hx3_1   TH-4F00D4815E  'Power scarcity shifts bargaining power to hyperscalers and infra'
+     card    b3.hx3_2   TH-B1F096684F  'Skilled-labor shortages constrain data center and power buildout'
+     merged  b8.hx8_1   TH-110E3113B1  'Fuel cells gain data center share on speed-to-power despite CCGT' — merged with h2 “Speed-to-power demand drives multi-year cycle for gas generation equipment makers” under one identity key — 0 supporting claim(s) shared, 17 its own — DIS
+     card    b9.hx9_1   TH-426034EB2D  'Nuclear revival, including SMRs, lifts equipment makers over the'
+     card    b10.hx10_1 TH-01EB1E98A3  'Uneven U.S. regional power regulation creates selective wires an'
+     card    b11.hx11_1 TH-C840A76413  'European grid expansion is primary beneficiary of electrificatio'
+     card    b11.hx11_2 TH-9F45C42C9E  'Power-ready land (retired coal sites) commands premiums on scarc'
+     card    b11.hx11_3 TH-F59A0872CA  'China all-of-the-above power buildout drives nuclear, hydro and '
+     card    b12.hx12_1 TH-B4AE1EA1AA  'Australian data center demand creates behind-the-meter gas power'
+     card    b12.hx12_2 TH-5BA11D6167  'Citi Wealth sees multi-year structural energy infrastructure gro'
+     card    b12.hx12_3 TH-051E7711B1  'Citi Wealth recommends selective AI capex/supply-chain exposure '
+     dropped hx4_1      —              'Regulatory reform to accelerate large-load grid connection creat' — named in completeness part 4's malformed added_hypotheses (not valid JSON) — its evidence was kept; re-ask only that part: reask-part --part 4
+   UNCARRIED VERIFIED MATERIAL FACTS (groups 12):
+     p5 unexplained 1 fact(s)
+                   3-5  'A typical data center build-out is two years, while the power needed for these if new generation is '
+     p7 unexplained 6 fact(s)
+                   24%  'U.S. data center capacity exceeded 50 GW in 2025, growing at a 24% CAGR since 2020.'
+        approximately 110 GW  'AI is the dominant source of tracked data center Declining PUE reflects ongoing efficiency gains tha'
+                 109.5  'Tracked IT Workload for AI (GW) IT Workloads - Core, Cloud, and Other (GW) 109.5 4.3'
+                4.3 GW  'form 4.3 GW (~12% share) in 2023'
+                50-GW+  '50-GW+ of data center capacity was'
+                   43%  'Growth was led by MISO (43% CAGR)'
+     p9 unexplained 1 fact(s)
+                   17%  'data center electricity demand rose 17% in 2025'
+     p14 unexplained 4 fact(s)
+        more than 50GW  'more than 50GW of data center capacity was operating in the U.S. at the end of 2025'
+                  ~24%  'up at a ~24% compound annual growth rate (CAGR) since 2020'
+                  ~43%  'Midwest Independent System Operator (MISO) had the fastest growth at ~43% CAGR, followed by ERCOT'
+                    25  'Cancellations jumped to 25 in 2025 from six in 2024, mainly due to power access, public pushback, an'
+     p15 unexplained 1 fact(s)
+           ~40% to 50%  'AI data centers can exhibit ~40% to 50% swings in demand over short periods depending on workload in'
+     p16 unexplained 2 fact(s)
+                 600GW  'roughly 600GW of U.S. data center projects are still searching for power, vs 183GW with construction'
+                   1GW  'customer-initiated load reduction in 2024 and 2025, in which 1GW or more dropped off the bulk power '
+     p17 unexplained 1 fact(s)
+           €11 billion  'fragmented national grid planning which cost €11 billion in 2024'
+     p18 unexplained 1 fact(s)
+             about 50%  'Meeting electricity demand through 2030 requires annual grid investment to rise about 50% from today'
+     p19 unexplained 1 fact(s)
+            1% decline  'reversing a 1% decline between 2010 and 2020'
+     p26 unexplained 1 fact(s)
+                835-MW  'Microsoft- Constellation’s 20-year PPA supporting the restart of Three Mile Island Unit 1 (835-MW)'
+     p37 unexplained 4 fact(s)
+              $2 to $4  'U.S. natural gas prices at the benchmark Henry Hub are generally within a range of $2 to $4/MMBtu'
+                    $8  'Asian LNG and European natural gas prices did fall to around $8/MMBtu or slightly lower in recent ye'
+                  ~$20  'but surged to ~$20/MMBtu or higher'
+              $5 to $8  'the global LNG glut expected towards the end of this decade should bring natural gas prices in Asia '
+     p49 unexplained 1 fact(s)
+              12.0 TWh  'consumption is forecast by AEMO to expand to 12.0 TWh growing at Australian Energy and Utilities ~25'
+   RISKS (11, all listed):
+     “Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptiona” — on 14 card(s): TH-01EB1E98A3, TH-051E7711B1, TH-110E311
+     “A repeat of the early-2000s gas-build overbuild: demand expected then did not materialize, leaving excess capacity and ratepayer burden, rai” — on 1 card(s): TH-110E3113B1
+     “Data center NIMBYism, affordability concerns and state moratorium proposals (13 states) could drive bipartisan pushback to data center expan” — on 1 card(s): TH-3EA660BB0A
+     “AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden d” — on 14 card(s): TH-01EB1E98A3, TH-051E7711B1, TH-110E311
+     “Scandium supply concentration in China and Russia is a scaling constraint for Bloom Energy SOFC production if scaled rapidly.” — on 1 card(s): TH-110E3113B1
+     “Permitting, interconnection and regulatory processes for large loads are moving at an uneven pace across U.S. regions, creating timeline mis” — on 2 card(s): TH-110E3113B1, TH-2312D83A80
+     “Data center developers with in-flight ERCOT projects may not complete buildout because only 20% of the $50,000 per MW required down payment ” — on 1 card(s): TH-01EB1E98A3
+     “Strong landowner opposition, air-permit politics, gas pipeline feedstock limits and water-usage constraints could cause missed timelines, co” — on 1 card(s): TH-01EB1E98A3
+     “The PJM reliability backstop design forces regulated wires companies to assume uncompensated risks and requires legislative reform across 13” — on 1 card(s): TH-01EB1E98A3
+     “AEMO has raised concerns over potential Australian grid instability and voltage disturbances that could cause massive outages as data center” — on 1 card(s): TH-B4AE1EA1AA
+     “Rising Australian construction costs, trade shortages (compounded by Brisbane 2032 Olympics, roads, rail, mining) and higher material prices” — on 1 card(s): TH-B4AE1EA1AA
+   NAMED IN CITED PARAGRAPHS, NOT RECORDED (9):
+     DW (a dated source, b122)
+     Reuters (a dated source, b124)
+     Renault (a list of examples, b125)
+     Volvo (a list of examples, b125)
+     Carwow (a list of examples, b125)
+     OLX (a list of examples, b125)
+     Cox Automotive (a dated source, b126)
+     CBRE (a dated source, b134)
+     PV Magazine (a dated source, b175)
+   ALERTS (6):
+     ! proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — named in completeness part 4's malformed added_hypotheses (not valid JSON) 
+     ! propositions merged: “Fuel cells gain data center share on speed-to-power despite CCGT cost edge” — merged with h2 “Speed-to-power demand drives multi-year cycle for gas generation equipment makers” under one identity ke
+     ! page 7: 6 verified material facts no thesis carries — a mechanism no card holds?
+     ! page 14: 4 verified material facts no thesis carries — a mechanism no card holds?
+     ! page 16: 2 verified material facts no thesis carries — a mechanism no card holds?
+     ! page 37: 4 verified material facts no thesis carries — a mechanism no card holds?
