@@ -375,6 +375,14 @@ PR (CLAUDE.md: coin-time translation).
 - **Version dates** (theme intelligence, `ArticleVersion.document_date`, `SourceRef.version_dates`)
   — plain words: *each version of an article keeps the date its own document states and where
   it was read*.
+- **Glyph quarantine / unreadable glyphs** (theme intelligence, `documents._quarantine`,
+  `parse.unreadable_glyphs`, `DocumentRecord.quarantined`) — plain words: *PDF text that came out
+  as `(cid:N)` codes because its font has no character map is left out before anything reads it,
+  recorded per page, and the page is flagged for a human to look at (no OCR)*.
+- **Re-read** (theme intelligence, `ingest-file --reread`, `verify.same_sentence_reread`) — plain
+  words: *the same file analysed again because today's reader reads it differently: a new version
+  of the same article, nothing earlier rewritten, and a sentence read again is repeated evidence,
+  never new*.
 
 ## Local setup (every laptop, every contributor)
 

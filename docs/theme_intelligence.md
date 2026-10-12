@@ -296,6 +296,31 @@ python -m vinci.theme_intelligence documents --status HELD
   not available here) makes the document PARTIAL; a page with charts says its plotted values are
   not verifiable; a page that cannot be read is named. Numbers shown only in a chart are never
   turned into evidence.
+- **Unreadable font text is quarantined, never analysed and never hidden** (`documents.py`,
+  `parse.py`, 2026-10-12). A PDF font with no character map comes out of the text layer as
+  `(cid:N)` codes — Citi's Gridlock report set its 7-page disclosure appendix that way: 308,181
+  characters on pages 54–60, 85% of the 293,161 tokens resent in every model call, and 446 false
+  "figures" read from the codes. Before anything
+  reads the text, each LINE and table CELL is tested: ≥ 3 codes covering ≥ 50% of its non-space
+  characters, or a line mostly set in a font whose characters on that page are ≥ 50% codes (its
+  scrambled near-letters go with it). Such text is left out — a readable line on the same page,
+  and a sentence that merely mentions a CID, are kept — and recorded per page (lines, cells,
+  characters, sha256) on the document record, which is PARTIAL with the issue "page N:
+  undecodable font glyphs … what they say is NOT read — the page needs visual / OCR review". The
+  weekly report lists it under research intake as **VISUAL / OCR REVIEW**, never as a missing
+  document. No OCR is attempted, and no claim of full verification is made. The file and its
+  sha256 are unchanged; only the text the model is sent changes.
+- **Re-reading a document the current reader reads differently** (`--reread`). The same file
+  again is a DUPLICATE; when today's reader would read it differently (e.g. a report imported
+  before the quarantine), the DUPLICATE says so and names `--reread`. `ingest-file --path <file>
+  --reread` then analyses it as a NEW VERSION of the SAME article: the document keeps its id,
+  arrival time, file name and standing (INGESTED / UPGRADED), and gains a history line; the
+  article keeps its id, title, date and first-seen time; the earlier version, its verification
+  ledger and every thesis version it produced are kept as they were. A sentence and figure the
+  earlier version already gave a thesis is REPEATED evidence — one row, never "new", never a
+  confirmation — however the new answer labels it. The new text is a new prompt, so the analysis
+  is paid for again (the cache never answers changed text); the cost limit applies as for any
+  import. Unchanged text → DUPLICATE ("unchanged"), nothing sent.
 - **Dates.** The publication date comes from the document's own text (page 1-2) or front matter —
   NEVER from the upload time, the file name or the PDF's CreationDate / ModDate (a FILE date,
   recorded as such). `--published` fills only a gap; when it disagrees with the document's own

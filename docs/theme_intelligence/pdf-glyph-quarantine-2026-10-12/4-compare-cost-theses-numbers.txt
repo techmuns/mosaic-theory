@@ -1,0 +1,117 @@
+== COST AND TOKENS (calls actually paid, by pass)
+  paid [hybrid-a R-20261011T100624Z-ingest]: total 51 calls, 8,117,094 input, 243,527 output tokens, $46.67
+       complete    22 calls  in  7,130,969  out  151,527  $  39.44
+       extract      2 calls  in    607,565  out   40,886  $   4.06
+       review      27 calls  in    378,560  out   51,114  $   3.17
+  new  [glyph-paid R-20261012T050655Z-ingest]: total 41 calls, 1,344,624 input, 199,137 output tokens, $11.70
+       complete    13 calls  in    880,681  out  118,748  $   7.37
+       extract      2 calls  in    109,525  out   41,485  $   1.58
+       review      26 calls  in    354,418  out   38,904  $   2.74
+
+== THESES citing the Gridlock article (base = final-a, new = this run)
+  base 16 theses {'WATCH': 5, 'SKIP': 11} | new 14 theses {'SKIP': 8, 'WATCH': 6}
+  TH-01EB1E98A3 'Uneven U.S. regional power regulation creates selective wires and gene'
+      base —
+      new  SKIP         investment dispersion_selection|US  <-- ONLY IN NEW
+  TH-051E7711B1 'Citi Wealth recommends selective AI capex/supply-chain exposure in US,'
+      base —
+      new  SKIP         investment capex_spending_cycle|US, South Korea, Taiwan  <-- ONLY IN NEW
+  TH-110E3113B1 'Speed-to-power drives BYOG gas generation equipment multi-year growth '
+      base WATCH        investment demand_volume_shift|US
+      new  WATCH        investment demand_volume_shift|US
+  TH-126BEECA00 'Uneven US regional power-market regulation makes regional selection dr'
+      base SKIP         investment dispersion_selection|US
+      new  —  <-- ONLY IN BASE
+  TH-1F366737A1 'AI datacenter power buildout drives multi-year transformer and grid eq'
+      base WATCH        investment capex_spending_cycle|Global
+      new  —  <-- ONLY IN BASE
+  TH-2312D83A80 'Transformer shortage drives multi-year demand and pricing for transfor'
+      base —
+      new  WATCH        investment supply_constraint|Global  <-- ONLY IN NEW
+  TH-3EA660BB0A 'Gas demand surge drives record midstream capex and strong project retu'
+      base —
+      new  WATCH        investment capex_spending_cycle|US  <-- ONLY IN NEW
+  TH-426034EB2D 'Nuclear and SMR interest rising as supportive policy and power demand '
+      base SKIP         investment demand_volume_shift|Global
+      new  WATCH        investment demand_volume_shift|Global  <-- ACTION CHANGED
+  TH-4F00D4815E 'Power scarcity shifts bargaining power to hyperscalers and infrastruct'
+      base —
+      new  SKIP         investment competitive_share_shift|US  <-- ONLY IN NEW
+  TH-566BFB9D39 'Low-cost US natural gas gives US a structural advantage in powering da'
+      base WATCH        investment cost_inflation|US
+      new  —  <-- ONLY IN BASE
+  TH-5BA11D6167 'Energy infrastructure is a multi-year structural growth story across f'
+      base SKIP         investment capex_spending_cycle|Global
+      new  SKIP         investment capex_spending_cycle|Global
+  TH-5EDF9760FB 'Powered-land (grid-connected sites, converted coal) commands premiums '
+      base WATCH        investment valuation_rerating|Europe
+      new  —  <-- ONLY IN BASE
+  TH-6EFAD379CB 'Selective continued exposure to US, South Korea, Taiwan AI capex theme'
+      base SKIP         investment capex_spending_cycle|US, South Korea, Taiwan
+      new  —  <-- ONLY IN BASE
+  TH-8178B565CB 'China all-of-the-above power buildout drives nuclear, hydro and pumped'
+      base SKIP         investment capex_spending_cycle|China
+      new  —  <-- ONLY IN BASE
+  TH-9F45C42C9E 'Power-ready land (retired coal sites) commands premiums on scarce grid'
+      base —
+      new  WATCH        investment valuation_rerating|Europe  <-- ONLY IN NEW
+  TH-B1F096684F 'Skilled-labor shortages constrain data center and power buildout into '
+      base —
+      new  WATCH        investment supply_constraint|Global  <-- ONLY IN NEW
+  TH-B4AE1EA1AA 'Australian data center demand creates behind-the-meter gas power marke'
+      base —
+      new  SKIP         investment demand_volume_shift|Australia  <-- ONLY IN NEW
+  TH-BAA07551ED 'Power scarcity bifurcates AI market, favoring hyperscalers and infrast'
+      base SKIP         investment competitive_share_shift|US
+      new  —  <-- ONLY IN BASE
+  TH-C0F7401B12 'US gas pipeline underinvestment creates attractive midstream growth ca'
+      base SKIP         investment capex_spending_cycle|US
+      new  —  <-- ONLY IN BASE
+  TH-C840A76413 'European grid expansion is primary beneficiary of electrification, eve'
+      base SKIP         investment capex_spending_cycle|Europe
+      new  SKIP         investment capex_spending_cycle|Europe
+  TH-CA02B7A83B 'Skilled-labor shortage is a persistent structural bottleneck on power '
+      base SKIP         investment supply_constraint|Global
+      new  —  <-- ONLY IN BASE
+  TH-CE04BAA34C 'Energy security accelerates renewables, EVs and energy storage demand '
+      base SKIP         investment demand_volume_shift|Global ex-US
+      new  —  <-- ONLY IN BASE
+  TH-D803766B8B 'Australia develops behind-the-meter gas power market for data centers'
+      base SKIP         investment demand_volume_shift|Australia
+      new  —  <-- ONLY IN BASE
+  TH-DDEE0B7EF0 'Fuel cells gain niche data-center power share on speed and grid-constr'
+      base WATCH        investment competitive_share_shift|US
+      new  —  <-- ONLY IN BASE
+  TH-EA64717B05 'Energy security accelerates EV and ESS battery demand, boosting Chines'
+      base —
+      new  SKIP         investment demand_volume_shift|Global ex-U.S.  <-- ONLY IN NEW
+  TH-F59A0872CA 'China all-of-the-above power buildout drives nuclear, hydro and storag'
+      base —
+      new  SKIP         investment demand_volume_shift|China  <-- ONLY IN NEW
+
+== NUMERICAL EVIDENCE (verified claims with a stated figure)
+  base 255 | new 211 verified figure-bearing claims
+  base figures whose value appears nowhere in the new run's verified quotes: 3 (all listed)
+     'two years'        stack lifetime increase — 'which is expected to increase by two years with advancement in technology'
+     'four years'       large transformer lead time — 'Large unit lead times have reached four years'
+     'four years'       capacity addition period — 'the new capacity to be added gradually over four years from 2025 to 2028'
+  new verified claims by page: pages 3–53; on quarantined pages 54–60: 0
+
+== COMPANIES (source-named; resolution and role)
+  base 35 | new 30 companies
+     carwow                       base ('—', 'PRIVATE', 'context')  new —
+     cbre                         base ('CBRE', 'LISTED_EQUITY', 'data_source')  new —
+     olx                          base ('—', 'PRIVATE', 'context')  new —
+     renault                      base ('—', 'UNRESOLVED', 'sector_example')  new —
+     start campus                 base ('—', 'PRIVATE', 'spending_customer')  new ('—', 'UNRESOLVED', 'sector_example')
+     volvo                        base ('—', 'UNRESOLVED', 'sector_example')  new —
+  same name, same ticker and status in both: 29; listed above: the rest
+
+== RISKS AND COUNTER-EVIDENCE (section 7, theses citing the article)
+  base: 0 counter-evidence line(s); 0 distinct market risk(s)
+  new: 0 counter-evidence line(s); 0 distinct market risk(s)
+
+== OPEN VERIFICATION ITEMS (the run's completeness ledger)
+  paid: 17 of 851 figures open, 4 of 292 paragraphs open; causes {'capture_not_verified': 8, 'verification_failed': 9, 'account_names_no_record': 4}
+  base: 6 of 851 figures open, 4 of 292 paragraphs open; causes {'capture_not_verified': 3, 'verification_failed': 3, 'account_names_no_record': 4}
+  new: 27 of 403 figures open, 27 of 287 paragraphs open; causes {'verification_failed': 5, 'no_account': 48, 'account_names_no_record': 1}

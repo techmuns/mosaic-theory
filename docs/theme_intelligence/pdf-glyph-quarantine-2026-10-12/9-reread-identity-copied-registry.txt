@@ -1,0 +1,101 @@
+RE-READ IDENTITY TEST — the real 60-page Citi Gridlock PDF, in COPIED registries, $0
+=====================================================================================
+2026-10-12, code at ec780bc2 + the same-sentence rule (this commit). Every registry below is a
+COPY of `final-a` (the baseline: the $46.67 run's own model answers, read by ti-parse-5) made
+for this test; the production state branch was never touched. File: the same bytes, sha256
+c6f361d4d57a61964ee0a6941fb7c3f18a5f3cc43107e8ed09989a4350b31f72.
+
+1. The same file again, WITHOUT --reread (copy `glyph-reread`)
+   $ ingest-file --path <the same PDF> --source citi_must_c --llm-permitted --as-of 2026-10-11 --cache-only --no-review
+   D-c6f361d4d57a6196  DUPLICATE  article A-82a8a9210bae  the same file was imported as
+   D-c6f361d4d57a6196 on 2026-10-11 14:16 UTC (INGESTED) — nothing re-counted — the current
+   reader (ti-parse-6) reads it differently from the held version AV-51c14867d6652aa1
+   (ti-parse-5): import it again with --reread …
+   cost $0.0
+
+2. --reread, cache only: REFUSED, loudly, at $0
+   failed: RuntimeError: no cached extraction for this article version and no LLM client
+   WHY (diffed, not assumed): the re-read's extraction prompt differs from the paid run's in two
+   places — it lists the registry's 16 theses as alignment candidates (the paid run was a first
+   read in an EMPTY registry), and it names the 8 authors the first analysis found (a new
+   version keeps the ARTICLE's metadata — ingest._as_version_of) where the paid run named the
+   PDF-metadata author only:
+     < Author(s) per page metadata: Citi Research
+     > Author(s) per page metadata: Citi Research; Anthony Yuen; Pierre Lau, CFA; Andrew Kaplowitz; …
+   The article text section is byte-identical (sha256 d6303e03…, 496 lines). The content-addressed
+   cache therefore did NOT reuse an answer against a changed prompt — as required. A real re-read
+   in a populated registry pays for one fresh analysis (~$12 at this run's cost): not approved.
+   The failed attempt stored the new version with no analysis; the document record still points
+   at the old version, so a retry is still a re-read (shown by step 3 on the same copy).
+
+3. $0 HARNESS (scratchpad tools/reread_harness.py — LABELLED, not production): the extractor is
+   shown NO alignment candidates and the PDF-metadata author only, so every prompt is the paid
+   run's and every answer a cache hit. Proven first in a fresh registry (`glyph-repro`): the
+   same prompts reproduce the paid run's answers at $0 (PARTIAL_PROCESSED, cost $0.0).
+   Everything downstream — the version, the document record, deterministic thesis matching by
+   key against the 16 theses held, change classes, evidence rows — ran as in production.
+
+   $ reread_harness.py ingest-file … --reread --max-cost 32 --cache-only --no-review
+   D-c6f361d4d57a6196  INGESTED  article A-82a8a9210bae  re-read of the same file
+   (D-c6f361d4d57a6196) by the current reader (ti-parse-6; the held version AV-51c14867d6652aa1
+   was read by ti-parse-5): its text changed — a new version of article A-82a8a9210bae; the
+   earlier version and its analysis are kept
+   cost $0.0
+
+   BEFORE (the copy as `final-a` left it)          AFTER (copy `glyph-reread3`, the fix in place)
+   articles holding the file: 1 (A-82a8a9210bae)   1 — the same article, never a new one
+   document D-c6f361d4d57a6196 INGESTED            INGESTED (its standing kept)
+     filename 'Citi Overcoming Gridlock 2.0.pdf'   unchanged
+     received 2026-10-11 14:16 UTC                 unchanged
+     version AV-51c14867d6652aa1                   AV-6ea8321738bb3305
+     quarantined pages []                          [54, 55, 56, 57, 58, 59, 60]
+     history: 1 line                               2 lines (+ "re-read of the same file …")
+   article title / published 2026-06-28 /          unchanged
+     first seen 2026-10-11 14:18:10 UTC
+   article authors: 8 (Citi Research + 7 found     12: the 8 kept + Vladimir Bystricky, Kyle
+     in the text)                                  Menges, Jack Shang, Vikram Bagri — section
+                                                   bylines the corrected block split no longer
+                                                   merges into headings (each with its block
+                                                   quote); none removed
+   article versions: 1                             2 — v1 (ti-parse-5, 504 blocks, 274 claims)
+                                                   AND v2 (ti-parse-6, 495 blocks, 236 claims)
+   v1 completeness: 851 figures (6 open),          unchanged — historical verification not
+     292 paragraphs (4 open)                       rewritten; v2 has its own: 403 (27 open),
+                                                   287 (27 open)
+   theses citing the article: 16 {WATCH 5,         24 {WATCH 9, SKIP 15}: the 16 kept; 5 gain a
+     SKIP 11}, all version 1                       version 2 (v1 kept as history), 11 untouched;
+                                                   8 created by v2 (see LIMITATION)
+   paid-call ledger: 0 records, $0.00 (a replay)   0 records, $0.00 — nothing spent
+
+4. NO DUPLICATE CONFIRMATIONS — found broken by this test, fixed, re-measured
+   Before the fix (copy `glyph-reread`, old engine): 18 key-evidence rows listed the SAME
+   sentence and figure TWICE on five cards (TH-C840A76413 7, TH-110E3113B1 5, TH-126BEECA00 3,
+   TH-D803766B8B 2, TH-5BA11D6167 1), the second reading classed "new" — e.g. TH-C840A76413
+   v2 "A-82a8a9210bae: new ×8", every one a sentence its v1 already held. Cause: the two
+   extraction answers labelled one sentence's metric / period in different words, so the
+   fingerprint (measure + value + origin) differed.
+   After (copy `glyph-reread3`): repeated quote+value rows on any card: 0. TH-C840A76413 gets
+   NO new version (all 8 of v2's links REPEATED — attribution only). Change classes of the
+   links v2 added to the 5 updated theses:
+     repeated (same sentence + figure already on the thesis) .... 36
+     new — a sentence v1 read but linked to ANOTHER thesis ...... 29  (e.g. Bloom fuel-cell
+           cost rows now also on the gas-generation thesis; "an origin already counted — not
+           an independent confirmation")
+     new — a sentence v1 never captured ......................... 7
+     contradictory ............................................. 2
+     no material change ........................................ 2
+   Independent confirmations across the whole registry: 0 (all links by class:
+   novelty_unverified 433, new 36, repeated 44, no material change 24, contradictory 7).
+
+5. The same file once more, --reread (copy `glyph-reread3`)
+   D-c6f361d4d57a6196  DUPLICATE  article A-82a8a9210bae  the same file was imported as
+   D-c6f361d4d57a6196 on 2026-10-11 14:16 UTC (INGESTED) — nothing re-counted — re-read: the
+   current reader's text is unchanged
+   cost $0.0
+
+LIMITATION (measured under the harness, not in production): v2 created 8 theses beside v1's
+counterparts — e.g. the transformer story as TH-2312D83A80 (supply_constraint) next to v1's
+TH-1F366737A1 (capex_spending_cycle) — because the model keyed them differently and the engine
+never merges a different mechanism ("similarity is never a merge licence"). In production the
+extractor IS shown the registry's theses and asked to reuse their keys; the harness switched
+that off to stay at $0, so how many would remain in a real re-read is NOT measured.
