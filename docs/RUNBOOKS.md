@@ -647,7 +647,7 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
    is FILED under the last session on or before it (`session_on_or_before`) and READS filings and
    evidence through today (`known_through = ref`). Passing `--ref <close>` on a later morning would
    bound the read at the close and hide that morning's 8-K — the defect #707's review fixed.
-   `--ref` is for the scratch re-cuts below, never for a committed day. It prints the book, then
+   A committed day never takes `--ref`. It prints the book, then
    writes `data/monitor/<session>.json`. *(Source: `_cmd_monitor`; `monitor.write_snapshot`.)*
 3. **Mirror** — `python3 frontend/build.py` copies every day into `frontend/monitor/` and moves
    `index.json`'s `latest`. *(Source: `frontend/build.py:emit_monitor`.)*
@@ -661,8 +661,11 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
 5. **Commit as an artifact** — the day file plus `frontend/monitor/*`, never bundled with code; the
    full offline suite runs green first (CLAUDE.md §ARTIFACT-PASS RULE).
 
-**For analysis, re-cut into a scratch directory, never `data/monitor/`.** #707's verification
-re-ran 09-22, 10-09 and 07-20 that way and compared each with the committed day.
+**An analysis re-cut of a past day has NO supported command.** `vinci monitor` always writes into
+`data/monitor/`, where the guard refuses any day older than the newest, and that refusal is the
+point. #707's verification re-ran 09-22, 10-09 and 07-20 with a one-off script that sent each
+snapshot to a scratch directory and compared it with the committed day. Do the same, and never
+point it at `data/monitor/`.
 
 ---
 

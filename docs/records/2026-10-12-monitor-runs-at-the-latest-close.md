@@ -16,7 +16,7 @@ run with NO `--ref`, which files the LATEST close** — the last session on or b
 filings through today.
 - **Later than the newest committed day:** the run writes a new day.
 - **The newest committed day itself:** the run is the same-session re-run.
-- **A day that a later close sits after is never re-run.** `--ref` is for scratch re-cuts only:
+- **A day that a later close sits after is never re-run.** A committed day never takes `--ref`:
   `--ref <close>` on a later morning would bound the read at the close and hide that morning's 8-K,
   the defect #707's review fixed.
 
@@ -55,12 +55,16 @@ label the lookahead.
     the pin red, and writing a new day over it would commit the regression.
   - **The falsifier.** It now counts ADDED day files too, and states that commit time stands in for
     run time.
-- **Fixed in this commit:**
+- **Fixed on top of it (`02aee736`, then the wording fix below):**
   - **The accepted risk was not earned.** CLAUDE.md requires showing the cheap fix is unavailable,
     and refusing a back-dated day is a few lines — so it is built (above), and the risk is re-scoped
     to the case it cannot see (below).
   - **The duplicate "(b)"** in row 5.
   - **The PR description** quoted the old message and instruction.
+  - **The runbook and this record pointed `--ref` at "scratch re-cuts"** — a command that does not
+    exist: `vinci monitor` writes only into `data/monitor/`, where the guard refuses an old date.
+    Both now say a committed day never takes `--ref`, and that an analysis re-cut needs a one-off
+    script writing elsewhere, as #707's verification used.
 
 **HOW VERIFIED.**
 - **The message, on the real failure shape** (worktree at `9b426cdc`).
@@ -95,8 +99,9 @@ label the lookahead.
   have:
   - **The session calendar past the day.** That is a price fetch at write time, walking back from
     today. `session_on_or_before` fails loud when there are no bars within a week (the
-    fetch-is-not-a-holiday rule, `docs/records/2026-09-22-monitor-fetch-error-is-not-a-holiday.md`), so every frozen-data test of the command, and every offline
-    scratch re-cut, would need a faked "today".
+    fetch-is-not-a-holiday rule, `docs/records/2026-09-22-monitor-fetch-error-is-not-a-holiday.md`),
+    so every frozen-data test of the command, and every one-off re-cut script, would need a faked
+    "today".
   - **The session each page is struck on.** That needs a ruling first: a page carries several dates
     (price as-of, CIQ snapshot, screen reference — #702's `date_semantics`), and which one is "its
     session" is a definition, not a line of code.
