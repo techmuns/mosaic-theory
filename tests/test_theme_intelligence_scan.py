@@ -320,17 +320,23 @@ def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_cod
     manual_first = ", ".join(f"{s.publisher} [automated access {access[s.id]}]"
                              for s in pipe.sources.values() if s.mode == "manual_first")
     assert all(s.id in access for s in pipe.sources.values() if s.mode == "manual_first")
-    for label, value in (("Accessible sources", f"{len(auto) - 1} of {len(auto)}"),
-                         ("Blocked automatic channels", blocked),
-                         ("Manual-first sources", manual_first),
-                         ("Articles analyzed", "2 full · 0 partial"),
-                         ("Research Now / Watch / Skip", None),
-                         ("New / upgraded / downgraded / challenged theses", None)):
-        assert f"<span>{label}</span>" in html, label
-        if value:
-            assert f"<span>{label}</span><b>{value}</b>" in html, (label, value)
+    # the redesigned overview (2026-10-12): a compact summary on top — Research Now / Watch /
+    # Skip, review items, verification, articles read — and the channel facts, by name, in the
+    # Sources view (the analyst's first screen is the research, not infrastructure status)
+    k = d.kpi
+    for label, value in (("Research Now", k["research_now"]), ("Watch", k["watch"]),
+                         ("Skip", k["skip"])):
+        assert f"<b>{value}</b><span>{label}</span>" in html, label
+    assert "<span>Review items</span>" in html and "<span>Articles read · 0 in part</span>" in html
     soup = BeautifulSoup(html, "html.parser")
-    for el in soup.select(".aud, .auditbar, script, input"):
+    sources = soup.select_one("#sources").get_text(" ", strip=True)
+    assert f"This scan read {len(auto) - 1} of {len(auto)} automatic channels" in sources
+    assert f"blocked: {blocked}" in sources and f"manual-first: {manual_first}" in sources
+    activity = soup.select_one("#activity").get_text(" ", strip=True)
+    assert (f"{k['new']} new · {k['upgraded']} upgraded · {k['downgraded']} downgraded · "
+            f"{k['challenged']} challenged") in activity
+    # engine ids, codes and gate traces: only in Operations & audit and behind the audit switch
+    for el in soup.select(".aud, .auditbar, script, input, #ops"):
         el.decompose()
     first = soup.get_text(" ", strip=True)
     assert "Published 2026-10-02" in first and "first ingested by the registry" in first
@@ -345,10 +351,10 @@ def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_cod
 
 # --- the dashboard -------------------------------------------------------------------------------
 
-def test_every_category_prints_with_a_count_and_a_long_one_says_showing_x_of_y(
-        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    from vinci.theme_intelligence import report
-    monkeypatch.setattr(report, "DASHBOARD_ROWS_PER_CATEGORY", 2)
+def test_every_thesis_is_one_row_with_its_events_and_the_counts_state_their_population(
+        tmp_path: Path) -> None:
+    """The redesigned overview (2026-10-12) ranks every thesis in ONE list — nothing collapsed,
+    so nothing truncated — each tagged with its events; the activity line counts events."""
     pipe = make_pipeline(tmp_path)
     pipe.start_run("fixture", as_of=date(2026, 3, 2))
     nodes = ["ai_infrastructure.memory", "ai_infrastructure.optical_networking",
@@ -366,9 +372,9 @@ def test_every_category_prints_with_a_count_and_a_long_one_says_showing_x_of_y(
     cards = write_cards(pipe.store, tmp_path / "out", generated="t")
     d = build_dashboard(pipe.store, run.run_id, cards=cards, generated="t")
     html = render_dashboard_html(d)
-    assert "showing 2 of 3" in html  # a collapse prints its own truncation
-    for cat in ("NEW", "UPGRADED", "DOWNGRADED", "CHALLENGED", "UNCHANGED BUT MATERIAL",
-                "ARCHIVED"):
-        assert f'<div class="cat">{cat} <small>' in html  # always printed, even when empty
+    assert "showing" not in html  # nothing collapsed — so no truncation to state
+    assert "Theses this week <small class=\"note\">(3)" in html  # the count states its population
+    assert "3 new · 0 upgraded · 0 downgraded · 0 challenged" in html
     assert d.totals_active.get("RESEARCH NOW", 0) == 0  # zero RESEARCH NOW is a valid answer
-    assert html.count('class="row"') == 3  # nothing dropped: the third row is one click below
+    assert html.count('class="thesis row"') == 3  # nothing dropped
+    assert html.count('<span class="tag">New</span>') == 2 * 3  # on each card and in activity

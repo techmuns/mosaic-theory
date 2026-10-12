@@ -69,6 +69,8 @@ from vinci.theme_intelligence.schemas import (
 from vinci.theme_intelligence.verify import (
     VerifiedHypothesis,
     VerifiedSector,
+    card_sentences,
+    is_market_reaction,
     label_for,
     norm_name,
     provenance_of,
@@ -176,8 +178,70 @@ def capped_conditionals(card: CardContent) -> CardContent:
         "s07_what_could_go_wrong": w.model_copy(update={
             "counter_evidence": cap(w.counter_evidence),
             "alternative_mechanisms": cap(w.alternative_mechanisms),
-            "market_risks": cap(w.market_risks)}),
+            "market_risks": cap(w.market_risks), "price_context": cap(w.price_context)}),
         "s08_decision": d.model_copy(update={"next_step": cap((d.next_step,))[0]})})
+
+
+def replace_sentence(card: CardContent, sid: str, new: CardSentence) -> CardContent:
+    """The card with ONE line replaced — `sid` as `verify.card_sentences` numbers it (s01.i,
+    s02.i, s03.i, s06.i over near + structural, s07.i over counter + alternatives + risks + price
+    context, s08.next). An unknown id raises."""
+    sec, _, idx = sid.partition(".")
+    upd = {"text": new.text, "provenance": new.provenance, "claim_ids": new.claim_ids}
+
+    def put(xs: tuple[_L, ...], i: int) -> tuple[_L, ...]:
+        if not 0 <= i < len(xs):
+            raise ValueError(f"no card line {sid}")
+        return xs[:i] + (xs[i].model_copy(update=upd),) + xs[i + 1:]
+
+    if sid == "s08.next":
+        return card.model_copy(update={"s08_decision": card.s08_decision.model_copy(
+            update={"next_step": new})})
+    i = int(idx) if idx.isdigit() else -1
+    if sec == "s01":
+        return card.model_copy(update={"s01_bottom_line": put(card.s01_bottom_line, i)})
+    if sec == "s02":
+        wc = card.s02_what_changed
+        return card.model_copy(update={"s02_what_changed": wc.model_copy(
+            update={"items": put(wc.items, i)})})
+    if sec == "s03":
+        return card.model_copy(update={"s03_transmission": put(card.s03_transmission, i)})
+    if sec == "s06":
+        n = card.s06_why_now
+        k = len(n.near_term)
+        part = {"near_term": put(n.near_term, i)} if i < k else {
+            "structural": put(n.structural, i - k)}
+        return card.model_copy(update={"s06_why_now": n.model_copy(update=part)})
+    if sec == "s07":
+        w = card.s07_what_could_go_wrong
+        for name in ("counter_evidence", "alternative_mechanisms", "market_risks",
+                     "price_context"):
+            xs = getattr(w, name)
+            if i < len(xs):
+                return card.model_copy(update={"s07_what_could_go_wrong": w.model_copy(
+                    update={name: put(xs, i)})})
+            i -= len(xs)
+    raise ValueError(f"no card line {sid}")
+
+
+def is_price_line(s: CardSentence, claims: dict[str, Claim]) -> bool:
+    """A line every cited claim of which states a SHARE-PRICE / index performance move."""
+    cited = [claims[c] for c in s.claim_ids if c in claims]
+    return bool(cited) and all(is_market_reaction(c.quote) for c in cited)
+
+
+def refile_price_moves(card: CardContent, claims: dict[str, Claim]) -> CardContent:
+    """Counter-evidence lines that state only a price move become PRICE CONTEXT: a share-price
+    move is not earnings evidence for or against a thesis (the same rule that keeps a price move
+    out of the earnings transmission). J.P. Morgan acceptance, 2026-10-12: "the Magnificent 7 have
+    risen roughly 12% vs the index's ~15%" sat under counter-evidence to EARNINGS broadening."""
+    w = card.s07_what_could_go_wrong
+    moved = tuple(s for s in w.counter_evidence if is_price_line(s, claims))
+    if not moved:
+        return card
+    return card.model_copy(update={"s07_what_could_go_wrong": w.model_copy(update={
+        "counter_evidence": tuple(s for s in w.counter_evidence if s not in moved),
+        "price_context": w.price_context + moved})})
 
 
 def _labelled_item(it: ChangeItem, claims: dict[str, Claim]) -> ChangeItem:
@@ -391,7 +455,8 @@ def compose_card(ci: CardInputs) -> CardContent:
     s07 = WhatCouldGoWrong(counter_evidence=_dedupe(labelled(s, claims) for s in counter),
                            alternative_mechanisms=_dedupe(alts),
                            disconfirming_observables=_dedupe(obs), unknowns=_dedupe(unk),
-                           market_risks=_dedupe(risks))
+                           market_risks=_dedupe(risks),
+                           price_context=pw.price_context if pw else ())
 
     # 08 decision -------------------------------------------------------------------------------
     pd = prev.s08_decision if prev else None
@@ -411,11 +476,11 @@ def compose_card(ci: CardInputs) -> CardContent:
                    investment_readiness=pr.investment_readiness,
                    readiness_note=pr.valuation_status, rule_trace=pr.rules_fired)
 
-    return capped_conditionals(CardContent(
+    return capped_conditionals(refile_price_moves(CardContent(
         header=header, s01_bottom_line=_dedupe(labelled(s, claims) for s in s01),
         s02_what_changed=s02, s03_transmission=s03, s04_key_evidence=s04,
         s05_affected=ci.affected, s06_why_now=s06, s07_what_could_go_wrong=s07,
-        s08_decision=s08, s09_sources=tuple(ci.sources)))
+        s08_decision=s08, s09_sources=tuple(ci.sources)), claims))
 
 
 def with_citations(card: CardContent, anchors: dict[str, list[str]],
@@ -454,6 +519,7 @@ def with_citations(card: CardContent, anchors: dict[str, list[str]],
     n_near = len(wn.near_term)
     w = card.s07_what_could_go_wrong
     n0, n1 = len(w.counter_evidence), len(w.alternative_mechanisms)
+    n2 = len(w.market_risks)
     d = card.s08_decision
     return capped_conditionals(card.model_copy(update={  # a re-derived label is capped again
         "s01_bottom_line": s01,
@@ -469,7 +535,9 @@ def with_citations(card: CardContent, anchors: dict[str, list[str]],
             "alternative_mechanisms": tuple(fix_sent(s, f"s07.{n0 + i}")
                                             for i, s in enumerate(w.alternative_mechanisms)),
             "market_risks": tuple(fix_sent(s, f"s07.{n0 + n1 + i}")
-                                  for i, s in enumerate(w.market_risks))}),
+                                  for i, s in enumerate(w.market_risks)),
+            "price_context": tuple(fix_sent(s, f"s07.{n0 + n1 + n2 + i}")
+                                   for i, s in enumerate(w.price_context))}),
         "s08_decision": d.model_copy(update={"next_step": fix_sent(d.next_step, "s08.next")}),
     }))
 
@@ -564,65 +632,108 @@ def diff_cards(old: CardContent, new: CardContent, classes: dict[str, ChangeClas
 # --- rendering -------------------------------------------------------------------------------
 
 _CSS = """
-:root{--bg:#fbfaf7;--ink:#1c1b19;--muted:#6b6862;--line:#e3dfd6;--card:#fff;
---obs:#1f6f43;--obs-bg:#e6f3ec;--fc:#0f5f6e;--fc-bg:#e2f2f4;--op:#6b3fa0;--op-bg:#efe8f8;
---inf:#8a5a00;--inf-bg:#fbf0d9;--ext:#1d4f91;--ext-bg:#e4edf9;
---unk:#555;--unk-bg:#ececec;--now:#9b1c1c;--now-bg:#fde8e8;--watch:#8a5a00;--watch-bg:#fbf0d9;
---skip:#555;--skip-bg:#ececec;--block:#9b1c1c}
-@media (prefers-color-scheme: dark){:root{--bg:#141412;--ink:#ecebe7;--muted:#a19e97;--line:#2f2d29;
---card:#1c1b19;--obs:#7fd4a4;--obs-bg:#173325;--fc:#8fd6e0;--fc-bg:#123238;--op:#c9a8f0;
---op-bg:#2c1f3d;--inf:#f0c36b;--inf-bg:#3a2d10;--ext:#9cc2f5;
---ext-bg:#172a45;--unk:#c9c6c0;--unk-bg:#2b2a27;--now:#ffb4b4;--now-bg:#4a1717;--watch:#f0c36b;
---watch-bg:#3a2d10;--skip:#c9c6c0;--skip-bg:#2b2a27;--block:#ffb4b4}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);
-font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif}
-.wrap{max-width:980px;margin:0 auto;padding:20px 16px 48px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;
-margin:0 0 18px}
-.hdr .id{font:600 12px/1.2 ui-monospace,Menlo,monospace;color:var(--muted);letter-spacing:.02em}
-.hdr h1{font-size:21px;line-height:1.25;margin:4px 0 8px}
-.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:13px}
-.dates{color:var(--muted);font-size:13px;margin-top:6px}
-.pill{display:inline-block;font:700 12px/1 ui-sans-serif,system-ui;padding:5px 8px;
-border-radius:5px;letter-spacing:.03em}
+:root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
+--soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
+--watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
+--warn-bg:#fff3ea;--ok:#1f6f43;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;
+--ext:#1d4f91;--unk:#676d78;--block:#9b1c1c}
+@media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
+--ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
+--accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--obs:#7fd4a4;
+--fc:#8fd6e0;--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
+BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.topnav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.topnav .in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+gap:20px;min-height:50px}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink)}.brand small{font-weight:500;
+color:var(--muted);margin-left:6px}
+.links{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;flex:1;min-width:0;
+scrollbar-width:none}.links::-webkit-scrollbar{display:none}
+.links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
+.links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
+border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+#audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
+.wrap.narrow{max-width:940px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+color:var(--muted)}
+h1{font-size:27px;line-height:1.22;margin:6px 0 8px;font-weight:680;letter-spacing:-.01em}
+h2{font-size:19px;margin:36px 0 12px;font-weight:660;letter-spacing:-.005em}
+h3{font-size:16px;margin:0 0 6px;font-weight:640;line-height:1.3}
+.pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
+border-radius:999px;white-space:nowrap;vertical-align:1px}
 .pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
-color:var(--watch)}.pill.skip{background:var(--skip-bg);color:var(--skip)}
-.pill.dir{background:var(--unk-bg);color:var(--ink)}.pill.kind{background:var(--op-bg);
-color:var(--op)}
-.sec{border-top:1px solid var(--line);padding:12px 0 4px}
-.sec h2,.sec summary{font:700 13px/1.3 ui-sans-serif,system-ui;letter-spacing:.06em;
-text-transform:uppercase;margin:0 0 8px;cursor:pointer}
+color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
+.pill.kind{background:var(--accent-bg);color:var(--accent)}
+.tag{display:inline-block;font-size:12px;color:var(--ink2);border:1px solid var(--line);
+border-radius:999px;padding:1px 9px;white-space:nowrap}.tag.down{color:var(--now)}
+.tag.up{color:var(--ok)}
+.flag{display:inline-block;font-size:12px;font-weight:650;color:var(--warn);
+background:var(--warn-bg);border-radius:6px;padding:3px 9px;white-space:nowrap}
+.okflag{font-size:12px;color:var(--muted)}
+.hdr .hline{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:6px 0 4px}
+.hdr .meta{color:var(--ink2);font-size:13.5px}
+.dates{color:var(--muted);font-size:13px;margin-top:6px}.vline{margin-top:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:24px 26px;margin:0 0 18px}
+.glance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 8px}
+.glance .g{border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+background:var(--panel)}
+.glance .g.wide{grid-column:1/-1}
+.glance h3{font-size:12px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
+color:var(--muted);margin:0 0 8px}
+.glance ul{margin:0;padding-left:18px}.glance li{margin:3px 0}
+.more{font-size:12.5px;display:inline-block;margin-top:6px}
+.sec{border-top:1px solid var(--line);padding:16px 0 6px}
+.sec h2,.sec summary{font-size:13px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
+margin:0 0 10px;color:var(--ink2);cursor:pointer}
 .sec summary small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
-details.sec>summary{list-style:none}details.sec>summary::before{content:"▸ ";color:var(--muted)}
+details.sec>summary{list-style:none}details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::before{content:"▸ ";color:var(--muted)}
 details.sec[open]>summary::before{content:"▾ "}
-.s{margin:4px 0 8px}.b{display:inline-block;font:700 10px/1 ui-sans-serif,system-ui;
-padding:3px 5px;border-radius:4px;margin-right:6px;vertical-align:1px;letter-spacing:.03em}
-.b.obs,.b.fact{background:var(--obs-bg);color:var(--obs)}.b.fc{background:var(--fc-bg);
-color:var(--fc)}.b.op{background:var(--op-bg);color:var(--op)}
-.b.inf{background:var(--inf-bg);color:var(--inf)}
-.b.ext{background:var(--ext-bg);color:var(--ext)}.b.unk{background:var(--unk-bg);color:var(--unk)}
-.cc{font:600 11px/1 ui-monospace,Menlo,monospace;color:var(--muted)}
-.tag{font:600 11px/1.2 ui-sans-serif,system-ui;color:var(--muted);margin-right:6px}
+.s{margin:4px 0 10px}.lab{display:inline-block;font-size:10.5px;font-weight:650;
+letter-spacing:.06em;color:var(--muted);margin-right:6px;white-space:nowrap}
+.lab::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+margin-right:5px;background:var(--unk);vertical-align:1px}
+.lab.obs::before,.lab.fact::before{background:var(--obs)}.lab.fc::before{background:var(--fc)}
+.lab.op::before{background:var(--op)}.lab.inf::before{background:var(--inf)}
+.lab.ext::before{background:var(--ext)}
+.cc{font:600 11px/1.3 ui-monospace,Menlo,monospace;color:var(--muted)}
+.step{font-size:12px;font-weight:600;color:var(--ink2);margin-right:6px}
 .ref{font:11px ui-monospace,Menlo,monospace;color:var(--muted);text-decoration:none}
-table{border-collapse:collapse;width:100%;font-size:13px;margin:4px 0 10px}
-th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:top}
-th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.q{color:var(--muted);font-style:italic}.withheld{color:var(--block);font-weight:600}
-.rw{color:var(--block);font-weight:600;font-size:.92em;margin:.15em 0 0}
-.note{color:var(--muted);font-size:13px}.sub{font-weight:700;font-size:12px;margin:10px 0 2px;
-color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.foot{color:var(--muted);font-size:12px;margin-top:10px}
-.statusnote{margin-top:8px;padding:6px 8px;border-radius:5px;background:var(--unk-bg);
+.hscroll{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:4px 0 12px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+font-weight:600}
+.q{color:var(--muted);font-style:italic}.withheld{color:var(--block);font-weight:650}
+.rw{color:var(--warn);background:var(--warn-bg);font-size:13px;margin:4px 0 0;padding:6px 9px;
+border-radius:6px}.flagged{border-left:3px solid var(--warn);padding-left:10px}
+.corr{color:var(--accent);font-size:12.5px;margin-top:3px}
+.note{color:var(--muted);font-size:13px}.sub{font-weight:650;font-size:12px;margin:14px 0 4px;
+color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.foot{color:var(--muted);font-size:12px;margin-top:14px}
+.statusnote{margin-top:10px;padding:7px 10px;border-radius:6px;background:var(--soft);
 font-weight:600;font-size:13px}
-.legend{font-size:12px;color:var(--muted);margin:2px 0 10px}
-.auditbar{max-width:980px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
-.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.auditbar .aud{display:revert}
+.legend{font-size:12.5px;color:var(--muted);margin:14px 0 4px}
+.legend summary{cursor:pointer}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
 #audit:checked~.wrap .nonaud{display:none}
-a{color:var(--ext)}
-@media (max-width:640px){table{display:block;overflow-x:auto}}
-@media print{details.sec>*{display:block!important}details.sec>summary::before{content:""}
-body{background:#fff}.card{border:0}.aud{display:revert!important}.nonaud{display:none!important}
-.auditbar{display:none}}
+@media (max-width:720px){.glance{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}
+.card{padding:16px 14px;border-radius:10px}.topnav .in{gap:0 12px;flex-wrap:wrap;
+padding-top:8px}.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}
+.wrap{padding:18px 12px 48px}}
+@media print{.topnav{display:none}details>*{display:block!important}
+details.sec>summary::before{content:""}body{background:#fff}.card{border:0;padding:0}
+.aud{display:revert!important}.nonaud{display:none!important}.hscroll{overflow:visible}
+.glance{grid-template-columns:repeat(2,minmax(0,1fr))}.g,.thesis{break-inside:avoid}}
 """
 
 _BADGE = {Provenance.MEASURED_OBSERVATION: "obs", Provenance.FORECAST: "fc",
@@ -648,13 +759,13 @@ LEGEND = ("Labels: MEASURED OBSERVATION — a figure or dated event the source r
           "interpretation or argument, not an established market fact · MODEL INFERENCE — this "
           "tool's reasoning · EXTERNALLY VERIFIED — checked against an independent primary "
           "source. A line citing several claims carries the weakest label among them.")
-AUDIT_TOGGLE = ('<input type="checkbox" id="audit" hidden><div class="auditbar">'
-                '<label for="audit"><u>Show evidence IDs, engine codes and the decision trace'
-                '</u></label> <span class="aud">— audit view on</span></div>')
+AUDIT_TOGGLE = '<input type="checkbox" id="audit" hidden>'
 
 
 def e(x: object) -> str:
-    return html.escape("" if x is None else str(x))
+    """Escaped for HTML — ONCE: text a source page already entity-encoded ("America&#039;s",
+    the pilot's Nomura title) is decoded first, so it never prints as "&#039;"."""
+    return html.escape(html.unescape("" if x is None else str(x)))
 
 
 def origin_label(attributed: str | None) -> str:
@@ -665,6 +776,35 @@ def origin_label(attributed: str | None) -> str:
     if attributed.strip().lower() in ("publisher_own", "publisher own"):
         return "publisher's own analysis"
     return attributed
+
+
+_ENTITY = re.compile(r"&(?:#\d+|#[xX][0-9a-fA-F]+|amp|lt|gt|quot|apos);")
+
+
+def plain_entities(text: str) -> str:
+    """Markdown as a reader sees it: a stored HTML entity a source page carried ("America&#039;s",
+    the pilot's Nomura title) is decoded. Only well-formed references — "S&P" and "AT&T" are text.
+    The JSON keeps the stored value."""
+    return _ENTITY.sub(lambda m: html.unescape(m.group(0)), text)
+
+
+def foot_html(note: str) -> str:
+    """The page's generated line: WHEN and FROM WHAT in the default view; the engine versions and
+    the run id it names in parentheses sit in the audit layer (shown in print)."""
+    head, sep, tail = note.partition(" (")
+    return (f'<div class="foot">{e(head)}'
+            + (f'<span class="aud"> ({e(tail)}</span>' if sep else "") + "</div>")
+
+
+#: an investment-readiness value as a reader says it (the stored enum stays in the JSON)
+READINESS_WORD = {"NOT_ASSESSED": "Not assessed"}
+
+
+def readiness_text(value: str, note: str) -> str:
+    """`Readiness — note`, in words, without repeating a label the note already starts with."""
+    word = READINESS_WORD.get(value, value)
+    rest = note[len(value):].lstrip(" —") if note.startswith(value) else note
+    return f"{word} — {rest}" if rest else word
 
 
 def _once(label: str, note: str) -> str:
@@ -710,6 +850,10 @@ class RenderContext:
     #: article id -> its retrieval as READ NOW, when a correction record changed what this
     #: version's source row stored (a preview recorded FULL)
     retrieval_now: dict[str, str] = field(default_factory=dict)
+    #: sentence id -> the reason of an ANALYST CORRECTION of that line (shown on it)
+    corrected: dict[str, str] = field(default_factory=dict)
+    #: the version's stored research priority — its FACTORS give the plain "why this action"
+    priority: ResearchPriority | None = None
 
 
 def shown_label(prov: Provenance, sid: str, rc: RenderContext) -> Provenance:
@@ -719,7 +863,7 @@ def shown_label(prov: Provenance, sid: str, rc: RenderContext) -> Provenance:
 
 
 def _warn_html(sid: str, rc: RenderContext) -> str:
-    return (f'<div class="rw">⚠ UNRESOLVED REVIEW — {e(rc.flagged[sid])}</div>'
+    return (f'<div class="rw">⚠ UNRESOLVED REVIEW — {ids_to_audit(e(rc.flagged[sid]))}</div>'
             if sid in rc.flagged else "")
 
 
@@ -739,8 +883,10 @@ def _refs(ids: Iterable[str]) -> str:
 #: A-46796449712e"). They belong in the audit view, not the first view (review P2.12): the line
 #: reads "⟨competing hypothesis⟩" and the ids show behind the toggle and in print. Observed
 #: 2026-10-10 on the first challenged cards.
-_ID_RUN = re.compile(r"(\s*(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,})"
-                     r"(?:,\s*(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,}))*)")
+_ID_ONE = r"(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,}|C-[0-9a-f]{5,}(?:\.{3}|…)?)"
+#: a run in its OWN parentheses goes with them — "automatic (A-…)" never reads "automatic ()"
+_RUN = r"(?:pool\s+)?" + _ID_ONE + r"(?:,\s*" + _ID_ONE + r")*"
+_ID_RUN = re.compile(r"(\s*\(" + _RUN + r"\)|\s*" + _RUN + ")")
 
 
 def ids_to_audit(escaped: str) -> str:
@@ -748,24 +894,33 @@ def ids_to_audit(escaped: str) -> str:
     return _ID_RUN.sub(lambda m: f'<span class="aud">{m.group(1)}</span>', escaped)
 
 
-def _sent(s: CardSentence, sid: str, rc: RenderContext) -> str:
+def _sent(s: CardSentence, sid: str, rc: RenderContext, *, anchor: bool = True,
+          step: str = "") -> str:
+    """One card line: its label, its text, its citations (audit view), and — ON the line — an
+    unresolved review warning or an analyst correction. `anchor` gives the line its linkable id
+    (the at-a-glance summary repeats lines without one)."""
+    aid = f' id="{_anchor(sid)}"' if anchor and sid != "-" else ""
+    stp = f'<span class="step">{e(step)}</span>' if step else ""
     if sid in rc.blocked:
-        return (f'<div class="s"><span class="withheld">WITHHELD — failed source verification'
-                f'</span><span class="aud"> {e(rc.blocked[sid])}</span><details><summary '
-                f'class="note">audit text</summary><span class="q">{e(s.text)}</span></details>'
-                f'</div>')
+        return (f'<div class="s flagged"{aid}>{stp}<span class="withheld">WITHHELD — failed '
+                f'source verification</span><span class="aud"> {e(rc.blocked[sid])}</span>'
+                f'<details><summary class="note">audit text</summary><span class="q">'
+                f'{e(_clean_display(s.text))}</span></details></div>')
     p = shown_label(s.provenance, sid, rc)
-    return (f'<div class="s"><span class="b {_BADGE[p]}">{e(p.value)}'
-            f'</span>{ids_to_audit(e(s.text))}{_refs(s.claim_ids)}{_warn_html(sid, rc)}</div>')
+    cls = " flagged" if sid in rc.flagged else ""
+    return (f'<div class="s{cls}"{aid}>{stp}<span class="lab {_BADGE[p]}">{e(p.value)}</span> '
+            f'{ids_to_audit(e(_clean_display(s.text)))}{_refs(s.claim_ids)}'
+            f'{_warn_html(sid, rc)}{_corr_html(sid, rc)}</div>')
 
 
 def _section(fid: str, title: str, body: str, *, print_mode: bool, summary: str = "") -> str:
     if fid in _FOLDED:
         op = " open" if print_mode else ""
         small = f" <small>— {e(summary)}</small>" if summary else ""
-        return (f'<details class="sec" data-field="{fid}"{op}><summary>{e(title)}{small}'
-                f'</summary>{body}</details>')
-    return f'<section class="sec" data-field="{fid}"><h2>{e(title)}</h2>{body}</section>'
+        return (f'<details class="sec" data-field="{fid}"{op}><summary id="sec-{fid}">'
+                f'{e(title)}{small}</summary>{body}</details>')
+    return (f'<section class="sec" data-field="{fid}"><h2 id="sec-{fid}">{e(title)}</h2>{body}'
+            f'</section>')
 
 
 def _listing_text(ls: Iterable[Listing]) -> str:
@@ -798,26 +953,221 @@ def _company_rows(cs: Iterable[AffectedCompany], *, exposures: bool = False) -> 
             "<th>Role the source states</th>"
             + ("<th>This thesis's reading</th>" if exposures else "")
             + "<th>Direction</th><th>Recommendation</th></tr>")
-    return ("<table>" + head + "".join(rows) + "</table>") if rows else \
-        '<div class="note">None named.</div>'
+    return ('<div class="hscroll"><table>' + head + "".join(rows) + "</table></div>") if rows \
+        else '<div class="note">None named.</div>'
+
+
+_ACTION_WORD = {"RESEARCH NOW": "Research Now", "WATCH": "Watch", "SKIP": "Skip"}
+_LINE_NAMES = {"s01": "bottom line", "s02": "what changed", "s03": "economics",
+               "s06": "why now", "s07": "what could go wrong", "s08": "next step"}
+
+
+def _anchor(sid: str) -> str:
+    """The id of a card line, linkable from the Review Required indicator and the review queue."""
+    return "L-" + sid.replace(".", "-")
+
+
+def _line_name(sid: str) -> str:
+    return _LINE_NAMES.get(sid.partition(".")[0], sid)
+
+
+def finding_names(sids: list[str]) -> list[str]:
+    """Each line's section name — numbered where a section holds more than one, so every link
+    says which line it opens ("what could go wrong 1", "what could go wrong 2")."""
+    names = [_line_name(s) for s in sids]
+    seen: dict[str, int] = {}
+    out = []
+    for n in names:
+        seen[n] = seen.get(n, 0) + 1
+        out.append(f"{n} {seen[n]}" if names.count(n) > 1 else n)
+    return out
+
+
+def _clean_display(text: str) -> str:
+    """A stored line as a reader sees it: the "page None" a web article carried before 2026-10-12
+    (it has no pages) is dropped. The stored text stays in the JSON."""
+    return re.sub(r"page None(?:: | )?", "", re.sub(r",\s*page None\b", "", text))
+
+
+def _corr_html(sid: str, rc: RenderContext) -> str:
+    return (f'<div class="corr">Corrected by the analyst — {e(rc.corrected[sid])}</div>'
+            if sid in rc.corrected else "")
+
+
+def _source_name(card: CardContent, article_id: str) -> str:
+    s = next((x for x in card.s09_sources if x.article_id == article_id), None)
+    if s is None:
+        return "source"
+    return s.publisher + (f", {s.published_at.date().isoformat()}" if s.published_at else "")
+
+
+def _para(block_id: str) -> str:
+    """A block id as a reader says it: "b006" -> "6"."""
+    return block_id[1:].lstrip("0") or "0" if re.fullmatch(r"b\d+", block_id) else block_id
+
+
+def topnav(base: str) -> str:
+    """The product navigation — the weekly overview's views — on the dashboard ("") and on every
+    card ("../"), with the audit switch (evidence ids, engine codes, decision traces)."""
+    page = f"{base}dashboard.html" if base else ""
+    links = (("Overview", "#top"), ("Theses", "#theses"), ("Review queue", "#review"),
+             ("Sources", "#sources"), ("Archive", "#archive"), ("Operations", "#ops"))
+    return ('<nav class="topnav" id="top"><div class="in"><a class="brand" href="'
+            f'{page or "#top"}">Mosaic Theory<small>Theme research</small></a><div class="links">'
+            + "".join(f'<a href="{page}{h}">{t}</a>' for t, h in links)
+            + '</div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes '
+              'and the decision trace">Audit view</label></div></nav>')
+
+
+def why_reasons(card: CardContent, pr: ResearchPriority | None) -> list[str]:
+    """Why the research action is what it is, in plain words — from the STORED priority's factor
+    VALUES and the card's own exposures, never from the rule trace's text (which stays in the
+    audit view)."""
+    if pr is None:
+        return []
+    f = {x.factor_id: x.value for x in pr.factors}
+    a = pr.research_action.value
+    av = card.s05_affected
+    exposed = bool(av.sector_exposures) or any(c.listings for c in av.companies)
+    if a == "RESEARCH NOW":
+        # the inflection route says WHY with its research question (composed by the priority
+        # rules from the claim's structured fields — the same words `report.why_action` shows)
+        f12 = next((x.note for x in pr.factors if x.factor_id == "F12_fundamental_inflection"), "")
+        q = re.search(r"research question: (.*?\?)", f12)
+        if f.get("F7_dislocation_or_catalyst") != "present" and q:
+            return ["Research Now — no dislocation or dated catalyst, but a credible near-term "
+                    f"change in a fundamental: {q.group(1)} (an investigation, not a trade)"]
+        return ["Research Now — a verified dislocation or a dated catalyst, a dated window inside "
+                "the next 2-4 quarters, an exposure the source names, an asserted premise and the "
+                "full text read (an investigation, not a trade)"]
+    if a == "SKIP":
+        if f.get("F2_material_evidence") == "0":
+            return ["Skip — no verified material evidence."]
+        if f.get("F4_profit_transmission") == "absent":
+            return ["Skip — no earnings mechanism (a price or valuation move is not one)."]
+        return ["Skip — longer-term only: no dated window inside the next 2-4 quarters."]
+    out: list[str] = []
+    near = f.get("F5_near_term_relevance")
+    if near == "runs_past":
+        out.append("Timing — its dated figures run past the next four quarters; a full-year or "
+                   "multi-quarter figure is not a 2-4-quarter window.")
+    elif near and near != "yes":
+        out.append("Timing — no dated window inside the next 2-4 quarters in the evidence.")
+    if not exposed:
+        out.append("Exposure — the source names no company or sector as exposed.")
+    if f.get("F7_dislocation_or_catalyst") != "present" and f.get(
+            "F12_fundamental_inflection") != "qualifies":
+        out.append({
+            "not credible": "Catalyst — the near-term change is a forecast without a "
+                            "corroborating measurement.",
+            "incomplete": "Catalyst — the source states no fundamental step from the change to "
+                          "profits."}.get(f.get("F12_fundamental_inflection", ""),
+                                          "Catalyst — no verified dislocation, dated catalyst or "
+                                          "near-term change in a fundamental."))
+    if f.get("F9_premise_in_source", "asserted") != "asserted":
+        out.append(f"Premise — {f['F9_premise_in_source'].replace('_', ' ')} in the source.")
+    if f.get("F11_retrieval", "FULL") != "FULL":
+        out.append("Source — only part of the text was read.")
+    if f.get("F10_verification_hold") == "HOLD":
+        out.append("Verification — on hold until a failed check is resolved.")
+    if f.get("F1_source_reliability") == "low":
+        out.append("Reliability — a low-reliability source only.")
+    return out or ["Watch — Research Now conditions not all met (see the decision trace)."]
+
+
+def _glance(card: CardContent, rc: RenderContext) -> str:
+    """AT A GLANCE — the seven questions an analyst asks of a thesis, answered from the card's own
+    lines (labels kept), each linked to its full section."""
+    act = _ACTION_WORD.get(card.header.research_action.value, card.header.research_action.value)
+
+    def block(title: str, body: str, sec: str, *, wide: bool = False) -> str:
+        return (f'<section class="g{" wide" if wide else ""}"><h3>{e(title)}</h3>{body}'
+                f'<a class="more" href="#sec-{sec}">Details</a></section>')
+
+    def line(s: CardSentence, sid: str) -> str:
+        return _sent(s, sid, rc, anchor=False)
+
+    s01 = card.s01_bottom_line
+    thesis = line(s01[0], "s01.0") if s01 else '<div class="note">—</div>'
+    wc = card.s02_what_changed.items
+    changed = "".join(
+        f'<li>{e(_clean_display(_plain_text(it.text)))}'
+        + (f' <span class="note">({e(it.period)})</span>' if it.period else "") + "</li>"
+        for i, it in enumerate(wc[:2]) if f"s02.{i}" not in rc.blocked)
+    steps = [(i, st) for i, st in enumerate(card.s03_transmission) if st.step != "market_reaction"]
+    impact = "".join(
+        f'<li><span class="step">{e(STEP_LABEL.get(st.step, st.step))}</span>'
+        f'{e(_clean_display(_plain_text(st.text)))}</li>'
+        for i, st in steps[:3] if f"s03.{i}" not in rc.blocked)
+    ev = [r for r in card.s04_key_evidence if r.value_text][:3] or list(card.s04_key_evidence[:3])
+    evidence = "".join(
+        f'<li><b>{e(r.value_text or "—")}</b> {e(unit_shown(r.value_text, r.unit))} — '
+        f'{e(r.label)} <span class="note">({e(r.period or "—")}, {e(r.epistemic.value)}; '
+        f'{e(_source_name(card, r.article_id))})</span></li>' for r in ev)
+    why = "".join(f"<li>{e(x)}</li>" for x in why_reasons(card, rc.priority))
+    w = card.s07_what_could_go_wrong
+    risks = ([line(s, f"s07.{i}") for i, s in enumerate(w.counter_evidence[:2])]
+             + [f'<li>{e(_clean_display(s.text))}</li>' for s in w.disconfirming_observables[:2]])
+    n0, n1 = len(w.counter_evidence), len(w.alternative_mechanisms)
+    risks += [line(s, f"s07.{n0 + n1 + i}") for i, s in enumerate(w.market_risks[:1])]
+    d = card.s08_decision
+    nxt = (line(d.next_step, "s08.next")
+           + (f'<div class="note">Would raise priority: {e(d.raise_priority_if[0].text)}</div>'
+              if d.raise_priority_if else ""))
+    return ('<div class="glance" aria-label="At a glance">'
+            + block("The thesis", thesis, "s01_bottom_line", wide=True)
+            + block("What changed", f"<ul>{changed}</ul>" if changed else
+                    '<div class="note">Nothing new in this version.</div>', "s02_what_changed")
+            + block("Effect on profits, margins or demand", f"<ul>{impact}</ul>" if impact else
+                    '<div class="note">No earnings step stated.</div>', "s03_transmission")
+            + block("Strongest evidence", f"<ul>{evidence}</ul>" if evidence else
+                    '<div class="note">No figure recorded.</div>', "s04_key_evidence")
+            + block(f"Why {act}", f"<ul>{why}</ul>", "s08_decision")
+            + block("What could invalidate it", "<ul>" + "".join(
+                x if x.startswith("<li>") else f"<li>{x}</li>" for x in risks) + "</ul>"
+                    if risks else '<div class="note">None recorded.</div>',
+                    "s07_what_could_go_wrong")
+            + block("Next check", nxt, "s08_decision")
+            + "</div>")
+
+
+def _plain_text(text: str) -> str:
+    """A line without its system labels ⟨…⟩ (kept on the line in the sections below)."""
+    return re.sub(r"\s*⟨[^⟩]*⟩\s*", " ", text).strip()
 
 
 def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = False) -> str:
+    """The Living Thesis Card. A short header (action, horizon, dates, a Review Required
+    indicator linked to the exact lines), an AT-A-GLANCE summary answering the analyst's seven
+    questions, then the nine sections in order — every line, figure and source as before. Claim
+    ids, engine codes and the decision trace sit behind the audit switch; the print view opens
+    everything (the complete record)."""
     h = card.header
-    parts: list[str] = []
     pill = _PILL.get(h.research_action.value, "skip")
     kind = (f'<span class="pill kind">{e(KIND_LABEL[h.kind])}</span>'
             if h.kind is ThesisKind.MARKET_REGIME else "")
-    parts.append(
-        f'<div class="hdr"><div class="id aud">{e(h.thesis_id)} · {e(" › ".join(h.ancestry))}'
-        f'</div><h1>{e(h.title)}</h1><div class="meta"><span class="pill {pill}">'
-        f'{e(h.research_action.value)}</span><span class="pill dir">Evidence: '
-        f'{e(h.evidence_direction.value)}</span>{kind}<span>{e(h.sector)}</span>'
-        f'<span>{e(h.region)}</span><span>Horizon: {e(h.horizon)}</span>'
-        + (f'<span>Status: {e(h.status.value)}</span>' if h.status.value != "ACTIVE" else "")
+    findings = [sid for sid in card_sentences(card) if sid in rc.blocked or sid in rc.flagged]
+    review = (f'<a class="flag" href="#{_anchor(findings[0])}">Review required · '
+              f'{len(findings)} line(s)</a> <span class="note">'
+              + " · ".join(f'<a href="#{_anchor(s)}">{e(n)}</a>'
+                           for s, n in zip(findings, finding_names(findings), strict=True))
+              + "</span>" if findings else
+              '<span class="okflag">No unresolved review findings on this card</span>')
+    parts = [
+        f'<header class="hdr"><div class="eyebrow">Living Thesis Card · {e(h.sector)} · '
+        f'{e(h.region)}</div><h1>{e(h.title)}</h1><div class="hline"><span class="pill {pill}">'
+        f'{e(_ACTION_WORD.get(h.research_action.value, h.research_action.value))}</span>{kind}'
+        f'<span class="meta">Horizon: {e(h.horizon)}</span><span class="meta">Evidence: '
+        f'{e(h.evidence_direction.value.lower())}</span>'
+        + (f'<span class="meta">Status: {e(h.status.value)}</span>'
+           if h.status.value != "ACTIVE" else "")
         + f'</div><div class="dates">{e(first_detected_line(h))}</div>'
         + (f'<div class="statusnote">{e(rc.status_note)}</div>' if rc.status_note else "")
-        + f'<div class="legend">{e(LEGEND)}</div></div>')
+        + f'<div class="vline">{review}</div><div class="id aud cc">{e(h.thesis_id)} · '
+          f'{e(" › ".join(h.ancestry))} · {e(h.research_action.value)}</div></header>',
+        _glance(card, rc),
+        f'<details class="legend"{" open" if print_mode else ""}><summary>How to read the line '
+        f'labels</summary>{e(LEGEND)}</details>']
     bodies: dict[str, str] = {}
     summaries: dict[str, str] = {}
     bodies["s01_bottom_line"] = "".join(_sent(s, f"s01.{i}", rc)
@@ -825,19 +1175,21 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     wc = card.s02_what_changed
 
     def item(i: int, it: ChangeItem) -> str:
+        sid = f"s02.{i}"
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
         body = (f'<span class="withheld">WITHHELD — failed source verification</span>'
-                f'<span class="aud"> {e(rc.blocked[f"s02.{i}"])}</span>'
-                if f"s02.{i}" in rc.blocked else ids_to_audit(e(it.text)))
-        p = shown_label(it.provenance, f"s02.{i}", rc)
-        return ('<div class="s">' + (f'<span class="tag">{e(tag)}</span>' if tag else "")
-                + f'<span class="b {_BADGE[p]}">{e(p.value)}</span>'
-                + body
+                f'<span class="aud"> {e(rc.blocked[sid])}</span>'
+                if sid in rc.blocked else ids_to_audit(e(_clean_display(it.text))))
+        p = shown_label(it.provenance, sid, rc)
+        flagged = " flagged" if sid in rc.blocked or sid in rc.flagged else ""
+        return (f'<div class="s{flagged}" id="{_anchor(sid)}">'
+                + (f'<span class="step">{e(tag)}</span>' if tag else "")
+                + f'<span class="lab {_BADGE[p]}">{e(p.value)}</span> ' + body
                 + (f' <span class="note">(article date {e(it.original_date)}'
                    + (f"; period {e(it.period)}" if it.period else "") + ")</span>"
                    if it.original_date else "")
                 + f'<span class="aud"> <span class="cc">[{e(it.change_class.value)}]</span>'
-                  f'</span>{_refs(it.claim_ids)}{_warn_html(f"s02.{i}", rc)}</div>')
+                  f'</span>{_refs(it.claim_ids)}{_warn_html(sid, rc)}{_corr_html(sid, rc)}</div>')
     first = [item(i, it) for i, it in enumerate(wc.items)]
     shown, rest = first[:3], first[3:]
     bodies["s02_what_changed"] = (
@@ -847,9 +1199,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
             f'other {len(rest)} of {len(first)}</summary>' + "".join(rest) + "</details>")
            if rest else ""))
     bodies["s03_transmission"] = "".join(
-        f'<div class="s"><span class="tag">{e(STEP_LABEL.get(st.step, st.step))}</span>'
-        + _sent(CardSentence(text=st.text, provenance=st.provenance, claim_ids=st.claim_ids),
-                f"s03.{i}", rc)[len('<div class="s">'):]
+        _sent(CardSentence(text=st.text, provenance=st.provenance, claim_ids=st.claim_ids),
+              f"s03.{i}", rc, step=STEP_LABEL.get(st.step, st.step))
         for i, st in enumerate(card.s03_transmission))
     src_steps = sum(1 for st in card.s03_transmission if st.provenance in SOURCE_LABELS)
     summaries["s03_transmission"] = (f"{len(card.s03_transmission)} step(s), {src_steps} stated "
@@ -873,17 +1224,20 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
             + (f"<div class=note>{e(r.comparator)}</div>" if r.comparator else "")
             + f'</td><td>{e(r.period or "—")}<div class=note>as of {e(asof)}</div></td>'
               f'<td>{e(" · ".join(flags))}</td><td>{e(r.origin or "—")}</td><td>'
-              f'<span class="ref">{e(r.article_id)} {e(r.block_id)}</span><div class="cc aud">'
-              f'{e(r.claim_id)} · {e(r.role.value)} · {e(r.change_class.value)}</div></td></tr>')
+              f'{e(_source_name(card, r.article_id))}<div class="note">paragraph '
+              f'{e(_para(r.block_id))}</div><div class="cc aud">{e(r.article_id)} '
+              f'{e(r.block_id)} · {e(r.claim_id)} · {e(r.role.value)} · '
+              f'{e(r.change_class.value)}</div></td></tr>')
     bodies["s04_key_evidence"] = (
         f'<div class="note">{len(card.s04_key_evidence)} evidence row(s); every figure links to '
         f'its verbatim source span. Figures repeating one origin are one row.</div>'
-        "<table><tr><th>Evidence</th><th>Value</th><th>Period / as-of</th><th>Type</th>"
-        "<th>Upstream origin</th><th>Source passage</th></tr>" + "".join(rows) + "</table>")
+        '<div class="hscroll"><table><tr><th>Evidence</th><th>Value</th><th>Period / as-of</th>'
+        "<th>Type</th><th>Upstream origin</th><th>Source passage</th></tr>" + "".join(rows)
+        + "</table></div>")
     summaries["s04_key_evidence"] = f"{len(card.s04_key_evidence)} evidence row(s)"
     av = card.s05_affected
     sector_rows = "".join(
-        f'<div class="s"><span class="b {_BADGE[s.provenance]}">{e(s.provenance.value)}</span>'
+        f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
         f'{_refs(s.claim_ids)}</div>' for s in av.sector_exposures)
     bodies["s05_affected"] = (
@@ -903,7 +1257,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + ("".join(_sent(s, f"s05.b{i}", rc) for i, s in enumerate(av.baskets)) or
            '<div class="note">None.</div>')
         + '<div class="sub">Enrichment — EXTERNAL HYPOTHESES, not named by the source</div>'
-        + ("".join(f'<div class="s"><span class="b unk">{e(x.label)}</span>{e(x.name)} — '
+        + ("".join(f'<div class="s"><span class="lab unk">{e(x.label)}</span> {e(x.name)} — '
                    f'{e(x.rationale)}</div>' for x in av.enrichment)
            or '<div class="note">None recorded. Unnamed companies are never added to the '
               'source lists above.</div>'))
@@ -912,16 +1266,17 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     wn = card.s06_why_now
     bodies["s06_why_now"] = (
         '<div class="sub">Near term (2-4 quarters)</div>'
-        + "".join(_sent(s, f"s06.{i}", rc) for i, s in enumerate(wn.near_term))
+        + ("".join(_sent(s, f"s06.{i}", rc) for i, s in enumerate(wn.near_term))
+           or '<div class="note">None in the sources.</div>')
         + '<div class="sub">Longer-term / structural (kept separate)</div>'
         + "".join(_sent(s, f"s06.{len(wn.near_term) + i}", rc)
                   for i, s in enumerate(wn.structural))
         + f'<div class="sub">Catalyst / repricing window</div><div class="s">'
           f'{e(wn.catalyst_window)}</div><div class="sub">Consensus / valuation</div>'
-          f'<div class="s"><span class="b unk">NOT ASSESSED</span>'
+          f'<div class="s"><span class="lab unk">NOT ASSESSED</span> '
           f'{e(_once("NOT_ASSESSED", wn.valuation_status)[len("NOT_ASSESSED — "):])}</div>')
     w = card.s07_what_could_go_wrong
-    n0, n1 = len(w.counter_evidence), len(w.alternative_mechanisms)
+    n0, n1, n2 = len(w.counter_evidence), len(w.alternative_mechanisms), len(w.market_risks)
     bodies["s07_what_could_go_wrong"] = (
         '<div class="sub">Strongest counter-evidence in the sources</div>'
         + ("".join(_sent(s, f"s07.{i}", rc) for i, s in enumerate(w.counter_evidence))
@@ -931,25 +1286,31 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + '<div class="sub">Market-level risks (kept as risks, not theses)</div>'
         + ("".join(_sent(s, f"s07.{n0 + n1 + i}", rc) for i, s in enumerate(w.market_risks))
            or '<div class="note">None recorded.</div>')
+        + ('<div class="sub">Price performance — market context, not earnings evidence</div>'
+           + "".join(_sent(s, f"s07.{n0 + n1 + n2 + i}", rc)
+                     for i, s in enumerate(w.price_context)) if w.price_context else "")
         + '<div class="sub">Observable disconfirming signals</div>'
         + "".join(_sent(s, "-", rc) for s in w.disconfirming_observables)
         + '<div class="sub">Unknowns</div>'
         + "".join(_sent(s, "-", rc) for s in w.unknowns))
-    summaries["s07_what_could_go_wrong"] = (f"{len(w.counter_evidence)} counter-evidence · "
-                                            f"{len(w.alternative_mechanisms)} alternatives · "
-                                            f"{len(w.market_risks)} market risk(s)")
+    summaries["s07_what_could_go_wrong"] = (
+        f"{len(w.counter_evidence)} counter-evidence · {len(w.alternative_mechanisms)} "
+        f"alternatives · {len(w.market_risks)} market risk(s)"
+        + (f" · {len(w.price_context)} price-context line(s)" if w.price_context else ""))
     d = card.s08_decision
     bodies["s08_decision"] = (
         f'<div class="s"><span class="pill {_PILL.get(d.research_action.value, "skip")}">'
-        f'{e(d.research_action.value)}</span> <span class="note">research attention only — this '
-        f'card never directs a purchase or sale</span></div>'
-        '<div class="sub">Next investigable step</div>' + _sent(d.next_step, "s08.next", rc)
+        f'{e(_ACTION_WORD.get(d.research_action.value, d.research_action.value))}</span> '
+        f'<span class="note">research attention only — this card never directs a purchase or '
+        f'sale</span></div>'
+        + "".join(f'<div class="s">{e(x)}</div>' for x in why_reasons(card, rc.priority))
+        + '<div class="sub">Next investigable step</div>' + _sent(d.next_step, "s08.next", rc)
         + '<div class="sub">Would raise priority</div>'
         + "".join(_sent(s, "-", rc) for s in d.raise_priority_if)
         + '<div class="sub">Would lower priority</div>'
         + "".join(_sent(s, "-", rc) for s in d.lower_priority_if)
         + f'<div class="sub">Investment readiness</div><div class="s">'
-          f'{e(_once(d.investment_readiness.value, d.readiness_note))}</div>'
+          f'{e(readiness_text(d.investment_readiness.value, d.readiness_note))}</div>'
           '<div class="aud"><div class="sub">Decision trace (deterministic rules)</div>'
         + "".join(f'<div class="s cc">{e(t)}</div>' for t in d.rule_trace) + "</div>")
     src_rows = "".join(
@@ -968,24 +1329,26 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     hist_rows = "".join(
         f"<tr><td>v{v.version}</td><td>{e(v.as_of.isoformat())}</td>"
         f"<td>{e(v.priority.research_action.value)}</td><td>{e(v.evidence_direction.value)}</td>"
-        f"<td>{e(v.change_summary)}<div class=\"note aud\">{e(v.priority.change_reason)}</div>"
+        f"<td>{ids_to_audit(e(_clean_display(v.change_summary)))}<div class=\"note aud\">"
+        f"{e(v.priority.change_reason)}</div>"
         + "".join(f'<div class="cc aud">{e(dd.field_id)}: {e(dd.change_class.value)} — '
                   f"{e(clip(dd.new or '', 140))}</div>" for dd in v.diffs)
         + "</td></tr>" for v in rc.history)
     attr = "".join(f'<div class="s cc">{e(a)} — {e(c)}: {e(n)}</div>'
                    for a, c, n in rc.attributions)
     bodies["s09_sources"] = (
-        "<table><tr><th>Source</th><th>Author(s)</th><th>Publisher</th><th>Article date</th>"
-        "<th>Upstream origin(s)</th><th>Contribution</th></tr>" + src_rows + "</table>"
-        '<div class="sub">Version history (immutable)</div><table><tr><th>Ver</th><th>As of</th>'
-        "<th>Action</th><th>Evidence</th><th>Why it changed</th></tr>" + hist_rows + "</table>"
+        '<div class="hscroll"><table><tr><th>Source</th><th>Author(s)</th><th>Publisher</th>'
+        "<th>Article date</th><th>Upstream origin(s)</th><th>Contribution</th></tr>" + src_rows
+        + '</table></div><div class="sub">Version history (immutable)</div><div class="hscroll">'
+          "<table><tr><th>Ver</th><th>As of</th><th>Action</th><th>Evidence</th>"
+          "<th>Why it changed</th></tr>" + hist_rows + "</table></div>"
         + ('<div class="sub">Attributions without a new version</div>' + attr if attr else ""))
     summaries["s09_sources"] = (f"{len(card.s09_sources)} source(s) · {len(rc.history)} "
                                 f"version(s)")
     for fid, title in SECTION_IDS:
         parts.append(_section(fid, title, bodies[fid], print_mode=print_mode,
                               summary=summaries.get(fid, "")))
-    parts.append(f'<div class="foot">{e(rc.generated_note)}</div>')
+    parts.append(foot_html(rc.generated_note))
     script = ("<script>window.addEventListener('beforeprint',()=>document.querySelectorAll("
               "'details').forEach(d=>d.open=true));</script>")
     body = "".join(parts)
@@ -994,8 +1357,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
             "content='width=device-width,initial-scale=1'><title>" + e(h.title)
             + "</title><style>" + _CSS + "</style></head><body>" + AUDIT_TOGGLE
-            + "<div class=wrap><article class=card>" + body + "</article></div>" + script
-            + "</body></html>")
+            + topnav("../") + "<div class='wrap narrow'><article class=card>" + body
+            + "</article></div>" + script + "</body></html>")
 
 
 def _md_sents(ss: Iterable[CardSentence], prefix: str, rc: RenderContext,
@@ -1007,8 +1370,10 @@ def _md_sents(ss: Iterable[CardSentence], prefix: str, rc: RenderContext,
         if sid in rc.blocked:
             out.append(f"- **WITHHELD — failed source verification:** {rc.blocked[sid]}")
         else:
-            out.append(f"- **{shown_label(s.provenance, sid, rc).value}:** {s.text}{refs}"
-                       + _warn_md(sid, rc))
+            out.append(f"- **{shown_label(s.provenance, sid, rc).value}:** "
+                       f"{_clean_display(s.text)}{refs}" + _warn_md(sid, rc)
+                       + (f" _(corrected by the analyst — {rc.corrected[sid]})_"
+                          if sid in rc.corrected else ""))
     return out
 
 
@@ -1102,6 +1467,10 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     md += ["**Market-level risks:**"]
     md += _md_sents(w.market_risks, "s07", rc,
                    len(w.counter_evidence) + len(w.alternative_mechanisms)) or ["- none"]
+    if w.price_context:
+        md += ["**Price performance — market context, not earnings evidence:**"] + _md_sents(
+            w.price_context, "s07", rc, len(w.counter_evidence) + len(w.alternative_mechanisms)
+            + len(w.market_risks))
     md += ["**Disconfirming signals:**"] + [f"- {s.text}" for s in w.disconfirming_observables]
     md += ["**Unknowns:**"] + [f"- {s.text}" for s in w.unknowns]
     d = card.s08_decision
@@ -1134,7 +1503,7 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     for aid, cls, note in rc.attributions:
         md.append(f"- attribution without a new version: {aid} — {cls}: {note}")
     md += ["", f"_{rc.generated_note}_", ""]
-    return "\n".join(md)
+    return plain_entities("\n".join(md))
 
 
 def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
@@ -1147,6 +1516,8 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
             {"article_id": a, "contribution": c, "note": n} for a, c, n in rc.attributions],
         "withheld_sentences": rc.blocked,
         "review_warnings": rc.flagged,
+        "analyst_corrections": rc.corrected,
+        "why_action": why_reasons(card, rc.priority),
         "generated": rc.generated_note,
     }
 

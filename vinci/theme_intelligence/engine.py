@@ -44,10 +44,15 @@ from vinci.theme_intelligence.cards import (
     LABEL_OPEN,
     CardInputs,
     affected_from,
+    capped_conditionals,
+    capped_label,
     card_sha,
     compose_card,
     diff_cards,
+    labelled,
     origin_label,
+    refile_price_moves,
+    replace_sentence,
     sector_exposures_from,
     with_citations,
 )
@@ -114,6 +119,7 @@ from vinci.theme_intelligence.verify import (
     VerifiedRisk,
     bare_label,
     card_sentences,
+    deterministic_card_checks,
     label_for,
     locate,
     overlap_anchor,
@@ -320,6 +326,30 @@ class ArticleContext:
     reliability: str
     run_id: str
     as_of: date
+
+
+@dataclass
+class SentenceCorrection:
+    """An ANALYST CORRECTION of one card line (`Engine.reassess`): the operator's text for line
+    `sentence_id` (as `verify.card_sentences` numbers it), citing verified claims the thesis
+    already links, with the reason recorded. J.P. Morgan acceptance, 2026-10-12: the bottom line
+    read "beat expectations for eight consecutive quarters" where the source projects an eighth
+    consecutive quarter of double-digit growth."""
+    thesis_id: str
+    sentence_id: str
+    text: str
+    claim_ids: tuple[str, ...]
+    reason: str
+
+
+class CorrectionError(ValueError):
+    """A correction that cites no verified linked claim, names no card line, or fails the card's
+    deterministic checks — refused, never applied in part."""
+
+
+#: verification-issue codes a re-grade carries to the lines they were made on (besides the card
+#: review's REVIEW_*); the deterministic card checks are recomputed instead
+CARRIED_CODES = frozenset({"SENTENCE_REANCHORED", "ANALYST_CORRECTION"})
 
 
 @dataclass
@@ -1069,7 +1099,33 @@ class Engine:
             out.append(ev)
         return out
 
-    def reassess(self, thesis_id: str, *, run_id: str, as_of: date) -> ThesisOutcome | None:
+    def _corrected(self, card: CardContent, corr: SentenceCorrection,
+                   claims: dict[str, Claim], run_id: str) -> CardContent:
+        """One ANALYST CORRECTION applied: the line's new text must cite claims already LINKED to
+        the thesis and verified, and pass the same deterministic number check as every card line
+        — a correction is never a way to add an unverified fact. Its label is derived from its
+        cited claims (the weakest), capped for a conditional line; raises when it fails."""
+        bad = [c for c in corr.claim_ids if c not in claims or not claims[c].span_verified
+               or claims[c].number_verified is False]
+        if not corr.claim_ids or bad:
+            raise CorrectionError(f"{corr.thesis_id} {corr.sentence_id}: a correction must cite "
+                                  f"verified claims the thesis links — not {bad or 'none'}")
+        if corr.sentence_id not in card_sentences(card):
+            raise CorrectionError(f"{corr.thesis_id}: no card line {corr.sentence_id}")
+        prov = capped_label(label_for(corr.claim_ids, claims) or Provenance.MODEL_INFERENCE,
+                            corr.text)
+        new = labelled(CardSentence(text=corr.text, provenance=prov,
+                                    claim_ids=tuple(corr.claim_ids)), claims)
+        fixed = replace_sentence(card, corr.sentence_id, new)
+        fails = [i.detail for i in deterministic_card_checks(fixed, claims, run_id)
+                 if i.ref_id == f"{corr.thesis_id}:{corr.sentence_id}"]
+        if fails:
+            raise CorrectionError(f"{corr.thesis_id} {corr.sentence_id}: the correction fails "
+                                  f"the card checks — {fails[0]}")
+        return fixed
+
+    def reassess(self, thesis_id: str, *, run_id: str, as_of: date,
+                 corrections: Sequence[SentenceCorrection] = ()) -> ThesisOutcome | None:
         """Re-apply the CURRENT research-action rules to a thesis's STORED evidence — no article
         read, no model call. Asked for by the operator after the 2026-10-12 pilot, whose one
         RESEARCH NOW rested on a page category tag as its exposure and on next year's full-year
@@ -1079,9 +1135,12 @@ class Engine:
         current card's exposures, transmission and sources; the contributing version's retrieval
         as read now; the previous priority's channel reliability and verification hold. A
         sector exposure is re-checked against its stored block and REFUSED when that block is a
-        bare page label (`verify.bare_label`). A NEW VERSION is appended only when the action or
-        the exposures change: its reviewed sentences are kept word for word; the header, the
-        decision and the refused exposures change. None when nothing changes."""
+        bare page label (`verify.bare_label`). The card's deterministic rules are re-applied (a
+        price move is market context, not counter-evidence; a conditional line is never a fact)
+        and any ANALYST CORRECTIONS (`SentenceCorrection`) applied. A NEW VERSION is appended only
+        when something changes; every other line is kept word for word. The card review's
+        findings are carried to the lines they were made on; the deterministic card checks are
+        recomputed. None when nothing changes."""
         t = self.store.thesis(thesis_id)
         prev_v = self.store.thesis_version(thesis_id, t.current_version) if t else None
         if t is None or prev_v is None:
@@ -1158,23 +1217,39 @@ class Engine:
         pr = compute_priority(state, previous=prev.research_action,
                               evidence_direction=prev_v.evidence_direction,
                               previous_factors=prev.factors)
-        if pr.research_action is prev.research_action and not refused:
-            return None
-        d = card.s08_decision
-        new_card = card.model_copy(update={
-            "header": card.header.model_copy(update={"research_action": pr.research_action,
-                                                     "analysis_as_of": as_of}),
+        refiled = refile_price_moves(card, all_claims)
+        base = capped_conditionals(refiled)
+        # a version says what changed: a conditional line stored as a fact is relabelled
+        capped = sum(x[1] != y[1] for x, y in zip(card_sentences(refiled).values(),
+                                                  card_sentences(base).values(), strict=True))
+        mine = [c for c in corrections if c.thesis_id == thesis_id]
+        for corr in mine:
+            base = self._corrected(base, corr, all_claims, run_id)
+        d = base.s08_decision
+        new_card = base.model_copy(update={
+            "header": base.header.model_copy(update={"research_action": pr.research_action}),
             "s05_affected": aff.model_copy(update={"sector_exposures": tuple(kept)}),
-            "s06_why_now": card.s06_why_now.model_copy(
+            "s06_why_now": base.s06_why_now.model_copy(
                 update={"valuation_status": pr.valuation_status}),
             "s08_decision": d.model_copy(update={
                 "research_action": pr.research_action,
                 "investment_readiness": pr.investment_readiness,
                 "readiness_note": pr.valuation_status, "rule_trace": pr.rules_fired})})
+        if pr.research_action is prev.research_action and card_sha(new_card) == card_sha(card):
+            return None
+        new_card = new_card.model_copy(update={"header": new_card.header.model_copy(
+            update={"analysis_as_of": as_of})})
         next_v = t.current_version + 1
+        moved = len(card.s07_what_could_go_wrong.counter_evidence) \
+            - len(new_card.s07_what_could_go_wrong.counter_evidence)
         summary = ("REASSESSED under the current research-action rules from stored evidence — no "
                    "article read, no model call: " + pr.change_reason
-                   + ("; " + "; ".join(refused) if refused else ""))
+                   + ("; " + "; ".join(refused) if refused else "")
+                   + (f"; {moved} price-move line(s) moved from counter-evidence to price context"
+                      if moved else "")
+                   + (f"; {capped} conditional line(s) relabelled SOURCE OPINION — a conditional "
+                      f"is never a measured fact" if capped else "")
+                   + "".join(f"; ANALYST CORRECTION {c.sentence_id} — {c.reason}" for c in mine))
         version = ThesisVersion(
             thesis_id=thesis_id, version=next_v, as_of=as_of, created_at=datetime.now(tz=UTC),
             run_id=run_id, engine_version=ENGINE_VERSION, content=new_card, priority=pr,
@@ -1187,12 +1262,32 @@ class Engine:
                          thesis_id=thesis_id, version=next_v, event_type=etype, run_id=run_id,
                          as_of=as_of, created_at=datetime.now(tz=UTC), detail=summary,
                          diffs=version.diffs)
-        # the card review's findings on its lines stand — the lines are unchanged — so they are
-        # carried to this run, where the new version's card finds them
-        carried = [i.model_copy(update={"issue_id": "VI-" + _sha(run_id, i.issue_id)[:14],
-                                        "run_id": run_id, "created_at": datetime.now(tz=UTC)})
-                   for i in self.store.issues(run_id=prev_v.run_id)
-                   if i.scope == "card_sentence" and i.ref_id.partition(":")[0] == thesis_id]
+        # the card review's findings stand on the lines they were made on — found by their TEXT
+        # (a refiled line has a new id) and carried to this run; a corrected line's old findings
+        # no longer apply; the deterministic card checks are recomputed on the new card
+        old_s, new_s = card_sentences(card), card_sentences(new_card)
+        sid_of = {txt: sid for sid, (txt, _p, _c) in new_s.items()}
+        carried: list[VerificationIssue] = []
+        for i in self.store.issues(run_id=prev_v.run_id):
+            tid, _, old_sid = i.ref_id.partition(":")
+            if i.scope != "card_sentence" or tid != thesis_id or not (
+                    i.code.startswith("REVIEW_") or i.code in CARRIED_CODES):
+                continue
+            sid = sid_of.get(old_s.get(old_sid, ("",))[0])
+            if sid is None or any(c.sentence_id == sid for c in mine):
+                continue
+            carried.append(i.model_copy(update={
+                "issue_id": "VI-" + _sha(run_id, i.issue_id)[:14], "run_id": run_id,
+                "created_at": datetime.now(tz=UTC), "ref_id": f"{thesis_id}:{sid}",
+                "detail": i.detail if sid == old_sid
+                else i.detail.replace(f"{old_sid}:", f"{sid}:", 1)}))
+        carried += deterministic_card_checks(new_card, all_claims, run_id)
+        carried += [VerificationIssue(
+            issue_id="VI-" + _sha(run_id, thesis_id, c.sentence_id, "correction")[:14],
+            run_id=run_id, scope="card_sentence", ref_id=f"{thesis_id}:{c.sentence_id}",
+            severity=IssueSeverity.INFO, code="ANALYST_CORRECTION",
+            detail=f"{c.sentence_id}: {c.reason} | {new_s[c.sentence_id][0][:100]!r}",
+            created_at=datetime.now(tz=UTC)) for c in mine]
         with self.store.tx():
             self.store.upsert_thesis(t.model_copy(update={"current_version": next_v}))
             self.store.add_thesis_version(version)

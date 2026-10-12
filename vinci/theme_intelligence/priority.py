@@ -158,7 +158,9 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                      previous_factors: tuple[PriorityFactor, ...] = ()) -> ResearchPriority:
     regime = st.kind is ThesisKind.MARKET_REGIME
     support_mat = [c for c in st.supporting + st.dislocation + st.catalyst if _material(c)]
-    counter_mat = [c for c in st.counter if _material(c)]
+    # a share-price / index performance move is market context, never earnings evidence against
+    # the thesis (cards.refile_price_moves; J.P. Morgan acceptance, 2026-10-12)
+    counter_mat = [c for c in st.counter if _material(c) and not is_market_reaction(c.quote)]
     # OBSERVATIONS, not claims: a claim restating the same measure and value from the same
     # original source (its fingerprint) counts once — and a contradiction from OTHER sources is
     # weighed by independent origins, never by how many claims one publisher wrote

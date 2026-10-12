@@ -54,7 +54,12 @@ from vinci.theme_intelligence.config import (
 )
 from vinci.theme_intelligence.coverage import SourceRisk, coverage_of, scan_source_risks
 from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
-from vinci.theme_intelligence.engine import ArticleContext, Engine, ThesisOutcome
+from vinci.theme_intelligence.engine import (
+    ArticleContext,
+    Engine,
+    SentenceCorrection,
+    ThesisOutcome,
+)
 from vinci.theme_intelligence.extract import (
     COMPACT_MAX_CLAIMS,
     Extraction,
@@ -87,6 +92,7 @@ from vinci.theme_intelligence.schemas import (
     ThesisStatus,
     VerificationIssue,
     WeeklyRun,
+    page_prefix,
 )
 from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
@@ -577,9 +583,10 @@ class Pipeline:
         for r in cov.source_risks:  # each card it was put on carries the review flag
             for tid in r.thesis_ids:
                 self._issue("thesis", tid, IssueSeverity.WARN, "SOURCE_RISK_OMITTED",
-                            f"page {r.page} ({r.block_id}) of {aid}: “{r.sentence}” — a risk "
-                            f"the source states beside this thesis's evidence that no model pass "
-                            f"listed; now in 07 as SOURCE OPINION — review")
+                            f"{page_prefix(r.page, sep=' ')}({r.block_id}) of {aid}: "
+                            f"“{r.sentence}” — a risk the source states beside this thesis's "
+                            f"evidence that no model pass listed; now in 07 as SOURCE OPINION "
+                            f"— review")
         for name in cov.unrecorded_names:
             self._issue("article", aid, IssueSeverity.INFO, "NAMED_NOT_RECORDED",
                         f"{name} — named in a cited paragraph, not recorded as a mention")
@@ -631,8 +638,10 @@ class Pipeline:
                 # the scope is SYSTEM-composed: ⟨…⟩, never read as a figure the line asserts
                 # (a bare "page 33" withheld the real line as a number its claim lacks)
                 raw=XRisk(statement=r.sentence,
-                          scope_qualification=f"⟨the source's own words, page {r.page} — a risk "
-                                              f"no model pass listed (risk scan)⟩"),
+                          scope_qualification="⟨the source's own words"
+                                              + (f", page {r.page}" if r.page is not None
+                                                 else "") + " — a risk "
+                                              "no model pass listed (risk scan)⟩"),
                 claim_ids=[pc.claim_id], related=list(r.related)))
 
     def _budget_held(self, url: str, aid: str, version_id: str,
@@ -834,19 +843,23 @@ class Pipeline:
             "PROCESSED", "ALREADY_INGESTED", "DUPLICATE_CONTENT") else RunStatus.PARTIAL
         return self.finish_run(status), res
 
-    def run_reassess(self, *, as_of: date, thesis_ids: Sequence[str] = ()
+    def run_reassess(self, *, as_of: date, thesis_ids: Sequence[str] = (),
+                     corrections: Sequence[SentenceCorrection] = ()
                      ) -> tuple[WeeklyRun, list[ThesisOutcome]]:
         """Re-apply the current research-action rules to stored theses (`Engine.reassess`) — no
         fetch, no model call, $0. Every listed thesis (default: every one not archived) is
-        re-graded from its stored evidence; a changed action or a refused exposure is a NEW
-        VERSION and a change event this run reports; nothing earlier is edited."""
+        re-graded from its stored evidence, with any ANALYST CORRECTIONS applied; a change is a
+        NEW VERSION and a change event this run reports; nothing earlier is edited."""
         run = self.start_run("reassess", as_of=as_of, window_from=as_of, window_to=as_of)
-        targets = list(thesis_ids) or [t.thesis_id for t in self.store.theses()
-                                       if t.status is not ThesisStatus.ARCHIVED]
+        targets = list(dict.fromkeys(
+            [*(thesis_ids or [t.thesis_id for t in self.store.theses()
+                              if t.status is not ThesisStatus.ARCHIVED]),
+             *(c.thesis_id for c in corrections)]))
         outs: list[ThesisOutcome] = []
         try:
             for tid in targets:
-                o = self.engine.reassess(tid, run_id=run.run_id, as_of=as_of)
+                o = self.engine.reassess(tid, run_id=run.run_id, as_of=as_of,
+                                         corrections=corrections)
                 self._count("theses_reassessed")
                 if o is not None:
                     outs.append(o)

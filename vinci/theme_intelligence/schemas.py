@@ -647,6 +647,10 @@ class WhatCouldGoWrong(Frozen):
     disconfirming_observables: tuple[CardSentence, ...]
     unknowns: tuple[CardSentence, ...]
     market_risks: tuple[CardSentence, ...]
+    #: a SHARE-PRICE / index performance line the source states — market context, never earnings
+    #: evidence for or against the thesis (J.P. Morgan acceptance, 2026-10-12: the Magnificent 7
+    #: lagging the index was filed as counter-evidence to EARNINGS broadening)
+    price_context: tuple[CardSentence, ...] = ()
 
 
 class Decision(Frozen):
@@ -966,6 +970,12 @@ class SourceRiskFlag(Frozen):
     fragment: bool = False
 
 
+def page_prefix(page: int | None, sep: str = ": ") -> str:
+    """"page N" + sep for a document with pages; nothing for a web article, which has none (the
+    pilot's cards and review queue printed "page None", 2026-10-12)."""
+    return f"page {page}{sep}" if page is not None else ""
+
+
 class MechanismCoverage(Frozen):
     """coverage.py — every proposition and every verified material fact of the source accounted
     for: on a card, merged (stated), excluded with a reason, or an ALERT for review."""
@@ -993,13 +1003,14 @@ class MechanismCoverage(Frozen):
                      f"its paragraph holds that evidence; review" if r.thesis_titles
                      else "on NO card — a sentence cut by a page break" if r.fragment
                      else "on NO card — no thesis's evidence is in its paragraph")
-            out.append(f"page {r.page}: a risk the source states that no model pass listed — "
+            out.append(f"{page_prefix(r.page)}a risk the source states that no model pass listed — "
                        f"“{r.sentence}” ({where})")  # whole: a cut quote misreads
         # a mechanism is argued with more than one fact; a lone uncarried figure is listed, not
         # alerted (face validity, 2026-10-12: Citi's p37 gas argument = 4 facts)
         # the SOURCE's evidence is named (every figure, as written) and kept apart from any
         # assessment: no thesis here carries it, so nothing has assessed it
-        out += [f"page {g.page}: {len(g.claim_ids)} verified material facts no thesis carries — "
+        out += [f"{page_prefix(g.page)}{len(g.claim_ids)} verified material facts no thesis "
+                f"carries — "
                 f"a mechanism no card holds?"
                 + (f" Source evidence: {'; '.join(g.figures)} — verified, UNASSESSED: no thesis "
                    f"or research action in this registry rests on it" if g.figures else "")

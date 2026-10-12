@@ -522,9 +522,12 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
     vt = value_text or ""
     in_quote = bool(vt) and norm_text(vt) in norm_text(quote)
     vt_n = norm_text(vt)  # "around –10%" carries a typographic minus
-    nums = [float(n.replace(",", "")) for n in stated_numbers(vt_n)]
-    if not nums:  # a figure written as words: "Two more hikes", "twenty-four months", "doubling"
-        nums = word_numbers(vt_n)
+    digits = [float(n.replace(",", "")) for n in stated_numbers(vt_n)]
+    # a figure written as words: "Two more hikes", "twenty-four months", "doubling" — and beside
+    # digits too: "five of the 11" reads 5 (J.P. Morgan acceptance, 2026-10-12: the digit alone
+    # was read, and the verbatim figure failed). The value text must still be verbatim in the quote.
+    nums = digits + word_numbers(vt_n)
+    if not digits:
         mult = [_MULT_WORD[w] for w in re.findall(r"[a-z]+", vt_n.lower()) if w in _MULT_WORD]
         nums += mult + [(k - 1.0) * 100.0 for k in mult]  # ×2, or the +100% change it states
     scales = [1.0] + [_SCALE[m.group(1).lower()] for m in _SCALE_WORD.finditer(vt_n)]
@@ -939,7 +942,8 @@ def card_sentences(card: CardContent) -> dict[str, tuple[str, str, tuple[str, ..
     for i, s in enumerate(card.s06_why_now.near_term + card.s06_why_now.structural):
         out[f"s06.{i}"] = (s.text, s.provenance.value, s.claim_ids)
     w = card.s07_what_could_go_wrong
-    for i, s in enumerate(w.counter_evidence + w.alternative_mechanisms + w.market_risks):
+    for i, s in enumerate(w.counter_evidence + w.alternative_mechanisms + w.market_risks
+                          + w.price_context):  # price context LAST: earlier ids stay stable
         out[f"s07.{i}"] = (s.text, s.provenance.value, s.claim_ids)
     out["s08.next"] = (card.s08_decision.next_step.text, card.s08_decision.next_step.provenance
                        .value, card.s08_decision.next_step.claim_ids)
@@ -964,10 +968,26 @@ def _pool_numbers(cited: list[Claim]) -> set[str]:
     return nums
 
 
+#: A NAMED index or basket carries a number that is part of its NAME, not a figure the line
+#: asserts: "S&P 500", "Russell 2000", "Magnificent 7" — and so does a quarter or half-year
+#: LABEL: "Q3", "3Q26", "1H27". Observed 2026-10-12 (J.P. Morgan acceptance): a risk line was
+#: withheld for "printing 500", then for "printing 3" (its "Q3"). Only these names are excused —
+#: every other number on the line is still checked against its cited claims.
+_NAMED_INDEX = re.compile(
+    r"\b(?:S&P|Russell|Nasdaq|NASDAQ|FTSE|Nikkei|STOXX|Stoxx|CAC|DAX|ASX|KOSPI|Hang Seng)"
+    r"(?:[ -]?(?:MidCap|SmallCap|Composite))?[ -]?\d{2,4}\b|\bMag(?:nificent)?[ -]?7\b"
+    r"|\b(?:Q[1-4]|[1-4]Q|H[12]|[12]H)(?:\s?'?\d{2}(?:\d{2})?)?\b")
+
+
+def without_named_indices(text: str) -> str:
+    return _NAMED_INDEX.sub(" ", text)
+
+
 def deterministic_card_checks(card: CardContent, claims: dict[str, Claim],
                               run_id: str) -> list[VerificationIssue]:
     """Without a model: a source-labelled line must cite verified claims, and every number it
-    prints must be one of the numbers those claims carry."""
+    prints must be one of the numbers those claims carry — the number in a named index's name
+    ("S&P 500") excepted."""
     issues: list[VerificationIssue] = []
     tid = card.header.thesis_id
     for sid, (text, prov, cids) in card_sentences(card).items():
@@ -980,7 +1000,7 @@ def deterministic_card_checks(card: CardContent, claims: dict[str, Claim],
                                                        f"no verified claim: {text[:100]!r}"))
             continue
         pool_nums = _pool_numbers(cited)
-        for n in stated_numbers(norm_text(_asserted(text))):
+        for n in stated_numbers(without_named_indices(norm_text(_asserted(text)))):
             if n.replace(",", "") not in pool_nums:
                 issues.append(_issue(run_id, "card_sentence", f"{tid}:{sid}",
                                      IssueSeverity.BLOCK, "NUMBER_NOT_IN_CITED_CLAIMS",

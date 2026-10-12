@@ -38,14 +38,27 @@ from vinci.theme_intelligence.cards import (
     _CSS,
     AUDIT_TOGGLE,
     KIND_LABEL,
+    STEP_LABEL,
     RenderContext,
+    _clean_display,
+    _line_name,
     clip,
     e,
+    foot_html,
+    ids_to_audit,
+    plain_entities,
     render_html,
     render_json,
     render_markdown,
+    topnav,
+    why_reasons,
 )
-from vinci.theme_intelligence.config import DASHBOARD_ROWS_PER_CATEGORY, ENGINE_VERSION, Paths
+from vinci.theme_intelligence.cards import _anchor as _card_anchor
+from vinci.theme_intelligence.config import (
+    ENGINE_VERSION,
+    Paths,
+    load_taxonomy,
+)
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
     ChangeEvent,
@@ -59,6 +72,7 @@ from vinci.theme_intelligence.schemas import (
     ThesisVersion,
     WeeklyCategory,
     WeeklyRun,
+    page_prefix,
 )
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.verify import card_sentences
@@ -213,6 +227,14 @@ def research_verification(store: Store, run: WeeklyRun,
                        f"{f.open_cause or 'unclassified'}: {f.reason}" for r, f in open_f]
         + [f"{r.article_version_id} {b.block_id} paragraph — {b.open_cause or 'unclassified'}: "
            f"{b.reason}" for r, b in open_b],
+        #: the same open items by TITLE and in words, for the review queue (no engine codes)
+        "open_items_plain": [
+            f"“{_title_of_version(store, r.article_version_id)}” — figure {f.figure!r} not "
+            f"captured: {_OPEN_CAUSE.get(f.open_cause or '', 'not accounted for')}"
+            for r, f in open_f] + [
+            f"“{_title_of_version(store, r.article_version_id)}” — one argument paragraph not "
+            f"accounted for: {_OPEN_CAUSE.get(b.open_cause or '', 'not accounted for')}"
+            for r, b in open_b],
         "coverage_alerts": cov_alerts,
         #: the same alerts by TITLE, for the first view (no engine ids there)
         "coverage_alerts_plain": [
@@ -222,6 +244,21 @@ def research_verification(store: Store, run: WeeklyRun,
                       **_coverage_detail(store, rep.coverage)}
                      for rep, aid in coverage if rep.coverage is not None],
     }
+
+
+#: why a figure or paragraph is still open, said plainly (the cause code stays in the audit log)
+_OPEN_CAUSE = {
+    "capture_not_verified": "the claim meant to capture it could not be verified",
+    "verification_failed": "the claim quoting it failed the number check",
+    "account_names_no_record": "the review accounted for it without naming a record",
+    "pass_not_run": "the completeness pass did not run",
+    "unreviewed": "no pass reviewed it",
+}
+
+
+def _title_of_version(store: Store, version_id: str) -> str:
+    av = store.article_version(version_id)
+    return _title_of(store, av.article_id) if av else version_id
 
 
 def _title_of(store: Store, article_id: str) -> str:
@@ -240,13 +277,13 @@ def _coverage_detail(store: Store, cov: Any) -> dict[str, Any]:
         "propositions": [f"{p.fate.upper()} {p.hypothesis_id} “{p.title}” → "
                          f"{p.thesis_id or '—'}" + (f" — {p.detail}" if p.detail else "")
                          for p in cov.propositions],
-        "uncarried": [f"page {g.page}: {g.status.upper()} — {len(g.claim_ids)} fact(s)"
+        "uncarried": [f"{page_prefix(g.page)}{g.status.upper()} — {len(g.claim_ids)} fact(s)"
                       + (f" — {g.reason}" if g.reason else "") + ": "
                       + " · ".join(q(c) for c in g.claim_ids) for g in cov.uncarried],
         "risks": list(cov.risks),
         "unrecorded_names": list(cov.unrecorded_names),
         "source_risks": [
-            f"page {r.page} {r.block_id}: “{clip(r.sentence, 200)}” → "
+            f"{page_prefix(r.page, sep=' ')}{r.block_id}: “{clip(r.sentence, 200)}” → "
             + (f"carried by: {r.represented_by!r}" if r.represented_by
                else f"EXCLUDED (paragraph judged immaterial: {r.excluded})" if r.excluded
                else f"FLAGGED on {', '.join(r.thesis_ids)}" if r.thesis_ids
@@ -556,22 +593,7 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                      f"({len(c.claim_ids)} claim ref(s)) — no new version, priority unchanged")
                     for c in contribs if c.version is None]
     articles = {c.article_id: a for c in contribs if (a := store.article(c.article_id))}
-    sents = card_sentences(v.content)
-    blocked: dict[str, str] = {}
-    flagged: dict[str, str] = {}
-    for i in store.issues(run_id=v.run_id):
-        if i.scope != "card_sentence" or (i.severity is not IssueSeverity.BLOCK
-                                          and i.code not in REVIEW_WARNINGS):
-            continue
-        tid, _, sid = i.ref_id.partition(":")
-        if tid != t.thesis_id or sid not in sents:
-            continue
-        if repr(sents[sid][0][:100]) not in i.detail:  # the issue names THIS version's sentence
-            continue
-        if i.severity is IssueSeverity.BLOCK:
-            blocked[sid] = f"{i.code} — {i.detail}"
-        else:  # "<sid>: <the reviewer's problem> | '<sentence>'" — the problem, on the line
-            flagged[sid] = i.detail.partition(": ")[2].rpartition(" | ")[0] or i.detail
+    blocked, flagged, corrected = line_findings(store, t.thesis_id, v)
     status_note = None
     if t.status is not v.content.header.status:
         ev = _latest_status_event([x for x in store.events(thesis_id=t.thesis_id)
@@ -588,7 +610,38 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                                            f"preview)")
     return RenderContext(history=history, attributions=attributions, blocked=blocked,
                          articles=articles, generated_note=generated, status_note=status_note,
-                         flagged=flagged, retrieval_now=retrieval_now)
+                         flagged=flagged, retrieval_now=retrieval_now, corrected=corrected,
+                         priority=v.priority)
+
+
+def line_findings(store: Store, thesis_id: str, v: ThesisVersion
+                  ) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
+    """(withheld, review-flagged, analyst-corrected) lines of ONE version — sentence id -> what
+    the record says — from the issues of the run that wrote it, each naming THIS version's
+    sentence. One function, so the card and the weekly overview never disagree."""
+    sents = card_sentences(v.content)
+    blocked: dict[str, str] = {}
+    flagged: dict[str, str] = {}
+    corrected: dict[str, str] = {}
+    for i in store.issues(run_id=v.run_id):
+        if i.scope != "card_sentence" or (i.severity is not IssueSeverity.BLOCK
+                                          and i.code not in REVIEW_WARNINGS
+                                          and i.code != "ANALYST_CORRECTION"):
+            continue
+        tid, _, sid = i.ref_id.partition(":")
+        if tid != thesis_id or sid not in sents:
+            continue
+        if repr(sents[sid][0][:100]) not in i.detail:  # the issue names THIS version's sentence
+            continue
+        # "<sid>: <the problem / the reason> | '<sentence>'" — the middle part, on the line
+        said = i.detail.partition(": ")[2].rpartition(" | ")[0] or i.detail
+        if i.severity is IssueSeverity.BLOCK:
+            blocked[sid] = f"{i.code} — {i.detail}"
+        elif i.code == "ANALYST_CORRECTION":
+            corrected[sid] = said
+        else:
+            flagged[sid] = said
+    return blocked, flagged, corrected
 
 
 def _latest_status_event(events: list[ChangeEvent]) -> ChangeEvent | None:
@@ -662,6 +715,19 @@ class DashRow:
     what_changed_audit: list[str] = field(default_factory=list)
     #: how this report's evidence for the thesis arrived (automatic / manual upload / linked)
     intake: list[str] = field(default_factory=list)
+    #: the analyst-facing summary (the redesigned overview, 2026-10-12): the central mechanism in
+    #: words, the change lines without engine tags, the earnings steps, the action in plain words
+    mechanism: str = ""
+    changed_plain: list[str] = field(default_factory=list)
+    implications: list[str] = field(default_factory=list)
+    why: list[str] = field(default_factory=list)
+    #: (line anchor, line name, what is open) of every withheld / review-flagged line on the card
+    review_lines: list[tuple[str, str, str]] = field(default_factory=list)
+    #: this report's events in words — "New", "Downgraded: Research Now → Watch" — ALL of them:
+    #: a thesis created and downgraded in one week shows both, and is still one row
+    events: list[str] = field(default_factory=list)
+    source_line: str = ""
+    partial_source: bool = False
 
 
 @dataclass
@@ -736,6 +802,57 @@ def _category(events: list[ChangeEvent], prev_action: ResearchAction | None,
     return None  # attribution only — no material change this run
 
 
+_ACTION_WORDS = {ResearchAction.RESEARCH_NOW: "Research Now", ResearchAction.WATCH: "Watch",
+                 ResearchAction.SKIP: "Skip"}
+
+
+def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[ThesisVersion],
+                  this_run: list[ThesisVersion], evs: list[ChangeEvent], rids: set[str],
+                  mech_label: dict[str, str]) -> dict[str, Any]:
+    """A thesis as the redesigned weekly overview shows it — read from the stored version and the
+    report's events, never from rendered text: the central mechanism in words; the change lines
+    and earnings steps without engine tags; why the action, in plain words; the card lines still
+    open for review (linked); every event of the week (a thesis new AND downgraded in one week
+    shows both); and its source with date."""
+    c = cur.content
+    types = {x.event_type for x in evs}
+    events: list[str] = ["New"] if "CREATED" in types else []
+    seq = ([before[-1]] if before else []) + sorted(this_run, key=lambda x: x.version)
+    for a, b in zip(seq, seq[1:], strict=False):
+        pa, pb = a.priority.research_action, b.priority.research_action
+        if pa is not pb:
+            word = "Upgraded" if ACTION_RANK[pb] > ACTION_RANK[pa] else "Downgraded"
+            events.append(f"{word}: {_ACTION_WORDS[pa]} → {_ACTION_WORDS[pb]}")
+    if "CHALLENGED" in types:
+        events.append("Challenged by new evidence")
+    if any(i.code == "ANALYST_CORRECTION" and i.ref_id.startswith(t.thesis_id + ":")
+           for r in rids for i in store.issues(run_id=r)):
+        events.append("Analyst correction")
+    if "ARCHIVED" in types:
+        events.append("Archived")
+    if not events and types & {"UPDATED", "UPGRADED", "REACTIVATED"}:
+        events.append("Updated")
+    blocked, flagged, _corr = line_findings(store, t.thesis_id, cur)
+    review = [(sid, blocked.get(sid) and "withheld — failed source verification"
+               or flagged[sid]) for sid in card_sentences(c) if sid in blocked or sid in flagged]
+    src = c.s09_sources[-1] if c.s09_sources else None
+    vs = store.article_versions(src.article_id) if src else []
+    partial = bool(vs) and vs[-1].retrieval_state is not RetrievalState.FULL
+    return {
+        "mechanism": mech_label.get(t.key_mechanism, t.key_mechanism.replace("_", " ")),
+        "changed_plain": [_plain(it.text) for it in c.s02_what_changed.items],
+        "implications": [f"{STEP_LABEL.get(st.step, st.step)}: {_plain(st.text)}"
+                         for st in c.s03_transmission if st.step != "market_reaction"],
+        "why": why_reasons(c, cur.priority),
+        "review_lines": [(_card_anchor(sid), _line_name(sid), said) for sid, said in review],
+        "events": events,
+        "source_line": (f"{src.publisher} · published "
+                        f"{src.published_at.date().isoformat() if src.published_at else 'UNKNOWN'}"
+                        if src else ""),
+        "partial_source": partial,
+    }
+
+
 def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str]],
                     generated: str) -> Dashboard:
     run = store.run(run_id)
@@ -751,6 +868,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
     cats: dict[str, list[DashRow]] = {c.value: [] for c in CATEGORY_ORDER}
     no_material: list[str] = []
     no_evidence: list[DashRow] = []
+    mech_label = {m.id: m.label for m in load_taxonomy().mechanisms}
     for tid, evs in by_thesis.items():
         if tid not in asof:
             continue
@@ -815,7 +933,8 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             analysis_as_of=cur.as_of.isoformat(),
             sector_exposures=[f"{x.name} ({x.direction.value})" for x in av.sector_exposures],
             why_action=why_action(cur.priority.rules_fired),
-            rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit)
+            rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit,
+            **_analyst_view(store, t, cur, before, this_run, evs, rids, mech_label))
         if any(r.startswith(NO_EVIDENCE_RULE) for r in cur.priority.rules_fired):
             no_evidence.append(row)  # not an opportunity: never under NEW / UPGRADED / …
             continue
@@ -936,11 +1055,14 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
         "research_now": sum(1 for r in rows if r.action == ResearchAction.RESEARCH_NOW.value),
         "watch": sum(1 for r in rows if r.action == ResearchAction.WATCH.value),
         "skip": sum(1 for r in rows if r.action == ResearchAction.SKIP.value),
-        "new": sum(1 for r in rows if r.previous_action is None),
-        "upgraded": sum(1 for r in rows if r.previous_action is not None
-                        and rank(r.action) > rank(r.previous_action)),
-        "downgraded": sum(1 for r in rows if r.previous_action is not None
-                          and rank(r.action) < rank(r.previous_action)),
+        # EVENTS, not sections: a thesis new this week AND downgraded in it counts in both
+        # (observed 2026-10-12: the pilot's re-graded RESEARCH NOW read "downgraded 0")
+        "new": sum(1 for r in rows if r.previous_action is None or "New" in r.events),
+        "upgraded": sum(1 for r in rows if any(x.startswith("Upgraded") for x in r.events) or (
+            r.previous_action is not None and rank(r.action) > rank(r.previous_action))),
+        "downgraded": sum(1 for r in rows if any(x.startswith("Downgraded") for x in r.events)
+                          or (r.previous_action is not None
+                              and rank(r.action) < rank(r.previous_action))),
         "challenged": sum(1 for r in rows if "CHALLENGED" in r.flags),
         "archived": d.archived_total,
         "figures_uncaptured": run.get("counts", {}).get("figures_uncaptured", 0),
@@ -990,29 +1112,261 @@ def _plain(text: str) -> str:
 # --- dashboard renderers -----------------------------------------------------------------------
 
 _DASH_CSS = """
-.dash h1{font-size:22px;margin:0 0 4px}.banner{background:var(--now-bg);color:var(--now);
-padding:10px 12px;border-radius:8px;font-weight:700;margin:0 0 12px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}
-.kpi{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--card)}
-.kpi b{display:block;font-size:17px;line-height:1.3}
-.kpi small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
-.vstat{border:1px solid var(--line);border-left:4px solid var(--watch);border-radius:8px;
-padding:8px 12px;margin:0 0 12px}
-.sh{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 12px}
-.sh ul{margin:6px 0 0;padding-left:18px}.sh li{margin:4px 0}
-.sh .pill{margin-right:6px}.sh table{font-size:12px}
-.kpi span{display:block;color:var(--muted);
-font-size:12px}
-.cat{margin:18px 0 6px;font:700 14px/1.3 ui-sans-serif,system-ui;text-transform:uppercase;
-letter-spacing:.05em}.cat small{font-weight:400;text-transform:none;letter-spacing:0;
-color:var(--muted)}.row{border:1px solid var(--line);border-radius:8px;padding:10px 12px;
-margin:6px 0;background:var(--card)}.row h3{margin:2px 0 4px;font-size:16px}
-.row ul{margin:4px 0 4px 18px;padding:0}.row li{margin:2px 0}.k{color:var(--muted);font-size:12px;
-text-transform:uppercase;letter-spacing:.04em;margin-top:6px}.empty{color:var(--muted);
-font-style:italic;margin:4px 0 8px}input.search{width:100%;padding:8px;border:1px solid var(--line);
-border-radius:6px;background:var(--card);color:var(--ink);margin:6px 0}
-@media print{.row{break-inside:avoid}details{display:block}input.search{display:none}}
+.dhead{margin:4px 0 18px}.dhead .subline{color:var(--muted);font-size:14px}
+.banner{background:var(--now-bg);color:var(--now);padding:10px 12px;border-radius:8px;
+font-weight:650;margin:0 0 14px}
+.summary{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}
+.stat{flex:1 1 120px;min-width:0;background:var(--panel);border:1px solid var(--line);
+border-radius:10px;padding:10px 14px;color:var(--ink)}a.stat:hover{text-decoration:none;
+border-color:var(--accent)}.stat b{display:block;font-size:22px;line-height:1.2;font-weight:680}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}.stat.warn b{color:var(--warn)}
+.stat .vt{font-size:15px;line-height:1.9}
+.theses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.thesis{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.thesis .ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.thesis h3{font-size:16.5px;margin:2px 0 0}.thesis h3 a{color:var(--ink)}
+.mech{font-size:13px;color:var(--ink2)}
+.tgrid{display:grid;grid-template-columns:118px minmax(0,1fr);gap:6px 12px;margin:4px 0 0;
+font-size:14px}.tgrid dt{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.03em;
+padding-top:2px}.tgrid dd{margin:0}.tgrid ul{margin:0;padding-left:16px}
+.tfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;margin-top:auto;
+padding-top:8px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.acts{list-style:none;margin:0;padding:0}.acts li{padding:8px 0;border-bottom:1px solid var(--line);
+display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;
+margin:0 0 12px}.rq h3{font-size:14px;margin:0 0 8px}.rq ul{margin:0;padding-left:18px}
+.rq li{margin:4px 0}.vstat{border:1px solid var(--line);border-left:4px solid var(--watch);
+border-radius:8px;padding:10px 14px;margin:0 0 12px;background:var(--panel)}
+.sh{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+margin:0 0 12px}.sh ul{margin:6px 0 0;padding-left:18px}.sh li{margin:6px 0}
+.sh .pill{margin-left:6px}.k{color:var(--muted);font-size:12px;text-transform:uppercase;
+letter-spacing:.05em;margin:0 0 4px;font-weight:600}
+.empty{color:var(--muted);font-style:italic;margin:4px 0 8px}
+input.search{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;
+background:var(--panel);color:var(--ink);margin:6px 0;font:inherit}
+.ops>details{margin:0 0 6px}
+@media (max-width:820px){.theses{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.tgrid{grid-template-columns:minmax(0,1fr)}.tgrid dt{padding-top:6px}
+.stat{flex-basis:44%}}
+@media print{.thesis,.rq{break-inside:avoid}details{display:block}input.search{display:none}}
 """
+
+_VERIFICATION_WORD = {"FULLY_VERIFIED": "Fully verified",
+                      "VERIFIED_WITHIN_PREVIEW": "Verified within previews",
+                      "INCOMPLETE": "Incomplete", "NOTHING_ANALYSED": "Nothing analysed"}
+_PILL_CLS = {"RESEARCH NOW": "now", "WATCH": "watch"}
+_RANK = {"RESEARCH NOW": 2, "WATCH": 1, "SKIP": 0}
+
+
+def _active_rows(d: Dashboard) -> list[DashRow]:
+    """Every thesis this report covers, ONE row each, ranked by research action, then the
+    freshest material evidence (a thesis new and downgraded in one week is one row, two events)."""
+    rows = [r for cat in CATEGORY_ORDER for r in d.categories.get(cat.value, [])]
+    rows.sort(key=lambda r: r.thesis_id)
+    rows.sort(key=lambda r: r.last_material_update, reverse=True)
+    rows.sort(key=lambda r: -_RANK.get(r.action, 0))
+    return rows
+
+
+def _event_tag(x: str) -> str:
+    cls = " down" if x.startswith("Downgraded") else " up" if x.startswith("Upgraded") else ""
+    return f'<span class="tag{cls}">{e(x)}</span>'
+
+
+def _thesis_html(r: DashRow) -> str:
+    """One thesis on the weekly overview: what it is, what changed, its effect on profits, why
+    the action, the next question and the source — the full record is one click away."""
+    act = _ACTION_WORDS.get(ResearchAction(r.action), r.action)
+    review = (f'<a class="flag" href="{e(r.card)}#{e(r.review_lines[0][0])}">Review required · '
+              f'{len(r.review_lines)} line(s)</a>' if r.review_lines else "")
+    kind = (f'<span class="pill kind">{e(KIND_LABEL[ThesisKind(r.kind)])}</span>'
+            if r.kind == ThesisKind.MARKET_REGIME.value else "")
+    changed = r.changed_plain[:1]
+    more = (f' <a class="note" href="{e(r.card)}#sec-s02_what_changed">+{len(r.changed_plain) - 1}'
+            f' more</a>' if len(r.changed_plain) > 1 else "")
+    impl = "".join(f"<li>{e(x)}</li>" for x in r.implications[:2])
+    audit = (f'<div class="aud"><div class="cc">{e(r.thesis_id)} · v{r.version} · {e(r.category)}'
+             + (" · " + e(", ".join(r.flags)) if r.flags else "") + "</div>"
+             + "".join(f'<div class="cc">{e(t)}</div>' for t in r.rule_trace) + "</div>")
+    return (
+        f'<article class="thesis row"><div class="ttop"><span class="pill '
+        f'{_PILL_CLS.get(r.action, "skip")}">{e(act)}</span>{kind}'
+        + "".join(_event_tag(x) for x in r.events) + review + "</div>"
+        f'<h3><a href="{e(r.card)}">{e(r.title)}</a></h3>'
+        f'<div class="mech">{e(r.mechanism)}</div><dl class="tgrid">'
+        f'<dt>What changed</dt><dd>'
+        + ("".join(e(_clean_display(x)) for x in changed) or "—") + more + "</dd>"
+        + (f"<dt>Effect on profits</dt><dd><ul>{impl}</ul></dd>" if impl else
+           "<dt>Effect on profits</dt><dd>No earnings step stated by the source.</dd>")
+        + f"<dt>Why {e(act)}</dt><dd><ul>" + "".join(f"<li>{e(x)}</li>" for x in r.why)
+        + f"</ul></dd><dt>Next question</dt><dd>{e(r.next_action)}</dd></dl>"
+        f'<div class="tfoot"><span>{e(r.source_line.partition(" · ")[0])}'
+        + (' · <b>read only in part</b>' if r.partial_source else "") + "</span>"
+        f'<a href="{e(r.card)}">Open the thesis card →</a></div>'
+        f'<div class="dates">{e(dates_line(r))}'
+        + (f' · How this evidence arrived: {ids_to_audit(e("; ".join(r.intake)))}'
+           if r.intake else "")
+        + "</div>" + audit + "</article>")
+
+
+def _activity_html(rows: list[DashRow]) -> str:
+    items = [f'<li>{"".join(_event_tag(x) for x in r.events)}<a href="{e(r.card)}">'
+             f'{e(r.title)}</a></li>' for r in rows if r.events]
+    return ("<ul class=\"acts\">" + "".join(items) + "</ul>") if items else \
+        '<div class="empty">No change this week.</div>'
+
+
+def _review_html(d: Dashboard, rows: list[DashRow], print_mode: bool) -> str:
+    v = d.verification or {}
+    lines = "".join(
+        f'<li><a href="{e(r.card)}">{e(r.title)}</a> — ' + "; ".join(
+            f'<a href="{e(r.card)}#{e(a)}">{e(name)}</a>: {ids_to_audit(e(said))}'
+            for a, name, said in r.review_lines) + "</li>" for r in rows if r.review_lines)
+    opens = v.get("open_items_plain") or []
+    alerts = [_clean_display(x) for x in (v.get("coverage_alerts_plain") or [])]
+    partial = (d.intake or {}).get("awaiting_documents", {}).get("items", [])
+    # the warning box only while something is open; a fully verified run reads as a plain note
+    box = "note" if v.get("status") == "FULLY_VERIFIED" else "vstat"
+    out = [f'<div class="{box}"><b>Research verification: '
+           f'{e(_VERIFICATION_WORD.get(v.get("status", ""), v.get("status", "UNKNOWN")))}</b>'
+           + (f' — {v.get("figures_open", 0)} of {v.get("figures", 0)} stated figures and '
+              f'{v.get("paragraphs_open", 0)} of {v.get("paragraphs", 0)} argument paragraphs '
+              f'open over {v.get("articles", 0)} article version(s); '
+              f'{v.get("articles_preview_only", 0)} read only in part. Open material is never '
+              f'used as evidence.' if v else "") + "</div>"]
+    out.append('<div class="rq"><h3>Card lines the review questioned or withheld</h3>'
+               + (f"<ul>{lines}</ul>" if lines else '<div class="empty">None.</div>') + "</div>")
+    out.append('<div class="rq"><h3>Figures and paragraphs not yet accounted for</h3>'
+               + ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in opens) + "</ul>"
+                  if opens else '<div class="empty">None.</div>') + "</div>")
+    out.append('<div class="rq"><h3>Coverage alerts — evidence no thesis carries, or a '
+               'proposition dropped</h3>'
+               + ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in alerts) + "</ul>"
+                  if alerts else '<div class="empty">None.</div>') + "</div>")
+    out.append('<div class="rq"><h3>Articles read only in part — awaiting a complete copy</h3>'
+               + ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in partial) + "</ul>"
+                  if partial else '<div class="empty">None.</div>') + "</div>")
+    return "".join(out)
+
+
+def _sources_html(d: Dashboard, print_mode: bool) -> str:
+    h = d.source_health or {}
+    if not h:
+        return '<div class="empty">No source-health check recorded.</div>'
+    when = (f"checked {h['checked_at'][:16].replace('T', ' ')} UTC"
+            if h.get("checked_at") else "not checked yet")
+    att = "".join(
+        f'<li><b>{e(r["publisher"])}</b><span class="pill {_HEALTH_PILL.get(r["status"], "dir")}">'
+        f'{e(r["status"].lower())}</span><div class="note">{ids_to_audit(e(_plain_reason(r)))}'
+        + (" Manual upload of an authorized copy recommended." if r.get("manual_action") else "")
+        + "</div></li>" for r in h.get("attention", []))
+    rows = "".join(
+        f"<tr><td>{e(r['publisher'])}</td><td>{e(r['status'].lower())}</td>"
+        f"<td>{e(r['freshness'].lower())}"
+        f"{(' · newest ' + e(r['newest_article_date'])) if r['newest_article_date'] else ''}</td>"
+        f"<td>{e((r['last_successful_discovery'] or '—')[:10])}</td>"
+        f"<td>{e((r['last_successful_extraction'] or '—')[:10])}</td>"
+        f"<td>{r['discovered']} / {r['in_window']}</td></tr>" for r in h.get("rows", []))
+    cov = (d.intake or {}).get("coverage", {}).get("items", [])
+    k = d.kpi or {}
+    scan = (f'<div class="note">This scan read <b>{e(k["accessible_sources"])}</b> automatic '
+            f'channels · blocked: <b>{e(k["blocked_sources"])}</b> · manual-first: '
+            f'{e(k.get("manual_first_sources") or "none")}</div>'
+            if k.get("accessible_sources") is not None else "")
+    return (f'<div class="sh"><div><b>{e(h["line"])}</b> <span class="note">{e(when)}</span>'
+            f'</div>{scan}' + (f"<ul>{att}</ul>" if att else "") + "</div>"
+            + '<details class="sec"' + (" open" if print_mode else "") + '><summary>All '
+            f'{h.get("total", 0)} publishers</summary><div class="hscroll"><table><tr>'
+            "<th>Publisher</th><th>Health</th><th>Freshness</th><th>Last discovery</th>"
+            "<th>Last full text</th><th>Found / in window</th></tr>" + rows
+            + "</table></div></details>"
+            + '<details class="sec"' + (" open" if print_mode else "") + '><summary>Coverage by '
+            f'publisher ({len(cov)})</summary><ul>'
+            + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in cov) + "</ul></details>")
+
+
+def _plain_reason(r: dict[str, Any]) -> str:
+    """A channel's health reason without the operator's commands (those stay in Operations)."""
+    return re.split(r"\s*(?:→|— upload an authorized copy|Meanwhile upload)", r["reason"])[0]
+
+
+def _archive_html(d: Dashboard) -> str:
+    return ('<input class="search" placeholder="Filter by title, sector, action or status…" '
+            'oninput="filt(this.value)" aria-label="Filter the archive"><div class="hscroll">'
+            '<table id="arch"><tr><th>Thesis</th><th>Action</th><th>Status</th><th>Sector</th>'
+            '<th>Versions</th><th>Last material update</th><th class="aud">Id · node / '
+            'mechanism</th></tr>'
+            + "".join(
+                f'<tr><td><a href="{e(a["card"])}">{e(a["title"])}</a></td>'
+                f'<td>{e(_ACTION_WORDS.get(ResearchAction(a["action"]), a["action"]))}</td>'
+                f'<td>{e(a["status"].lower())}</td><td>{e(a["sector"])} · {e(a["region"])}</td>'
+                f'<td>{a["versions"]}</td><td>{e(a["last_material_update"])}</td>'
+                f'<td class="cc aud">{e(a["thesis_id"])} · {e(a["node"])} / '
+                f'{e(a["mechanism"])} / {e(a["direction"])}</td></tr>' for a in d.archive)
+            + "</table></div>")
+
+
+def _ops_html(d: Dashboard, print_mode: bool) -> str:
+    """Operations & audit — run ids, engine codes, upload commands, the validation log. For the
+    operator; the analyst-facing views above never print them."""
+    run = d.run
+    op = " open" if print_mode else ""
+    val = d.validation
+    parts = [
+        f'<details class="sec"{op}><summary>Run and report scope</summary><div class="s cc">'
+        f'run {e(run["run_id"])} · mode {e(run["mode"])} · scan execution {e(run["status"])} · '
+        f'research verification {e((d.verification or {}).get("status", "UNKNOWN"))} · window '
+        f'{e(d.window)}</div><div class="s note">This report covers '
+        f'{len(d.report_runs)} run(s): {e(", ".join(d.report_runs))}</div>'
+        f'<div class="s note">Verification log: {val.get("BLOCK", 0)} blocked · '
+        f'{val.get("HOLD", 0)} held · {val.get("WARN", 0)} warnings · {val.get("INFO", 0)} info '
+        f'(validation_log.json)</div></details>',
+        f'<details class="sec"{op}><summary>Research source health (full)</summary>'
+        + _health_html(d.source_health, print_mode) + "</details>",
+        f'<details class="sec"{op}><summary>Research intake / manual action</summary>'
+        + _intake_html(d.intake, print_mode) + "</details>"]
+    if d.sources:
+        parts.append(
+            f'<details class="sec"{op}><summary>Source coverage ({len(d.sources)})</summary>'
+            '<div class="hscroll"><table><tr><th>Source</th><th>Status</th><th>Discovered</th>'
+            "<th>In window</th><th>Undated</th><th>New</th><th>Processed</th><th>Queued</th>"
+            "<th>Inaccessible</th><th>Errors / warnings</th></tr>"
+            + "".join(
+                f"<tr><td>{e(s['source_id'])}<div class=note>{e(s['method'])}</div></td>"
+                f"<td>{e(s['status'])}</td><td>{s['discovered']}</td>"
+                f"<td>{s['in_window']}</td><td>{s['undated']}</td><td>{s['new']}</td>"
+                f"<td>{s['processed']}</td><td>{s['queued']}</td>"
+                f"<td>{s['inaccessible']}</td><td>"
+                + e(clip("; ".join(s["errors"] + s["warnings"]), 300) or "—")
+                + (f"<div class=note>{e(s['truncation'])}</div>"
+                   if s.get("truncation") else "") + "</td></tr>"
+                for s in d.sources) + "</table></div></details>")
+    v = d.verification or {}
+    if v.get("open_items"):
+        parts.append(f'<details class="sec"{op}><summary>Open items — engine record '
+                     f'({len(v["open_items"])})</summary>'
+                     + "".join(f'<div class="s note">{e(x)}</div>' for x in v["open_items"])
+                     + "</details>")
+    parts.append(_coverage_html(v, print_mode))
+    if d.caveats:
+        parts.append(f'<details class="sec"{op}><summary>Unresolved retrieval / verification '
+                     f'caveats ({len(d.caveats)})</summary>'
+                     + "".join(f'<div class="s note">{e(c)}</div>' for c in d.caveats)
+                     + "</details>")
+    if d.no_evidence:
+        parts.append(f'<details class="sec"{op}><summary>Not research opportunities '
+                     f'({len(d.no_evidence)}) — {e(NO_EVIDENCE_HELP)}</summary>'
+                     + "".join(f'<div class="s note">{e(r.title)} — {e(r.why_action)}'
+                               f'<span class="aud"> · {e(r.thesis_id)} v{r.version} · '
+                               f'{e(r.change_reason)}</span></div>' for r in d.no_evidence)
+                     + "</details>")
+    if d.no_material_change:
+        parts.append(f'<details class="sec"{op}><summary>No material change this run '
+                     f'({len(d.no_material_change)})</summary>'
+                     + "".join(f'<div class="s note">{e(x)}</div>'
+                               for x in d.no_material_change) + "</details>")
+    return '<div class="ops">' + "".join(parts) + "</div>"
 
 
 def _standing(d: Dashboard) -> list[str]:
@@ -1026,40 +1380,6 @@ def _failed_label(d: Dashboard) -> str:
     return f"{len(new)} new" + (f" + {len(standing)} standing ({', '.join(sorted(standing))})"
                                 if standing else "")
 
-
-def _row_html(r: DashRow) -> str:
-    pill = {"RESEARCH NOW": "now", "WATCH": "watch"}.get(r.action, "skip")
-    change = (f"{r.previous_action} → {r.action}" if r.previous_action else f"new → {r.action}")
-    shown, rest = r.what_changed[:3], r.what_changed[3:]
-    li = "".join(f"<li>{e(x)}</li>" for x in shown) or "<li>—</li>"
-    more = (f'<details><summary class="note">show the other {len(rest)} of '
-            f'{len(r.what_changed)}</summary><ul>' + "".join(f"<li>{e(x)}</li>" for x in rest)
-            + "</ul></details>") if rest else ""
-    names = r.named_companies + r.named_instruments + r.private_named
-    kind = (f'<span class="pill kind">{e(KIND_LABEL[ThesisKind(r.kind)])}</span>'
-            if r.kind == ThesisKind.MARKET_REGIME.value else "")
-    audit = (f'<div class="aud"><div class="k">Audit</div><div class="cc">{e(r.thesis_id)} · '
-             f'v{r.version}' + (" · " + e(", ".join(r.flags)) if r.flags else "")
-             + f'</div><div class="note">{e(change)} — {e(r.change_reason)}</div>'
-             + "".join(f'<div class="cc">{e(t)}</div>' for t in r.rule_trace)
-             + "".join(f'<div class="note">{e(x)}</div>' for x in r.what_changed_audit)
-             + "</div>")
-    return (
-        f'<div class="row"><div class="meta"><span class="pill {pill}">{e(r.action)}</span>'
-        f'<span class="pill dir">Evidence {e(r.evidence_direction)}</span>{kind}</div>'
-        f'<h3><a href="{e(r.card)}">{e(r.title)}</a></h3>'
-        f'<div class="dates">{e(dates_line(r))}</div>'
-        f'<div class="k">What changed</div><ul>{li}</ul>{more}'
-        f'<div class="k">Why this action</div><div>{e(r.why_action or change)}</div>'
-        f'<div class="k">Exposure the source names</div><div>'
-        + e("; ".join([f"sector: {x}" for x in r.sector_exposures] + names)
-            or "no company or sector named")
-        + '</div><div class="k">Sources (original authors)</div><ul>'
-        + ("".join(f"<li>{e(x)}</li>" for x in r.sources) or "<li>—</li>") + "</ul>"
-        + (f'<div class="note">How this evidence arrived: {e("; ".join(r.intake))}</div>'
-           if r.intake else "")
-        + f'<div class="k">Next research step</div><div>{e(r.next_action)}</div>'
-        + audit + "</div>")
 
 
 def _coverage_html(v: dict[str, Any], print_mode: bool) -> str:
@@ -1087,128 +1407,56 @@ def _coverage_html(v: dict[str, Any], print_mode: bool) -> str:
 
 def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                           embedded_cards: list[str] | None = None) -> str:
+    """The weekly research brief. The FIRST screen is the research: title and as-of, a compact
+    summary (Research Now / Watch / Skip, review items, verification), then the theses as
+    concise cards. Review queue, sources, archive and Operations & audit are their own views
+    (navigation at the top); engine ids, codes, commands and gate traces live only in Operations
+    and behind the audit switch. The print view opens everything."""
     run = d.run
     v = d.verification or {}
-    parts = [f'<div class="dash"><div class="id">Theme intelligence · weekly decision brief · '
-             f'run {e(run["run_id"])} · scan execution {e(run["status"])} · research '
-             f'verification {e(v.get("status", "UNKNOWN"))}</div><h1>What to research this week'
-             f'</h1><div class="note">Research attention only — no row is a purchase or sale. '
-             f'Window {e(d.window)}.</div>']
+    k = d.kpi or {}
+    rows = _active_rows(d)
+    review_n = (sum(len(r.review_lines) for r in rows) + int(v.get("figures_open", 0))
+                + int(v.get("paragraphs_open", 0)) + len(v.get("coverage_alerts") or []))
+    wf, wt = run.get("window_from") or "—", run.get("window_to") or "—"
+    parts = [f'<header class="dhead"><div class="eyebrow">Weekly research brief</div>'
+             f'<h1>What to research this week</h1><div class="subline">{e(wf)} – {e(wt)} · as of '
+             f'{e(run["as_of"])} · research attention only — never a purchase or sale</div>'
+             f'</header>']
     if d.banner:
         parts.append(f'<div class="banner">{e(d.banner)}</div>')
-    if v.get("status") != "FULLY_VERIFIED":
-        parts.append(f'<div class="vstat"><b>Research verification '
-                     f'{e(v.get("status", "UNKNOWN"))}</b> (the scan itself '
-                     f'{e(run["status"])}) — {e(v.get("summary", "not computed"))}.'
-                     + ('<details class="sec"' + (" open" if print_mode else "")
-                        + f'><summary>Open items ({len(v["open_items"])})</summary>'
-                        + "".join(f'<div class="s note">{e(x)}</div>' for x in v["open_items"])
-                        + "</details>" if v.get("open_items") else "")
-                     + _coverage_html(v, print_mode) + "</div>")
-    k = d.kpi or {}
-    kp: list[tuple[str, ...]] = ([("Sources", _no_discovery(run["mode"]))]
-          if k.get("accessible_sources") is None else
-          [("Accessible sources", str(k["accessible_sources"]),
-            "automatic channels read this run"),
-           ("Blocked automatic channels", str(k["blocked_sources"])),
-           ("Manual-first sources", str(k.get("manual_first_sources") or "none"),
-            "health-checked only — research arrives as uploads")])
-    kp += [("Articles analyzed", f"{k.get('articles_full', 0)} full · "
-                                 f"{k.get('articles_partial', 0)} partial"
-            + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")),
-           ("Research Now / Watch / Skip",
-            f"{k.get('research_now', 0)} / {k.get('watch', 0)} / {k.get('skip', 0)}",
-            f"of the {k.get('theses_this_run', 0)} theses this run created or changed"),
-           ("New / upgraded / downgraded / challenged theses",
-            f"{k.get('new', 0)} / {k.get('upgraded', 0)} / {k.get('downgraded', 0)} / "
-            f"{k.get('challenged', 0)}",
-            "this run's events — a thesis new this run can also be challenged in it")]
-    if k.get("queued"):
-        kp.append(("Queued by the budget cap (not yet read)", str(k["queued"])))
-    if k.get("figures_in_articles"):
-        kp.append(("Reported figures not yet captured",
-                   f"{k.get('figures_uncaptured', 0)} of {k['figures_in_articles']}"))
-    if v:
-        kp.append(("Research verification", str(v["status"]),
-                   f"{v['figures_open']} of {v['figures']} figures · {v['paragraphs_open']} of "
-                   f"{v['paragraphs']} paragraphs open — apart from the scan's "
-                   f"{run['status']}"))
-    parts.append('<div class="kpis">' + "".join(
-        f'<div class="kpi"><span>{e(t[0])}</span><b>{e(t[1])}</b>'
-        + (f"<small>{e(t[2])}</small>" if len(t) > 2 else "") + "</div>" for t in kp)
-        + "</div>")
-    parts.append(_health_html(d.source_health, print_mode))
-    parts.append(_intake_html(d.intake, print_mode))
-    if d.sources:
-        parts.append('<details class="sec"' + (" open" if print_mode else "")
-                     + '><summary>Source coverage (' + str(len(d.sources)) + ')</summary><table>'
-                     "<tr><th>Source</th><th>Status</th><th>Discovered</th><th>In window</th>"
-                     "<th>Undated</th><th>New</th><th>Processed</th><th>Queued</th>"
-                     "<th>Inaccessible</th><th>Errors / warnings</th></tr>"
-                     + "".join(
-                         f"<tr><td>{e(s['source_id'])}<div class=note>{e(s['method'])}</div></td>"
-                         f"<td>{e(s['status'])}</td><td>{s['discovered']}</td>"
-                         f"<td>{s['in_window']}</td><td>{s['undated']}</td><td>{s['new']}</td>"
-                         f"<td>{s['processed']}</td><td>{s['queued']}</td>"
-                         f"<td>{s['inaccessible']}</td><td>"
-                         + e(clip("; ".join(s["errors"] + s["warnings"]), 300) or "—")
-                         + (f"<div class=note>{e(s['truncation'])}</div>"
-                            if s.get("truncation") else "") + "</td></tr>"
-                         for s in d.sources) + "</table></details>")
-    if d.caveats:
-        parts.append('<details class="sec"' + (" open" if print_mode else "")
-                     + f'><summary>Unresolved retrieval / verification caveats '
-                       f'({len(d.caveats)})</summary>'
-                     + "".join(f'<div class="s note">{e(c)}</div>' for c in d.caveats)
-                     + "</details>")
-    for cat in CATEGORY_ORDER:
-        rows = d.categories.get(cat.value, [])
-        n = len(rows)
-        shown = rows[:DASHBOARD_ROWS_PER_CATEGORY]
-        rest = rows[DASHBOARD_ROWS_PER_CATEGORY:]
-        head = (f"showing {len(shown)} of {n}" if rest else f"{n}")
-        parts.append(f'<div class="cat">{e(cat.value)} <small>({head}) — '
-                     f'{e(_CATEGORY_HELP[cat])}</small></div>')
-        if not rows:
-            parts.append('<div class="empty">None this run.</div>')
-            continue
-        parts.extend(_row_html(r) for r in shown)
-        if rest:
-            parts.append('<details' + (" open" if print_mode else "") + f'><summary>show the '
-                         f'other {len(rest)} of {n}</summary>'
-                         + "".join(_row_html(r) for r in rest) + "</details>")
-    if d.no_evidence:
-        parts.append('<details class="sec"' + (" open" if print_mode else "")
-                     + f'><summary>Not research opportunities ({len(d.no_evidence)}) — '
-                       f'{e(NO_EVIDENCE_HELP)}</summary>'
-                     + "".join(f'<div class="s note">{e(r.title)} — {e(r.why_action)}'
-                               f'<span class="aud"> · {e(r.thesis_id)} v{r.version} · '
-                               f'{e(r.change_reason)}</span></div>' for r in d.no_evidence)
-                     + "</details>")
-    if d.no_material_change:
-        parts.append('<details class="sec"' + (" open" if print_mode else "")
-                     + f'><summary>No material change this run ({len(d.no_material_change)})'
-                       f'</summary>' + "".join(f'<div class="s note">{e(x)}</div>'
-                                               for x in d.no_material_change) + "</details>")
-    parts.append(f'<div class="cat">Searchable archive <small>({len(d.archive)} theses, every '
-                 f'status)</small></div><input class="search" placeholder="filter by id, title, '
-                 f'sector, action, status…" oninput="filt(this.value)"><table id="arch"><tr>'
-                 f'<th>Thesis</th><th>Action</th><th>Evidence</th><th>Status</th><th>Sector'
-                 f'</th><th class="aud">Node / mechanism</th><th>Versions</th>'
-                 f'<th>Last material update</th></tr>'
-                 + "".join(
-                     f'<tr><td><a href="{e(a["card"])}">{e(a["title"])}</a><div class="cc aud">'
-                     f'{e(a["thesis_id"])}</div></td><td>{e(a["action"])}</td>'
-                     f'<td>{e(a["evidence_direction"])}</td><td>{e(a["status"])}</td>'
-                     f'<td>{e(a["sector"])} · {e(a["region"])}</td><td class="cc aud">'
-                     f'{e(a["node"])} / {e(a["mechanism"])} / {e(a["direction"])}</td>'
-                     f'<td>{a["versions"]}</td>'
-                     f'<td>{e(a["last_material_update"])}</td></tr>' for a in d.archive)
-                 + "</table>")
-    v = d.validation
-    parts.append(f'<div class="foot">Verification log this run: {v.get("BLOCK", 0)} blocked · '
-                 f'{v.get("HOLD", 0)} held · {v.get("WARN", 0)} warnings · {v.get("INFO", 0)} '
-                 f'info (validation_log.json). {e(d.generated)}</div></div>')
+    vword = _VERIFICATION_WORD.get(v.get("status", ""), v.get("status", "—"))
+    parts.append(
+        '<div class="summary">'
+        f'<div class="stat"><b>{k.get("research_now", 0)}</b><span>Research Now</span></div>'
+        f'<div class="stat"><b>{k.get("watch", 0)}</b><span>Watch</span></div>'
+        f'<div class="stat"><b>{k.get("skip", 0)}</b><span>Skip</span></div>'
+        f'<a class="stat{" warn" if review_n else ""}" href="#review"><b>{review_n}</b>'
+        f'<span>Review items</span></a>'
+        f'<a class="stat" href="#review"><b class="vt">{e(vword)}</b><span>Verification · '
+        f'{v.get("figures_open", 0)} figure(s), {v.get("paragraphs_open", 0)} paragraph(s) '
+        f'open</span></a>'
+        f'<div class="stat"><b>{k.get("articles_full", 0) + k.get("articles_partial", 0)}</b>'
+        f'<span>Articles read · {k.get("articles_partial", 0)} in part</span></div></div>')
+    parts.append(f'<section id="theses"><h2>Theses this week <small class="note">({len(rows)}) '
+                 f'— ranked by research action, then the freshest evidence</small></h2>'
+                 + ('<div class="theses">' + "".join(_thesis_html(r) for r in rows) + "</div>"
+                    if rows else '<div class="empty">No thesis created or changed this week.'
+                                 '</div>') + "</section>")
+    parts.append(f'<section id="activity"><h2>This week\'s activity <small class="note">— '
+                 f'{k.get("new", 0)} new · {k.get("upgraded", 0)} upgraded · '
+                 f'{k.get("downgraded", 0)} downgraded · {k.get("challenged", 0)} challenged'
+                 f'</small></h2>' + _activity_html(rows) + "</section>")
+    parts.append(f'<section id="review"><h2>Review queue <small class="note">({review_n} '
+                 f'item(s))</small></h2>' + _review_html(d, rows, print_mode) + "</section>")
+    parts.append('<section id="sources"><h2>Sources</h2>' + _sources_html(d, print_mode)
+                 + "</section>")
+    parts.append(f'<section id="archive"><h2>Archive <small class="note">({len(d.archive)} '
+                 f'theses, every status)</small></h2>' + _archive_html(d) + "</section>")
+    parts.append('<section id="ops"><h2>Operations &amp; audit <small class="note">— run ids, '
+                 'engine codes, upload commands and the validation log</small></h2>'
+                 + _ops_html(d, print_mode) + "</section>")
+    parts.append(foot_html(d.generated))
     if embedded_cards:
         parts.append('<div style="break-before:page"></div>' + "".join(embedded_cards))
     script = ("<script>function filt(q){q=q.toLowerCase();document.querySelectorAll('#arch tr')"
@@ -1218,7 +1466,8 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
             "content='width=device-width,initial-scale=1'><title>Theme intelligence weekly"
             "</title><style>" + _CSS + _DASH_CSS + "</style></head><body>" + AUDIT_TOGGLE
-            + "<div class=wrap>" + "".join(parts) + "</div>" + script + "</body></html>")
+            + topnav("") + "<div class=wrap>" + "".join(parts) + "</div>" + script
+            + "</body></html>")
 
 
 _INTAKE_LISTS = (
@@ -1302,11 +1551,12 @@ def _health_html(h: dict[str, Any], print_mode: bool) -> str:
         for r in h["rows"])
     out.append('<details class="sec"' + (" open" if print_mode else "")
                + f'><summary>All {h["total"]} publishers — last successful checks</summary>'
-               "<table><tr><th>Publisher</th><th>Health</th><th>Freshness</th><th>Last checked "
-               "(UTC)</th><th>Last discovery OK</th><th>Last full-text OK</th><th>Last verified "
-               "publication date</th><th>Discovered / listing-dated in window</th>"
+               '<div class="hscroll"><table><tr><th>Publisher</th><th>Health</th>'
+               "<th>Freshness</th><th>Last checked (UTC)</th><th>Last discovery OK</th>"
+               "<th>Last full-text OK</th><th>Last verified publication date</th>"
+               "<th>Discovered / listing-dated in window</th>"
                "<th>Consecutive failed checks</th><th>Manual upload</th></tr>" + rows
-               + "</table></details>")
+               + "</table></div></details>")
     return "".join(out) + "</div>"
 
 
@@ -1442,7 +1692,7 @@ def render_dashboard_md(d: Dashboard) -> str:
     v = d.validation
     md += ["", f"_Verification log: {v.get('BLOCK', 0)} blocked · {v.get('HOLD', 0)} held · "
               f"{v.get('WARN', 0)} warnings · {v.get('INFO', 0)} info. {d.generated}_", ""]
-    return "\n".join(md)
+    return plain_entities("\n".join(md))
 
 
 def render_dashboard_csv(d: Dashboard) -> str:

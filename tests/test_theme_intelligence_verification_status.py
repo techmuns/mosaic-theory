@@ -167,7 +167,8 @@ def test_a_completed_scan_with_open_gaps_is_not_verified_end_to_end(tmp_path: Pa
     html = (tmp_path / "out" / "dashboard.html").read_text()
     md = (tmp_path / "out" / "dashboard.md").read_text()
     assert "scan execution SUCCEEDED · research verification INCOMPLETE" in html
-    assert "<span>Research verification</span><b>INCOMPLETE</b>" in html
+    assert ('<b class="vt">Incomplete</b><span>Verification · 0 figure(s), 1 paragraph(s) '
+            'open') in html
     assert "- Scan execution: SUCCEEDED" in md and "- Research verification: INCOMPLETE" in md
     assert out["manifest"]["status"] == "SUCCEEDED"
     assert out["manifest"]["research_verification"]["status"] == "INCOMPLETE"
@@ -188,7 +189,8 @@ def test_every_gap_accounted_for_is_fully_verified(tmp_path: Path) -> None:
     assert v["status"] == "FULLY_VERIFIED" and v["open_items"] == []
     d = build_dashboard(pipe.store, run.run_id, cards={}, generated="t")
     assert "research verification FULLY_VERIFIED" in render_dashboard_html(d)
-    assert '<div class="vstat">' not in render_dashboard_html(d)
+    assert '<div class="vstat">' not in render_dashboard_html(d)  # no warning box
+    assert '<b class="vt">Fully verified</b>' in render_dashboard_html(d)
 
 
 def test_a_preview_only_article_is_verified_within_the_preview_at_most(tmp_path: Path) -> None:

@@ -210,12 +210,18 @@ def cmd_report(a: argparse.Namespace) -> int:
 
 
 def cmd_reassess(a: argparse.Namespace) -> int:
+    from vinci.theme_intelligence.engine import SentenceCorrection
     from vinci.theme_intelligence.pipeline import Pipeline
     from vinci.theme_intelligence.report import write_run_outputs
 
+    corrections = [SentenceCorrection(
+        thesis_id=c["thesis_id"], sentence_id=c["sentence_id"], text=c["text"],
+        claim_ids=tuple(c["claim_ids"]), reason=c["reason"])
+        for c in (json.loads(Path(a.corrections).read_text()) if a.corrections else [])]
     pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
                     client=None, review=False)  # stored evidence only: no model client at all
-    run, outs = pipe.run_reassess(as_of=_iso(a.as_of), thesis_ids=a.thesis or ())
+    run, outs = pipe.run_reassess(as_of=_iso(a.as_of), thesis_ids=a.thesis or (),
+                                  corrections=corrections)
     print(f"run {run.run_id}: {run.status.value} — {run.counts.get('theses_reassessed', 0)} "
           f"thesis(es) reassessed from stored evidence, {len(outs)} changed; cost $0.00")
     for o in outs:
@@ -650,6 +656,10 @@ def main(argv: list[str] | None = None) -> int:
     ra.add_argument("--as-of", required=True, help="YYYY-MM-DD the rules are applied as of")
     ra.add_argument("--thesis", action="append", help="a thesis id (repeatable; default: every "
                                                       "thesis not archived)")
+    ra.add_argument("--corrections", help="JSON list of ANALYST CORRECTIONS — {thesis_id, "
+                                          "sentence_id, text, claim_ids, reason}; each must cite "
+                                          "verified claims the thesis links and pass the card "
+                                          "checks, or nothing is applied")
     ra.set_defaults(fn=cmd_reassess)
 
     qa = sub.add_parser("qa", help="re-check a run's stored records")
