@@ -607,7 +607,9 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     if not blocks or body_words < 40:
         state = RetrievalState.BLOCKED
         notes.append(f"no article body recovered ({body_words} words)")
-    elif _PAYWALL.search(page_text_l) or _PAYWALL.search(soup.get_text(" ", strip=True)[:20000]):
+    # the WHOLE page: a long free preview puts the subscriber marker past any fixed window
+    # (pilot 2026-10-12: a SemiAnalysis paid post, marker at character 29,821 — read as FULL)
+    elif _PAYWALL.search(page_text_l) or _PAYWALL.search(soup.get_text(" ", strip=True)):
         state = RetrievalState.PARTIAL
         notes.append("paywall / subscriber marker on the page — analysed as an excerpt only")
     elif body_words < 150:

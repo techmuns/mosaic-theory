@@ -76,6 +76,36 @@ def test_a_paywalled_or_thin_page_is_never_full() -> None:
     assert thin.retrieval_state is RetrievalState.BLOCKED
 
 
+def _substack(body: str, *, paywall: bool) -> str:
+    """The live SemiAnalysis post shape (pilot 2026-10-12): the free part in
+    `div.available-content`, the subscriber marker an `h2.paywall-title` in a SIBLING
+    `div.paywall` — outside every parsed block. HYPOTHETICAL text."""
+    wall = ('<div class="paywall"><h2 class="paywall-title">This post is for paid subscribers'
+            '</h2></div>') if paywall else ""
+    return (f'<html><body><div id="main"><article class="newsletter-post post">'
+            f'<div class="available-content">{body}</div>{wall}</article></div></body></html>')
+
+
+def test_a_long_free_preview_with_the_marker_past_20000_characters_is_never_full() -> None:
+    """Pilot 2026-10-12: "Beijing Will Not Pace the Frontier" (marker at character 29,821 of
+    30,129) and a second paid SemiAnalysis post (45,959 of 46,272) were read as FULL — the
+    marker was searched for in the first 20,000 characters only. A $0 corpus check over 60
+    cached pages flips exactly those two."""
+    long_body = "".join(f"<p>Section {i} explains how contract prices for DRAM moved during "
+                        f"quarter {i} as hyperscalers absorbed supply and inventories normalised "
+                        f"across the chain.</p>" for i in range(200))  # distinct: not de-duplicated
+    pay = parse_document(_substack(long_body, paywall=True), "https://example.test/lp", None)
+    text_len = sum(len(b.text) for b in pay.blocks)
+    assert text_len > 20_000, text_len  # the shape needs the marker PAST the old window
+    assert "paywall" not in " ".join(b.text for b in pay.blocks).lower()  # outside the blocks
+    assert pay.retrieval_state is RetrievalState.PARTIAL
+    assert any("paywall / subscriber marker" in n for n in pay.notes)
+    free = parse_document(_substack(long_body, paywall=False), "https://example.test/lf", None)
+    assert free.retrieval_state is RetrievalState.FULL  # the same long page without it stays FULL
+    short = parse_document(_substack(_BODY, paywall=True), "https://example.test/sp", None)
+    assert short.retrieval_state is RetrievalState.PARTIAL  # within the old window: still caught
+
+
 def test_html_comments_are_not_article_text() -> None:
     d = parse_document(f"<html><body><article><!-- Simple presence check for tracking -->"
                        f"{_BODY}</article></body></html>", "https://example.test/c", None)
