@@ -452,9 +452,11 @@ PR (CLAUDE.md: coin-time translation).
   group of businesses the source names ("GPU and ASIC manufacturers", "suppliers"), read verbatim
   from paragraphs holding the thesis's verified evidence; never a company, never an exposure, no
   ticker implied, and the research action never reads it*.
-- **Resolved finding** (theme intelligence, `report._resolved_by_relabel`) — plain words: *a card
-  review finding that questioned a fact label the line no longer carries (the re-grade relabelled
-  it SOURCE OPINION); shown on the line as history, never counted as open*.
+- **Resolved finding** (theme intelligence, `report._resolved_by_relabel`, `finding_scope`) — plain
+  words: *a card review finding about a fact label ALONE that the line no longer carries (the
+  re-grade relabelled it SOURCE OPINION); shown on the line as history, never counted as open. A
+  finding that also objects to content (mixed), or cannot be read as label-only (ambiguous),
+  stays open*.
 - **Historical figure** (theme intelligence, `superseded_items_plain`, `verify.number_passes`) —
   plain words: *an open figure whose claim failed a number check that today's check passes; the
   stored failure stands and the figure is still not evidence, but it is history, not an open gap*.
