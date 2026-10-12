@@ -614,6 +614,47 @@ cleaner flags** — that is selecting prose on outcome; the flags stay on the pa
 
 ---
 
+## j. MONITOR DAY — run at the LATEST close; a past day is never re-cut
+
+*(Operator ruling 2026-10-12, option 1 of `docs/records/2026-10-11-monitor-reads-nothing-after-its-day.md`;
+record `docs/records/2026-10-12-monitor-runs-at-the-latest-close.md`.)*
+
+A monitor day (`data/monitor/<YYYY-MM-DD>.json`) is the book as of ONE market close: marks against
+benchmarks, the BUY−AVOID diagnostic, the freshness rows and the panel grid. Its DATED inputs are
+bounded by #707 (filings, evidence dates, ledger decisions, deadlines), but its panels, measured rows
+and record-read fields read TODAY's pages, records and cards. So a day re-run after a later close
+writes later information into an earlier date, and the only safe re-run is of the latest close
+itself.
+
+**When.** Any routine mark of the book, AND whenever `tests/test_panel_emit.py::
+test_emit_is_deterministic_over_the_committed_corpus` goes red after an artifact pass. That pin
+requires the latest day's panels to equal what today's pages emit, so a moved page turns it red.
+
+1. **Pick the date: the LATEST close** — the last session whose closing prices exist — never an
+   earlier one.
+   - **Later than the newest committed day:** the run writes a NEW day. This is #705's case: UBER's
+     page moved on 2026-10-11, and the book got `2026-10-09.json` beside an untouched `2026-09-22`.
+   - **The newest committed day itself:** the run replaces the front of the book with the same
+     session and better data, which `write_snapshot` allows.
+   - **A day with a later close after it is never re-run.** `write_snapshot` refuses it once a later
+     day file exists; the rule also covers the window before one does.
+2. **Run it** — `python -m vinci.cli monitor --ref <close>`. It prints the book, then writes
+   `data/monitor/<close>.json`. *(Source: `_cmd_monitor`; `monitor.write_snapshot`.)*
+3. **Mirror** — `python3 frontend/build.py` copies every day into `frontend/monitor/` and moves
+   `index.json`'s `latest`. *(Source: `frontend/build.py:emit_monitor`.)*
+4. **Check before committing:**
+   - the panel-emit pin is green;
+   - no `newer_filings` date and no `last_evidence_date` is after the day's `as_of`;
+   - any "no freshness row" or "carries evidence dated after" note is expected. On the latest close
+     there should be none.
+5. **Commit as an artifact** — the day file plus `frontend/monitor/*`, never bundled with code; the
+   full offline suite runs green first (CLAUDE.md §ARTIFACT-PASS RULE).
+
+**For analysis, re-cut into a scratch directory, never `data/monitor/`.** #707's verification
+re-ran 09-22, 10-09 and 07-20 that way and compared each with the committed day.
+
+---
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut

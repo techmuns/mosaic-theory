@@ -160,7 +160,14 @@ def test_emit_is_deterministic_over_the_committed_corpus() -> None:
     again += emit_panels(rows=snap["rows"], freshness=snap["freshness"],
                          dossier_for=_dossier, record_for=_record, root=ROOT)
     got = [json.loads(r.model_dump_json()) for r in again]
-    assert got == (snap.get("panels") or [])
+    # THE REMEDY IS PART OF THE FAILURE (operator ruling 2026-10-12). This pin goes red whenever a
+    # page moves after the latest day, and the tempting fix — re-running that day — writes later
+    # pages into a dated record. The message names the ruled fix, where the operator meets it.
+    assert got == (snap.get("panels") or []), (
+        f"the latest monitor day ({snap['as_of']}) no longer reproduces from today's pages — a "
+        f"page moved. Run `vinci monitor --ref <the LATEST close>`: a NEW day when that close is "
+        f"later than {snap['as_of']}, the same-session re-run when it is {snap['as_of']} itself. "
+        f"Never re-cut a day that a later close sits after (docs/RUNBOOKS.md §j).")
 
 
 def test_a_row_is_typed_rather_than_a_loose_dict() -> None:
