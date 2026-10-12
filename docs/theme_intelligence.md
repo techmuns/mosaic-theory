@@ -339,10 +339,16 @@ python -m vinci.theme_intelligence documents --status HELD
   earlier version already gave a thesis is REPEATED evidence — one row, never "new", never a
   confirmation — however the new answer labels it. The new text is a new prompt, so the analysis
   is paid for again (the cache never answers changed text); the cost limit applies as for any
-  import. Unchanged text → DUPLICATE ("unchanged"), nothing sent. A thesis the new version creates
-  beside one its earlier version created, holding at least half of the same sentences, is a
-  SIBLING: created (a different identity key is a different thesis), never merged, and flagged
-  `SAME_ARTICLE_SIBLING` for a human — the answer may have keyed one story two ways.
+  import. Unchanged text → DUPLICATE ("unchanged"), nothing sent. A hypothesis of the new version
+  that holds at least half its sentences on a thesis the earlier version created is THAT thesis —
+  updated, its id kept (`SAME_ARTICLE_MATCH`) — when direction, geography, mechanism family,
+  segment, product and time horizon agree; a different value-chain node label is stated, never
+  blocking (2026-10-12: on Citi's re-read the transformer story, 61 of 68 sentences, and six
+  more matched). Any other difference: a SIBLING — created, held for review (never RESEARCH NOW),
+  flagged `SAME_ARTICLE_SIBLING` with the dimension that differs. Overlapping sentences alone never
+  merge. A thesis whose sentences the new version re-states (at least half) but no hypothesis took
+  is RE-VERIFIED and re-assessed under today's rules — a new version only when the assessment
+  changes (Citi's low-cost US gas thesis: WATCH → SKIP-3). A sentence read again counts once.
 - **A malformed answer field costs that field, never the answer** (`extract.salvage_fields`,
   2026-10-12). A completeness answer whose top level fails is read field by field, then item by
   item: a list given as valid JSON text is decoded; a field that is neither is discarded with the
@@ -362,7 +368,24 @@ python -m vinci.theme_intelligence documents --status HELD
   organisations a cited paragraph names as examples or as a dated source but nobody recorded are
   listed. Alerts are `MECHANISM_COVERAGE` issues and a section of research verification (which
   then reads INCOMPLETE); the full record is in the audit view and the JSON. Nothing is forced
-  into a card and nothing merges by similarity.
+  into a card and nothing merges by similarity. A proposition a paid answer named and its re-ask
+  did not propose again is listed as dropped, with that reason.
+- **One technology, one thesis** (`taxonomy.toml` products, `engine.product_signature`,
+  2026-10-12). A thesis's PRODUCT is the one its own statement names, else the one at least a
+  fifth of its cited claims name (a passing mention is not its subject). Two hypotheses on one
+  identity key that share no supporting claim and name different products are separate theses
+  (`|prod:<product>`, `PRODUCT_SPLIT`) — Citi's fuel-cell share story is no longer inside the
+  gas-turbine thesis — and a risk naming only the split-off product goes with it. A separate
+  thesis earns no action by being separate.
+- **Risks the source states** (`coverage.scan_source_risks`, 2026-10-12). Every sentence of a
+  readable argument paragraph that states a downside in the source's own construction ("risks
+  remaining", "might put downward pressure", "did not materialize", "execution risk remains" —
+  never the bare word, never "little risk of …") is checked against what carries it: a proposed
+  risk, a counter-claim, a card's alternative mechanism, a cited quote, or a proposed risk drawn
+  from its paragraph. One nothing carries goes into 07 of ONLY the theses whose evidence shares
+  its paragraph — the verbatim sentence, labelled SOURCE OPINION, flagged `SOURCE_RISK_OMITTED`
+  — and is a coverage alert; with no such thesis, or cut by a page break, it is alerted and
+  placed nowhere. No generic risk is added to every card.
 - **Dates.** The publication date comes from the document's own text (page 1-2) or front matter —
   NEVER from the upload time, the file name or the PDF's CreationDate / ModDate (a FILE date,
   recorded as such). `--published` fills only a gap; when it disagrees with the document's own

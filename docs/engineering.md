@@ -391,7 +391,23 @@ PR (CLAUDE.md: coin-time translation).
   one review chunk whose answer broke, never the whole document*.
 - **Sibling thesis** (theme intelligence, `SAME_ARTICLE_SIBLING`) — plain words: *a new thesis a
   re-read created that repeats at least half the sentences of a thesis the earlier reading
-  created — kept separate, flagged for a human*.
+  created but differs on direction, geography, kind of mechanism, segment, product or horizon —
+  kept separate, held for review, flagged for a human*.
+- **Same-article match** (theme intelligence, `SAME_ARTICLE_MATCH`) — plain words: *a re-read's
+  story that repeats at least half of an earlier thesis's sentences and agrees on everything but
+  a label updates that thesis instead of creating a second one*.
+- **Re-verified thesis** (theme intelligence, `engine._reverify`) — plain words: *an earlier
+  thesis whose sentences a re-read repeats but no new story claimed: kept, its evidence marked
+  repeated, and re-scored under today's rules*.
+- **Product-qualified identity** (theme intelligence, `|prod:`, `PRODUCT_SPLIT`) — plain words:
+  *two stories on one identity key about different technologies (fuel cells vs gas turbines),
+  sharing no evidence, are two theses*.
+- **Mechanism family** (theme intelligence, `taxonomy.toml` `family`) — plain words: *the kind of
+  economics a mechanism label belongs to (volume, price / cost, competition, valuation, policy,
+  market structure); two labels in one family are the same kind of claim*.
+- **Source-stated risk** (theme intelligence, `coverage.scan_source_risks`,
+  `SOURCE_RISK_OMITTED`) — plain words: *a downside the report states in its own words that no
+  model pass listed, put verbatim on the cards whose evidence sits in the same paragraph*.
 - **Back matter** (theme intelligence, `documents.classify_unread`) — plain words: *unreadable
   trailing pages the readable document itself shows are fine-print disclosures (after the last
   section its contents list names), so the analysis text counts as complete for the research
