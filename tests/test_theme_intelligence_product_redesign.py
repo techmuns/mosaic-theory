@@ -170,7 +170,8 @@ def test_a_share_price_line_is_price_context_never_counter_evidence_to_earnings(
     assert line is not None and line["id"] == f"L-s07-{last}"
     assert line.select_one(f'a.ref[href="#{price}"]') is not None
     md = next(Path(out["dir"]).glob("cards/TH-*.md")).read_text()
-    assert md.index(f"**{group}:**") < md.index(price)
+    block = md.split(f"**{group}:**", 1)[1].split("\n**", 1)[0]  # the group's own lines
+    assert price in block
 
 
 # --- 3. analyst corrections -------------------------------------------------------------------
@@ -192,7 +193,7 @@ def _flagging(pipe: Pipeline, run_id: str, problem: str) -> None:
 
 
 #: the pilot reviewer's habit: a claim id, cut short, inside its finding
-CITING = "the span in C-71cbea09e3099d… does not say this (test)"
+CITING = "the span in C-71cbea09e3099d… and C-1d67... does not say this (test)"
 
 
 def _reviewed(tmp_path: Path, problem: str = "overstates the source (test)") -> Pipeline:
@@ -391,7 +392,7 @@ def test_review_required_links_to_the_exact_line_and_the_default_view_carries_no
         line = soup.select_one(f"#L-{sid}")
         assert line is not None and "UNRESOLVED REVIEW" in line.get_text(" ")
         ids = line.select(".rw .aud")  # the finding's claim id: behind the audit switch
-        assert [x.get_text(strip=True) for x in ids] == ["C-71cbea09e3099d…"]
+        assert [x.get_text(strip=True) for x in ids] == ["C-71cbea09e3099d…", "C-1d67..."]
     # the at-a-glance answers: all seven, risks and the next check open — not in a <details>
     glance = soup.select_one(".glance")
     assert glance is not None and glance.find_parent("details") is None
@@ -417,6 +418,7 @@ def test_review_required_links_to_the_exact_line_and_the_default_view_carries_no
                      "page None", "&#039;", "&amp;"):
             assert code not in first, code
         assert re.search(r"\b(?:TH|A|C|R)-[0-9A-Za-z]{8,}", first) is None  # no registry id
+        assert re.search(r"\bC-[0-9a-f]{3,}", first) is None  # nor a reviewer's shortened one
         assert re.search(r"\(\s*\)", first) is None  # an id gone from its parentheses: both go
 
 

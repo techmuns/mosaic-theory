@@ -968,6 +968,13 @@ def _pool_numbers(cited: list[Claim]) -> set[str]:
     return nums
 
 
+def number_passes(c: Claim) -> bool:
+    """Whether a STORED claim's figure passes TODAY's number check — read-only: it tells a past
+    failure of a since-corrected check from a figure that still fails. The record is never
+    edited (a claim is re-verified only when its article is applied again)."""
+    return _number_check(c.value, c.value_text, c.unit, c.quote)[0] is True
+
+
 #: A NAMED index or basket carries a number that is part of its NAME, not a figure the line
 #: asserts: "S&P 500", "Russell 2000", "Magnificent 7" — and so does a quarter or half-year
 #: LABEL: "Q3", "3Q26", "1H27". Observed 2026-10-12 (J.P. Morgan acceptance): a risk line was

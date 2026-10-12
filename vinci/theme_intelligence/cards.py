@@ -25,7 +25,7 @@ import html
 import json
 import re
 from collections.abc import Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date
 from typing import Any, TypeVar
 
@@ -715,6 +715,14 @@ font-weight:600}
 .rw{color:var(--warn);background:var(--warn-bg);font-size:13px;margin:4px 0 0;padding:6px 9px;
 border-radius:6px}.flagged{border-left:3px solid var(--warn);padding-left:10px}
 .corr{color:var(--accent);font-size:12.5px;margin-top:3px}
+.rv{color:var(--muted);font-size:12.5px;margin-top:3px}.rv details{display:inline}
+.rv summary{display:inline;cursor:pointer;margin-left:6px;text-transform:none;
+letter-spacing:0;font-weight:400;color:var(--accent)}
+details.more{margin-top:10px;max-width:100%;min-width:0;overflow-x:auto}
+details.more>summary{cursor:pointer;color:var(--accent);font-size:13px;text-transform:none;
+letter-spacing:0}
+.ref.nolink{color:var(--muted)}.hit{outline:2px solid var(--accent);outline-offset:3px}
+tr.hit>td{background:var(--accent-bg)}
 .note{color:var(--muted);font-size:13px}.sub{font-weight:650;font-size:12px;margin:14px 0 4px;
 color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .foot{color:var(--muted);font-size:12px;margin-top:14px}
@@ -724,7 +732,8 @@ font-weight:600;font-size:13px}
 .legend summary{cursor:pointer}
 .aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
 #audit:checked~.wrap .nonaud{display:none}
-@media (max-width:720px){.glance{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}
+@media (max-width:720px){.hscroll table{min-width:620px}
+.glance{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}
 .card{padding:16px 14px;border-radius:10px}.topnav .in{gap:0 12px;flex-wrap:wrap;
 padding-top:8px}.brand small{display:none}.auditbar{margin-left:auto}
 .links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
@@ -854,6 +863,87 @@ class RenderContext:
     corrected: dict[str, str] = field(default_factory=dict)
     #: the version's stored research priority — its FACTORS give the plain "why this action"
     priority: ResearchPriority | None = None
+    #: sentence id -> (why it is resolved, the earlier review's words): a review finding a LATER
+    #: version resolved (report.line_findings decides) — kept on the line as history, never
+    #: counted as an open finding
+    resolved: dict[str, tuple[str, str]] = field(default_factory=dict)
+    #: every claim the card cites, by id, so every evidence link has a target — section 04 lists
+    #: the ones outside the key-evidence rows; a cited id with no record is never a link
+    claims: dict[str, Claim] = field(default_factory=dict)
+    #: claim id -> its role on this thesis (supports, contradicts, context …)
+    roles: dict[str, str] = field(default_factory=dict)
+    #: business groups the source names in the paragraphs holding this thesis's evidence
+    groups: tuple[NamedGroup, ...] = ()
+    #: the claim ids with an evidence row on the rendered card (set by `render_html`)
+    targets: frozenset[str] = frozenset()
+
+
+@dataclass(frozen=True)
+class NamedGroup:
+    """A BUSINESS GROUP the source names ("GPU and ASIC manufacturers", "suppliers"), as written,
+    in a paragraph holding this thesis's verified evidence. Not a company and not an exposure: no
+    ticker is looked up or implied, and the research action never reads it."""
+    name: str
+    article_id: str
+    block_ids: tuple[str, ...]
+    excerpt: str  # the words around its first mention, verbatim — a bare "suppliers" says whose
+    claim_ids: tuple[str, ...]  # verified claims whose quote contains the name
+
+
+#: a group noun, optionally led by ACRONYM qualifiers ("GPU and ASIC", "HBM", "AI") — an ordinary
+#: word before the noun is left to the excerpt, so a verb is never read as part of a name
+_ACR = r"[A-Z0-9][A-Z0-9/+-]*[A-Z0-9]"
+_GROUP = re.compile(rf"(?:\b({_ACR}(?:\s+(?:and|&|or)\s+{_ACR})*)\s+)?"
+                    r"\b((?i:suppliers|manufacturers|makers|vendors|producers|chipmakers|"
+                    r"foundries|hyperscalers))\b")
+
+
+def named_groups(claims: Iterable[Claim], blocks: dict[tuple[str, str], str]
+                 ) -> tuple[NamedGroup, ...]:
+    """Business groups named in the paragraphs (`blocks`: (article version, block id) -> text)
+    that hold the given span-verified claims — deterministic and verbatim, first mention first."""
+    cl = [c for c in claims if c.span_verified]
+    seen: dict[str, NamedGroup] = {}
+    for c in cl:
+        text = blocks.get((c.article_version_id, c.block_id), "")
+        for m in _GROUP.finditer(text):
+            name = " ".join(x for x in (m.group(1), m.group(2)) if x)
+            key = name.lower()
+            if key in seen:
+                g = seen[key]
+                if c.block_id not in g.block_ids:
+                    seen[key] = replace(g, block_ids=(*g.block_ids, c.block_id))
+                continue
+            a, b = max(0, m.start() - 45), min(len(text), m.end() + 35)
+            a = text.rfind(" ", 0, a) + 1 if a else 0
+            b = (text.find(" ", b) if text.find(" ", b) != -1 else len(text)) if b < len(text) \
+                else len(text)
+            excerpt = ("…" if a else "") + text[a:b].strip() + ("…" if b < len(text) else "")
+            ids = tuple(x.claim_id for x in cl if name.lower() in x.quote.lower())
+            seen[key] = NamedGroup(name=name, article_id=c.article_id, block_ids=(c.block_id,),
+                                   excerpt=excerpt, claim_ids=ids)
+    return tuple(seen.values())
+
+
+def cited_claim_ids(card: CardContent) -> list[str]:
+    """Every claim id the card cites, in order of first appearance (lines, rows, exposures)."""
+    out: list[str] = []
+
+    def walk(x: Any) -> None:
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if k in ("claim_ids", "claim_id"):
+                    for c in ([v] if isinstance(v, str) else v or []):
+                        if c not in out:
+                            out.append(c)
+                else:
+                    walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+
+    walk(json.loads(card.model_dump_json()))
+    return out
 
 
 def shown_label(prov: Provenance, sid: str, rc: RenderContext) -> Provenance:
@@ -871,19 +961,38 @@ def _warn_md(sid: str, rc: RenderContext) -> str:
     return f" ⚠ **UNRESOLVED REVIEW — {rc.flagged[sid]}**" if sid in rc.flagged else ""
 
 
-def _refs(ids: Iterable[str]) -> str:
+def _resolved_html(sid: str, rc: RenderContext) -> str:
+    """A review finding a later version resolved: said as history, with the review's words."""
+    if sid not in rc.resolved:
+        return ""
+    why, said = rc.resolved[sid]
+    return (f'<div class="rv">✓ Resolved — {e(why)}<details><summary class="note">the earlier '
+            f'review</summary>{ids_to_audit(e(said))}</details></div>')
+
+
+def _resolved_md(sid: str, rc: RenderContext) -> str:
+    return (f" ✓ _Resolved — {rc.resolved[sid][0]} (earlier review: {rc.resolved[sid][1]})_"
+            if sid in rc.resolved else "")
+
+
+def _refs(ids: Iterable[str], rc: RenderContext) -> str:
+    """A line's citations (audit view): each links to its claim's evidence row on this card; an
+    id with no row is printed as text, never as a link to a missing target."""
     ids = list(ids)
     if not ids:
         return ""
-    return (' <span class="aud">' + " ".join(f'<a class="ref" href="#{e(c)}">{e(c)}</a>'
-                                             for c in ids) + "</span>")
+    return (' <span class="aud">' + " ".join(
+        f'<a class="ref" href="#{e(c)}">{e(c)}</a>' if c in rc.targets else
+        f'<span class="ref nolink" title="no evidence record held for this id">{e(c)}</span>'
+        for c in ids) + "</span>")
 
 
 #: A run of registry ids inside a line — a challenger thesis, an article ("TH-98FD8D046C,
 #: A-46796449712e"). They belong in the audit view, not the first view (review P2.12): the line
 #: reads "⟨competing hypothesis⟩" and the ids show behind the toggle and in print. Observed
 #: 2026-10-10 on the first challenged cards.
-_ID_ONE = r"(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,}|C-[0-9a-f]{5,}(?:\.{3}|…)?)"
+_ID_ONE = (r"(?:TH-[0-9A-F]{6,}|A-[0-9a-f]{8,}|C-[0-9a-f]{5,}(?:\.{3}|…)?"
+           r"|C-[0-9a-f]{3,4}(?:\.{3}|…))")  # a reviewer's shortened id: "C-1d67..."
 #: a run in its OWN parentheses goes with them — "automatic (A-…)" never reads "automatic ()"
 _RUN = r"(?:pool\s+)?" + _ID_ONE + r"(?:,\s*" + _ID_ONE + r")*"
 _ID_RUN = re.compile(r"(\s*\(" + _RUN + r"\)|\s*" + _RUN + ")")
@@ -909,8 +1018,8 @@ def _sent(s: CardSentence, sid: str, rc: RenderContext, *, anchor: bool = True,
     p = shown_label(s.provenance, sid, rc)
     cls = " flagged" if sid in rc.flagged else ""
     return (f'<div class="s{cls}"{aid}>{stp}<span class="lab {_BADGE[p]}">{e(p.value)}</span> '
-            f'{ids_to_audit(e(_clean_display(s.text)))}{_refs(s.claim_ids)}'
-            f'{_warn_html(sid, rc)}{_corr_html(sid, rc)}</div>')
+            f'{ids_to_audit(e(_clean_display(s.text)))}{_refs(s.claim_ids, rc)}'
+            f'{_warn_html(sid, rc)}{_resolved_html(sid, rc)}{_corr_html(sid, rc)}</div>')
 
 
 def _section(fid: str, title: str, body: str, *, print_mode: bool, summary: str = "") -> str:
@@ -1019,7 +1128,8 @@ def topnav(base: str) -> str:
               'and the decision trace">Audit view</label></div></nav>')
 
 
-def why_reasons(card: CardContent, pr: ResearchPriority | None) -> list[str]:
+def why_reasons(card: CardContent, pr: ResearchPriority | None,
+                groups: Iterable[str] = ()) -> list[str]:
     """Why the research action is what it is, in plain words — from the STORED priority's factor
     VALUES and the card's own exposures, never from the rule trace's text (which stays in the
     audit view)."""
@@ -1053,8 +1163,11 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None) -> list[str]:
                    "multi-quarter figure is not a 2-4-quarter window.")
     elif near and near != "yes":
         out.append("Timing — no dated window inside the next 2-4 quarters in the evidence.")
+    names = list(dict.fromkeys(groups))
     if not exposed:
-        out.append("Exposure — the source names no company or sector as exposed.")
+        out.append("Exposure — no listed company or verified sector exposure; the source names "
+                   f"business groups only ({'; '.join(names)}), not companies." if names else
+                   "Exposure — the source names no company or sector as exposed.")
     if f.get("F7_dislocation_or_catalyst") != "present" and f.get(
             "F12_fundamental_inflection") != "qualifies":
         out.append({
@@ -1104,7 +1217,8 @@ def _glance(card: CardContent, rc: RenderContext) -> str:
         f'<li><b>{e(r.value_text or "—")}</b> {e(unit_shown(r.value_text, r.unit))} — '
         f'{e(r.label)} <span class="note">({e(r.period or "—")}, {e(r.epistemic.value)}; '
         f'{e(_source_name(card, r.article_id))})</span></li>' for r in ev)
-    why = "".join(f"<li>{e(x)}</li>" for x in why_reasons(card, rc.priority))
+    why = "".join(f"<li>{e(x)}</li>"
+                  for x in why_reasons(card, rc.priority, [g.name for g in rc.groups]))
     w = card.s07_what_could_go_wrong
     risks = ([line(s, f"s07.{i}") for i, s in enumerate(w.counter_evidence[:2])]
              + [f'<li>{e(_clean_display(s.text))}</li>' for s in w.disconfirming_observables[:2]])
@@ -1131,6 +1245,55 @@ def _glance(card: CardContent, rc: RenderContext) -> str:
             + "</div>")
 
 
+_ROLE_WORD = {"supports": "supports", "dislocation": "dislocation", "catalyst": "catalyst",
+              "contradicts": "counter-evidence", "context": "context",
+              "competing": "competing hypothesis"}
+
+
+def _other_row(c: Claim, card: CardContent, rc: RenderContext) -> str:
+    """One cited claim outside the key-evidence rows — the same columns, its role in place of the
+    upstream origin; its row id is the claim id every link to it uses."""
+    flags = [c.epistemic.value] + (["APPROXIMATE"] if c.approximate else []) \
+        + (["chart-derived"] if c.chart_derived else []) + list(c.qualifiers) \
+        + ([] if c.span_verified and c.number_verified is not False else ["NOT VERIFIED"])
+    label = " — ".join(x for x in (c.scope, c.metric) if x) or c.statement
+    role = rc.roles.get(c.claim_id, "")
+    return (f'<tr id="{e(c.claim_id)}"><td>{e(label)}<div class="q">“{e(c.quote)}”</div></td>'
+            f'<td><b>{e(c.value_text or "—")}</b> {e(unit_shown(c.value_text, c.unit))}</td>'
+            f'<td>{e(c.period or "—")}<div class=note>as of '
+            f'{e(c.measured_as_of.isoformat() if c.measured_as_of else "—")}</div></td>'
+            f'<td>{e(" · ".join(flags))}</td><td>{e(_ROLE_WORD.get(role, role or "—"))}</td>'
+            f'<td>{e(_source_name(card, c.article_id))}<div class="note">paragraph '
+            f'{e(_para(c.block_id))}</div><div class="cc aud">{e(c.article_id)} {e(c.block_id)} · '
+            f'{e(c.claim_id)}</div></td></tr>')
+
+
+#: a link into a collapsed section opens it: every <details> around the target opens, the page
+#: scrolls to it and marks it — on load (a link from the weekly page), on a hash change and on a
+#: repeated click of the same link
+REVEAL_JS = (
+    "<script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById("
+    "decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;"
+    "d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;"
+    "t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){"
+    "t.classList.remove('hit')},2500)}"
+    "addEventListener('hashchange',function(){reveal(location.hash)});"
+    "addEventListener('load',function(){reveal(location.hash)});"
+    "document.addEventListener('click',function(ev){var a=ev.target.closest&&"
+    "ev.target.closest('a[href^=\"#\"]');if(a&&a.getAttribute('href')===location.hash)"
+    "reveal(location.hash)});</script>")
+
+
+def mechanism_step(card: CardContent, skip: Iterable[str] = ()) -> int | None:
+    """The index of the step that says HOW the thesis works in the source's own terms: its first
+    transmission step stated by the source (the industry shift, when there is one) and not
+    withheld or questioned — a verified line of the card, never a taxonomy category."""
+    out = [i for i, st in enumerate(card.s03_transmission)
+           if st.step != "market_reaction" and st.provenance in SOURCE_LABELS
+           and f"s03.{i}" not in set(skip)]
+    return out[0] if out else None
+
+
 def _plain_text(text: str) -> str:
     """A line without its system labels ⟨…⟩ (kept on the line in the sections below)."""
     return re.sub(r"\s*⟨[^⟩]*⟩\s*", " ", text).strip()
@@ -1143,16 +1306,22 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     ids, engine codes and the decision trace sit behind the audit switch; the print view opens
     everything (the complete record)."""
     h = card.header
+    key_ids = [r.claim_id for r in card.s04_key_evidence]
+    others = [rc.claims[c] for c in cited_claim_ids(card) if c not in key_ids and c in rc.claims]
+    rc = replace(rc, targets=frozenset(key_ids) | {c.claim_id for c in others})
     pill = _PILL.get(h.research_action.value, "skip")
     kind = (f'<span class="pill kind">{e(KIND_LABEL[h.kind])}</span>'
             if h.kind is ThesisKind.MARKET_REGIME else "")
     findings = [sid for sid in card_sentences(card) if sid in rc.blocked or sid in rc.flagged]
+    done = [sid for sid in card_sentences(card) if sid in rc.resolved]
+    earlier = (f' <span class="note">· <a href="#{_anchor(done[0])}">{len(done)} earlier review '
+               f'finding(s) resolved</a></span>' if done else "")
     review = (f'<a class="flag" href="#{_anchor(findings[0])}">Review required · '
               f'{len(findings)} line(s)</a> <span class="note">'
               + " · ".join(f'<a href="#{_anchor(s)}">{e(n)}</a>'
                            for s, n in zip(findings, finding_names(findings), strict=True))
               + "</span>" if findings else
-              '<span class="okflag">No unresolved review findings on this card</span>')
+              '<span class="okflag">No unresolved review findings on this card</span>') + earlier
     parts = [
         f'<header class="hdr"><div class="eyebrow">Living Thesis Card · {e(h.sector)} · '
         f'{e(h.region)}</div><h1>{e(h.title)}</h1><div class="hline"><span class="pill {pill}">'
@@ -1189,7 +1358,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                    + (f"; period {e(it.period)}" if it.period else "") + ")</span>"
                    if it.original_date else "")
                 + f'<span class="aud"> <span class="cc">[{e(it.change_class.value)}]</span>'
-                  f'</span>{_refs(it.claim_ids)}{_warn_html(sid, rc)}{_corr_html(sid, rc)}</div>')
+                  f'</span>{_refs(it.claim_ids, rc)}{_warn_html(sid, rc)}'
+                  f'{_resolved_html(sid, rc)}{_corr_html(sid, rc)}</div>')
     first = [item(i, it) for i, it in enumerate(wc.items)]
     shown, rest = first[:3], first[3:]
     bodies["s02_what_changed"] = (
@@ -1233,16 +1403,31 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         f'its verbatim source span. Figures repeating one origin are one row.</div>'
         '<div class="hscroll"><table><tr><th>Evidence</th><th>Value</th><th>Period / as-of</th>'
         "<th>Type</th><th>Upstream origin</th><th>Source passage</th></tr>" + "".join(rows)
-        + "</table></div>")
-    summaries["s04_key_evidence"] = f"{len(card.s04_key_evidence)} evidence row(s)"
+        + "</table></div>"
+        + (f'<details class="more"{" open" if print_mode else ""}><summary>Other evidence this '
+           f'card cites ({len(others)}) — counter-evidence, context and citations outside the key '
+           f'rows</summary><div class="hscroll"><table><tr><th>Evidence</th><th>Value</th>'
+           f'<th>Period / as-of</th><th>Type</th><th>Role on this thesis</th><th>Source passage'
+           f'</th></tr>' + "".join(_other_row(c, card, rc) for c in others)
+           + "</table></div></details>" if others else ""))
+    summaries["s04_key_evidence"] = (f"{len(card.s04_key_evidence)} evidence row(s)"
+                                     + (f" · {len(others)} more cited" if others else ""))
     av = card.s05_affected
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
-        f'{_refs(s.claim_ids)}</div>' for s in av.sector_exposures)
+        f'{_refs(s.claim_ids, rc)}</div>' for s in av.sector_exposures)
+    group_rows = "".join(
+        f'<div class="s"><b>{e(g.name)}</b> <span class="q">{e(g.excerpt)}</span> '
+        f'<span class="note">paragraph {e(", ".join(_para(b) for b in g.block_ids))}</span>'
+        f'{_refs(g.claim_ids, rc)}</div>' for g in rc.groups)
     bodies["s05_affected"] = (
         '<div class="sub">Sectors / themes the source names as exposed</div>'
         + (sector_rows or '<div class="note">None named by the source.</div>')
+        + '<div class="sub">Business groups the source names — not companies; no ticker is '
+          'implied and the research action does not count them</div>'
+        + (group_rows or '<div class="note">None named in the paragraphs holding this thesis\'s '
+                         'evidence.</div>')
         + '<div class="sub">Stock exposures of this thesis (source-named companies)</div>'
         + _company_rows(av.companies, exposures=True)
         + '<div class="sub">Named instruments / indices</div>' + _company_rows(av.instruments)
@@ -1261,8 +1446,11 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                    f'{e(x.rationale)}</div>' for x in av.enrichment)
            or '<div class="note">None recorded. Unnamed companies are never added to the '
               'source lists above.</div>'))
-    summaries["s05_affected"] = (f"{len(av.sector_exposures)} sector(s) · {len(av.companies)} "
-                                 f"company exposure(s) · {len(av.also_named)} other mention(s)")
+    summaries["s05_affected"] = (f"{len(av.sector_exposures)} sector(s) · "
+                                 + (f"{len(rc.groups)} business group(s) named · "
+                                    if rc.groups else "")
+                                 + f"{len(av.companies)} company exposure(s) · "
+                                 f"{len(av.also_named)} other mention(s)")
     wn = card.s06_why_now
     bodies["s06_why_now"] = (
         '<div class="sub">Near term (2-4 quarters)</div>'
@@ -1303,7 +1491,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         f'{e(_ACTION_WORD.get(d.research_action.value, d.research_action.value))}</span> '
         f'<span class="note">research attention only — this card never directs a purchase or '
         f'sale</span></div>'
-        + "".join(f'<div class="s">{e(x)}</div>' for x in why_reasons(card, rc.priority))
+        + "".join(f'<div class="s">{e(x)}</div>'
+                  for x in why_reasons(card, rc.priority, [g.name for g in rc.groups]))
         + '<div class="sub">Next investigable step</div>' + _sent(d.next_step, "s08.next", rc)
         + '<div class="sub">Would raise priority</div>'
         + "".join(_sent(s, "-", rc) for s in d.raise_priority_if)
@@ -1350,7 +1539,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                               summary=summaries.get(fid, "")))
     parts.append(foot_html(rc.generated_note))
     script = ("<script>window.addEventListener('beforeprint',()=>document.querySelectorAll("
-              "'details').forEach(d=>d.open=true));</script>")
+              "'details').forEach(d=>d.open=true));</script>" + REVEAL_JS)
     body = "".join(parts)
     if print_mode:  # the print file is the COMPLETE record: every nested audit toggle opens too
         body = body.replace("<details>", "<details open>")
@@ -1372,6 +1561,7 @@ def _md_sents(ss: Iterable[CardSentence], prefix: str, rc: RenderContext,
         else:
             out.append(f"- **{shown_label(s.provenance, sid, rc).value}:** "
                        f"{_clean_display(s.text)}{refs}" + _warn_md(sid, rc)
+                       + _resolved_md(sid, rc)
                        + (f" _(corrected by the analyst — {rc.corrected[sid]})_"
                           if sid in rc.corrected else ""))
     return out
@@ -1399,7 +1589,7 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
                                                               if it.period else "") + ")"
                     if it.original_date else "")
                  + (" [" + ", ".join(it.claim_ids) + "]" if it.claim_ids else "")
-                 + _warn_md(f"s02.{i}", rc))
+                 + _warn_md(f"s02.{i}", rc) + _resolved_md(f"s02.{i}", rc))
     md += ["", f"## {titles['s03_transmission']}"]
     for i, st in enumerate(card.s03_transmission):
         md += [f"- _{STEP_LABEL.get(st.step, st.step)}_ "
@@ -1420,11 +1610,23 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
                  f"{r.period or '—'} / as of {r.measured_as_of or '—'} | {' · '.join(flags)} | "
                  f"{r.origin or '—'} | {r.article_id} {r.block_id} ({r.claim_id}; "
                  f"{r.role.value}; {r.change_class.value}) |")
+    key_ids = {r.claim_id for r in card.s04_key_evidence}
+    others = [rc.claims[c] for c in cited_claim_ids(card) if c not in key_ids and c in rc.claims]
+    if others:
+        md += ["", "**Other evidence this card cites:**"] + [
+            f"- {c.statement} — {c.value_text or '—'} {unit_shown(c.value_text, c.unit)} — "
+            f"{c.period or '—'} — {c.epistemic.value} — "
+            f"{_ROLE_WORD.get(rc.roles.get(c.claim_id, ''), rc.roles.get(c.claim_id, '—'))} — "
+            f"“{c.quote}” ({c.article_id} {c.block_id}; {c.claim_id})" for c in others]
     av = card.s05_affected
     md += ["", f"## {titles['s05_affected']}", "**Sectors / themes the source names as exposed:**"]
     md += [f"- **{s.provenance.value}:** {s.name} — {s.direction.value} — “{s.quote}”"
            + (" [" + ", ".join(s.claim_ids) + "]" if s.claim_ids else "")
            for s in av.sector_exposures] or ["- none named by the source"]
+    md.append("**Business groups the source names — not companies; no ticker implied:**")
+    md += [f"- {g.name} — {g.excerpt} (paragraph {', '.join(_para(b) for b in g.block_ids)})"
+           + (" [" + ", ".join(g.claim_ids) + "]" if g.claim_ids else "")
+           for g in rc.groups] or ["- none"]
     # (label, group) PAIRS — never `grp is av.instruments`: every empty tuple is the same object,
     # so identity matched one empty group to another's heading
     for label, grp, expo in (("Stock exposures of this thesis", av.companies, True),
@@ -1517,7 +1719,13 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "withheld_sentences": rc.blocked,
         "review_warnings": rc.flagged,
         "analyst_corrections": rc.corrected,
-        "why_action": why_reasons(card, rc.priority),
+        "why_action": why_reasons(card, rc.priority, [g.name for g in rc.groups]),
+        "review_resolved": {k: why for k, (why, _said) in rc.resolved.items()},
+        "named_business_groups": [
+            {"name": g.name, "article_id": g.article_id, "block_ids": list(g.block_ids),
+             "excerpt": g.excerpt, "claim_ids": list(g.claim_ids)} for g in rc.groups],
+        "other_cited_evidence": [c for c in cited_claim_ids(card)
+                                 if c not in {r.claim_id for r in card.s04_key_evidence}],
         "generated": rc.generated_note,
     }
 

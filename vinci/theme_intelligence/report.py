@@ -36,16 +36,23 @@ from typing import Any
 from vinci.theme_intelligence.cards import (
     _CHANGE_TAG,
     _CSS,
+    _FACT_LABELS,
     AUDIT_TOGGLE,
     KIND_LABEL,
+    REVEAL_JS,
     STEP_LABEL,
+    NamedGroup,
     RenderContext,
     _clean_display,
     _line_name,
+    cited_claim_ids,
     clip,
     e,
+    finding_names,
     foot_html,
     ids_to_audit,
+    mechanism_step,
+    named_groups,
     plain_entities,
     render_html,
     render_json,
@@ -61,12 +68,16 @@ from vinci.theme_intelligence.config import (
 )
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
+    SOURCE_LABELS,
     ChangeEvent,
+    Claim,
     IssueSeverity,
+    Provenance,
     ResearchAction,
     RetrievalState,
     RunStatus,
     Thesis,
+    ThesisClaimLink,
     ThesisKind,
     ThesisStatus,
     ThesisVersion,
@@ -75,7 +86,7 @@ from vinci.theme_intelligence.schemas import (
     page_prefix,
 )
 from vinci.theme_intelligence.store import Store
-from vinci.theme_intelligence.verify import card_sentences
+from vinci.theme_intelligence.verify import card_sentences, number_passes
 
 #: Issue codes that are retrieval caveats — always listed at the top of the dashboard.
 RETRIEVAL_CAVEAT_CODES = frozenset({"RETRIEVAL_BLOCKED", "NO_BODY", "PARTIAL_RETRIEVAL",
@@ -157,6 +168,21 @@ def research_verification(store: Store, run: WeeklyRun,
     figures = [(r, f) for r in reps for f in r.figures]
     blocks = [(r, b) for r in reps for b in r.blocks]
     open_f = [(r, f) for r, f in figures if f.status == "uncaptured"]
+    # an open figure whose claim FAILED the number check but passes TODAY's check: a past failure
+    # of a since-corrected rule (J.P. Morgan's "five of the 11", 2026-10-12) — still not evidence
+    # (the stored record keeps its failure), told apart from a figure that still fails
+    # The failing claim is found by STRUCTURE — same article version and paragraph, quoting the
+    # figure, its number check failed — never parsed out of the ledger's reason sentence.
+    superseded: dict[int, list[Claim]] = {}
+    for rep_f, f in open_f:
+        if f.open_cause != "verification_failed":
+            continue
+        av_f = store.article_version(rep_f.article_version_id)
+        got = [x for x in (store.claims_for_article(av_f.article_id) if av_f else [])
+               if x.article_version_id == rep_f.article_version_id and x.block_id == f.block_id
+               and f.figure in x.quote and x.number_verified is False]
+        if got and all(g.span_verified and number_passes(g) for g in got):
+            superseded[id(f)] = got
     open_b = [(r, b) for r, b in blocks if b.status == "unreviewed"]
     not_run = sum(1 for r in reps if not r.pass_ran)
     # read only as a preview = the LATEST version of it these runs analysed is PARTIAL — a page
@@ -231,10 +257,20 @@ def research_verification(store: Store, run: WeeklyRun,
         "open_items_plain": [
             f"“{_title_of_version(store, r.article_version_id)}” — figure {f.figure!r} not "
             f"captured: {_OPEN_CAUSE.get(f.open_cause or '', 'not accounted for')}"
-            for r, f in open_f] + [
+            for r, f in open_f if id(f) not in superseded] + [
             f"“{_title_of_version(store, r.article_version_id)}” — one argument paragraph not "
             f"accounted for: {_OPEN_CAUSE.get(b.open_cause or '', 'not accounted for')}"
             for r, b in open_b],
+        "figures_superseded": len(superseded),
+        #: open figures whose claim failed a since-corrected number check (still open, still not
+        #: evidence) — history, apart from what still fails
+        "superseded_items_plain": [
+            f"“{_title_of_version(store, r.article_version_id)}” — figure {f.figure!r}: the claim "
+            f"quoting it (“{superseded[id(f)][0].value_text or ''}”) "
+            f"failed the number check when the article was read; today's check passes it. The "
+            f"stored record keeps the failure, so the figure is not used as evidence until the "
+            f"article is applied again"
+            for r, f in open_f if id(f) in superseded],
         "coverage_alerts": cov_alerts,
         #: the same alerts by TITLE, for the first view (no engine ids there)
         "coverage_alerts_plain": [
@@ -593,7 +629,9 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                      f"({len(c.claim_ids)} claim ref(s)) — no new version, priority unchanged")
                     for c in contribs if c.version is None]
     articles = {c.article_id: a for c in contribs if (a := store.article(c.article_id))}
-    blocked, flagged, corrected = line_findings(store, t.thesis_id, v)
+    blocked, flagged, corrected, resolved = line_findings(store, t.thesis_id, v)
+    links = store.links(t.thesis_id)
+    claims = {i: c for i in cited_claim_ids(v.content) if (c := store.claim(i)) is not None}
     status_note = None
     if t.status is not v.content.header.status:
         ev = _latest_status_event([x for x in store.events(thesis_id=t.thesis_id)
@@ -611,11 +649,28 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
     return RenderContext(history=history, attributions=attributions, blocked=blocked,
                          articles=articles, generated_note=generated, status_note=status_note,
                          flagged=flagged, retrieval_now=retrieval_now, corrected=corrected,
-                         priority=v.priority)
+                         priority=v.priority, resolved=resolved, claims=claims,
+                         roles={lk.claim_id: lk.role.value for lk in links},
+                         groups=thesis_groups(store, links))
+
+
+def thesis_groups(store: Store, links: list[ThesisClaimLink]) -> tuple[NamedGroup, ...]:
+    """Business groups the source names in the paragraphs holding a thesis's verified evidence
+    (cards.named_groups) — read from the stored paragraphs, never from a model."""
+    claims = list({lk.claim_id: c for lk in links
+                   if (c := store.claim(lk.claim_id)) is not None and c.span_verified}.values())
+    blocks: dict[tuple[str, str], str] = {}
+    for c in claims:
+        if (c.article_version_id, c.block_id) not in blocks:
+            av = store.article_version(c.article_version_id)
+            blocks[(c.article_version_id, c.block_id)] = next(
+                (b.text for b in (av.blocks if av else ()) if b.block_id == c.block_id), "")
+    return named_groups(claims, blocks)
 
 
 def line_findings(store: Store, thesis_id: str, v: ThesisVersion
-                  ) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
+                  ) -> tuple[dict[str, str], dict[str, str], dict[str, str],
+                             dict[str, tuple[str, str]]]:
     """(withheld, review-flagged, analyst-corrected) lines of ONE version — sentence id -> what
     the record says — from the issues of the run that wrote it, each naming THIS version's
     sentence. One function, so the card and the weekly overview never disagree."""
@@ -623,6 +678,7 @@ def line_findings(store: Store, thesis_id: str, v: ThesisVersion
     blocked: dict[str, str] = {}
     flagged: dict[str, str] = {}
     corrected: dict[str, str] = {}
+    codes: dict[str, str] = {}
     for i in store.issues(run_id=v.run_id):
         if i.scope != "card_sentence" or (i.severity is not IssueSeverity.BLOCK
                                           and i.code not in REVIEW_WARNINGS
@@ -641,7 +697,38 @@ def line_findings(store: Store, thesis_id: str, v: ThesisVersion
             corrected[sid] = said
         else:
             flagged[sid] = said
-    return blocked, flagged, corrected
+            codes[sid] = i.code
+    return blocked, flagged, corrected, _resolved_by_relabel(store, thesis_id, v, flagged, codes)
+
+
+def _resolved_by_relabel(store: Store, thesis_id: str, v: ThesisVersion, flagged: dict[str, str],
+                         codes: dict[str, str]) -> dict[str, tuple[str, str]]:
+    """Review findings a LATER version resolved — moved out of `flagged`, kept as history. One
+    case, and only when the record shows it: the review questioned a line's FACT label (its words
+    name the label: "Labelled MEASURED OBSERVATION but … conditional") when the line carried it,
+    and the line — the same words — now carries SOURCE OPINION, the label that finding asks for.
+    A finding about anything else, or whose words do not name the label, stays open. Observed
+    2026-10-12: Nomura's two conditional risk lines, relabelled by the re-grade, still read
+    UNRESOLVED REVIEW."""
+    sents = card_sentences(v.content)
+    out: dict[str, tuple[str, str]] = {}
+    earlier = [x for x in store.thesis_versions(thesis_id) if x.version < v.version]
+    for sid in list(flagged):
+        text, prov, _ids = sents[sid]
+        if codes.get(sid) != "REVIEW_PARTIAL" or prov != Provenance.SOURCE_OPINION.value:
+            continue
+        for ev in earlier:  # the version the finding was first made on
+            then = {t: p for t, p, _c in card_sentences(ev.content).values()}
+            if text in then and any(i.scope == "card_sentence" and i.code == "REVIEW_PARTIAL"
+                                    and flagged[sid] in i.detail
+                                    for i in store.issues(run_id=ev.run_id)):
+                if then[text] in {p.value for p in _FACT_LABELS} \
+                        and then[text].lower() in flagged[sid].lower():
+                    out[sid] = (f"an earlier review (v{ev.version}) questioned its {then[text]} "
+                                f"label; this version labels it SOURCE OPINION",
+                                flagged.pop(sid))
+                break
+    return out
 
 
 def _latest_status_event(events: list[ChangeEvent]) -> ChangeEvent | None:
@@ -723,6 +810,13 @@ class DashRow:
     why: list[str] = field(default_factory=list)
     #: (line anchor, line name, what is open) of every withheld / review-flagged line on the card
     review_lines: list[tuple[str, str, str]] = field(default_factory=list)
+    #: review findings a later version resolved: (line anchor, line name, why) — history
+    resolved_lines: list[tuple[str, str, str]] = field(default_factory=list)
+    #: the earnings chain in step names, and the step closest to profits in the source's words
+    impact_chain: list[str] = field(default_factory=list)
+    impact_line: str = ""
+    #: business groups the source names (not companies, not exposures)
+    groups: list[str] = field(default_factory=list)
     #: this report's events in words — "New", "Downgraded: Research Now → Watch" — ALL of them:
     #: a thesis created and downgraded in one week shows both, and is still one row
     events: list[str] = field(default_factory=list)
@@ -832,18 +926,39 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
         events.append("Archived")
     if not events and types & {"UPDATED", "UPGRADED", "REACTIVATED"}:
         events.append("Updated")
-    blocked, flagged, _corr = line_findings(store, t.thesis_id, cur)
+    blocked, flagged, _corr, resolved = line_findings(store, t.thesis_id, cur)
+    groups = [g.name for g in thesis_groups(store, store.links(t.thesis_id))]
+    skip = set(blocked) | set(flagged)
+    mi = mechanism_step(c, skip)
+    rest = [(i, st) for i, st in enumerate(c.s03_transmission)
+            if st.step != "market_reaction" and i != mi]
+    said = [(i, st) for i, st in rest if st.provenance in SOURCE_LABELS and f"s03.{i}" not in skip]
+    unknown = any(st.text.startswith("UNKNOWN") for _i, st in rest)
     review = [(sid, blocked.get(sid) and "withheld — failed source verification"
                or flagged[sid]) for sid in card_sentences(c) if sid in blocked or sid in flagged]
     src = c.s09_sources[-1] if c.s09_sources else None
     vs = store.article_versions(src.article_id) if src else []
     partial = bool(vs) and vs[-1].retrieval_state is not RetrievalState.FULL
     return {
-        "mechanism": mech_label.get(t.key_mechanism, t.key_mechanism.replace("_", " ")),
+        # HOW it works, in the source's words (a verified line of the card); the taxonomy
+        # category only when no step is stated by the source
+        "mechanism": (_plain(c.s03_transmission[mi].text) if mi is not None else
+                      "Category: " + mech_label.get(t.key_mechanism,
+                                                    t.key_mechanism.replace("_", " "))),
+        "impact_chain": [STEP_LABEL.get(st.step, st.step)
+                         + (" (not quantified)" if st.text.startswith("UNKNOWN") else "")
+                         for _i, st in rest],
+        "impact_line": (f"{STEP_LABEL.get(said[-1][1].step, said[-1][1].step)}: "
+                        f"{_plain(said[-1][1].text)}" if said else
+                        "The source does not quantify an effect on listed-company earnings."
+                        if unknown else "No earnings step stated by the source."),
+        "groups": groups,
+        "resolved_lines": [(_card_anchor(sid), name, why) for (sid, (why, _w)), name
+                           in zip(resolved.items(), finding_names(list(resolved)), strict=True)],
         "changed_plain": [_plain(it.text) for it in c.s02_what_changed.items],
         "implications": [f"{STEP_LABEL.get(st.step, st.step)}: {_plain(st.text)}"
                          for st in c.s03_transmission if st.step != "market_reaction"],
-        "why": why_reasons(c, cur.priority),
+        "why": why_reasons(c, cur.priority, groups),
         "review_lines": [(_card_anchor(sid), _line_name(sid), said) for sid, said in review],
         "events": events,
         "source_line": (f"{src.publisher} · published "
@@ -1071,7 +1186,7 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     }
 
 
-def dates_line(r: DashRow) -> str:
+def dates_line(r: DashRow, *, explain: bool = True) -> str:
     """Three dates, never conflated: the publisher's, the registry's actual first ingestion (wall
     clock, UTC) and the analysis as-of — which a historical replay sets BEFORE ingestion, so it is
     never called a detection."""
@@ -1080,7 +1195,7 @@ def dates_line(r: DashRow) -> str:
     return (f"Published {r.article_date or 'UNKNOWN'} · first ingested by the registry "
             f"{r.first_ingested or 'UNKNOWN'}"
             + (" (new to the registry, not necessarily new to the market)"
-               if r.category == WeeklyCategory.NEW.value else "")
+               if explain and r.category == WeeklyCategory.NEW.value else "")
             + f" · analysed as of {r.analysis_as_of or 'UNKNOWN'}"
             + (" (a historical replay — a simulated date, not a detection)" if replay else ""))
 
@@ -1126,7 +1241,10 @@ border-color:var(--accent)}.stat b{display:block;font-size:22px;line-height:1.2;
 padding:16px 18px;display:flex;flex-direction:column;gap:8px}
 .thesis .ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .thesis h3{font-size:16.5px;margin:2px 0 0}.thesis h3 a{color:var(--ink)}
-.mech{font-size:13px;color:var(--ink2)}
+.mech{font-size:13.5px;color:var(--ink2);margin-top:2px}
+.chain{font-size:12.5px;color:var(--muted);margin-bottom:3px}.legend{margin:10px 0 0}
+.stat span.sm{font-size:11.5px;margin-top:2px}details.rqd{margin-top:10px}
+details.rqd>summary{font-size:14px;font-weight:600}
 .tgrid{display:grid;grid-template-columns:118px minmax(0,1fr);gap:6px 12px;margin:4px 0 0;
 font-size:14px}.tgrid dt{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.03em;
 padding-top:2px}.tgrid dd{margin:0}.tgrid ul{margin:0;padding-left:16px}
@@ -1185,7 +1303,7 @@ def _thesis_html(r: DashRow) -> str:
     changed = r.changed_plain[:1]
     more = (f' <a class="note" href="{e(r.card)}#sec-s02_what_changed">+{len(r.changed_plain) - 1}'
             f' more</a>' if len(r.changed_plain) > 1 else "")
-    impl = "".join(f"<li>{e(x)}</li>" for x in r.implications[:2])
+    chain = " → ".join(r.impact_chain)
     audit = (f'<div class="aud"><div class="cc">{e(r.thesis_id)} · v{r.version} · {e(r.category)}'
              + (" · " + e(", ".join(r.flags)) if r.flags else "") + "</div>"
              + "".join(f'<div class="cc">{e(t)}</div>' for t in r.rule_trace) + "</div>")
@@ -1197,14 +1315,15 @@ def _thesis_html(r: DashRow) -> str:
         f'<div class="mech">{e(r.mechanism)}</div><dl class="tgrid">'
         f'<dt>What changed</dt><dd>'
         + ("".join(e(_clean_display(x)) for x in changed) or "—") + more + "</dd>"
-        + (f"<dt>Effect on profits</dt><dd><ul>{impl}</ul></dd>" if impl else
-           "<dt>Effect on profits</dt><dd>No earnings step stated by the source.</dd>")
+        + "<dt>Effect on profits</dt><dd>"
+        + (f'<div class="chain">{e(chain)}</div>' if chain else "")
+        + f"{e(_clean_display(r.impact_line))}</dd>"
         + f"<dt>Why {e(act)}</dt><dd><ul>" + "".join(f"<li>{e(x)}</li>" for x in r.why)
         + f"</ul></dd><dt>Next question</dt><dd>{e(r.next_action)}</dd></dl>"
         f'<div class="tfoot"><span>{e(r.source_line.partition(" · ")[0])}'
         + (' · <b>read only in part</b>' if r.partial_source else "") + "</span>"
         f'<a href="{e(r.card)}">Open the thesis card →</a></div>'
-        f'<div class="dates">{e(dates_line(r))}'
+        f'<div class="dates">{e(dates_line(r, explain=False))}'
         + (f' · How this evidence arrived: {ids_to_audit(e("; ".join(r.intake)))}'
            if r.intake else "")
         + "</div>" + audit + "</article>")
@@ -1217,36 +1336,79 @@ def _activity_html(rows: list[DashRow]) -> str:
         '<div class="empty">No change this week.</div>'
 
 
+def _brief(said: str, n: int = 170) -> str:
+    """A finding, shortened for the queue at a word boundary — the "…" says it was shortened; the
+    whole finding stays on its card line, one link away."""
+    if len(said) <= n:
+        return said
+    return said[:said.rfind(" ", 0, n)].rstrip(" ,;:") + " …"
+
+
+def review_counts(d: Dashboard, rows: list[DashRow]) -> dict[str, int]:
+    """The review queue's four groups, counted: current card lines (withheld or questioned — the
+    ones that bear on a decision), incomplete sources, background alerts, resolved/historical."""
+    v = d.verification or {}
+    partial = (d.intake or {}).get("awaiting_documents", {}).get("items", [])
+    return {"current": sum(len(r.review_lines) for r in rows),
+            "incomplete": len(v.get("open_items_plain") or []) + len(partial),
+            "background": len(v.get("coverage_alerts_plain") or []),
+            "historical": len(v.get("superseded_items_plain") or [])
+            + sum(len(r.resolved_lines) for r in rows)}
+
+
 def _review_html(d: Dashboard, rows: list[DashRow], print_mode: bool) -> str:
     v = d.verification or {}
+    n = review_counts(d, rows)
+    op = " open" if print_mode else ""
     lines = "".join(
-        f'<li><a href="{e(r.card)}">{e(r.title)}</a> — ' + "; ".join(
-            f'<a href="{e(r.card)}#{e(a)}">{e(name)}</a>: {ids_to_audit(e(said))}'
-            for a, name, said in r.review_lines) + "</li>" for r in rows if r.review_lines)
+        f'<li><a href="{e(r.card)}">{e(r.title)}</a><ul>' + "".join(
+            f'<li><a href="{e(r.card)}#{e(a)}">{e(name)}</a> — {ids_to_audit(e(_brief(said)))}'
+            f'</li>' for a, name, said in r.review_lines) + "</ul></li>"
+        for r in rows if r.review_lines)
     opens = v.get("open_items_plain") or []
     alerts = [_clean_display(x) for x in (v.get("coverage_alerts_plain") or [])]
     partial = (d.intake or {}).get("awaiting_documents", {}).get("items", [])
     # the warning box only while something is open; a fully verified run reads as a plain note
     box = "note" if v.get("status") == "FULLY_VERIFIED" else "vstat"
-    out = [f'<div class="{box}"><b>Research verification: '
+    vstat = [f'<div class="{box}"><b>Research verification: '
            f'{e(_VERIFICATION_WORD.get(v.get("status", ""), v.get("status", "UNKNOWN")))}</b>'
            + (f' — {v.get("figures_open", 0)} of {v.get("figures", 0)} stated figures and '
               f'{v.get("paragraphs_open", 0)} of {v.get("paragraphs", 0)} argument paragraphs '
               f'open over {v.get("articles", 0)} article version(s); '
-              f'{v.get("articles_preview_only", 0)} read only in part. Open material is never '
-              f'used as evidence.' if v else "") + "</div>"]
-    out.append('<div class="rq"><h3>Card lines the review questioned or withheld</h3>'
-               + (f"<ul>{lines}</ul>" if lines else '<div class="empty">None.</div>') + "</div>")
-    out.append('<div class="rq"><h3>Figures and paragraphs not yet accounted for</h3>'
-               + ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in opens) + "</ul>"
-                  if opens else '<div class="empty">None.</div>') + "</div>")
-    out.append('<div class="rq"><h3>Coverage alerts — evidence no thesis carries, or a '
-               'proposition dropped</h3>'
-               + ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in alerts) + "</ul>"
-                  if alerts else '<div class="empty">None.</div>') + "</div>")
-    out.append('<div class="rq"><h3>Articles read only in part — awaiting a complete copy</h3>'
-               + ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in partial) + "</ul>"
-                  if partial else '<div class="empty">None.</div>') + "</div>")
+              f'{v.get("articles_preview_only", 0)} read only in part'
+              + (f'; {v["figures_superseded"]} of the open figures failed a since-corrected '
+                 f'check (under Resolved or historical)' if v.get("figures_superseded") else "")
+              + '. Open material is never used as evidence.' if v else "") + "</div>"]
+
+    def items(xs: list[str]) -> str:
+        return ("<ul>" + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in xs) + "</ul>"
+                if xs else '<div class="empty">None.</div>')
+
+    hist = [x for r in rows for x in r.resolved_lines]
+    hist_html = "".join(
+        f'<li><a href="{e(r.card)}">{e(r.title)}</a> — ' + "; ".join(
+            f'<a href="{e(r.card)}#{e(a)}">{e(name)}</a>: {e(why)}'
+            for a, name, why in r.resolved_lines) + "</li>" for r in rows if r.resolved_lines)
+    sup = v.get("superseded_items_plain") or []
+    out = [f'<div class="rq"><h3>On the current cards — lines withheld or questioned '
+           f'({n["current"]})</h3><div class="note">Each finding is shortened here (…); the '
+           f'whole finding is on its card line — follow the link.</div>'
+           + (f"<ul>{lines}</ul>" if lines else '<div class="empty">None — no line of a current '
+                                                'card is withheld or questioned.</div>') + "</div>",
+           f'<details class="sec rqd"{op}><summary>Incomplete sources ({n["incomplete"]}) — '
+           f'figures and paragraphs not accounted for; articles read only in part</summary>'
+           + vstat[0] + '<div class="rq"><h3>Figures and paragraphs not yet accounted for</h3>'
+           + items(opens) + '</div><div class="rq"><h3>Articles read only in part — awaiting a '
+           'complete copy</h3>' + items(partial) + "</div></details>",
+           f'<details class="sec rqd"{op}><summary>Background alerts ({n["background"]}) — '
+           f'evidence no thesis carries, or a proposition dropped</summary>' + items(alerts)
+           + "</details>",
+           f'<details class="sec rqd"{op}><summary>Resolved or historical ({n["historical"]}) — '
+           f'past validation failures since corrected; review findings a later version resolved'
+           f'</summary><div class="note">Kept as history: the stored records are never edited. '
+           f'None of these bears on a current card.</div>'
+           + (f"<ul>{hist_html}</ul>" if hist_html else "") + (items(sup) if sup else "")
+           + ('<div class="empty">None.</div>' if not hist and not sup else "") + "</details>"]
     return "".join(out)
 
 
@@ -1416,8 +1578,8 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     v = d.verification or {}
     k = d.kpi or {}
     rows = _active_rows(d)
-    review_n = (sum(len(r.review_lines) for r in rows) + int(v.get("figures_open", 0))
-                + int(v.get("paragraphs_open", 0)) + len(v.get("coverage_alerts") or []))
+    rc_n = review_counts(d, rows)
+    review_n = rc_n["current"]
     wf, wt = run.get("window_from") or "—", run.get("window_to") or "—"
     parts = [f'<header class="dhead"><div class="eyebrow">Weekly research brief</div>'
              f'<h1>What to research this week</h1><div class="subline">{e(wf)} – {e(wt)} · as of '
@@ -1432,23 +1594,28 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
         f'<div class="stat"><b>{k.get("watch", 0)}</b><span>Watch</span></div>'
         f'<div class="stat"><b>{k.get("skip", 0)}</b><span>Skip</span></div>'
         f'<a class="stat{" warn" if review_n else ""}" href="#review"><b>{review_n}</b>'
-        f'<span>Review items</span></a>'
+        f'<span>Review items</span><span class="sm">on current cards</span></a>'
         f'<a class="stat" href="#review"><b class="vt">{e(vword)}</b><span>Verification · '
-        f'{v.get("figures_open", 0)} figure(s), {v.get("paragraphs_open", 0)} paragraph(s) '
-        f'open</span></a>'
+        # CURRENT open figures — those that failed a since-corrected check are history, told
+        # apart in the review queue (the JSON keeps both counts)
+        f'{v.get("figures_open", 0) - v.get("figures_superseded", 0)} figure(s), '
+        f'{v.get("paragraphs_open", 0)} paragraph(s) open</span></a>'
         f'<div class="stat"><b>{k.get("articles_full", 0) + k.get("articles_partial", 0)}</b>'
         f'<span>Articles read · {k.get("articles_partial", 0)} in part</span></div></div>')
     parts.append(f'<section id="theses"><h2>Theses this week <small class="note">({len(rows)}) '
                  f'— ranked by research action, then the freshest evidence</small></h2>'
                  + ('<div class="theses">' + "".join(_thesis_html(r) for r in rows) + "</div>"
                     if rows else '<div class="empty">No thesis created or changed this week.'
-                                 '</div>') + "</section>")
+                                 '</div>')
+                 + '<div class="note legend">“First ingested” = new to this registry, not '
+                   'necessarily new to the market.</div></section>')
     parts.append(f'<section id="activity"><h2>This week\'s activity <small class="note">— '
                  f'{k.get("new", 0)} new · {k.get("upgraded", 0)} upgraded · '
                  f'{k.get("downgraded", 0)} downgraded · {k.get("challenged", 0)} challenged'
                  f'</small></h2>' + _activity_html(rows) + "</section>")
-    parts.append(f'<section id="review"><h2>Review queue <small class="note">({review_n} '
-                 f'item(s))</small></h2>' + _review_html(d, rows, print_mode) + "</section>")
+    parts.append(f'<section id="review"><h2>Review queue <small class="note">({review_n} on '
+                 f'current cards; the rest grouped below)</small></h2>'
+                 + _review_html(d, rows, print_mode) + "</section>")
     parts.append('<section id="sources"><h2>Sources</h2>' + _sources_html(d, print_mode)
                  + "</section>")
     parts.append(f'<section id="archive"><h2>Archive <small class="note">({len(d.archive)} '
@@ -1462,7 +1629,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     script = ("<script>function filt(q){q=q.toLowerCase();document.querySelectorAll('#arch tr')"
               ".forEach((r,i)=>{if(i)r.style.display=r.textContent.toLowerCase().includes(q)?'':"
               "'none'})}window.addEventListener('beforeprint',()=>document.querySelectorAll("
-              "'details').forEach(d=>d.open=true));</script>")
+              "'details').forEach(d=>d.open=true));</script>" + REVEAL_JS)
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
             "content='width=device-width,initial-scale=1'><title>Theme intelligence weekly"
             "</title><style>" + _CSS + _DASH_CSS + "</style></head><body>" + AUDIT_TOGGLE
