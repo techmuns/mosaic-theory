@@ -636,17 +636,26 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
      page moved on 2026-10-11, and the book got `2026-10-09.json` beside an untouched `2026-09-22`.
    - **The newest committed day itself:** the run replaces the front of the book with the same
      session and better data, which `write_snapshot` allows.
-   - **A day with a later close after it is never re-run.** `write_snapshot` refuses it once a later
-     day file exists; the rule also covers the window before one does.
-2. **Run it** — `python -m vinci.cli monitor --ref <close>`. It prints the book, then writes
-   `data/monitor/<close>.json`. *(Source: `_cmd_monitor`; `monitor.write_snapshot`.)*
+   - **A day with a later close after it is never re-run.** `write_snapshot` refuses only to
+     OVERWRITE such a day once a later day file exists. It does NOT refuse a past day that was never
+     written (e.g. `--ref 2026-10-01` while `2026-09-22` and `2026-10-09` are committed writes a new
+     back-dated file), nor a re-cut of the newest day before the later close has a file. The rule
+     covers both; nothing in code does.
+2. **Run it with NO `--ref`** — `python -m vinci.cli monitor`. The date defaults to today: the day
+   is FILED under the last session on or before it (`session_on_or_before`) and READS filings and
+   evidence through today (`known_through = ref`). Passing `--ref <close>` on a later morning would
+   bound the read at the close and hide that morning's 8-K — the defect #707's review fixed.
+   `--ref` is for the scratch re-cuts below, never for a committed day. It prints the book, then
+   writes `data/monitor/<session>.json`. *(Source: `_cmd_monitor`; `monitor.write_snapshot`.)*
 3. **Mirror** — `python3 frontend/build.py` copies every day into `frontend/monitor/` and moves
    `index.json`'s `latest`. *(Source: `frontend/build.py:emit_monitor`.)*
 4. **Check before committing:**
    - the panel-emit pin is green;
-   - no `newer_filings` date and no `last_evidence_date` is after the day's `as_of`;
-   - any "no freshness row" or "carries evidence dated after" note is expected. On the latest close
-     there should be none.
+   - no `newer_filings` date and no `last_evidence_date` is after the date the run was made (its
+     `--ref`, i.e. today). A filing dated after the day's `as_of` but on or before today is CORRECT
+     on a same-session re-run — a Monday-morning run filed under Friday flags Monday's 8-K;
+   - any "no freshness row" or "carries evidence dated after" note is expected. On a run with no
+     `--ref` there should be none.
 5. **Commit as an artifact** — the day file plus `frontend/monitor/*`, never bundled with code; the
    full offline suite runs green first (CLAUDE.md §ARTIFACT-PASS RULE).
 

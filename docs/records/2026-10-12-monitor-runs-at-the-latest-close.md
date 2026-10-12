@@ -53,10 +53,16 @@ the remedy. The file was restored and the pin is green again. Output in the PR.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The rule rests on the operator; nothing refuses an early `--ref`.** `write_snapshot` refuses only
-  when a later day FILE exists. A re-cut of the newest day after a later close, but before that close
-  has a file, goes through.
-  - Falsifier: a committed day file last modified in a commit made after a later session's close —
-    visible in `git log -- data/monitor/<day>.json` against the session calendar.
+  to OVERWRITE a day that already has a file AND has a later day file above it. Two cases go through:
+  a re-cut of the newest day after a later close, before that close has a file; and a back-dated day
+  that was never written (`--ref 2026-10-01` between the committed `2026-09-22` and `2026-10-09`).
+- **The committed day is run with no `--ref`.** The day is filed under the last session on or before
+  today and reads filings through today; `--ref <close>` on a later morning would hide that morning's
+  8-K, the defect #707's review fixed. `--ref` is for scratch re-cuts only (RUNBOOKS §j step 2).
+  - Falsifier: a committed day file ADDED or modified in a commit made after a later session's
+    close — visible in `git log -- data/monitor/<day>.json` against the session calendar. Commit
+    time is a proxy for run time: a run made before the later close but committed after it reads
+    as a violation, so a hit is checked against the run before it is called one.
   - A machine check is possible: refuse to write day D when any page the panels read is struck on a
     session after D. It is not built here; the ruling chose the rule.
 - **A moved page can leave the panel-emit pin red until the next close** when the page is struck on
