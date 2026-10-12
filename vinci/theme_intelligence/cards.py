@@ -72,6 +72,7 @@ from vinci.theme_intelligence.verify import (
     label_for,
     norm_name,
     provenance_of,
+    same_sentence_reread,
 )
 
 HORIZON_LABEL = {Horizon.NEXT_2_4_QUARTERS: "Next 2-4 quarters",
@@ -187,7 +188,8 @@ def evidence_rows(claims: dict[str, Claim],
                   links: list[ThesisClaimLink]) -> tuple[EvidenceRow, ...]:
     """One row per piece of evidence: claims repeating the SAME origin + measure + value
     collapse into the first, which lists the repeats as `also_reported_in` (attribution, not new
-    evidence)."""
+    evidence); a sentence read again from another version of the same article collapses into
+    the row its first reading made."""
     roles = (LinkRole.DISLOCATION, LinkRole.SUPPORTS, LinkRole.CATALYST)
     rows: dict[str, EvidenceRow] = {}
     order = sorted((lk for lk in links if lk.role in roles and lk.claim_id in claims),
@@ -202,7 +204,9 @@ def evidence_rows(claims: dict[str, Claim],
                 rows[c.fingerprint] = r.model_copy(
                     update={"also_reported_in": (*r.also_reported_in, c.article_id)})
             continue
-        label = " — ".join(x for x in (c.scope, c.metric) if x) or c.statement
+        if any(same_sentence_reread(claims[r.claim_id], c) for r in rows.values()):
+            continue
+        label =" — ".join(x for x in (c.scope, c.metric) if x) or c.statement
         rows[c.fingerprint] = EvidenceRow(
             claim_id=c.claim_id, label=label, value_text=c.value_text, value=c.value,
             unit=c.unit, period=c.period, measured_as_of=c.measured_as_of, epistemic=c.epistemic,

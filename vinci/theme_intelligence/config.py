@@ -38,7 +38,7 @@ EXTRACT_PROMPT_VERSION = "ti-extract-6"
 COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
 PARSER_VERSION = "ti-parse-6"  # 6: undecodable PDF glyphs quarantined
-ENGINE_VERSION = "ti-engine-2"
+ENGINE_VERSION = "ti-engine-3"  # 3: a sentence read again from another version is REPEATED
 
 #: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
 #: Cache writes bill 1.25x input and cache reads 0.1x input. Used for the run manifest's cost line;

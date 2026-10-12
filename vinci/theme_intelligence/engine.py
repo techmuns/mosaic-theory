@@ -9,7 +9,9 @@ The thesis id is a hash of the key, so a re-run on an empty registry reproduces 
 populated registry MATCHES an earlier thesis instead of minting a new id.
 
 WHAT AN INCOMING CLAIM IS, relative to what the thesis already holds:
-  repeated                — same claim, or same measure + value + upstream ORIGIN (attribution only)
+  repeated                — same claim, or same measure + value + upstream ORIGIN (attribution
+                            only), or one sentence and figure read again from another VERSION of
+                            the same article (a re-read, a preview's full text), however labelled
   independent confirmation — same measure and value from a DIFFERENT origin
   contradictory           — the source contradicts the thesis, or a different origin disagrees
   correction              — same origin + measure, different value, no later as-of
@@ -108,6 +110,7 @@ from vinci.theme_intelligence.verify import (
     passage_anchor,
     passage_claim,
     reanchor_sentence,
+    same_sentence_reread,
 )
 
 _GEO = {"us": "US", "u.s.": "US", "united states": "US", "usa": "US", "america": "US",
@@ -1226,6 +1229,11 @@ def classify_claim(new: Claim, role: LinkRole, held: list[Claim]) -> tuple[Chang
     if same_fp:
         return ChangeClass.REPEATED, (f"same measure, value and upstream origin as "
                                       f"{same_fp[0].claim_id} — attribution, not new evidence")
+    reread = [e for e in held if same_sentence_reread(e, new)]
+    if reread:
+        return ChangeClass.REPEATED, (f"the same sentence and figure as {reread[0].claim_id}, "
+                                      f"read again from another version of this article "
+                                      f"({reread[0].article_version_id}) — not new evidence")
     if role is LinkRole.CONTRADICTS:
         return ChangeClass.CONTRADICTORY, "the source states evidence against this thesis"
     same_measure = [e for e in held if e.measure_key == new.measure_key

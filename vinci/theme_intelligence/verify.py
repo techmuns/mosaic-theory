@@ -287,6 +287,26 @@ def _nk(s: str | None) -> str:
     return norm_text(s or "").lower()
 
 
+#: the shorter quote must be at least this long to count as CONTAINED in the other (a one-word
+#: quote inside a sentence is not that sentence)
+SAME_SENTENCE_MIN_CHARS = 20
+
+
+def same_sentence_reread(held: Claim, new: Claim) -> bool:
+    """`new` restates `held` from ANOTHER VERSION of the same article — a re-read by a newer
+    reader, or the full text of a preview: one quote is (or contains) the other and the figure is
+    the same. Two extraction answers label one sentence's metric / scope / period differently, so
+    the fingerprint misses it; the SOURCE SENTENCE is the evidence, not the model's label for it."""
+    if held.article_id != new.article_id or held.article_version_id == new.article_version_id:
+        return False
+    a, b = _nk(held.quote), _nk(new.quote)
+    if a != b and (min(len(a), len(b)) < SAME_SENTENCE_MIN_CHARS or (a not in b and b not in a)):
+        return False
+    if held.value is not None and new.value is not None:
+        return held.value == new.value
+    return _nk(held.value_text) == _nk(new.value_text)
+
+
 # --- provenance --------------------------------------------------------------------------------
 
 _LABEL_RANK = {Provenance.SOURCE_OPINION: 0, Provenance.ARTICLE_FACT: 0, Provenance.FORECAST: 1,

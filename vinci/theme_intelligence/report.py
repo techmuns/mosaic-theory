@@ -365,8 +365,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     out["line"] = (f"{len(auto)} analysed automatically · {len(manual)} imported manually · "
                    f"{len(awaiting)} partial awaiting a complete document · {len(publishers)} "
                    f"publisher(s) blocked or degraded · {len(needs_upload)} needing an upload · "
-                   f"{len(metadata)} needing a metadata or licence check · {len(gaps)} coverage "
-                   f"gap(s)")
+                   f"{len(metadata)} needing a metadata, licence or visual check · "
+                   f"{len(gaps)} coverage gap(s)")
     return out
 
 
@@ -1070,7 +1070,7 @@ _INTAKE_LISTS = (
     ("awaiting_documents", "Partial articles awaiting a complete document"),
     ("publishers", "Publishers blocked or degraded"),
     ("needs_upload", "Known articles requiring an upload"),
-    ("needs_metadata", "Requiring a metadata or licence check"),
+    ("needs_metadata", "Requiring a metadata, licence or visual check"),
     ("coverage_gaps", "Unknown publisher-level coverage gaps"),
 )
 

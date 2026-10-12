@@ -280,6 +280,95 @@ def test_a_reread_is_a_new_version_of_the_same_article_with_history_kept(
         assert not [lk for lk in links if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
 
 
+class Relabelling(Model):
+    """The second answer labels the SAME sentence differently — observed on the real 60-page
+    PDF on 2026-10-12: a re-read listed 18 sentences twice on five cards and called them "new"
+    because each answer named the metric / period in its own words — and also takes the
+    sentence's OTHER figure, which is evidence the first answer did not hold."""
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> dict[str, Any]:
+        first = not self.users
+        x = super().extract(system=system, user=user, tool=tool, cache=cache)
+        if tool["name"] != "record_article_evidence" or first:
+            return x
+        quote = x["claims"][0]["quote"]
+        x["claims"] = [claim("c1", "b003", quote, "US transmission spending up 18%",
+                             metric="US transmission capital spending", value=18,
+                             value_text="18%", unit="%", period="calendar 2026"),
+                       claim("c2", "b003", quote, "Transmission capex reached $42 billion",
+                             metric="transmission capex", value=42e9, value_text="$42 billion",
+                             unit="USD", period="2026")]
+        x["hypotheses"][0]["supporting_claim_ids"] = ["c1", "c2"]
+        Extraction.model_validate(x)
+        return x
+
+
+def test_a_reread_sentence_is_repeated_evidence_never_new_or_a_second_row(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    pipe = _pipe(tmp_path, Relabelling())
+    with monkeypatch.context() as m:
+        _unguarded(m)
+        first = _ingest(pipe)
+    again = _ingest(pipe, reread=True)
+    assert again.article_id == first.article_id and again.version_id != first.version_id
+    [t] = pipe.store.theses()
+    claims = {c.claim_id: c for c in pipe.store.claims_for_article(first.article_id)}
+    v2 = {lk.claim_id: lk for lk in pipe.store.links(t.thesis_id)
+          if claims[lk.claim_id].article_version_id == again.version_id}
+    by_value = {claims[cid].value_text: lk.change_class for cid, lk in v2.items()}
+    # the same sentence and figure, labelled differently: REPEATED, not new evidence
+    assert by_value["18%"] is ChangeClass.REPEATED
+    # the same sentence's OTHER figure was never held: it is new (from an origin already counted)
+    assert by_value["$42 billion"] is ChangeClass.NEW
+    v = pipe.store.thesis_version(t.thesis_id, t.current_version)
+    assert v is not None
+    rows = [(r.quote.lower(), r.value_text) for r in v.content.s04_key_evidence]
+    assert len(rows) == len(set(rows)) == 2  # one row per figure — never the 18% twice
+    assert not [lk for lk in pipe.store.links(t.thesis_id)
+                if lk.change_class is ChangeClass.INDEPENDENT_CONFIRMATION]
+
+
+def _c(cid: str, version: str, quote: str, value: float | None, value_text: str | None, *,
+       article: str = "A-1", metric: str = "m") -> Any:
+    from vinci.theme_intelligence.schemas import Claim, ClaimKind, Confidence, Epistemic
+
+    return Claim(claim_id=cid, article_id=article, article_version_id=version, block_id="b003",
+                 char_start=0, char_end=len(quote), quote=quote, statement=quote,
+                 kind=ClaimKind.METRIC, epistemic=Epistemic.ACTUAL, metric=metric, value=value,
+                 value_text=value_text, confidence=Confidence.HIGH, span_verified=True,
+                 number_verified=True, measure_key=f"k|{metric}", fingerprint=f"f|{cid}",
+                 extraction_id="X-1")
+
+
+S = "the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fuel cells"
+
+
+@pytest.mark.parametrize("new", [
+    _c("n1", "AV-2", S.upper(), 31, "31%", metric="gas share of CCGT LCOE"),   # labelled anew
+    _c("n2", "AV-2", "the gas cost makes up 31%, 32%, and 25%", 31, "31%"),    # a shorter quote
+    _c("n3", "AV-2", S.replace(" ", " "), None, "31%"),                  # typography only
+])
+def test_the_same_sentence_from_another_version_is_the_same_evidence(new: Any) -> None:
+    from vinci.theme_intelligence.verify import same_sentence_reread
+
+    assert same_sentence_reread(_c("h", "AV-1", S, 31, "31%"), new)
+
+
+@pytest.mark.parametrize("new", [
+    _c("n1", "AV-1", S, 31, "31%"),                      # the SAME version: not a re-read
+    _c("n2", "AV-2", S, 31, "31%", article="A-2"),       # another article quoting it
+    _c("n3", "AV-2", S, 32, "32%"),                      # the same sentence's other figure
+    _c("n6", "AV-2", S, None, "32%"),                    # ... with no parsed value either
+    _c("n4", "AV-2", "fuel cells", 31, "31%"),           # a fragment, not the sentence
+    _c("n5", "AV-2", "stack replacement cost is 30% of the total", 31, "31%"),  # another sentence
+])
+def test_another_sentence_figure_or_article_is_never_folded_in(new: Any) -> None:
+    from vinci.theme_intelligence.verify import same_sentence_reread
+
+    assert not same_sentence_reread(_c("h", "AV-1", S, 31, "31%"), new)
+
+
 def test_a_reread_of_unchanged_text_adds_nothing(tmp_path: Path) -> None:
     model = Model()
     pipe = _pipe(tmp_path, model)
@@ -300,6 +389,12 @@ def test_the_weekly_report_asks_for_a_visual_review_never_for_a_missing_document
     intake = research_intake(pipe.store, run, [run], {"rows": [], "attention": []})
     review = [x for x in intake["needs_metadata"]["items"] if x.startswith("VISUAL / OCR REVIEW")]
     assert len(review) == 1 and "pages 2–3" in review[0] and "NOT read" in review[0]
+    # the rendered section says what kind of check it is (seen on the real report 2026-10-12:
+    # a visual review filed under "a metadata or licence check")
+    from vinci.theme_intelligence.report import _intake_html
+
+    assert "1 needing a metadata, licence or visual check" in intake["line"]
+    assert "Requiring a metadata, licence or visual check" in _intake_html(intake, False)
     [awaiting] = intake["awaiting_documents"]["items"]
     assert "not a missing document: pages 2–3 could not be read" in awaiting
     v = research_verification(pipe.store, run)
