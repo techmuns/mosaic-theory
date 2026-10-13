@@ -52,6 +52,10 @@ superseded-by:
   is committable to the private repo and deployed on the authed internal site. It is derived
   analysis with titles, figures and short source quotes. It never carries article text, and it
   reverts to git-ignored with the dossiers if the repo or the deploy ever becomes public.
+- **The py↔JS duplicate-definition guard** (`tests/test_duplicate_definitions.py`) no longer scans
+  `frontend/theme-intelligence/`. Its `desk.js` is generated from `desk.py` byte for byte (pinned
+  equal), not a hand-copied twin. The first full suite run found this: the local preview's
+  generated copy read as a new duplicate. Every other frontend JS file is scanned as before.
 - **No publication is committed by this change:** the app shows "No theme-intelligence run is
   published yet" until one is.
 
