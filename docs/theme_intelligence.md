@@ -623,6 +623,35 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
 - A registry holding articles from a reserved test domain (`.test`) says **TEST DATA** on every
   page.
 
+**One theme.** The desk, the Living Thesis Card and the weekly report share one palette (light and
+dark, following the OS), one type and one nav bar — the desk's six screens — with the audit switch at
+the right. The weekly report keeps its own sections in a second row ("On this page").
+
+**Not checkable on this machine.** The weekly runner rebuilds the registry from the state branch's
+export, which carries no article text; there, business groups (read from the evidence paragraphs)
+are reported as *not checkable on this machine*, never as *none*.
+
+**Inside the main app (`frontend/theme-intelligence/`).** The app (Nostra Vinci) shows the desk as
+its **Theme intelligence** section — This week, Themes, Articles, Review, Uploads and Sources as
+tabs, a thesis's reading page under Themes, the Full record and the weekly report opening as the
+published pages in a new tab — in the app's own design language and light/dark toggle. To publish a
+run (no model call):
+
+```bash
+python -m vinci.theme_intelligence state pull
+python -m vinci.theme_intelligence publish
+git add frontend/theme-intelligence && git commit -m "theme intelligence: publish <week>"
+```
+
+`publish` takes the latest run (`--run` for another), replaces the previous publication whole, and
+refuses a registry holding test-domain articles (the synthetic stress registries) unless
+`--allow-test-data` is given for a local preview. Commit the folder ALONE (an artifact commit — never
+with code) and merge it the way the dossier artifacts are; Cloudflare Pages deploys it with the site.
+What is published is derived analysis with titles, figures and short source quotes for internal use
+on the authed deploy (operator decision 2026-10-13) — never an article's text, never a local path.
+The weekly Actions run does NOT publish (it commits only to the state branch); publishing stays a
+deliberate step.
+
 **Follow-up requirements (documented, not built).**
 - **A. A safe one-step weekly upload command:** a cache-only state pull, identity and licence
   checks, a cost preflight, an explicitly budgeted import, QA, ledger reconciliation, and a

@@ -478,6 +478,17 @@ PR (CLAUDE.md: coin-time translation).
   the earlier open findings stay open on it — on the unchanged line as before, on a changed line
   as NOT RE-REVIEWED, on a removed line as listed — read from the run that made them, never
   copied, never resolved by the skip*.
+- **Publish (theme intelligence)** (`publish.py`, `python -m vinci.theme_intelligence publish`) —
+  plain words: *write one run's research desk into `frontend/theme-intelligence/`, which the main
+  app shows as its Theme intelligence section: the standalone pages, the desk's own script and its
+  styles scoped to the section on the app's design tokens — one renderer, two frames; a test-domain
+  registry is refused*.
+- **Theme (theme intelligence)** (`cards.THEME_CSS`, `cards.topnav`) — plain words: *the one
+  palette (light and dark), type, nav bar and audit switch every theme-intelligence page uses — the
+  desk, the Living Thesis Card and the weekly report*.
+- **Not checkable on this machine** (theme intelligence, `report.groups_unread`) — plain words: *a
+  paragraph whose text this registry does not hold (an exported registry, the weekly runner):
+  business groups there are reported as not checkable, never as none*.
 - **Week in progress** (theme intelligence, `desk.desk_weeks`) — plain words: *the manual runs
   since the last weekly scan, shown as the desk's current week until a scan closes it*.
 - **Stress registry** (theme intelligence, `tests/theme_intelligence_stress.py`) — plain words: *a
