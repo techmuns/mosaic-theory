@@ -585,30 +585,35 @@ document is analysed without its licence confirmed.
 Every run's output folder opens on the desk (`index.html`); the weekly report
 (`dashboard.html`), its printable record and the cards are unchanged and linked from it.
 
-- **This Week** — the week in a sentence, then the week's thesis changes grouped by research area
-  (new, upgraded, downgraded, challenged, new evidence) and what each article produced, including
-  zero-thesis, partial, held, failed and queued ones. Before the first weekly scan, the week is
-  every manual run since (a week in progress).
+- **This Week** — the week in a sentence and five counts (articles read, theses new or changed,
+  Research Now, findings to review, upload items), then the week's thesis changes grouped by
+  research area (new, upgraded, downgraded, challenged, new evidence) and what each article
+  produced, including zero-thesis, partial, held, failed and queued ones. **Needs your attention**
+  sits beside them; every active thesis by area is one fold below. Before the first weekly scan,
+  the week is every manual run since (a week in progress).
 - **Themes** — every thesis, active and archived, by area: search, filter by status, action and
-  area, and sort by last new evidence, closeness to archiving, sources or open findings. Areas use
-  short names; the taxonomy keys are unchanged.
-- **Articles** — one page per week (the selector shows them), each article's state, what it
-  produced, its open completeness items and its follow-up.
-- **Review** — every unresolved finding on every active thesis, whatever week raised it, in order:
-  decision-affecting first, then Research Now, then the oldest. Each links to its exact card line.
+  area, and sort by last new evidence, closeness to archiving, sources or open findings. An area opens
+  when it changed this week; the others are one click away. Areas use short names; the taxonomy
+  keys are unchanged.
+- **Articles** — one page per week (older / newer, and every week in one fold), each article's
+  state, what it produced, its open completeness items and its follow-up.
+- **Review** — every unresolved finding on every active thesis, whatever week raised it, grouped
+  under its thesis, in order: decision-affecting first, then Research Now, then the oldest. Each
+  links to its exact card line; a line's scope note is in the audit view, as on the reading page.
   Resolved and historical findings stay below. The page is read-only; a finding closes only through
   the record (an analyst correction or a re-read).
 - **Uploads** — everything to supply or clear, never dismissed by age, each with its publisher,
-  source id, dates and the command to run (folded on its row). The weekly steps are listed beside
-  it.
+  dates and the command to run (folded on its row; the source id is in the command and the audit
+  view). The weekly steps are listed beside it.
 - **Sources** — health now, the stored health-check history (only what is recorded), freshness,
   articles analysed in the last four weeks, and how research may come in: automatic coverage and
   manual-first coverage apart.
-- **The reading page** (`theses/<id>.html`) — the thesis, what changed, the strongest figures, how
-  it reaches fundamentals, why this action, what could prove it wrong and what to investigate next.
-  Exposures, related theses (theses sharing a source are flagged as the same source, not
-  independent confirmation), open findings, evidence, history and sources follow. **Full record**
-  opens the nine-section card, or any one section.
+- **The reading page** (`theses/<id>.html`) — the thesis; why this action beside what to
+  investigate next; the strongest figures; how it reaches fundamentals beside what could prove it
+  wrong; what changed beside who is exposed. Open findings, related theses (theses sharing a source
+  are flagged as the same source, not independent confirmation), evidence, history and sources
+  follow; the longer lists (conditions met, more risks, signals to watch) are one fold away. **Full
+  record** opens the nine-section card, or any one section.
 - **Timing** — the near-term condition is stated once, met or not, from the stored factor, with
   the dated claims it reads and where each date comes from. The source's horizon label is printed
   as a description, not a test. If those claims, re-dated today, give another value, the page shows
