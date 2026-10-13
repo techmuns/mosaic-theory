@@ -1,7 +1,7 @@
 # Theme intelligence — operator guide
 
 `vinci/theme_intelligence/` is a **research discovery and prioritisation** tool. It reads permitted
-public research pages from seven publisher channels (five automatic, two manual-first), extracts their source-anchored evidence, named
+public research pages from six publisher channels (four automatic, two manual-first), extracts their source-anchored evidence, named
 companies and risks, keeps a persistent, versioned registry of investment theses, and writes a
 decision-first weekly briefing of nine-section **Living Thesis Cards**.
 
@@ -28,7 +28,7 @@ no prices, returns or outcomes (including the unmerged #695 audit's).
 | `report --latest` / `--week 2026-10-05` or `2026-W41` / `--run RUN_ID` | re-render the dashboard and every card from the registry |
 | `qa --run RUN_ID\|latest` | re-check a run's stored records without any LLM (spans, figures, look-ahead, card facts, section order, hashes, triggers, coverage, render consistency) |
 | `backup` · `export-state --out D` · `import-state --src D` | consistent SQLite copy · append-only JSONL export (no article text) · rebuild a fresh registry from an export |
-| `sources` | print the seven configured channels (and the retired ones, as history) |
+| `sources` | print the six configured channels (and the retired ones, as history) |
 | `ingest-file --path F --source S [--url U] [--llm-permitted]` | import one supplied document (PDF / HTML / Markdown / text) through the SAME pipeline — see *Manual documents* below |
 | `ingest-inbox [--inbox D] [--source S]` | import every document in the private inbox; each file is filed under `processed/`, `held/`, `review/` or `rejected/` |
 | `documents [--status HELD]` | list the supplied documents and their status |
@@ -197,13 +197,16 @@ Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
   ingestion the run is a historical replay and says so — a simulated date is never called a
   detection.
 
-## The seven channels (editable: `vinci/theme_intelligence/config/sources.toml`)
+## The six channels (editable: `vinci/theme_intelligence/config/sources.toml`)
 
-Seven approved publishers since 2026-10-11 (operator decision): Bank of America was removed —
-not replaced — and sits under `[[retired]]` as HISTORY only: no discovery, no health check, no
-upload request, no new import (`ingest-file` / `article` refuse it plainly); its earlier
-evidence, theses and runs stay in the registry untouched and are never requeued. Every count —
-health, coverage, intake — is derived from the configured seven, never hardcoded.
+Six approved publishers since 2026-10-13 (operator decisions): Bank of America (2026-10-11) and
+Nomura (2026-10-13 — its full reports sit on a client portal with no public sign-up, so they
+could never be supplied) were removed — not replaced — and sit under `[[retired]]` as HISTORY
+only: no discovery, no health check, no upload request on the weekly report or the desk, no new
+import (`ingest-file` / `article` refuse the source and any URL on its hosts — for Nomura its site
+and its portal); their earlier evidence, theses and runs stay in the registry untouched and are
+never requeued. Every count — health, coverage, intake — is derived from the configured six,
+never hardcoded.
 
 Access as probed on 2026-10-09/10 with the honest research User-Agent (no browser spoofing, robots.txt
 honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
@@ -213,7 +216,6 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 | Citi Must C | the page's embedded CMS data (`__NEXT_DATA__`): series items + CMS publishDate | OK — the page embeds its ~20 linked items; older ones are not listed there. Each page links its full report as a public PDF ("Download Here") — read automatically (`linked_reports = "fetch"`) |
 | J.P. Morgan Top Market Takeaways | listing cards with dates (sitemap lastmod as a fallback that can only rule a page OUT) | OK |
 | Morgan Stanley Research | **manual-first** (`mode = "manual_first"`): a lightweight health check only; research arrives as authorised uploads | automated access **BLOCKED** — the connection is dropped on every request, robots.txt included; never bypassed, never retried inside its back-off |
-| Nomura Connects | `/articles/` + pagination, each page's own date | OK — pages that say "to read the full report, click here" point to the client portal: listed for an authorised upload, never fetched (`linked_reports = "request"`) |
 | TrendForce press center | listing pages `?page=N`, date in the article URL | OK |
 | SemiAnalysis | the newsletter's RSS feed (pubDate) | OK — paid posts carry a preview only and are recorded PARTIAL |
 | Goldman Sachs Research | **manual-first**, as Morgan Stanley | automated access **BLOCKED** — HTTP 403 on entry, sitemap and insights |
@@ -815,7 +817,7 @@ measured for three Citi reports).
 - Bank of America is retired (2026-10-11): its history is kept, nothing new is read or accepted.
 - SemiAnalysis paid posts expose a preview only — PARTIAL until an authorised full copy is
   uploaded (it then UPGRADES the same article).
-- Nomura's full reports sit on its client portal — requested, never fetched.
+- Nomura was retired on 2026-10-13: its full reports sit on its client portal (no public sign-up).
 - No OCR: a scanned page is flagged and the document PARTIAL; chart values are not read.
 - A figure-dense research PDF is expensive through the full pipeline ($46.67 measured for one
   60-page report) — held above the per-document limit until the operator raises it. The spend
