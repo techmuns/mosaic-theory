@@ -307,6 +307,10 @@ python -m vinci.theme_intelligence documents --status HELD
   heading is one heading); title, authors (metadata, front matter or a "By …" byline) and the
   document's own date, each with where it was read. Running headers, footers and page numbers are
   left out and counted.
+- **A saved preview stays a preview** (2026-10-13). A paywalled page saved as PDF without a paid
+  sign-in ends with the publisher's subscriber notice ("This post is for paid subscribers …");
+  the document is then PARTIAL, said why, and Uploads keeps asking for the full post. Save a paid
+  post while signed in to the paid subscription.
 - **What is flagged, never dropped silently.** A page with no text layer (a scanned image — OCR is
   not available here) makes the document PARTIAL; a page with charts says its plotted values are
   not verifiable; a page that cannot be read is named. Numbers shown only in a chart are never
@@ -604,10 +608,15 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   the record (an analyst correction or a re-read).
 - **Uploads** — everything to supply or clear, never dismissed by age, each with its publisher,
   dates and the command to run (folded on its row; the source id is in the command and the audit
-  view). The weekly steps are listed beside it.
-- **Sources** — health now, the stored health-check history (only what is recorded), freshness,
-  articles analysed in the last four weeks, and how research may come in: automatic coverage and
-  manual-first coverage apart.
+  view). A source's request lists its articles by title, linked, and says what is already held of
+  each ("supplied — held until you confirm its licence"); a source whose articles the scan cannot
+  list (Morgan Stanley, Goldman Sachs) points to its research page instead. The weekly steps are
+  listed beside it.
+- **Sources** — one plain line per channel from its latest check's test results ("some articles
+  are previews or summaries of a fuller report"), the check's own findings one fold away, the
+  history strip once two or more checks are stored, the newest article (on the site or held),
+  articles analysed in the last four weeks; automatic and manual-first coverage apart, the
+  manual-first ones with their research page.
 - **The reading page** (`theses/<id>.html`) — the thesis; why this action beside what to
   investigate next; the strongest figures; how it reaches fundamentals beside what could prove it
   wrong; what changed beside who is exposed. Open findings, related theses (theses sharing a source
