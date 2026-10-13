@@ -217,7 +217,7 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 | J.P. Morgan Top Market Takeaways | listing cards with dates (sitemap lastmod as a fallback that can only rule a page OUT) | OK |
 | Morgan Stanley Research | **manual-first** (`mode = "manual_first"`): a lightweight health check only; research arrives as authorised uploads | automated access **BLOCKED** — the connection is dropped on every request, robots.txt included; never bypassed, never retried inside its back-off |
 | TrendForce press center | listing pages `?page=N`, date in the article URL | OK |
-| SemiAnalysis | the newsletter's RSS feed (pubDate) | OK — paid posts carry a preview only and are recorded PARTIAL |
+| SemiAnalysis | the newsletter's RSS feed (pubDate) | OK — paid posts carry a preview only and are recorded PARTIAL; **preview-only by decision** (2026-10-13, no subscription — `paywalled_posts = "preview_only"`): the preview is analysed and labelled a preview, the full post never requested |
 | Goldman Sachs Research | **manual-first**, as Morgan Stanley | automated access **BLOCKED** — HTTP 403 on entry, sitemap and insights |
 
 Morgan Stanley and Goldman Sachs are **manual-first**: a scan does not attempt their discovery
@@ -666,7 +666,9 @@ with code) and merge it the way the dossier artifacts are; Cloudflare Pages depl
 What is published is derived analysis with titles, figures and short source quotes for internal use
 on the authed deploy (operator decision 2026-10-13) — never an article's text, never a local path.
 The weekly Actions run does NOT publish (it commits only to the state branch); publishing stays a
-deliberate step.
+deliberate step. **Operator decision 2026-10-13:** publish the current snapshot once #703 is merged;
+keep weekly publishing MANUAL for now (one `publish` + an artifact commit each week), and revisit
+automatic publishing after the first few weekly runs look right.
 
 **Follow-up requirements (documented, not built).**
 - **A. A safe one-step weekly upload command:** a cache-only state pull, identity and licence
@@ -815,8 +817,9 @@ measured for three Citi reports).
   research reaches clients through entitled portals and licensed distribution (not probed or
   configured here); the dependable route is an entitled operator's `ingest-file`.
 - Bank of America is retired (2026-10-11): its history is kept, nothing new is read or accepted.
-- SemiAnalysis paid posts expose a preview only — PARTIAL until an authorised full copy is
-  uploaded (it then UPGRADES the same article).
+- SemiAnalysis paid posts expose a preview only — PARTIAL, and by decision (2026-10-13, no
+  subscription) never requested: the preview is all this channel gives. A page that LINKS a fuller
+  report is still requested (`linked_reports`).
 - Nomura was retired on 2026-10-13: its full reports sit on its client portal (no public sign-up).
 - No OCR: a scanned page is flagged and the document PARTIAL; chart values are not read.
 - A figure-dense research PDF is expensive through the full pipeline ($46.67 measured for one
