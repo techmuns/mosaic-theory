@@ -472,6 +472,12 @@ PR (CLAUDE.md: coin-time translation).
   as met or not; the source's horizon label is a description, never a test; when the factor's own
   claims, re-dated today, give another value, the thesis shows Review required and keeps its
   action until reassessed*.
+- **Not reviewed / not re-reviewed** (theme intelligence, `report.review_carry`,
+  `cards.CarriedFinding`) — plain words: *a thesis version whose run recorded REVIEW_NOT_RUN
+  (`--no-review`, the review budget exhausted, no client and no cache) says it was not reviewed;
+  the earlier open findings stay open on it — on the unchanged line as before, on a changed line
+  as NOT RE-REVIEWED, on a removed line as listed — read from the run that made them, never
+  copied, never resolved by the skip*.
 - **Week in progress** (theme intelligence, `desk.desk_weeks`) — plain words: *the manual runs
   since the last weekly scan, shown as the desk's current week until a scan closes it*.
 - **Stress registry** (theme intelligence, `tests/theme_intelligence_stress.py`) — plain words: *a

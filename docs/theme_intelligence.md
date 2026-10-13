@@ -613,6 +613,11 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   the dated claims it reads and where each date comes from. The source's horizon label is printed
   as a description, not a test. If those claims, re-dated today, give another value, the page shows
   **Review required** and the research action of record stands until the thesis is reassessed.
+- **Not reviewed.** When the card review did not run for a version (`--no-review`, the review
+  budget exhausted, or no model client and no cached review), the card, the weekly report and the
+  desk say so, and the earlier open findings stay open: on an unchanged line as before, on a
+  changed line as **NOT RE-REVIEWED**, on a removed line listed apart — never resolved by the
+  skip. The next review that runs stands on its own findings.
 - **Audit view** (top right) shows ids, engine codes, factor values and the decision trace, as on
   the card.
 - A registry holding articles from a reserved test domain (`.test`) says **TEST DATA** on every
