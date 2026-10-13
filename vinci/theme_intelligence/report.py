@@ -41,8 +41,10 @@ from vinci.theme_intelligence.cards import (
     KIND_LABEL,
     REVEAL_JS,
     STEP_LABEL,
+    CarriedFinding,
     NamedGroup,
     RenderContext,
+    ReviewCarry,
     _clean_display,
     _line_name,
     cited_claim_ids,
@@ -629,7 +631,8 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                      f"({len(c.claim_ids)} claim ref(s)) — no new version, priority unchanged")
                     for c in contribs if c.version is None]
     articles = {c.article_id: a for c in contribs if (a := store.article(c.article_id))}
-    blocked, flagged, corrected, resolved = line_findings(store, t.thesis_id, v)
+    vf = _findings(store, t.thesis_id, v, {})
+    blocked, flagged, corrected, resolved = vf.blocked, vf.flagged, vf.corrected, vf.resolved
     links = store.links(t.thesis_id)
     claims = {i: c for i in cited_claim_ids(v.content) if (c := store.claim(i)) is not None}
     status_note = None
@@ -651,7 +654,7 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                          flagged=flagged, retrieval_now=retrieval_now, corrected=corrected,
                          priority=v.priority, resolved=resolved, claims=claims,
                          roles={lk.claim_id: lk.role.value for lk in links},
-                         groups=thesis_groups(store, links))
+                         groups=thesis_groups(store, links), carry=vf.carry)
 
 
 def thesis_groups(store: Store, links: list[ThesisClaimLink]) -> tuple[NamedGroup, ...]:
@@ -673,12 +676,56 @@ def line_findings(store: Store, thesis_id: str, v: ThesisVersion
                              dict[str, tuple[str, str]]]:
     """(withheld, review-flagged, analyst-corrected) lines of ONE version — sentence id -> what
     the record says — from the issues of the run that wrote it, each naming THIS version's
-    sentence. One function, so the card and the weekly overview never disagree."""
+    sentence; and, for a version written WITHOUT the card review, the earlier open findings read
+    onto its lines (`review_carry`). One function, so the card, the weekly overview and the desk
+    never disagree."""
+    f = _findings(store, thesis_id, v, {})
+    return f.blocked, f.flagged, f.corrected, f.resolved
+
+
+def review_carry(store: Store, thesis_id: str, v: ThesisVersion) -> ReviewCarry:
+    """The version's card-review status (see `_findings`)."""
+    return _findings(store, thesis_id, v, {}).carry
+
+
+def review_not_run(store: Store, thesis_id: str, v: ThesisVersion) -> str | None:
+    """Why the card review did not run for this version — its run's REVIEW_NOT_RUN for this
+    thesis (`--no-review`, the review budget exhausted, or no model client and no cached review);
+    None when the review ran."""
+    return next((i.detail for i in store.issues(run_id=v.run_id)
+                 if i.code == "REVIEW_NOT_RUN" and i.ref_id == thesis_id), None)
+
+
+@dataclass
+class _VersionFindings:
+    blocked: dict[str, str]
+    flagged: dict[str, str]
+    corrected: dict[str, str]
+    resolved: dict[str, tuple[str, str]]
+    carry: ReviewCarry
+    #: every open card-review finding on this version's lines, with where it was made
+    open: dict[str, CarriedFinding]
+
+
+def _findings(store: Store, thesis_id: str, v: ThesisVersion,
+              memo: dict[int, _VersionFindings]) -> _VersionFindings:
+    """One version's findings. A REVIEWED version shows its own review's findings — a finding a
+    successful later review does not raise again is no longer open (and a relabel may resolve
+    one: `_resolved_by_relabel`). A version written WITHOUT the card review (REVIEW_NOT_RUN) is
+    never read as clean (review of PR #703, 2026-10-13): every open finding of the version before
+    it stays open — on the line with the SAME words and the SAME cited evidence as an unresolved
+    finding; on a line whose words or evidence changed (the same text elsewhere, or the same
+    line id) as NOT RE-REVIEWED; and, when the line is gone, listed as removed, never resolved.
+    Nothing is copied or edited: each finding is read from the run that made it, with that
+    version and date. The deterministic card checks are each version's own (they always run)."""
+    if v.version in memo:
+        return memo[v.version]
     sents = card_sentences(v.content)
     blocked: dict[str, str] = {}
     flagged: dict[str, str] = {}
     corrected: dict[str, str] = {}
     codes: dict[str, str] = {}
+    own: dict[str, CarriedFinding] = {}
     for i in store.issues(run_id=v.run_id):
         if i.scope != "card_sentence" or (i.severity is not IssueSeverity.BLOCK
                                           and i.code not in REVIEW_WARNINGS
@@ -693,12 +740,52 @@ def line_findings(store: Store, thesis_id: str, v: ThesisVersion
         said = i.detail.partition(": ")[2].rpartition(" | ")[0] or i.detail
         if i.severity is IssueSeverity.BLOCK:
             blocked[sid] = f"{i.code} — {i.detail}"
+            if i.code.startswith("REVIEW_"):  # the card review withheld it (not a re-run check)
+                own[sid] = CarriedFinding(i.code, i.detail, said, True, v.version, v.as_of,
+                                          sents[sid][0], False)
         elif i.code == "ANALYST_CORRECTION":
             corrected[sid] = said
         else:
             flagged[sid] = said
             codes[sid] = i.code
-    return blocked, flagged, corrected, _resolved_by_relabel(store, thesis_id, v, flagged, codes)
+            own[sid] = CarriedFinding(i.code, i.detail, said, False, v.version, v.as_of,
+                                      sents[sid][0], False)
+    reason = review_not_run(store, thesis_id, v)
+    carried: dict[str, CarriedFinding] = {}
+    removed: list[CarriedFinding] = []
+    if reason is not None:
+        prev = max((x for x in store.thesis_versions(thesis_id) if x.version < v.version),
+                   key=lambda x: x.version, default=None)
+        if prev is not None:
+            before = _findings(store, thesis_id, prev, memo)
+            then = card_sentences(prev.content)
+            at = {txt: sid for sid, (txt, _p, _c) in reversed(list(sents.items()))}
+            for sid_p, f in before.open.items():
+                text_p, _prov, cids_p = then[sid_p]
+                here = at.get(text_p) or (sid_p if sid_p in sents else None)
+                if here is None or here in carried or here in own:
+                    removed.append(f)  # the line is gone (or its place is taken): never resolved
+                    continue
+                same = sents[here][0] == text_p and tuple(sents[here][2]) == tuple(cids_p)
+                carried[here] = CarriedFinding(f.code, f.detail, f.said, f.blocked,
+                                               f.origin_version, f.origin_as_of, f.origin_text,
+                                               f.changed or not same)
+            removed += list(before.carry.removed)
+        for sid, f in carried.items():
+            if sid in blocked:  # this version's own check withholds the line already
+                continue
+            if f.blocked and not f.changed:
+                blocked[sid] = f"{f.code} — {f.detail}"
+            else:
+                flagged[sid] = f.said
+                codes[sid] = f.code
+    resolved = _resolved_by_relabel(store, thesis_id, v, flagged, codes)
+    opened = {**{sid: f for sid, f in carried.items() if sid not in resolved}, **own}
+    out = _VersionFindings(blocked, flagged, corrected, resolved,
+                           ReviewCarry(reason, {k: f for k, f in carried.items()
+                                                if k not in resolved}, tuple(removed)), opened)
+    memo[v.version] = out
+    return out
 
 
 #: a CONTENT objection — something the cited spans do not carry, which no relabel answers. Any one

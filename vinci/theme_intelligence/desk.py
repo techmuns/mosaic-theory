@@ -45,6 +45,7 @@ from vinci.theme_intelligence.cards import (
     e,
     foot_html,
     ids_to_audit,
+    review_not_run_words,
     unit_shown,
     why_reasons,
 )
@@ -60,6 +61,7 @@ from vinci.theme_intelligence.report import (
     card_context,
     line_findings,
     report_runs,
+    review_carry,
     source_health_as_of,
     theses_as_of_run,
 )
@@ -141,7 +143,11 @@ _TIMING_WORD = {"near_term": "inside the next four quarters",
                 "straddling": "runs past the next four quarters",
                 "long_range": "beyond the next four quarters",
                 "historical": "older than a quarter", "undated": "no readable date"}
-_KIND_WORD = {"withheld": "Why it is held", "timing": "Timing", "review": "Review"}
+_KIND_WORD = {"withheld": "Why it is held", "timing": "Timing", "review": "Review",
+              "changed": "Not re-reviewed", "not_reviewed": "Not reviewed",
+              "removed": "Not re-reviewed"}
+#: where a Review item opens on the card when it has no line of its own
+_KIND_ANCHOR = {"timing": "sec-s06_why_now", "not_reviewed": "top", "removed": "top"}
 #: the order the week's articles are listed in on This Week: analysed, then what needs action
 STATE_ORDER = {"FULL": 0, "PARTIAL": 1, "FAILED": 2, "BLOCKED": 2, "NO_BODY": 2, "HELD": 3,
                "REVIEW": 3, "REJECTED": 3, "QUEUED": 4}
@@ -717,10 +723,12 @@ def _first_raised(store: Store, tid: str, versions: list[ThesisVersion], text: s
 def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
                     nt: NearTerm | None = None) -> tuple[list[Finding], list[Finding]]:
     """(open, history) findings of one thesis's version: the lines withheld or questioned
-    (report.line_findings — the card's own reading), a near-term timing conflict; and, as
+    (report.line_findings — the card's own reading, earlier findings included when this version
+    was not reviewed), a version the card review never read, a near-term timing conflict; and, as
     history, findings a later version resolved, analyst corrections, and findings on lines no
     longer on the card."""
     blocked, flagged, corrected, resolved = line_findings(store, t.thesis_id, v)
+    carry = review_carry(store, t.thesis_id, v)
     sents = card_sentences(v.content)
     versions = [x for x in store.thesis_versions(t.thesis_id) if x.version <= v.version]
     decisive = decision_claims(v)
@@ -728,22 +736,46 @@ def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
     base = {"thesis_id": t.thesis_id, "title": t.title, "action": action, "area": area}
     opened: list[Finding] = []
     for sid, (text, _prov, cids) in sents.items():
+        cf = carry.carried.get(sid)  # an earlier version's finding: its own date and version
+        since = (f" Not re-reviewed since version {cf.origin_version}." if cf else "")
         if sid in blocked:
             opened.append(Finding(**base, sid=sid, line=plain(text), kind="withheld",
                                   said="Withheld from the card — the line failed source "
-                                       "verification.",
+                                       "verification." + since,
                                   decision="a withheld line is never evidence until it is "
                                            "verified",
-                                  raised=v.as_of, raised_version=v.version, audit=blocked[sid]))
+                                  raised=cf.origin_as_of if cf else v.as_of,
+                                  raised_version=cf.origin_version if cf else v.version,
+                                  audit=blocked[sid]))
         elif sid in flagged:
-            first = _first_raised(store, t.thesis_id, versions, text, flagged[sid]) or v
+            first = ((cf.origin_as_of, cf.origin_version) if cf else next(
+                ((x.as_of, x.version) for x in [_first_raised(
+                    store, t.thesis_id, versions, text, flagged[sid])] if x is not None),
+                (v.as_of, v.version)))
             hit = sorted({decisive[c] for c in cids if c in decisive})
-            opened.append(Finding(**base, sid=sid, line=plain(text), kind="review",
-                                  said=flagged[sid],
+            opened.append(Finding(**base, sid=sid, line=plain(text),
+                                  kind="changed" if cf and cf.changed else "review",
+                                  said=flagged[sid] + (
+                                      f" (said of the line when it read “{plain(cf.origin_text)}”;"
+                                      f" changed since, not re-reviewed)" if cf and cf.changed
+                                      else since),
                                   decision=("the line restates evidence the research action "
                                             "counts (" + ", ".join(hit) + ")") if hit else "",
-                                  raised=first.as_of, raised_version=first.version,
+                                  raised=first[0], raised_version=first[1],
                                   audit=f"{t.thesis_id}:{sid} · " + ", ".join(cids)))
+    if carry.not_run is not None:
+        opened.append(Finding(
+            **base, sid="", line=f"Version {v.version} was not reviewed", kind="not_reviewed",
+            said=(f"The card review did not run for this version: "
+                  f"{review_not_run_words(carry.not_run)}. A skipped review is never a clean "
+                  f"one; earlier findings stay open until a review runs."),
+            decision="", raised=v.as_of, raised_version=v.version, audit=carry.not_run))
+    for f in carry.removed:
+        opened.append(Finding(
+            **base, sid="", line=plain(f.origin_text), kind="removed",
+            said=f"{f.said} (the line was removed by a version the review never read — not "
+                 f"re-reviewed, not resolved)", decision="", raised=f.origin_as_of,
+            raised_version=f.origin_version, audit=f.detail))
     nt = nt or near_term_reading(store, v)
     if nt.conflict:
         opened.append(Finding(
@@ -763,12 +795,13 @@ def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
                             history="Corrected by the analyst."))
     now = {txt for txt, _p, _c in sents.values()}
     seen: set[tuple[str, str]] = set()
+    still = {f.said for f in (*carry.carried.values(), *carry.removed)}  # open, never history
     for ev in versions[:-1]:
         _b, fl, _c, _r = line_findings(store, t.thesis_id, ev)
         old = card_sentences(ev.content)
         for sid, said in fl.items():
             text = old[sid][0]
-            if text in now or (text, said) in seen:
+            if text in now or (text, said) in seen or said in still:
                 continue
             seen.add((text, said))
             hist.append(Finding(**base, sid="", line=plain(text), kind="review", said=said,
@@ -1059,6 +1092,10 @@ class Desk:
 
     def thesis_link(self, tid: str, depth: int = 0) -> str:
         return f'{"../" * depth}theses/{e(tid)}.html'
+
+    @staticmethod
+    def anchor_of(f: Finding) -> str:
+        return _anchor(f.sid) if f.sid else _KIND_ANCHOR.get(f.kind, "top")
 
     def card_link(self, tid: str, depth: int = 0, anchor: str = "") -> str:
         path = self.cards.get(tid, {}).get("html", f"cards/{tid}.html")
@@ -1393,7 +1430,7 @@ class Desk:
         items = []
         for f in self.open:
             age = (w.end - f.raised).days
-            anchor = _anchor(f.sid) if f.sid else "sec-s06_why_now"
+            anchor = self.anchor_of(f)
             items.append(
                 f'<li class="rvi" data-dec="{1 if f.decision else 0}" data-act="{e(f.action)}" '
                 f'data-age="{age}"><div class="rvhead"><a href="{self.thesis_link(f.thesis_id)}">'
@@ -1614,8 +1651,9 @@ class Desk:
                 f'{_chip(action)}{"".join(_event(x) for x in events)}'
                 + (f'<span class="ev">archived — {e(self.archived_why(t, v))}</span>'
                    if arch else "")
-                + (f'<a class="flag" href="#review">Review required · '
-                   f'{_pl(len(mine), "finding")}</a>'
+                + (f'<a class="flag" href="#review">'
+                   f'{"Not reviewed · " if any(f.kind == "not_reviewed" for f in mine) else ""}'
+                   f'Review required · {_pl(len(mine), "finding")}</a>'
                    if mine else "")
                 + f'<span>{_pl(len(c.s09_sources), "source")} · first seen '
                   f'{e(_day(t.created_as_of))} · last material update '
@@ -1716,8 +1754,8 @@ class Desk:
             + (f'<div class="dec">Bears on the research action — {e(f.decision)}</div>'
                if f.decision else "")
             + f'<div class="small">raised {e(_day(f.raised))} · <a href="'
-              f'{self.card_link(tid, 1, _anchor(f.sid) if f.sid else "sec-s06_why_now")}">the '
-              f'line in the full record →</a></div></li>' for f in mine)
+              f'{self.card_link(tid, 1, self.anchor_of(f))}">the line in the full record →</a>'
+              f'</div></li>' for f in mine)
         evid, n_ev = self.evidence_html(c, rc)
         hist = "".join(
             f'<li><span class="hv">v{h.version}</span><span>{e(_day(h.as_of))}</span>'

@@ -44,7 +44,12 @@ from vinci.theme_intelligence.desk import (
     near_term_words,
 )
 from vinci.theme_intelligence.pipeline import Pipeline
-from vinci.theme_intelligence.report import line_findings, theses_as_of_run, write_run_outputs
+from vinci.theme_intelligence.report import (
+    line_findings,
+    review_carry,
+    theses_as_of_run,
+    write_run_outputs,
+)
 from vinci.theme_intelligence.schemas import (
     RetrievalState,
     RunStatus,
@@ -150,7 +155,9 @@ def test_review_lists_every_open_finding_of_every_active_thesis_including_earlie
     for t, v in theses_as_of_run(pipe.store, run).values():
         if t.status is not ThesisStatus.ARCHIVED:
             blocked, flagged, _c, _r = line_findings(pipe.store, t.thesis_id, v)
-            expected += len(blocked) + len(flagged) + near_term_reading(pipe.store, v).conflict
+            carry = review_carry(pipe.store, t.thesis_id, v)
+            expected += (len(blocked) + len(flagged) + near_term_reading(pipe.store, v).conflict
+                         + (carry.not_run is not None) + len(carry.removed))
     items = _soup(out / "review.html").select("#rv li.rvi")
     assert expected and len(items) == expected
     ages = [int(i["data-age"]) for i in items]

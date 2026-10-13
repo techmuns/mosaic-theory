@@ -845,6 +845,43 @@ def first_detected_line(h: CardHeader) -> str:
             + f" · last material update {h.last_material_update.isoformat()}")
 
 
+@dataclass(frozen=True)
+class CarriedFinding:
+    """An open card-review finding of an earlier version, read onto a version written WITHOUT the
+    card review (its run recorded REVIEW_NOT_RUN): the stored finding is never copied or edited —
+    it is read from the run that made it (report.review_carry)."""
+    code: str
+    detail: str  # the stored finding's own words, whole
+    said: str  # the part shown on the line
+    blocked: bool  # the review withheld the line (REVIEW_UNSUPPORTED)
+    origin_version: int  # the version whose review made it
+    origin_as_of: date
+    origin_text: str  # the line as it read when the review made it
+    #: the line's words or cited evidence changed since that review, and no review has run on the
+    #: new form: NOT RE-REVIEWED, never clean
+    changed: bool
+
+
+@dataclass(frozen=True)
+class ReviewCarry:
+    """The card-review status of one version: why its review did not run (None — it ran), the
+    earlier open findings read onto its lines, and those whose line it removed."""
+    not_run: str | None = None
+    carried: dict[str, CarriedFinding] = field(default_factory=dict)
+    removed: tuple[CarriedFinding, ...] = ()
+
+
+#: why a card review did not run, in words (the stored REVIEW_NOT_RUN detail stays in the audit)
+def review_not_run_words(detail: str) -> str:
+    if "--no-review" in detail:
+        return "the review was switched off for the run (--no-review)"
+    if "budget" in detail:
+        return "the run's review budget was exhausted"
+    if "no LLM client" in detail or "no cached" in detail:
+        return "no model client and no cached review were available"
+    return "the card review did not run"
+
+
 @dataclass
 class RenderContext:
     history: list[ThesisVersion]
@@ -876,6 +913,8 @@ class RenderContext:
     groups: tuple[NamedGroup, ...] = ()
     #: the claim ids with an evidence row on the rendered card (set by `render_html`)
     targets: frozenset[str] = frozenset()
+    #: the version's card-review status: not run, and the earlier findings read onto its lines
+    carry: ReviewCarry = field(default_factory=ReviewCarry)
 
 
 @dataclass(frozen=True)
@@ -952,13 +991,50 @@ def shown_label(prov: Provenance, sid: str, rc: RenderContext) -> Provenance:
     return Provenance.SOURCE_OPINION if sid in rc.flagged and prov in _FACT_LABELS else prov
 
 
+def carried_note(f: CarriedFinding) -> str:
+    """Where a finding read onto an unreviewed version comes from, in words."""
+    return (f"raised by the review of version {f.origin_version} ({f.origin_as_of.isoformat()})"
+            + (f", when the line read “{clip(f.origin_text, 160)}”" if f.changed else "")
+            + "; not re-reviewed since")
+
+
+def _warn_label(sid: str, rc: RenderContext) -> str:
+    f = rc.carry.carried.get(sid)
+    return "NOT RE-REVIEWED" if f is not None and f.changed else "UNRESOLVED REVIEW"
+
+
 def _warn_html(sid: str, rc: RenderContext) -> str:
-    return (f'<div class="rw">⚠ UNRESOLVED REVIEW — {ids_to_audit(e(rc.flagged[sid]))}</div>'
-            if sid in rc.flagged else "")
+    if sid not in rc.flagged:
+        return ""
+    f = rc.carry.carried.get(sid)
+    return (f'<div class="rw">⚠ {_warn_label(sid, rc)} — {ids_to_audit(e(rc.flagged[sid]))}'
+            + (f'<div class="note">{e(carried_note(f))}</div>' if f is not None else "")
+            + "</div>")
 
 
 def _warn_md(sid: str, rc: RenderContext) -> str:
-    return f" ⚠ **UNRESOLVED REVIEW — {rc.flagged[sid]}**" if sid in rc.flagged else ""
+    if sid not in rc.flagged:
+        return ""
+    f = rc.carry.carried.get(sid)
+    return (f" ⚠ **{_warn_label(sid, rc)} — {rc.flagged[sid]}**"
+            + (f" _({carried_note(f)})_" if f is not None else ""))
+
+
+def review_status_html(rc: RenderContext) -> str:
+    """A version written without the card review SAYS so — never read as a clean review — with
+    the earlier findings on lines it removed (not re-reviewed, never resolved)."""
+    c = rc.carry
+    if c.not_run is None:
+        return ""
+    return (f'<div class="statusnote">Not reviewed — the card review did not run for this '
+            f'version: {e(review_not_run_words(c.not_run))}. Earlier findings stay on their '
+            f'lines until a review runs.<span class="aud"> ({e(c.not_run)})</span>'
+            + (f'<details><summary class="note">{len(c.removed)} earlier finding(s) on lines '
+               f'this version removed — not re-reviewed</summary>' + "".join(
+                   f'<div class="s">“{e(clip(f.origin_text, 200))}” — '
+                   f'{ids_to_audit(e(f.said))} <span class="note">({e(carried_note(f))})</span>'
+                   f'</div>' for f in c.removed) + "</details>" if c.removed else "")
+            + "</div>")
 
 
 def _resolved_html(sid: str, rc: RenderContext) -> str:
@@ -1321,6 +1397,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
               + " · ".join(f'<a href="#{_anchor(s)}">{e(n)}</a>'
                            for s, n in zip(findings, finding_names(findings), strict=True))
               + "</span>" if findings else
+              # a version the review never read is not clean: it says it was not reviewed
+              '<span class="flag">Not reviewed</span>' if rc.carry.not_run is not None else
               '<span class="okflag">No unresolved review findings on this card</span>') + earlier
     parts = [
         f'<header class="hdr"><div class="eyebrow">Living Thesis Card · {e(h.sector)} · '
@@ -1332,6 +1410,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
            if h.status.value != "ACTIVE" else "")
         + f'</div><div class="dates">{e(first_detected_line(h))}</div>'
         + (f'<div class="statusnote">{e(rc.status_note)}</div>' if rc.status_note else "")
+        + review_status_html(rc)
         + f'<div class="vline">{review}</div><div class="id aud cc">{e(h.thesis_id)} · '
           f'{e(" › ".join(h.ancestry))} · {e(h.research_action.value)}</div></header>',
         _glance(card, rc),
@@ -1576,6 +1655,13 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
          f"`{h.thesis_id}` · {' › '.join(h.ancestry)}", "", f"_{LEGEND}_", ""]
     if rc.status_note:
         md += [f"> **{rc.status_note}**", ""]
+    if rc.carry.not_run is not None:
+        md += [f"> **Not reviewed — the card review did not run for this version: "
+               f"{review_not_run_words(rc.carry.not_run)}.** Earlier findings stay on their lines "
+               f"until a review runs."]
+        md += [f"> - not re-reviewed (line removed): “{clip(f.origin_text, 200)}” — {f.said} "
+               f"({carried_note(f)})" for f in rc.carry.removed]
+        md += [""]
     titles = dict(SECTION_IDS)
     md += [f"## {titles['s01_bottom_line']}"] + _md_sents(card.s01_bottom_line, "s01", rc) + [""]
     wc = card.s02_what_changed
@@ -1721,6 +1807,14 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "analyst_corrections": rc.corrected,
         "why_action": why_reasons(card, rc.priority, [g.name for g in rc.groups]),
         "review_resolved": {k: why for k, (why, _said) in rc.resolved.items()},
+        "review_not_run": rc.carry.not_run,
+        "review_carried": {k: {"code": f.code, "origin_version": f.origin_version,
+                               "origin_as_of": f.origin_as_of.isoformat(),
+                               "origin_text": f.origin_text, "not_re_reviewed": f.changed}
+                           for k, f in rc.carry.carried.items()},
+        "review_removed_lines": [{"code": f.code, "detail": f.detail,
+                                  "origin_version": f.origin_version,
+                                  "origin_text": f.origin_text} for f in rc.carry.removed],
         "named_business_groups": [
             {"name": g.name, "article_id": g.article_id, "block_ids": list(g.block_ids),
              "excerpt": g.excerpt, "claim_ids": list(g.claim_ids)} for g in rc.groups],
