@@ -1867,7 +1867,10 @@ class Engine:
 
     def _issue(self, ctx: ArticleContext, scope: str, ref: str, sev: IssueSeverity, code: str,
                detail: str) -> VerificationIssue:
-        return VerificationIssue(issue_id="VI-" + _sha(ctx.run_id, scope, ref, code)[:14],
+        # the DETAIL is part of the id, as in verify._issue: two articles of one run on one key
+        # (PRODUCT_SPLIT, SAME_KEY_IN_ARTICLE …) carry different details, and without it they
+        # shared an id the append-only store refused — the second article failed (2026-10-13)
+        return VerificationIssue(issue_id="VI-" + _sha(ctx.run_id, scope, ref, code, detail)[:14],
                                  run_id=ctx.run_id, scope=scope, ref_id=ref, severity=sev,
                                  code=code, detail=detail, created_at=datetime.now(tz=UTC))
 
