@@ -36,6 +36,10 @@
 #               reports public on its own site and they may be processed like the page itself.
 #               Bounded by `max_linked_reports` per run (long documents: LLM cost).
 #   "request" — (default) list the report for an authorised upload (`ingest-file`).
+# `paywalled_posts`: a paid post whose page carries only its free preview.
+#   "request"      — (default) list the full post for an authorised upload.
+#   "preview_only" — the operator's decision that the preview is all the channel gives (no
+#                    subscription): analysed as the preview it is, still PARTIAL, never requested.
 # `manual_llm_processing`: may a MANUALLY SUPPLIED document of this channel go to the
 #   third-party LLM? permitted | not_permitted | unknown (default — the document is HELD unless
 #   the operator states, per document, that its licence allows it: `--llm-permitted`).
@@ -96,6 +100,9 @@ channel = "SemiAnalysis (site + its newsletter feed)"
 entry_url = "https://semianalysis.com/"
 adapter = "semianalysis_feed"
 feed_url = "https://newsletter.semianalysis.com/feed"
+# operator decision 2026-10-13: no paid subscription — paid posts are read as their free preview
+# (still PARTIAL) and never requested for upload
+paywalled_posts = "preview_only"
 reliability = "medium"
 default_article_class = "independent_research"
 min_crawl_delay_s = 10

@@ -157,6 +157,11 @@ class SourceConfig:
     linked_reports: str = "request"
     #: linked reports fetched per run for this channel — each is a long document (cost bound)
     max_linked_reports: int = 2
+    #: a PAYWALLED post (a paid post's free preview): "request" = list it for an authorised upload
+    #: of the full post (the default); "preview_only" = the operator's decision that the free
+    #: preview is all this channel will give — analysed as the preview it is (still PARTIAL),
+    #: never requested. A page's LINKED report is governed by `linked_reports`, not by this.
+    paywalled_posts: str = "request"
     #: "automatic" — discovered and read by every scan; "manual_first" — a lightweight health
     #: check only (no discovery, no retrieval attempt): its research arrives as authorised uploads
     mode: str = "automatic"
@@ -287,6 +292,7 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
                 manual_llm_processing=str(s.get("manual_llm_processing", "unknown")),
                 linked_reports=str(s.get("linked_reports", "request")),
                 max_linked_reports=int(s.get("max_linked_reports", 2)),
+                paywalled_posts=str(s.get("paywalled_posts", "request")),
                 mode=str(s.get("mode", "automatic")),
             ))
         except KeyError as exc:
@@ -299,6 +305,8 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
             raise ConfigError(f"{sc.id}: mode must be automatic | manual_first")
         if sc.linked_reports not in ("fetch", "request"):
             raise ConfigError(f"{sc.id}: linked_reports must be fetch | request")
+        if sc.paywalled_posts not in ("request", "preview_only"):
+            raise ConfigError(f"{sc.id}: paywalled_posts must be request | preview_only")
         if sc.manual_llm_processing not in ("permitted", "not_permitted", "unknown"):
             raise ConfigError(f"{sc.id}: manual_llm_processing must be permitted | "
                               f"not_permitted | unknown")

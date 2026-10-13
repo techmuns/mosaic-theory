@@ -30,13 +30,14 @@ from tests.theme_intelligence_support import (
     Hypo,
     claim,
     extraction,
+    fetched,
     hyp,
     ingest,
     make_pipeline,
     table_counts,
 )
 from vinci.theme_intelligence import desk
-from vinci.theme_intelligence.config import load_taxonomy
+from vinci.theme_intelligence.config import load_sources, load_taxonomy
 from vinci.theme_intelligence.desk import (
     AREA_NAME,
     area_name,
@@ -266,9 +267,12 @@ def test_older_upload_requests_stay_listed_and_are_never_dismissed_by_age(
         w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
     pipe, out, _ = w12
     first = min(r.as_of for r in pipe.store.runs() if r.mode == "scan")
+    # a preview-only channel's previews are never asked for (SemiAnalysis, 2026-10-13)
+    preview_only = {s.id for s in load_sources() if s.paywalled_posts == "preview_only"}
     old = [a for a in pipe.store.articles()
            if (vs := pipe.store.article_versions(a.article_id))
            and vs[-1].retrieval_state is RetrievalState.PARTIAL
+           and a.source_id not in preview_only
            and a.published_at and a.published_at.date() <= first]
     assert old, "the fixture must hold a preview from the first week"
     text = _soup(out / "uploads.html").get_text(" ")
@@ -477,14 +481,17 @@ def test_a_flagged_lines_scope_note_is_the_audit_views_on_review_as_on_the_readi
 # --- Sources and Uploads: plain words, the request's own links ----------------------------------
 
 OPEN_MODELS = "https://newsletter.semianalysis.com/p/are-open-models-catching-up"
+MONEY = "https://www.citigroup.com/global/insights/money-the-evolution-to-digital"
 GS_PAGE = "https://www.goldmansachs.com/insights/goldman-sachs-research/"
 
 
 def _desk_with_health(tmp_path: Path) -> tuple[Pipeline, Path]:
     """A run whose channels carry checks shaped as the real pilot's stored ones (2026-10-12):
-    SemiAnalysis DEGRADED on completeness (a paywalled preview) asking for one article, which a
-    supplied document now HOLDS; Goldman Sachs BLOCKED, expected, with no article it could list;
-    TrendForce HEALTHY. Built from the real `SourceHealthCheck` type."""
+    Citi DEGRADED on completeness (a teaser) asking for one article, which a supplied document
+    now HOLDS; SemiAnalysis DEGRADED on completeness (a paywalled preview) asking for one — a
+    request stored BEFORE the operator made it preview-only (2026-10-13); Goldman Sachs BLOCKED,
+    expected, with no article it could list; TrendForce HEALTHY. Built from the real
+    `SourceHealthCheck` type."""
     from vinci.theme_intelligence.documents import Declared
     from vinci.theme_intelligence.ingest import ingest_file
     from vinci.theme_intelligence.schemas import (
@@ -507,6 +514,14 @@ def _desk_with_health(tmp_path: Path) -> tuple[Pipeline, Path]:
         manual_action=ManualAction(kind="UPLOAD_REQUIRED", issue="(test)", action="(test)",
                                    affected=(f"{OPEN_MODELS} — Are Open Models Catching Up?",))))
     pipe.store.add_health_check(SourceHealthCheck(
+        check_id="SH-test-citi", source_id="citi_must_c", publisher="Citi", checked_at=at,
+        trigger="manual", status=HealthStatus.DEGRADED, reason="(test) partial", next_action="up",
+        tests=(*ok, HealthTest(name="completeness", result="WARN", detail=(
+            "partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a "
+            "teaser / excerpt)"))),
+        manual_action=ManualAction(kind="UPLOAD_REQUIRED", issue="(test)", action="(test)",
+                                   affected=(f"{MONEY} — Money: The Evolution to Digital",))))
+    pipe.store.add_health_check(SourceHealthCheck(
         check_id="SH-test-gs", source_id="gs_research", publisher="Goldman Sachs", checked_at=at,
         trigger="manual", status=HealthStatus.BLOCKED, reason="(test) 403", next_action="up",
         expect_blocked=True, tests=(HealthTest(name="access", result="FAIL", detail=(
@@ -520,7 +535,7 @@ def _desk_with_health(tmp_path: Path) -> tuple[Pipeline, Path]:
     pipe.start_run("ingest", as_of=NOW)
     saved = (Path(__file__).parent / "fixtures" / "theme_intelligence" / "synthetic_documents"
              / "semianalysis_preview_saved_synthetic.pdf")
-    res = ingest_file(pipe, saved, Declared(source_id="semianalysis", url=OPEN_MODELS), as_of=NOW)
+    res = ingest_file(pipe, saved, Declared(source_id="citi_must_c", url=MONEY), as_of=NOW)
     assert res.status == "HELD", res.note  # no licence statement: held, nothing analysed
     run = pipe.finish_run(RunStatus.SUCCEEDED)
     return pipe, _render(pipe, run.run_id, tmp_path / "out")
@@ -562,12 +577,12 @@ def test_uploads_link_each_requested_article_say_what_is_held_and_where_to_look(
     be read"."""
     _pipe, out = _desk_with_health(tmp_path)
     page = _soup(out / "uploads.html")
-    item = next(li for li in page.select("li.ui") if "New research from SemiAnalysis" in
+    item = next(li for li in page.select("li.ui") if "New research from Citi" in
                 li.get_text(" "))
-    (a,) = [x for x in item.select("a") if x.get("href") == OPEN_MODELS]
-    assert a.get_text() == "Are Open Models Catching Up?"
+    (a,) = [x for x in item.select("a") if x.get("href") == MONEY]
+    assert a.get_text() == "Money: The Evolution to Digital"
     assert "held until you confirm its licence" in item.get_text(" ")
-    assert f"{OPEN_MODELS} —" not in page.get_text(" ")
+    assert f"{MONEY} —" not in page.get_text(" ")
     gs = next(li for li in page.select("li.ui") if "New research from Goldman Sachs" in
               li.get_text(" "))
     assert "Where to look" in gs.get_text(" ")
@@ -601,3 +616,58 @@ def test_an_articles_follow_up_is_one_action_and_its_open_items_fold(
             "Supply the full report"]
     assert "figures captured" in page.get_text(" ")  # kept, one fold away …
     assert "figures captured" not in _outside_folds(page)  # … never a line of its own
+
+
+
+# --- SemiAnalysis preview-only (operator decision 2026-10-13: no subscription) --------------------
+
+def test_a_preview_only_channels_paid_posts_are_never_asked_for(tmp_path: Path) -> None:
+    """`paywalled_posts = "preview_only"` (SemiAnalysis): its paid-post previews are analysed and
+    labelled previews, never requested — not on Uploads (neither the article nor the channel's
+    request stored BEFORE the decision), not on the weekly report's intake, and Articles says so.
+    NEGATIVE pins: a "request" channel's preview is still asked for, and so is a preview-only
+    channel's page that LINKS a fuller report (that is `linked_reports`, not this decision)."""
+    from vinci.theme_intelligence.desk import _Registry, upload_items
+    from vinci.theme_intelligence.report import build_dashboard
+    from vinci.theme_intelligence.schemas import IssueSeverity
+
+    pipe, out = _desk_with_health(tmp_path)  # carries SemiAnalysis's pre-decision request
+    made: dict[str, str] = {}
+    for slug, sid, pub in (("sa-paid-post", "semianalysis", "SemiAnalysis"),
+                           ("sa-linking-page", "semianalysis", "SemiAnalysis"),
+                           ("jpm-teaser", "jpm_tmt", "J.P. Morgan Private Bank")):
+        text = (f"The {slug} page: memory contract prices rose 9% in 3Q26 as AI servers absorbed "
+                f"most new supply, and the tightness is expected to persist into next year.")
+        art = Hypo(slug, pub, PUB, [("paragraph", text)])
+        ext = extraction([claim("c1", "b001", "memory contract prices rose 9% in 3Q26",
+                                "Memory contract prices +9% in 3Q26", metric="contract price "
+                                "change", value=9, value_text="9%", unit="%", period="3Q26")],
+                         [hyp("h1", "Memory contract prices rise", node="ai_infrastructure.memory",
+                              mechanism="pricing_cycle", supporting=["c1"])])
+        doc = dataclasses.replace(art.doc(), retrieval_state=RetrievalState.PARTIAL)
+        pipe.start_run("article", as_of=NOW)
+        res = pipe.process_document(doc, fetched(doc, state=RetrievalState.PARTIAL),
+                                    url=doc.canonical_url, source_id=sid, as_of=NOW,
+                                    fixture=ext, publisher_override=pub)
+        pipe.finish_run(RunStatus.SUCCEEDED)
+        made[slug] = res.article_id or ""
+    pipe._issue("article", made["sa-linking-page"], IssueSeverity.WARN,  # noqa: SLF001
+                "LINKED_REPORT_UPLOAD", "the page links a fuller report (test)")
+    asked = {u.url.rsplit("/", 1)[-1]: u for u in upload_items(_Registry(pipe.store), {}, [])
+             if u.kind == "full_report"}
+    assert sorted(asked) == ["jpm-teaser", "sa-linking-page"]
+    last = max(pipe.store.runs(), key=lambda r: r.started_at)
+    out = _render(pipe, last.run_id, tmp_path / "out2")
+    page = _soup(out / "uploads.html")
+    assert "New research from SemiAnalysis" not in page.get_text(" ")  # the pre-decision request
+    assert "New research from Citi" in page.get_text(" ")  # a request channel still asks
+    awaiting = " ".join(build_dashboard(pipe.store, last.run_id, cards={},
+                                        generated="t").intake["awaiting_documents"]["items"])
+    assert made["jpm-teaser"] in awaiting and made["sa-linking-page"] in awaiting
+    assert made["sa-paid-post"] not in awaiting
+    rows = {tr.select_one("td.art a").get("href", "").rsplit("/", 1)[-1]: tr
+            for tr in _soup(out / "articles.html").select("#at tr[data-state='PARTIAL']")
+            if tr.select_one("td.art a")}
+    assert "Preview only — by decision" in rows["sa-paid-post"].get_text(" ")
+    assert not rows["sa-paid-post"].select("a[href='uploads.html']")
+    assert rows["jpm-teaser"].select("a[href='uploads.html']")

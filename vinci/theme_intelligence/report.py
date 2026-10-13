@@ -401,6 +401,7 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     whose coverage is unknown. Source health, ingestion coverage and research verification stay
     separate statuses; this section is ingestion coverage."""
     from vinci.theme_intelligence.config import load_retired_sources, load_sources
+    from vinci.theme_intelligence.health import asks_only_for_previews
 
     rids = {r.run_id for r in runs}
     as_of = {r.run_id: r.as_of for r in runs}
@@ -438,9 +439,14 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     # a document whose pages could not be READ is not awaiting another document: those pages need
     # a visual / OCR review (documents.py quarantines undecodable glyph output)
     unread = {d.article_id: d for d in docs_all if d.quarantined and d.article_id}
+    active = {s.id: s for s in load_sources()}
     for a in store.articles():
         if a.source_id in retired:
             continue
+        src_a = active.get(a.source_id)
+        if (src_a is not None and src_a.paywalled_posts == "preview_only"
+                and a.article_id not in upload_issue):
+            continue  # its free preview is all it gives (the operator's decision): not awaited
         vs = [v for v in store.article_versions(a.article_id)
               if v.retrieval_state is not RetrievalState.BLOCKED]
         if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
@@ -458,6 +464,9 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
             needs_upload.append(f"{line} — {clip(upload_issue[a.article_id], 300)}")
     for row in health.get("attention", []):
         ma = row.get("manual_action")
+        src_r = active.get(str(row.get("source_id")))
+        if src_r is not None and asks_only_for_previews(src_r, row):
+            continue
         if ma and ma.get("kind") == "UPLOAD_REQUIRED":
             needs_upload.append(f"{row['publisher']} (channel {row['status']}) — {ma['action']}"
                                 + (f" — known: {'; '.join(ma['affected'][:3])}"

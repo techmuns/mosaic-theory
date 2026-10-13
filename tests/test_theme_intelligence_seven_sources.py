@@ -257,7 +257,7 @@ def test_a_preview_nomura_left_in_the_registry_is_never_requested_on_the_desk(
 
     pipe = make_pipeline(tmp_path)
     for slug, sid, pub in (("nomura-preview", "nomura_connects", "Nomura"),
-                           ("active-preview", "semianalysis", "SemiAnalysis")):
+                           ("active-preview", "jpm_tmt", "J.P. Morgan Private Bank")):
         text = (f"The {pub} page summarises a fuller report it links to; the growth outlook "
                 f"slows in 2027 before it steadies, with GDP growth easing to 1.8% next year.")
         art = Hypo(slug=slug, publisher=pub, published=date(2026, 9, 29),
@@ -277,7 +277,8 @@ def test_a_preview_nomura_left_in_the_registry_is_never_requested_on_the_desk(
     held = {a.publisher: a for a in pipe.store.articles()}
     assert held["Nomura"].source_id == "nomura_connects"  # the history stays
     items = upload_items(_Registry(pipe.store), {}, [])
-    assert [u.publisher for u in items if u.kind == "full_report"] == ["SemiAnalysis"]
+    assert [u.publisher for u in items if u.kind == "full_report"] == [
+        "J.P. Morgan Private Bank"]
     assert not [u for u in items if u.source_id == "nomura_connects" or u.publisher == "Nomura"]
     # the rendered desk: the history is listed on Articles, the follow-up says it is not asked for
     from bs4 import BeautifulSoup
@@ -288,7 +289,8 @@ def test_a_preview_nomura_left_in_the_registry_is_never_requested_on_the_desk(
     out = Path(write_run_outputs(pipe.store, last.run_id, tmp_path / "out")["dir"])
     rows = {tr["data-pub"]: tr for tr in BeautifulSoup((out / "articles.html").read_text(),
                                                        "html.parser").select("#at tr[data-pub]")}
-    nomura, active = rows["Nomura"].select("td")[-1], rows["SemiAnalysis"].select("td")[-1]
+    nomura = rows["Nomura"].select("td")[-1]
+    active = rows["J.P. Morgan Private Bank"].select("td")[-1]
     assert "Not requested — Nomura retired 13 Oct 2026" in nomura.get_text(" ")
     assert not nomura.select("a[href='uploads.html']")
     assert [a.get_text() for a in active.select("a[href='uploads.html']")] == [

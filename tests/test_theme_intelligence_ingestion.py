@@ -211,16 +211,19 @@ def test_a_saved_preview_of_a_paywalled_page_is_read_as_a_preview_never_in_full(
     Each ended "This post is for paid subscribers … Already a paid subscriber? Sign in", and the
     reader recorded one of them FULL (the other was PARTIAL only for a page with no text layer).
     POSITIVE pin: the subscriber notice in a supplied document makes it PARTIAL, says why, and the
-    analysed version is stored PARTIAL — so Uploads still asks for the full post. NEGATIVE pin: the
-    full post (no notice) stays FULL."""
+    analysed version is stored PARTIAL — so Uploads still asks for the full post (on a channel that
+    requests paid posts). NEGATIVE pin: the full post (no notice) stays FULL."""
     r = read_document(SA_SAVED_PREVIEW, Declared(source_id="semianalysis"))
     assert r.doc.retrieval_state is RetrievalState.PARTIAL
     assert [i for i in r.issues if "subscriber notice" in i], r.issues
     full = read_document(SA_FULL, Declared(source_id="semianalysis"))
     assert full.doc.retrieval_state is RetrievalState.FULL
     assert not [i for i in full.issues if "subscriber" in i]
-    res = ingest_file(pipe, SA_SAVED_PREVIEW, _sa(url=PREVIEW_URL), as_of=AS_OF,
-                      fixture=_full_extraction())
+    # a channel that requests paid posts (SemiAnalysis itself is preview-only since 2026-10-13:
+    # its previews are never asked for — pinned in the desk tests)
+    res = ingest_file(pipe, SA_SAVED_PREVIEW, Declared(source_id="citi_must_c", url=PREVIEW_URL,
+                                                       llm_permitted=True),
+                      as_of=AS_OF, fixture=_full_extraction())
     assert res.status == "INGESTED", res.note
     (v,) = pipe.store.article_versions(res.article_id or "")
     assert v.retrieval_state is RetrievalState.PARTIAL

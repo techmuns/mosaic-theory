@@ -219,6 +219,42 @@ def test_a_paywalled_preview_is_degraded_not_full(tmp_path: Path, store: Store) 
     assert h.manual_upload_recommended
 
 
+@pytest.mark.parametrize("policy", ["request", "preview_only"])
+def test_a_preview_only_channel_is_never_asked_for_its_paid_posts(
+        tmp_path: Path, store: Store, policy: str) -> None:
+    """Operator decision 2026-10-13 (SemiAnalysis, no subscription): `paywalled_posts =
+    "preview_only"`. The check still SAYS the previews are partial (DEGRADED, completeness WARN —
+    never upgraded to healthy), but asks for nothing; the same pages under "request" ask for an
+    upload (NEGATIVE pin)."""
+    s = src(paywalled_posts=policy)
+    web = healthy_web(s)
+    for slug, title in (("memory-prices", "Memory prices keep rising"),
+                        ("grid-queues", "Grid queues lengthen")):
+        web.pages[f"https://pub-a.test/articles/{slug}"] = (200, article(title, paywall=True))
+    h = check(store, fetcher(tmp_path, web), [s]).checks[0]
+    assert h.status is HealthStatus.DEGRADED
+    assert {t.name: t.result for t in h.tests}["completeness"] == "WARN"
+    if policy == "request":
+        assert h.manual_action is not None and h.manual_action.kind == "UPLOAD_REQUIRED"
+        assert h.manual_upload_recommended
+    else:
+        assert h.manual_action is None and not h.manual_upload_recommended
+        assert "preview_only" in h.next_action and "none to supply" in h.next_action
+
+
+def test_a_preview_only_channel_still_asks_for_a_page_that_is_partial_for_another_reason(
+        tmp_path: Path, store: Store) -> None:
+    """The decision covers PAID posts only: a 96-word teaser on the same channel (no paywall
+    notice) is still a partial page the check asks about."""
+    s = src(paywalled_posts="preview_only")
+    web = healthy_web(s)
+    web.pages["https://pub-a.test/articles/memory-prices"] = (
+        200, article("Memory prices keep rising", paras=1))  # ~50 words: a teaser
+    h = check(store, fetcher(tmp_path, web), [s]).checks[0]
+    assert {t.name: t.result for t in h.tests}["completeness"] == "WARN"
+    assert h.manual_action is not None and h.manual_action.kind == "UPLOAD_REQUIRED"
+
+
 @pytest.mark.parametrize(("policy", "status"), [("fetch", HealthStatus.HEALTHY),
                                                  ("request", HealthStatus.DEGRADED)])
 def test_a_page_linking_its_report_degrades_only_where_the_report_is_not_read(

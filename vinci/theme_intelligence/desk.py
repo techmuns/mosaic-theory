@@ -381,6 +381,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
     store = reg.store
     rids = week.run_ids
     retired = {r.id: r for r in load_retired_sources()}
+    linked = {i.ref_id for i in store.issues() if i.code == "LINKED_REPORT_UPLOAD"}
     rows: dict[str, ArticleRow] = {}
     for r in week.runs:
         if r.mode == "reassess":  # a re-grade of stored evidence reads no article
@@ -450,6 +451,10 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
             gone = retired[row.source_id]
             row.follow_up = (f"Not requested — {gone.publisher} retired "
                              f"{_day(date.fromisoformat(gone.retired))}")
+        elif (row.state == "PARTIAL" and aid not in linked
+              and (s := reg.sources.get(row.source_id)) is not None
+              and s.paywalled_posts == "preview_only"):
+            row.follow_up = "Preview only — by decision, never requested"
         elif row.state == "PARTIAL":
             row.follow_up, row.follow_link = "Supply the full report", "uploads.html"
     # manual runs that FAILED: their article listed as failed — or, when a later run of the week
@@ -898,6 +903,10 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                 detail=[f"pages {', '.join(str(p) for p in pages)}"],
                 audit=f"{a.article_id} · document {doc.doc_id}"))
             continue
+        src_a = reg.sources.get(a.source_id)
+        if (src_a is not None and src_a.paywalled_posts == "preview_only"
+                and a.article_id not in upload_issue):
+            continue  # its free preview is all it gives (the operator's decision): never asked for
         why = ("the page links a fuller report that needs an authorised copy"
                if a.article_id in upload_issue else
                f"only a preview could be read ({vs[-1].body_word_count:,} words)")
@@ -931,7 +940,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
             first_seen=seen, why=_CHECKPOINT_WHY[_CHECKPOINT[status]],
             command=_ingest_cmd(sid or "<source>", url), url=url,
             audit=f"scan outcome {status}" + (f" · {cid}" if cid else "")))
-    from vinci.theme_intelligence.health import split_affected
+    from vinci.theme_intelligence.health import asks_only_for_previews, split_affected
 
     rows = {r["source_id"]: r for r in health.get("rows", [])}
     supplied = {d.declared.get("url", ""): d.status for d in reg.documents
@@ -941,6 +950,8 @@ def upload_items(reg: _Registry, health: dict[str, Any],
         ma = row.get("manual_action") or {}
         manual_first = src.mode == "manual_first"
         if not manual_first and ma.get("kind") != "UPLOAD_REQUIRED":
+            continue
+        if asks_only_for_previews(src, row):
             continue
         links: list[tuple[str, str, str]] = []
         rest: list[str] = []
@@ -1767,7 +1778,9 @@ class Desk:
             quiet = (' <span class="small">· quiet</span>'
                      if last and last.freshness.value == "QUIET" else "")
             note = ('<div class="small">linked reports read by the scan</div>'
-                    if src.linked_reports == "fetch" else "")
+                    if src.linked_reports == "fetch" else "") + (
+                '<div class="small">paid posts read as their preview — by decision</div>'
+                if src.paywalled_posts == "preview_only" else "")
             where = (f'<div class="small">research page: <a href="{e(src.entry_url)}">'
                      f'{e(_host(src.entry_url))}</a></div>' if src.mode == "manual_first" else "")
             out["manual_first" if src.mode == "manual_first" else "automatic"].append(

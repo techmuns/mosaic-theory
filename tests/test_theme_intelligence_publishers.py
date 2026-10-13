@@ -264,6 +264,9 @@ def test_the_channel_policies_as_configured() -> None:
     by = {s.id: s for s in load_sources()}
     assert by["citi_must_c"].linked_reports == "fetch"
     assert "nomura_connects" not in by  # retired 2026-10-13
+    # SemiAnalysis: no subscription (2026-10-13) — paid posts read as their preview, never asked for
+    assert {s: by[s].paywalled_posts for s in by if by[s].paywalled_posts != "request"} == {
+        "semianalysis": "preview_only"}
     assert all(by[s].linked_reports == "request" for s in by if s != "citi_must_c")
     assert "ingest-file" in _UPLOAD  # the health hint points at the document route
 

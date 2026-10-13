@@ -347,7 +347,8 @@ def _dates(o: _Obs, scan: dict[str, Any]) -> None:
         o.tests["dates_authors"] = _t("dates_authors", "PASS", facts)
 
 
-def _completeness(o: _Obs, scan: dict[str, Any], *, fetches_linked: bool = False) -> None:
+def _completeness(o: _Obs, scan: dict[str, Any], *, fetches_linked: bool = False,
+                  preview_only: bool = False) -> None:
     last = (f"; latest scan {scan['run_id']}: {scan['full']} full, {scan['partial']} preview / "
             f"partial, {scan['unreadable']} unreadable" if scan.get("run_id") else "")
     read = [x for x in o.samples if x.read and not x.parser_fail]
@@ -361,7 +362,9 @@ def _completeness(o: _Obs, scan: dict[str, Any], *, fetches_linked: bool = False
     fetched = [x for x in read if fetches_linked and x.linked_report]
     last += (f"; {len(fetched)} sampled page(s) summarise a report they link to — the scan "
              f"READS it (linked_reports = \"fetch\")" if fetched else "")
-    o.incomplete = previews or partial
+    # a preview-only channel (paywalled_posts = "preview_only"): its paid posts' previews are
+    # all it gives, by the operator's decision — still a WARN below, never something to supply
+    o.incomplete = partial if preview_only else (previews or partial)
     if previews:
         why = f"{len(previews)} of {n} sampled article(s) are paywalled previews — only the " \
               f"preview is readable"
@@ -451,6 +454,19 @@ def _affected(o: _Obs, store: Store, sid: str) -> tuple[str, ...]:
     return tuple(out)
 
 
+def asks_only_for_previews(src: SourceConfig, row: dict[str, Any]) -> bool:
+    """A preview-only channel's (`paywalled_posts = "preview_only"`) upload request — as a summary
+    row carries it — that is about its previews alone: the only tests short of PASS are
+    completeness (and freshness). By the operator's decision it is never shown, on the desk or the
+    weekly report; a request raised for anything else (an extraction or parser failure) still is,
+    and a page's LINKED report is asked for on its own article row. Read from the structured test
+    results — including a check stored before the decision, which still carries the request."""
+    if src.paywalled_posts != "preview_only" or src.mode == "manual_first":
+        return False
+    off = {t.get("name") for t in row.get("tests", []) if t.get("result") in ("WARN", "FAIL")}
+    return bool(off) and off <= {"completeness", "freshness"}
+
+
 def split_affected(line: str) -> tuple[str | None, str]:
     """(url, title) of one `ManualAction.affected` line as `_affected` writes it — "url — title"
     or "url — title not known". A line that names no web address ("unknown — the channel cannot be
@@ -483,6 +499,9 @@ def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
             return act, ManualAction(kind="MANUAL_REVIEW", issue=o.tests[d].detail,
                                      affected=_affected(o, store, src.id), action=act)
         return act, None
+    if d == "completeness" and src.paywalled_posts == "preview_only" and not o.incomplete:
+        return ("none to supply — paid posts are read as their free preview by the operator's "
+                "decision (paywalled_posts = \"preview_only\")"), None
     if d in ("extraction", "parser_integrity", "completeness"):
         act = (("review the article parser for this publisher; " if d != "completeness" else "")
                + f"{upload} if you are entitled to the full text")
@@ -605,7 +624,8 @@ def check_source(src: SourceConfig, f: PoliteFetcher, store: Store, *, trigger: 
                 _extract(src, f, o, history)
             scan = _scan_stats(store, src.id)
             _dates(o, scan)
-            _completeness(o, scan, fetches_linked=src.linked_reports == "fetch")
+            _completeness(o, scan, fetches_linked=src.linked_reports == "fetch",
+                          preview_only=src.paywalled_posts == "preview_only")
     finally:
         f.ttl_cap = cap
     freshness, newest, new = _freshness(o, window_from, prev)
