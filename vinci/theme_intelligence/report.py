@@ -1013,12 +1013,14 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
 
 
 def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str]],
-                    generated: str) -> Dashboard:
+                    generated: str, runs: list[WeeklyRun] | None = None) -> Dashboard:
+    """The weekly report of `run_id` over `report_runs` — or over `runs` when given (the research
+    desk's week in progress: every manual run since the last weekly scan, desk.desk_weeks)."""
     run = store.run(run_id)
     if run is None:
         raise KeyError(f"no run {run_id}")
     asof = theses_as_of_run(store, run)
-    runs = report_runs(store, run)
+    runs = runs or report_runs(store, run)
     rids = {r.run_id for r in runs}
     events = [ev for r in runs for ev in store.events(run_id=r.run_id)]
     by_thesis: dict[str, list[ChangeEvent]] = {}
@@ -1967,6 +1969,9 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
     issues = store.issues(run_id=run_id)
     (out / "validation_log.json").write_text(json.dumps(
         [json.loads(i.model_dump_json()) for i in issues], indent=1, sort_keys=True))
+    from vinci.theme_intelligence.desk import write_desk  # the desk reads this module
+
+    desk = write_desk(store, run_id, out, cards=cards, generated=generated)
     secs = ((run.finished_at - run.started_at).total_seconds() if run.finished_at else None)
     manifest = {
         "run_id": run.run_id, "mode": run.mode, "status": run.status.value,
@@ -2001,7 +2006,7 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
     newest = max(store.runs(), key=lambda r: r.started_at).run_id
     if out.parent.name == "runs" and run_id == newest:  # names the NEWEST run, not the last
         (out.parent / "LATEST").write_text(run_id + "\n")  # one re-rendered
-    return {"dir": str(out), "cards": cards, "dashboard": d, "manifest": manifest}
+    return {"dir": str(out), "cards": cards, "dashboard": d, "manifest": manifest, "desk": desk}
 
 
 def week_of(d: date) -> tuple[date, date]:
