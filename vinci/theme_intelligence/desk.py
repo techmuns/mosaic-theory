@@ -38,14 +38,18 @@ from urllib.parse import urlparse
 from vinci.theme_intelligence.cards import (
     AUDIT_TOGGLE,
     REVEAL_JS,
+    ROBOTS,
     STEP_LABEL,
+    THEME_CSS,
     _anchor,
     _clean_display,
     _plain_text,
     e,
     foot_html,
+    groups_unchecked_note,
     ids_to_audit,
     review_not_run_words,
+    topnav,
     unit_shown,
     why_reasons,
 )
@@ -628,7 +632,8 @@ class Gate:
     detail: str
 
 
-def gates(v: ThesisVersion, groups: list[str], nt: NearTerm) -> list[Gate]:
+def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
+          groups_unread: int = 0) -> list[Gate]:
     """The Research Now conditions, each met or not, read from the stored factor VALUES (the rule
     trace stays in the audit view). The near-term condition is stated ONCE, from the factor of
     record — the source's horizon framing is shown apart and is never a pass/fail."""
@@ -655,7 +660,10 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm) -> list[Gate]:
              ("sectors: " + ", ".join(s.name for s in av.sector_exposures)
               if av.sector_exposures else "listed companies named")
              if exposed else ("business groups only (" + "; ".join(groups) + ") — not companies"
-                              if groups else "no company or sector named as exposed")),
+                              if groups else "no company or sector named; whether the source "
+                              "names business groups is not checkable on this machine (the "
+                              "article text is not held here)" if groups_unread else
+                              "no company or sector named as exposed")),
         Gate(cat, "A dislocation, a dated catalyst or a measured change",
              "present" if cat else {"not credible": "a forecast without a corroborating "
                                                      "measurement",
@@ -965,7 +973,7 @@ def _doc_item(d: DocumentRecord, kind: str, why: str, command: str, *,
 
 def _chip(action: str) -> str:
     w, cls = _ACTION.get(action, (action.title(), "skip"))
-    return f'<span class="chip {cls}">{e(w)}</span>'
+    return f'<span class="pill {cls}">{e(w)}</span>'
 
 
 def _state(state: str) -> str:
@@ -1066,7 +1074,7 @@ class Desk:
         self.uploads = upload_items(self.reg, self.health, checkpoints)
         self.test_articles = sum(1 for a in store.articles() if _test_domain(a.canonical_url))
         self.n_articles = len(store.articles())
-        self.groups: dict[str, list[str]] = {}
+        self.groups: dict[str, tuple[list[str], int]] = {}
         self.sources_of: dict[str, set[str]] = defaultdict(set)
         for c in self.reg.contributions:
             if c.thesis_id in self.asof and c.run_id in self.week_of_run:
@@ -1115,16 +1123,15 @@ class Desk:
 
     def unmet(self, tid: str) -> list[str]:
         t, v = self.asof[tid]
-        groups = self.groups.get(tid)
-        if groups is None:
-            groups = self.groups[tid] = [g.name for g in card_context(
-                self.store, t, v, generated="", until=self.run.finished_at).groups]
-        return [g.name for g in gates(v, groups, self.near[tid]) if not g.ok]
+        if tid not in self.groups:
+            rc = card_context(self.store, t, v, generated="", until=self.run.finished_at)
+            self.groups[tid] = ([g.name for g in rc.groups], rc.groups_unread)
+        groups, unread = self.groups[tid]
+        return [g.name for g in gates(v, groups, self.near[tid], groups_unread=unread)
+                if not g.ok]
 
     def page(self, title: str, body: str, active: str, depth: int = 0) -> str:
         up = "../" * depth
-        nav = "".join(f'<a href="{up}{h}"{" class=on" if n == active else ""}>{n}</a>'
-                      for n, h in NAV)
         banner = ""
         if self.test_articles:
             banner = (f'<div class="testdata">TEST DATA — this registry holds articles from a '
@@ -1132,16 +1139,14 @@ class Desk:
                       f'the rest are supplied documents or other sources). This is not research.'
                       f'</div>')
         return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
-                "content='width=device-width,initial-scale=1'><title>" + e(title)
+                "content='width=device-width,initial-scale=1'>" + ROBOTS + "<title>" + e(title)
                 + " · Research desk</title><style>" + CSS + "</style></head><body>"
-                + AUDIT_TOGGLE + banner + f'<header class="top"><div class="in"><a class="brand" '
-                f'href="{up}index.html">Mosaic Theory <small>Research desk</small></a><nav>{nav}'
-                f'</nav><label for="audit" class="auditbar" title="Show engine ids, codes and the '
-                f'decision trace">Audit view</label></div></header><main class="wrap">{body}'
-                + foot_html(self.generated)
+                + AUDIT_TOGGLE + banner + topnav(up, active=active)
+                + f'<main class="wrap">{body}' + foot_html(self.generated)
                 + f'<div class="foot"><a href="{up}dashboard.html">Full weekly report</a> · '
                   f'<a href="{up}report_print.html">Printable report</a></div></main>'
-                + "<script>" + JS + "</script>" + REVEAL_JS + "</body></html>")
+                + "<script>" + JS + "deskInit(document,new URLSearchParams(location.search));"
+                + "</script>" + REVEAL_JS + "</body></html>")
 
     # -- This Week -----------------------------------------------------------------------------
     def home(self) -> str:
@@ -1625,9 +1630,9 @@ class Desk:
         c = v.content
         rc = card_context(self.store, t, v, generated="", until=self.run.finished_at)
         groups = [g.name for g in rc.groups]
-        self.groups[tid] = groups
+        self.groups[tid] = (groups, rc.groups_unread)
         nt = self.near[tid]
-        gs = gates(v, groups, nt)
+        gs = gates(v, groups, nt, groups_unread=rc.groups_unread)
         action = v.priority.research_action.value
         mine = self.open_by_thesis().get(tid, [])
         flagged_sids = {f.sid for f in mine if f.sid}
@@ -1746,7 +1751,9 @@ class Desk:
                 f'<dd>{e(", ".join(s.name for s in av.sector_exposures)) or "none"}</dd>'
                 f'<dt>Business groups the source names</dt><dd>'
                 + (e("; ".join(groups)) + ' <span class="muted">— groups, not companies; no '
-                   'ticker is implied</span>' if groups else "none") + "</dd></dl>")
+                   'ticker is implied</span>' if groups else "" if rc.groups_unread else "none")
+                + (f'<div class="small">{e(groups_unchecked_note(rc.groups_unread))}</div>'
+                   if rc.groups_unread else "") + "</dd></dl>")
         related = self.related_html(tid)
         rv = "".join(
             f'<li><div class="line">“{ids_to_audit(e(f.line))}”</div><div class="said">'
@@ -1979,33 +1986,8 @@ def write_desk(store: Store, run_id: str, out: Path, *, cards: dict[str, dict[st
     return Desk(store, run, cards=cards, generated=generated).write(out)
 
 
-NAV = [("This week", "index.html"), ("Themes", "themes.html"), ("Articles", "articles.html"),
-       ("Review", "review.html"), ("Uploads", "uploads.html"), ("Sources", "sources.html")]
 
-CSS = """
-:root{--bg:#f6f5f1;--panel:#fff;--ink:#16191d;--ink2:#3b4148;--muted:#6b7280;--line:#e6e4dd;
---accent:#1d4f7a;--accent-bg:#eaf1f8;--watch:#8a5a00;--watch-bg:#fbf1d8;--now:#1f6b3a;
---now-bg:#e3f3e8;--skip:#555;--skip-bg:#eee;--bad:#9b2c2c;--bad-bg:#fbe9e7;--part:#7a5b00;
---part-bg:#fdf3dc;--ok:#1f6b3a;--ok-bg:#e3f3e8;--info:#215f86;--info-bg:#e6f0f7}
-*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 -apple-system,
-BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;overflow-wrap:break-word}
-a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-.top{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.top .in{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:24px;
-min-height:56px;flex-wrap:wrap}
-.brand{font-weight:700;color:var(--ink)}
-.brand small{font-weight:500;color:var(--muted);margin-left:6px}
-nav a{color:var(--ink2);margin-right:18px;padding:17px 0;display:inline-block;
-border-bottom:2px solid transparent}
-nav a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
-nav a:hover{text-decoration:none}
-.auditbar{margin-left:auto;font-size:13px;color:var(--muted);cursor:pointer;border:1px solid
-var(--line);border-radius:6px;padding:3px 9px;white-space:nowrap}
-#audit:checked~.top .auditbar{background:var(--accent-bg);color:var(--accent)}
-.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~main .aud{display:revert}
-.cc{font:12px/1.4 ui-monospace,Menlo,monospace;color:var(--muted)}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 64px}
+CSS = THEME_CSS + """
 h1{font-size:30px;line-height:1.2;margin:4px 0 10px;letter-spacing:-.01em}
 h2{font-size:18px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
 font-size:13px;margin-left:6px}h3{font-size:14.5px;margin:16px 0 8px}
@@ -2036,35 +2018,32 @@ padding:12px 16px;margin-bottom:8px;color:var(--ink)}
 .tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
 .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gapi{color:var(--ink2)}
-.chip{display:inline-block;font-size:12px;font-weight:650;border-radius:20px;padding:2px 10px;
-white-space:nowrap}
-.chip.watch{background:var(--watch-bg);color:var(--watch)}.chip.now{background:var(--now-bg);
-color:var(--now)}.chip.skip{background:var(--skip-bg);color:var(--skip)}
 .ev{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:20px;
-padding:1px 8px;color:var(--ink2);background:#fff;white-space:nowrap}
-.ev.down{color:var(--bad);border-color:#f0c9c4}.ev.up{color:var(--now)}.ev.new{color:var(--info)}
+padding:1px 8px;color:var(--ink2);background:var(--panel);white-space:nowrap}
+.ev.down{color:var(--bad);border-color:var(--bad-bg)}.ev.up{color:var(--ok)}.ev.new{color:var(--info)}
 .ev.rv{color:var(--bad);background:var(--bad-bg);border-color:transparent}
 .st{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12.5px;white-space:nowrap}
-.st.ok{color:var(--ok);background:var(--ok-bg)}.st.part{color:var(--part);background:var(--part-bg)}
+.st.ok{color:var(--ok);background:var(--ok-bg)}.st.part{color:var(--watch);background:var(--watch-bg)}
 .st.bad{color:var(--bad);background:var(--bad-bg)}.st.info{color:var(--info);background:var(--info-bg)}
-.st.mute{color:var(--muted);background:#f0efea}
+.st.mute{color:var(--muted);background:var(--soft)}
 table{border-collapse:collapse;width:100%;background:var(--panel)}
 .hscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-width:100%}
 th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;
-font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:#fbfbf9}
+font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
 td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14.5px}
 tr:last-child td{border-bottom:0}
 section{margin-bottom:28px}
-code{font-size:12.5px;background:#f1f0eb;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere}
+code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
+overflow-wrap:anywhere}
 code.cmd{display:inline-block;white-space:normal}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 .filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
-border:1px solid var(--line);border-radius:8px;background:#fff}
+border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
 .filters input#q{min-width:240px;flex:1}.filters label{display:inline-flex;gap:8px;
 align-items:center;font-size:14px}
 .weeks{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px;max-width:100%}
 .wk{white-space:nowrap;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
-font-size:13px;background:#fff;color:var(--ink2)}
+font-size:13px;background:var(--panel);color:var(--ink2)}
 .wk small{margin-left:6px;color:var(--muted)}.wk.on{border-color:var(--accent);color:var(--ink);
 font-weight:600}
 details summary{cursor:pointer;color:var(--accent);font-size:13.5px}
@@ -2074,7 +2053,7 @@ border-radius:12px;padding:10px 16px;margin-bottom:10px}
 details.agrp>summary,details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
 details.agrp .hscroll,details.ubk .hscroll{margin-top:10px}
 .act{display:inline-flex;gap:2px;vertical-align:middle}.act i{width:9px;height:14px;
-border-radius:2px;background:#e9e7e0;display:block}.act i.on{background:var(--accent)}
+border-radius:2px;background:var(--line);display:block}.act i.on{background:var(--accent)}
 .stale{display:inline-block;font-size:12px;color:var(--bad);margin-top:3px}
 .rvlist{list-style:none;padding:0;margin:0}
 .rvi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;
@@ -2087,8 +2066,8 @@ margin-bottom:10px}
 .steps{padding-left:18px;margin:0 0 10px;font-size:14px}.steps li{margin-bottom:9px}
 .hs{display:inline-flex;gap:2px;vertical-align:middle}.hs i{width:10px;height:14px;
 border-radius:2px;display:block}
-.h-healthy{background:#6aa77d}.h-degraded{background:#e2b950}.h-blocked{background:#c9645a}
-.h-error{background:#c9645a}.h-unknown{background:#ccc}
+.h-healthy{background:var(--ok)}.h-degraded{background:var(--watch)}.h-blocked{background:var(--bad)}
+.h-error{background:var(--bad)}.h-unknown{background:var(--line)}
 .crumb{font-size:13px;color:var(--muted);margin-bottom:8px}
 .th h1{font-size:28px;max-width:920px}.th .meta{display:flex;flex-wrap:wrap;gap:8px 12px;
 align-items:center;color:var(--muted);font-size:13.5px;margin-bottom:18px}
@@ -2097,7 +2076,7 @@ align-items:center;color:var(--muted);font-size:13.5px;margin-bottom:18px}
 .thesis{font-size:19px;line-height:1.55;margin:0;border-left:3px solid var(--accent);
 padding-left:16px}
 .tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;
-white-space:nowrap;vertical-align:1px;margin-left:4px;background:#fff}
+white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
 margin-bottom:16px}
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
@@ -2139,9 +2118,10 @@ details.evg>summary{color:var(--ink);font-size:14.5px}details.evg .hscroll{margi
 .timeline{list-style:none;padding:0;margin:0}.timeline li{display:flex;gap:12px;align-items:center;
 padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap;font-size:14px}
 .timeline li:first-child{border-top:0}.hv{font-weight:700;width:30px}
-.btn{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:8px 14px;
-margin:0 8px 8px 0}.btn2{display:inline-block;border:1px solid var(--line);border-radius:8px;
-padding:8px 14px}.btn:hover,.btn2:hover{text-decoration:none}
+.btn{display:inline-block;background:var(--accent);color:var(--panel);border-radius:8px;
+padding:8px 14px;margin:0 8px 8px 0}
+.btn2{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+.btn:hover,.btn2:hover{text-decoration:none}
 .nine{columns:2;font-size:14px}
 tr.xtra{display:none}.morebox:checked+.hscroll tr.xtra{display:table-row}
 .morelbl{display:inline-block;margin:8px 2px 12px;font-size:13.5px;color:var(--accent);
@@ -2152,27 +2132,25 @@ details.cmdd{min-width:150px}details.cmdd code{display:block;margin-top:6px;word
 details.older{display:inline-block;margin-left:4px}details.older[open]{display:block}
 td:empty{padding:0}
 .testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
-.foot{max-width:1180px;margin:18px auto 0;font-size:12.5px;color:var(--muted)}
+.foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
 .hit{outline:2px solid var(--accent);outline-offset:3px}
 @media (max-width:880px){.cols{grid-template-columns:1fr}aside{position:static}
 .grid2{grid-template-columns:1fr}.expo{grid-template-columns:1fr}.expo dt{margin-top:6px}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
-nav a{margin-right:12px;padding:8px 0}.top .in{gap:4px 16px;padding:8px 16px}
-.wrap{padding:20px 16px 48px}.filters input#q{min-width:0;width:100%}
+.filters input#q{min-width:0;width:100%}
 .arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
 .arts tr:first-child{display:none}.arts tr{padding:12px 14px;border-bottom:1px solid var(--line)}
 .arts td{border:0;padding:2px 0}.arts td:empty{display:none}.hscroll{border-radius:10px}
 .arts tr.xtra{display:none}.morebox:checked+.hscroll .arts tr.xtra{display:block}
 .tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
-@media print{.top,.tabbar,.filters{display:none}[data-panel]{display:block!important}
-body{background:#fff}.aud{display:revert!important}}
+@media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
 """
 
-JS = """document.querySelectorAll('[data-tabs]').forEach(function(g){var b=g.querySelectorAll(
-'[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){x.addEventListener(
-'click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});p.forEach(function(q){
-q.hidden=q.dataset.panel!==x.dataset.tab})})})});
-function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+#: the desk's behaviour — tabs, filters, sorts, "show all" — ONE script for the standalone pages
+#: (inline) and the main app's Theme intelligence section (published as desk.js, run on each view
+#: it shows): `deskInit(root, params)` wires one rendered page; the filters are global functions
+#: the page's controls call.
+JS = """function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
 function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
 rowsOf('input.morebox').forEach(function(b){b.checked=true})}
 function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
@@ -2200,7 +2178,11 @@ function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElem
 if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
 x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
 n+=ok?1:0});document.getElementById('cnt3').textContent='showing '+n+' of '+all.length}
-(function(){var u=new URLSearchParams(location.search);if(document.getElementById('tt')){
-if(u.get('area'))document.getElementById('far').value=u.get('area');if(u.get('sort')){
-document.getElementById('so').value=u.get('sort');srt()}flt()}
-if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()})();"""
+function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
+var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
+x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
+p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
+if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
+u.get('area');if(u.get('sort')){document.getElementById('so').value=u.get('sort');srt()}flt()}
+if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+"""

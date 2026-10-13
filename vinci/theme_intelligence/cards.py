@@ -631,17 +631,23 @@ def diff_cards(old: CardContent, new: CardContent, classes: dict[str, ChangeClas
 
 # --- rendering -------------------------------------------------------------------------------
 
-_CSS = """
+#: THE THEME-INTELLIGENCE THEME — one palette (light and dark), one type, one nav bar and one audit
+#: switch for every page the package writes: the research desk, the Living Thesis Card and the
+#: weekly report (option A, 2026-10-13 — before it the desk had its own palette and nav, showed
+#: Research Now in green where the card showed it in red, and had no dark mode).
+THEME_CSS = """
 :root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
 --soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
 --watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
---warn-bg:#fff3ea;--ok:#1f6f43;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;
---ext:#1d4f91;--unk:#676d78;--block:#9b1c1c}
+--warn-bg:#fff3ea;--ok:#1f6f43;--ok-bg:#e6f2eb;--bad:#9b1c1c;--bad-bg:#fbe9e7;--info:#0f5f6e;
+--info-bg:#e3f1f3;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;--ext:#1d4f91;
+--unk:#676d78;--block:#9b1c1c}
 @media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
 --ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
 --accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
---skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--obs:#7fd4a4;
---fc:#8fd6e0;--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--ok-bg:#132621;
+--bad:#ffb4ab;--bad-bg:#3a1916;--info:#8fd6e0;--info-bg:#10272b;--obs:#7fd4a4;--fc:#8fd6e0;
+--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
 BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
@@ -655,21 +661,40 @@ color:var(--muted);margin-left:6px}
 scrollbar-width:none}.links::-webkit-scrollbar{display:none}
 .links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
 .links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.links a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.subnav{max-width:1120px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.subnav a{margin:0 4px}
 .auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
 border:1px solid var(--line);border-radius:6px;padding:4px 9px}
 #audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
 .wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
 .wrap.narrow{max-width:940px}
-.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-color:var(--muted)}
-h1{font-size:27px;line-height:1.22;margin:6px 0 8px;font-weight:680;letter-spacing:-.01em}
-h2{font-size:19px;margin:36px 0 12px;font-weight:660;letter-spacing:-.005em}
-h3{font-size:16px;margin:0 0 6px;font-weight:640;line-height:1.3}
 .pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
 border-radius:999px;white-space:nowrap;vertical-align:1px}
 .pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
 color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
 .pill.kind{background:var(--accent-bg);color:var(--accent)}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
+#audit:checked~.wrap .nonaud{display:none}
+@media (max-width:720px){.topnav .in{gap:0 12px;flex-wrap:wrap;padding-top:8px}
+.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}.wrap{padding:18px 12px 48px}}
+@media print{.topnav,.subnav{display:none}body{background:#fff}.aud{display:revert!important}
+.nonaud{display:none!important}}
+"""
+#: the research desk's screens — the ONE nav bar of every theme-intelligence page
+DESK_NAV = (("This week", "index.html"), ("Themes", "themes.html"), ("Articles", "articles.html"),
+            ("Review", "review.html"), ("Uploads", "uploads.html"), ("Sources", "sources.html"))
+#: every page the package writes is internal research, never for search engines
+ROBOTS = '<meta name="robots" content="noindex, nofollow">'
+
+_CSS = THEME_CSS + """
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+color:var(--muted)}
+h1{font-size:27px;line-height:1.22;margin:6px 0 8px;font-weight:680;letter-spacing:-.01em}
+h2{font-size:19px;margin:36px 0 12px;font-weight:660;letter-spacing:-.005em}
+h3{font-size:16px;margin:0 0 6px;font-weight:640;line-height:1.3}
 .tag{display:inline-block;font-size:12px;color:var(--ink2);border:1px solid var(--line);
 border-radius:999px;padding:1px 9px;white-space:nowrap}.tag.down{color:var(--now)}
 .tag.up{color:var(--ok)}
@@ -730,16 +755,10 @@ color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 font-weight:600;font-size:13px}
 .legend{font-size:12.5px;color:var(--muted);margin:14px 0 4px}
 .legend summary{cursor:pointer}
-.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
-#audit:checked~.wrap .nonaud{display:none}
 @media (max-width:720px){.hscroll table{min-width:620px}
 .glance{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}
-.card{padding:16px 14px;border-radius:10px}.topnav .in{gap:0 12px;flex-wrap:wrap;
-padding-top:8px}.brand small{display:none}.auditbar{margin-left:auto}
-.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
-.links a{padding:6px 0 8px}
-.wrap{padding:18px 12px 48px}}
-@media print{.topnav{display:none}details>*{display:block!important}
+.card{padding:16px 14px;border-radius:10px}}
+@media print{details>*{display:block!important}
 details.sec>summary::before{content:""}body{background:#fff}.card{border:0;padding:0}
 .aud{display:revert!important}.nonaud{display:none!important}.hscroll{overflow:visible}
 .glance{grid-template-columns:repeat(2,minmax(0,1fr))}.g,.thesis{break-inside:avoid}}
@@ -911,6 +930,9 @@ class RenderContext:
     roles: dict[str, str] = field(default_factory=dict)
     #: business groups the source names in the paragraphs holding this thesis's evidence
     groups: tuple[NamedGroup, ...] = ()
+    #: paragraphs holding this thesis's evidence whose text is NOT HELD on this machine (an
+    #: exported registry carries none): business groups there are "not checkable", never "none"
+    groups_unread: int = 0
     #: the claim ids with an evidence row on the rendered card (set by `render_html`)
     targets: frozenset[str] = frozenset()
     #: the version's card-review status: not run, and the earlier findings read onto its lines
@@ -962,6 +984,13 @@ def named_groups(claims: Iterable[Claim], blocks: dict[tuple[str, str], str]
             seen[key] = NamedGroup(name=name, article_id=c.article_id, block_ids=(c.block_id,),
                                    excerpt=excerpt, claim_ids=ids)
     return tuple(seen.values())
+
+
+def groups_unchecked_note(n: int) -> str:
+    """Business groups where the evidence text is not held (an exported registry, the runner)."""
+    return (f"Not checkable on this machine — the text of {n} paragraph(s) holding this thesis's "
+            f"evidence is not held here (an exported registry carries no article text), so "
+            f"business groups the source names there cannot be read.")
 
 
 def cited_claim_ids(card: CardContent) -> list[str]:
@@ -1191,21 +1220,24 @@ def _para(block_id: str) -> str:
     return block_id[1:].lstrip("0") or "0" if re.fullmatch(r"b\d+", block_id) else block_id
 
 
-def topnav(base: str) -> str:
-    """The product navigation — the weekly overview's views — on the dashboard ("") and on every
-    card ("../"), with the audit switch (evidence ids, engine codes, decision traces)."""
-    page = f"{base}dashboard.html" if base else ""
-    links = (("Overview", "#top"), ("Theses", "#theses"), ("Review queue", "#review"),
-             ("Sources", "#sources"), ("Archive", "#archive"), ("Operations", "#ops"))
+def topnav(base: str, *, active: str = "", sections: Iterable[tuple[str, str]] = ()) -> str:
+    """The product navigation — the research desk's six screens — on every page the package
+    writes: the desk (`base` ""), a card or a reading page ("../") and the weekly report (""), with
+    the audit switch (evidence ids, engine codes, decision traces). `sections`: the page's own
+    in-page links, in a second row (the weekly report)."""
+    on = ' class="on"'
+    links = "".join(f'<a href="{base}{h}"{on if t == active else ""}>{e(t)}</a>'
+                    for t, h in DESK_NAV)
+    sub = ('<div class="subnav">On this page: ' + " · ".join(
+        f'<a href="{h}">{e(t)}</a>' for t, h in sections) + "</div>") if sections else ""
     return ('<nav class="topnav" id="top"><div class="in"><a class="brand" href="'
-            f'{page or "#top"}">Mosaic Theory<small>Theme research</small></a><div class="links">'
-            + "".join(f'<a href="{page}{h}">{t}</a>' for t, h in links)
-            + '</div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes '
-              'and the decision trace">Audit view</label></div></nav>')
+            f'{base}index.html">Mosaic Theory<small>Research desk</small></a><div class="links">'
+            + links + '</div><label for="audit" class="auditbar" title="Show evidence IDs, engine '
+              'codes and the decision trace">Audit view</label></div></nav>' + sub)
 
 
 def why_reasons(card: CardContent, pr: ResearchPriority | None,
-                groups: Iterable[str] = ()) -> list[str]:
+                groups: Iterable[str] = (), *, groups_unchecked: bool = False) -> list[str]:
     """Why the research action is what it is, in plain words — from the STORED priority's factor
     VALUES and the card's own exposures, never from the rule trace's text (which stays in the
     audit view)."""
@@ -1242,7 +1274,12 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
     names = list(dict.fromkeys(groups))
     if not exposed:
         out.append("Exposure — no listed company or verified sector exposure; the source names "
-                   f"business groups only ({'; '.join(names)}), not companies." if names else
+                   f"business groups only ({'; '.join(names)}), not companies"
+                   + ("; other evidence paragraphs are not checkable on this machine (their "
+                      "article text is not held here)." if groups_unchecked else ".") if names
+                   else "Exposure — no listed company or verified sector exposure; whether the "
+                        "source names business groups is not checkable on this machine (the "
+                        "article text is not held here)." if groups_unchecked else
                    "Exposure — the source names no company or sector as exposed.")
     if f.get("F7_dislocation_or_catalyst") != "present" and f.get(
             "F12_fundamental_inflection") != "qualifies":
@@ -1294,7 +1331,8 @@ def _glance(card: CardContent, rc: RenderContext) -> str:
         f'{e(r.label)} <span class="note">({e(r.period or "—")}, {e(r.epistemic.value)}; '
         f'{e(_source_name(card, r.article_id))})</span></li>' for r in ev)
     why = "".join(f"<li>{e(x)}</li>"
-                  for x in why_reasons(card, rc.priority, [g.name for g in rc.groups]))
+                  for x in why_reasons(card, rc.priority, [g.name for g in rc.groups],
+                              groups_unchecked=rc.groups_unread > 0))
     w = card.s07_what_could_go_wrong
     risks = ([line(s, f"s07.{i}") for i, s in enumerate(w.counter_evidence[:2])]
              + [f'<li>{e(_clean_display(s.text))}</li>' for s in w.disconfirming_observables[:2]])
@@ -1505,8 +1543,10 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + (sector_rows or '<div class="note">None named by the source.</div>')
         + '<div class="sub">Business groups the source names — not companies; no ticker is '
           'implied and the research action does not count them</div>'
-        + (group_rows or '<div class="note">None named in the paragraphs holding this thesis\'s '
-                         'evidence.</div>')
+        + group_rows + (f'<div class="note">{e(groups_unchecked_note(rc.groups_unread))}</div>'
+                        if rc.groups_unread else "" if group_rows else
+                        '<div class="note">None named in the paragraphs holding this thesis\'s '
+                        'evidence.</div>')
         + '<div class="sub">Stock exposures of this thesis (source-named companies)</div>'
         + _company_rows(av.companies, exposures=True)
         + '<div class="sub">Named instruments / indices</div>' + _company_rows(av.instruments)
@@ -1527,7 +1567,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
               'source lists above.</div>'))
     summaries["s05_affected"] = (f"{len(av.sector_exposures)} sector(s) · "
                                  + (f"{len(rc.groups)} business group(s) named · "
-                                    if rc.groups else "")
+                                    if rc.groups else "business groups not checkable here · "
+                                    if rc.groups_unread else "")
                                  + f"{len(av.companies)} company exposure(s) · "
                                  f"{len(av.also_named)} other mention(s)")
     wn = card.s06_why_now
@@ -1571,7 +1612,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         f'<span class="note">research attention only — this card never directs a purchase or '
         f'sale</span></div>'
         + "".join(f'<div class="s">{e(x)}</div>'
-                  for x in why_reasons(card, rc.priority, [g.name for g in rc.groups]))
+                  for x in why_reasons(card, rc.priority, [g.name for g in rc.groups],
+                              groups_unchecked=rc.groups_unread > 0))
         + '<div class="sub">Next investigable step</div>' + _sent(d.next_step, "s08.next", rc)
         + '<div class="sub">Would raise priority</div>'
         + "".join(_sent(s, "-", rc) for s in d.raise_priority_if)
@@ -1623,9 +1665,10 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     if print_mode:  # the print file is the COMPLETE record: every nested audit toggle opens too
         body = body.replace("<details>", "<details open>")
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
-            "content='width=device-width,initial-scale=1'><title>" + e(h.title)
+            "content='width=device-width,initial-scale=1'>" + ROBOTS + "<title>" + e(h.title)
             + "</title><style>" + _CSS + "</style></head><body>" + AUDIT_TOGGLE
-            + topnav("../") + "<div class='wrap narrow'><article class=card>" + body
+            + topnav("../", active="Themes") + "<div class='wrap narrow'><article class=card>"
+            + body
             + "</article></div>" + script + "</body></html>")
 
 
@@ -1712,7 +1755,9 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     md.append("**Business groups the source names — not companies; no ticker implied:**")
     md += [f"- {g.name} — {g.excerpt} (paragraph {', '.join(_para(b) for b in g.block_ids)})"
            + (" [" + ", ".join(g.claim_ids) + "]" if g.claim_ids else "")
-           for g in rc.groups] or ["- none"]
+           for g in rc.groups] or ([] if rc.groups_unread else ["- none"])
+    if rc.groups_unread:
+        md.append(f"- {groups_unchecked_note(rc.groups_unread)}")
     # (label, group) PAIRS — never `grp is av.instruments`: every empty tuple is the same object,
     # so identity matched one empty group to another's heading
     for label, grp, expo in (("Stock exposures of this thesis", av.companies, True),
@@ -1805,7 +1850,8 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "withheld_sentences": rc.blocked,
         "review_warnings": rc.flagged,
         "analyst_corrections": rc.corrected,
-        "why_action": why_reasons(card, rc.priority, [g.name for g in rc.groups]),
+        "why_action": why_reasons(card, rc.priority, [g.name for g in rc.groups],
+                              groups_unchecked=rc.groups_unread > 0),
         "review_resolved": {k: why for k, (why, _said) in rc.resolved.items()},
         "review_not_run": rc.carry.not_run,
         "review_carried": {k: {"code": f.code, "origin_version": f.origin_version,
@@ -1815,6 +1861,7 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "review_removed_lines": [{"code": f.code, "detail": f.detail,
                                   "origin_version": f.origin_version,
                                   "origin_text": f.origin_text} for f in rc.carry.removed],
+        "named_business_groups_unchecked_paragraphs": rc.groups_unread,
         "named_business_groups": [
             {"name": g.name, "article_id": g.article_id, "block_ids": list(g.block_ids),
              "excerpt": g.excerpt, "claim_ids": list(g.claim_ids)} for g in rc.groups],

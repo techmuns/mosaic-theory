@@ -40,6 +40,7 @@ from vinci.theme_intelligence.cards import (
     AUDIT_TOGGLE,
     KIND_LABEL,
     REVEAL_JS,
+    ROBOTS,
     STEP_LABEL,
     CarriedFinding,
     NamedGroup,
@@ -634,6 +635,7 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
     vf = _findings(store, t.thesis_id, v, {})
     blocked, flagged, corrected, resolved = vf.blocked, vf.flagged, vf.corrected, vf.resolved
     links = store.links(t.thesis_id)
+    groups, unread = _group_read(store, links)
     claims = {i: c for i in cited_claim_ids(v.content) if (c := store.claim(i)) is not None}
     status_note = None
     if t.status is not v.content.header.status:
@@ -654,12 +656,25 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                          flagged=flagged, retrieval_now=retrieval_now, corrected=corrected,
                          priority=v.priority, resolved=resolved, claims=claims,
                          roles={lk.claim_id: lk.role.value for lk in links},
-                         groups=thesis_groups(store, links), carry=vf.carry)
+                         groups=groups, groups_unread=unread, carry=vf.carry)
 
 
 def thesis_groups(store: Store, links: list[ThesisClaimLink]) -> tuple[NamedGroup, ...]:
     """Business groups the source names in the paragraphs holding a thesis's verified evidence
     (cards.named_groups) — read from the stored paragraphs, never from a model."""
+    return _group_read(store, links)[0]
+
+
+def groups_unread(store: Store, links: list[ThesisClaimLink]) -> int:
+    """How many paragraphs holding a thesis's verified evidence have NO TEXT on this machine — an
+    exported registry carries no article text (state.py), so on the weekly runner the business
+    groups there cannot be read: a surface then says "not checkable on this machine", never
+    "none" (a false negative on every weekly readout before 2026-10-13)."""
+    return _group_read(store, links)[1]
+
+
+def _group_read(store: Store, links: list[ThesisClaimLink]
+                ) -> tuple[tuple[NamedGroup, ...], int]:
     claims = list({lk.claim_id: c for lk in links
                    if (c := store.claim(lk.claim_id)) is not None and c.span_verified}.values())
     blocks: dict[tuple[str, str], str] = {}
@@ -668,7 +683,7 @@ def thesis_groups(store: Store, links: list[ThesisClaimLink]) -> tuple[NamedGrou
             av = store.article_version(c.article_version_id)
             blocks[(c.article_version_id, c.block_id)] = next(
                 (b.text for b in (av.blocks if av else ()) if b.block_id == c.block_id), "")
-    return named_groups(claims, blocks)
+    return named_groups(claims, blocks), sum(1 for t in blocks.values() if not t.strip())
 
 
 def line_findings(store: Store, thesis_id: str, v: ThesisVersion
@@ -1058,7 +1073,8 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
     if not events and types & {"UPDATED", "UPGRADED", "REACTIVATED"}:
         events.append("Updated")
     blocked, flagged, _corr, resolved = line_findings(store, t.thesis_id, cur)
-    groups = [g.name for g in thesis_groups(store, store.links(t.thesis_id))]
+    found, unread = _group_read(store, store.links(t.thesis_id))
+    groups = [g.name for g in found]
     skip = set(blocked) | set(flagged)
     mi = mechanism_step(c, skip)
     rest = [(i, st) for i, st in enumerate(c.s03_transmission)
@@ -1089,7 +1105,7 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
         "changed_plain": [_plain(it.text) for it in c.s02_what_changed.items],
         "implications": [f"{STEP_LABEL.get(st.step, st.step)}: {_plain(st.text)}"
                          for st in c.s03_transmission if st.step != "market_reaction"],
-        "why": why_reasons(c, cur.priority, groups),
+        "why": why_reasons(c, cur.priority, groups, groups_unchecked=unread > 0),
         "review_lines": [(_card_anchor(sid), _line_name(sid), said) for sid, said in review],
         "events": events,
         "source_line": (f"{src.publisher} · published "
@@ -1700,6 +1716,11 @@ def _coverage_html(v: dict[str, Any], print_mode: bool) -> str:
             + body + f'<div class="aud">{audit}</div></details>')
 
 
+#: the weekly report's own sections — its second nav row (the desk's screens are the first)
+REPORT_SECTIONS = (("Overview", "#top"), ("Theses", "#theses"), ("Review queue", "#review"),
+                   ("Sources", "#sources"), ("Archive", "#archive"), ("Operations", "#ops"))
+
+
 def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
                           embedded_cards: list[str] | None = None) -> str:
     """The weekly research brief. The FIRST screen is the research: title and as-of, a compact
@@ -1764,9 +1785,10 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
               "'none'})}window.addEventListener('beforeprint',()=>document.querySelectorAll("
               "'details').forEach(d=>d.open=true));</script>" + REVEAL_JS)
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport "
-            "content='width=device-width,initial-scale=1'><title>Theme intelligence weekly"
-            "</title><style>" + _CSS + _DASH_CSS + "</style></head><body>" + AUDIT_TOGGLE
-            + topnav("") + "<div class=wrap>" + "".join(parts) + "</div>" + script
+            "content='width=device-width,initial-scale=1'>" + ROBOTS + "<title>Theme "
+            "intelligence weekly</title><style>" + _CSS + _DASH_CSS + "</style></head><body>"
+            + AUDIT_TOGGLE + topnav("", sections=REPORT_SECTIONS) + "<div class=wrap>"
+            + "".join(parts) + "</div>" + script
             + "</body></html>")
 
 
