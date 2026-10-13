@@ -580,6 +580,52 @@ document is analysed without its licence confirmed.
   "Corrected by the analyst — <reason>"; the earlier version stands in the history. Keep the
   corrections file private: it may quote licensed text.
 
+### The research desk (2026-10-13 — the approved design)
+
+Every run's output folder opens on the desk (`index.html`); the weekly report
+(`dashboard.html`), its printable record and the cards are unchanged and linked from it.
+
+- **This Week** — the week in a sentence, then the week's thesis changes grouped by research area
+  (new, upgraded, downgraded, challenged, new evidence) and what each article produced, including
+  zero-thesis, partial, held, failed and queued ones. Before the first weekly scan, the week is
+  every manual run since (a week in progress).
+- **Themes** — every thesis, active and archived, by area: search, filter by status, action and
+  area, and sort by last new evidence, closeness to archiving, sources or open findings. Areas use
+  short names; the taxonomy keys are unchanged.
+- **Articles** — one page per week (the selector shows them), each article's state, what it
+  produced, its open completeness items and its follow-up.
+- **Review** — every unresolved finding on every active thesis, whatever week raised it, in order:
+  decision-affecting first, then Research Now, then the oldest. Each links to its exact card line.
+  Resolved and historical findings stay below. The page is read-only; a finding closes only through
+  the record (an analyst correction or a re-read).
+- **Uploads** — everything to supply or clear, never dismissed by age, each with its publisher,
+  source id, dates and the command to run (folded on its row). The weekly steps are listed beside
+  it.
+- **Sources** — health now, the stored health-check history (only what is recorded), freshness,
+  articles analysed in the last four weeks, and how research may come in: automatic coverage and
+  manual-first coverage apart.
+- **The reading page** (`theses/<id>.html`) — the thesis, what changed, the strongest figures, how
+  it reaches fundamentals, why this action, what could prove it wrong and what to investigate next.
+  Exposures, related theses (theses sharing a source are flagged as the same source, not
+  independent confirmation), open findings, evidence, history and sources follow. **Full record**
+  opens the nine-section card, or any one section.
+- **Timing** — the near-term condition is stated once, met or not, from the stored factor, with
+  the dated claims it reads and where each date comes from. The source's horizon label is printed
+  as a description, not a test. If those claims, re-dated today, give another value, the page shows
+  **Review required** and the research action of record stands until the thesis is reassessed.
+- **Audit view** (top right) shows ids, engine codes, factor values and the decision trace, as on
+  the card.
+- A registry holding articles from a reserved test domain (`.test`) says **TEST DATA** on every
+  page.
+
+**Follow-up requirements (documented, not built).**
+- **A. A safe one-step weekly upload command:** a cache-only state pull, identity and licence
+  checks, a cost preflight, an explicitly budgeted import, QA, ledger reconciliation, and a
+  fast-forward-only push. No implicit paid replay.
+- **B. Append-only review resolution:** version-specific findings, with reviewer, time, reason,
+  and a verified correction or dismissal; full history kept. Accepting a warning must never itself
+  make unsupported evidence valid.
+
 ## Scheduling
 
 **GitHub Actions — `.github/workflows/theme-intelligence-weekly.yml`.** Actions is active on this

@@ -460,6 +460,23 @@ PR (CLAUDE.md: coin-time translation).
 - **Historical figure** (theme intelligence, `superseded_items_plain`, `verify.number_passes`) —
   plain words: *an open figure whose claim failed a number check that today's check passes; the
   stored failure stands and the figure is still not evidence, but it is history, not an open gap*.
+- **Research desk** (theme intelligence, `desk.py`, `write_desk`) — plain words: *the analyst's
+  weekly product written beside a run's outputs — This Week, Themes, Articles, Review, Uploads,
+  Sources and a reading page per thesis — read from the registry's records, writing nothing*.
+- **Decision-affecting finding** (theme intelligence, `desk.decision_claims`, `DECISION_FACTORS`)
+  — plain words: *a withheld line, a near-term timing conflict, or a review finding on a line that
+  cites a claim the research action counts (F2/F5/F7/F12); it orders the review queue and never
+  changes an action*.
+- **Near-term reading vs horizon framing** (theme intelligence, `desk.near_term_reading`,
+  `NearTerm.conflict`) — plain words: *the near-term condition is the stored F5 factor, stated once
+  as met or not; the source's horizon label is a description, never a test; when the factor's own
+  claims, re-dated today, give another value, the thesis shows Review required and keeps its
+  action until reassessed*.
+- **Week in progress** (theme intelligence, `desk.desk_weeks`) — plain words: *the manual runs
+  since the last weekly scan, shown as the desk's current week until a scan closes it*.
+- **Stress registry** (theme intelligence, `tests/theme_intelligence_stress.py`) — plain words: *a
+  SYNTHETIC multi-week registry built through the real engine on a reserved `.test` domain, for
+  scale tests only — never the real registry or production state*.
 
 ## Local setup (every laptop, every contributor)
 
