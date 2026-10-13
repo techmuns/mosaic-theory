@@ -209,6 +209,29 @@ def cmd_report(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_publish(a: argparse.Namespace) -> int:
+    """Publish one run's research desk into the main app (`frontend/theme-intelligence/`) — see
+    publish.py. Commit the folder as an artifact-only commit; Cloudflare Pages deploys it."""
+    from vinci.theme_intelligence.publish import PublishError, publish
+
+    st = Store(Paths(Path(a.data_dir)).db)
+    runs = st.runs()
+    if not runs:
+        raise SystemExit("no runs recorded yet")
+    chosen = [r for r in runs if r.run_id == a.run] if a.run else runs
+    if not chosen:
+        raise SystemExit(f"no run {a.run}")
+    run = max(chosen, key=lambda r: r.started_at)
+    try:
+        m = publish(st, run.run_id, Path(a.out), allow_test_data=a.allow_test_data)
+    except PublishError as exc:
+        print(f"refused: {exc}")
+        return 1
+    print(f"published {run.run_id} ({m['week']}): {len(m['files'])} file(s), {m['theses']} "
+          f"thesis page(s) -> {a.out}")
+    return 0
+
+
 def cmd_reassess(a: argparse.Namespace) -> int:
     from vinci.theme_intelligence.engine import SentenceCorrection
     from vinci.theme_intelligence.pipeline import Pipeline
@@ -650,6 +673,14 @@ def main(argv: list[str] | None = None) -> int:
     g.add_argument("--run")
     rp.add_argument("--out")
     rp.set_defaults(fn=cmd_report)
+
+    pb = sub.add_parser("publish", help="publish a run's research desk into the main app "
+                                        "(frontend/theme-intelligence/) — no model call")
+    pb.add_argument("--run", help="run id (default: the latest run)")
+    pb.add_argument("--out", default="frontend/theme-intelligence")
+    pb.add_argument("--allow-test-data", action="store_true",
+                    help="publish a registry holding test-domain articles (a local preview only)")
+    pb.set_defaults(fn=cmd_publish)
 
     ra = sub.add_parser("reassess", help="re-grade stored theses under the current rules — "
                                          "stored evidence only, no fetch, no model call ($0)")

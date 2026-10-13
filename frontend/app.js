@@ -65,6 +65,21 @@ const EDGES = [
     ],
   },
   {
+    // The research desk (vinci/theme_intelligence): rendered by the Python package and published
+    // into frontend/theme-intelligence/ (`python -m vinci.theme_intelligence publish`); one view
+    // module frames every screen. No `does`: each screen opens with its own summary line.
+    // A thesis's reading page is a drill-down under Themes (#/intel/themes/TH-…).
+    key: "intel", label: "Theme intelligence", state: "live",
+    stages: [
+      { route: "intel", label: "This week" },
+      { route: "intel/themes", label: "Themes" },
+      { route: "intel/articles", label: "Articles" },
+      { route: "intel/review", label: "Review" },
+      { route: "intel/uploads", label: "Uploads" },
+      { route: "intel/sources", label: "Sources" },
+    ],
+  },
+  {
     key: "calls", label: "Calls tape", state: "live",
     stages: [
       // No `does` on purpose: the frame prints it as a persistent subtitle, and on a cockpit that
@@ -118,6 +133,7 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
+  intel: () => import("./views/intel/desk.js"),
   calls: () => import("./views/calls/tape.js"),
 };
 
