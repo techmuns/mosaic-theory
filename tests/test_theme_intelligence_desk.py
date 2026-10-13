@@ -15,6 +15,7 @@ No network, no model call.
 
 from __future__ import annotations
 
+import dataclasses
 import re
 from collections import Counter
 from datetime import date, timedelta
@@ -194,7 +195,7 @@ def test_a_preview_is_never_presented_as_read_in_full(
     shown = 0
     for p in [out / "articles.html", *out.glob("articles-*.html")]:
         for tr in _soup(p).select("#at tr[data-state]"):
-            title = tr.select("td")[2].select_one("a")
+            title = tr.select_one("td.art a")
             if title is not None and title.get_text() in partial:
                 assert tr["data-state"] == "PARTIAL", title.get_text()
                 assert "Read in full" not in tr.get_text(" ")
@@ -287,12 +288,13 @@ def test_this_week_groups_its_changes_by_area_and_lists_what_each_article_produc
             tid = Path(str(a["href"])).stem
             assert area_name(asof[tid][0].key_node) == name
     note = s.find(string=re.compile(r"Showing \d+ of \d+ articles"))
-    rows = s.select("table.prod tr")[1:]
+    rows = s.select("ul.alist > li")
     if note:
         n = int(re.search(r"of (\d+)", str(note)).group(1))  # type: ignore[union-attr]
         assert len(rows) < n
     states = {r.select_one(".st").get_text() for r in rows}
     assert "Read in full" in states
+    assert all(r.select_one(".atl") for r in rows)  # every listed article names itself
 
 
 # --- areas, the near-term reading ---------------------------------------------------------------
@@ -399,3 +401,74 @@ def test_a_registry_of_real_sources_carries_no_test_banner(tmp_path: Path) -> No
     assert desk._test_domain("https://example.test/x")
     assert not desk._test_domain("https://www.nomuraconnects.com/focused-thinking-posts/x/")
     assert not desk._test_domain("urn:document:sha256:abc")
+
+
+# --- readability: nothing said twice, no engine detail in the default view ---------------------
+
+def test_a_figure_label_never_repeats_the_scope_its_metric_already_names(tmp_path: Path) -> None:
+    """POSITIVE + NEGATIVE pin, on the rendered reading page: a metric that already names its scope
+    reads once ("HBM contract price change", never "HBM — HBM contract price change"); a scope the
+    metric does not name is kept before it ("Korea — DRAM contract price change"). Decided from the
+    claim's structured scope and metric; the Full record keeps the label as sealed."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=NOW)
+    lines = ("HBM contract prices rose 12% in 3Q26.",
+             "Korean DRAM contract prices rose 9% in 3Q26.")
+    art = Hypo("figure-labels", "Test Publisher", PUB, [("paragraph", t) for t in lines])
+    x = extraction(
+        [claim("c1", "b001", lines[0].rstrip("."), "HBM contract prices up 12%",
+               metric="HBM contract price change", value=12, value_text="12%", unit="%",
+               period="3Q26", scope="HBM"),
+         claim("c2", "b002", lines[1].rstrip("."), "Korean DRAM contract prices up 9%",
+               metric="DRAM contract price change", value=9, value_text="9%", unit="%",
+               period="3Q26", scope="Korea")],
+        [hyp("h1", "Memory contract prices rise", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1", "c2"])])
+    ingest(pipe, art.doc(), x, as_of=NOW, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    (t,) = pipe.store.theses()
+    out = _render(pipe, pipe.store.runs()[-1].run_id, tmp_path / "out")
+    page = _soup(out / "theses" / f"{t.thesis_id}.html")
+    labels = {x.get_text() for x in page.select(".nums .lbl")}
+    assert labels == {"HBM contract price change", "Korea — DRAM contract price change"}
+    evidence = page.select_one("[data-panel=ev]")
+    assert evidence is not None and "HBM — HBM" not in evidence.get_text(" ")
+    card = _soup(out / "cards" / f"{t.thesis_id}.html").get_text(" ")
+    assert "HBM — HBM contract price change" in card  # the sealed record is unchanged
+
+
+def test_a_source_id_is_an_audit_detail_on_sources_and_uploads(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """The publisher's NAME is the default view; its registry id (`citi_must_c`) belongs to the
+    audit view — on Uploads it is still in each row's command, ready to copy."""
+    _pipe, out, _ = w12
+    sids = {x.get_text() for x in _soup(out / "sources.html").select(".aud code")}
+    assert len(sids) >= 5  # the audit view keeps every source's id (the check can find them)
+    for name in ("sources.html", "uploads.html"):
+        text = _default_text(out / name)
+        assert [s for s in sids if re.search(rf"\b{re.escape(s)}\b", text)] == [], name
+    cmds = " ".join(x.get_text() for x in _soup(out / "uploads.html").select("code.cmd"))
+    assert any(s in cmds for s in sids)
+
+
+def test_a_flagged_lines_scope_note_is_the_audit_views_on_review_as_on_the_reading_page(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """A risk line is stored with a trailing "(scope: …)" note (engine `_risk_sentences`). The
+    reading page keeps that note in the audit view; a FINDING on the line — the Review screen's
+    and the reading page's "Open review findings", both drawn by `finding_item` — does the same,
+    so the quoted line closes on its own words. NEGATIVE pin: a line without a note is unchanged."""
+    pipe, _out, _ = w12
+    run = max((r for r in pipe.store.runs() if r.mode == "scan"), key=lambda r: r.started_at)
+    d = desk.Desk(pipe.store, run, cards={}, generated="")
+    f = d.open[0]
+    noted = dataclasses.replace(f, line=f.line + " (scope: US grid; author's framing)")
+    item = BeautifulSoup(d.finding_item(noted), "html.parser")
+    line = item.select_one(".line")
+    assert line is not None
+    note = line.select_one(".aud.scope")
+    assert note is not None and note.get_text() == " (scope: US grid; author's framing)"
+    note.decompose()
+    assert line.get_text() == f"“{f.line}”"  # the default view: the line, closed on its own words
+    plain = BeautifulSoup(d.finding_item(f), "html.parser")
+    assert plain.select_one(".aud.scope") is None
+    assert plain.select_one(".line").get_text() == f"“{f.line}”"  # type: ignore[union-attr]

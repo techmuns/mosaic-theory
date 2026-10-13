@@ -74,7 +74,8 @@ APP_TOKENS = {
 #: in the app the frame supplies the page title, breadcrumb and audit switch
 _IN_APP = """
 .intel{font-variant-numeric:tabular-nums}
-.intel .hero h1{font-size:22px;margin-top:0}
+.intel .hero h1{font-size:20px;margin-top:0}
+.intel .hero h1.tabtitle{display:none}
 .intel .th h1{display:none}
 .intel .crumb{display:none}
 .intel .aud{display:none}#intel-audit:checked~.intel .aud{display:revert}

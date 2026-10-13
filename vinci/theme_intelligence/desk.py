@@ -1017,6 +1017,34 @@ def _strip(weeks: list[Week], active: set[str]) -> str:
         f'<i class="{"on" if w.key in active else ""}"></i>' for w in weeks) + "</span>")
 
 
+#: article states whose badge says all there is to say — no per-row note repeats it
+_SELF_EXPLAINED = frozenset({"QUEUED"})
+_SCOPE = re.compile(r"\s*\((scope:\s*[^()]*(?:\([^()]*\)[^()]*)*)\)\s*$")
+
+
+def split_scope(text: str) -> tuple[str, str]:
+    """(the line, its trailing "(scope: …)" note) — the reading page shows the line and keeps the
+    note in the audit view; the full record prints both."""
+    m = _SCOPE.search(text)
+    return (text[:m.start()], m.group(1)) if m else (text, "")
+
+
+def figure_label(store: Store, claim_id: str, label: str) -> str:
+    """A figure's label as the reading page shows it: a metric that already names its scope
+    ("observability software prices change" under "observability software") is not repeated after
+    it. Read from the claim's structured scope and metric, never by re-parsing the sealed label —
+    which the Full record still prints as sealed."""
+    c = store.claim(claim_id)
+    if c is not None and c.scope and c.metric and c.scope.casefold() in c.metric.casefold():
+        return c.metric
+    return label
+
+
+def _no_thesis(a: ArticleRow) -> str:
+    return next((n for n in a.notes if n.startswith("No thesis")),
+                "No thesis created or changed.")
+
+
 def _link(url: str, text: str) -> str:
     """A link only to a web address — a document's own identifier (urn:document:…) is text."""
     return (f'<a href="{e(url)}">{e(text)}</a>' if url.startswith(("http://", "https://"))
@@ -1171,42 +1199,43 @@ class Desk:
         for name, rs in areas:
             rs = sorted(rs, key=lambda r: (_RANK.get(r.action, 3), r.title))
             rows = [self.change_row(r) for r in rs]
-            sec.append(f'<div class="area"><h3>{e(name)} <small>{_theses(len(rs))}</small></h3>'
-                       f'{capped(rows, "theses", 8)}</div>')
+            sec.append(f'<div class="area"><h3>{e(name)} <small>{len(rs)}</small></h3>'
+                       f'{capped(rows, "theses", 6)}</div>')
         if d.no_evidence:
             sec.append('<details class="quiet"><summary>' + _pl(len(d.no_evidence), "proposition")
-                       + " with no verified evidence — recorded, never a research candidate"
-                       "</summary><ul>" + "".join(
+                       + " with no verified evidence — kept for the record</summary><ul>" + "".join(
                            f'<li><a href="{self.thesis_link(r.thesis_id)}">{e(r.title)}</a></li>'
                            for r in d.no_evidence) + "</ul></details>")
         att = []
         if self.open:
-            n_t = len({f.thesis_id for f in self.open})
-            att.append(f'<li><a href="review.html"><b>{_pl(len(self.open), "finding")}</b> open on '
-                       f'{_theses(n_t, "active")}'
-                       f'{f" — {decisive} bear on a research action" if decisive else ""}</a></li>')
+            att.append(f'<li><a href="review.html"><b>{len(self.open)}</b> open review '
+                       f'{"finding" if len(self.open) == 1 else "findings"}</a>'
+                       + (f'<span>{decisive} affect a research action</span>' if decisive else "")
+                       + "</li>")
         if waiting:
-            att.append(f'<li><a href="uploads.html"><b>{_pl(len(waiting), "upload item")}</b> — '
-                       f'documents to supply or clear</a></li>')
+            att.append(f'<li><a href="uploads.html"><b>{len(waiting)}</b> upload '
+                       f'{"item" if len(waiting) == 1 else "items"}</a>'
+                       f'<span>documents to supply or clear</span></li>')
         if bad:
-            att.append(f'<li><a href="articles.html"><b>{_pl(len(bad), "article")}</b> failed or '
-                       f'blocked this week</a></li>')
+            att.append(f'<li><a href="articles.html"><b>{len(bad)}</b> failed or blocked '
+                       f'{"article" if len(bad) == 1 else "articles"}</a>'
+                       f'<span>this week</span></li>')
         soon = [t for t, _v in active
                 if STALE_AFTER_DAYS - (w.end - t.last_material_update).days <= 21]
         if soon:
-            att.append(f'<li><a href="themes.html?sort=stale"><b>{_theses(len(soon))}</b> '
-                       f'archive within three weeks unless new evidence arrives</a></li>')
+            att.append(f'<li><a href="themes.html?sort=stale"><b>{len(soon)}</b> close to '
+                       f'archiving</a><span>no new evidence for about three months</span></li>')
         blocked = [r["publisher"] for r in self.health.get("rows", [])
                    if r["status"] in ("BLOCKED", "ERROR", "DEGRADED")]
         if blocked:
-            att.append(f'<li><a href="sources.html"><b>{_pl(len(blocked), "source")}</b> blocked '
-                       f'or degraded ({e(", ".join(blocked))})</a></li>')
-        produced = self.produced_table(arts, cap=10)
+            att.append(f'<li><a href="sources.html"><b>{len(blocked)}</b> sources blocked or '
+                       f'partial</a><span>{e(", ".join(blocked))}</span></li>')
         a_counts: dict[str, list[Thesis]] = defaultdict(list)
         for t, _v in active:
             a_counts[self.area[t.thesis_id]].append(t)
         changed = {r.thesis_id for r in self.rows}
         recent = self.weeks[-12:]
+
         def n_now(ts: list[Thesis]) -> int:
             return sum(1 for t in ts if self.asof[t.thesis_id][1].priority.research_action
                        is ResearchAction.RESEARCH_NOW)
@@ -1217,73 +1246,88 @@ class Desk:
             f'<td>{n_now(ts) or "—"}</td><td>'
             f'{_strip(recent, set().union(*[self.activity[t.thesis_id] for t in ts]))}</td></tr>'
             for a, ts in sorted(a_counts.items(), key=lambda kv: (-len(kv[1]), kv[0]))]
+        tiles = [
+            ("articles.html", len(read), "Articles read",
+             f"{full} in full · {len(read) - full} preview" + (f" · {queued} queued" if queued
+                                                               else ""), False),
+            ("", len(self.rows), "New or changed theses", f"{new} new · {ups} up · {downs} down",
+             False),
+            ("themes.html", rn, "Research Now", f"of {len(active)} active", False),
+            ("review.html", len(self.open), "Findings to review",
+             f"{decisive} affect an action" if decisive else "none affect an action",
+             bool(decisive)),
+            ("uploads.html", len(waiting), "Upload items", "to supply or clear", bool(waiting))]
+        strip = "".join(
+            (f'<a href="{h}" class="{"warn" if warn else ""}">' if h else "<div>")
+            + f"<b>{n}</b><span>{e(label)}</span><small>{e(sub)}</small>"
+            + ("</a>" if h else "</div>") for h, n, label, sub, warn in tiles)
         body = (
-            f'<section class="hero"><div class="eyebrow">Weekly research brief</div>'
-            f'<h1>{e(w.label)}</h1><p class="lede"><b>{_pl(len(read), "article")} read</b> '
-            f'({full} in full, {len(read) - full} preview only)'
-            f'{f", {queued} queued" if queued else ""}'
-            f'{f", {len(bad)} failed or blocked" if bad else ""}. They created '
-            f'<b>{_pl(new, "thesis", "theses")}</b> and changed {len(self.rows) - new}: '
-            f'{ups} upgraded, {downs} downgraded'
-            + (f" (and {_pl(len(d.no_evidence), 'proposition')} with no verified evidence)"
-               if d.no_evidence else "")
-            + f'. <b>{_theses(len(active), "active")}</b>, {rn} at Research Now.</p>'
-            f'<div class="strip"><a href="articles.html"><b>{len(read)}</b><span>Articles read · '
-            f'{full} in full</span></a><div><b>{len(self.rows)}</b><span>Theses created or changed'
-            f'</span></div><a href="themes.html"><b>{rn}</b><span>Research Now (active)</span></a>'
-            f'<a href="review.html" class="{"warn" if decisive else ""}"><b>{len(self.open)}</b>'
-            f'<span>Findings to review · {decisive} decision-affecting</span></a>'
-            f'<a href="uploads.html" class="{"warn" if waiting else ""}"><b>{len(waiting)}</b>'
-            f'<span>Upload items</span></a></div></section>'
-            f'<div class="cols"><section class="main"><h2>Thesis changes by research area</h2>'
-            f'<p class="hint">Only theses created or changed this week. Every thesis is under '
-            f'<a href="themes.html">Themes</a>.</p>'
+            f'<section class="hero"><h1>{e(w.label)}</h1><p class="sum">'
+            f'{_pl(len(read), "article")} read · {_theses(len(self.rows), "new or changed")} · '
+            f'{rn} at Research Now</p><div class="strip">{strip}</div></section>'
+            f'<div class="cols"><section class="main"><h2>Changes this week '
+            f'<small>{_theses(len(self.rows))} in {_pl(len(areas), "area")}</small></h2>'
             + ("".join(sec) or '<p class="muted">No thesis was created or changed.</p>')
-            + '<h2 class="mt">What each article produced</h2>' + produced
+            + f'<h2 class="mt">Articles this week <small>{len(arts)}</small></h2>'
+            + self.produced_list(arts, cap=8)
             + '</section><aside><h2>Needs your attention</h2><ul class="att">'
             + ("".join(att) or '<li class="muted">Nothing outstanding.</li>')
             + "</ul></aside></div>"
-            f'<section><h2>Active theses by area <small>{_pl(len(active), "thesis", "theses")} in '
-            f'{_pl(len(a_counts), "area")}</small></h2>'
-            + self.table("areas", f'<tr><th>Area</th><th>Active</th><th>Changed this week</th>'
-                                  f'<th>Research Now</th><th>Weeks with new evidence (last '
-                                  f'{len(recent)})</th></tr>', arow, "areas")
-            + '</section>')
+            f'<details class="quiet"><summary>All active theses by area '
+            f'<span class="muted">{_theses(len(active))} in {_pl(len(a_counts), "area")}</span>'
+            f'</summary>'
+            + self.table("areas", '<tr><th>Area</th><th>Active</th><th>Changed</th>'
+                                  '<th>Research Now</th><th>Weeks with new evidence</th></tr>',
+                         arow, "areas")
+            + '</details>')
         return self.page("This week", body, "This week")
 
+    def latest_source(self, tid: str) -> tuple[str, date | None]:
+        """The publisher and date of a thesis's latest source."""
+        srcs = self.asof[tid][1].content.s09_sources if tid in self.asof else ()
+        s = max(srcs, key=lambda x: x.published_at or datetime.min.replace(tzinfo=UTC),
+                default=None)
+        return (s.publisher, _todate(s.published_at)) if s else ("", None)
+
     def change_row(self, r: DashRow) -> str:
-        unmet = self.unmet(r.thesis_id) if r.action != "RESEARCH NOW" else []
+        unmet = self.unmet(r.thesis_id) if r.action == "WATCH" else []
         n_open = len(self.open_by_thesis().get(r.thesis_id, []))
+        mech = plain(r.mechanism)
+        same = re.sub(r"\W+", " ", mech).strip().lower() in re.sub(
+            r"\W+", " ", r.title).strip().lower()
+        pub, when = self.latest_source(r.thesis_id)
+        meta = [x for x in (pub, _day(when) if when else "") if x]
+        if r.partial_source:
+            meta.append("preview only")
+        gap = (f'<span class="bdg" title="Not yet Research Now: {e("; ".join(unmet))}">'
+               f'{_pl(len(unmet), "condition")} open</span>' if unmet else "")
         return (f'<a class="trow" href="{self.thesis_link(r.thesis_id)}"><div class="ttop">'
                 f'{_chip(r.action)}{"".join(_event(x) for x in r.events)}'
                 + (f'<span class="ev rv">{_pl(n_open, "finding")}</span>' if n_open else "")
                 + f'</div><div class="ttitle">{e(r.title)}</div>'
-                f'<div class="tline clamp">{e(plain(r.mechanism))}</div><div class="tmeta">'
-                f'{e(r.source_line)}{" · preview only" if r.partial_source else ""}'
-                + (f' · <span class="gapi">not yet Research Now: {e(" · ".join(unmet))}</span>'
-                   if unmet and r.action != "SKIP" else "") + "</div></a>")
+                + ("" if same or not mech else f'<div class="tline clamp">{e(mech)}</div>')
+                + f'<div class="tmeta">{e(" · ".join(meta))}{gap}</div></a>')
 
     def produced_cell(self, a: ArticleRow, depth: int = 0) -> str:
         if a.produced:
             return "<br>".join(
                 f'<a href="{self.thesis_link(tid, depth)}">{e(self.title(tid))}</a> '
-                f'<span class="small">— {e(how)}</span>' if tid in self.asof else
+                f'<span class="small">· {e(how)}</span>' if tid in self.asof else
                 f'<span class="small">{e(how)} (a thesis not in this run\'s record)</span>'
                 for tid, how in a.produced)
-        return f'<span class="small">{e(" ".join(a.notes))}</span>'
+        return f'<span class="small">{e(_no_thesis(a))}</span>'
 
-    def produced_table(self, arts: list[ArticleRow], cap: int) -> str:
+    def produced_list(self, arts: list[ArticleRow], cap: int) -> str:
         if not arts:
             return '<p class="muted">No article this week.</p>'
-        rows = [f'<tr><td><b>{e(a.title)}</b><div class="small">{e(a.publisher)} · '
-                f'{e(_day(a.published))}</div></td><td>{_state(a.state)}</td>'
-                f'<td>{self.produced_cell(a)}</td></tr>' for a in arts]
-        shown = rows[:cap]
-        return ('<div class="hscroll"><table class="arts prod"><tr><th>Article</th><th>Read</th>'
-                '<th>Produced</th></tr>' + "".join(shown) + "</table></div>"
-                + (f'<p class="small">Showing {len(shown)} of {len(rows)} articles — '
-                   f'<a href="articles.html">all {len(rows)} on Articles</a></p>'
-                   if len(rows) > cap else ""))
+        items = [f'<li>{_state(a.state)}<div><div class="atl">{e(a.title)}</div>'
+                 f'<div class="small">{e(a.publisher)} · {e(_day(a.published))}</div>'
+                 + (f'<div class="aprod">{self.produced_cell(a)}</div>' if a.analysed else "")
+                 + "</div></li>" for a in arts]
+        return ('<ul class="alist">' + "".join(items[:cap]) + "</ul>"
+                + (f'<p class="small">Showing {cap} of {len(items)} articles — '
+                   f'<a href="articles.html">all {len(items)} on Articles</a></p>'
+                   if len(items) > cap else ""))
 
     # -- Themes --------------------------------------------------------------------------------
     def themes(self) -> str:
@@ -1306,27 +1350,26 @@ class Desk:
             arch = t.status is ThesisStatus.ARCHIVED
             left = STALE_AFTER_DAYS - (w.end - t.last_material_update).days
             note = ("" if not arch and left > 21 else
-                    f'<div class="stale">archives in {left} days unless new evidence</div>'
-                    if not arch else
-                    f'<div class="small">archived — {e(self.archived_why(t, v))}</div>')
+                    f'<span class="stale">archives in {left} days</span>' if not arch else
+                    f'<span class="small">archived — {e(self.archived_why(t, v))}</span>')
             n_src = len(v.content.s09_sources)
-            figs = len(v.content.s04_key_evidence)
             a = self.area[tid]
+            sub = [x for x in (note, f'<span class="small">{_theses(rel[tid], "related")}</span>'
+                               if rel.get(tid) else "") if x]
             rows.append((a, (
                 f'<tr data-area="{e(a)}" data-action="{e(v.priority.research_action.value)}" '
                 f'data-status="{"archived" if arch else "active"}" '
                 f'data-upd="{t.last_material_update.toordinal()}" '
                 f'data-left="{left if not arch else 99999}" data-src="{n_src}" '
-                f'data-rv="{len(by_t.get(tid, []))}"><td><a href="{self.thesis_link(tid)}"><b>'
-                f'{e(t.title)}</b></a>'
+                f'data-rv="{len(by_t.get(tid, []))}"><td><a href="{self.thesis_link(tid)}">'
+                f'{e(t.title)}</a>'
                 f'{" " + _event("New") if tid in changed and v.version == 1 else ""}'
-                f'<div class="small">{e(a)}'
-                f'{" · " + _theses(rel[tid], "related") if rel.get(tid) else ""}</div>{note}'
-                f'<span class="aud cc">{e(tid)}</span></td>'
-                f'<td>{_chip(v.priority.research_action.value)}</td>'
-                f'<td class="nowrap">{e(_day(t.last_material_update))}</td><td>{n_src}</td>'
-                f'<td>{figs}</td><td>{len(by_t.get(tid, [])) or "—"}</td>'
-                f'<td>{_strip(recent, self.activity[tid])}</td></tr>')))
+                + (f'<div>{" · ".join(sub)}</div>' if sub else "")
+                + f'<span class="aud cc">{e(tid)}</span></td>'
+                  f'<td>{_chip(v.priority.research_action.value)}</td>'
+                  f'<td class="nowrap">{e(_day(t.last_material_update))}</td><td>{n_src}</td>'
+                  f'<td>{len(by_t.get(tid, [])) or "—"}</td>'
+                  f'<td>{_strip(recent, self.activity[tid])}</td></tr>')))
         by_area: dict[str, list[str]] = defaultdict(list)
         for a, r in rows:
             by_area[a].append(r)
@@ -1337,25 +1380,23 @@ class Desk:
             ch = sum(1 for t, _v in act if t.thesis_id in changed)
             rn = sum(1 for _t, v in act
                      if v.priority.research_action is ResearchAction.RESEARCH_NOW)
+            facts = [f"{len(act)} active"] + ([f"{rn} Research Now"] if rn else []) + (
+                [f"{ch} changed this week"] if ch else [])
             groups.append(
-                f'<details class="agrp"{" open" if ch or rn else ""} data-grp="{e(a)}"><summary>'
-                f'<b>{e(a)}</b> <span class="muted">{_theses(len(act), "active")}'
-                f'{f" · {ch} changed this week" if ch else ""}'
-                f'{f" · {rn} at Research Now" if rn else ""}'
-                f'</span></summary>'
-                + self.table("themes", '<tr><th>Thesis</th><th>Action</th><th>Last new evidence'
-                                       '</th><th>Sources</th><th>Key figures</th><th>Open '
-                                       'findings</th><th>Weeks with evidence</th></tr>', rs,
-                             "theses")
+                f'<details class="agrp"{" open" if ch else ""} data-grp="{e(a)}"><summary>'
+                f'<b>{e(a)}</b><span class="muted">{" · ".join(facts)}</span></summary>'
+                + self.table("themes", '<tr><th>Thesis</th><th>Action</th><th>Last evidence'
+                                       '</th><th>Sources</th><th>Findings</th><th>Activity'
+                                       '</th></tr>', rs, "theses")
                 + '</details>')
         n_act = len(self.active())
         areas = sorted(by_area)
-        body = (f'<section class="hero"><h1>Themes</h1><p class="lede">Every thesis in the '
-                f'registry: <b>{n_act} active</b>, {len(self.asof) - n_act} archived, in '
-                f'{_pl(len(areas), "research area")}. A thesis archives after {STALE_AFTER_DAYS} '
-                f'days without new evidence, or at once when its action is Skip; new evidence '
-                f're-activates it.</p></section>'
-                '<div class="filters"><input id="q" placeholder="Search titles and areas" '
+        body = (f'<section class="hero"><h1 class="tabtitle">Themes</h1><p class="sum">'
+                f'{n_act} active · {len(self.asof) - n_act} archived · '
+                f'{_pl(len(areas), "area")}</p><p class="hint">Areas with a change this week '
+                f'are open. A thesis archives after {STALE_AFTER_DAYS} days without new evidence, '
+                f'or at once when Skip.</p></section>'
+                '<div class="filters"><input id="q" placeholder="Search theses and areas" '
                 'oninput="flt()" aria-label="Search"><select id="fs" onchange="flt()" '
                 'aria-label="Status"><option value="active">Active</option><option '
                 'value="archived">Archived</option><option value="">All</option></select>'
@@ -1365,9 +1406,9 @@ class Desk:
                 '<select id="far" onchange="flt()" aria-label="Area"><option value="">All areas'
                 '</option>' + "".join(f"<option>{e(a)}</option>" for a in areas)
                 + '</select><select id="so" onchange="srt()" aria-label="Sort"><option '
-                  'value="upd">Last new evidence</option><option value="stale">Closest to '
+                  'value="upd">Latest evidence</option><option value="stale">Closest to '
                   'archiving</option><option value="src">Most sources</option><option '
-                  'value="rv">Most open findings</option></select><span id="cnt" class="small">'
+                  'value="rv">Most findings</option></select><span id="cnt" class="small">'
                   '</span></div>'
                 f'<div id="tt">{"".join(groups)}</div>')
         return self.page("Themes", body, "Themes")
@@ -1380,40 +1421,53 @@ class Desk:
     # -- Articles ------------------------------------------------------------------------------
     def articles_page(self, w: Week) -> str:
         arts = self.articles[w.key]
-        chips = [f'<a class="wk{" on" if x.key == w.key else ""}" href="{self.week_file(x)}">'
-                 f'{e(_span(x.start, x.end))}<small>{len(self.articles[x.key])}</small></a>'
-                 for x in reversed(self.weeks)]
-        sel = "".join(chips[:12]) + (
-            f'<details class="older"><summary>{_pl(len(chips) - 12, "earlier week")}</summary>'
-            + "".join(chips[12:]) + "</details>" if len(chips) > 12 else "")
+        order = list(reversed(self.weeks))  # newest first
+        i = order.index(w)
+        newer, older = (order[i - 1] if i else None), (order[i + 1] if i + 1 < len(order) else None)
+        allw = "".join(f'<a class="wk{" on" if x.key == w.key else ""}" href="{self.week_file(x)}">'
+                       f'{e(_span(x.start, x.end))} <small>{len(self.articles[x.key])}</small></a>'
+                       for x in order)
+        nav = ('<nav class="weeknav">'
+               + (f'<a href="{self.week_file(older)}">‹ {e(_span(older.start, older.end))}</a>'
+                  if older else '<span class="muted">‹ no earlier week</span>')
+               + f'<b>{e(_span(w.start, w.end))}</b>'
+               + (f'<a href="{self.week_file(newer)}">{e(_span(newer.start, newer.end))} ›</a>'
+                  if newer else '<span class="muted">latest week</span>')
+               + f'<details class="older"><summary>All weeks ({len(order)})</summary>'
+                 f'<div class="weeks">{allw}</div></details></nav>')
         count = Counter(a.state for a in arts)
-        summary = " · ".join(f"{n} {ARTICLE_STATE[s][0].lower()}" for s, n in count.most_common())
+        states = "".join(f'<span class="cnt">{_state(s)} {n}</span>'
+                         for s, n in sorted(count.items(),
+                                            key=lambda kv: STATE_ORDER.get(kv[0], 9)))
         rows = []
         for a in arts:
             prog = (f'{a.captured} of {a.figures} figures captured' if a.analysed and a.figures
                     else "")
             items = a.open_items + [f"Coverage alert: {x}" for x in a.alerts]
-            detail = ("<details><summary>" + _pl(len(items), "open item") + "</summary><ul>"
+            detail = ('<details class="fold"><summary>' + _pl(len(items), "open item")
+                      + "</summary><ul>"
                       + "".join(f"<li>{ids_to_audit(e(plain(x)))}</li>" for x in items)
                       + "</ul></details>" if items else "")
-            link = _link(a.url, a.title)
+            notes = [n for n in a.notes if a.state not in _SELF_EXPLAINED
+                     and (a.produced or not n.startswith("No thesis"))]
+            sub = " · ".join(x for x in (e(a.publisher), e(a.route) if a.route != "automatic"
+                                         else "", f"{a.words:,} words read"
+                                         if a.state == "PARTIAL" and a.words else "") if x)
             rows.append(
                 f'<tr data-state="{a.state}" data-pub="{e(a.publisher)}"><td class="nowrap">'
-                f'{e(_day(a.published))}</td><td>{e(a.publisher)}'
-                + (f'<div class="small">{e(a.route)}</div>' if a.route != "automatic" else "")
-                + f'</td><td>{link}'
-                + "".join(f'<div class="small">{e(n)}</div>' for n in a.notes
-                          if a.produced or not n.startswith("No thesis"))
+                f'{e(_day(a.published))}</td><td class="art">{_link(a.url, a.title)}'
+                f'<div class="small">{sub}</div>'
+                + "".join(f'<div class="small">{e(n)}</div>' for n in notes)
                 + f'<span class="aud cc">{e(" · ".join(a.audit))}</span></td><td>{_state(a.state)}'
-                + (f'<div class="small">{a.words:,} words read</div>' if a.state == "PARTIAL"
-                   and a.words else "")
                 + f'</td><td>{self.produced_cell(a) if a.analysed else ""}</td>'
-                f'<td>{f"<span class=small>{e(prog)}</span>" if prog else ""}{detail}</td>'
-                f'<td class="small">{e(a.follow_up)}</td></tr>')
+                f'<td class="small">{e(a.follow_up)}'
+                + (f'<div>{e(prog)}</div>' if prog else "") + f"{detail}</td></tr>")
         pubs = sorted({a.publisher for a in arts})
-        body = (f'<section class="hero"><h1>Articles</h1><p class="lede">{e(w.label)}: '
-                f'<b>{_pl(len(arts), "item")}</b>{" — " + e(summary) if summary else ""}.</p>'
-                f'<div class="weeks" aria-label="Week">{sel}</div></section>'
+        legend = ('<p class="hint">Queued: found in the window and left for the next run by the '
+                  'per-run article cap.</p>' if count.get("QUEUED") else "")
+        body = (f'<section class="hero"><h1 class="tabtitle">Articles</h1><p class="sum">'
+                f'{e(w.label)} · {_pl(len(arts), "item")}</p>{nav}'
+                f'<div class="counts">{states}</div>{legend}</section>'
                 '<div class="filters"><select id="fr" onchange="fa()" aria-label="State"><option '
                 'value="">Every state</option>' + "".join(
                     f'<option value="{s}">{e(ARTICLE_STATE[s][0])}</option>' for s in count)
@@ -1421,35 +1475,48 @@ class Desk:
                   'value="">Every publisher</option>' + "".join(
                       f"<option>{e(p)}</option>" for p in pubs)
                 + '</select><span id="cnt2" class="small"></span></div>'
-                + self.table("artt", '<tr><th>Published</th><th>Publisher</th><th>Article</th>'
-                                     '<th>State</th><th>Produced</th><th>Completeness</th>'
-                                     '<th>Follow-up</th></tr>', rows, "articles", tid="at"))
+                + self.table("artt", '<tr><th>Published</th><th>Article</th><th>State</th>'
+                                     '<th>Produced</th><th>Follow-up</th></tr>', rows, "articles",
+                             tid="at"))
         return self.page(f"Articles — {w.label}", body, "Articles")
 
     def week_file(self, w: Week) -> str:
         return "articles.html" if w is self.week else f"articles-{w.key}.html"
 
     # -- Review --------------------------------------------------------------------------------
+    def finding_item(self, f: Finding, depth: int = 0) -> str:
+        """One finding: the line, the review's words, and one meta row — badges, never repeated
+        sentences (the reason a finding affects an action is its badge's tooltip)."""
+        age = (self.week.end - f.raised).days
+        weeks = age // 7
+        line, scope = split_scope(f.line)  # the scope note is the audit view's, as on the page
+        badges = (f'<span class="bdg bad" title="{e(f.decision)}">Affects action</span>'
+                  if f.decision else "")
+        return (f'<li class="rvi" data-dec="{1 if f.decision else 0}" data-act="{e(f.action)}" '
+                f'data-age="{age}"><div class="line clamp2">“{ids_to_audit(e(line))}”'
+                + (f'<span class="aud scope"> ({e(scope)})</span>' if scope else "")
+                + f'</div>'
+                f'<div class="said clamp3"><b>{_KIND_WORD.get(f.kind, "Review")}:</b> '
+                f'{ids_to_audit(e(plain(f.said)))}</div><div class="rvmeta">{badges}'
+                f'<span>raised {e(_day(f.raised))} (version {f.raised_version})</span>'
+                f'<span>{"this week" if weeks == 0 else _pl(weeks, "week") + " open"}</span>'
+                f'<a href="{self.card_link(f.thesis_id, depth, self.anchor_of(f))}">'
+                f'Open in the full record ↗</a></div>'
+                f'<span class="aud cc">{e(f.audit)}</span></li>')
+
     def review(self) -> str:
         w = self.week
-        items = []
-        for f in self.open:
-            age = (w.end - f.raised).days
-            anchor = self.anchor_of(f)
-            items.append(
-                f'<li class="rvi" data-dec="{1 if f.decision else 0}" data-act="{e(f.action)}" '
-                f'data-age="{age}"><div class="rvhead"><a href="{self.thesis_link(f.thesis_id)}">'
-                f'<b>{e(f.title)}</b></a> {_chip(f.action)} <span class="small">{e(f.area)}</span>'
-                f'</div><div class="line">“{ids_to_audit(e(f.line))}”</div>'
-                f'<div class="said"><b>{_KIND_WORD.get(f.kind, "Review")}:</b> '
-                f'{ids_to_audit(e(plain(f.said)))}</div>'
-                + (f'<div class="dec">Bears on the research action — {e(f.decision)}</div>'
-                   if f.decision else "")
-                + f'<div class="small">raised {e(_day(f.raised))} (version {f.raised_version}) · '
-                  f'open {_pl(age // 7, "week")} · '
-                  f'<a href="{self.card_link(f.thesis_id, 0, anchor)}">'
-                  f'open the line in the full record →</a></div>'
-                  f'<span class="aud cc">{e(f.audit)}</span></li>')
+        groups: dict[str, list[Finding]] = defaultdict(list)
+        for f in self.open:  # already in review order: a thesis is placed by its first finding
+            groups[f.thesis_id].append(f)
+        blocks = []
+        for tid, fs in groups.items():
+            f0 = fs[0]
+            blocks.append(
+                f'<li class="rvg"><div class="rvgh"><a href="{self.thesis_link(tid)}">'
+                f'{e(f0.title)}</a>{_chip(f0.action)}<span class="small">{e(f0.area)} · '
+                f'{_pl(len(fs), "finding")}</span></div><ul class="rvitems">'
+                + "".join(self.finding_item(f) for f in fs) + "</ul></li>")
         dec = sum(1 for f in self.open if f.decision)
         old = sum(1 for f in self.open if (w.end - f.raised).days >= 28)
         hist = [f'<li><b>{e(f.title)}</b> — “{ids_to_audit(e(f.line))}”<div class="small">'
@@ -1459,30 +1526,28 @@ class Desk:
                  ([(wk, a, x) for x in a.open_items])]
         comp = [f'<li><a href="{self.week_file(wk)}">{e(a.title)}</a> — {e(x)}</li>'
                 for wk, a, x in reversed(verif)]
-        body = (f'<section class="hero"><h1>Review</h1><p class="lede"><b>'
-                f'{_pl(len(self.open), "unresolved finding")}</b> on '
-                f'{_pl(len({f.thesis_id for f in self.open}), "active thesis", "active theses")}, '
-                f'whatever week raised them — <b>{dec} bear on a research action</b> and come '
-                f'first, then Research Now theses, then the oldest. {old} have been open four '
-                f'weeks or more. A questioned line is never counted as verified evidence while it '
-                f'is open.</p><p class="hint">Read-only. A finding closes only through the record '
-                f'— an analyst correction or a re-read; this page records no resolution.</p>'
-                '<div class="filters"><label><input type="checkbox" id="fdec" onchange="fr2()"> '
-                'Decision-affecting only</label><label><input type="checkbox" id="frn" '
-                'onchange="fr2()"> Research Now only</label><label><input type="checkbox" '
-                'id="fold" onchange="fr2()"> Open 4+ weeks</label><span id="cnt3" class="small">'
-                '</span></div></section>'
+        body = (f'<section class="hero"><h1 class="tabtitle">Review</h1><p class="sum">'
+                f'{_pl(len(self.open), "open finding")} · '
+                f'{_theses(len(groups))} · {dec} affect a research action · '
+                f'{old} open 4+ weeks</p><p class="hint">Findings that affect a research action '
+                f'come first, then Research Now, then the oldest. Read-only: a finding closes '
+                f'through an analyst correction or a re-read.</p>'
+                '<div class="filters"><label class="pillcheck"><input type="checkbox" id="fdec" '
+                'onchange="fr2()"> Affects action</label><label class="pillcheck"><input '
+                'type="checkbox" id="frn" onchange="fr2()"> Research Now</label><label '
+                'class="pillcheck"><input type="checkbox" id="fold" onchange="fr2()"> Open 4+ '
+                'weeks</label><span id="cnt3" class="small"></span></div></section>'
                 + '<ul class="rvlist" id="rv">'
-                + (capped_li(items, "findings", "rvlist")
+                + (capped_li(blocks, "theses", "rvlist")
                    or '<li class="muted">No open finding.</li>') + "</ul>"
                 + (f'<details class="quiet"><summary>Resolved and historical findings '
-                   f'({len(hist)})</summary><ul class="plainlist">{"".join(hist)}</ul></details>'
-                   if hist else "")
+                   f'<span class="muted">{len(hist)}</span></summary><ul class="plainlist">'
+                   f'{"".join(hist)}</ul></details>' if hist else "")
                 + (f'<details class="quiet"><summary>Article completeness — open figures and '
-                   f'paragraphs ({len(comp)})</summary><p class="small">Open material is never '
-                   f'used as evidence: it can hold a thesis back, never raise it.</p>'
-                   f'<ul class="plainlist">{capped_li(comp, "items", "plainlist")}</ul></details>'
-                   if comp else ""))
+                   f'paragraphs <span class="muted">{len(comp)}</span></summary><p class="small">'
+                   f'Open material is never used as evidence: it can hold a thesis back, never '
+                   f'raise it.</p><ul class="plainlist">{capped_li(comp, "items", "plainlist")}'
+                   f'</ul></details>' if comp else ""))
         return self.page("Review", body, "Review")
 
     # -- Uploads -------------------------------------------------------------------------------
@@ -1491,13 +1556,12 @@ class Desk:
         groups = [
             ("full_report", "Full report needed", "a preview was read; the full copy completes "
                                                   "the same article"),
-            ("blocked_article", "Blocked or unreadable articles",
-             "the weekly scan found them but could not read them"),
-            ("channel", "Manual-first and blocked sources",
-             "publishers the scan does not or cannot read"),
-            ("held", "Held documents", "supplied, not analysed until released"),
-            ("review", "Held — which article is uncertain", "supplied; you decide what it is"),
-            ("visual", "Visual check", "pages of a supplied document that could not be read"),
+            ("blocked_article", "Blocked articles", "found by the scan, could not be read"),
+            ("channel", "Manual-first and blocked sources", "the scan does not or cannot read "
+                                                            "them"),
+            ("held", "Held documents", "supplied; analysed only once released"),
+            ("review", "Match uncertain", "supplied; you decide which article it is"),
+            ("visual", "Visual check", "pages of a supplied document could not be read"),
             ("rejected", "Not imported", "supplied but unreadable"),
             ("done", "Completed imports", "analysed — kept for the record")]
         by: dict[str, list[UploadItem]] = defaultdict(list)
@@ -1509,59 +1573,56 @@ class Desk:
                         reverse=True)
             if not us:
                 continue
-            rows = []
+            items = []
             for u in us:
-                age = (f"{(w.end - u.published).days} days old" if u.published else "")
-                pub = f"published {e(_day(u.published))}" if u.published else "—"
-                seen = f"first seen {e(_day(u.first_seen))}" if u.first_seen else "—"
-                rows.append(
-                    f'<tr><td><b>{_link(u.url, u.title)}</b><div class="why">{e(u.why)}</div>'
-                    + "".join(f'<div class="small">{e(x)}</div>' for x in u.detail[:6])
+                dates = " · ".join(x for x in (
+                    f"published {_day(u.published)}" if u.published else "",
+                    f"{(w.end - u.published).days} days old" if u.published else "",
+                    f"first seen {_day(u.first_seen)}" if u.first_seen else "") if x)
+                extra = (u.detail[:4] + ([f"showing 4 of {len(u.detail)}"]
+                                         if len(u.detail) > 4 else []))
+                items.append(
+                    f'<li class="ui"><div class="uimain"><div class="atl">{_link(u.url, u.title)}'
+                    f'</div><div class="why">{e(u.why)}</div>'
+                    + "".join(f'<div class="small clamp">{e(x)}</div>' for x in extra)
                     + "".join(f'<div class="small">→ <a href="{self.thesis_link(t)}">'
                               f'{e(self.title(t))}</a></div>' for t in u.theses if t in self.asof)
-                    + (f'<div class="small">showing 6 of {len(u.detail)}</div>'
-                       if len(u.detail) > 6 else "")
-                    + f'<span class="aud cc">{e(u.audit)}</span></td><td>{e(u.publisher)}'
-                      f'<div class="small"><code>{e(u.source_id)}</code></div></td>'
-                      f'<td class="nowrap">{pub}<div class="small">{e(age)}</div></td>'
-                      f'<td class="nowrap">{seen}</td>'
-                      f'<td>{self.command_html(u.command)}</td></tr>')
+                    + f'<span class="aud cc">{e(u.audit)}</span></div><div class="uiside">'
+                      f'<div>{e(u.publisher) or "publisher not recorded"}'
+                    + (f' <code class="aud">{e(u.source_id)}</code>' if u.source_id else "")
+                    + '</div>'
+                    + (f'<div class="small">{e(dates)}</div>' if dates else "")
+                    + f'</div>'
+                      f'<div class="uiact">{self.command_html(u.command)}</div></li>')
             open_ = kind not in ("done", "rejected")
             blocks.append(
-                f'<details class="ubk"{" open" if open_ else ""}><summary><b>{e(head)}</b> '
+                f'<details class="ubk"{" open" if open_ else ""}><summary><b>{e(head)}</b>'
                 f'<span class="muted">{len(us)} · {e(help_)}</span></summary>'
-                + self.table("upt", '<tr><th>Document · why</th><th>Publisher · source id</th>'
-                                    '<th>Published · age</th><th>First seen</th><th>What to do'
-                                    '</th></tr>', rows, "documents")
-                + "</details>")
+                f'<ul class="uilist">{capped_li(items, "documents", "uilist", cap=10)}</ul>'
+                f'</details>')
         waiting = sum(1 for u in self.uploads if u.kind != "done")
-        body = (f'<section class="hero"><h1>Uploads</h1><p class="lede"><b>{_pl(waiting, "item")}'
-                f'</b> to supply or clear · {len(by.get("done", []))} completed imports. Nothing '
-                f'here is dismissed by age — an older report stays listed until it is supplied or '
-                f'cleared.</p></section><div class="cols"><section class="main">'
+        body = (f'<section class="hero"><h1 class="tabtitle">Uploads</h1><p class="sum">'
+                f'{_pl(waiting, "item")} to supply or clear · {len(by.get("done", []))} imported'
+                f'</p><p class="hint">Nothing here is dismissed by age — an item stays until it is '
+                f'supplied or cleared.</p></section><div class="cols"><section class="main">'
                 + ("".join(blocks) or '<p class="muted">Nothing waiting.</p>')
                 + f'</section><aside><h2>Each week</h2><ol class="steps">'
-                  f'<li><b>Pull</b> the registry the weekly run keeps: <code class="cmd">{CLI} '
-                  f'state pull</code></li>'
-                  f'<li><b>Collect</b> the PDFs or saved pages you are licensed to use for the '
-                  f'items listed here, and any new report from a manual-first source.</li>'
-                  f'<li><b>Import</b> one file with the command on its row, or drop files in '
-                  f'<code>data/theme_intelligence/inbox/</code> — each with a '
-                  f'<code>&lt;file&gt;.meta.json</code> naming <code>source</code>, '
-                  f'<code>url</code>, <code>title</code>, <code>published</code> and '
-                  f'<code>llm_permitted</code> — and run <code class="cmd">{CLI} ingest-inbox'
-                  f'</code>.</li>'
-                  f'<li><b>Clear</b> what is held: <code class="cmd">{CLI} documents --status '
-                  f'HELD</code>, then the release command on its row.</li>'
-                  f'<li><b>Push</b> before Monday 03:00 UTC: <code class="cmd">{CLI} state push'
-                  f'</code> (fast-forward only) — that week\'s brief includes them.</li></ol>'
-                  f'<p class="small">State <code>--llm-permitted</code> only when the document\'s '
-                  f'licence allows third-party model processing; without it the document is held. '
-                  f'A document needs at least 40 words of readable text. A fuller copy of a '
-                  f'preview is the SAME article, re-checked — nothing is counted twice. A document '
-                  f'whose estimated cost is above the $30 per-document limit waits for your '
-                  f'release.</p>'
-                  f'</aside></div>')
+                  f'<li><b>Pull</b> the registry<code class="cmd">{CLI} state pull</code></li>'
+                  f'<li><b>Import</b> each file with the command on its row, or put them in '
+                  f'<code>data/theme_intelligence/inbox/</code> and run '
+                  f'<code class="cmd">{CLI} ingest-inbox</code></li>'
+                  f'<li><b>Clear</b> what is held with the release command on its row</li>'
+                  f'<li><b>Push</b> before Monday 03:00 UTC<code class="cmd">{CLI} state push'
+                  f'</code></li></ol><details class="fold"><summary>Rules</summary>'
+                  f'<ul class="small"><li>Add <code>--llm-permitted</code> only when the '
+                  f'document\'s licence allows third-party model processing; without it the '
+                  f'document is held.</li><li>A document needs at least 40 words of readable '
+                  f'text.</li><li>A fuller copy of a preview is the same article, re-checked — '
+                  f'nothing is counted twice.</li><li>A document estimated above the $30 '
+                  f'per-document limit waits for your release.</li><li>An inbox file may carry a '
+                  f'<code>&lt;file&gt;.meta.json</code> with <code>source</code>, '
+                  f'<code>url</code>, <code>title</code>, <code>published</code>, '
+                  f'<code>llm_permitted</code>.</li></ul></details></aside></div>')
         return self.page("Uploads", body, "Uploads")
 
     # -- Sources -------------------------------------------------------------------------------
@@ -1580,47 +1641,51 @@ class Desk:
             if d and (art.source_id not in newest or d > newest[art.source_id]):
                 newest[art.source_id] = d
         out: dict[str, list[str]] = {"automatic": [], "manual_first": []}
+        attention = 0
         for sid, src in self.reg.sources.items():
             r = rows_by.get(sid, {})
             st = str(r.get("status", "UNKNOWN"))
+            attention += st != "HEALTHY"
             word, cls = _HEALTH.get(st, (st.title(), "mute"))
             hist = [h for h in self.store.health_checks(source_id=sid) if h.checked_at <= until]
             strip = ('<span class="hs">' + "".join(
                 f'<i class="h-{h.status.value.lower()}" title="{e(_day(h.checked_at))}: '
                 f'{e(h.status.value.lower())}"></i>' for h in hist[-12:]) + "</span>"
-                + f' <span class="small">last {min(12, len(hist))} of {len(hist)} stored checks'
-                  f'</span>') if hist else '<span class="small">no stored check</span>'
-            fresh = {"FRESH": "fresh", "QUIET": "quiet — nothing dated in the window",
-                     "UNKNOWN": "unknown"}.get(str(r.get("freshness", "UNKNOWN")), "unknown")
-            llm = {"permitted": "sent to the model", "not_permitted": "never sent to the model",
-                   "unknown": "held unless you state its licence allows"}.get(
-                src.manual_llm_processing, src.manual_llm_processing)
+                + f'<span class="small"> {min(12, len(hist))} of {len(hist)}</span>'
+                if hist else '<span class="small">none stored</span>')
+            fresh = {"FRESH": "Fresh", "QUIET": "Quiet", "UNKNOWN": "Unknown"}.get(
+                str(r.get("freshness", "UNKNOWN")), "Unknown")
+            intake = [("Weekly scan" if src.mode != "manual_first" else "Manual upload"),
+                      {"permitted": "uploads analysed",
+                       "not_permitted": "uploads never analysed",
+                       "unknown": "uploads need --llm-permitted"}.get(
+                          src.manual_llm_processing, src.manual_llm_processing),
+                      ("linked reports fetched" if src.linked_reports == "fetch"
+                       else "linked reports requested")]
+            reason = plain(str(r.get("reason", "not checked yet")))
             out["manual_first" if src.mode == "manual_first" else "automatic"].append(
-                f'<tr><td><b>{e(src.publisher)}</b><div class="small"><code>{e(sid)}</code></div>'
-                f'</td><td><span class="st {cls}">{e(word)}</span><div class="small">'
-                f'{e(plain(str(r.get("reason", "not checked yet")))[:200])}</div></td>'
-                f'<td>{strip}</td><td class="small">{e(fresh)}<br>newest article '
-                f'{e(_day(newest.get(sid)))}</td><td>{n_read[sid]}</td>'
-                f'<td class="small">'
-                f'{"Weekly scan" if src.mode != "manual_first" else "Manual upload only"}'
-                f'<br>Uploaded documents: {e(llm)}<br>Linked reports: '
-                f'{"fetched politely" if src.linked_reports == "fetch" else "requested for upload"}'
-                f'</td></tr>')
+                f'<tr><td><b>{e(src.publisher)}</b>'
+                f'<div class="aud"><code>{e(sid)}</code></div></td>'
+                f'<td><span class="st {cls}">{e(word)}</span>'
+                f'<div class="small clamp2" title="{e(reason)}">{e(reason)}</div></td>'
+                f'<td>{strip}</td><td class="small">{e(fresh)}<div>newest '
+                f'{e(_day(newest.get(sid)))}</div><div>{n_read[sid]} analysed in '
+                f'{_pl(len(recent), "week")}</div></td>'
+                f'<td class="small">{"<br>".join(e(x) for x in intake)}</td></tr>')
 
         def table(rs: list[str]) -> str:
             return ('<div class="hscroll"><table class="arts srct"><tr><th>Publisher</th>'
-                    '<th>Now</th><th>Stored health checks (oldest → newest)</th><th>Freshness</th>'
-                    f'<th>Articles analysed, last {len(recent)} weeks</th><th>Permitted intake'
-                    '</th></tr>' + "".join(rs) + "</table></div>")
+                    '<th>Status now</th><th>Health history</th><th>Freshness</th>'
+                    '<th>Intake</th></tr>' + "".join(rs) + "</table></div>")
 
-        body = (f'<section class="hero"><h1>Sources</h1><p class="lede">Each publisher\'s access '
-                f'now, its stored health record and how its research may come in. A blocked or '
-                f'quiet source publishing nothing here is NOT evidence it published nothing.</p>'
-                f'<p class="hint">History shows only stored health-check records; a week with no '
-                f'check shows nothing.</p></section>'
+        body = (f'<section class="hero"><h1 class="tabtitle">Sources</h1><p class="sum">'
+                f'{len(out["automatic"])} automatic · {len(out["manual_first"])} manual-first · '
+                f'{attention} need attention</p><p class="hint">A blocked or quiet source is not '
+                f'evidence it published nothing. Health history shows stored checks only.</p>'
+                f'</section>'
                 f'<section><h2>Automatic coverage <small>read by the weekly scan</small></h2>'
                 f'{table(out["automatic"])}</section><section><h2>Manual-first coverage <small>'
-                f'never scanned — research arrives only as documents you supply</small></h2>'
+                f'research arrives only as documents you supply</small></h2>'
                 f'{table(out["manual_first"])}</section>')
         return self.page("Sources", body, "Sources")
 
@@ -1649,6 +1714,12 @@ class Desk:
             return (' <a class="flagi" href="#review">under review</a>' if sid in flagged_sids
                     else "")
 
+        def line(text: str) -> str:
+            """A card line as the page reads it: its scope note goes to the audit view."""
+            body, scope = split_scope(plain(text))
+            return ids_to_audit(e(body)) + (f'<span class="aud scope"> ({e(scope)})</span>'
+                                            if scope else "")
+
         events = next((r.events for r in self.rows if r.thesis_id == tid), [])
         arch = t.status is ThesisStatus.ARCHIVED
         head = (f'<nav class="crumb"><a href="../themes.html">Themes</a> › {e(self.area[tid])}'
@@ -1660,24 +1731,25 @@ class Desk:
                    f'{"Not reviewed · " if any(f.kind == "not_reviewed" for f in mine) else ""}'
                    f'Review required · {_pl(len(mine), "finding")}</a>'
                    if mine else "")
-                + f'<span>{_pl(len(c.s09_sources), "source")} · first seen '
-                  f'{e(_day(t.created_as_of))} · last material update '
-                  f'{e(_day(t.last_material_update))}</span></div>'
+                + f'</div><div class="meta2">{e(self.area[tid])} · '
+                  f'{_pl(len(c.s09_sources), "source")} · first seen {e(_day(t.created_as_of))}'
+                  f' · last material update {e(_day(t.last_material_update))}</div>'
                   f'<div class="aud cc">{e(tid)} · version {v.version} · run {e(v.run_id)} · '
                   f'{e(t.key_node)} · {e(t.key_mechanism)}</div></header>')
         s01 = c.s01_bottom_line
         thesis = ""
         if s01 and once(s01[0].text):
-            thesis = (f'<p class="thesis">{ids_to_audit(e(plain(s01[0].text)))} '
+            thesis = (f'<p class="thesis">{line(s01[0].text)} '
                       f'{_tag(s01[0].provenance.value)}{flag("s01.0")}</p>')
-        changed = [f'<li>{ids_to_audit(e(plain(it.text)))}'
-                   + (f' <span class="muted">({e(it.period)})</span>' if it.period else "")
+        changed = [f'<li>{line(it.text)}'
+                   + (f' <span class="muted">({e(it.period)})</span>'
+                      if it.period and it.period not in plain(it.text) else "")
                    + f"{flag(f's02.{i}')}</li>"
                    for i, it in enumerate(c.s02_what_changed.items[:3])
                    if f"s02.{i}" not in rc.blocked and once(it.text)]
         last = rc.history[-1] if rc.history else v
         prev = rc.history[-2] if len(rc.history) > 1 else None
-        moved = (f"Version {last.version} ({_day(last.as_of)}): "
+        moved = (f"Version {last.version}, {_day(last.as_of)} — "
                  + (f"{_ACTION[prev.priority.research_action.value][0]} → "
                     f"{_ACTION[last.priority.research_action.value][0]}"
                     if prev and prev.priority.research_action is not last.priority.research_action
@@ -1688,14 +1760,15 @@ class Desk:
         pub = {s.article_id: s for s in c.s09_sources}
         fig_html = "".join(
             f'<div class="num"><b>{e(r.value_text)}</b><span class="unit">'
-            f'{e(unit_of(r.value_text, r.unit))}</span><span class="lbl">{e(r.label)}</span>'
+            f'{e(unit_of(r.value_text, r.unit))}</span><span class="lbl">'
+            f'{e(figure_label(self.store, r.claim_id, r.label))}</span>'
             f'<small>{e(_EPI.get(r.epistemic.value, r.epistemic.value))} · '
-            f'{e(r.period or "period not stated")} · '
+            f'{e(r.period or "period not stated")}</small><small>'
+            + (f"{e(pub[r.article_id].publisher)}, " if r.article_id in pub else "")
             + (f"measured {e(_day(r.measured_as_of))}" if r.measured_as_of else
                f"published {e(_day(pub[r.article_id].published_at))}"
                if r.article_id in pub else "date not stated")
-            + f'</small><small>{e(pub[r.article_id].publisher) if r.article_id in pub else ""}'
-              f'</small><span class="aud cc">{e(r.claim_id)}</span></div>' for r in figs)
+            + f'</small><span class="aud cc">{e(r.claim_id)}</span></div>' for r in figs)
         steps = []
         for i, st in enumerate(c.s03_transmission):
             if st.step == "market_reaction":
@@ -1705,7 +1778,7 @@ class Desk:
                 continue
             steps.append(f'<li><span class="sn">{e(STEP_LABEL.get(st.step, st.step))}</span>'
                          + ('<span class="muted">not quantified by the source</span>' if unknown
-                            else f'<span>{ids_to_audit(e(plain(st.text)))}</span> '
+                            else f'<span>{line(st.text)}</span> '
                                  f'{_tag(st.provenance.value)}{flag(f"s03.{i}")}')
                          + "</li>")
         near = next(g for g in gs if g.name == NEAR_GATE)
@@ -1717,7 +1790,7 @@ class Desk:
                 f'<li class="unmet"><span class="ic">✗</span><div><b>{e(g.name)}</b>'
                 f'<span>{e(g.detail)}</span></div></li>' for g in unmet) + "</ul>"
             if unmet else "") + (
-            f'<details class="met"><summary>{_pl(len(met), "condition")} met</summary>'
+            f'<details class="met fold"><summary>{_pl(len(met), "condition")} met</summary>'
             '<ul class="gates">' + "".join(
                 f'<li class="ok"><span class="ic">✓</span><div><b>{e(g.name)}</b>'
                 f'<span>{e(g.detail)}</span></div></li>' for g in met) + "</ul></details>"
@@ -1725,24 +1798,20 @@ class Desk:
         timing = self.timing_html(nt, near)
         w7 = c.s07_what_could_go_wrong
         n0, n1 = len(w7.counter_evidence), len(w7.alternative_mechanisms)
-        risks = [f'<li>{ids_to_audit(e(plain(s.text)))} {_tag(s.provenance.value)}'
-                 f'{flag(f"s07.{i}")}</li>'
+        risks = [f'<li>{line(s.text)} {_tag(s.provenance.value)}{flag(f"s07.{i}")}</li>'
                  for i, s in enumerate(w7.counter_evidence) if once(s.text)]
-        risks += [f'<li>{ids_to_audit(e(plain(s.text)))} {_tag(s.provenance.value)}'
+        risks += [f'<li>{line(s.text)} {_tag(s.provenance.value)}'
                   f'{flag(f"s07.{n0 + n1 + i}")}</li>'
                   for i, s in enumerate(w7.market_risks) if once(s.text)]
-        watch = [f"<li>{ids_to_audit(e(plain(s.text)))}</li>"
-                 for s in w7.disconfirming_observables if once(s.text)]
-        alt = [f'<li>{ids_to_audit(e(plain(s.text)))} {_tag(s.provenance.value)}</li>'
+        watch = [f"<li>{line(s.text)}</li>" for s in w7.disconfirming_observables if once(s.text)]
+        alt = [f'<li>{line(s.text)} {_tag(s.provenance.value)}</li>'
                for s in w7.alternative_mechanisms
                if not s.text.startswith("Registry link") and once(s.text)]
         dsn = c.s08_decision
-        nxt = (f'<p>{ids_to_audit(e(plain(dsn.next_step.text)))}{flag("s08.next")}</p>'
+        nxt = (f'<p>{line(dsn.next_step.text)}{flag("s08.next")}</p>'
                if once(dsn.next_step.text) else "")
-        raise_ = [f"<li>{ids_to_audit(e(plain(s.text)))}</li>" for s in dsn.raise_priority_if
-                  if once(s.text)]
-        lower = [f"<li>{ids_to_audit(e(plain(s.text)))}</li>" for s in dsn.lower_priority_if
-                 if once(s.text)]
+        raise_ = [f"<li>{line(s.text)}</li>" for s in dsn.raise_priority_if if once(s.text)]
+        lower = [f"<li>{line(s.text)}</li>" for s in dsn.lower_priority_if if once(s.text)]
         av = c.s05_affected
         listed = [f"{co.name_as_written} ({', '.join(x.ticker for x in co.listings)})"
                   for co in av.companies if co.listings]
@@ -1750,19 +1819,11 @@ class Desk:
                 f'{e(", ".join(listed)) or "none"}</dd><dt>Sectors the source names as exposed</dt>'
                 f'<dd>{e(", ".join(s.name for s in av.sector_exposures)) or "none"}</dd>'
                 f'<dt>Business groups the source names</dt><dd>'
-                + (e("; ".join(groups)) + ' <span class="muted">— groups, not companies; no '
-                   'ticker is implied</span>' if groups else "" if rc.groups_unread else "none")
+                + (e("; ".join(groups)) + ' <span class="muted">— groups, not companies</span>'
+                   if groups else "" if rc.groups_unread else "none")
                 + (f'<div class="small">{e(groups_unchecked_note(rc.groups_unread))}</div>'
                    if rc.groups_unread else "") + "</dd></dl>")
         related = self.related_html(tid)
-        rv = "".join(
-            f'<li><div class="line">“{ids_to_audit(e(f.line))}”</div><div class="said">'
-            f'{ids_to_audit(e(plain(f.said)))}</div>'
-            + (f'<div class="dec">Bears on the research action — {e(f.decision)}</div>'
-               if f.decision else "")
-            + f'<div class="small">raised {e(_day(f.raised))} · <a href="'
-              f'{self.card_link(tid, 1, self.anchor_of(f))}">the line in the full record →</a>'
-              f'</div></li>' for f in mine)
         evid, n_ev = self.evidence_html(c, rc)
         hist = "".join(
             f'<li><span class="hv">v{h.version}</span><span>{e(_day(h.as_of))}</span>'
@@ -1770,9 +1831,9 @@ class Desk:
             f'{e(self.version_how(h))}</span><span class="aud cc">'
             f'{e(plain(h.change_summary)[:400])}</span></li>' for h in reversed(rc.history))
         srcs = "".join(
-            f'<li>{_link(s.url, s.title or "title not recorded")} — '
-            f'{e(s.publisher)}, {e(_day(s.published_at))} · '
-            f'{"full text" if self.read_in_full(s, rc) else "preview only"}'
+            f'<li>{_link(s.url, s.title or "title not recorded")}<div class="small">'
+            f'{e(s.publisher)} · {e(_day(s.published_at))} · '
+            f'{"full text" if self.read_in_full(s, rc) else "preview only"}</div>'
             f'<span class="aud cc"> {e(s.article_id)}</span></li>' for s in c.s09_sources)
         nine = "".join(f'<li><a href="{self.card_link(tid, 1, "sec-" + fid)}">{e(name.title())}'
                        f'</a></li>' for fid, name in SECTION_IDS)
@@ -1780,36 +1841,53 @@ class Desk:
             f'<div class="cc">{e(f.factor_id)} = {e(f.value)} — {e(f.note[:300])}</div>'
             for f in v.priority.factors)
         none = '<p class="muted">No bottom line recorded.</p>'
-        q = (f'<section class="panel q1"><h2>The thesis</h2>{thesis or none}'
-             f'</section><div class="grid2"><section class="panel"><h2>What changed</h2>'
-             f'<p class="small">{e(moved)}</p>'
-             + (f"<ul>{''.join(changed)}</ul>" if changed else "")
-             + f'</section><section class="panel"><h2>Why {e(_ACTION.get(action, (action,))[0])}'
-               f'</h2>{why}{timing}<div class="aud">{trace}</div></section></div>'
+
+        def folded(items: list[str], keep: int, what: str) -> str:
+            if len(items) <= keep:
+                return "".join(items)
+            return ("".join(items[:keep]) + f'<li class="morewrap"><details class="fold">'
+                    f'<summary>{len(items) - keep} more {what}</summary><ul>'
+                    + "".join(items[keep:]) + "</ul></details></li>")
+
+        decide = (f'<section class="panel next"><h2>What to investigate next</h2>{nxt}'
+                  + ('<details class="fold"><summary>When to raise or lower priority</summary>'
+                     + (f'<h3>Would raise priority</h3><ul>{"".join(raise_)}</ul>'
+                        if raise_ else "")
+                     + (f'<h3>Would lower priority</h3><ul>{"".join(lower)}</ul>'
+                        if lower else "") + "</details>" if raise_ or lower else "")
+                  + "</section>")
+        wrong = ('<section class="panel"><h2>What could prove it wrong</h2><ul class="risk">'
+                 + (folded(risks, 3, "risks") or
+                    "<li class=muted>None in the sources so far.</li>") + "</ul>"
+                 + (f'<details class="fold"><summary>Signals to watch '
+                    f'({len(watch)})</summary><ul class="risk">{"".join(watch)}</ul></details>'
+                    if watch else "")
+                 + (f'<details class="fold"><summary>Competing explanation</summary>'
+                    f'<ul class="risk">{"".join(alt)}</ul></details>' if alt else "")
+                 + "</section>")
+        q = (f'<section class="panel q1"><h2>The thesis</h2>{thesis or none}</section>'
+             + f'<div class="grid2"><section class="panel"><h2>Why '
+               f'{e(_ACTION.get(action, (action,))[0])}</h2>{why}{timing}'
+               f'<div class="aud">{trace}</div></section>{decide}</div>'
              + (f'<section class="panel"><h2>The strongest figures</h2><div class="nums">'
                 f'{fig_html}</div></section>' if fig_html else "")
              + f'<div class="grid2"><section class="panel"><h2>How it reaches fundamentals</h2>'
                f'<ol class="chain">'
                f'{"".join(steps) or "<li class=muted>No earnings step stated by the source.</li>"}'
-               f'</ol></section><section class="panel"><h2>What could prove it wrong</h2>'
-               f'<ul class="risk">'
-               f'{"".join(risks) or "<li class=muted>None in the sources so far.</li>"}</ul>'
-             + (f'<h3>Watch for</h3><ul class="risk">{"".join(watch)}</ul>' if watch else "")
-             + (f'<h3>Competing explanation</h3><ul class="risk">{"".join(alt)}</ul>'
-                if alt else "")
-             + f'</section></div><section class="panel next"><h2>What to investigate next</h2>'
-               f'{nxt}'
-             + (f'<h3>Would raise priority</h3><ul>{"".join(raise_)}</ul>' if raise_ else "")
-             + (f'<h3>Would lower priority</h3><ul>{"".join(lower)}</ul>' if lower else "")
-             + f'</section><section class="panel"><h2>Who is exposed</h2>{expo}</section>'
-             + (f'<section class="panel"><h2>Related theses</h2>{related}</section>'
-                if related else "")
+               f'</ol></section>{wrong}</div>'
+             + f'<div class="grid2"><section class="panel"><h2>What changed</h2>'
+               f'<p class="small">{e(moved)}</p>'
+             + (f"<ul>{''.join(changed)}</ul>" if changed else "")
+             + f'</section><section class="panel"><h2>Who is exposed</h2>{expo}</section></div>'
              + (f'<section class="panel" id="review"><h2>Open review findings '
-                f'<small>{len(mine)}</small></h2><ul class="rvlist">{rv}</ul></section>'
-                if mine else ""))
+                f'<small>{len(mine)}</small></h2><ul class="rvitems">'
+                + "".join(self.finding_item(f, 1) for f in mine) + "</ul></section>"
+                if mine else "")
+             + (f'<section class="panel"><h2>Related theses</h2>{related}</section>'
+                if related else ""))
         tabs = (f'<section class="tabs" data-tabs><div class="tabbar" role="tablist">'
                 f'<button data-tab="ev" class="on">Evidence ({n_ev})</button>'
-                f'<button data-tab="hi">History ({len(rc.history)} versions)</button>'
+                f'<button data-tab="hi">History ({len(rc.history)})</button>'
                 f'<button data-tab="src">Sources ({len(c.s09_sources)})</button>'
                 f'<button data-tab="full">Full record</button></div>'
                 f'<div data-panel="ev">{evid}</div>'
@@ -1852,13 +1930,17 @@ class Desk:
 
     def timing_html(self, nt: NearTerm, near: Gate) -> str:
         """The source's horizon FRAMING beside the dated near-term evidence — two statements, never
-        two verdicts on one test (the Nomura presentation, 2026-10-13)."""
+        two verdicts on one test (the Nomura presentation, 2026-10-13). The dated claims are folded;
+        a date basis they all share is said once."""
+        bases = {x.basis for x in nt.claims}
+        common = next(iter(bases)) if len(bases) == 1 else ""
         rows = "".join(
-            f'<li>{e(x.claim.metric or x.claim.statement)[:140]} — '
+            f'<li>{e((x.claim.metric or x.claim.statement)[:120])} — '
             f'{e(_TIMING_WORD.get(x.timing, x.timing))}'
-            f'; dated by {e(x.basis)}<span class="aud cc"> {e(x.claim.claim_id)} · '
-            f'{e(x.note)}</span></li>' for x in nt.claims[:6])
-        more = (f'<li class="small">showing 6 of {len(nt.claims)}</li>' if len(nt.claims) > 6
+            + ("" if common else f'; dated by {e(x.basis)}')
+            + f'<span class="aud cc"> {e(x.claim.claim_id)} · {e(x.note)}</span></li>'
+            for x in nt.claims[:8])
+        more = (f'<li class="small">showing 8 of {len(nt.claims)}</li>' if len(nt.claims) > 8
                 else "")
         conflict = (f'<div class="conflict"><b>Review required.</b> The near-term reading of '
                     f'record (“{e(nt.stored.replace("_", " "))}”) differs from its own cited '
@@ -1870,8 +1952,10 @@ class Desk:
                 f'<div><b>{e(near.name)}</b><span>{e(near.detail)}</span></div></li></ul>'
                 f'<p class="small"><b>How the source frames it:</b> {e(nt.framing)} — a '
                 f'description of the thesis, not a test.</p>'
-                + (f'<p class="small"><b>The dated evidence the near-term condition reads:</b></p>'
-                   f'<ul class="small">{rows}{more}</ul>' if rows else "")
+                + (f'<details class="fold"><summary>Dated evidence ({len(nt.claims)})</summary>'
+                   f'<ul class="small">{rows}{more}</ul>'
+                   + (f'<p class="small">All dated by {e(common)}.</p>' if common else "")
+                   + "</details>" if rows else "")
                 + f'<div class="aud cc">{e(nt.note[:400])}</div></div>')
 
     def related_html(self, tid: str) -> str:
@@ -1883,11 +1967,11 @@ class Desk:
             other = x.to_thesis if x.from_thesis == tid else x.from_thesis
             if other not in self.asof:
                 continue
-            item = (f'<li><a href="{e(other)}.html">{e(self.title(other))}</a> '
-                    f'<span class="small">— {e(self.area[other])}'
+            item = (f'<li><a href="{e(other)}.html">{e(self.title(other))}</a>'
+                    f'<div class="small">{e(self.area[other])}'
                     + ("" if x.relation.value == "SIBLING" else
-                       f'; {e(_RELATION.get(x.relation.value, x.relation.value.lower()))}')
-                    + "</span></li>")
+                       f' · {e(_RELATION.get(x.relation.value, x.relation.value.lower()))}')
+                    + "</div></li>")
             (siblings if x.relation.value == "SIBLING" else out).append(item)
         mine = self.sources_of.get(tid, set())
         shared: dict[str, set[str]] = defaultdict(set)
@@ -1898,24 +1982,25 @@ class Desk:
         for other, aids in sorted(shared.items(), key=lambda kv: self.title(kv[0])):
             names = sorted({(a.publisher if (a := self.reg.article(aid)) else "a source")
                             for aid in aids})
-            out.append(f'<li><a href="{e(other)}.html">{e(self.title(other))}</a> '
-                       f'<span class="small">— shares {_pl(len(aids), "source article")} '
-                       f'({e(", ".join(names))}): the same source, not independent confirmation'
-                       f'</span></li>')
-        if siblings:
-            out.append(f'<li class="morewrap"><details class="more-rows"><summary>'
-                       f'{_pl(len(siblings), "thesis", "theses")} in the same broader area, a '
-                       f'different part of the chain</summary><ul class="plainlist">'
-                       + capped_li(sorted(siblings), "theses", "plainlist")
-                       + "</ul></details></li>")
-        return f'<ul class="plainlist">{"".join(out)}</ul>' if out else ""
+            out.append(f'<li><a href="{e(other)}.html">{e(self.title(other))}</a>'
+                       f'<div class="small">shares {_pl(len(aids), "source article")} '
+                       f'({e(", ".join(names))}) — the same source, not independent confirmation'
+                       f'</div></li>')
+        if not out and not siblings:
+            return ""
+        return ((f'<ul class="rel">{"".join(out)}</ul>' if out else "")
+                + (f'<details class="more-rows fold"><summary>'
+                   f'{_pl(len(siblings), "thesis", "theses")} in the same broader area</summary>'
+                   f'<ul class="rel">{capped_li(sorted(siblings), "theses", "rel")}</ul>'
+                   f'</details>' if siblings else ""))
 
     def evidence_html(self, c: Any, rc: Any) -> tuple[str, int]:
         pub = {s.article_id: s for s in c.s09_sources}
         rows: list[tuple[str, dict[str, Any]]] = []
         for r in c.s04_key_evidence:
             rows.append((r.article_id, {"v": r.value_text, "u": unit_of(r.value_text, r.unit),
-                                        "label": r.label, "quote": r.quote, "period": r.period,
+                                        "label": figure_label(self.store, r.claim_id, r.label),
+                                        "quote": r.quote, "period": r.period,
                                         "type": _EPI.get(r.epistemic.value, r.epistemic.value),
                                         "role": "key evidence", "id": r.claim_id}))
         key = {r.claim_id for r in c.s04_key_evidence}
@@ -1925,7 +2010,8 @@ class Desk:
             role = rc.roles.get(cid, "")
             rows.append((cl.article_id, {
                 "v": cl.value_text, "u": unit_of(cl.value_text, cl.unit),
-                "label": " — ".join(z for z in (cl.scope, cl.metric) if z) or cl.statement,
+                "label": figure_label(self.store, cid, " — ".join(
+                    z for z in (cl.scope, cl.metric) if z) or cl.statement),
                 "quote": cl.quote, "period": cl.period,
                 "type": _EPI.get(cl.epistemic.value, cl.epistemic.value),
                 "role": {"contradicts": "against", "context": "context", "supports": "supports",
@@ -1988,26 +2074,30 @@ def write_desk(store: Store, run_id: str, out: Path, *, cards: dict[str, dict[st
 
 
 CSS = THEME_CSS + """
-h1{font-size:30px;line-height:1.2;margin:4px 0 10px;letter-spacing:-.01em}
-h2{font-size:18px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
-font-size:13px;margin-left:6px}h3{font-size:14.5px;margin:16px 0 8px}
+h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
+font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}
 .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
 font-weight:600}
-.hero{margin-bottom:24px}.lede{font-size:17px;color:var(--ink2);margin:0 0 16px;max-width:820px}
-.hint{color:var(--muted);font-size:13.5px;margin:-6px 0 14px}
+.hero{margin-bottom:20px}.lede{font-size:16px;color:var(--ink2);margin:0 0 14px;max-width:820px}
+.sum{font-size:15px;color:var(--ink2);margin:0 0 10px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:820px}
 .muted{color:var(--muted)}.nowrap{white-space:nowrap}.small{font-size:12.5px;color:var(--muted)}
 .mt{margin-top:26px}
 .strip{display:flex;gap:12px;flex-wrap:wrap}
 .strip>*{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
-min-width:140px;flex:1;color:var(--ink)}
-.strip b{display:block;font-size:24px;line-height:1.2}.strip span{font-size:13px;color:var(--muted)}
+min-width:150px;flex:1;color:var(--ink);display:flex;flex-direction:column;gap:1px}
+.strip b{font-size:24px;line-height:1.15}
+.strip span{font-size:13px;font-weight:600;color:var(--ink2)}
+.strip small{font-size:12px;color:var(--muted)}
 .strip a.warn b{color:var(--bad)}.strip a:hover{text-decoration:none;border-color:var(--accent)}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;
 margin-bottom:30px}
 aside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 8px;
 position:sticky;top:76px}
 .att{list-style:none;margin:0;padding:0}.att li{padding:10px 0;border-top:1px solid var(--line);
-font-size:14px}.att li:first-child{border-top:0;padding-top:0}
+font-size:14px;display:flex;flex-direction:column;gap:2px}.att li:first-child{border-top:0;
+padding-top:0}.att li span{font-size:12.5px;color:var(--muted)}
 .area{margin-bottom:20px}.area h3{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
 color:var(--muted);margin:0 0 8px}
 .trow{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;
@@ -2036,6 +2126,7 @@ section{margin-bottom:28px}
 code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
 overflow-wrap:anywhere}
 code.cmd{display:inline-block;white-space:normal}
+aside code.cmd{display:block;white-space:pre;overflow-x:auto;margin:4px 0;font-size:12px}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 .filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
 border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
@@ -2131,10 +2222,51 @@ cursor:pointer}
 details.cmdd{min-width:150px}details.cmdd code{display:block;margin-top:6px;word-break:break-all}
 details.older{display:inline-block;margin-left:4px}details.older[open]{display:block}
 td:empty{padding:0}
+.bdg{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;
+background:var(--soft);color:var(--ink2)}.bdg.bad{background:var(--bad-bg);color:var(--bad)}
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.alist{list-style:none;padding:0;margin:0;border:1px solid var(--line);border-radius:12px;
+background:var(--panel)}
+.alist li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:4px 14px;padding:10px 14px;
+border-top:1px solid var(--line);align-items:start}.alist li:first-child{border-top:0}
+.alist li>.st{justify-self:start}
+.atl{font-weight:600;line-height:1.35}.aprod{font-size:13.5px;margin-top:3px}
+.weeknav{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:14px}
+.weeknav details.older{display:inline-block}.weeknav details[open]{flex-basis:100%}
+.weeknav .weeks{margin-top:8px}
+.counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:8px 0}
+.cnt{display:inline-flex;gap:5px;align-items:center}
+.rvg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px 6px;
+margin-bottom:10px}
+.rvgh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-bottom:2px}
+.rvgh a{font-weight:650}
+.rvitems{list-style:none;padding:0;margin:0}
+.rvitems li.rvi{background:none;border:0;border-top:1px solid var(--line);border-radius:0;
+padding:10px 0 8px;margin:0}.rvitems li.rvi:first-child{border-top:0}
+.rvmeta{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:12.5px;
+color:var(--muted);margin-top:4px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.uilist{list-style:none;padding:0;margin:8px 0 0}
+.ui{display:grid;grid-template-columns:minmax(0,1fr) 230px 150px;gap:6px 18px;padding:12px 0;
+border-top:1px solid var(--line);align-items:start}.uilist>.ui:first-child{border-top:0}
+.uiside{font-size:13.5px}.uiact{font-size:13px}
+details.fold{margin-top:8px}details.fold>summary{font-size:13px}
+.pillcheck{border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+background:var(--panel)}
+.meta2{font-size:13px;color:var(--muted);margin:-10px 0 16px}
+.rel{list-style:none;padding:0;margin:0}.rel li{margin:0 0 10px}
+.grid2{align-items:start}
 .testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
 .foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
 .hit{outline:2px solid var(--accent);outline-offset:3px}
-@media (max-width:880px){.cols{grid-template-columns:1fr}aside{position:static}
+details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-size:13px}
+.arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:130px}
+.arts.themes th:nth-child(3){width:140px}.arts.themes th:nth-child(4),
+.arts.themes th:nth-child(5){width:84px}.arts.themes th:nth-child(6){width:170px}
+@media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
+aside{position:static;min-width:0}
+.ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
 .grid2{grid-template-columns:1fr}.expo{grid-template-columns:1fr}.expo dt{margin-top:6px}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .filters input#q{min-width:0;width:100%}
@@ -2177,7 +2309,9 @@ function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElem
 .checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
 if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
 x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
-n+=ok?1:0});document.getElementById('cnt3').textContent='showing '+n+' of '+all.length}
+n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
+.call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
+document.getElementById('cnt3').textContent='showing '+n+' of '+all.length}
 function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
 var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
 x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
