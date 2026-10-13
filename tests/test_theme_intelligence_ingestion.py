@@ -50,6 +50,7 @@ from vinci.theme_intelligence.schemas import (
 SYN = FIXTURES / "synthetic_documents"
 SA_FULL = SYN / "semianalysis_full_synthetic.pdf"
 SA_PREVIEW = SYN / "semianalysis_preview_synthetic.txt"
+SA_SAVED_PREVIEW = SYN / "semianalysis_preview_saved_synthetic.pdf"
 MS_PDF = SYN / "ms_report_synthetic.pdf"
 MS_HTML = SYN / "ms_report_synthetic.html"
 SCANNED = SYN / "scanned_page_synthetic.pdf"
@@ -202,6 +203,31 @@ def test_a_scanned_page_is_flagged_and_makes_the_document_partial() -> None:
     assert any(n.startswith("PARTIAL:") for n in r.doc.notes)
     # page 1's text is still read — the gap is flagged, the rest never discarded
     assert any("rose 9% QoQ in 3Q26" in b.text and b.page == 1 for b in r.doc.blocks)
+
+
+def test_a_saved_preview_of_a_paywalled_page_is_read_as_a_preview_never_in_full(
+        pipe: Pipeline) -> None:
+    """2026-10-13: two SemiAnalysis paid posts were supplied as PDFs saved without a paid sign-in.
+    Each ended "This post is for paid subscribers … Already a paid subscriber? Sign in", and the
+    reader recorded one of them FULL (the other was PARTIAL only for a page with no text layer).
+    POSITIVE pin: the subscriber notice in a supplied document makes it PARTIAL, says why, and the
+    analysed version is stored PARTIAL — so Uploads still asks for the full post. NEGATIVE pin: the
+    full post (no notice) stays FULL."""
+    r = read_document(SA_SAVED_PREVIEW, Declared(source_id="semianalysis"))
+    assert r.doc.retrieval_state is RetrievalState.PARTIAL
+    assert [i for i in r.issues if "subscriber notice" in i], r.issues
+    full = read_document(SA_FULL, Declared(source_id="semianalysis"))
+    assert full.doc.retrieval_state is RetrievalState.FULL
+    assert not [i for i in full.issues if "subscriber" in i]
+    res = ingest_file(pipe, SA_SAVED_PREVIEW, _sa(url=PREVIEW_URL), as_of=AS_OF,
+                      fixture=_full_extraction())
+    assert res.status == "INGESTED", res.note
+    (v,) = pipe.store.article_versions(res.article_id or "")
+    assert v.retrieval_state is RetrievalState.PARTIAL
+    from vinci.theme_intelligence.desk import _Registry, upload_items
+
+    asked = [u for u in upload_items(_Registry(pipe.store), {}, []) if u.kind == "full_report"]
+    assert [u.url for u in asked] == [PREVIEW_URL]
 
 
 def test_the_publication_date_comes_from_the_document_never_the_file(tmp_path: Path) -> None:

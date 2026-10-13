@@ -40,6 +40,7 @@ from vinci.theme_intelligence.parse import (
     GLYPH_MIN_SHARE,
     ParsedDocument,
     parse_document,
+    paywall_marker,
     unreadable_glyphs,
 )
 from vinci.theme_intelligence.schemas import (
@@ -143,6 +144,14 @@ def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title
             back_matter: str = "") -> DocumentRead:
     """Assemble the ParsedDocument: the document's own metadata first, the operator's statement
     only where the document is silent — every value says where it was read."""
+    marker = paywall_marker(" ".join(b.text for b in blocks))
+    if marker:
+        # a paywalled page SAVED without a paid sign-in is still its preview (2026-10-13: two
+        # SemiAnalysis posts supplied as PDFs ended "This post is for paid subscribers")
+        read.issues.append(f"subscriber notice in the document (\"{marker}\") — a saved preview "
+                           f"of a paywalled page: analysed as an excerpt only, the full post is "
+                           f"still needed")
+        partial = True
     notes = list(read.issues)
     names = {a.name.lower() for a in authors}
     authors = authors + [a for a in _byline([b.text for b in blocks[:10]])

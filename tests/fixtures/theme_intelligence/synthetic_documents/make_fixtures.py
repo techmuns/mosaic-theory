@@ -61,6 +61,17 @@ def html_semianalysis_full() -> str:
             f"<p>September 28, 2026</p>{paras}</body></html>")
 
 
+def html_semianalysis_saved_preview() -> str:
+    """A paid post's page SAVED AS PDF without a paid sign-in: the free preview, then the
+    subscriber notice — what an operator supplies when the browser was not signed in."""
+    paras = "".join(f"<p>{p}</p>" for p in PREVIEW + FULL_MORE[:2])
+    return (f"<html><head><title>Synthetic Memory Note: Inference Keeps Memory Tight</title>"
+            f"{CSS}</head><body>{BANNER}<h1>Synthetic Memory Note: Inference Keeps Memory "
+            f"Tight</h1><p>By Synthetic Analyst One and Synthetic Analyst Two</p>"
+            f"<p>September 28, 2026</p>{paras}<h2>This post is for paid subscribers</h2>"
+            f"<p>Subscribe</p><p>Already a paid subscriber? Sign in</p></body></html>")
+
+
 def html_ms_report() -> str:
     rows = "".join(f"<tr><td>{q}</td><td>{a}</td><td>{b}</td></tr>" for q, a, b in (
         ("1Q26", "$41.2bn", "38%"), ("2Q26", "$44.9bn", "39%"), ("3Q26", "$48.3bn", "41%"),
@@ -110,6 +121,7 @@ def html_undated() -> str:
 
 (OUT / "ms_report_synthetic.html").write_text(html_ms_report())
 for name, html in (("semianalysis_full_synthetic.pdf", html_semianalysis_full()),
+                   ("semianalysis_preview_saved_synthetic.pdf", html_semianalysis_saved_preview()),
                    ("ms_report_synthetic.pdf", html_ms_report()),
                    ("scanned_page_synthetic.pdf", html_scanned()),
                    ("undated_synthetic.pdf", html_undated())):

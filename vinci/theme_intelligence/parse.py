@@ -102,6 +102,13 @@ _PAYWALL = re.compile(
     r"(this post is for paid subscribers|subscribe to (continue|read)|become a (paid )?member|"
     r"log ?in to (continue|read)|sign in to (continue|read)|already a subscriber\?|"
     r"keep reading with a 7-day free trial|for subscribers only|paywall)", re.I)
+
+
+def paywall_marker(text: str) -> str | None:
+    """The subscriber / paywall marker in `text`, if any — ONE definition for a retrieved page
+    (below) and a supplied document (documents.py)."""
+    m = _PAYWALL.search(text)
+    return m.group(0) if m else None
 _FULL_REPORT_ELSEWHERE = re.compile(
     r"(read the full (article|report)|download the (full )?report|full report (is )?available)",
     re.I)

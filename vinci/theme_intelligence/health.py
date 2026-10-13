@@ -451,6 +451,17 @@ def _affected(o: _Obs, store: Store, sid: str) -> tuple[str, ...]:
     return tuple(out)
 
 
+def split_affected(line: str) -> tuple[str | None, str]:
+    """(url, title) of one `ManualAction.affected` line as `_affected` writes it — "url — title"
+    or "url — title not known". A line that names no web address ("unknown — the channel cannot be
+    read", "… and 3 more (showing 10 of 13)") is (None, the line). The ONE reader of that format:
+    a consumer that wants the title or the address calls this, never its own split."""
+    head, sep, tail = line.partition(" — ")
+    if sep and head.startswith(("http://", "https://")) and " " not in head:
+        return head, tail
+    return None, line
+
+
 def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
             consecutive: int) -> tuple[str, ManualAction | None]:
     upload = _UPLOAD.format(sid=src.id)

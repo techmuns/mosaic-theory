@@ -18,7 +18,7 @@ from __future__ import annotations
 import dataclasses
 import re
 from collections import Counter
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -472,3 +472,132 @@ def test_a_flagged_lines_scope_note_is_the_audit_views_on_review_as_on_the_readi
     plain = BeautifulSoup(d.finding_item(f), "html.parser")
     assert plain.select_one(".aud.scope") is None
     assert plain.select_one(".line").get_text() == f"“{f.line}”"  # type: ignore[union-attr]
+
+
+# --- Sources and Uploads: plain words, the request's own links ----------------------------------
+
+OPEN_MODELS = "https://newsletter.semianalysis.com/p/are-open-models-catching-up"
+GS_PAGE = "https://www.goldmansachs.com/insights/goldman-sachs-research/"
+
+
+def _desk_with_health(tmp_path: Path) -> tuple[Pipeline, Path]:
+    """A run whose channels carry checks shaped as the real pilot's stored ones (2026-10-12):
+    SemiAnalysis DEGRADED on completeness (a paywalled preview) asking for one article, which a
+    supplied document now HOLDS; Goldman Sachs BLOCKED, expected, with no article it could list;
+    TrendForce HEALTHY. Built from the real `SourceHealthCheck` type."""
+    from vinci.theme_intelligence.documents import Declared
+    from vinci.theme_intelligence.ingest import ingest_file
+    from vinci.theme_intelligence.schemas import (
+        HealthStatus,
+        HealthTest,
+        ManualAction,
+        SourceHealthCheck,
+    )
+
+    pipe, _v = _measured_thesis(tmp_path)
+    at = datetime(2026, 10, 12, 6, 0, tzinfo=UTC)
+    ok = [HealthTest(name=n, result="PASS", detail="(test) passed") for n in
+          ("access", "discovery", "extraction", "dates_authors", "freshness", "parser_integrity")]
+    pipe.store.add_health_check(SourceHealthCheck(
+        check_id="SH-test-sa", source_id="semianalysis", publisher="SemiAnalysis", checked_at=at,
+        trigger="manual", status=HealthStatus.DEGRADED, reason="(test) partial", next_action="up",
+        tests=(*ok, HealthTest(name="completeness", result="WARN", detail=(
+            "partial: 1 of 3 sampled article(s) are paywalled previews — only the preview is "
+            "readable"))),
+        manual_action=ManualAction(kind="UPLOAD_REQUIRED", issue="(test)", action="(test)",
+                                   affected=(f"{OPEN_MODELS} — Are Open Models Catching Up?",))))
+    pipe.store.add_health_check(SourceHealthCheck(
+        check_id="SH-test-gs", source_id="gs_research", publisher="Goldman Sachs", checked_at=at,
+        trigger="manual", status=HealthStatus.BLOCKED, reason="(test) 403", next_action="up",
+        expect_blocked=True, tests=(HealthTest(name="access", result="FAIL", detail=(
+            f"{GS_PAGE}: access denied (HTTP 403)")),),
+        manual_action=ManualAction(kind="UPLOAD_REQUIRED", issue="(test)", action="(test)",
+                                   affected=("unknown — the channel cannot be read",))))
+    pipe.store.add_health_check(SourceHealthCheck(
+        check_id="SH-test-tf", source_id="trendforce", publisher="TrendForce", checked_at=at,
+        trigger="manual", status=HealthStatus.HEALTHY, reason="(test) ok", next_action="none",
+        tests=tuple(ok)))
+    pipe.start_run("ingest", as_of=NOW)
+    saved = (Path(__file__).parent / "fixtures" / "theme_intelligence" / "synthetic_documents"
+             / "semianalysis_preview_saved_synthetic.pdf")
+    res = ingest_file(pipe, saved, Declared(source_id="semianalysis", url=OPEN_MODELS), as_of=NOW)
+    assert res.status == "HELD", res.note  # no licence statement: held, nothing analysed
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    return pipe, _render(pipe, run.run_id, tmp_path / "out")
+
+
+def _outside_folds(page: BeautifulSoup) -> str:
+    for x in page.select("details, .aud, script, style"):
+        x.decompose()
+    return page.get_text(" ")
+
+
+def test_sources_say_each_channels_state_in_plain_words_and_fold_the_checks_own(
+        tmp_path: Path) -> None:
+    """POSITIVE: a degraded channel's line comes from its structured test results ("previews or
+    summaries of a fuller report"), the check's own sentence sits in a fold; an expected block
+    says so and links the publisher's research page. NEGATIVE: a healthy channel has no fold, and
+    one stored check draws no history strip ("1 of 1" said nothing)."""
+    _pipe, out = _desk_with_health(tmp_path)
+    page = _soup(out / "sources.html")
+    rows = {tr.select_one("td b").get_text(): tr for tr in page.select("table.srct tr")[1:]
+            if tr.select_one("td b")}
+    sa, gs, tf = rows["SemiAnalysis"], rows["Goldman Sachs"], rows["TrendForce"]
+    assert "previews or summaries of a fuller report" in sa.get_text(" ")
+    fold = sa.select_one("details")
+    assert fold is not None and "paywalled previews" in fold.get_text(" ")
+    assert "paywalled previews" not in _outside_folds(BeautifulSoup(str(sa), "html.parser"))
+    assert "known restriction" in gs.get_text(" ")
+    assert [a["href"] for a in gs.select("td a")] == [GS_PAGE]
+    assert "full text, dates and bylines read" in tf.get_text(" ")
+    assert tf.select_one("details") is None
+    assert not page.select(".hs")  # one check each: no strip
+
+
+def test_uploads_link_each_requested_article_say_what_is_held_and_where_to_look(
+        tmp_path: Path) -> None:
+    """The source's request lists its article as a TITLE linked to its address (never the raw
+    "url — title" line), says a supplied copy is held for a licence decision, and a channel that
+    could list no article points to its research page instead of "unknown — the channel cannot
+    be read"."""
+    _pipe, out = _desk_with_health(tmp_path)
+    page = _soup(out / "uploads.html")
+    item = next(li for li in page.select("li.ui") if "New research from SemiAnalysis" in
+                li.get_text(" "))
+    (a,) = [x for x in item.select("a") if x.get("href") == OPEN_MODELS]
+    assert a.get_text() == "Are Open Models Catching Up?"
+    assert "held until you confirm its licence" in item.get_text(" ")
+    assert f"{OPEN_MODELS} —" not in page.get_text(" ")
+    gs = next(li for li in page.select("li.ui") if "New research from Goldman Sachs" in
+              li.get_text(" "))
+    assert "Where to look" in gs.get_text(" ")
+    assert GS_PAGE in [x.get("href") for x in gs.select("a")]
+    assert "the channel cannot be read" not in page.get_text(" ")
+
+
+def test_split_affected_reads_the_one_format_the_health_check_writes() -> None:
+    """The ONE reader of `ManualAction.affected` lines — shapes as stored by the real check."""
+    from vinci.theme_intelligence.health import split_affected
+
+    assert split_affected(f"{OPEN_MODELS} — Are Open Models Catching Up?") == (
+        OPEN_MODELS, "Are Open Models Catching Up?")
+    assert split_affected("https://x.test/a — title not known") == ("https://x.test/a",
+                                                                    "title not known")
+    for line in ("unknown — the channel cannot be read", "… and 3 more (showing 10 of 13)"):
+        assert split_affected(line) == (None, line)  # NEGATIVE: no address, the line as written
+
+
+def test_an_articles_follow_up_is_one_action_and_its_open_items_fold(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """A preview's follow-up LINKS to Uploads; the figure count lives inside the open-items fold,
+    never as a third line in a narrow column."""
+    _pipe, out, _ = w12
+    page = _soup(out / "articles.html")
+    partial = page.select('#at tr[data-state="PARTIAL"]')
+    assert partial
+    for tr in partial:
+        cell = tr.select("td")[-1]
+        assert [a.get_text() for a in cell.select("a[href='uploads.html']")] == [
+            "Supply the full report"]
+    assert "figures captured" in page.get_text(" ")  # kept, one fold away …
+    assert "figures captured" not in _outside_folds(page)  # … never a line of its own

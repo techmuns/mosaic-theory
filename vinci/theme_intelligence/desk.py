@@ -78,6 +78,7 @@ from vinci.theme_intelligence.schemas import (
     ResearchAction,
     RetrievalState,
     RunStatus,
+    SourceHealthCheck,
     Thesis,
     ThesisStatus,
     ThesisVersion,
@@ -307,6 +308,8 @@ class ArticleRow:
     produced: list[tuple[str, str]] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     follow_up: str = ""
+    #: where the follow-up is done (a desk page), when it is done on the desk
+    follow_link: str = ""
     audit: list[str] = field(default_factory=list)
     article_id: str | None = None
 
@@ -438,9 +441,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
                              and av.article_id == aid), None)
             row.notes.append(_fates(rep_last))
         if row.state == "PARTIAL":
-            row.follow_up = "Supply the full report — see Uploads"
-        elif row.open_items:
-            row.follow_up = f"{_pl(len(row.open_items), 'completeness item')} to check"
+            row.follow_up, row.follow_link = "Supply the full report", "uploads.html"
     # manual runs that FAILED: their article listed as failed — or, when a later run of the week
     # completed it, as completed after the failed attempt(s)
     for fr in week.failed:
@@ -489,9 +490,9 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
                 publisher=a.publisher if a else reg.publisher(sid), source_id=sid, url=url,
                 published=_todate(a.published_at) if a else None, state=state,
                 notes=[_CHECKPOINT_WHY[state].capitalize() + "."],
-                follow_up=("Upload a copy you hold — see Uploads"
-                           if state in ("BLOCKED", "NO_BODY") else
+                follow_up=("Upload a copy you hold" if state in ("BLOCKED", "NO_BODY") else
                            "Re-run in the next scan" if state == "FAILED" else ""),
+                follow_link="uploads.html" if state in ("BLOCKED", "NO_BODY") else "",
                 article_id=cid or None, audit=[f"scan {r.run_id}: {status}"
                                                + (f" · {cid}" if cid else "")])
     # documents supplied this week that were not analysed
@@ -502,7 +503,8 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
             key=d.doc_id, title=d.title or f"untitled document ({d.filename})",
             publisher=d.publisher, source_id=d.source_id, url=d.declared.get("url", ""),
             published=d.published, state=d.status if d.status in ARTICLE_STATE else "FAILED",
-            route="upload", notes=[_doc_why(d)], follow_up="See Uploads",
+            route="upload", notes=[_doc_why(d)], follow_up="Decide on Uploads",
+            follow_link="uploads.html",
             audit=[f"document {d.doc_id} · {d.status}"])
     if latest:
         for url, _st, pay in store.candidates("QUEUED"):
@@ -841,6 +843,10 @@ class UploadItem:
     #: theses the document produced (completed imports) — linked by title, never by id
     theses: list[str] = field(default_factory=list)
     audit: str = ""
+    #: a channel's articles to supply: (url, title as listed, what is already held of it)
+    links: list[tuple[str, str, str]] = field(default_factory=list)
+    #: a channel whose articles the scan cannot list: its research page, to look there by hand
+    where: str = ""
 
 
 def _ingest_cmd(sid: str, url: str = "") -> str:
@@ -908,13 +914,32 @@ def upload_items(reg: _Registry, health: dict[str, Any],
             first_seen=seen, why=_CHECKPOINT_WHY[_CHECKPOINT[status]],
             command=_ingest_cmd(sid or "<source>", url), url=url,
             audit=f"scan outcome {status}" + (f" · {cid}" if cid else "")))
+    from vinci.theme_intelligence.health import split_affected
+
     rows = {r["source_id"]: r for r in health.get("rows", [])}
+    supplied = {d.declared.get("url", ""): d.status for d in reg.documents
+                if d.declared.get("url")}
     for sid, src in reg.sources.items():
         row = rows.get(sid, {})
         ma = row.get("manual_action") or {}
         manual_first = src.mode == "manual_first"
         if not manual_first and ma.get("kind") != "UPLOAD_REQUIRED":
             continue
+        links: list[tuple[str, str, str]] = []
+        rest: list[str] = []
+        for line in (str(x) for x in ma.get("affected", [])):
+            at, title = split_affected(line)
+            if at is None:
+                if not line.startswith("unknown"):  # "… and N more" keeps its count
+                    rest.append(line)
+                continue
+            held = store.article_by_url(at)
+            vs = reg.versions(held.article_id) if held else []
+            state = vs[-1].retrieval_state if vs else None
+            links.append((at, title, _HELD_WORDS.get(supplied.get(at, ""), "")
+                          or ("already read in full" if state is RetrievalState.FULL else
+                              "a preview is held — see Full report needed"
+                              if state is RetrievalState.PARTIAL else "")))
         out.append(UploadItem(
             kind="channel", title=f"New research from {src.publisher}", publisher=src.publisher,
             source_id=sid, published=None, first_seen=None,
@@ -922,7 +947,8 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                  "report you hold" if manual_first else
                  f"automated access is {str(row.get('status', 'UNKNOWN')).lower()} — upload "
                  f"the reports you hold, starting with the articles listed"),
-            command=_ingest_cmd(sid), detail=[str(x) for x in ma.get("affected", [])],
+            command=_ingest_cmd(sid), detail=rest, links=links,
+            where=src.entry_url if not links else "",
             audit=f"health {row.get('status', 'UNKNOWN')}" + (f" · {row.get('reason', '')[:160]}"
                                                               if row else "")))
     for d in reg.documents:
@@ -957,6 +983,14 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                            "re-checked" if d.status == "UPGRADED" else "imported as a new article",
                 "", theses=made, audit=f"document {d.doc_id} · {d.article_id or ''}"))
     return out
+
+
+#: what a supplied document's status says about the article it was supplied for
+_HELD_WORDS = {"HELD": "supplied — held until you confirm its licence",
+               "REVIEW": "supplied — waiting for your match decision",
+               "INGESTED": "supplied and analysed", "UPGRADED": "supplied and analysed",
+               "DUPLICATE": "supplied — the same text as already held",
+               "REJECTED": "supplied but unreadable", "FAILED": "supplied — analysis failed"}
 
 
 def _doc_item(d: DocumentRecord, kind: str, why: str, command: str, *,
@@ -1038,6 +1072,46 @@ def figure_label(store: Store, claim_id: str, label: str) -> str:
     if c is not None and c.scope and c.metric and c.scope.casefold() in c.metric.casefold():
         return c.metric
     return label
+
+
+#: a health test that did not pass, in plain words (the test's own detail stays one fold away)
+_TEST_WORDS = {"access": "the site refuses automated access",
+               "discovery": "new articles could not be listed",
+               "extraction": "articles are read only in part",
+               "dates_authors": "dates or bylines are missing",
+               "completeness": "some articles are previews or summaries of a fuller report",
+               "parser_integrity": "the page layout may have changed"}
+
+
+def _health_line(h: SourceHealthCheck | None) -> str:
+    """One plain line for a channel's latest check, from its structured test results — never by
+    re-reading the check's own sentences."""
+    if h is None:
+        return "not checked yet"
+    if h.status.value == "HEALTHY":
+        return "full text, dates and bylines read"
+    words = [_TEST_WORDS[t.name] for t in h.tests
+             if t.result in ("WARN", "FAIL") and t.name in _TEST_WORDS]
+    if h.freshness.value == "QUIET":
+        words.append("nothing new recently")
+    if h.status.value == "BLOCKED" and h.expect_blocked:
+        words.append("a known restriction — supply its research by upload")
+    if h.status.value == "ERROR":
+        words.insert(0, f"the check failed technically ({_pl(h.consecutive_failed_checks, 'time')}"
+                        f" in a row)")
+    return "; ".join(dict.fromkeys(words)) or h.status.value.lower()
+
+
+def _ml(label: str) -> str:
+    """A cell's label shown only where the table stacks into cards (a phone), whose column
+    headers are hidden — so a bare "1" or "—" never stands without its meaning."""
+    return f'<span class="ml">{e(label)}: </span>'
+
+
+def _host(url: str) -> str:
+    """A web address as a reader names it: its host and path, no scheme."""
+    u = urlparse(url)
+    return (u.netloc.removeprefix("www.") + u.path).rstrip("/")
 
 
 def _no_thesis(a: ArticleRow) -> str:
@@ -1367,9 +1441,11 @@ class Desk:
                 + (f'<div>{" · ".join(sub)}</div>' if sub else "")
                 + f'<span class="aud cc">{e(tid)}</span></td>'
                   f'<td>{_chip(v.priority.research_action.value)}</td>'
-                  f'<td class="nowrap">{e(_day(t.last_material_update))}</td><td>{n_src}</td>'
-                  f'<td>{len(by_t.get(tid, [])) or "—"}</td>'
-                  f'<td>{_strip(recent, self.activity[tid])}</td></tr>')))
+                  f'<td class="nowrap">{_ml("last evidence")}{e(_day(t.last_material_update))}'
+                  f'</td><td>{_ml("sources")}{n_src}</td>'
+                  f'<td>{_ml("open findings")}{len(by_t.get(tid, [])) or "—"}</td>'
+                  f'<td>{_ml("weeks with new evidence")}{_strip(recent, self.activity[tid])}'
+                  f'</td></tr>')))
         by_area: dict[str, list[str]] = defaultdict(list)
         for a, r in rows:
             by_area[a].append(r)
@@ -1441,13 +1517,15 @@ class Desk:
                                             key=lambda kv: STATE_ORDER.get(kv[0], 9)))
         rows = []
         for a in arts:
-            prog = (f'{a.captured} of {a.figures} figures captured' if a.analysed and a.figures
-                    else "")
             items = a.open_items + [f"Coverage alert: {x}" for x in a.alerts]
-            detail = ('<details class="fold"><summary>' + _pl(len(items), "open item")
-                      + "</summary><ul>"
+            detail = ('<details class="fold"><summary>' + _pl(len(items), "item")
+                      + " to check</summary>"
+                      + (f'<p class="small">{a.captured} of {a.figures} figures captured</p>'
+                         if a.figures else "") + "<ul>"
                       + "".join(f"<li>{ids_to_audit(e(plain(x)))}</li>" for x in items)
                       + "</ul></details>" if items else "")
+            act = (f'<a href="{a.follow_link}">{e(a.follow_up)}</a>' if a.follow_link
+                   else e(a.follow_up))
             notes = [n for n in a.notes if a.state not in _SELF_EXPLAINED
                      and (a.produced or not n.startswith("No thesis"))]
             sub = " · ".join(x for x in (e(a.publisher), e(a.route) if a.route != "automatic"
@@ -1460,8 +1538,7 @@ class Desk:
                 + "".join(f'<div class="small">{e(n)}</div>' for n in notes)
                 + f'<span class="aud cc">{e(" · ".join(a.audit))}</span></td><td>{_state(a.state)}'
                 + f'</td><td>{self.produced_cell(a) if a.analysed else ""}</td>'
-                f'<td class="small">{e(a.follow_up)}'
-                + (f'<div>{e(prog)}</div>' if prog else "") + f"{detail}</td></tr>")
+                f'<td class="small">{act}{detail}</td></tr>')
         pubs = sorted({a.publisher for a in arts})
         legend = ('<p class="hint">Queued: found in the window and left for the next run by the '
                   'per-run article cap.</p>' if count.get("QUEUED") else "")
@@ -1585,6 +1662,12 @@ class Desk:
                     f'<li class="ui"><div class="uimain"><div class="atl">{_link(u.url, u.title)}'
                     f'</div><div class="why">{e(u.why)}</div>'
                     + "".join(f'<div class="small clamp">{e(x)}</div>' for x in extra)
+                    + "".join(f'<div class="small">• {_link(url, title)}'
+                              + (f' <span class="muted">· {e(note)}</span>' if note else "")
+                              + "</div>" for url, title, note in u.links)
+                    + (f'<div class="small">Where to look: <a href="{e(u.where)}">'
+                       f'{e(_host(u.where))}</a> — the scan cannot list its articles</div>'
+                       if u.where else "")
                     + "".join(f'<div class="small">→ <a href="{self.thesis_link(t)}">'
                               f'{e(self.title(t))}</a></div>' for t in u.theses if t in self.asof)
                     + f'<span class="aud cc">{e(u.audit)}</span></div><div class="uiside">'
@@ -1601,18 +1684,19 @@ class Desk:
                 f'<ul class="uilist">{capped_li(items, "documents", "uilist", cap=10)}</ul>'
                 f'</details>')
         waiting = sum(1 for u in self.uploads if u.kind != "done")
+        cli = f'<span class="nw">{CLI}</span>'  # a narrow panel wraps after it, never inside it
         body = (f'<section class="hero"><h1 class="tabtitle">Uploads</h1><p class="sum">'
                 f'{_pl(waiting, "item")} to supply or clear · {len(by.get("done", []))} imported'
                 f'</p><p class="hint">Nothing here is dismissed by age — an item stays until it is '
                 f'supplied or cleared.</p></section><div class="cols"><section class="main">'
                 + ("".join(blocks) or '<p class="muted">Nothing waiting.</p>')
                 + f'</section><aside><h2>Each week</h2><ol class="steps">'
-                  f'<li><b>Pull</b> the registry<code class="cmd">{CLI} state pull</code></li>'
+                  f'<li><b>Pull</b> the registry<code class="cmd">{cli} state pull</code></li>'
                   f'<li><b>Import</b> each file with the command on its row, or put them in '
                   f'<code>data/theme_intelligence/inbox/</code> and run '
-                  f'<code class="cmd">{CLI} ingest-inbox</code></li>'
+                  f'<code class="cmd">{cli} ingest-inbox</code></li>'
                   f'<li><b>Clear</b> what is held with the release command on its row</li>'
-                  f'<li><b>Push</b> before Monday 03:00 UTC<code class="cmd">{CLI} state push'
+                  f'<li><b>Push</b> before Monday 03:00 UTC<code class="cmd">{cli} state push'
                   f'</code></li></ol><details class="fold"><summary>Rules</summary>'
                   f'<ul class="small"><li>Add <code>--llm-permitted</code> only when the '
                   f'document\'s licence allows third-party model processing; without it the '
@@ -1628,7 +1712,6 @@ class Desk:
     # -- Sources -------------------------------------------------------------------------------
     def sources_page(self) -> str:
         until = self.run.finished_at or datetime.now(tz=UTC)
-        rows_by = {r["source_id"]: r for r in self.health.get("rows", [])}
         recent = self.weeks[-4:]
         n_read: Counter[str] = Counter()
         newest: dict[str, date] = {}
@@ -1642,49 +1725,61 @@ class Desk:
                 newest[art.source_id] = d
         out: dict[str, list[str]] = {"automatic": [], "manual_first": []}
         attention = 0
+        analysed = ("analysed this week" if len(recent) == 1 else
+                    f"analysed, last {len(recent)} weeks")
         for sid, src in self.reg.sources.items():
-            r = rows_by.get(sid, {})
-            st = str(r.get("status", "UNKNOWN"))
+            hist = [h for h in self.store.health_checks(source_id=sid) if h.checked_at <= until]
+            last = hist[-1] if hist else None
+            st = last.status.value if last else "UNKNOWN"
             attention += st != "HEALTHY"
             word, cls = _HEALTH.get(st, (st.title(), "mute"))
-            hist = [h for h in self.store.health_checks(source_id=sid) if h.checked_at <= until]
             strip = ('<span class="hs">' + "".join(
                 f'<i class="h-{h.status.value.lower()}" title="{e(_day(h.checked_at))}: '
                 f'{e(h.status.value.lower())}"></i>' for h in hist[-12:]) + "</span>"
-                + f'<span class="small"> {min(12, len(hist))} of {len(hist)}</span>'
-                if hist else '<span class="small">none stored</span>')
-            fresh = {"FRESH": "Fresh", "QUIET": "Quiet", "UNKNOWN": "Unknown"}.get(
-                str(r.get("freshness", "UNKNOWN")), "Unknown")
-            intake = [("Weekly scan" if src.mode != "manual_first" else "Manual upload"),
-                      {"permitted": "uploads analysed",
-                       "not_permitted": "uploads never analysed",
-                       "unknown": "uploads need --llm-permitted"}.get(
-                          src.manual_llm_processing, src.manual_llm_processing),
-                      ("linked reports fetched" if src.linked_reports == "fetch"
-                       else "linked reports requested")]
-            reason = plain(str(r.get("reason", "not checked yet")))
+                + f'<span class="small"> last {min(12, len(hist))} of {len(hist)} checks</span>'
+                if len(hist) >= 2 else "")
+            odd = [t for t in (last.tests if last else ()) if t.result in ("WARN", "FAIL")]
+            details = ('<details class="fold"><summary>What the check found</summary><ul>'
+                       + "".join(f"<li><b>{e(t.name.replace('_', ' '))}</b> — {e(plain(t.detail))}"
+                                 f"</li>" for t in odd) + "</ul></details>" if odd else "")
+            site = last.newest_article_date if last else None  # what the check saw listed
+            seen = max((d for d in (site, newest.get(sid)) if d), default=None)
+            fresh = e(_day(seen)) if seen else '<span class="muted">not known</span>'
+            quiet = (' <span class="small">· quiet</span>'
+                     if last and last.freshness.value == "QUIET" else "")
+            note = ('<div class="small">linked reports read by the scan</div>'
+                    if src.linked_reports == "fetch" else "")
+            where = (f'<div class="small">research page: <a href="{e(src.entry_url)}">'
+                     f'{e(_host(src.entry_url))}</a></div>' if src.mode == "manual_first" else "")
             out["manual_first" if src.mode == "manual_first" else "automatic"].append(
-                f'<tr><td><b>{e(src.publisher)}</b>'
+                f'<tr><td><b>{e(src.publisher)}</b>{note}{where}'
                 f'<div class="aud"><code>{e(sid)}</code></div></td>'
-                f'<td><span class="st {cls}">{e(word)}</span>'
-                f'<div class="small clamp2" title="{e(reason)}">{e(reason)}</div></td>'
-                f'<td>{strip}</td><td class="small">{e(fresh)}<div>newest '
-                f'{e(_day(newest.get(sid)))}</div><div>{n_read[sid]} analysed in '
-                f'{_pl(len(recent), "week")}</div></td>'
-                f'<td class="small">{"<br>".join(e(x) for x in intake)}</td></tr>')
+                f'<td><span class="st {cls}">{e(word)}</span> '
+                f'<span class="small">{e(_health_line(last))}</span>'
+                + (f'<div class="small">checked {e(_day(last.checked_at))}</div>' if last else "")
+                + f'{strip}{details}</td>'
+                f'<td class="nowrap">{_ml("newest article")}{fresh}{quiet}</td>'
+                f'<td>{_ml(analysed)}{n_read[sid] or "—"}</td></tr>')
 
         def table(rs: list[str]) -> str:
             return ('<div class="hscroll"><table class="arts srct"><tr><th>Publisher</th>'
-                    '<th>Status now</th><th>Health history</th><th>Freshness</th>'
-                    '<th>Intake</th></tr>' + "".join(rs) + "</table></div>")
+                    '<th>Access now</th><th>Newest article</th>'
+                    + f'<th>{analysed.capitalize()}</th></tr>' + "".join(rs)
+                    + "</table></div>")
 
+        permit = {"permitted": "analysed as soon as they arrive",
+                  "not_permitted": "never sent to the model",
+                  "unknown": "analysed once you confirm the licence allows it"}
+        policies = {permit.get(x.manual_llm_processing, x.manual_llm_processing)
+                    for x in self.reg.sources.values()}
         body = (f'<section class="hero"><h1 class="tabtitle">Sources</h1><p class="sum">'
                 f'{len(out["automatic"])} automatic · {len(out["manual_first"])} manual-first · '
                 f'{attention} need attention</p><p class="hint">A blocked or quiet source is not '
-                f'evidence it published nothing. Health history shows stored checks only.</p>'
-                f'</section>'
-                f'<section><h2>Automatic coverage <small>read by the weekly scan</small></h2>'
-                f'{table(out["automatic"])}</section><section><h2>Manual-first coverage <small>'
+                f'evidence it published nothing. Documents you upload are '
+                f'{" / ".join(sorted(policies))} (<code>--llm-permitted</code>).</p></section>'
+                f'<section><h2>Automatic coverage <small>read by the weekly scan; a report a page '
+                f'links to is listed on Uploads</small></h2>{table(out["automatic"])}</section>'
+                f'<section><h2>Manual-first coverage <small>the scan does not read these; '
                 f'research arrives only as documents you supply</small></h2>'
                 f'{table(out["manual_first"])}</section>')
         return self.page("Sources", body, "Sources")
@@ -2126,7 +2221,7 @@ section{margin-bottom:28px}
 code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
 overflow-wrap:anywhere}
 code.cmd{display:inline-block;white-space:normal}
-aside code.cmd{display:block;white-space:pre;overflow-x:auto;margin:4px 0;font-size:12px}
+aside code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 .filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
 border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
@@ -2261,6 +2356,8 @@ background:var(--panel)}
 .foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
 .hit{outline:2px solid var(--accent);outline-offset:3px}
 details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-size:13px}
+.ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
+.arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
 .arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:130px}
 .arts.themes th:nth-child(3){width:140px}.arts.themes th:nth-child(4),
 .arts.themes th:nth-child(5){width:84px}.arts.themes th:nth-child(6){width:170px}
@@ -2269,11 +2366,12 @@ aside{position:static;min-width:0}
 .ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
 .grid2{grid-template-columns:1fr}.expo{grid-template-columns:1fr}.expo dt{margin-top:6px}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
-.filters input#q{min-width:0;width:100%}
+.filters input#q{min-width:0;width:100%;flex-basis:100%}
 .arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
 .arts tr:first-child{display:none}.arts tr{padding:12px 14px;border-bottom:1px solid var(--line)}
 .arts td{border:0;padding:2px 0}.arts td:empty{display:none}.hscroll{border-radius:10px}
 .arts tr.xtra{display:none}.morebox:checked+.hscroll .arts tr.xtra{display:block}
+.ml{display:inline;color:var(--muted);font-size:12.5px}
 .tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
 @media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
 """
