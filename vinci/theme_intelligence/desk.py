@@ -53,7 +53,12 @@ from vinci.theme_intelligence.cards import (
     unit_shown,
     why_reasons,
 )
-from vinci.theme_intelligence.config import STALE_AFTER_DAYS, load_sources, load_taxonomy
+from vinci.theme_intelligence.config import (
+    STALE_AFTER_DAYS,
+    load_retired_sources,
+    load_sources,
+    load_taxonomy,
+)
 from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
     MANUAL_MODES,
@@ -375,6 +380,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
     queued for the next run."""
     store = reg.store
     rids = week.run_ids
+    retired = {r.id: r for r in load_retired_sources()}
     rows: dict[str, ArticleRow] = {}
     for r in week.runs:
         if r.mode == "reassess":  # a re-grade of stored evidence reads no article
@@ -440,7 +446,11 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
                              if (av := store.article_version(x.article_version_id))
                              and av.article_id == aid), None)
             row.notes.append(_fates(rep_last))
-        if row.state == "PARTIAL":
+        if row.state == "PARTIAL" and row.source_id in retired:  # history: never asked for
+            gone = retired[row.source_id]
+            row.follow_up = (f"Not requested — {gone.publisher} retired "
+                             f"{_day(date.fromisoformat(gone.retired))}")
+        elif row.state == "PARTIAL":
             row.follow_up, row.follow_link = "Supply the full report", "uploads.html"
     # manual runs that FAILED: their article listed as failed — or, when a later run of the week
     # completed it, as completed after the failed attempt(s)
@@ -856,13 +866,18 @@ def _ingest_cmd(sid: str, url: str = "") -> str:
 
 def upload_items(reg: _Registry, health: dict[str, Any],
                  checkpoints: list[tuple[str, str, date]]) -> list[UploadItem]:
-    """Everything the operator can supply or clear, registry-wide — never dismissed by age."""
+    """Everything the operator can supply or clear, registry-wide — never dismissed by age. A
+    RETIRED channel's records are history only: nothing of it is ever asked for (as the weekly
+    report's intake, `report.research_intake`)."""
     store = reg.store
     out: list[UploadItem] = []
+    retired = {r.id for r in load_retired_sources()}
     upload_issue = {i.ref_id: i.detail for i in store.issues()
                     if i.code == "LINKED_REPORT_UPLOAD"}
     unread = {d.article_id: d for d in reg.documents if d.quarantined and d.article_id}
     for a in store.articles():
+        if a.source_id in retired:
+            continue
         vs = [v for v in reg.versions(a.article_id)
               if v.retrieval_state is not RetrievalState.BLOCKED]
         if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
@@ -904,6 +919,8 @@ def upload_items(reg: _Registry, health: dict[str, Any],
         cand = store.candidate(url)
         pay = cand[1] if cand else {}
         sid = str(pay.get("source_id") or "")
+        if sid in retired:
+            continue
         cid = str(pay.get("article_id") or "")
         art = reg.article(cid) if cid else None
         out.append(UploadItem(
@@ -952,6 +969,8 @@ def upload_items(reg: _Registry, health: dict[str, Any],
             audit=f"health {row.get('status', 'UNKNOWN')}" + (f" · {row.get('reason', '')[:160]}"
                                                               if row else "")))
     for d in reg.documents:
+        if d.source_id in retired:
+            continue
         last = d.history[-1].split(": ", 1)[-1] if d.history else ""
         if d.status == "HELD":
             licence = not last.startswith(("COST:", "BUDGET:"))

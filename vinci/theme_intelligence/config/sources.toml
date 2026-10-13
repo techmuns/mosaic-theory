@@ -1,11 +1,11 @@
 # Theme-intelligence source channels — EDITABLE CONFIGURATION, not code.
 #
-# SEVEN active publishers (decision 2026-10-11): Citi, J.P. Morgan, Nomura, TrendForce and
-# SemiAnalysis are read automatically (hybrid where a report must be supplied); Morgan Stanley and
-# Goldman Sachs are MANUAL-FIRST (`mode = "manual_first"`: a lightweight health check only, no
-# discovery or retrieval — their research arrives as authorised uploads). Bank of America is
-# RETIRED ([[retired]] below): no discovery, no health check, no intake, no new evidence; its
-# historical records stay in the registry as provenance.
+# SIX active publishers (decision 2026-10-13): Citi, J.P. Morgan, TrendForce and SemiAnalysis are
+# read automatically (hybrid where a report must be supplied); Morgan Stanley and Goldman Sachs
+# are MANUAL-FIRST (`mode = "manual_first"`: a lightweight health check only, no discovery or
+# retrieval — their research arrives as authorised uploads). Bank of America (2026-10-11) and
+# Nomura (2026-10-13) are RETIRED ([[retired]] below): no discovery, no health check, no intake,
+# no new evidence; their historical records stay in the registry as provenance.
 #
 # One [[source]] per monitored channel. `entry_url` is the canonical entry point the brief names;
 # `adapter` selects the discovery strategy in `vinci/theme_intelligence/discovery.py` (a strategy
@@ -22,6 +22,7 @@
 #   jpm_tmt           200 (listing + sitemap with lastmod; robots Crawl-delay 10 for AI agents)
 #   ms_research       CONNECTION DROPPED on every request incl. robots.txt  -> BLOCKED
 #   nomura_connects   200 (/articles/ listing, paginated p2..pN; no feed; robots.txt 404)
+#                          — RETIRED 2026-10-13: full reports on its client portal, no public sign-up
 #   trendforce        200 (press-news listing, dated URLs; sitemap with lastmod)
 #   semianalysis      200 (site links its newsletter; newsletter RSS is the live feed;
 #                          semianalysis.com robots Crawl-delay 100 — so the feed is read directly;
@@ -78,23 +79,6 @@ default_article_class = "institutional_research"
 min_crawl_delay_s = 10
 
 [[source]]
-id = "nomura_connects"
-publisher = "Nomura"
-channel = "Nomura Connects"
-entry_url = "https://www.nomuraconnects.com/"
-adapter = "nomura_articles"
-listing_url = "https://www.nomuraconnects.com/articles/"
-link_pattern = "^https://www\\.nomuraconnects\\.com/focused-thinking-posts/"
-max_listing_pages = 3
-max_date_checks = 36
-# "To read the full report, click here" leads to the Nomura client portal (go.nomuranow.com):
-# never fetched — listed for an authorised upload
-linked_reports = "request"
-reliability = "medium"
-default_article_class = "publisher_commentary"
-min_crawl_delay_s = 5
-
-[[source]]
 id = "trendforce"
 publisher = "TrendForce"
 channel = "TrendForce press center news"
@@ -139,3 +123,12 @@ publisher = "Bank of America"
 retired = "2026-10-11"
 reason = "removed from the approved publisher list by the operator (2026-10-11)"
 hosts = ["business.bofa.com"]
+
+[[retired]]
+id = "nomura_connects"
+publisher = "Nomura"
+retired = "2026-10-13"
+# its full reports sit on the Nomura client portal (go.nomuranow.com), which offers no public
+# sign-up — they could never be supplied
+reason = "removed from the approved publisher list by the operator (2026-10-13)"
+hosts = ["nomuraconnects.com", "nomuranow.com"]

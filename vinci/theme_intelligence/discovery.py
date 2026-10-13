@@ -5,7 +5,6 @@ One adapter per publisher LAYOUT (never per article), selected by `adapter` in `
   citi_next_data     Must C page's embedded CMS data (`__NEXT_DATA__`): series items + publishDate
   jpm_tmt            Top Market Takeaways listing cards (dated); sitemap lastmod as fallback
   generic_listing    entry page anchors matching `link_pattern` (dated cards or page date)
-  nomura_articles    /articles/ listing + its pagination (undated) → each page's own date
   trendforce_press   press-center pages ?page=N (date in the article URL)
   semianalysis_feed  the newsletter's RSS feed (pubDate)
 
@@ -61,8 +60,6 @@ METHOD = {
                       "CMS publishDate)",
     "jpm_tmt": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
     "generic_listing": "entry page links matching the configured pattern → card or page date",
-    "nomura_articles": "/articles/ listing + pagination (undated) → publication date from each "
-                       "page",
     "trendforce_press": "press-center listing pages ?page=N (date in the article URL)",
     "semianalysis_feed": "newsletter RSS feed (item pubDate)",
 }
@@ -282,35 +279,6 @@ def generic_listing(src: SourceConfig, f: PoliteFetcher,
                                       re.compile(src.link_pattern))]
 
 
-def nomura_articles(src: SourceConfig, f: PoliteFetcher,
-                    cov: SourceCoverage) -> list[Candidate]:
-    listing = src.listing_url or src.entry_url
-    fr = _entry(src, f, cov, listing)
-    host = re.escape(urlparse(listing).netloc)
-    pat = re.compile(src.link_pattern or rf"^https://{host}/focused-thinking-posts/")
-    pages = [fr]
-    soup = _soup(fr)
-    nxt = sorted({canon(urljoin(listing, str(a["href"]))) for a in soup.find_all("a", href=True)
-                  if isinstance(a, Tag) and re.search(r"/page/\d+/?$|[?&]page=\d+",
-                                                      str(a["href"]))},
-                 key=lambda u: int(re.findall(r"\d+", u)[-1]))
-    for u in nxt[: max(0, src.max_listing_pages - 1)]:
-        p = _get(f, u, cov)
-        if p.state is RetrievalState.BLOCKED:
-            cov.warnings.append(f"listing page {u}: {p.note}")
-            continue
-        pages.append(p)
-    if len(nxt) > max(0, src.max_listing_pages - 1):
-        cov.truncation = (f"read {len(pages)} listing page(s) of the {len(nxt) + 1} linked "
-                          f"(max_listing_pages={src.max_listing_pages})")
-    out: dict[str, Candidate] = {}
-    for p in pages:
-        for u, t, d in card_links(_soup(p), p.final_url or listing, pat):
-            out.setdefault(u, Candidate(url=u, source_id=src.id, title=t, listed_date=d,
-                                        date_basis="listing card date" if d else "undated"))
-    return list(out.values())
-
-
 def trendforce_press(src: SourceConfig, f: PoliteFetcher, cov: SourceCoverage,
                      *, oldest_needed: date | None = None) -> list[Candidate]:
     pat = re.compile(r"/presscenter/news/(20\d{6})-\d+\.html$")
@@ -379,7 +347,6 @@ ADAPTERS: dict[str, Adapter] = {
     "citi_next_data": citi_next_data,
     "jpm_tmt": jpm_tmt,
     "generic_listing": generic_listing,
-    "nomura_articles": nomura_articles,
     "trendforce_press": trendforce_press,
     "semianalysis_feed": semianalysis_feed,
 }

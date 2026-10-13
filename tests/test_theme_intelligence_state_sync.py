@@ -184,9 +184,9 @@ def test_the_intake_lists_what_needs_a_human(tmp_path: Path) -> None:
         checked_at=datetime(2026, 10, 11, 6, 0, tzinfo=UTC), trigger="manual",
         status=HealthStatus.BLOCKED, reason="access denied (HTTP 403) (test)",
         next_action="manual upload", expect_blocked=True))
-    pipe.store.upsert_candidate("https://www.nomuraconnects.com/focused-thinking-posts/x",
-                                "nomura_connects", "UNDATED",
-                                {"source_id": "nomura_connects", "title": "An undated insight",
+    pipe.store.upsert_candidate("https://newsletter.semianalysis.com/p/x",
+                                "semianalysis", "UNDATED",
+                                {"source_id": "semianalysis", "title": "An undated insight",
                                  "note": "the page states no publication date — VERIFY"})
     # a RETIRED channel's historical row is never asked about again
     pipe.store.upsert_candidate("https://business.bofa.com/en-us/content/y.html",

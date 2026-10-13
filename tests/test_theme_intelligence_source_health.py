@@ -129,11 +129,11 @@ def store(tmp_path: Path) -> Store:
 
 def test_every_configured_channel_receives_a_status_and_a_last_checked_time(
         tmp_path: Path, store: Store) -> None:
-    """Every ACTIVE channel — seven since Bank of America was retired (2026-10-11): the
-    denominators follow the configuration, never a constant."""
+    """Every ACTIVE channel — six since Bank of America (2026-10-11) and Nomura (2026-10-13)
+    were retired: the denominators follow the configuration, never a constant."""
     eight = [replace(s, min_crawl_delay_s=0.0) for s in load_sources()]
     n = len(eight)
-    assert n == 7
+    assert n == 6
     web = Web()  # every page of every host: 404, except what is stated below
     web.pages["https://www.goldmansachs.com/robots.txt"] = (403, "")
     web.pages["https://www.morganstanley.com/robots.txt"] = httpx.ConnectError("dropped")
@@ -340,7 +340,7 @@ def test_manual_ingestion_continues_while_the_publisher_is_blocked(tmp_path: Pat
     assert after.manual_upload_recommended
 
 
-# --- H.11 one channel's failure cannot stop the other seven ---------------------------------------
+# --- H.11 one channel's failure cannot stop the others --------------------------------------------
 
 def test_one_channel_failing_never_stops_the_others(tmp_path: Path, store: Store,
                                                      monkeypatch: pytest.MonkeyPatch) -> None:
@@ -433,7 +433,7 @@ def test_the_health_cli_runs_without_an_llm_key(tmp_path: Path,
     assert cli.main(["--data-dir", str(tmp_path / "ti"), "sources", "--check-health",
                      "--json"]) == 0
     out = json.loads(capsys.readouterr().out)
-    assert out["total"] == len(load_sources()) == len(out["sources"]) == 7
+    assert out["total"] == len(load_sources()) == len(out["sources"]) == 6
     assert out["summary"].startswith("Sources healthy: ")
     assert all(r["checked_at"] and r["status"] in HealthStatus.__members__ for r in out["sources"])
 

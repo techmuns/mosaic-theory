@@ -249,10 +249,12 @@ def test_a_linked_report_estimated_above_the_cost_limit_is_held_and_listed(
 
 
 def test_a_request_channel_never_fetches_its_linked_report(tmp_path: Path) -> None:
-    """Nomura's full reports sit on its client portal: listed for upload, never fetched."""
+    """A "request" channel's linked report is listed for upload, never fetched (every active
+    channel but Citi; Nomura's client-portal reports were the original case, retired 2026-10-13)."""
     f = _citi_fetcher((SYN_PDF.read_bytes(), "application/pdf"))
     pipe = _pipe(tmp_path, f)
-    res = pipe.process_url(PAGE, source_id="nomura_connects", as_of=AS_OF, fixture=PAGE_EXT)
+    assert _src("semianalysis").linked_reports == "request"
+    res = pipe.process_url(PAGE, source_id="semianalysis", as_of=AS_OF, fixture=PAGE_EXT)
     assert f.calls == [PAGE]
     [i] = [i for i in pipe.store.issues() if i.code == "LINKED_REPORT_UPLOAD"]
     assert i.ref_id == res.article_id and "never to fetch it" in i.detail
@@ -261,12 +263,12 @@ def test_a_request_channel_never_fetches_its_linked_report(tmp_path: Path) -> No
 def test_the_channel_policies_as_configured() -> None:
     by = {s.id: s for s in load_sources()}
     assert by["citi_must_c"].linked_reports == "fetch"
-    assert by["nomura_connects"].linked_reports == "request"
+    assert "nomura_connects" not in by  # retired 2026-10-13
     assert all(by[s].linked_reports == "request" for s in by if s != "citi_must_c")
     assert "ingest-file" in _UPLOAD  # the health hint points at the document route
 
 
-# --- a page that states no publication date (Nomura's layout) ----------------------------------
+# --- a page that states no publication date (the layout Nomura used; retired 2026-10-13) --------
 
 def _undated_page(title: str, modified: str | None) -> bytes:
     meta = f'<meta name="last_modified_date" content="{modified}">' if modified else ""
@@ -276,8 +278,10 @@ def _undated_page(title: str, modified: str | None) -> bytes:
 
 
 def test_an_undated_page_is_bounded_by_its_last_modification(tmp_path: Path) -> None:
-    src = _src("nomura_connects", max_listing_pages=1)
-    base = "https://www.nomuraconnects.com/focused-thinking-posts"
+    base = "https://example.test/undated-layout/posts"
+    src = replace(_src("jpm_tmt"), id="undated_layout_test", adapter="generic_listing",
+                  entry_url=f"{base}/", listing_url=f"{base}/", sitemap_url=None,
+                  link_pattern=rf"^{base}/", max_listing_pages=1)
     listing = (f'<html><body><main><div class="card"><a href="{base}/old-insight">An old '
                f'insight whose title is long enough for the card rule</a></div><div '
                f'class="card"><a href="{base}/recent-insight">A recent insight whose title '
@@ -303,10 +307,10 @@ def test_an_undated_page_is_bounded_by_its_last_modification(tmp_path: Path) -> 
 
 
 def test_an_operator_verified_date_is_labelled_as_such(tmp_path: Path) -> None:
-    url = "https://www.nomuraconnects.com/focused-thinking-posts/recent-insight"
+    url = "https://example.test/synthetic/semianalysis-shaped/recent-insight"
     f = Fetcher({url: (_undated_page("Recent", "2026-10-05T09:00:00-04:00"), "text/html")})
     pipe = _pipe(tmp_path, f)
-    res = pipe.process_url(url, source_id="nomura_connects", as_of=AS_OF, fixture=PAGE_EXT,
+    res = pipe.process_url(url, source_id="semianalysis", as_of=AS_OF, fixture=PAGE_EXT,
                            declared_published=date(2026, 10, 3))
     art = pipe.store.article(res.article_id or "")
     assert art is not None and art.published_at is not None
