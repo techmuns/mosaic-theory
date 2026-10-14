@@ -456,11 +456,14 @@ class SecResolver:
         hint = (m.ticker_hint or "").strip().upper()
         # a hint naming a listing the SEC data does not hold = the company is listed elsewhere
         foreign_hint = bool(hint) and hint not in idx.by_ticker and hint not in idx.funds
+        hinted: str | None = None  # the registrant an SEC-listed hint names, when the name differs
         if m.ticker_hint and m.ticker_hint.upper() in idx.by_ticker:
             cik, name, _ = idx.by_ticker[m.ticker_hint.upper()]
             if written and _prefix_match(written, _tokens(name)):
                 cands[cik] = name
                 method = "model ticker hint verified against SEC registrant name"
+            else:
+                hinted = name
         if not cands and written:
             for cik, name in idx.names.items():
                 if _prefix_match(written, _tokens(name)):
@@ -484,6 +487,31 @@ class SecResolver:
                                     + " — a partial name is not identity: not resolved")
                 cands = exact
                 method += " (exact registrant name; the hint names a non-SEC listing)"
+            if hinted and cands and all(_tokens(n)[:1] != _tokens(hinted)[:1]
+                                        for n in cands.values()):
+                # the hint names one SEC issuer, the name partly matches ANOTHER business: two
+                # identities (2026-10-14: "Citi", hint C — Citigroup — had resolved to Citi
+                # Trends, CTRN). One family stays one ("Entergy Louisiana", hint ETR, Entergy)
+                return res(ResolutionStatus.UNRESOLVED,
+                           method + "; refused — the hint names another SEC issuer",
+                           note=f"the extraction's hint {hint!r} is {hinted}'s ticker, which "
+                                f"{m.name_as_written!r} does not name; the name only partially "
+                                f"matches " + "; ".join(sorted(cands.values())[:3])
+                                + " — two identities: not resolved")
+            if m.entity_type is EntityType.PRIVATE_COMPANY and cands:
+                # the source's classification stands against a PARTIAL name: only the
+                # registrant's exact name overrides it (2026-10-14: "Cognition", the private AI
+                # lab behind Devin, had resolved to Cognition Therapeutics, CGTX)
+                exact = {c: n for c, n in cands.items() if _tokens(n) == written}
+                if not exact:
+                    return res(ResolutionStatus.UNRESOLVED,
+                               method + "; refused — the source names a private company",
+                               note=f"{m.name_as_written!r} is classified as a private company "
+                                    f"and only partially matches "
+                                    + "; ".join(sorted(cands.values())[:3])
+                                    + " — a partial name is not identity: not resolved")
+                cands = exact
+                method += " (exact registrant name; classified as a private company)"
         described = " ".join((m.quote, m.role_detail))  # what the source says of THIS company
         if len(cands) > 1 and context_families(described):
             # choosing between registrants: an issuer whose own industry IS among the described

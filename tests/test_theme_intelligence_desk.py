@@ -817,3 +817,210 @@ def test_an_articles_open_items_sit_under_it_at_full_width_and_review_groups_the
     for li in review.select("ul.compl > li:not(.morewrap)"):
         assert li.select_one("ul > li") is not None  # the article's items, under it
     assert "not accounted for — not accounted for" not in review.get_text(" ")
+
+
+# --- who is exposed, the reading page's order, the Evidence tab's repeats (2026-10-14) ----------
+
+def _exposure_thesis(tmp_path: Path) -> tuple[Pipeline, Path, str]:
+    """Hypothetical article, AUTHENTIC frozen SEC subset (the J.P. Morgan fixture's): Micron named
+    as a beneficiary, Microsoft as harmed, and FactSet — a data source — carried in the thesis's
+    own list of affected names, the shape the extraction gave the Alzheimer thesis on 2026-10-14
+    (Morgan Stanley, the publisher, as its one listed exposure). Two figures the article states
+    twice ("36%" for 2026) and once for another year (2025), and one the thesis statement
+    cites."""
+    from tests.theme_intelligence_support import JPM_AS_OF, mention
+
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=JPM_AS_OF)
+    lines = ("Micron's HBM revenue rose 40% in the quarter as AI servers ramped.",
+             "Microsoft could see cloud margins squeezed as memory costs climb.",
+             "FactSet data show 36% of buyers plan to add memory this year.",
+             "Survey: 36% of buyers will add memory in 2026, per FactSet.",
+             "Memory makers plan 10% more capacity by 2027.",
+             "In 2025, 36% of buyers added memory, per FactSet.",
+             "Buyers spend $413 a year on memory upgrades.")
+    art = Hypo("who-is-exposed", "Test Publisher", date(2026, 2, 2),
+               [("paragraph", t) for t in lines])
+    x = extraction(
+        [claim("c1", "b001", lines[0].rstrip("."), "Micron HBM revenue up 40%",
+               metric="HBM revenue growth", value=40, value_text="40%", unit="%",
+               period="the quarter"),
+         claim("c2", "b003", "36% of buyers plan to add memory this year",
+               "36% of buyers plan to add memory", metric="buyers planning to add memory",
+               value=36, value_text="36%", unit="%", source="FactSet"),
+         claim("c3", "b004", "36% of buyers will add memory in 2026",
+               "36% of buyers will add memory in 2026", metric="buyers adding memory",
+               value=36, value_text="36%", unit="%", period="2026", source="FactSet"),
+         claim("c4", "b005", lines[4].rstrip("."), "capacity up 10% by 2027",
+               kind="forecast", epistemic="forecast", metric="memory capacity growth",
+               value=10, value_text="10%", unit="%", period="by 2027"),
+         claim("c5", "b006", "In 2025, 36% of buyers added memory",
+               "36% of buyers added memory in 2025", metric="buyers adding memory",
+               value=36, value_text="36%", unit="%", period="2025", source="FactSet"),
+         claim("c6", "b007", lines[6].rstrip("."), "buyers spend $413 a year",
+               metric="annual memory-upgrade spend", value=413, value_text="$413",
+               unit="$/year", period="per year")],
+        [hyp("h1", "HBM demand lifts memory makers", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c4", "c1", "c2", "c3", "c5", "c6"],
+             affected=[("Micron", "potential_beneficiary"),
+                       ("Microsoft", "potentially_harmed"), ("FactSet", "data_source")])],
+        mentions=[mention("Micron", "b001", "Micron's HBM revenue rose 40%", ticker="MU"),
+                  mention("Microsoft", "b002", "Microsoft could see cloud margins squeezed",
+                          role="potentially_harmed", direction="negative", ticker="MSFT"),
+                  mention("FactSet", "b003", "FactSet data show", entity_type="data_provider",
+                          role="data_source", direction="neutral", ticker="FDS")])
+    # a page saved as PDF keeps its browser-tab title: "… | <publisher>" (Morgan Stanley's, 2026)
+    doc = dataclasses.replace(art.doc(), title="Memory Note: HBM Demand | Test Publisher")
+    ingest(pipe, doc, x, as_of=JPM_AS_OF, publisher=art.publisher)
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    (t,) = pipe.store.theses()
+    return pipe, _render(pipe, run.run_id, tmp_path / "out"), t.thesis_id
+
+
+def test_who_is_exposed_says_who_could_benefit_or_be_hurt_and_never_lists_a_data_source(
+        tmp_path: Path) -> None:
+    """POSITIVE: Micron under "Could benefit" with its verified ticker, Microsoft under "Could be
+    hurt". NEGATIVE: FactSet — named, but as the data source — sits in no bucket, on the reading
+    page, the card's exposure table and the weekly report; it is counted as also named."""
+    pipe, out, tid = _exposure_thesis(tmp_path)
+    expo = _soup(out / "theses" / f"{tid}.html").select_one(".expo")
+    assert expo is not None
+    heads = [h.get_text() for h in expo.select("h3")]
+    groups = {h.get_text(): h.find_next_sibling("ul").get_text(" ") for h in expo.select("h3")}
+    assert "Could benefit" in heads and "Could be hurt" in heads
+    assert "Micron" in groups["Could benefit"] and "MU" in groups["Could benefit"]
+    assert "Microsoft" in groups["Could be hurt"] and "MSFT" in groups["Could be hurt"]
+    assert not any("FactSet" in g for g in groups.values())
+    assert "Also named, not exposures: FactSet (data source)" in expo.get_text(" ")
+    card = _soup(out / "cards" / f"{tid}.html").select_one('[data-field="s05_affected"]')
+    assert card is not None
+    subs = card.select(".sub")
+    stock = next(s for s in subs if s.get_text().startswith("Stock exposures"))
+    table = stock.find_next_sibling()
+    assert "Micron" in table.get_text(" ") and "FactSet" not in table.get_text(" ")
+    also = next(s for s in subs if s.get_text().startswith("Also named"))
+    assert "FactSet" in also.find_next_sibling().get_text(" ")
+    from vinci.theme_intelligence.report import build_dashboard
+
+    d = build_dashboard(pipe.store, pipe.store.runs()[-1].run_id, cards={}, generated="t")
+    (row,) = [r for rs in d.categories.values() for r in rs]
+    assert any(n.startswith("Micron") for n in row.named_companies)
+    assert not any(n.startswith("FactSet") for n in row.named_companies)
+
+
+def test_the_reading_page_leads_with_the_thesis_figure_and_merges_a_figure_stated_twice(
+        tmp_path: Path) -> None:
+    """The strongest figures lead with what the thesis statement itself cites (its fact line
+    cites c4, the capacity forecast — listed first in the evidence though not first by type).
+    The Evidence tab lists "36%" ONCE when the article states it twice for one measure (periods
+    that do not disagree); NEGATIVE: a figure is never merged with a different one."""
+    _pipe, out, tid = _exposure_thesis(tmp_path)
+    page = _soup(out / "theses" / f"{tid}.html")
+    first = page.select_one(".nums .num b")
+    assert first is not None and first.get_text() == "10%"
+    ev = page.select_one("[data-panel=ev]")
+    assert ev is not None
+    lines = [li.select_one("summary").get_text(" ") for li in ev.select("ul.evl > li")
+             if li.select_one("summary")]
+    # 2026's figure, stated twice, is one line; 2025's — the same measure, another year — is not
+    assert sum(1 for x in lines if x.startswith("36%")) == 2
+    twice = [li for li in ev.select("ul.evl > li") if "stated 2 times" in li.get_text(" ")]
+    assert len(twice) == 1 and len(twice[0].select("blockquote")) == 2
+    assert "2026" in twice[0].get_text(" ") and "2025" not in twice[0].get_text(" ")
+    assert sum(1 for x in lines if x.startswith("40%")) == 1  # a different figure stays apart
+
+
+def test_a_unit_and_a_title_never_repeat_what_is_already_said(tmp_path: Path) -> None:
+    """"$413 $/year … · per year" read the unit three times: it reads "$413 per year". A saved
+    page's title keeps its site suffix ("… | Morgan Stanley", so Review read "… | Morgan Stanley
+    Morgan Stanley"): every screen drops a suffix that repeats the publisher. NEGATIVE pins: a
+    unit the value does not carry is kept; a trailing part naming anything else stays."""
+    from vinci.theme_intelligence.cards import unit_shown
+    from vinci.theme_intelligence.parse import clean_title
+
+    assert unit_shown("$413", "$/year") == "per year"
+    assert unit_shown("413", "$/year") == "$/year" and unit_shown("~43%", "%") == ""
+    assert clean_title("Caffeine Market Outlook | Morgan Stanley", "Morgan Stanley") == \
+        "Caffeine Market Outlook"
+    assert clean_title("How AI Masks America&#039;s Rising Risk Premium", "Nomura") == \
+        "How AI Masks America's Rising Risk Premium"
+    assert clean_title("Must C - Sizing the ETF Opportunity", "Citi") == \
+        "Must C - Sizing the ETF Opportunity"
+    assert clean_title("Outlook | Morgan Stanley", "Citi") == "Outlook | Morgan Stanley"
+    _pipe, out, tid = _exposure_thesis(tmp_path)
+    page = _soup(out / "theses" / f"{tid}.html")
+    ev = page.select_one("[data-panel=ev]")
+    assert ev is not None
+    line = next(li.select_one("summary").get_text(" ") for li in ev.select("ul.evl > li")
+                if li.select_one("summary") and "$413" in li.get_text(" "))
+    assert line.startswith("$413 per year") and "$/year" not in line and "· per year" not in line
+    for screen in (out / "articles.html", out / "theses" / f"{tid}.html",
+                   out / "cards" / f"{tid}.html"):
+        text = _soup(screen).get_text(" ")
+        assert "Memory Note: HBM Demand" in text, screen.name
+        assert "| Test Publisher" not in text, screen.name
+
+
+def test_a_thesis_filed_at_an_areas_root_is_folded_with_the_area_not_listed_as_related(
+        tmp_path: Path) -> None:
+    """Canada's power and minerals thesis (filed at the AI-infrastructure ROOT) was listed as
+    related to HBM memory pricing: a root node is "parent" of every thesis in its area, so that
+    link says only "same area". It joins the broader-area fold. NEGATIVE pin: a thesis sharing
+    a source is still listed directly."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=NOW)
+    grid = "Grid operators sign 3 GW of new data-center contracts in 2026."
+    for slug, node, title, line in (
+            ("root", "ai_infrastructure", "Canada's power supplies the compute cycle",
+             "Canada's grid adds 4 GW for data centers by 2027."),
+            ("child", "ai_infrastructure.memory", "HBM prices rise on tight supply",
+             "HBM contract prices rose 12% in 3Q26.")):
+        art = Hypo(slug, "Test Publisher", PUB, [("paragraph", line), ("paragraph", grid)])
+        x = extraction([claim("c1", "b001", line.rstrip("."), title, metric=f"{slug} figure",
+                              value=12, value_text="12%", unit="%", period="3Q26"),
+                        claim("c2", "b002", grid.rstrip("."), "3 GW of grid contracts",
+                              metric="grid contracts", value=3, value_text="3 GW", unit="GW",
+                              period="2026")],
+                       [hyp("h1", title, node=node, mechanism="pricing_cycle",
+                            supporting=["c1"])]
+                       # the root's article also carries a grid thesis: the SAME source
+                       + ([hyp("h2", "Grid contracts accelerate", node="ai_infrastructure"
+                               ".power_grid", mechanism="demand_volume_shift",
+                               supporting=["c2"])] if slug == "root" else []))
+        ingest(pipe, art.doc(), x, as_of=NOW, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    by = {t.key_node: t.thesis_id for t in pipe.store.theses()}
+    rels = [r.relation.value for r in pipe.store.relations(by["ai_infrastructure"])]
+    assert "PARENT_CHILD" in rels  # the engine links them …
+    out = _render(pipe, pipe.store.runs()[-1].run_id, tmp_path / "out")
+    page = _soup(out / "theses" / f"{by['ai_infrastructure']}.html")
+    direct = [a["href"] for ul in page.select("ul.rel") if ul.find_parent("details") is None
+              for a in ul.select("a")]
+    folded = [a["href"] for d in page.select("details.more-rows") for a in d.select("ul.rel a")]
+    child = f"{by['ai_infrastructure.memory']}.html"
+    assert child not in direct and child in folded  # … the page folds it with the area
+    same_source = f"{by['ai_infrastructure.power_grid']}.html"
+    assert same_source in direct and same_source not in folded  # a shared source stays listed
+
+
+def test_the_weekly_reports_sources_say_each_channels_state_in_words(tmp_path: Path) -> None:
+    """2026-10-14: the weekly report's Sources printed each check's raw reason ("robots.txt
+    unreachable (RemoteProtocolError) — FAIL CLOSED"), state codes ("[automatic; access
+    DEGRADED] … PARTIAL automated coverage") and placeholder dashes, while the desk's Sources said
+    the same in words. POSITIVE: each channel needing attention reads from its structured test
+    results, as on the desk. NEGATIVE pin: the raw reason is kept — in Operations & audit."""
+    from vinci.theme_intelligence.report import build_dashboard, render_dashboard_html
+
+    pipe, _out = _desk_with_health(tmp_path)
+    d = build_dashboard(pipe.store, pipe.store.runs()[-1].run_id, cards={}, generated="t")
+    page = BeautifulSoup(render_dashboard_html(d), "html.parser")
+    src, ops = page.select_one("#sources"), page.select_one("#ops")
+    assert src is not None and ops is not None
+    text = src.get_text(" ")
+    assert "previews or summaries of a fuller report" in text  # SemiAnalysis, from its tests
+    assert "a known restriction — supply its research by upload" in text  # Goldman Sachs
+    assert "partly working" in text and "by upload" in text
+    for raw in ("(test) 403", "(test) partial", "access DEGRADED", "PARTIAL automated",
+                "MANUAL-FIRST", "DEGRADED", "BLOCKED", "[automated access"):
+        assert raw not in text, raw
+    assert "(test) 403" in ops.get_text(" ")

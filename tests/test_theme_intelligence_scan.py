@@ -331,7 +331,10 @@ def test_the_kpis_say_it_in_plain_words_and_the_first_view_carries_no_engine_cod
     soup = BeautifulSoup(html, "html.parser")
     sources = soup.select_one("#sources").get_text(" ", strip=True)
     assert f"This scan read {len(auto) - 1} of {len(auto)} automatic channels" in sources
-    assert f"blocked: {blocked}" in sources and f"manual-first: {manual_first}" in sources
+    # the manual-first channels by name, in words (their access codes stay in Operations)
+    upload_only = ", ".join(s.publisher for s in pipe.sources.values() if s.mode == "manual_first")
+    assert f"blocked: {blocked}" in sources and f"by upload only: {upload_only}" in sources
+    assert "automated access" not in sources and manual_first in d.kpi["manual_first_sources"]
     activity = soup.select_one("#activity").get_text(" ", strip=True)
     assert (f"{k['new']} new · {k['upgraded']} upgraded · {k['downgraded']} downgraded · "
             f"{k['challenged']} challenged") in activity

@@ -83,6 +83,18 @@ def html_web_page_dated_in_a_box() -> str:
             f"</title>{CSS}</head><body>{BANNER}{box}{paras}</body></html>")
 
 
+def html_overprinted_chart_labels() -> str:
+    """A web page saved as PDF whose chart labels are printed three times over themselves (a
+    faux-bold effect, as morganstanley.com's Caffeine chart printed "Need more energy 666111%%%"
+    for 61%), beside a body figure whose digits legitimately repeat (1100) and must stay."""
+    label = "Synthetic survey: need more energy 61%"
+    stack = "".join(f"<div style='position:absolute;left:0;top:0'>{label}</div>" for _ in range(3))
+    return (f"<html><head><title>Synthetic Overprinted Chart</title>{CSS}</head><body>{BANNER}"
+            f"<h1>Synthetic Overprinted Chart</h1><p>Published September 2, 2026. The invented "
+            f"survey counted 1100 respondents.</p><div style='position:relative;height:24px'>"
+            f"{stack}</div><p>{FULL_MORE[0]}</p></body></html>")
+
+
 def html_ms_report() -> str:
     rows = "".join(f"<tr><td>{q}</td><td>{a}</td><td>{b}</td></tr>" for q, a, b in (
         ("1Q26", "$41.2bn", "38%"), ("2Q26", "$44.9bn", "39%"), ("3Q26", "$48.3bn", "41%"),
@@ -134,6 +146,7 @@ def html_undated() -> str:
 for name, html in (("semianalysis_full_synthetic.pdf", html_semianalysis_full()),
                    ("semianalysis_preview_saved_synthetic.pdf", html_semianalysis_saved_preview()),
                    ("web_page_dated_in_a_box_synthetic.pdf", html_web_page_dated_in_a_box()),
+                   ("overprinted_chart_synthetic.pdf", html_overprinted_chart_labels()),
                    ("ms_report_synthetic.pdf", html_ms_report()),
                    ("scanned_page_synthetic.pdf", html_scanned()),
                    ("undated_synthetic.pdf", html_undated())):

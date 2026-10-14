@@ -59,7 +59,7 @@ def test_the_runner_says_business_groups_are_not_checkable_never_none(tmp_path: 
         card = BeautifulSoup((out / "cards" / f"{t.thesis_id}.html").read_text(), "html.parser")
         s05 = card.select_one('[data-field="s05_affected"]').get_text(" ")
         page = BeautifulSoup((out / "theses" / f"{t.thesis_id}.html").read_text(),
-                             "html.parser").select_one("dl.expo").get_text(" ")
+                             "html.parser").select_one(".expo").get_text(" ")
         md = (out / "cards" / f"{t.thesis_id}.md").read_text()
         js = json.loads((out / "cards" / f"{t.thesis_id}.json").read_text())
         if checkable:  # positive pin: with the text held the group is read, nothing is hedged

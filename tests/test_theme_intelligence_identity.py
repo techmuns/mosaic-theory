@@ -51,6 +51,13 @@ REGISTRANTS = [
      "Wines, Brandy & Brandy Spirits"),
     ("0001559998", "Tencent Music Entertainment Group", "TME", "NYSE", 7370,
      "Services-Computer Programming, Data Processing, Etc."),
+    # the 2026-10-14 shapes (SEC ticker map and submissions as cached by the pilot registry)
+    ("0000831001", "CITIGROUP INC", "C", "NYSE", 6021, "National Commercial Banks"),
+    ("0001318484", "Citi Trends Inc", "CTRN", "Nasdaq", 5600, "Retail-Apparel & Accessory Stores"),
+    ("0001455365", "COGNITION THERAPEUTICS INC", "CGTX", "Nasdaq", 2836,
+     "Biological Products, (No Diagnostic Substances)"),
+    ("0000065984", "ENTERGY CORP /DE/", "ETR", "NYSE", 4911, "Electric Services"),
+    ("0001348952", "ENTERGY LOUISIANA, LLC", "ELC", "NYSE", 4911, "Electric Services"),
 ]
 
 
@@ -84,10 +91,11 @@ def _resolver(tmp_path: Path) -> SecResolver:
 
 
 def mention(name: str, quote: str, role_detail: str, *, hint: str | None = None,
-            role: str = "potential_beneficiary") -> Mention:
+            role: str = "potential_beneficiary",
+            entity: EntityType = EntityType.COMPANY) -> Mention:
     return Mention(
         mention_id="M-test", article_id="A-test", article_version_id="AV-test",
-        name_as_written=name, normalized_name=name.lower(), entity_type=EntityType.COMPANY,
+        name_as_written=name, normalized_name=name.lower(), entity_type=entity,
         role=MentionRole(role), role_detail=role_detail, direction="positive",
         recommendation_status=RecommendationStatus.NOT_A_RECOMMENDATION, block_id="b001",
         quote=quote, ticker_hint=hint, issuer_name_hint=None)
@@ -120,6 +128,48 @@ def test_a_partial_name_with_a_foreign_hint_is_never_a_us_registrant(tmp_path: P
                 hint="0700.HK")
     r = _resolver(tmp_path).resolve(m, as_of=AS_OF)
     assert r.status is ResolutionStatus.UNRESOLVED and r.registrant is None
+
+
+# --- the 2026-10-14 pilot registry: two wrong tickers on stored cards --------------------------
+
+def test_a_hint_naming_one_issuer_never_lets_a_partial_name_pick_another(tmp_path: Path) -> None:
+    """"Citi", hint C (Citigroup), had resolved to Citi Trends (CTRN), an apparel retailer: the
+    name is not Citigroup's, so the resolver searched every registrant by prefix and ignored the
+    hint. A hint and a name naming two businesses are two identities — not resolved, both said.
+    NEGATIVE pins: the full name with the same hint resolves; a name of the hint's own family
+    (Entergy Louisiana, hint ETR) is one identity and is not refused."""
+    m = mention("Citi", "© 2026 Citigroup Inc.", "publisher of the article", hint="C",
+                role="publisher")
+    r = _resolver(tmp_path).resolve(m, as_of=AS_OF)
+    assert r.status is ResolutionStatus.UNRESOLVED and not r.listings
+    assert "CITIGROUP INC" in r.note and "Citi Trends Inc" in r.note
+    full = mention("Citigroup", "© 2026 Citigroup Inc.", "publisher", hint="C", role="publisher")
+    assert [x.ticker for x in _resolver(tmp_path).resolve(full, as_of=AS_OF).listings] == ["C"]
+    family = mention("Entergy Louisiana", "Entergy Louisiana will serve the campus",
+                     "utility supplying the data center", hint="ETR")
+    assert _resolver(tmp_path).resolve(family, as_of=AS_OF).registrant == "ENTERGY LOUISIANA, LLC"
+
+
+def test_a_company_the_source_names_as_private_is_not_listed_by_a_partial_name(
+        tmp_path: Path) -> None:
+    """"Cognition" — the private AI lab behind the Devin agent, classified private by the
+    extraction — had resolved to Cognition Therapeutics (CGTX), a biotech: the business ("viral
+    agent demo") names no industry the SIC check could veto. A partial name never overrides the
+    source's classification. NEGATIVE pins: the registrant's exact name still resolves; a name
+    the extraction calls a company keeps the designed prefix match."""
+    m = mention("Cognition", "the viral Devin agent demo in March 2024",
+                "Viral Devin agent demo in March 2024", role="context",
+                entity=EntityType.PRIVATE_COMPANY)
+    r = _resolver(tmp_path).resolve(m, as_of=AS_OF)
+    assert r.status is ResolutionStatus.UNRESOLVED and not r.listings
+    assert "classified as a private company" in r.note and "COGNITION THERAPEUTICS" in r.note
+    exact = mention("Cognition Therapeutics", "Cognition Therapeutics' trial", "biotech",
+                    entity=EntityType.PRIVATE_COMPANY)
+    assert [x.ticker for x in _resolver(tmp_path).resolve(exact, as_of=AS_OF).listings] == \
+        ["CGTX"]
+    company = mention("Cognition", "Cognition's trial read out", "drug developer")
+    assert _resolver(tmp_path).resolve(company, as_of=AS_OF).registrant == \
+        "COGNITION THERAPEUTICS INC"
 
 
 # --- no false negatives: the right company still resolves, point in time ----------------------

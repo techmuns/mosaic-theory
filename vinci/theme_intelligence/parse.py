@@ -32,6 +32,7 @@ BLOCKED when no body survives. A PARTIAL article is analysed, but never as a ful
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 import re
 from dataclasses import dataclass, field
@@ -109,6 +110,31 @@ def paywall_marker(text: str) -> str | None:
     (below) and a supplied document (documents.py)."""
     m = _PAYWALL.search(text)
     return m.group(0) if m else None
+
+
+#: a trailing " | Site" / " – Site" / " - Site" part of a title
+_SITE_SUFFIX = re.compile(r"\s+[|\u2013\u2014-]\s+([^|\u2013\u2014]+?)\s*$")
+
+
+def clean_title(title: str | None, publisher: str = "") -> str:
+    """An article title as a reader names it — ONE definition for the importer and every screen:
+    HTML entities decoded ("America&#039;s"), and a trailing site part dropped when it only
+    repeats the publisher. A page saved as PDF keeps its browser-tab title, so every Morgan
+    Stanley article arrived as "… | Morgan Stanley" and Review read "… | Morgan Stanley Morgan
+    Stanley" (2026-10-14). Any other trailing part is the title's own and stays ("Must C -
+    Sizing the ETF Opportunity")."""
+    t = html.unescape(title or "").strip()
+    m = _SITE_SUFFIX.search(t)
+    if m and publisher and m.start() > 0:
+        site, pub = _name_tokens(m.group(1)), _name_tokens(publisher)
+        n = min(len(site), len(pub))
+        if n and site[:n] == pub[:n]:
+            return t[: m.start()].rstrip()
+    return t
+
+
+def _name_tokens(s: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+", s.lower())
 _FULL_REPORT_ELSEWHERE = re.compile(
     r"(read the full (article|report)|download the (full )?report|full report (is )?available)",
     re.I)

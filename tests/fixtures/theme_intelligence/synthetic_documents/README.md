@@ -14,6 +14,7 @@ They exist because the scenarios they test involve documents this repository mus
 | `semianalysis_full_synthetic.pdf` | the full post, supplied later by an authorised subscriber | Case A — the upgrade; byline authors |
 | `semianalysis_preview_saved_synthetic.pdf` | a paid post's page saved as PDF without a paid sign-in: the preview, then the subscriber notice | a supplied preview is recorded PARTIAL, never FULL |
 | `web_page_dated_in_a_box_synthetic.pdf` | a research web page saved as PDF whose headline and date sit in layout boxes the reader detects as a table | the date is read from the page, never left unknown |
+| `overprinted_chart_synthetic.pdf` | a web page saved as PDF whose chart label is printed three times over itself (faux bold) beside a body figure with legitimately repeated digits | an overprinted label is read once (61%, not 666111%%%); repeated digits in the text stay (1100) |
 | `ms_report_synthetic.pdf` | a two-page report from a channel that refuses automated access | Case B (no URL), Case C/D, tables, footnotes, page refs |
 | `ms_report_synthetic.html` | the same report saved as HTML | Case C — one report in two formats is one article |
 | `scanned_page_synthetic.pdf` | a report with a page that has no text layer | the scanned-page flag; PARTIAL |

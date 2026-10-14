@@ -29,7 +29,9 @@ from dataclasses import dataclass, field, replace
 from datetime import date
 from typing import Any, TypeVar
 
+from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.schemas import (
+    EXPOSURE_ROLES,
     SECTION_IDS,
     SOURCE_LABELS,
     AffectedCompany,
@@ -552,6 +554,12 @@ def unit_shown(value_text: str | None, unit: str | None) -> str:
     separate fields."""
     u = (unit or "").strip()
     v = value_text or ""
+    # a currency the written value already carries: "$413" with unit "$/year" prints "$413 per
+    # year", never "$413 $/year" (2026-10-14)
+    sym = next((x for x in ("$", "€", "£", "¥") if u.startswith(x) and x in v), "")
+    if sym:
+        u = u[len(sym):].strip()
+        u = f"per {u[1:].strip()}" if u.startswith("/") else u
 
     def carried(token: str) -> bool:
         if token.lower() in _PERCENT_UNITS:
@@ -710,6 +718,8 @@ padding:24px 26px;margin:0 0 18px}
 .glance .g{border:1px solid var(--line);border-radius:10px;padding:14px 16px;
 background:var(--panel)}
 .glance .g.wide{grid-column:1/-1}
+details.glancefold{margin:18px 0 6px}details.glancefold>summary{cursor:pointer;font-size:13px;
+color:var(--muted)}details.glancefold .glance{margin-top:10px}
 .glance h3{font-size:12px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
 color:var(--muted);margin:0 0 8px}
 .glance ul{margin:0;padding-left:18px}.glance li{margin:3px 0}
@@ -1151,6 +1161,16 @@ def _listing_text(ls: Iterable[Listing]) -> str:
     return ", ".join(f"{x.ticker}" + (f" ({x.exchange})" if x.exchange else "") for x in ls)
 
 
+def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[AffectedCompany]]:
+    """The named companies that ARE exposures of the thesis — a role the source states as one
+    (beneficiary, harmed, supplier, customer, disruptor …) — and those merely named on it (the
+    publisher, a data source, context). The priority rules count only the first
+    (`EXPOSURE_ROLES`); every surface lists them the same way. On 2026-10-14 Morgan Stanley, the
+    PUBLISHER, sat in the Alzheimer thesis's list of exposures on the card and the desk."""
+    return ([c for c in av.companies if c.role in EXPOSURE_ROLES],
+            [c for c in av.companies if c.role not in EXPOSURE_ROLES])
+
+
 def _company_rows(cs: Iterable[AffectedCompany], *, exposures: bool = False) -> str:
     rows = []
     for c in cs:
@@ -1256,18 +1276,20 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
     f = {x.factor_id: x.value for x in pr.factors}
     a = pr.research_action.value
     av = card.s05_affected
-    exposed = bool(av.sector_exposures) or any(c.listings for c in av.companies)
+    exposed = bool(av.sector_exposures) or any(c.listings for c in exposures_of(av)[0])
     if a == "RESEARCH NOW":
         # the inflection route says WHY with its research question (composed by the priority
         # rules from the claim's structured fields — the same words `report.why_action` shows)
         f12 = next((x.note for x in pr.factors if x.factor_id == "F12_fundamental_inflection"), "")
         q = re.search(r"research question: (.*?\?)", f12)
         if f.get("F7_dislocation_or_catalyst") != "present" and q:
-            return ["Research Now — no dislocation or dated catalyst, but a credible near-term "
-                    f"change in a fundamental: {q.group(1)} (an investigation, not a trade)"]
-        return ["Research Now — a verified dislocation or a dated catalyst, a dated window inside "
-                "the next 2-4 quarters, an exposure the source names, an asserted premise and the "
-                "full text read (an investigation, not a trade)"]
+            return ["Research Now — no recent mispricing or dated catalyst, but a credible "
+                    f"near-term change in a fundamental: {q.group(1)} An investigation, not a "
+                    "trade."]
+        # a "dislocation" is a mispricing measured in the last quarter (priority.py)
+        return ["Research Now — a mispricing measured in the last quarter or a dated catalyst, "
+                "timing inside the next 2-4 quarters, an exposure the source names, a premise "
+                "the source states, and the full text read. An investigation, not a trade."]
     if a == "SKIP":
         if f.get("F2_material_evidence") == "0":
             return ["Skip — no verified material evidence."]
@@ -1425,10 +1447,10 @@ def _plain_text(text: str) -> str:
 
 def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = False) -> str:
     """The Living Thesis Card. A short header (action, horizon, dates, a Review Required
-    indicator linked to the exact lines), an AT-A-GLANCE summary answering the analyst's seven
-    questions, then the nine sections in order — every line, figure and source as before. Claim
-    ids, engine codes and the decision trace sit behind the audit switch; the print view opens
-    everything (the complete record)."""
+    indicator linked to the exact lines), the AT-A-GLANCE answers folded away (they repeat the
+    sections; not printed), then the nine sections in order — every line, figure and source as
+    before. Claim ids, engine codes and the decision trace sit behind the audit switch; the print
+    view opens everything (the complete record)."""
     h = card.header
     key_ids = [r.claim_id for r in card.s04_key_evidence]
     others = [rc.claims[c] for c in cited_claim_ids(card) if c not in key_ids and c in rc.claims]
@@ -1461,7 +1483,12 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + review_status_html(rc)
         + f'<div class="vline">{review}</div><div class="id aud cc">{e(h.thesis_id)} · '
           f'{e(" › ".join(h.ancestry))} · {e(h.research_action.value)}</div></header>',
-        _glance(card, rc),
+        # the seven answers repeat the sections' own opening lines (and the desk's reading page,
+        # which links here as the full record): folded away on screen, left out of the print —
+        # they hold no fact the sections below do not (operator, 2026-10-14)
+        "" if print_mode else (
+            '<details class="glancefold"><summary>At a glance — the seven answers, repeated '
+            'from the sections below</summary>' + _glance(card, rc) + "</details>"),
         f'<details class="legend"{" open" if print_mode else ""}><summary>How to read the line '
         f'labels</summary>{e(LEGEND)}</details>']
     bodies: dict[str, str] = {}
@@ -1558,14 +1585,14 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                         '<div class="note">None named in the paragraphs holding this thesis\'s '
                         'evidence.</div>')
         + '<div class="sub">Stock exposures of this thesis (source-named companies)</div>'
-        + _company_rows(av.companies, exposures=True)
+        + _company_rows(exposures_of(av)[0], exposures=True)
         + '<div class="sub">Named instruments / indices</div>' + _company_rows(av.instruments)
         + '<div class="sub">Private or unlisted (stay private)</div>'
         + _company_rows(av.private_or_unlisted)
         + '<div class="sub">Named, not securities (products, baskets, agencies)</div>'
         + _company_rows(av.not_securities)
         + '<div class="sub">Also named in the source — mentions, NOT exposures of this thesis'
-          '</div>' + _company_rows(av.also_named)
+          '</div>' + _company_rows(exposures_of(av)[1] + list(av.also_named))
         + '<div class="sub">Sector labels</div><div class="s">' + e(", ".join(av.sectors) or "—")
         + "</div>" + '<div class="sub">Cited baskets (members NOT named by the source)</div>'
         + ("".join(_sent(s, f"s05.b{i}", rc) for i, s in enumerate(av.baskets)) or
@@ -1579,8 +1606,9 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                                  + (f"{len(rc.groups)} business group(s) named · "
                                     if rc.groups else "business groups not checkable here · "
                                     if rc.groups_unread else "")
-                                 + f"{len(av.companies)} company exposure(s) · "
-                                 f"{len(av.also_named)} other mention(s)")
+                                 + f"{len(exposures_of(av)[0])} company exposure(s) · "
+                                 f"{len(exposures_of(av)[1]) + len(av.also_named)} other "
+                                 f"mention(s)")
     wn = card.s06_why_now
     bodies["s06_why_now"] = (
         '<div class="sub">Near term (2-4 quarters)</div>'
@@ -1634,7 +1662,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
           '<div class="aud"><div class="sub">Decision trace (deterministic rules)</div>'
         + "".join(f'<div class="s cc">{e(t)}</div>' for t in d.rule_trace) + "</div>")
     src_rows = "".join(
-        f"<tr><td><a href=\"{e(s.url)}\">{e(s.title or 'title UNKNOWN')}</a>"
+        f"<tr><td><a href=\"{e(s.url)}\">"
+        f"{e(clean_title(s.title, s.publisher) or 'title UNKNOWN')}</a>"
         f"<div class=note>{e(s.article_class.value.replace('_', ' '))} · retrieval "
         f"{e(rc.retrieval_now.get(s.article_id, s.retrieval_state.value))}</div>"
         f"<div class=\"cc aud\">{e(s.article_id)}</div></td>"
@@ -1770,13 +1799,13 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
         md.append(f"- {groups_unchecked_note(rc.groups_unread)}")
     # (label, group) PAIRS — never `grp is av.instruments`: every empty tuple is the same object,
     # so identity matched one empty group to another's heading
-    for label, grp, expo in (("Stock exposures of this thesis", av.companies, True),
+    for label, grp, expo in (("Stock exposures of this thesis", exposures_of(av)[0], True),
                              ("Named instruments / indices", av.instruments, False),
                              ("Private or unlisted", av.private_or_unlisted, False),
                              ("Named, not securities (products, baskets, agencies)",
                               av.not_securities, False),
                              ("Also named in the source — mentions, NOT exposures of this thesis",
-                              av.also_named, False)):
+                              exposures_of(av)[1] + list(av.also_named), False)):
         md.append(f"**{label}:**")
         for c in grp:
             lst = _listing_text(c.listings) or "—"
@@ -1829,7 +1858,7 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
         art_date = s.published_at.date().isoformat() if s.published_at else "UNKNOWN"
         if s.version_dates:
             art_date += f" (versions: {'; '.join(s.version_dates)})"
-        md.append(f"- [{s.title or 'title UNKNOWN'}]({s.url}) — "
+        md.append(f"- [{clean_title(s.title, s.publisher) or 'title UNKNOWN'}]({s.url}) — "
                  f"{'; '.join(s.authors) if s.authors else 'author UNKNOWN'} — {s.publisher} — "
                  f"article date {art_date}"
                  f" — {s.article_class.value} — retrieval "

@@ -765,6 +765,36 @@ def check_sources(sources: Iterable[SourceConfig], f: PoliteFetcher, store: Stor
 
 # --- readouts ------------------------------------------------------------------------------------
 
+_TEST_WORDS = {"access": "the site refuses automated access",
+               "discovery": "new articles could not be listed",
+               "extraction": "articles are read only in part",
+               "dates_authors": "dates or bylines are missing",
+               "completeness": "some articles are previews or summaries of a fuller report",
+               "parser_integrity": "the page layout may have changed"}
+
+
+def plain_line(h: SourceHealthCheck | None) -> str:
+    """One plain line for a channel's latest check, from its structured test results — never by
+    re-reading the check's own sentences (they carry error names and codes: "robots.txt
+    unreachable (RemoteProtocolError) — FAIL CLOSED"). ONE definition for the desk's Sources and
+    the weekly report's (2026-10-14: the report still printed the raw reason)."""
+    if h is None:
+        return "not checked yet"
+    if h.status.value == "HEALTHY":
+        return "full text, dates and bylines read"
+    words = [_TEST_WORDS[t.name] for t in h.tests
+             if t.result in ("WARN", "FAIL") and t.name in _TEST_WORDS]
+    if h.freshness.value == "QUIET":
+        words.append("nothing new recently")
+    if h.status.value == "BLOCKED" and h.expect_blocked:
+        words.append("a known restriction — supply its research by upload")
+    if h.status.value == "ERROR":
+        n = h.consecutive_failed_checks
+        words.insert(0, f"the check failed technically ({n} time{'' if n == 1 else 's'} in a "
+                        f"row)")
+    return "; ".join(dict.fromkeys(words)) or h.status.value.lower()
+
+
 def summary(checks: list[SourceHealthCheck], configured: list[SourceConfig]) -> dict[str, Any]:
     """The compact dashboard block: counts over the CONFIGURED channels (a never-checked channel
     is UNKNOWN), the channels needing attention, and every channel's row."""
@@ -775,7 +805,7 @@ def summary(checks: list[SourceHealthCheck], configured: list[SourceConfig]) -> 
         rows.append({
             "source_id": s.id, "publisher": s.publisher,
             "status": h.status.value if h else HealthStatus.UNKNOWN.value,
-            "reason": h.reason if h else "not checked yet",
+            "reason": h.reason if h else "not checked yet", "plain": plain_line(h),
             "next_action": h.next_action if h else "run `sources --check-health`",
             "freshness": h.freshness.value if h else Freshness.UNKNOWN.value,
             "newest_article_date": h.newest_article_date.isoformat()

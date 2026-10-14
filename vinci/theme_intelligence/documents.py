@@ -39,6 +39,7 @@ from vinci.theme_intelligence.parse import (
     GLYPH_MIN_CODES,
     GLYPH_MIN_SHARE,
     ParsedDocument,
+    clean_title,
     parse_document,
     paywall_marker,
     unreadable_glyphs,
@@ -145,6 +146,13 @@ def _byline(texts: list[str]) -> list[Author]:
     return []
 
 
+def _publisher(source_id: str) -> str:
+    """The configured publisher of a channel, or "" (an unknown channel strips no title)."""
+    from vinci.theme_intelligence.config import load_sources
+
+    return next((s.publisher for s in load_sources() if s.id == source_id), "")
+
+
 def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title_src: str | None,
             authors: list[Author], doc_date: date | None, date_src: str | None,
             declared: Declared, canonical: str, partial: bool,
@@ -165,6 +173,8 @@ def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title
                          if a.name.lower() not in names]
     if declared.title and not title:
         title, title_src = declared.title, "operator-stated"
+    elif title:
+        title = clean_title(title, _publisher(declared.source_id)) or title
     if declared.authors:
         names = {a.name.lower() for a in authors}
         authors += [Author(name=n, source_field="operator-stated") for n in declared.authors
@@ -304,6 +314,10 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
         causes: set[str] = set()  # why the document is PARTIAL, other than undecodable glyphs
         page_chars: list[int] = []  # readable characters per page (a metric for classify_unread)
         for n, page in enumerate(pdf.pages, 1):
+            # a glyph printed twice or three times over itself (a faux-bold or shadow effect) is
+            # one character: Morgan Stanley's Caffeine chart printed "Need more energy 666111%%%"
+            # for 61% (2026-10-14) — every figure on it then failed the number check
+            page = page.dedupe_chars()
             try:
                 found = page.find_tables()
                 boxes = [t.bbox for t in found]

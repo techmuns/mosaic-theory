@@ -25,7 +25,6 @@ one click away — never silently cut.
 
 from __future__ import annotations
 
-import html
 import re
 from collections import Counter, defaultdict
 from collections.abc import Iterable
@@ -45,6 +44,7 @@ from vinci.theme_intelligence.cards import (
     _clean_display,
     _plain_text,
     e,
+    exposures_of,
     foot_html,
     groups_unchecked_note,
     ids_to_audit,
@@ -59,6 +59,7 @@ from vinci.theme_intelligence.config import (
     load_sources,
     load_taxonomy,
 )
+from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
     MANUAL_MODES,
@@ -75,12 +76,18 @@ from vinci.theme_intelligence.report import (
     theses_as_of_run,
 )
 from vinci.theme_intelligence.schemas import (
+    EXPOSURE_ROLES,
     SECTION_IDS,
+    AffectedCompany,
+    AffectedView,
     Claim,
     CompletenessReport,
+    Direction,
     DocumentRecord,
+    MentionRole,
     Provenance,
     ResearchAction,
+    ResolutionStatus,
     RetrievalState,
     RunStatus,
     SourceHealthCheck,
@@ -91,7 +98,7 @@ from vinci.theme_intelligence.schemas import (
 )
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.timewindow import timing_of, window_of
-from vinci.theme_intelligence.verify import card_sentences
+from vinci.theme_intelligence.verify import card_sentences, content_words, overlap
 
 #: a short DISPLAY name per taxonomy node — the node KEY stays what it is in every record; only
 #: the label a reader sees is short (the long label remains the node's definition)
@@ -400,7 +407,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
             row = rows.get(aid)
             if row is None:
                 row = rows[aid] = ArticleRow(
-                    key=aid, title=html.unescape(a.title or "") or "title not recorded",
+                    key=aid, title=clean_title(a.title, a.publisher) or "title not recorded",
                     publisher=a.publisher, source_id=a.source_id, url=a.canonical_url,
                     published=_todate(a.published_at), state="FULL", article_id=aid)
             vs = reg.versions(aid)
@@ -475,7 +482,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
                             if c.run_id in reg.runs
                             and reg.runs[c.run_id].started_at > fr.started_at})
             rows[aid] = ArticleRow(
-                key=aid, title=html.unescape(a.title or "") if a else "title not recorded",
+                key=aid, title=clean_title(a.title, a.publisher) if a else "title not recorded",
                 publisher=a.publisher if a else "publisher not recorded",
                 source_id=a.source_id if a else "", url=a.canonical_url if a else "",
                 published=_todate(a.published_at) if a else None, state="FAILED",
@@ -501,7 +508,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
             a = reg.article(cid) if cid else None
             sid = str(pay.get("source_id") or (a.source_id if a else ""))
             rows[url] = ArticleRow(
-                key=url, title=(html.unescape(a.title or "") if a else "")
+                key=url, title=(clean_title(a.title, a.publisher) if a else "")
                 or str(pay.get("title") or "") or "title not recorded",
                 publisher=a.publisher if a else reg.publisher(sid), source_id=sid, url=url,
                 published=_todate(a.published_at) if a else None, state=state,
@@ -516,7 +523,8 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
         if d.run_id not in rids or d.status in ("INGESTED", "UPGRADED"):
             continue
         rows[d.doc_id] = ArticleRow(
-            key=d.doc_id, title=d.title or f"untitled document ({d.filename})",
+            key=d.doc_id,
+            title=clean_title(d.title, d.publisher) or f"untitled document ({d.filename})",
             publisher=d.publisher, source_id=d.source_id, url=d.declared.get("url", ""),
             published=d.published, state=d.status if d.status in ARTICLE_STATE else "FAILED",
             route="upload", notes=[_doc_why(d)], follow_up="Decide on Uploads",
@@ -527,7 +535,8 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
             sid = str(pay.get("source_id") or "")
             pub = pay.get("published")
             rows[url] = ArticleRow(
-                key=url, title=str(pay.get("title") or "") or "title not recorded",
+                key=url, title=clean_title(str(pay.get("title") or ""), reg.publisher(sid))
+                or "title not recorded",
                 publisher=reg.publisher(sid), source_id=sid, url=url,
                 published=date.fromisoformat(str(pub)[:10]) if pub else None, state="QUEUED",
                 notes=["Found in the window; left for the next run by the per-run article cap."],
@@ -667,7 +676,7 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
         Gate(n not in ("0", ""), "Verified evidence",
              _pl(int(n) if n.isdigit() else 0, "verified figure or event",
                  "verified figures or events")
-             if n not in ("0", "") else "no verified material evidence"),
+             if n not in ("0", "") else "no verified figure or event"),
         Gate(f4 != "absent", "A stated route to profits",
              {"source-shown": "the source states how it reaches earnings",
               "inferred": "inferred — the source does not state the earnings step"}.get(
@@ -676,13 +685,15 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
         Gate(near_ok, NEAR_GATE, near_words),
         Gate(exposed, "An exposure the source names",
              ("sectors: " + ", ".join(s.name for s in av.sector_exposures)
-              if av.sector_exposures else "listed companies named")
+              if av.sector_exposures else "listed companies: " + ", ".join(
+                  f"{c.name_as_written} ({', '.join(x.ticker for x in c.listings)})"
+                  for c in exposures_of(av)[0] if c.listings))
              if exposed else ("business groups only (" + "; ".join(groups) + ") — not companies"
                               if groups else "no company or sector named; whether the source "
                               "names business groups is not checkable on this machine (the "
                               "article text is not held here)" if groups_unread else
                               "no company or sector named as exposed")),
-        Gate(cat, "A dislocation, a dated catalyst or a measured change",
+        Gate(cat, "A recent mispricing, a dated catalyst or a measured change",
              "present" if cat else {"not credible": "a forecast without a corroborating "
                                                      "measurement",
                                     "incomplete": "no stated step from the change to profits"}
@@ -895,7 +906,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                 continue  # its analysis text is whole — never an awaited document
             pages = sorted(q.page for q in doc.quarantined)
             out.append(UploadItem(
-                kind="visual", title=html.unescape(a.title or "") or "title not recorded",
+                kind="visual", title=clean_title(a.title, a.publisher) or "title not recorded",
                 publisher=a.publisher, source_id=a.source_id, published=_todate(a.published_at),
                 first_seen=_todate(a.first_seen_at),
                 why=(f"{_pl(len(pages), 'page')} of the supplied document could not be read "
@@ -912,7 +923,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                if a.article_id in upload_issue else
                f"only a preview could be read ({vs[-1].body_word_count:,} words)")
         out.append(UploadItem(
-            kind="full_report", title=html.unescape(a.title or "") or "title not recorded",
+            kind="full_report", title=clean_title(a.title, a.publisher) or "title not recorded",
             publisher=a.publisher, source_id=a.source_id, published=_todate(a.published_at),
             first_seen=_todate(a.first_seen_at), why=why,
             command=_ingest_cmd(a.source_id, a.canonical_url), url=a.canonical_url,
@@ -935,8 +946,9 @@ def upload_items(reg: _Registry, health: dict[str, Any],
         art = reg.article(cid) if cid else None
         out.append(UploadItem(
             kind="blocked_article",
-            title=(html.unescape(art.title or "") if art else "") or str(pay.get("title") or "")
-            or "title not recorded", publisher=art.publisher if art else reg.publisher(sid),
+            title=(clean_title(art.title, art.publisher) if art else "")
+            or clean_title(str(pay.get("title") or ""), reg.publisher(sid)) or "title not recorded",
+            publisher=art.publisher if art else reg.publisher(sid),
             source_id=sid, published=_todate(art.published_at) if art else None,
             first_seen=seen, why=_CHECKPOINT_WHY[_CHECKPOINT[status]],
             command=_ingest_cmd(sid or "<source>", url), url=url,
@@ -1003,7 +1015,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                 d, "review", _doc_why(d),
                 f"{CLI} ingest-file --release {d.doc_id} --same-as {aid}   (or --as-new, or "
                 f"--duplicate-of {aid})",
-                detail=[f"resembles “{html.unescape(like.title or '')}” ({like.publisher})"]
+                detail=[f"resembles “{clean_title(like.title, like.publisher)}” ({like.publisher})"]
                 if like else [], audit=f"document {d.doc_id} · {d.match_basis[:160]}"))
         elif d.status in ("REJECTED", "FAILED"):
             out.append(_doc_item(d, "rejected", _doc_why(d),
@@ -1031,7 +1043,8 @@ _HELD_WORDS = {"HELD": "supplied — held until you confirm its licence",
 def _doc_item(d: DocumentRecord, kind: str, why: str, command: str, *,
               detail: list[str] | None = None, theses: list[str] | None = None,
               audit: str = "") -> UploadItem:
-    return UploadItem(kind=kind, title=d.title or f"untitled document ({d.filename})",
+    return UploadItem(kind=kind, title=clean_title(d.title, d.publisher)
+                      or f"untitled document ({d.filename})",
                       publisher=d.publisher, source_id=d.source_id, published=d.published,
                       first_seen=d.received_at.date(), why=why, command=command,
                       url=d.declared.get("url", ""), detail=detail or [], theses=theses or [],
@@ -1110,31 +1123,125 @@ def figure_label(store: Store, claim_id: str, label: str) -> str:
 
 
 #: a health test that did not pass, in plain words (the test's own detail stays one fold away)
-_TEST_WORDS = {"access": "the site refuses automated access",
-               "discovery": "new articles could not be listed",
-               "extraction": "articles are read only in part",
-               "dates_authors": "dates or bylines are missing",
-               "completeness": "some articles are previews or summaries of a fuller report",
-               "parser_integrity": "the page layout may have changed"}
-
-
 def _health_line(h: SourceHealthCheck | None) -> str:
-    """One plain line for a channel's latest check, from its structured test results — never by
-    re-reading the check's own sentences."""
-    if h is None:
-        return "not checked yet"
-    if h.status.value == "HEALTHY":
-        return "full text, dates and bylines read"
-    words = [_TEST_WORDS[t.name] for t in h.tests
-             if t.result in ("WARN", "FAIL") and t.name in _TEST_WORDS]
-    if h.freshness.value == "QUIET":
-        words.append("nothing new recently")
-    if h.status.value == "BLOCKED" and h.expect_blocked:
-        words.append("a known restriction — supply its research by upload")
-    if h.status.value == "ERROR":
-        words.insert(0, f"the check failed technically ({_pl(h.consecutive_failed_checks, 'time')}"
-                        f" in a row)")
-    return "; ".join(dict.fromkeys(words)) or h.status.value.lower()
+    """One plain line for a channel's latest check (`health.plain_line`, shared with the weekly
+    report)."""
+    from vinci.theme_intelligence.health import plain_line
+
+    return plain_line(h)
+
+
+#: a named company's ROLE in words, where the source states no direction for it
+_ROLE_WORD = {"sector_example": "named as an example of the sector", "disruptor": "a disruptor",
+              "spending_customer": "a customer / spender", "supplier": "a supplier",
+              "investor": "an investor", "recommendation": "the source recommends it",
+              "potential_beneficiary": "could benefit", "potentially_harmed": "could be hurt"}
+
+
+def _lean(direction: Direction, role: MentionRole) -> str:
+    """up / down / flat — the thesis's reading of a name, else the role the source states."""
+    if direction is Direction.POSITIVE or (direction is not Direction.NEGATIVE
+                                           and role is MentionRole.POTENTIAL_BENEFICIARY):
+        return "up"
+    if direction is Direction.NEGATIVE or role is MentionRole.POTENTIALLY_HARMED:
+        return "down"
+    return "flat"
+
+
+def _where(c: AffectedCompany) -> str:
+    """Where a named company trades — or why no listing is shown."""
+    if c.listings:
+        return ", ".join(x.ticker for x in c.listings)
+    if c.resolution_status is ResolutionStatus.PRIVATE:
+        return "private"
+    if c.resolution_status in (ResolutionStatus.FUND, ResolutionStatus.INDEX):
+        return c.resolution_status.value.lower()
+    unver = [x.ticker for x in c.other_securities]
+    return (f"{', '.join(unver)} — listing not verified" if unver
+            else "no verified US listing")
+
+
+def exposure_html(av: AffectedView, groups: list[str], groups_unread: int) -> str:
+    """Who is exposed, as a fund reads it: who could BENEFIT, who could be HURT, and who the
+    source names without a direction — companies (listed or not) and sectors together, each with
+    its listing or why it has none. Only names in an exposure role (the priority rules' own set,
+    `exposures_of`); the publisher, data sources and context are counted apart. A company the
+    source does not name is never added."""
+    exp, named = exposures_of(av)
+    others = [c for c in (*av.private_or_unlisted, *av.instruments) if c.role in EXPOSURE_ROLES]
+    rest = named + [c for c in (*av.private_or_unlisted, *av.instruments)
+                    if c.role not in EXPOSURE_ROLES] + list(av.also_named)
+    buckets: dict[str, list[str]] = {"up": [], "down": [], "flat": []}
+    seen: dict[str, list[list[str]]] = {"up": [], "down": [], "flat": []}
+    for c in [*exp, *others]:
+        side = _lean(c.direction, c.role)
+        # one name spelt two ways in one article ("Zhipu Z.ai", "Zhipu (Z.ai)") is listed once
+        toks = re.findall(r"[a-z0-9]+", c.name_as_written.lower())
+        if any(t[:len(toks)] == toks or toks[:len(t)] == t for t in seen[side]):
+            continue
+        seen[side].append(toks)
+        role = ("" if side != "flat"
+                else _ROLE_WORD.get(c.role.value, c.role.value.replace("_", " ")))
+        buckets[side].append(
+            f'<li><b>{e(c.name_as_written)}</b> <span class="tk">{e(_where(c))}</span>'
+            + (f' <span class="muted">{e(role)}</span>' if role else "")
+            + (f'<div class="small">{e(c.role_detail)}</div>' if c.role_detail else "")
+            + "</li>")
+    for x in av.sector_exposures:
+        side = {Direction.POSITIVE: "up", Direction.NEGATIVE: "down"}.get(x.direction, "flat")
+        kind = ("" if re.search(r"\b(?:sectors?|industr(?:y|ies))$", x.name, re.I)
+                else ' <span class="tk">sector</span>')
+        buckets[side].append(f'<li><b>{e(x.name)}</b>{kind} {_tag(x.provenance.value)}</li>')
+    heads = {"up": "Could benefit", "down": "Could be hurt",
+             "flat": "Named as exposed — direction not stated"}
+    out = "".join(f'<h3>{heads[k]}</h3><ul class="who">'
+                  f'{capped_li(v, "names", "who", cap=6)}</ul>' for k, v in buckets.items() if v)
+    if not out:
+        out = ('<p class="muted">The source names no company or sector as exposed. A company '
+               'the source does not name is never added.</p>')
+    elif not any(c.listings for c in exp):
+        out += ('<p class="small">No US-listed company is named as exposed. A company the source '
+                'does not name is never added.</p>')
+    if groups or groups_unread:
+        out += ('<p class="small"><b>Business groups the source names:</b> '
+                + (f'{e("; ".join(groups))} — groups, not companies' if groups else "")
+                + (f' {e(groups_unchecked_note(groups_unread))}' if groups_unread else "")
+                + "</p>")
+    if rest:
+        shown = [f"{c.name_as_written} ({c.role.value.replace('_', ' ')})" for c in rest[:4]]
+        out += (f'<p class="small muted">Also named, not exposures: {e(", ".join(shown))}'
+                + (f" — showing 4 of {len(rest)}; all in the full record" if len(rest) > 4
+                   else "") + "</p>")
+    return f'<div class="expo">{out}</div>'
+
+
+def _merge_restated(rows: list[tuple[str, dict[str, Any]]]) -> list[tuple[str, dict[str, Any]]]:
+    """One Evidence line per figure an article states twice: the same value and unit, on the same
+    side of the thesis, periods that do not disagree, labels sharing at least half their content
+    words (the healthcare-consumerism article gave "36%" and "$413" twice each, 2026-10-14).
+    Every claim and quote stays on the merged line; a different period or measure never merges."""
+    def side(x: dict[str, Any]) -> str:
+        return ("against" if x["role"] == "against" else
+                "support" if x["role"] in ("key evidence", "supports") else "other")
+
+    out: list[tuple[str, dict[str, Any]]] = []
+    for aid, x in rows:
+        x = {**x, "quotes": [x["quote"]], "ids": [x["id"]]}
+        if x["period"] and x["period"].lower() in (x["u"] or "").lower():
+            x["period"] = None  # "per year" beside the unit "per year" is the unit, not a period
+        words = content_words(x["label"])
+        twin = next((y for a2, y in out if a2 == aid and x["v"] and y["v"] == x["v"]
+                     and y["u"] == x["u"] and side(y) == side(x)
+                     and not (x["period"] and y["period"] and x["period"] != y["period"])
+                     and max(overlap(words, content_words(y["label"])),
+                             overlap(content_words(y["label"]), words)) >= 0.5), None)
+        if twin is None:
+            out.append((aid, x))
+            continue
+        twin["quotes"].append(x["quote"])
+        twin["ids"].append(x["id"])
+        twin["period"] = twin["period"] or x["period"]
+    return out
 
 
 def _ml(label: str) -> str:
@@ -1885,8 +1992,9 @@ class Desk:
                    f'Review required · {_pl(len(mine), "finding")}</a>'
                    if mine else "")
                 + f'</div><div class="meta2">{e(self.area[tid])} · '
-                  f'{_pl(len(c.s09_sources), "source")} · first seen {e(_day(t.created_as_of))}'
-                  f' · last material update {e(_day(t.last_material_update))}</div>'
+                  f'{_pl(len(c.s09_sources), "source")} · newest evidence published '
+                  f'{e(_day(t.last_material_update))} · on the desk since '
+                  f'{e(_day(t.created_as_of))}</div>'
                   f'<div class="aud cc">{e(tid)} · version {v.version} · run {e(v.run_id)} · '
                   f'{e(t.key_node)} · {e(t.key_mechanism)}</div></header>')
         s01 = c.s01_bottom_line
@@ -1896,7 +2004,8 @@ class Desk:
                       f'{_tag(s01[0].provenance.value)}{flag("s01.0")}</p>')
         changed = [f'<li>{line(it.text)}'
                    + (f' <span class="muted">({e(it.period)})</span>'
-                      if it.period and it.period not in plain(it.text) else "")
+                      if it.period and re.sub(r"^per ", "", it.period) not in plain(it.text)
+                      else "")
                    + f"{flag(f's02.{i}')}</li>"
                    for i, it in enumerate(c.s02_what_changed.items[:3])
                    if f"s02.{i}" not in rc.blocked and once(it.text)]
@@ -1906,9 +2015,23 @@ class Desk:
                  + (f"{_ACTION[prev.priority.research_action.value][0]} → "
                     f"{_ACTION[last.priority.research_action.value][0]}"
                     if prev and prev.priority.research_action is not last.priority.research_action
-                    else "research action unchanged" if prev else "first recorded"))
+                    else "new evidence, research action unchanged" if prev else "first recorded"))
+        # when the action of record last moved, if not in this version (the header's chips name
+        # the week's moves; this says since when the action stands)
+        turns = [(h, p) for p, h in zip(rc.history, rc.history[1:], strict=False)
+                 if h.priority.research_action is not p.priority.research_action]
+        if turns and turns[-1][0] is not last:
+            h, p = turns[-1]
+            up = _RANK[h.priority.research_action.value] < _RANK[p.priority.research_action.value]
+            moved += (f" · {_ACTION[h.priority.research_action.value][0]} since version "
+                      f"{h.version} ({_day(h.as_of)}), {'raised' if up else 'lowered'} from "
+                      f"{_ACTION[p.priority.research_action.value][0]}")
+        # the figures the thesis statement itself cites lead (the Alzheimer thesis led with a
+        # gene-editing market size while its own $70bn sat fourth, 2026-10-14)
+        lead = {cid for s in s01 for cid in s.claim_ids}
         figs = sorted((r for r in c.s04_key_evidence if r.value_text),
-                      key=lambda r: (r.epistemic.value not in ("actual", "forecast"),
+                      key=lambda r: (r.claim_id not in lead,
+                                     r.epistemic.value not in ("actual", "forecast"),
                                      not re.search(r"\d", r.value_text or "")))[:4]
         pub = {s.article_id: s for s in c.s09_sources}
         fig_html = "".join(
@@ -1943,7 +2066,7 @@ class Desk:
                 f'<li class="unmet"><span class="ic">✗</span><div><b>{e(g.name)}</b>'
                 f'<span>{e(g.detail)}</span></div></li>' for g in unmet) + "</ul>"
             if unmet else "") + (
-            f'<details class="met fold"><summary>{_pl(len(met), "condition")} met</summary>'
+            f'<details class="met fold"><summary>{_pl(len(met), "check")} passed</summary>'
             '<ul class="gates">' + "".join(
                 f'<li class="ok"><span class="ic">✓</span><div><b>{e(g.name)}</b>'
                 f'<span>{e(g.detail)}</span></div></li>' for g in met) + "</ul></details>"
@@ -1965,17 +2088,7 @@ class Desk:
                if once(dsn.next_step.text) else "")
         raise_ = [f"<li>{line(s.text)}</li>" for s in dsn.raise_priority_if if once(s.text)]
         lower = [f"<li>{line(s.text)}</li>" for s in dsn.lower_priority_if if once(s.text)]
-        av = c.s05_affected
-        listed = [f"{co.name_as_written} ({', '.join(x.ticker for x in co.listings)})"
-                  for co in av.companies if co.listings]
-        expo = (f'<dl class="expo"><dt>Listed companies the source names</dt><dd>'
-                f'{e(", ".join(listed)) or "none"}</dd><dt>Sectors the source names as exposed</dt>'
-                f'<dd>{e(", ".join(s.name for s in av.sector_exposures)) or "none"}</dd>'
-                f'<dt>Business groups the source names</dt><dd>'
-                + (e("; ".join(groups)) + ' <span class="muted">— groups, not companies</span>'
-                   if groups else "" if rc.groups_unread else "none")
-                + (f'<div class="small">{e(groups_unchecked_note(rc.groups_unread))}</div>'
-                   if rc.groups_unread else "") + "</dd></dl>")
+        expo = exposure_html(c.s05_affected, groups, rc.groups_unread)
         related = self.related_html(tid)
         evid, n_ev, per_src = self.evidence_html(c, rc)
         hist = "".join(
@@ -1988,7 +2101,8 @@ class Desk:
             return (f" · {n} cited" + (f", {a} against" if a else "")) if n else ""
 
         srcs = "".join(
-            f'<li>{_link(s.url, s.title or "title not recorded")}<div class="small">'
+            f'<li>{_link(s.url, clean_title(s.title, s.publisher) or "title not recorded")}'
+            f'<div class="small">'
             f'{e(s.publisher)} · {e(_day(s.published_at))} · '
             f'{"read in full" if self.read_in_full(s, rc) else "preview only"}'
             f'{e(gave(s.article_id))}</div>'
@@ -2029,16 +2143,16 @@ class Desk:
              + f'<div class="grid2"><section class="panel"><h2>Why '
                f'{e(_ACTION.get(action, (action,))[0])}</h2>{why}{timing}'
                f'<div class="aud">{trace}</div></section>{decide}</div>'
+             + f'<div class="grid2"><section class="panel"><h2>Who is exposed</h2>{expo}'
+               f'</section>{wrong}</div>'
              + (f'<section class="panel"><h2>The strongest figures</h2><div class="nums">'
                 f'{fig_html}</div></section>' if fig_html else "")
              + f'<div class="grid2"><section class="panel"><h2>How it reaches fundamentals</h2>'
                f'<ol class="chain">'
                f'{"".join(steps) or "<li class=muted>No earnings step stated by the source.</li>"}'
-               f'</ol></section>{wrong}</div>'
-             + f'<div class="grid2"><section class="panel"><h2>What changed</h2>'
+               f'</ol></section><section class="panel"><h2>What changed</h2>'
                f'<p class="small">{e(moved)}</p>'
-             + (f"<ul>{''.join(changed)}</ul>" if changed else "")
-             + f'</section><section class="panel"><h2>Who is exposed</h2>{expo}</section></div>'
+             + (f"<ul>{''.join(changed)}</ul>" if changed else "") + "</section></div>"
              + (f'<section class="panel" id="review"><h2>Open review findings '
                 f'<small>{len(mine)}</small></h2><ul class="rvitems">'
                 + "".join(self.finding_item(f, 1) for f in mine) + "</ul></section>"
@@ -2110,8 +2224,8 @@ class Desk:
         return (f'<div class="timing"><h3>Timing</h3>{conflict}<ul class="gates"><li class="'
                 f'{"ok" if near.ok else "unmet"}"><span class="ic">{"✓" if near.ok else "✗"}</span>'
                 f'<div><b>{e(near.name)}</b><span>{e(near.detail)}</span></div></li></ul>'
-                f'<p class="small"><b>How the source frames it:</b> {e(nt.framing)} — a '
-                f'description of the thesis, not a test.</p>'
+                f'<p class="small">The source itself calls it <b>{e(nt.framing[:1].lower())}'
+                f'{e(nt.framing[1:])}</b> — a description of the thesis, not a test.</p>'
                 + (f'<details class="fold"><summary>Dated evidence ({len(nt.claims)})</summary>'
                    f'<ul class="small">{rows}{more}</ul>'
                    + (f'<p class="small">All dated by {e(common)}.</p>' if common else "")
@@ -2127,7 +2241,11 @@ class Desk:
             other = x.to_thesis if x.from_thesis == tid else x.from_thesis
             if other not in self.asof:
                 continue
-            if x.relation.value == "SIBLING":
+            # a thesis filed at an AREA's root (no sub-node) is "parent" of every thesis in the
+            # area: that link says only "same area" (Canada's power and minerals was listed as
+            # related to HBM memory pricing, 2026-10-14) — it joins the broader-area fold
+            root = "." not in self.asof[tid][0].key_node or "." not in self.asof[other][0].key_node
+            if x.relation.value == "SIBLING" or (x.relation.value == "PARENT_CHILD" and root):
                 sibling.add(other)
             else:
                 why[other].append(_RELATION.get(x.relation.value, x.relation.value.lower()))
@@ -2183,6 +2301,8 @@ class Desk:
                 "role": {"contradicts": "against", "context": "context", "supports": "supports",
                          "competing": "competing"}.get(role, role or "cited"),
                 "id": cid}))
+        rows = _merge_restated(rows)
+
         def when(aid: str) -> datetime:
             s_ = pub.get(aid)
             return s_.published_at if s_ and s_.published_at else datetime.min.replace(tzinfo=UTC)
@@ -2194,13 +2314,18 @@ class Desk:
         def item(aid: str, x: dict[str, Any], *, with_source: bool) -> str:
             kind = ("" if x["type"] in ("Observed", "Type not stated") else
                     f' <span class="tag">{e(x["type"].lower())}</span>')
-            when_ = f' <span class="muted">· {e(x["period"])}</span>' if x["period"] else ""
+            # a period the unit already says ("per year" after "$413 per year") is not repeated
+            per = x["period"] if x["period"] and x["period"].lower() not in x["u"].lower() else ""
+            when_ = f' <span class="muted">· {e(per)}</span>' if per else ""
             src = (f'<span class="muted"> — {e(src_name(aid))}</span>' if with_source else "")
             val = (f'<span class="v">{e(x["v"])}{" " + e(x["u"]) if x["u"] else ""}</span> '
                    if x["v"] else "")  # a statement has no number: no placeholder dash
-            return (f'<li><details><summary>{val}{e(x["label"])}{when_}{kind}'
-                    f'{src}</summary><blockquote>“{e(x["quote"])}”</blockquote></details>'
-                    f'<span class="aud cc">{e(x["id"])}</span></li>')
+            twice = (f' <span class="muted">· stated {len(x["quotes"])} times</span>'
+                     if len(x["quotes"]) > 1 else "")
+            quotes = "".join(f"<blockquote>“{e(q)}”</blockquote>" for q in x["quotes"])
+            return (f'<li><details><summary>{val}{e(x["label"])}{when_}{kind}{twice}'
+                    f'{src}</summary>{quotes}</details>'
+                    f'<span class="aud cc">{e(" · ".join(x["ids"]))}</span></li>')
 
         groups: dict[str, list[Any]] = {"against": [], "support": [], "other": []}
         for aid, x in rows:
@@ -2402,8 +2527,10 @@ details.met{margin-top:8px}
 font-size:13.5px;margin:6px 0}
 .risk,.next ul{padding-left:18px;margin:0;font-size:14.5px}.risk li{margin-bottom:6px}
 .next p{font-size:15.5px;margin:0 0 6px}
-.expo{display:grid;grid-template-columns:260px minmax(0,1fr);gap:6px 16px;margin:0;font-size:14.5px}
-.expo dt{color:var(--muted)}.expo dd{margin:0}
+.who{list-style:none;padding:0;margin:0 0 10px;font-size:14.5px}.who li{padding:5px 0;
+border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
+.tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+padding:0 6px;margin-left:4px;white-space:nowrap}
 .tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
 .tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 -20px 16px;padding:0 12px;
 overflow-x:auto}
@@ -2494,7 +2621,7 @@ details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-siz
 aside{position:static;min-width:0}
 .ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
 .steps4{grid-template-columns:1fr}
-.grid2{grid-template-columns:1fr}.expo{grid-template-columns:1fr}.expo dt{margin-top:6px}
+.grid2{grid-template-columns:1fr}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .filters input#q{min-width:0;width:100%;flex-basis:100%}
 .arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}

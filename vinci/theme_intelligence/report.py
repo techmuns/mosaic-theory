@@ -51,6 +51,7 @@ from vinci.theme_intelligence.cards import (
     cited_claim_ids,
     clip,
     e,
+    exposures_of,
     finding_names,
     foot_html,
     ids_to_audit,
@@ -69,6 +70,7 @@ from vinci.theme_intelligence.config import (
     Paths,
     load_taxonomy,
 )
+from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
     SOURCE_LABELS,
@@ -302,7 +304,7 @@ def _title_of_version(store: Store, version_id: str) -> str:
 
 def _title_of(store: Store, article_id: str) -> str:
     a = store.article(article_id)
-    return (a.title if a is not None else None) or article_id
+    return (clean_title(a.title, a.publisher) if a is not None else None) or article_id
 
 
 def _coverage_detail(store: Store, cov: Any) -> dict[str, Any]:
@@ -384,7 +386,8 @@ def _doc_line(store: Store, d: Any, as_of: dict[str, date]) -> str:
             else "original NOT on this machine — its text is not re-verifiable here")
     how = ("linked report fetched automatically" if d.declared.get("via")
            else "manual upload")
-    return (f"{d.publisher} — “{d.title or 'title UNKNOWN'}” ({d.filename}; {d.fmt}"
+    return (f"{d.publisher} — “{clean_title(d.title, d.publisher) or 'title UNKNOWN'}” "
+            f"({d.filename}; {d.fmt}"
             + (f", {d.pages} page(s)" if d.pages else "") + f") — {d.status}, {how}; "
             f"published {d.published.isoformat() if d.published else 'UNKNOWN'}"
             + (f" ({d.published_source})" if d.published else "")
@@ -423,7 +426,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
                 continue
             auto_by[a.source_id] = auto_by.get(a.source_id, 0) + 1
             state = vs[-1].retrieval_state.value if vs else "?"
-            auto.append(f"{a.publisher} — “{a.title or 'title UNKNOWN'}” — published "
+            auto.append(f"{a.publisher} — “{clean_title(a.title, a.publisher) or 'title UNKNOWN'}”"
+                        f" — published "
                         f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'};"
                         f" {state}; analysed as of {r.as_of.isoformat()} ({r.mode} run)"
                         + ("; its linked report read too" if aid in via_doc
@@ -451,7 +455,8 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
               if v.retrieval_state is not RetrievalState.BLOCKED]
         if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
             continue
-        line = (f"{a.publisher} — “{a.title or 'title UNKNOWN'}” (published "
+        line = (f"{a.publisher} — “{clean_title(a.title, a.publisher) or 'title UNKNOWN'}” "
+                f"(published "
                 f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'}; "
                 f"{vs[-1].body_word_count} words read) [{a.article_id}]")
         if a.article_id in unread:
@@ -516,6 +521,7 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
         if d.run_id in rids and d.status in ("INGESTED", "UPGRADED"):
             manual_by[d.source_id] = manual_by.get(d.source_id, 0) + 1
     coverage: list[str] = []
+    plain_cov: list[str] = []  # the same, in words, for the report's Sources section
     for src in load_sources():
         st = health_by.get(src.id, {}).get("status", "UNKNOWN")
         n_auto, n_man = auto_by.get(src.id, 0), manual_by.get(src.id, 0)
@@ -534,7 +540,20 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
         coverage.append(f"{src.publisher} [{src.mode.replace('_', '-')}; access {st}] — "
                         f"{n_auto} article(s) analysed automatically, {n_man} supplied — "
                         f"{verdict}")
+        if src.mode == "manual_first":
+            plain_cov.append(f"{src.publisher} — by upload (the site refuses automated "
+                             f"reading): " + (f"{n_man} supplied this week" if n_man else
+                                              "nothing supplied this week — its research this "
+                                              "week is missing, not absent"))
+        else:
+            how = {"HEALTHY": "read automatically", "DEGRADED": "read automatically, in part",
+                   "BLOCKED": "automatic reading blocked — what it published is not known",
+                   "ERROR": "automatic reading failed — what it published is not known"}.get(
+                       st, "not checked — what it published is not known")
+            plain_cov.append(f"{src.publisher} — {how}: {n_auto} read this week"
+                             + (f", {n_man} supplied" if n_man else ""))
     out = {"automatic": _listed(auto), "manual": _listed(manual), "coverage": _listed(coverage),
+           "coverage_plain": _listed(plain_cov),
            "awaiting_documents": _listed(awaiting), "publishers": _listed(publishers),
            "needs_upload": _listed(needs_upload), "needs_metadata": _listed(metadata),
            "coverage_gaps": _listed(gaps),
@@ -1028,7 +1047,8 @@ def _sources_line(store: Store, tid: str, rids: set[str]) -> list[str]:
         authors = "; ".join(x.name for x in a.authors) if a.authors else "author UNKNOWN"
         pub = a.published_at.date().isoformat() if a.published_at else "date UNKNOWN"
         what = _CHANGE_TAG.get(c.contribution) or "first record of this thesis"
-        out.append(f"{a.publisher} — {authors} — “{a.title or 'title UNKNOWN'}” (article date "
+        out.append(f"{a.publisher} — {authors} — "
+                   f"“{clean_title(a.title, a.publisher) or 'title UNKNOWN'}” (article date "
                    f"{pub}) — {what.lower()}")
     return out
 
@@ -1188,7 +1208,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             named_companies=[c.name_as_written + (" (" + "/".join(x.ticker for x in c.listings)
                                                   + ")" if c.listings else
                                                   f" ({c.resolution_status.value})")
-                             for c in av.companies],
+                             for c in exposures_of(av)[0]],
             named_instruments=[c.name_as_written + (
                 f" [fund {'/'.join(x.ticker for x in c.listings)}]" if c.listings
                 else f" [{c.resolution_status.value.lower()}]") for c in av.instruments],
@@ -1318,6 +1338,10 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
                       + (f" [automated access {access[s['source_id']]}]"
                          if s["source_id"] in access else "") for s in manual_first)
             or "none"),
+        # the same channels by name only, for the Sources section (the access code above stays
+        # in the Markdown record and Operations & audit)
+        "upload_only_sources": None if manual else (
+            ", ".join(names.get(s["source_id"], s["source_id"]) for s in manual_first) or "none"),
         "blocked_sources": None if manual else (
             ", ".join(names.get(s["source_id"], s["source_id"]) for s in blocked) or "none"),
         "articles_full": d.articles_read - d.articles_partial,
@@ -1370,9 +1394,10 @@ def why_action(rules: tuple[str, ...] | list[str]) -> str:
         # the inflection route says WHY in the first view: its research question (no ids in it)
         q = re.search(r"research question: (.*?\?)", r)
         if "a near-term fundamental inflection" in r and q:
-            return ("Research Now — no dislocation or dated catalyst, but a credible near-term "
-                    f"change in a fundamental: {q.group(1)} (an investigation, not a trade)")
-        return "Research Now — every condition met (an investigation, not a trade)"
+            return ("Research Now — no recent mispricing or dated catalyst, but a credible "
+                    f"near-term change in a fundamental: {q.group(1)} An investigation, not a "
+                    "trade.")
+        return "Research Now — every check passed. An investigation, not a trade."
     return re.sub(r"^SKIP-\d+ ", "Skip — ", r)
 
 
@@ -1576,34 +1601,47 @@ def _sources_html(d: Dashboard, print_mode: bool) -> str:
         return '<div class="empty">No source-health check recorded.</div>'
     when = (f"checked {h['checked_at'][:16].replace('T', ' ')} UTC"
             if h.get("checked_at") else "not checked yet")
+    n = h.get("counts", {})
+    head = (f"{n.get('HEALTHY', 0)} of {h.get('total', 0)} sources working"
+            + "".join(f" · {n[k]} {w}" for k, w in (("DEGRADED", "partly"), ("BLOCKED", "blocked"),
+                                                     ("ERROR", "failing"),
+                                                     ("UNKNOWN", "status not known"))
+                    if n.get(k)))
+    # in words, from the structured test results (health.plain_line) — the check's own reason,
+    # with its error names, stays in Operations & audit
     att = "".join(
         f'<li><b>{e(r["publisher"])}</b><span class="pill {_HEALTH_PILL.get(r["status"], "dir")}">'
-        f'{e(r["status"].lower())}</span><div class="note">{ids_to_audit(e(_plain_reason(r)))}'
-        + (" Manual upload of an authorized copy recommended." if r.get("manual_action") else "")
+        f'{e(_HEALTH_WORD.get(r["status"], r["status"].lower()))}</span><div class="note">'
+        f'{e(r.get("plain") or _plain_reason(r))}'
+        + (". Supply its research by upload." if r.get("manual_action")
+           and "upload" not in (r.get("plain") or "") else "")
         + "</div></li>" for r in h.get("attention", []))
     rows = "".join(
-        f"<tr><td>{e(r['publisher'])}</td><td>{e(r['status'].lower())}</td>"
-        f"<td>{e(r['freshness'].lower())}"
+        f"<tr><td>{e(r['publisher'])}</td>"
+        f"<td>{e(_HEALTH_WORD.get(r['status'], r['status'].lower()))}</td>"
+        f"<td>{e(_FRESH_WORD.get(r['freshness'], r['freshness'].lower()))}"
         f"{(' · newest ' + e(r['newest_article_date'])) if r['newest_article_date'] else ''}</td>"
-        f"<td>{e((r['last_successful_discovery'] or '—')[:10])}</td>"
-        f"<td>{e((r['last_successful_extraction'] or '—')[:10])}</td>"
-        f"<td>{r['discovered']} / {r['in_window']}</td></tr>" for r in h.get("rows", []))
-    cov = (d.intake or {}).get("coverage", {}).get("items", [])
+        f"<td>{e((r['last_successful_discovery'] or 'never')[:10])}</td>"
+        f"<td>{e((r['last_successful_extraction'] or 'never')[:10])}</td>"
+        f"<td>{r['discovered']} found · {r['in_window']} in the window</td></tr>"
+        for r in h.get("rows", []))
+    intake = d.intake or {}
+    cov = (intake.get("coverage_plain") or intake.get("coverage") or {}).get("items", [])
     k = d.kpi or {}
     scan = (f'<div class="note">This scan read <b>{e(k["accessible_sources"])}</b> automatic '
-            f'channels · blocked: <b>{e(k["blocked_sources"])}</b> · manual-first: '
-            f'{e(k.get("manual_first_sources") or "none")}</div>'
+            f'channels · blocked: <b>{e(k["blocked_sources"])}</b> · by upload only: '
+            f'{e(k.get("upload_only_sources") or "none")}</div>'
             if k.get("accessible_sources") is not None else "")
-    return (f'<div class="sh"><div><b>{e(h["line"])}</b> <span class="note">{e(when)}</span>'
+    return (f'<div class="sh"><div><b>{e(head)}</b> <span class="note">{e(when)}</span>'
             f'</div>{scan}' + (f"<ul>{att}</ul>" if att else "") + "</div>"
             + '<details class="sec"' + (" open" if print_mode else "") + '><summary>All '
             f'{h.get("total", 0)} publishers</summary><div class="hscroll"><table><tr>'
-            "<th>Publisher</th><th>Health</th><th>Freshness</th><th>Last discovery</th>"
-            "<th>Last full text</th><th>Found / in window</th></tr>" + rows
+            "<th>Publisher</th><th>Working?</th><th>New articles</th><th>Last listed</th>"
+            "<th>Last read in full</th><th>Articles</th></tr>" + rows
             + "</table></div></details>"
-            + '<details class="sec"' + (" open" if print_mode else "") + '><summary>Coverage by '
-            f'publisher ({len(cov)})</summary><ul>'
-            + "".join(f"<li>{ids_to_audit(e(x))}</li>" for x in cov) + "</ul></details>")
+            + '<details class="sec"' + (" open" if print_mode else "") + '><summary>What each '
+            f'publisher gave this week ({len(cov)})</summary><ul>'
+            + "".join(f"<li>{e(x)}</li>" for x in cov) + "</ul></details>")
 
 
 def _plain_reason(r: dict[str, Any]) -> str:
@@ -1837,6 +1875,11 @@ def _intake_html(it: dict[str, Any], print_mode: bool) -> str:
 
 _HEALTH_PILL = {"HEALTHY": "skip", "DEGRADED": "watch", "BLOCKED": "now", "ERROR": "now",
                 "UNKNOWN": "dir"}
+#: a channel's health and freshness in words (the codes stay in Operations & audit)
+_HEALTH_WORD = {"HEALTHY": "working", "DEGRADED": "partly working", "BLOCKED": "blocked",
+                "ERROR": "check failed", "UNKNOWN": "status not known"}
+_FRESH_WORD = {"FRESH": "new articles recently", "QUIET": "nothing new recently",
+               "UNKNOWN": "not known"}
 
 
 def _health_html(h: dict[str, Any], print_mode: bool) -> str:

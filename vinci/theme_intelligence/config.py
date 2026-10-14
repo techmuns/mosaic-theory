@@ -37,7 +37,8 @@ LLM_MAX_TOKENS = 21_333
 EXTRACT_PROMPT_VERSION = "ti-extract-6"
 COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
-PARSER_VERSION = "ti-parse-7"  # 7: the paywall marker searched in the whole page (6: glyphs)
+PARSER_VERSION = "ti-parse-8"  # 8: overprinted PDF glyphs read once; 7: the paywall marker searched
+#                                 in the whole page; 6: glyphs
 #: 3: a sentence read again from another version is REPEATED · 4: timing read beside the cited
 #: evidence (SKIP-3), same-article siblings flagged, mechanism coverage recorded · 5: a window
 #: running past the next 4 quarters is not near-term, a page label is no exposure (pilot)

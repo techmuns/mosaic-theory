@@ -56,6 +56,7 @@ MS_PDF = SYN / "ms_report_synthetic.pdf"
 MS_HTML = SYN / "ms_report_synthetic.html"
 SCANNED = SYN / "scanned_page_synthetic.pdf"
 UNDATED = SYN / "undated_synthetic.pdf"
+OVERPRINTED = SYN / "overprinted_chart_synthetic.pdf"
 SA_TITLE = "Synthetic Memory Note: Inference Keeps Memory Tight"
 PREVIEW_URL = "https://example.test/synthetic/semianalysis/inference-keeps-memory-tight"
 AS_OF = date(2026, 10, 11)
@@ -245,6 +246,33 @@ def test_a_date_printed_inside_a_layout_box_is_read_from_the_document() -> None:
     assert r.doc.published_at is not None and r.doc.published_at.date() == date(2026, 9, 14)
     assert r.doc.published_source == "the document text (page 1-2)"
     assert read_document(UNDATED, Declared(source_id="ms_research")).doc.published_at is None
+
+
+def test_a_glyph_printed_over_itself_is_read_once() -> None:
+    """2026-10-14: Morgan Stanley's Caffeine chart printed every label three times over itself
+    (faux bold), so "61%" was read as "666111%%%": the claim citing it failed the number check and
+    the desk listed "Figure '666111%' not captured" seven times. An overprinted glyph is one
+    character. NEGATIVE pin: digits that legitimately repeat side by side (1100) stay as written."""
+    text = "\n".join(b.text for b in read_document(
+        OVERPRINTED, Declared(source_id="ms_research")).doc.blocks)
+    assert "need more energy 61%" in text
+    assert "666111" not in text and "eeennn" not in text
+    assert "counted 1100 respondents" in text
+
+
+def test_a_saved_pages_site_suffix_is_not_imported_as_part_of_its_title(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """A page saved as PDF keeps its browser-tab title as the PDF's Title: every Morgan Stanley
+    article arrived as "… | Morgan Stanley" (2026-10-14). The importer drops a trailing part that
+    repeats the channel's publisher. NEGATIVE pin: a trailing part naming anyone else stays."""
+    from vinci.theme_intelligence import documents
+
+    monkeypatch.setattr(documents, "_publisher", lambda _sid: "Synthetic Bank")
+    r = read_document(DATED_BOX, Declared(source_id="ms_research"))
+    assert r.doc.title == "Synthetic Memory Note: A Dated Web Page"
+    monkeypatch.setattr(documents, "_publisher", lambda _sid: "Morgan Stanley")
+    r = read_document(DATED_BOX, Declared(source_id="ms_research"))
+    assert r.doc.title == "Synthetic Memory Note: A Dated Web Page | Synthetic Bank"
 
 
 def test_the_publication_date_comes_from_the_document_never_the_file(tmp_path: Path) -> None:

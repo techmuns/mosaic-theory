@@ -393,9 +393,14 @@ def test_review_required_links_to_the_exact_line_and_the_default_view_carries_no
         assert line is not None and "UNRESOLVED REVIEW" in line.get_text(" ")
         ids = line.select(".rw .aud")  # the finding's claim id: behind the audit switch
         assert [x.get_text(strip=True) for x in ids] == ["C-71cbea09e3099d…", "C-1d67..."]
-    # the at-a-glance answers: all seven, risks and the next check open — not in a <details>
+    # the at-a-glance answers: all seven — folded away, since they repeat the sections' own
+    # opening lines (operator, 2026-10-14; they were open above the sections before) …
     glance = soup.select_one(".glance")
-    assert glance is not None and glance.find_parent("details") is None
+    assert glance is not None and glance.find_parent("details") is not None
+    assert "open" not in glance.find_parent("details").attrs
+    # … and left out of the printed record, which holds every section in full
+    prn = next(Path(out["dir"]).glob("cards/TH-*.print.html")).read_text()
+    assert 'class="glance"' not in prn and 'data-field="s01_bottom_line"' in prn
     assert [h.get_text() for h in glance.select("h3")] == [
         "The thesis", "What changed", "Effect on profits, margins or demand",
         "Strongest evidence", "Why Watch", "What could invalidate it", "Next check"]
