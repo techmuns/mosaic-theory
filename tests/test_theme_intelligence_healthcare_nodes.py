@@ -72,3 +72,29 @@ def test_a_drug_market_and_a_care_payment_shift_are_two_theses_never_one(tmp_pat
     assert len(pipe.store.theses()) == 2
     t = pipe.store.thesis(alz.thesis_id)
     assert t is not None and t.current_version == 2
+
+
+def test_within_pharma_a_therapy_area_and_a_sales_channel_are_different_claims(
+        tmp_path: Path) -> None:
+    """The real run on healthcare's children (2026-10-14) still keyed a "$26bn biopharma
+    direct-to-consumer cash-pay" hypothesis onto the Alzheimer drug-market thesis — the same
+    node, mechanism, direction and geography. Pharma's SEGMENTS, read from the hypothesis's own
+    statement (never the model's choice), separate them: neurology vs direct-to-consumer.
+    NEGATIVE pin: a second Alzheimer article keeps the neurology key and updates that thesis."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=AS_OF)
+    _article(pipe, "alz", "Alzheimer's drug sales could grow 26% in 2026.",
+             "healthcare.pharma_biotech", "Alzheimer's drug innovation opens a large market")
+    _article(pipe, "dtc", "Direct-to-consumer cash-pay drug sales rose 26% in 2026.",
+             "healthcare.pharma_biotech", "Direct-to-consumer cash-pay access widens drug sales")
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    keys = {t.key_segment: t for t in pipe.store.theses()}
+    assert set(keys) == {"neurology", "direct_to_consumer"}
+    alz = keys["neurology"]
+    pipe.start_run("ingest", as_of=AS_OF)
+    _article(pipe, "alz2", "Alzheimer's drug sales could rise 26% in 2026, a second source says.",
+             "healthcare.pharma_biotech", "Alzheimer's drug innovation opens a large market")
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    assert len(pipe.store.theses()) == 2
+    t = pipe.store.thesis(alz.thesis_id)
+    assert t is not None and t.current_version == 2

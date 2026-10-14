@@ -266,6 +266,38 @@ terms = ["transformer", "transformers", "switchgear", "substation", "substations
          "grid equipment", "high-voltage equipment", "electrical equipment", "circuit breaker",
          "circuit breakers", "GOES", "grain-oriented electrical steel"]
 
+# Pharma & biotech by what is sold and how (operator, 2026-10-14). On the first real run under
+# healthcare's children, a "$26bn biopharma direct-to-consumer cash-pay" hypothesis still keyed
+# onto the Alzheimer drug-market thesis — the same node, mechanism, direction and geography. A
+# therapy area or a sales channel is a different claim.
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "neurology"
+label = "Neurology (Alzheimer's, dementia)"
+terms = ["Alzheimer's", "Alzheimer", "Alzheimers", "dementia", "neurodegenerative",
+         "neurodegeneration", "Parkinson's", "amyloid", "tau", "neurology"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "obesity_metabolic"
+label = "Obesity and metabolic (GLP-1)"
+terms = ["GLP-1", "GLP-1s", "obesity", "anti-obesity", "weight loss", "weight-loss", "diabetes",
+         "semaglutide", "tirzepatide", "incretin", "incretins"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "oncology"
+label = "Oncology"
+terms = ["oncology", "cancer", "cancers", "tumor", "tumors", "tumour", "tumours", "ADC", "ADCs",
+         "antibody-drug conjugate", "antibody-drug conjugates", "immuno-oncology"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "direct_to_consumer"
+label = "Direct-to-consumer / cash-pay"
+terms = ["direct-to-consumer", "DTC", "cash-pay", "cash pay", "out-of-pocket", "out of pocket",
+         "self-pay"]
+
 # PRODUCTS — finer than segments, for CLAIM-level contradiction checks (contradiction.py): two
 # claims contradict only when they speak about the same product, variable, period and geography
 # with opposite directions. Read from the verbatim quote (and the claim's metric / scope); the
