@@ -417,8 +417,9 @@ class Engine:
         segments: dict[str, str] = {}
         products: dict[str, str] = {}
         # theses this article's EARLIER versions contributed to (before this version applies)
-        earlier = list(dict.fromkeys(c.thesis_id for c in st.contributions(
-            article_id=ctx.article.article_id)))
+        earlier = [tid for tid in dict.fromkeys(c.thesis_id for c in st.contributions(
+            article_id=ctx.article.article_id))
+            if (prior_t := st.thesis(tid)) is not None and not prior_t.retired]  # retired: never
         for h in ve.hypotheses:
             seg = segment_of(h, claims, self.taxonomy, self.product_signature(h, claims))
             key = thesis_key(h, seg)
@@ -596,7 +597,9 @@ class Engine:
         corrected (its id is that key's hash): a former key finds its thesis, never a duplicate
         that would overwrite it."""
         t = self.store.thesis_by_key(key)
-        return t if t is not None else self.store.thesis(thesis_id_for(key))
+        t = t if t is not None else self.store.thesis(thesis_id_for(key))
+        # a RETIRED thesis is never matched again: its articles' re-analysis replaces it
+        return None if t is None or t.retired else t
 
     def _correct_segment(self, ctx: ArticleContext, tid: str) -> None:
         """A thesis a later reading reached by ANOTHER key, whose own segment under today's rule
@@ -862,6 +865,10 @@ class Engine:
                 review: str = "") -> ThesisOutcome:
         raw = h.raw
         tid = thesis_id_for(key)
+        # the key's id may belong to a RETIRED thesis (re-analysis): a new id, derived from the
+        # key and the retired one's — never the retired record overwritten
+        while (held := self.store.thesis(tid)) is not None and held.retired:
+            tid = thesis_id_for(f"{key}|after:{held.thesis_id}")
         other = raw.value_chain_node == "other" or raw.mechanism == "other"
         now = self.first_ingested.get(tid) or datetime.now(tz=UTC)
         published = (ctx.article.published_at.date() if ctx.article.published_at else ctx.as_of)
@@ -1760,7 +1767,7 @@ class Engine:
         t_windows = evidence_windows(own, ctx.as_of)
         cids: tuple[str, ...] = ()
         for o in self.store.theses():
-            if o.thesis_id == t.thesis_id:
+            if o.thesis_id == t.thesis_id or o.retired:  # a retired thesis is history only
                 continue
             rel: RelationType | None = None
             role = ""

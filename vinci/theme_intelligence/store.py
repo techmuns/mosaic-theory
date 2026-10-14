@@ -440,6 +440,14 @@ class Store:
         self.conn.execute("UPDATE theses SET thesis_key=?, payload=? WHERE thesis_id=?",
                           (self.thesis_key(t), t.model_dump_json(), t.thesis_id))
 
+    def retire_thesis(self, t: Thesis) -> None:
+        """A thesis RETIRED by re-analysis (`Pipeline.run_reanalyse`): its status and its key (which
+        now carries the retiring run, freeing the bare key) move together; its id, versions,
+        links and history stay."""
+        assert t.retired, "retire_thesis takes a thesis with `retired` set"
+        self.conn.execute("UPDATE theses SET thesis_key=?, status=?, payload=? WHERE thesis_id=?",
+                          (self.thesis_key(t), t.status.value, t.model_dump_json(), t.thesis_id))
+
     def thesis(self, thesis_id: str) -> Thesis | None:
         r = self._rows("SELECT payload FROM theses WHERE thesis_id=?", [thesis_id], Thesis)
         return r[0] if r else None

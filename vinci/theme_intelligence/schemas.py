@@ -275,13 +275,15 @@ class EvidenceRole(StrEnum):
 
 
 def identity_key(node: str, mechanism: str, direction: str, geography: str,
-                 segment: str = "", review: str = "", product: str = "") -> str:
+                 segment: str = "", review: str = "", product: str = "",
+                 retired: str = "") -> str:
     """The ONE thesis identity: node | mechanism | direction | geography, plus the SEGMENT within
     the node when the taxonomy defines segments for it (evidence about NAND / SSD is not the same
     claim as evidence about DRAM / HBM), plus a review tag for an unclassified (`other`) thesis,
     plus a PRODUCT only when one key held two technologies with distinct evidence (engine.py).
     Without a segment, review tag or product the key is exactly the first build's — its ids are
-    kept."""
+    kept. A RETIRED thesis (re-analysis, `retired` = the run that retired it) carries the run in
+    its key, which frees the bare key for the theses its articles' re-analysis creates."""
     key = f"{node}|{mechanism}|{direction}|{geography}"
     if segment:
         key += f"|seg:{segment}"
@@ -289,6 +291,8 @@ def identity_key(node: str, mechanism: str, direction: str, geography: str,
         key += f"|review:{review}"
     if product:
         key += f"|prod:{product}"
+    if retired:
+        key += f"|retired:{retired}"
     return key
 
 
@@ -801,12 +805,17 @@ class Thesis(Mutable):
     #: the PRODUCT that set this thesis apart from another on the same key (engine.py); "" for
     #: every thesis that never needed it — their ids are unchanged
     key_product: str = ""
+    #: the run that RETIRED this thesis (`reanalyse`): the articles it was built from were
+    #: analysed again under the current taxonomy, and the theses that analysis creates replace it.
+    #: It keeps its versions, evidence and history, stays ARCHIVED, and is never matched,
+    #: updated or reactivated again. "" for every other thesis.
+    retired: str = ""
 
     @property
     def identity(self) -> str:
         return identity_key(self.key_node, self.key_mechanism, self.key_direction.value,
                             self.key_geography, self.key_segment, self.key_review,
-                            self.key_product)
+                            self.key_product, self.retired)
 
 
 class ThesisVersion(Frozen):

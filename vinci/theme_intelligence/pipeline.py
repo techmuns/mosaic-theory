@@ -81,6 +81,7 @@ from vinci.theme_intelligence.schemas import (
     ArticleVersion,
     Author,
     CardContent,
+    ChangeEvent,
     Claim,
     FieldStatus,
     HealthStatus,
@@ -407,7 +408,8 @@ class Pipeline:
                          source_id: str, as_of: date, fixture: dict[str, Any] | None = None,
                          publisher_override: str | None = None,
                          completeness_fixture: dict[str, Any] | None = None,
-                         cost_limit: float | None = None) -> ArticleResult:
+                         cost_limit: float | None = None,
+                         reanalysis: bool = False) -> ArticleResult:
         """Everything after parsing. Tests and replays enter here with an already-parsed
         document (e.g. an authentic excerpt) — the same code path the live fetch takes.
         `cost_limit`: this document's actual-spend limit (default config.DOC_COST_LIMIT_USD)."""
@@ -416,14 +418,16 @@ class Pipeline:
         try:
             return self._process_document(doc, fr, url=url, source_id=source_id, as_of=as_of,
                                           fixture=fixture, publisher_override=publisher_override,
-                                          completeness_fixture=completeness_fixture)
+                                          completeness_fixture=completeness_fixture,
+                                          reanalysis=reanalysis)
         finally:
             self.guard.end_document()
 
     def _process_document(self, doc: ParsedDocument, fr: FetchResult, *, url: str,
                           source_id: str, as_of: date, fixture: dict[str, Any] | None,
                           publisher_override: str | None,
-                          completeness_fixture: dict[str, Any] | None) -> ArticleResult:
+                          completeness_fixture: dict[str, Any] | None,
+                          reanalysis: bool = False) -> ArticleResult:
         assert self.run is not None
         src = self.sources.get(source_id)
         publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
@@ -495,7 +499,7 @@ class Pipeline:
                         f"not analysed (publication-time replay)")
             self._count("articles_lookahead_refused")
             return ArticleResult(url, "LOOKAHEAD", aid, version.version_id)
-        if self._applied(aid, version.version_id):
+        if not reanalysis and self._applied(aid, version.version_id):
             self._count("articles_already_ingested")
             return ArticleResult(url, "ALREADY_INGESTED", aid, version.version_id,
                                  note="this article version was already applied — no new records")
@@ -573,6 +577,12 @@ class Pipeline:
         # evidence shares their paragraph, as the source's opinion (coverage.py)
         risks_found = scan_source_risks(doc, ve, report)
         self._place_source_risks(ve, risks_found, doc, aid, version.version_id)
+        if reanalysis:
+            # a claim or mention id hashes its CONTENT (version, paragraph, quote, statement /
+            # name, role): an id already stored is the same record — kept as first written, its
+            # provenance untouched (an id must never mean two things)
+            ve.claims = [self.store.claim(c.claim_id) or c for c in ve.claims]
+            ve.mentions = [self.store.mention(m.mention_id) or m for m in ve.mentions]
         outcomes = self.engine.apply(ctx, ve, resolutions)
         # every proposition and verified material fact accounted for (coverage.py) — alerts are
         # WARN issues for review; nothing here creates or merges a thesis
@@ -895,6 +905,121 @@ class Pipeline:
             raise
         return self.finish_run(RunStatus.PARTIAL if refused else RunStatus.SUCCEEDED), done
 
+    def run_reanalyse(self, *, article_ids: Sequence[str], retire: Sequence[str], reason: str,
+                      as_of: date, budget: float | None = None,
+                      fixtures: dict[str, dict[str, Any]] | None = None
+                      ) -> tuple[WeeklyRun, list[ArticleResult]]:
+        """RE-ANALYSIS of articles already held, under the CURRENT taxonomy and prompts — the way
+        to split a thesis an earlier taxonomy merged (operator, 2026-10-14: the Alzheimer thesis
+        had absorbed a cash-pay and a GLP-1 article, all keyed `healthcare`).
+
+        1. Every thesis to RETIRE must hold evidence from the listed articles ONLY — else nothing
+           is done: retiring it would drop evidence no re-analysis restores.
+        2. Each is RETIRED: archived, its key tagged with this run (the bare key is free again),
+           a RETIRED event with the reason. Its versions, links and history stay; it is never
+           matched, updated or reactivated again.
+        3. Each article's latest stored version is analysed again, oldest first, through the SAME
+           pipeline as an upload — extraction, completeness, verification, the engine — with the
+           retired theses out of the extractor's registry context. Records whose content id is
+           already stored are kept as first written.
+        4. The theses it creates or changes are enriched (enrich.py), as a weekly scan would.
+
+        Paid like an upload (one extraction, completeness and card reviews per article).
+        `fixtures`: extractions by article id, for tests and replays (as `process_document`)."""
+        run = self.start_run("reanalyse", as_of=as_of, window_from=as_of, window_to=as_of)
+        if budget is not None:
+            self.guard.run_limit = budget
+        results: list[ArticleResult] = []
+        try:
+            wanted = list(dict.fromkeys(article_ids))
+            for aid in wanted:
+                if self.store.article(aid) is None or not self.store.article_versions(aid):
+                    raise ValueError(f"no stored article {aid} to re-analyse")
+            for tid in retire:
+                t = self.store.thesis(tid)
+                if t is None:
+                    raise ValueError(f"no thesis {tid}")
+                if t.retired:
+                    raise ValueError(f"{tid} was already retired by {t.retired}")
+                srcs = {c.article_id for lk in self.store.links(tid)
+                        if (c := self.store.claim(lk.claim_id)) is not None}
+                outside = sorted(srcs - set(wanted))
+                if outside:
+                    raise ValueError(f"{tid} holds evidence from {', '.join(outside)}, which this "
+                                     f"run does not re-analyse — retiring it would drop that "
+                                     f"evidence; nothing was changed")
+            now = datetime.now(tz=UTC)
+            for tid in retire:
+                t = self.store.thesis(tid)
+                assert t is not None
+                gone = t.model_copy(update={"status": ThesisStatus.ARCHIVED,
+                                            "retired": run.run_id})
+                with self.store.tx():
+                    self.store.retire_thesis(gone)
+                    self.store.add_event(ChangeEvent(
+                        event_id="CE-" + _sha(tid, "RETIRED", run.run_id)[:14], thesis_id=tid,
+                        version=t.current_version, event_type="RETIRED", run_id=run.run_id,
+                        as_of=as_of, created_at=now,
+                        detail=f"retired: {reason} — its articles ({', '.join(wanted)}) are "
+                               f"analysed again under the current taxonomy; the theses that "
+                               f"creates replace it (identity key {t.identity} → "
+                               f"{gone.identity})"))
+                self._count("theses_retired")
+            touched: list[str] = []
+            for aid in sorted(wanted, key=self._published_key):
+                doc, fr, art = self._stored_document(aid)
+                res = self.process_document(doc, fr, url=art.canonical_url,
+                                            source_id=art.source_id, as_of=as_of,
+                                            fixture=(fixtures or {}).get(aid),
+                                            publisher_override=art.publisher, reanalysis=True)
+                results.append(res)
+                touched += [o.thesis_id for o in res.outcomes]
+            self._scan_enrichment(as_of, [tid for tid in dict.fromkeys(touched)
+                                          if (x := self.store.thesis(tid)) is not None
+                                          and x.status is ThesisStatus.ACTIVE])
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+        ok = all(r.status in ("PROCESSED", "PARTIAL_PROCESSED") for r in results)
+        return self.finish_run(RunStatus.SUCCEEDED if ok else RunStatus.PARTIAL), results
+
+    def _published_key(self, aid: str) -> tuple[datetime, str]:
+        a = self.store.article(aid)
+        return ((a.published_at if a and a.published_at else datetime.min.replace(tzinfo=UTC)),
+                aid)
+
+    def _stored_document(self, aid: str) -> tuple[ParsedDocument, FetchResult, Article]:
+        """An article's LATEST stored version as the parsed document it was — the same blocks
+        (so the same content hash and version), title, authors and dates — for re-analysis. No
+        fetch: the text is the stored text."""
+        a = self.store.article(aid)
+        vs = self.store.article_versions(aid)
+        if a is None or not vs:
+            raise ValueError(f"no stored article {aid}")
+        v = max(vs, key=lambda x: x.retrieved_at)
+        if not v.blocks or not any(b.text for b in v.blocks):
+            raise ValueError(f"{aid}: its stored version {v.version_id} holds no text on this "
+                             f"machine (an exported registry carries none) — re-analyse where "
+                             f"the text is held")
+        doc = ParsedDocument(
+            canonical_url=a.canonical_url, title=a.title, title_source=a.title_source,
+            authors=a.authors, authors_status=a.authors_status, published_at=a.published_at,
+            published_raw=a.published_raw, published_source=a.published_source,
+            published_status=a.published_status, modified_at=v.modified_at,
+            modified_source=v.modified_source, blocks=v.blocks,
+            retrieval_state=v.retrieval_state,
+            notes=[f"re-analysis of stored version {v.version_id}"],
+            stated_date=((v.document_date, v.document_date_source or "the stored version")
+                         if v.document_date else None),
+            unread_back_matter=v.unread_back_matter)
+        fr = FetchResult(url=a.canonical_url, final_url=v.final_url, status=v.http_status,
+                         state=v.retrieval_state,
+                         note=f"re-analysis of stored version {v.version_id} — no fetch",
+                         content=None, content_type=None, fetched_at=v.retrieved_at,
+                         sha256=v.raw_sha256, cache_path=None, from_cache=True, seconds=0.0)
+        return doc, fr, a
+
     def _active_ids(self) -> list[str]:
         return [t.thesis_id for t in self.store.theses() if t.status is ThesisStatus.ACTIVE]
 
@@ -947,13 +1072,15 @@ class Pipeline:
                               f"US listing), {len(e.refused)} set aside"))
         return done, refused
 
-    def _scan_enrichment(self, as_of: date) -> None:
-        """The weekly scan's last step: enrich every active thesis whose current version has no
-        set — the theses this week created or changed, and any a manual run left. Nothing here
-        changes the scan's status: a refusal or a missing model is a WARNING on the run."""
+    def _scan_enrichment(self, as_of: date, targets: list[str] | None = None) -> None:
+        """A run's last step (the weekly scan, a re-analysis): enrich every active thesis whose
+        current version has no set — by default all of them; the theses this run created or
+        changed, and any a manual run left. Nothing here changes the run's status: a refusal or a
+        missing model is a WARNING on the run."""
         assert self.run is not None
         try:
-            done, refused = self._enrich_theses(self._active_ids(), as_of=as_of)
+            done, refused = self._enrich_theses(
+                self._active_ids() if targets is None else targets, as_of=as_of)
         except RuntimeError as exc:  # no model client and no cached answer
             self.run.warnings.append(f"enrichment not run: {exc}")
             return

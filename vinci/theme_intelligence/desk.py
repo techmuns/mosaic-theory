@@ -1672,6 +1672,9 @@ class Desk:
         return self.page("Themes", body, "Themes")
 
     def archived_why(self, t: Thesis, v: ThesisVersion) -> str:
+        if t.retired:
+            return ("retired — its articles were analysed again under the current taxonomy, and "
+                    "the theses that created replace it")
         if v.priority.research_action is ResearchAction.SKIP:
             return "its research action is Skip"
         return f"no new evidence for more than {STALE_AFTER_DAYS} days"
@@ -2236,6 +2239,7 @@ class Desk:
         r = self.reg.runs.get(h.run_id)
         how = {"scan": "from the weekly scan", "article": "from a new article",
                "ingest": "from an uploaded document",
+               "reanalyse": "from its articles analysed again under the current taxonomy",
                "reassess": "re-graded from stored evidence — no article read"}.get(
             r.mode if r else "", "run not recorded")
         return how + (" · includes an analyst correction"

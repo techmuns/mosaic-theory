@@ -114,7 +114,7 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
 
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
-MANUAL_MODES = ("ingest", "article", "reassess", "enrich")
+MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse")
 
 
 def _no_discovery(mode: str) -> str:
@@ -122,6 +122,8 @@ def _no_discovery(mode: str) -> str:
             "model call)" if mode == "reassess" else
             "none read — an enrichment pass over stored theses (the listed companies each one's "
             "steps imply; one model call per thesis, no article read)" if mode == "enrich" else
+            "none discovered — articles already held, analysed again under the current taxonomy "
+            "(re-analysis; their earlier theses retired)" if mode == "reanalyse" else
             "single article (manual URL) — no source discovery")
 #: entries listed per intake list before "showing X of Y"
 INTAKE_SHOW = 12

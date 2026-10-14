@@ -12,6 +12,8 @@
     python -m vinci.theme_intelligence documents [--status HELD]
     python -m vinci.theme_intelligence enrich --as-of YYYY-MM-DD [--thesis TH-…] [--refresh] \
         [--budget USD]
+    python -m vinci.theme_intelligence reanalyse --article A-… [--article A-…] --retire TH-… \
+        [--retire TH-…] --reason "…" --as-of YYYY-MM-DD [--budget USD]
     python -m vinci.theme_intelligence state pull|push|status --remote <git remote> \
         [--branch theme-intelligence-state]
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
@@ -273,6 +275,34 @@ def cmd_enrich(a: argparse.Namespace) -> int:
           f"{run.counts.get('theses_enriched', 0)} thesis(es) enriched")
     for tid, what in done:
         print(f"  {tid}: {what}")
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · outputs: "
+          f"{out['dir']}")
+    return _EXIT[run.status]
+
+
+def cmd_reanalyse(a: argparse.Namespace) -> int:
+    """Re-analyse articles already held under the current taxonomy, retiring the theses an
+    earlier one merged (Pipeline.run_reanalyse) — paid like an upload."""
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=_client(required=True), review=not a.no_review)
+    try:
+        run, results = pipe.run_reanalyse(article_ids=a.article, retire=a.retire or (),
+                                          reason=a.reason, as_of=_iso(a.as_of), budget=a.budget)
+    except ValueError as exc:
+        print(f"refused: {exc}")
+        return 1
+    print(f"run {run.run_id}: reanalyse {run.status.value} — "
+          f"{run.counts.get('theses_retired', 0)} thesis(es) retired, {len(results)} article(s) "
+          f"analysed again")
+    for r in results:
+        print(f"  {r.article_id}: {r.status}")
+        for o in r.outcomes:
+            print(f"    {o.thesis_id} v{o.new_version} {o.action.value:12} "
+                  f"{'created' if o.created else o.contribution.value} — {o.title[:70]}")
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
     print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · outputs: "
           f"{out['dir']}")
@@ -730,6 +760,21 @@ def main(argv: list[str] | None = None) -> int:
     en.add_argument("--budget", type=float, help="the run's spending limit in USD")
     en.add_argument("--out", help="where the run's outputs are written")
     en.set_defaults(fn=cmd_enrich)
+
+    rn = sub.add_parser("reanalyse", help="analyse articles already held again under the "
+                                          "current taxonomy, retiring the theses an earlier one "
+                                          "merged (paid like an upload)")
+    rn.add_argument("--article", action="append", required=True,
+                    help="an article id to analyse again (repeatable)")
+    rn.add_argument("--retire", action="append",
+                    help="a thesis id to retire (repeatable) — it must hold evidence from the "
+                         "listed articles only")
+    rn.add_argument("--reason", required=True, help="why, in words (recorded on each retirement)")
+    rn.add_argument("--as-of", required=True, help="YYYY-MM-DD the analysis is as of")
+    rn.add_argument("--budget", type=float, help="the run's spending limit in USD")
+    rn.add_argument("--no-review", action="store_true")
+    rn.add_argument("--out", help="where the run's outputs are written")
+    rn.set_defaults(fn=cmd_reanalyse)
 
     qa = sub.add_parser("qa", help="re-check a run's stored records")
     qa.add_argument("--run", default="latest")
