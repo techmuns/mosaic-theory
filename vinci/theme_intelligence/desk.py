@@ -120,7 +120,11 @@ AREA_NAME: dict[str, str] = {
     "ai_models_platforms": "AI models & platforms", "semiconductors_non_ai": "Non-AI semis",
     "consumer_electronics": "Consumer electronics",
     "electronic_components": "Electronic components", "energy": "Energy",
-    "financials": "Financials", "healthcare": "Healthcare", "industrials": "Industrials",
+    "financials": "Financials", "healthcare": "Healthcare",
+    "healthcare.pharma_biotech": "Pharma & biotech",
+    "healthcare.life_science_tools": "Life-science tools",
+    "healthcare.medtech_diagnostics": "Medtech & diagnostics",
+    "healthcare.services_payers": "Health services & payers", "industrials": "Industrials",
     "consumer": "Consumer", "materials": "Materials", "real_estate": "Real estate",
     "telecom_media": "Telecom & media", "utilities": "Utilities", "other": "Unclassified"}
 

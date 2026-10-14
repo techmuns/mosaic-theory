@@ -97,6 +97,27 @@ label = "Banks, insurers, asset managers, exchanges"
 id = "healthcare"
 label = "Healthcare, pharma, medtech"
 
+# Healthcare's children (operator, 2026-10-14). With healthcare as ONE node, every article arguing
+# rising US healthcare demand shared one key: the pilot's Alzheimer drug-market thesis absorbed a
+# direct-to-consumer cash-pay piece and a conference piece on GLP-1 access. Added, never renamed:
+# the four theses already keyed at `healthcare` keep their keys.
+
+[[node]]
+id = "healthcare.pharma_biotech"
+label = "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing"
+
+[[node]]
+id = "healthcare.life_science_tools"
+label = "Life-science tools and R&D services: CROs, CDMOs, lab instruments, research data and AI drug-discovery platforms"
+
+[[node]]
+id = "healthcare.medtech_diagnostics"
+label = "Medical devices, equipment and diagnostics (tests, imaging, monitoring)"
+
+[[node]]
+id = "healthcare.services_payers"
+label = "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)"
+
 [[node]]
 id = "industrials"
 label = "Industrials, defense, transport, capital goods"
