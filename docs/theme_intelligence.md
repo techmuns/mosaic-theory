@@ -608,12 +608,14 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   when it changed this week; the others are one click away. Areas use short names; the taxonomy
   keys are unchanged.
 - **Articles** — one page per week (older / newer, and every week in one fold), each article's
-  state, what it produced, its open completeness items and its follow-up.
+  state, what it produced and its follow-up; its open completeness items sit in one fold under it,
+  at the table's full width ("3 items to check · 60 of 62 figures captured").
 - **Review** — every unresolved finding on every active thesis, whatever week raised it, grouped
   under its thesis, in order: decision-affecting first, then Research Now, then the oldest. Each
   links to its exact card line; a line's scope note is in the audit view, as on the reading page.
-  Resolved and historical findings stay below. The page is read-only; a finding closes only through
-  the record (an analyst correction or a re-read).
+  Resolved and historical findings stay below, each saying what resolved it; the open completeness
+  items below them are grouped under their article. The page is read-only; a finding closes only
+  through the record (an analyst correction or a re-read).
 - **Uploads** — everything to supply or clear, never dismissed by age, each with its publisher,
   dates and the command to run (folded on its row; the source id is in the command and the audit
   view). A source's request lists its articles by title, linked, and says what is already held of
@@ -629,9 +631,13 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
 - **The reading page** (`theses/<id>.html`) — the thesis; why this action beside what to
   investigate next; the strongest figures; how it reaches fundamentals beside what could prove it
   wrong; what changed beside who is exposed. Open findings, related theses (theses sharing a source
-  are flagged as the same source, not independent confirmation), evidence, history and sources
-  follow; the longer lists (conditions met, more risks, signals to watch) are one fold away. **Full
-  record** opens the nine-section card, or any one section.
+  are flagged as the same source, not independent confirmation; one entry per thesis); the longer
+  lists (conditions met, more risks, signals to watch) are one fold away. Four tabs close the page.
+  **Evidence** lists what goes against the thesis first, then the supporting figures by article,
+  then context; each item is one line (figure, what it measures, period, source) that opens to the
+  source's words. **History** is one line per version. **Sources** says how many cited items each
+  article gave and how many go against. **Full record** opens the nine-section card, or any one
+  section.
 - **Timing** — the near-term condition is stated once, met or not, from the stored factor, with
   the dated claims it reads and where each date comes from. The source's horizon label is printed
   as a description, not a test. If those claims, re-dated today, give another value, the page shows
