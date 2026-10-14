@@ -618,6 +618,12 @@ _CATEGORY_HELP = {
 AsOf = dict[str, tuple[Thesis, ThesisVersion]]
 
 
+#: the change events that move a thesis OFF the active list: the archive pass's, and a
+#: re-analysis RETIRING the thesis an earlier taxonomy merged (Pipeline.run_reanalyse) — never
+#: reactivated, its own `retired` field says why
+ARCHIVING = ("ARCHIVED", "RETIRED")
+
+
 def theses_as_of_run(store: Store, run: WeeklyRun) -> AsOf:
     """Every thesis AS THAT RUN LEFT IT: the version its end-of-run snapshot recorded and the
     status its events had set by then. Re-rendering an old run therefore reproduces what it
@@ -637,7 +643,7 @@ def theses_as_of_run(store: Store, run: WeeklyRun) -> AsOf:
         for ev in sorted(store.events(thesis_id=t.thesis_id), key=lambda x: x.created_at):
             if ev.created_at > end:
                 break
-            if ev.event_type == "ARCHIVED":
+            if ev.event_type in ARCHIVING:
                 status = ThesisStatus.ARCHIVED
             elif ev.event_type == "REACTIVATED":
                 status = ThesisStatus.ACTIVE
@@ -914,7 +920,7 @@ def _resolved_by_relabel(store: Store, thesis_id: str, v: ThesisVersion, flagged
 
 
 def _latest_status_event(events: list[ChangeEvent]) -> ChangeEvent | None:
-    st = [x for x in events if x.event_type in ("ARCHIVED", "REACTIVATED", "REVIEW_NEEDED")]
+    st = [x for x in events if x.event_type in (*ARCHIVING, "REACTIVATED", "REVIEW_NEEDED")]
     return max(st, key=lambda x: x.created_at) if st else None
 
 
@@ -1064,7 +1070,7 @@ def _sources_line(store: Store, tid: str, rids: set[str]) -> list[str]:
 def _category(events: list[ChangeEvent], prev_action: ResearchAction | None,
               now_action: ResearchAction) -> WeeklyCategory | None:
     types = {x.event_type for x in events}
-    if "ARCHIVED" in types:
+    if types & set(ARCHIVING):
         return WeeklyCategory.ARCHIVED
     if "CREATED" in types:
         return WeeklyCategory.NEW
@@ -1105,7 +1111,9 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
     if any(i.code == "ANALYST_CORRECTION" and i.ref_id.startswith(t.thesis_id + ":")
            for r in rids for i in store.issues(run_id=r)):
         events.append("Analyst correction")
-    if "ARCHIVED" in types:
+    if "RETIRED" in types:
+        events.append("Retired — re-analysed")
+    elif "ARCHIVED" in types:
         events.append("Archived")
     if not events and types & {"UPDATED", "UPGRADED", "REACTIVATED"}:
         events.append("Updated")
@@ -1200,7 +1208,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                 if full not in audit:
                     audit.append(full)
         for x in evs:
-            if x.event_type in ("ARCHIVED", "REACTIVATED", "REVIEW_NEEDED"):
+            if x.event_type in (*ARCHIVING, "REACTIVATED", "REVIEW_NEEDED"):
                 changed.append(f"{x.event_type.replace('_', ' ').capitalize()}: {x.detail}")
         av = cur.content.s05_affected
         flags = sorted({x.event_type for x in evs} - {"CREATED", "UPDATED"})

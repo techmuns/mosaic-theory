@@ -82,6 +82,18 @@ def test_reanalysis_splits_a_merged_thesis_and_retires_it_for_good(tmp_path: Pat
     assert t0 is not None and t0.status is ThesisStatus.ARCHIVED and t0.retired == run.run_id
     assert t0.current_version == 2 and len(pipe.store.thesis_versions(old)) == 2
     assert any(e.event_type == "RETIRED" for e in pipe.store.events(thesis_id=old))
+    # every surface reads it as archived, as of this run — the first real run left the desk
+    # listing the retired thesis active, at Research Now (the readers knew only ARCHIVED)
+    from bs4 import BeautifulSoup
+
+    from vinci.theme_intelligence.report import theses_as_of_run, write_run_outputs
+
+    assert theses_as_of_run(pipe.store, run)[old][0].status is ThesisStatus.ARCHIVED
+    out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
+    page = BeautifulSoup((out / "theses" / f"{old}.html").read_text(), "html.parser")
+    assert "retired — its articles were analysed again" in page.select_one("header").get_text(" ")
+    themes = BeautifulSoup((out / "themes.html").read_text(), "html.parser").get_text(" ")
+    assert "3 active · 1 archived" in themes
     live = {t.key_segment or t.key_node: t for t in pipe.store.theses() if not t.retired}
     assert set(live) == {"neurology", "direct_to_consumer", "healthcare"}
 
