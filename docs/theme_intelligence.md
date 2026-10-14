@@ -690,7 +690,9 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   investigate next; **who is exposed** beside what could prove it wrong; the strongest figures
   (those the thesis statement cites first); how it reaches fundamentals beside what changed.
   **Who is exposed** groups companies and sectors as *could benefit*, *could be hurt* and *named,
-  direction not stated*, each company with its ticker or why it has none. The publisher, data
+  direction not stated*, each company with its ticker or why it has none. A sector the source
+  names twice in near words is listed once, the entry with a direction kept; two that say
+  opposite ways both stay (display only — the card's JSON keeps every entry). The publisher, data
   sources and context are counted apart, never listed as exposures, and a company the source does
   not name is never added. Open findings, related theses (theses sharing a source are flagged as
   the same source, not independent confirmation; one entry per thesis; a link that only says "same
