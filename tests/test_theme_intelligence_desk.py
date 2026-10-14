@@ -482,6 +482,9 @@ def test_a_flagged_lines_scope_note_is_the_audit_views_on_review_as_on_the_readi
 
 OPEN_MODELS = "https://newsletter.semianalysis.com/p/are-open-models-catching-up"
 MONEY = "https://www.citigroup.com/global/insights/money-the-evolution-to-digital"
+LATAM = "https://www.citigroup.com/global/insights/latam-poised-for-take-off"
+MS_PDF = (Path(__file__).parent / "fixtures" / "theme_intelligence" / "synthetic_documents"
+          / "ms_report_synthetic.pdf")
 GS_PAGE = "https://www.goldmansachs.com/insights/goldman-sachs-research/"
 
 
@@ -520,7 +523,8 @@ def _desk_with_health(tmp_path: Path) -> tuple[Pipeline, Path]:
             "partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a "
             "teaser / excerpt)"))),
         manual_action=ManualAction(kind="UPLOAD_REQUIRED", issue="(test)", action="(test)",
-                                   affected=(f"{MONEY} — Money: The Evolution to Digital",))))
+                                   affected=(f"{MONEY} — Money: The Evolution to Digital",
+                                             f"{LATAM} — LatAm Poised for Take-Off"))))
     pipe.store.add_health_check(SourceHealthCheck(
         check_id="SH-test-gs", source_id="gs_research", publisher="Goldman Sachs", checked_at=at,
         trigger="manual", status=HealthStatus.BLOCKED, reason="(test) 403", next_action="up",
@@ -671,3 +675,27 @@ def test_a_preview_only_channels_paid_posts_are_never_asked_for(tmp_path: Path) 
     assert "Preview only — by decision" in rows["sa-paid-post"].get_text(" ")
     assert not rows["sa-paid-post"].select("a[href='uploads.html']")
     assert rows["jpm-teaser"].select("a[href='uploads.html']")
+
+
+
+def test_a_sources_request_leaves_uploads_once_every_article_it_lists_is_supplied(
+        tmp_path: Path) -> None:
+    """Asked 2026-10-14: "why is New research from Citi still pending if the article PDF is
+    already supplied?" A channel's request (from its health check) lists the articles it found;
+    once EVERY one is supplied, held or read, the request has nothing left to ask and leaves
+    Uploads — the held copy stays under Held documents. NEGATIVE pin: while one listed article is
+    still missing, the request stays (the test above, LatAm not supplied)."""
+    from vinci.theme_intelligence.documents import Declared
+    from vinci.theme_intelligence.ingest import ingest_file
+
+    pipe, _out = _desk_with_health(tmp_path)  # Money held; LatAm not supplied
+    pipe.start_run("ingest", as_of=NOW)
+    res = ingest_file(pipe, MS_PDF, Declared(source_id="citi_must_c", url=LATAM), as_of=NOW)
+    assert res.status == "HELD", res.note
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    page = _soup(_render(pipe, run.run_id, tmp_path / "out2") / "uploads.html")
+    text = page.get_text(" ")
+    assert "New research from Citi" not in text
+    held = [li for li in page.select("li.ui") if "Release command" in li.get_text(" ")]
+    assert len(held) == 2  # both supplied copies still wait for their licence decision
+    assert "New research from Goldman Sachs" in text  # a manual-first channel's standing request

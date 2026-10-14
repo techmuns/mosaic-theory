@@ -13,6 +13,7 @@ They exist because the scenarios they test involve documents this repository mus
 | `semianalysis_preview_synthetic.txt` | the free preview paragraphs of a paid post (what the feed delivers, recorded PARTIAL) | Case A — preview, then full document |
 | `semianalysis_full_synthetic.pdf` | the full post, supplied later by an authorised subscriber | Case A — the upgrade; byline authors |
 | `semianalysis_preview_saved_synthetic.pdf` | a paid post's page saved as PDF without a paid sign-in: the preview, then the subscriber notice | a supplied preview is recorded PARTIAL, never FULL |
+| `web_page_dated_in_a_box_synthetic.pdf` | a research web page saved as PDF whose headline and date sit in layout boxes the reader detects as a table | the date is read from the page, never left unknown |
 | `ms_report_synthetic.pdf` | a two-page report from a channel that refuses automated access | Case B (no URL), Case C/D, tables, footnotes, page refs |
 | `ms_report_synthetic.html` | the same report saved as HTML | Case C — one report in two formats is one article |
 | `scanned_page_synthetic.pdf` | a report with a page that has no text layer | the scanned-page flag; PARTIAL |

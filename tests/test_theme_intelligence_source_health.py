@@ -255,6 +255,27 @@ def test_a_preview_only_channel_still_asks_for_a_page_that_is_partial_for_anothe
     assert h.manual_action is not None and h.manual_action.kind == "UPLOAD_REQUIRED"
 
 
+@pytest.mark.parametrize("policy", ["fetch", "request"])
+def test_a_teaser_that_links_its_full_report_is_read_through_the_link_where_the_channel_fetches(
+        tmp_path: Path, store: Store, policy: str) -> None:
+    """Observed 2026-10-14 (Citi, "Money: The Evolution to Digital"): a 96-word page ending "Read
+    the full article here.", its full PDF one link away. Under "fetch" the scan reads that PDF, so
+    the check asks for nothing; under "request" a teaser still asks for an upload (NEGATIVE)."""
+    s = src(linked_reports=policy)
+    web = healthy_web(s)
+    web.pages["https://pub-a.test/articles/grid-queues"] = (200, article(
+        "Grid queues lengthen", paras=1).replace(
+        "</article>", '<p>Read the full article <a href="https://pub-a.test/r.pdf">here.</a></p>'
+                      "</article>"))
+    h = check(store, fetcher(tmp_path, web), [s]).checks[0]
+    if policy == "fetch":
+        assert {t.name: t.result for t in h.tests}["completeness"] == "PASS"
+        assert h.manual_action is None
+    else:
+        assert {t.name: t.result for t in h.tests}["completeness"] == "WARN"
+        assert h.manual_action is not None and h.manual_action.kind == "UPLOAD_REQUIRED"
+
+
 @pytest.mark.parametrize(("policy", "status"), [("fetch", HealthStatus.HEALTHY),
                                                  ("request", HealthStatus.DEGRADED)])
 def test_a_page_linking_its_report_degrades_only_where_the_report_is_not_read(

@@ -263,8 +263,9 @@ def _extract(src: SourceConfig, f: PoliteFetcher, o: _Obs,
                      blocks=len(doc.body_blocks), retrieval=doc.retrieval_state,
                      notes=tuple(doc.notes))
         sm.paywall = any("paywall" in n for n in doc.notes)
-        sm.linked_report = bool(doc.linked_reports) and not sm.paywall and not any(
-            "short body" in n for n in doc.notes)
+        # a page that links its fuller report — however short (Citi's teasers say "Read the full
+        # article here."): where the channel fetches linked reports, the scan reads that report
+        sm.linked_report = bool(doc.linked_reports) and not sm.paywall
         if doc.retrieval_state is RetrievalState.BLOCKED:
             sm.parser_fail = (f"{c.url} answered HTTP 200 ({sm.kb} KB) but the parser recovered "
                               f"{sm.words} words — its structure is not read")

@@ -424,7 +424,9 @@ def _report_links(container: Tag, base: str) -> tuple[tuple[str, str], ...]:
             continue
         text = _clean(a.get_text(" ", strip=True))
         hit = bool(_REPORT_ANCHOR.match(text))
-        if not hit and text.lower() in ("here", "click here"):
+        # "Read the full article here." — the anchor's text carries the sentence's full stop
+        # (Citi, 2026-10-14: missed, so the page read as a teaser and its PDF was asked for)
+        if not hit and text.lower().rstrip(".:!") in ("here", "click here"):
             before = ""
             for prev in a.find_all_previous(string=True, limit=4):
                 before = f"{prev} {before}"

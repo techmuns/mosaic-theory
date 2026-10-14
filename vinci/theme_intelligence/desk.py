@@ -968,6 +968,10 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                           or ("already read in full" if state is RetrievalState.FULL else
                               "a preview is held — see Full report needed"
                               if state is RetrievalState.PARTIAL else "")))
+        if not manual_first and links and not rest and all(note for _u, _t, note in links):
+            # every article the check listed is already supplied, held or read: nothing is left
+            # to ask until the next check finds more (a held copy stays under Held documents)
+            continue
         out.append(UploadItem(
             kind="channel", title=f"New research from {src.publisher}", publisher=src.publisher,
             source_id=sid, published=None, first_seen=None,

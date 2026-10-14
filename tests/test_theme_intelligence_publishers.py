@@ -149,7 +149,10 @@ def test_a_real_sidebar_holding_a_minority_of_the_text_is_still_dropped() -> Non
      (("here", "https://portal.example.test/pub/1"),)),  # Nomura's client-portal link
     ('<a href="https://ir.example.test/r">Download Here</a>',
      (("Download Here", "https://ir.example.test/r"),)),  # Citi's report link
-], ids=["print-copy-pdf", "jpm-form-crs", "nomura-click-here", "citi-download-here"])
+    ('<p>Read the full article <a href="https://ir.example.test/a.pdf">here.</a></p>',
+     (("here.", "https://ir.example.test/a.pdf"),)),  # Citi, 2026-10-14: the full stop
+], ids=["print-copy-pdf", "jpm-form-crs", "nomura-click-here", "citi-download-here",
+        "citi-read-the-full-article-here"])
 def test_which_links_are_a_fuller_report(html_link: str, expected: tuple[Any, ...]) -> None:
     """A link is the fuller report only when the page SAYS so — never because a PDF exists
     (the bare-PDF rule marked every J.P. Morgan page partial in the 2026-10-11 corpus check)."""

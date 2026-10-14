@@ -72,6 +72,17 @@ def html_semianalysis_saved_preview() -> str:
             f"<p>Subscribe</p><p>Already a paid subscriber? Sign in</p></body></html>")
 
 
+def html_web_page_dated_in_a_box() -> str:
+    """A research WEB PAGE saved as PDF whose site lays the headline and date out in boxes the PDF
+    reader detects as a table (as morganstanley.com's article pages print)."""
+    paras = "".join(f"<p>{p}</p>" for p in FULL_MORE[:4])
+    box = ("<table style='width:100%;border:1px solid #333'><tr><td>RESEARCH</td>"
+           "<td>Synthetic Memory Note: A Dated Web Page</td></tr><tr><td>September 14, 2026</td>"
+           "<td>A one-line standfirst for the invented page.</td></tr></table>")
+    return (f"<html><head><title>Synthetic Memory Note: A Dated Web Page | Synthetic Bank"
+            f"</title>{CSS}</head><body>{BANNER}{box}{paras}</body></html>")
+
+
 def html_ms_report() -> str:
     rows = "".join(f"<tr><td>{q}</td><td>{a}</td><td>{b}</td></tr>" for q, a, b in (
         ("1Q26", "$41.2bn", "38%"), ("2Q26", "$44.9bn", "39%"), ("3Q26", "$48.3bn", "41%"),
@@ -122,6 +133,7 @@ def html_undated() -> str:
 (OUT / "ms_report_synthetic.html").write_text(html_ms_report())
 for name, html in (("semianalysis_full_synthetic.pdf", html_semianalysis_full()),
                    ("semianalysis_preview_saved_synthetic.pdf", html_semianalysis_saved_preview()),
+                   ("web_page_dated_in_a_box_synthetic.pdf", html_web_page_dated_in_a_box()),
                    ("ms_report_synthetic.pdf", html_ms_report()),
                    ("scanned_page_synthetic.pdf", html_scanned()),
                    ("undated_synthetic.pdf", html_undated())):

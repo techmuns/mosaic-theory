@@ -117,6 +117,13 @@ def _block(blocks: list[Block], kind: str, text: str, page: int | None,
                         order=len(blocks) + 1, page=page))
 
 
+def _cells_text(table: list[list[str | None]]) -> str:
+    """A table's text, row by row, for the date search: a saved web page's layout boxes are read
+    as tables, and its headline and date can sit inside one (2026-10-13/14: all six Morgan
+    Stanley pages supplied printed their date there, and none was read)."""
+    return " | ".join(str(c) for row in table for c in row if c)
+
+
 def _date_from(texts: list[str]) -> date | None:
     for t in texts:
         d = date_in_text(t)
@@ -360,7 +367,10 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 top = float(ln.get("top", 0))
                 while pending and pending[0][0] <= top:  # a table above this line: in order
                     _flush(blocks, para, n, section)
-                    read.tables += _table_block(blocks, pending.pop(0)[1], n, section)
+                    tb = pending.pop(0)[1]
+                    read.tables += _table_block(blocks, tb, n, section)
+                    if n <= 2:
+                        page1_texts.append(_cells_text(tb))
                     heading_bottom = None
                 text = str(ln.get("text", "")).strip()
                 if not text:
@@ -408,6 +418,8 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
             _flush(blocks, para, n, section)
             for _top, t in pending:
                 read.tables += _table_block(blocks, t, n, section)
+                if n <= 2:
+                    page1_texts.append(_cells_text(t))
         if dropped:
             read.issues.append(f"{dropped} running header / footer / page-number line(s) "
                                f"left out")

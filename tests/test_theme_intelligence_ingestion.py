@@ -51,6 +51,7 @@ SYN = FIXTURES / "synthetic_documents"
 SA_FULL = SYN / "semianalysis_full_synthetic.pdf"
 SA_PREVIEW = SYN / "semianalysis_preview_synthetic.txt"
 SA_SAVED_PREVIEW = SYN / "semianalysis_preview_saved_synthetic.pdf"
+DATED_BOX = SYN / "web_page_dated_in_a_box_synthetic.pdf"
 MS_PDF = SYN / "ms_report_synthetic.pdf"
 MS_HTML = SYN / "ms_report_synthetic.html"
 SCANNED = SYN / "scanned_page_synthetic.pdf"
@@ -231,6 +232,19 @@ def test_a_saved_preview_of_a_paywalled_page_is_read_as_a_preview_never_in_full(
 
     asked = [u for u in upload_items(_Registry(pipe.store), {}, []) if u.kind == "full_report"]
     assert [u.url for u in asked] == [PREVIEW_URL]
+
+
+def test_a_date_printed_inside_a_layout_box_is_read_from_the_document() -> None:
+    """2026-10-13/14: every Morgan Stanley article supplied (six, its article pages saved as PDF)
+    prints its date inside layout boxes the PDF reader takes for a table, and none was read — the
+    date had to be stated by hand, labelled operator-stated. A date the page prints is the
+    document's own, in a table cell or a line. NEGATIVE pin: a document that prints no date stays
+    undated (a file date is never used)."""
+    r = read_document(DATED_BOX, Declared(source_id="ms_research"))
+    assert r.tables == 1  # the box is read as a table, its cells kept
+    assert r.doc.published_at is not None and r.doc.published_at.date() == date(2026, 9, 14)
+    assert r.doc.published_source == "the document text (page 1-2)"
+    assert read_document(UNDATED, Declared(source_id="ms_research")).doc.published_at is None
 
 
 def test_the_publication_date_comes_from_the_document_never_the_file(tmp_path: Path) -> None:
