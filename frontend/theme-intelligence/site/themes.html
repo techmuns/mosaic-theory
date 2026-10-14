@@ -1,0 +1,319 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name="robots" content="noindex, nofollow"><title>Themes · Research desk</title><style>
+:root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
+--soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
+--watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
+--warn-bg:#fff3ea;--ok:#1f6f43;--ok-bg:#e6f2eb;--bad:#9b1c1c;--bad-bg:#fbe9e7;--info:#0f5f6e;
+--info-bg:#e3f1f3;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;--ext:#1d4f91;
+--unk:#676d78;--block:#9b1c1c}
+@media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
+--ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
+--accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--ok-bg:#132621;
+--bad:#ffb4ab;--bad-bg:#3a1916;--info:#8fd6e0;--info-bg:#10272b;--obs:#7fd4a4;--fc:#8fd6e0;
+--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
+BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.topnav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.topnav .in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+gap:20px;min-height:50px}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink)}.brand small{font-weight:500;
+color:var(--muted);margin-left:6px}
+.links{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;flex:1;min-width:0;
+scrollbar-width:none}.links::-webkit-scrollbar{display:none}
+.links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
+.links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.links a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.subnav{max-width:1120px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.subnav a{margin:0 4px}
+.auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
+border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+#audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
+.wrap.narrow{max-width:940px}
+.pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
+border-radius:999px;white-space:nowrap;vertical-align:1px}
+.pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
+color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
+.pill.kind{background:var(--accent-bg);color:var(--accent)}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
+#audit:checked~.wrap .nonaud{display:none}
+@media (max-width:720px){.topnav .in{gap:0 12px;flex-wrap:wrap;padding-top:8px}
+.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}.wrap{padding:18px 12px 48px}}
+@media print{.topnav,.subnav{display:none}body{background:#fff}.aud{display:revert!important}
+.nonaud{display:none!important}}
+
+h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
+font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+font-weight:600}
+.hero{margin-bottom:20px}.lede{font-size:16px;color:var(--ink2);margin:0 0 14px;max-width:820px}
+.sum{font-size:15px;color:var(--ink2);margin:0 0 10px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:820px}
+.muted{color:var(--muted)}.nowrap{white-space:nowrap}.small{font-size:12.5px;color:var(--muted)}
+.mt{margin-top:26px}
+.strip{display:flex;gap:12px;flex-wrap:wrap}
+.strip>*{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+min-width:150px;flex:1;color:var(--ink);display:flex;flex-direction:column;gap:1px}
+.strip b{font-size:24px;line-height:1.15}
+.strip span{font-size:13px;font-weight:600;color:var(--ink2)}
+.strip small{font-size:12px;color:var(--muted)}
+.strip a.warn b{color:var(--bad)}.strip a:hover{text-decoration:none;border-color:var(--accent)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;
+margin-bottom:30px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 8px;
+position:sticky;top:76px}
+.att{list-style:none;margin:0;padding:0}.att li{padding:10px 0;border-top:1px solid var(--line);
+font-size:14px;display:flex;flex-direction:column;gap:2px}.att li:first-child{border-top:0;
+padding-top:0}.att li span{font-size:12.5px;color:var(--muted)}
+.area{margin-bottom:20px}.area h3{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--muted);margin:0 0 8px}
+.trow{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:12px 16px;margin-bottom:8px;color:var(--ink)}
+.trow:hover{border-color:var(--accent);text-decoration:none}
+.ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px}
+.ttitle{font-weight:650;font-size:16px;line-height:1.35;margin-bottom:2px}
+.tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gapi{color:var(--ink2)}
+.ev{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:20px;
+padding:1px 8px;color:var(--ink2);background:var(--panel);white-space:nowrap}
+.ev.down{color:var(--bad);border-color:var(--bad-bg)}.ev.up{color:var(--ok)}.ev.new{color:var(--info)}
+.ev.rv{color:var(--bad);background:var(--bad-bg);border-color:transparent}
+.st{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12.5px;white-space:nowrap}
+.st.ok{color:var(--ok);background:var(--ok-bg)}.st.part{color:var(--watch);background:var(--watch-bg)}
+.st.bad{color:var(--bad);background:var(--bad-bg)}.st.info{color:var(--info);background:var(--info-bg)}
+.st.mute{color:var(--muted);background:var(--soft)}
+table{border-collapse:collapse;width:100%;background:var(--panel)}
+.hscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-width:100%}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;
+font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14.5px}
+tr:last-child td{border-bottom:0}
+section{margin-bottom:28px}
+code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
+overflow-wrap:anywhere}
+code.cmd{display:inline-block;white-space:normal}
+aside code.cmd,.howto code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
+.headsup{margin:12px 0 0;font-size:13.5px;color:var(--ink2)}
+.steps4{list-style:none;padding:0;margin:12px 0 6px;display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.steps4 li{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
+border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.filters input#q{min-width:240px;flex:1}.filters label{display:inline-flex;gap:8px;
+align-items:center;font-size:14px}
+.weeks{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px;max-width:100%}
+.wk{white-space:nowrap;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
+font-size:13px;background:var(--panel);color:var(--ink2)}
+.wk small{margin-left:6px;color:var(--muted)}.wk.on{border-color:var(--accent);color:var(--ink);
+font-weight:600}
+details summary{cursor:pointer;color:var(--accent);font-size:13.5px}
+details.more-rows>summary{margin:8px 14px 12px}
+details.agrp,details.ubk,details.quiet{background:var(--panel);border:1px solid var(--line);
+border-radius:12px;padding:10px 16px;margin-bottom:10px}
+details.agrp>summary,details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
+details.agrp .hscroll,details.ubk .hscroll{margin-top:10px}
+.act{display:inline-flex;gap:2px;vertical-align:middle}.act i{width:9px;height:14px;
+border-radius:2px;background:var(--line);display:block}.act i.on{background:var(--accent)}
+.stale{display:inline-block;font-size:12px;color:var(--bad);margin-top:3px}
+.rvlist{list-style:none;padding:0;margin:0}
+.rvi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;
+margin-bottom:10px}
+.rvlist .panel li,.panel .rvlist li{padding:10px 0;border-top:1px solid var(--line)}
+.rvhead{margin-bottom:6px}.line{font-size:15px}
+.said{font-size:13.5px;color:var(--ink2);margin:4px 0}
+.dec{font-size:13px;color:var(--bad);margin:4px 0}
+.plainlist{padding-left:18px;margin:8px 0}.plainlist li{margin-bottom:10px}
+.steps{padding-left:18px;margin:0 0 10px;font-size:14px}.steps li{margin-bottom:9px}
+.hs{display:inline-flex;gap:2px;vertical-align:middle}.hs i{width:10px;height:14px;
+border-radius:2px;display:block}
+.h-healthy{background:var(--ok)}.h-degraded{background:var(--watch)}.h-blocked{background:var(--bad)}
+.h-error{background:var(--bad)}.h-unknown{background:var(--line)}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:8px}
+.th h1{font-size:28px;max-width:920px}.th .meta{display:flex;flex-wrap:wrap;gap:8px 12px;
+align-items:center;color:var(--muted);font-size:13.5px;margin-bottom:18px}
+.flag{background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 9px;font-size:13px}
+.flagi{font-size:11.5px;color:var(--bad);margin-left:4px;white-space:nowrap}
+.thesis{font-size:19px;line-height:1.55;margin:0;border-left:3px solid var(--accent);
+padding-left:16px}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;
+white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
+margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.grid2 .panel{margin-bottom:0}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.num{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.num b{font-size:24px;line-height:1.1}.num .unit{color:var(--muted);font-size:13px;margin-left:5px}
+.num .lbl{display:block;font-size:13.5px;color:var(--ink2);margin-top:6px;line-height:1.35}
+.num small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.chain{list-style:none;padding:0;margin:0;counter-reset:s}
+.chain li{position:relative;padding:0 0 14px 34px;font-size:14.5px}
+.chain li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;width:22px;
+height:22px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:12px;
+font-weight:700;text-align:center;line-height:22px}
+.sn{display:block;font-weight:650;font-size:13px}
+.gates{list-style:none;padding:0;margin:0}.gates li{display:flex;gap:10px;padding:7px 0;
+border-top:1px solid var(--line)}.gates li:first-child{border-top:0}
+.gates .ic{width:20px;flex:none;font-weight:700}.gates .ok .ic{color:var(--ok)}
+.gates .unmet .ic{color:var(--bad)}.gates b{display:block;font-size:14px;font-weight:600}
+.gates span:not(.ic){font-size:13px;color:var(--muted)}
+details.met{margin-top:8px}
+.timing{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
+.timing ul{padding-left:18px;margin:4px 0}
+.conflict{background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:8px 12px;
+font-size:13.5px;margin:6px 0}
+.risk,.next ul{padding-left:18px;margin:0;font-size:14.5px}.risk li{margin-bottom:6px}
+.next p{font-size:15.5px;margin:0 0 6px}
+.who{list-style:none;padding:0;margin:0 0 10px;font-size:14.5px}.who li{padding:5px 0;
+border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
+.hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
+.hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
+.tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+padding:0 6px;margin-left:4px;white-space:nowrap}
+.tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 -20px 16px;padding:0 12px;
+overflow-x:auto}
+.tabbar button{border:0;background:none;padding:14px 10px;font:inherit;font-size:14px;
+color:var(--ink2);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tabbar button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+details.evg{border-top:1px solid var(--line);padding:8px 0}details.evg:first-child{border-top:0}
+details.evg>summary{color:var(--ink);font-size:14.5px}details.evg .hscroll{margin-top:8px}
+.q{color:var(--muted);font-size:13px;font-style:italic;margin-top:3px}
+.timeline{list-style:none;padding:0;margin:0}.timeline li{display:flex;gap:12px;align-items:center;
+padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap;font-size:14px}
+.timeline li:first-child{border-top:0}.hv{font-weight:650;min-width:78px;white-space:nowrap}
+.btn{display:inline-block;background:var(--accent);color:var(--panel);border-radius:8px;
+padding:8px 14px;margin:0 8px 8px 0}
+.btn2{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+.btn:hover,.btn2:hover{text-decoration:none}
+.nine{columns:2;font-size:14px}
+tr.xtra{display:none}.morebox:checked+.hscroll tr.xtra{display:table-row}
+.morelbl{display:inline-block;margin:8px 2px 12px;font-size:13.5px;color:var(--accent);
+cursor:pointer}
+.morebox:checked~.morelbl{display:none}
+.why{font-size:13px;color:var(--ink2);margin-top:3px}
+details.cmdd{min-width:150px}details.cmdd code{display:block;margin-top:6px;word-break:break-all}
+details.older{display:inline-block;margin-left:4px}details.older[open]{display:block}
+td:empty{padding:0}
+.bdg{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;
+background:var(--soft);color:var(--ink2)}.bdg.bad{background:var(--bad-bg);color:var(--bad)}
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.alist{list-style:none;padding:0;margin:0;border:1px solid var(--line);border-radius:12px;
+background:var(--panel)}
+.alist li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:4px 14px;padding:10px 14px;
+border-top:1px solid var(--line);align-items:start}.alist li:first-child{border-top:0}
+.alist li>.st{justify-self:start}
+.atl{font-weight:600;line-height:1.35}.aprod{font-size:13.5px;margin-top:3px}
+.weeknav{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:14px}
+.weeknav details.older{display:inline-block}.weeknav details[open]{flex-basis:100%}
+.weeknav .weeks{margin-top:8px}
+.counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:8px 0}
+.cnt{display:inline-flex;gap:5px;align-items:center}
+.rvg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px 6px;
+margin-bottom:10px}
+.rvgh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-bottom:2px}
+.rvgh a{font-weight:650}
+.rvitems{list-style:none;padding:0;margin:0}
+.rvitems li.rvi{background:none;border:0;border-top:1px solid var(--line);border-radius:0;
+padding:10px 0 8px;margin:0}.rvitems li.rvi:first-child{border-top:0}
+.rvmeta{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:12.5px;
+color:var(--muted);margin-top:4px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.uilist{list-style:none;padding:0;margin:8px 0 0}
+.ui{display:grid;grid-template-columns:minmax(0,1fr) 230px 150px;gap:6px 18px;padding:12px 0;
+border-top:1px solid var(--line);align-items:start}.uilist>.ui:first-child{border-top:0}
+.uiside{font-size:13.5px}.uiact{font-size:13px}
+details.fold{margin-top:8px}details.fold>summary{font-size:13px}
+.pillcheck{border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+background:var(--panel)}
+.meta2{font-size:13px;color:var(--muted);margin:-10px 0 16px}
+.rel{list-style:none;padding:0;margin:0}.rel li{margin:0 0 10px}
+.evsum{font-size:14px;color:var(--ink2);margin:0 0 6px}.evsum .against{color:var(--bad)}
+.evh{font-size:14px;margin:18px 0 4px}
+.evl{list-style:none;padding:0;margin:0}.evl>li{border-top:1px solid var(--line);padding:7px 0}
+.evl>li:first-child{border-top:0}
+.evl details>summary{cursor:pointer;color:var(--ink);font-size:14px;list-style:none;
+line-height:1.45}
+.evl details>summary::-webkit-details-marker{display:none}
+.evl details>summary::before{content:"▸";color:var(--muted);font-size:10px;
+margin-right:8px}
+.evl details[open]>summary::before{content:"▾"}
+.evl .v{font-weight:650;margin-right:4px}.evl.against .v{color:var(--bad)}
+.evl blockquote{margin:6px 0 2px 18px;padding:4px 10px;border-left:3px solid var(--line);
+color:var(--muted);font-style:italic;font-size:13px}
+details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
+.srcl li{margin:0 0 10px}
+.arts tr[data-hassub] td{border-bottom:0}.arts td.subrow{padding-top:0;font-size:13px}
+.compl>li{margin:0 0 10px}.compl ul{margin:4px 0 0;padding-left:18px}
+.grid2{align-items:start}
+.testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
+.foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
+.hit{outline:2px solid var(--accent);outline-offset:3px}
+details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-size:13px}
+.ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
+.arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
+.arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:130px}
+.arts.themes th:nth-child(3){width:140px}.arts.themes th:nth-child(4),
+.arts.themes th:nth-child(5){width:84px}.arts.themes th:nth-child(6){width:170px}
+@media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
+aside{position:static;min-width:0}
+.ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
+.steps4{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}
+h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
+.filters input#q{min-width:0;width:100%;flex-basis:100%}
+.arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
+.arts tr:first-child{display:none}.arts tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+.arts td{border:0;padding:2px 0}.arts td:empty{display:none}.hscroll{border-radius:10px}
+.arts tr.xtra{display:none}.morebox:checked+.hscroll .arts tr.xtra{display:block}
+.ml{display:inline;color:var(--muted);font-size:12.5px}
+.tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
+@media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
+</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="index.html">This week</a><a href="themes.html" class="on">Themes</a><a href="articles.html">Articles</a><a href="review.html">Review</a><a href="uploads.html">Uploads</a><a href="sources.html">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><main class="wrap"><section class="hero"><h1 class="tabtitle">Themes</h1><p class="sum">19 active · 4 archived · 11 areas</p><p class="hint">Areas with a change this week are open. A thesis archives after 91 days without new evidence, or at once when Skip.</p></section><div class="filters"><input id="q" placeholder="Search theses and areas" oninput="flt()" aria-label="Search"><select id="fs" onchange="flt()" aria-label="Status"><option value="active">Active</option><option value="archived">Archived</option><option value="">All</option></select><select id="fa" onchange="flt()" aria-label="Action"><option value="">All actions</option><option value="RESEARCH NOW">Research Now</option><option value="WATCH">Watch</option><option value="SKIP">Skip</option></select><select id="far" onchange="flt()" aria-label="Area"><option value="">All areas</option><option>AI infrastructure</option><option>AI infrastructure · AI chips</option><option>AI infrastructure · Memory</option><option>AI models &amp; platforms</option><option>Consumer</option><option>Healthcare</option><option>Healthcare · Health services &amp; payers</option><option>Healthcare · Life-science tools</option><option>Healthcare · Pharma &amp; biotech</option><option>Industrials</option><option>Market-wide</option></select><select id="so" onchange="srt()" aria-label="Sort"><option value="upd">Latest evidence</option><option value="stale">Closest to archiving</option><option value="src">Most sources</option><option value="rv">Most findings</option></select><span id="cnt" class="small"></span></div><div id="tt"><details class="agrp" data-grp="AI infrastructure"><summary><b>AI infrastructure</b><span class="muted">1 active</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="AI infrastructure" data-action="SKIP" data-status="active" data-upd="739874" data-left="62" data-src="1" data-rv="3"><td><a href="theses/TH-188B31F187.html">Canada&#x27;s power and critical minerals position it for the global compute/data-center cycle</a><div><span class="small">2 related theses</span></div><span class="aud cc">TH-188B31F187</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>15 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>3</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="AI infrastructure · AI chips"><summary><b>AI infrastructure · AI chips</b><span class="muted">1 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="AI infrastructure · AI chips" data-action="WATCH" data-status="active" data-upd="739888" data-left="76" data-src="1" data-rv="2"><td><a href="theses/TH-1516B6186B.html">8-Hi HBM shift eases GPU BoM but raises per-Gb cost, pressuring accelerator makers</a><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-1516B6186B</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>29 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>2</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="AI infrastructure · Memory"><summary><b>AI infrastructure · Memory</b><span class="muted">1 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="AI infrastructure · Memory" data-action="WATCH" data-status="active" data-upd="739888" data-left="76" data-src="1" data-rv="0"><td><a href="theses/TH-7C895A0A4E.html">HBM supply tightness drives sharp 2027 price increases, benefiting memory suppliers</a><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-7C895A0A4E</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>29 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>—</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="AI models &amp; platforms"><summary><b>AI models &amp; platforms</b><span class="muted">2 active · 2 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="AI models &amp; platforms" data-action="WATCH" data-status="active" data-upd="739897" data-left="85" data-src="2" data-rv="7"><td><a href="theses/TH-38CA111885.html">Open models catch up to frontier faster each era, risking model-layer commoditization</a><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-38CA111885</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>8 Oct 2026</td><td><span class="ml">sources: </span>2</td><td><span class="ml">open findings: </span>7</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="AI models &amp; platforms" data-action="SKIP" data-status="active" data-upd="739897" data-left="85" data-src="1" data-rv="5"><td><a href="theses/TH-2651327A9B.html">China&#x27;s frontier-safety governance is decided by leadership, not experts or binding rules</a> <span class="ev new">New</span><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-2651327A9B</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>8 Oct 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>5</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Consumer"><summary><b>Consumer</b><span class="muted">1 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Consumer" data-action="WATCH" data-status="active" data-upd="739861" data-left="49" data-src="1" data-rv="5"><td><a href="theses/TH-16225B12C4.html">US energy drink demand set for structural multi-year growth from new occasions</a><span class="aud cc">TH-16225B12C4</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>2 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>5</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Healthcare"><summary><b>Healthcare</b><span class="muted">2 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Healthcare" data-action="WATCH" data-status="active" data-upd="739877" data-left="65" data-src="1" data-rv="1"><td><a href="theses/TH-F6906B89B0.html">Easing US policy uncertainty and faster approvals lift healthcare sector investment</a> <span class="ev new">New</span><div><span class="small">6 related theses</span></div><span class="aud cc">TH-F6906B89B0</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>18 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>1</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare" data-action="SKIP" data-status="active" data-upd="739877" data-left="65" data-src="1" data-rv="2"><td><a href="theses/TH-62BA09949E.html">AI adoption shortens drug development and cuts healthcare operating costs</a><div><span class="small">6 related theses</span></div><span class="aud cc">TH-62BA09949E</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>18 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>2</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare" data-action="RESEARCH NOW" data-status="archived" data-upd="739888" data-left="99999" data-src="3" data-rv="0"><td><a href="theses/TH-BF20FBC464.html">Alzheimer&#x27;s innovation opens a $70bn drug market with broader healthcare value</a><div><span class="small">archived — retired — its articles were analysed again under the current taxonomy, and the theses that created replace it</span></div><span class="aud cc">TH-BF20FBC464</span></td><td><span class="pill now">Research Now</span></td><td class="nowrap"><span class="ml">last evidence: </span>29 Sep 2026</td><td><span class="ml">sources: </span>3</td><td><span class="ml">open findings: </span>—</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare" data-action="WATCH" data-status="archived" data-upd="739877" data-left="99999" data-src="2" data-rv="0"><td><a href="theses/TH-1D5A6AD90E.html">AI &#x27;picks and shovels&#x27; enablers capture biotech productivity gains with less clinical risk</a><div><span class="small">archived — retired — its articles were analysed again under the current taxonomy, and the theses that created replace it</span></div><span class="aud cc">TH-1D5A6AD90E</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>18 Sep 2026</td><td><span class="ml">sources: </span>2</td><td><span class="ml">open findings: </span>—</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare" data-action="WATCH" data-status="archived" data-upd="739877" data-left="99999" data-src="1" data-rv="0"><td><a href="theses/TH-2E2C6735DB.html">Easing US policy uncertainty and faster approvals lift healthcare investment confidence</a> <span class="ev new">New</span><div><span class="small">archived — retired — its articles were analysed again under the current taxonomy, and the theses that created replace it</span></div><span class="aud cc">TH-2E2C6735DB</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>18 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>—</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare" data-action="SKIP" data-status="archived" data-upd="739877" data-left="99999" data-src="1" data-rv="0"><td><a href="theses/TH-7C43904AA3.html">China&#x27;s biotech innovation creates partnership upside and competitive risk for Western pharma</a><div><span class="small">archived — retired — its articles were analysed again under the current taxonomy, and the theses that created replace it</span></div><span class="aud cc">TH-7C43904AA3</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>18 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>—</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Healthcare · Health services &amp; payers"><summary><b>Healthcare · Health services &amp; payers</b><span class="muted">1 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Healthcare · Health services &amp; payers" data-action="WATCH" data-status="active" data-upd="739888" data-left="76" data-src="2" data-rv="7"><td><a href="theses/TH-DEB6560D7F.html">Robust healthcare utilization sustains demand across providers, testing and generics</a><div><span class="small">2 related theses</span></div><span class="aud cc">TH-DEB6560D7F</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>29 Sep 2026</td><td><span class="ml">sources: </span>2</td><td><span class="ml">open findings: </span>7</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Healthcare · Life-science tools"><summary><b>Healthcare · Life-science tools</b><span class="muted">1 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Healthcare · Life-science tools" data-action="WATCH" data-status="active" data-upd="739873" data-left="61" data-src="1" data-rv="3"><td><a href="theses/TH-1B06ACA0B7.html">AI picks-and-shovels enablers monetize drug-discovery productivity now</a> <span class="ev new">New</span><div><span class="small">2 related theses</span></div><span class="aud cc">TH-1B06ACA0B7</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>14 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>3</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Healthcare · Pharma &amp; biotech"><summary><b>Healthcare · Pharma &amp; biotech</b><span class="muted">4 active · 3 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Healthcare · Pharma &amp; biotech" data-action="WATCH" data-status="active" data-upd="739888" data-left="76" data-src="1" data-rv="3"><td><a href="theses/TH-A097D4722F.html">Direct-to-consumer cash-pay access unlocks a $26B biopharma demand opportunity</a> <span class="ev new">New</span><div><span class="small">2 related theses</span></div><span class="aud cc">TH-A097D4722F</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>29 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>3</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare · Pharma &amp; biotech" data-action="WATCH" data-status="active" data-upd="739873" data-left="61" data-src="1" data-rv="3"><td><a href="theses/TH-8DDD7B2868.html">Alzheimer&#x27;s innovation unlocks a $70bn drug market plus adjacent value</a> <span class="ev new">New</span><div><span class="small">2 related theses</span></div><span class="aud cc">TH-8DDD7B2868</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>14 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>3</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare · Pharma &amp; biotech" data-action="SKIP" data-status="active" data-upd="739877" data-left="65" data-src="1" data-rv="3"><td><a href="theses/TH-62BBF1F71E.html">China&#x27;s rising biotech innovation creates partnership opportunity and competitive risk</a><div><span class="small">2 related theses</span></div><span class="aud cc">TH-62BBF1F71E</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>18 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>3</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Healthcare · Pharma &amp; biotech" data-action="SKIP" data-status="active" data-upd="739873" data-left="61" data-src="1" data-rv="1"><td><a href="theses/TH-DEE87FCF51.html">In-vivo gene editing opens new organ markets above consensus by 2035</a> <span class="ev new">New</span><div><span class="small">2 related theses</span></div><span class="aud cc">TH-DEE87FCF51</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>14 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>1</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Industrials"><summary><b>Industrials</b><span class="muted">1 active · 1 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Industrials" data-action="SKIP" data-status="active" data-upd="739884" data-left="72" data-src="1" data-rv="4"><td><a href="theses/TH-A381AB426E.html">China&#x27;s $12tn Industry 5.0 capex supercycle benefits automation, robotics, semis, software suppliers</a> <span class="ev new">New</span><span class="aud cc">TH-A381AB426E</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>25 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>4</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details><details class="agrp" open data-grp="Market-wide"><summary><b>Market-wide</b><span class="muted">4 active · 3 changed this week</span></summary><div class="hscroll"><table class="arts themes"><tr><th>Thesis</th><th>Action</th><th>Last evidence</th><th>Sources</th><th>Findings</th><th>Activity</th></tr><tr data-area="Market-wide" data-action="WATCH" data-status="active" data-upd="739898" data-left="86" data-src="1" data-rv="2"><td><a href="theses/TH-FBDC863613.html">Broadening S&amp;P 500 earnings super-cycle extends beyond the mega-caps</a><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-FBDC863613</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>9 Oct 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>2</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Market-wide" data-action="WATCH" data-status="active" data-upd="739889" data-left="77" data-src="1" data-rv="4"><td><a href="theses/TH-2FFD9B58A8.html">AI boom masks rising US risk premium; an AI setback could weaken the dollar</a><div><span class="small">3 related theses</span></div><span class="aud cc">TH-2FFD9B58A8</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>30 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>4</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Market-wide" data-action="WATCH" data-status="active" data-upd="739874" data-left="62" data-src="1" data-rv="0"><td><a href="theses/TH-41B1AB7F8C.html">Canada capital-deepening drives higher productivity growth and constructive Canadian assets</a> <span class="ev new">New</span><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-41B1AB7F8C</span></td><td><span class="pill watch">Watch</span></td><td class="nowrap"><span class="ml">last evidence: </span>15 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>—</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr><tr data-area="Market-wide" data-action="SKIP" data-status="active" data-upd="739884" data-left="72" data-src="1" data-rv="1"><td><a href="theses/TH-1838CDDC15.html">Multipolar industrial reorg: regional specialization creates cross-market selection opportunity</a><div><span class="small">1 related thesis</span></div><span class="aud cc">TH-1838CDDC15</span></td><td><span class="pill skip">Skip</span></td><td class="nowrap"><span class="ml">last evidence: </span>25 Sep 2026</td><td><span class="ml">sources: </span>1</td><td><span class="ml">open findings: </span>1</td><td><span class="ml">weeks with new evidence: </span><span class="act" title="weeks with new evidence, oldest to newest"><i class="on"></i></span></td></tr></table></div></details></div><div class="foot">Generated 2026-10-14 13:59 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261014T110419Z-reanalyse, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div><div class="foot"><a href="dashboard.html">Full weekly report</a> · <a href="report_print.html">Printable report</a></div></main><script>function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
+rowsOf('input.morebox').forEach(function(b){b.checked=true})}
+function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
+s=document.getElementById('fs').value,a=document.getElementById('fa').value,
+ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
+if(q||a||ar)openAll('#tt');
+all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
+(!ar||r.dataset.area===ar)&&(!q||r.textContent.toLowerCase().indexOf(q)>=0);
+r.style.display=ok?'':'none';n+=ok?1:0});
+rowsOf('#tt details[data-grp]').forEach(function(g){var v=Array.prototype.slice.call(
+g.querySelectorAll('tr[data-area]')).some(function(r){return r.style.display!=='none'});
+g.style.display=v?'':'none';if(q||a||ar)g.open=v});
+document.getElementById('cnt').textContent='showing '+n+' of '+all.length}
+function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
+-r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:-r.dataset.rv};
+rowsOf('#tt table').forEach(function(t){var rs=Array.prototype.slice.call(t.querySelectorAll(
+'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)}).forEach(function(r){
+(r.parentNode).appendChild(r)})})}
+function fa(){var r=document.getElementById('fr').value,p=document.getElementById('fp').value,n=0,
+all=rowsOf('#at tr[data-state]');if(r||p)openAll('#at');all.forEach(function(x){var ok=
+(!r||x.dataset.state===r)&&(!p||x.dataset.pub===p);x.style.display=ok?'':'none';n+=ok?1:0});
+rowsOf('#at tr[data-sub]').forEach(function(x){var t=x.previousElementSibling;
+x.style.display=t&&t.style.display==='none'?'none':''});
+document.getElementById('cnt2').textContent='showing '+n+' of '+all.length}
+function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElementById('frn')
+.checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
+if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
+x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
+n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
+.call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
+document.getElementById('cnt3').textContent='showing '+n+' of '+all.length}
+function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
+var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
+x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
+p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
+if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
+u.get('area');if(u.get('sort')){document.getElementById('so').value=u.get('sort');srt()}flt()}
+if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+deskInit(document,new URLSearchParams(location.search));</script><script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById(decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){t.classList.remove('hit')},2500)}addEventListener('hashchange',function(){reveal(location.hash)});addEventListener('load',function(){reveal(location.hash)});document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)reveal(location.hash)});</script></body></html>
