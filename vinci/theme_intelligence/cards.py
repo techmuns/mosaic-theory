@@ -721,8 +721,9 @@ margin:0 0 10px;color:var(--ink2);cursor:pointer}
 details.sec>summary{list-style:none}details.sec>summary::-webkit-details-marker{display:none}
 details.sec>summary::before{content:"▸ ";color:var(--muted)}
 details.sec[open]>summary::before{content:"▾ "}
-.s{margin:4px 0 10px}.lab{display:inline-block;font-size:10.5px;font-weight:650;
-letter-spacing:.06em;color:var(--muted);margin-right:6px;white-space:nowrap}
+.s{margin:4px 0 10px}.lab{display:inline-block;font-size:11.5px;font-weight:500;
+letter-spacing:0;text-transform:lowercase;color:var(--muted);margin-right:6px;white-space:nowrap}
+.sys{color:var(--muted);font-size:12.5px}
 .lab::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
 margin-right:5px;background:var(--unk);vertical-align:1px}
 .lab.obs::before,.lab.fact::before{background:var(--obs)}.lab.fc::before{background:var(--fc)}
@@ -1108,6 +1109,15 @@ def ids_to_audit(escaped: str) -> str:
     return _ID_RUN.sub(lambda m: f'<span class="aud">{m.group(1)}</span>', escaped)
 
 
+_SYS_LABEL = re.compile("(" + LABEL_OPEN + "[^" + LABEL_CLOSE + "]*" + LABEL_CLOSE + ")")
+
+
+def quiet_labels(html_text: str) -> str:
+    """A card line's SYSTEM labels ⟨…⟩ set quieter than the source's words they qualify — the
+    words read first; the label is still on the line (its text unchanged)."""
+    return _SYS_LABEL.sub(r'<span class="sys">\1</span>', html_text)
+
+
 def _sent(s: CardSentence, sid: str, rc: RenderContext, *, anchor: bool = True,
           step: str = "") -> str:
     """One card line: its label, its text, its citations (audit view), and — ON the line — an
@@ -1123,7 +1133,7 @@ def _sent(s: CardSentence, sid: str, rc: RenderContext, *, anchor: bool = True,
     p = shown_label(s.provenance, sid, rc)
     cls = " flagged" if sid in rc.flagged else ""
     return (f'<div class="s{cls}"{aid}>{stp}<span class="lab {_BADGE[p]}">{e(p.value)}</span> '
-            f'{ids_to_audit(e(_clean_display(s.text)))}{_refs(s.claim_ids, rc)}'
+            f'{quiet_labels(ids_to_audit(e(_clean_display(s.text))))}{_refs(s.claim_ids, rc)}'
             f'{_warn_html(sid, rc)}{_resolved_html(sid, rc)}{_corr_html(sid, rc)}</div>')
 
 
@@ -1465,7 +1475,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
         body = (f'<span class="withheld">WITHHELD — failed source verification</span>'
                 f'<span class="aud"> {e(rc.blocked[sid])}</span>'
-                if sid in rc.blocked else ids_to_audit(e(_clean_display(it.text))))
+                if sid in rc.blocked else quiet_labels(ids_to_audit(e(_clean_display(it.text)))))
         p = shown_label(it.provenance, sid, rc)
         flagged = " flagged" if sid in rc.blocked or sid in rc.flagged else ""
         return (f'<div class="s{flagged}" id="{_anchor(sid)}">'

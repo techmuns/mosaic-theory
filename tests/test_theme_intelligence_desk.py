@@ -132,7 +132,9 @@ def test_every_long_list_says_how_much_it_holds_and_keeps_every_row(
             assert m and m.group(2) == m.group(3), lab.get_text(" ")
             box = s.find(id=lab["for"])
             assert box is not None and box.get("class") == ["morebox"]
-            rows = box.find_next_sibling("div").select("table tr")[1:]  # header row first
+            # header row first; an article's items row (data-sub) belongs to the entry above it
+            rows = [r for r in box.find_next_sibling("div").select("table tr")[1:]
+                    if not r.has_attr("data-sub")]
             assert len(rows) == int(m.group(2))
             assert sum(1 for r in rows if "xtra" in (r.get("class") or [])) == \
                 int(m.group(2)) - int(m.group(1))
@@ -729,3 +731,89 @@ def test_this_week_and_uploads_give_the_content_the_full_width(
     assert len(howto.select("ol.steps4 > li")) == 4
     first = up.select_one("main.wrap details.howto ~ details.ubk")
     assert first is not None  # the list follows the fold, at full width
+
+
+# --- the reading page's tabs, and the folds of the other screens (audit 2026-10-14) -------------
+
+def test_the_reading_pages_tabs_read_as_lists_against_first_and_name_each_thesis_once(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """Asked 2026-10-14: the Evidence / History / Sources / Full record block "looks completely
+    unreadable". Evidence is no five-column table: a summary line, then what speaks AGAINST the
+    thesis first, then the supporting items by source — one line each, the source's words one
+    click away (provenance, on demand), no placeholder dash for a statement with no number.
+    Related theses name a thesis once, with every reason; the Full record list numbers its
+    sections once ("1. Bottom line", never "1. 01 Bottom Line")."""
+    _pipe, out, _ = w12
+    pages = sorted((out / "theses").glob("TH-*.html"))
+    for p in pages:
+        s = _soup(p)
+        ev = s.select_one("[data-panel=ev]")
+        assert ev is not None and not ev.select("table"), p.name
+        for li in ev.select("ul.evl > li:not(.morewrap)"):
+            summary = li.select_one("details > summary")
+            quote = li.select_one("details > blockquote")
+            assert summary is not None and quote is not None, p.name
+            assert "“" not in summary.get_text() and quote.get_text().startswith("“")
+            v = summary.select_one(".v")
+            assert v is None or v.get_text().strip() not in ("", "—")
+        assert ev.select_one("p.evsum") is not None
+        names = [a["href"] for a in s.select("ul.rel > li > a")]
+        assert len(names) == len(set(names)), (p.name, names)  # a thesis once
+        for li in s.select("ol.nine li"):
+            assert not li.get_text().strip()[:1].isdigit(), li.get_text()
+    assert pages
+
+
+def test_evidence_against_the_thesis_is_listed_first(tmp_path: Path) -> None:
+    """A thesis with a supporting figure and a counter-claim (hypothetical): the Evidence tab says
+    how many are against, and lists them FIRST, before the supporting ones."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=NOW)
+    lines = ("HBM contract prices rose 12% in 3Q26.",
+             "Some buyers expect HBM prices to fall 5% in 2027 as capacity arrives.")
+    art = Hypo("against-first", "Test Publisher", PUB, [("paragraph", t) for t in lines])
+    x = extraction(
+        [claim("c1", "b001", lines[0].rstrip("."), "HBM contract prices up 12%",
+               metric="HBM contract price change", value=12, value_text="12%", unit="%",
+               period="3Q26"),
+         claim("c2", "b002", lines[1].rstrip("."), "HBM prices expected to fall 5% in 2027",
+               kind="forecast", epistemic="forecast", metric="expected HBM price decline",
+               value=5, value_text="5%", unit="%", period="2027")],
+        [hyp("h1", "HBM contract prices rise", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"], counter=["c2"])])
+    ingest(pipe, art.doc(), x, as_of=NOW, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    (t,) = pipe.store.theses()
+    out = _render(pipe, pipe.store.runs()[-1].run_id, tmp_path / "out")
+    ev = _soup(out / "theses" / f"{t.thesis_id}.html").select_one("[data-panel=ev]")
+    assert ev is not None
+    heads = [h.get_text(" ") for h in ev.select("h3.evh")]
+    assert heads and heads[0].startswith("Against"), heads
+    assert any(h.startswith("Supporting") for h in heads[1:]), heads
+    assert "1 against" in ev.select_one("p.evsum").get_text(" ")  # type: ignore[union-attr]
+
+
+def test_an_articles_open_items_sit_under_it_at_full_width_and_review_groups_them(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """An article's open items are one fold in a full-width row under the article — never inside
+    the narrow Follow-up column — and the row travels with its article (capped or filtered).
+    Review's completeness list names each article once, its items under it."""
+    _pipe, out, _ = w12
+    rows_seen = 0
+    for p in [out / "articles.html", *sorted(out.glob("articles-*.html"))]:
+        s = _soup(p)
+        for sub in s.select("#at tr[data-sub]"):
+            rows_seen += 1
+            prev = sub.find_previous_sibling("tr")
+            assert prev is not None and prev.has_attr("data-state") and prev.has_attr("data-hassub")
+            assert sub.select_one("td[colspan='5'] details.fold") is not None
+            assert ("xtra" in (sub.get("class") or [])) == ("xtra" in (prev.get("class") or []))
+        for tr in s.select("#at tr[data-state]"):
+            assert not tr.select("td")[-1].select("details")  # the follow-up is one action
+    assert rows_seen, "the fixture must hold an article with open items"
+    review = _soup(out / "review.html")
+    comp = review.select("ul.compl > li > a")
+    assert comp and len({a.get_text() + a["href"] for a in comp}) == len(comp)
+    for li in review.select("ul.compl > li:not(.morewrap)"):
+        assert li.select_one("ul > li") is not None  # the article's items, under it
+    assert "not accounted for — not accounted for" not in review.get_text(" ")
