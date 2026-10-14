@@ -598,8 +598,10 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
 - **This Week** — the week in a sentence and five counts (articles read, theses new or changed,
   Research Now, findings to review, upload items), then the week's thesis changes grouped by
   research area (new, upgraded, downgraded, challenged, new evidence) and what each article
-  produced, including zero-thesis, partial, held, failed and queued ones. **Needs your attention**
-  sits beside them; every active thesis by area is one fold below. Before the first weekly scan,
+  produced, including zero-thesis, partial, held, failed and queued ones, at the page's full width.
+  What the counts do not already say (failed or blocked articles, theses close to archiving,
+  sources needing attention) is one line of links under them; every active thesis by area is one
+  fold below. Before the first weekly scan,
   the week is every manual run since (a week in progress).
 - **Themes** — every thesis, active and archived, by area: search, filter by status, action and
   area, and sort by last new evidence, closeness to archiving, sources or open findings. An area opens
@@ -617,8 +619,8 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   view). A source's request lists its articles by title, linked, and says what is already held of
   each ("supplied — held until you confirm its licence"), and leaves Uploads once every article it
   lists is supplied or read; a source whose articles the scan cannot list (Morgan Stanley, Goldman
-  Sachs) points to its research page instead. The weekly steps are
-  listed beside it.
+  Sachs) points to its research pages instead. The weekly steps sit in one fold above the list,
+  which takes the full width.
 - **Sources** — one plain line per channel from its latest check's test results ("some articles
   are previews or summaries of a fuller report"), the check's own findings one fold away, the
   history strip once two or more checks are stored, the newest article (on the site or held),
