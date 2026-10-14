@@ -257,3 +257,51 @@ def test_the_identity_check_reads_what_the_company_does_never_the_mechanisms_wor
     assert [x.ticker for x in pharma.listings] == ["MRK"]
     pipes = propose("oil pipeline operator")
     assert not pipes.listings and "not the same company" in pipes.resolution_note
+
+
+def test_the_weekly_scan_ends_with_enrichment_in_its_own_run(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Operator 2026-10-14: enrichment is part of the weekly run. A scan (offline, no new article
+    this week) enriches every active thesis whose current version has no set — inside the SCAN's
+    run, its call on the scan's bill, so the week's report and desk carry it. NEGATIVE: a scan
+    with enrichment off (`scan --no-enrich`) asks nothing."""
+    from tests.test_theme_intelligence_scan import _fake_scan
+
+    for on in (True, False):
+        pipe, tid = _memory_thesis(tmp_path / str(on))
+        pipe.enrich_in_scan = on
+        model = StandIn(ANSWER)
+        pipe.client = GuardedClient(model, pipe.guard)
+        _fake_scan(monkeypatch, pipe, [])
+        run = pipe.run_scan(window_from=JPM_AS_OF, window_to=JPM_AS_OF, as_of=JPM_AS_OF,
+                            max_articles=5)
+        sets = pipe.store.enrichments(tid)
+        if on:
+            (es,) = sets
+            assert run.mode == "scan" and es.run_id == run.run_id
+            assert run.counts.get("theses_enriched") == 1
+            assert [c["purpose"] for c in pipe.store.llm_calls(run.run_id)] == ["enrich"]
+        else:
+            assert sets == [] and model.users == [] and "theses_enriched" not in run.counts
+
+
+def test_the_scan_command_enriches_unless_told_not_to(monkeypatch: pytest.MonkeyPatch,
+                                                      tmp_path: Path) -> None:
+    """The weekly wrappers call `scan`: the command turns the step on; `--no-enrich` off."""
+    from vinci.theme_intelligence import __main__ as cli
+    from vinci.theme_intelligence import pipeline as pipeline_mod
+
+    seen: list[bool] = []
+
+    class StopError(Exception):
+        pass
+
+    def recorder(*_a: Any, enrich: bool = False, **_k: Any) -> Any:
+        seen.append(enrich)
+        raise StopError
+
+    monkeypatch.setattr(pipeline_mod, "Pipeline", recorder)
+    for argv in (["scan", "--cache-only"], ["scan", "--cache-only", "--no-enrich"]):
+        with pytest.raises(StopError):
+            cli.main(["--data-dir", str(tmp_path), *argv])
+    assert seen == [True, False]

@@ -166,7 +166,7 @@ def cmd_scan(a: argparse.Namespace) -> int:
     as_of = _iso(a.as_of) if a.as_of else w_to
     client = None if a.cache_only else _client(required=True)
     pipe = Pipeline(Path(a.data_dir), sources=sources, taxonomy=taxonomy, client=client,
-                    review=not a.no_review)
+                    review=not a.no_review, enrich=not a.no_enrich)
     run = pipe.run_scan(window_from=w_from, window_to=w_to, as_of=as_of,
                         max_articles=a.max_articles, resume_run_id=a.resume, budget=a.budget)
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
@@ -617,6 +617,9 @@ def main(argv: list[str] | None = None) -> int:
     sc.add_argument("--resume", help="resume an interrupted run id")
     sc.add_argument("--cache-only", action="store_true")
     sc.add_argument("--no-review", action="store_true")
+    sc.add_argument("--no-enrich", action="store_true",
+                    help="skip the enrichment step at the end of the scan (default: every "
+                         "active thesis whose current version has no set is enriched)")
     sc.add_argument("--out")
     sc.set_defaults(fn=cmd_scan)
 

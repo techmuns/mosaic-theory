@@ -58,6 +58,8 @@ REGISTRANTS = [
      "Biological Products, (No Diagnostic Substances)"),
     ("0000065984", "ENTERGY CORP /DE/", "ETR", "NYSE", 4911, "Electric Services"),
     ("0001348952", "ENTERGY LOUISIANA, LLC", "ELC", "NYSE", 4911, "Electric Services"),
+    ("0000032604", "EMERSON ELECTRIC CO", "EMR", "NYSE", 3600,
+     "Electronic & Other Electrical Equipment (No Computer Equip)"),
 ]
 
 
@@ -170,6 +172,22 @@ def test_a_company_the_source_names_as_private_is_not_listed_by_a_partial_name(
     company = mention("Cognition", "Cognition's trial read out", "drug developer")
     assert _resolver(tmp_path).resolve(company, as_of=AS_OF).registrant == \
         "COGNITION THERAPEUTICS INC"
+
+
+def test_an_industrial_issuer_described_by_its_software_is_the_same_company(
+        tmp_path: Path) -> None:
+    """Emerson Electric — an automation-software company the SEC still files under SIC 3600
+    (electrical equipment) — was refused identity for a description naming its software
+    (operator, 2026-10-14: "Emerson is a software/automation company"). Industrial automation is
+    sold as software: the description and the issuer are compatible. NEGATIVE pin: a software
+    description is still not an airline."""
+    m = mention("Emerson Electric", "Emerson's control software orders rose",
+                "industrial automation and process-control systems and software", hint="EMR")
+    r = _resolver(tmp_path).resolve(m, as_of=AS_OF)
+    assert r.status is ResolutionStatus.LISTED_EQUITY and [x.ticker for x in r.listings] == ["EMR"]
+    airline = mention("Delta", "Delta's booking software", "travel booking software company")
+    r2 = _resolver(tmp_path).resolve(airline, as_of=AS_OF)
+    assert r2.status is ResolutionStatus.UNRESOLVED and "not the same company" in r2.note
 
 
 # --- no false negatives: the right company still resolves, point in time ----------------------

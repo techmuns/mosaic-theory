@@ -137,7 +137,7 @@ class Pipeline:
     def __init__(self, data_dir: Path, *, sources: tuple[SourceConfig, ...], taxonomy: Taxonomy,
                  client: ToolClient | None, fetcher: PoliteFetcher | None = None,
                  resolver: SecResolver | None = None, review: bool = True,
-                 store: Store | None = None) -> None:
+                 store: Store | None = None, enrich: bool = False) -> None:
         self.paths = Paths(data_dir)
         self.paths.ensure()
         self.store = store or Store(self.paths.db)
@@ -151,6 +151,9 @@ class Pipeline:
             self.fetcher.set_host_floor(s.entry_url, s.min_crawl_delay_s)
         self.resolver = resolver or SecResolver(self.paths.http_cache)
         self.review = review
+        #: a scan ends with the ENRICHMENT step over every active thesis whose current version
+        #: has no set yet (the weekly run, operator 2026-10-14; `scan --no-enrich` opts out)
+        self.enrich_in_scan = enrich
         self.run: WeeklyRun | None = None
         #: the source-health pass taken at the start of the current scan (None before one)
         self.health: HealthRun | None = None
@@ -880,59 +883,84 @@ class Pipeline:
         version has no set yet (`refresh` asks again). One paid call per thesis, through the
         spend guard; a refusal stops the pass and says so. Returns (run, [(thesis id, what
         happened)])."""
-        from vinci.theme_intelligence.enrich import enrich_thesis
-        from vinci.theme_intelligence.report import thesis_groups
-
-        run = self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of)
+        self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of)
         if budget is not None:
             self.guard.run_limit = budget
-        targets = list(thesis_ids or [t.thesis_id for t in self.store.theses()
-                                      if t.status is ThesisStatus.ACTIVE])
-        done: list[tuple[str, str]] = []
-        status = RunStatus.SUCCEEDED
         try:
-            for tid in targets:
-                t = self.store.thesis(tid)
-                v = self.store.thesis_version(tid, t.current_version) if t else None
-                if t is None or v is None:
-                    raise ValueError(f"no thesis {tid} in this registry")
-                if not refresh and any(x.thesis_version == v.version
-                                       for x in self.store.enrichments(tid)):
-                    done.append((tid, f"already proposed for version {v.version} — skipped "
-                                      f"(--refresh asks again)"))
-                    continue
-                groups = [g.name for g in thesis_groups(self.store, self.store.links(tid))]
-                self.guard.begin_document(f"enrich {tid}")
-                try:
-                    res = enrich_thesis(v.content, version=v.version, area=t.sector,
-                                        groups=groups, client=self.client,
-                                        cache_dir=self.paths.llm_cache, resolver=self.resolver,
-                                        as_of=as_of, run_id=run.run_id)
-                except BudgetExceeded as exc:
-                    done.append((tid, f"not run — budget: {exc}"))
-                    status = RunStatus.PARTIAL
-                    break
-                finally:
-                    self.guard.end_document()
-                if res.enrichment is None:
-                    done.append((tid, res.note))
-                    self._count("theses_not_enriched")
-                    continue
-                self._llm_call("enrich", tid, res.cached, res.usage, res.cost_usd, res.seconds,
-                               self.client.model if self.client else LLM_MODEL,
-                               ENRICH_PROMPT_VERSION)
-                with self.store.tx():
-                    self.store.add_enrichment(res.enrichment)
-                self._count("theses_enriched")
-                e = res.enrichment
-                done.append((tid, f"{len(e.candidates)} proposed ("
-                                  f"{sum(1 for c in e.candidates if c.listings)} with a verified "
-                                  f"US listing), {len(e.refused)} set aside"))
+            done, refused = self._enrich_theses(list(thesis_ids or self._active_ids()),
+                                                as_of=as_of, refresh=refresh)
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
                                                     f"{traceback.format_exc()[-1500:]}")
             raise
-        return self.finish_run(status), done
+        return self.finish_run(RunStatus.PARTIAL if refused else RunStatus.SUCCEEDED), done
+
+    def _active_ids(self) -> list[str]:
+        return [t.thesis_id for t in self.store.theses() if t.status is ThesisStatus.ACTIVE]
+
+    def _enrich_theses(self, targets: list[str], *, as_of: date, refresh: bool = False
+                       ) -> tuple[list[tuple[str, str]], bool]:
+        """The enrichment loop inside the current run: [(thesis id, what happened)], and
+        whether the spend guard refused a call (the pass then stops — said, never pretended)."""
+        from vinci.theme_intelligence.enrich import enrich_thesis
+        from vinci.theme_intelligence.report import thesis_groups
+
+        assert self.run is not None
+        done: list[tuple[str, str]] = []
+        refused = False
+        for tid in targets:
+            t = self.store.thesis(tid)
+            v = self.store.thesis_version(tid, t.current_version) if t else None
+            if t is None or v is None:
+                raise ValueError(f"no thesis {tid} in this registry")
+            if not refresh and any(x.thesis_version == v.version
+                                   for x in self.store.enrichments(tid)):
+                done.append((tid, f"already proposed for version {v.version} — skipped "
+                                  f"(--refresh asks again)"))
+                continue
+            groups = [g.name for g in thesis_groups(self.store, self.store.links(tid))]
+            self.guard.begin_document(f"enrich {tid}")
+            try:
+                res = enrich_thesis(v.content, version=v.version, area=t.sector,
+                                    groups=groups, client=self.client,
+                                    cache_dir=self.paths.llm_cache, resolver=self.resolver,
+                                    as_of=as_of, run_id=self.run.run_id)
+            except BudgetExceeded as exc:
+                done.append((tid, f"not run — budget: {exc}"))
+                refused = True
+                break
+            finally:
+                self.guard.end_document()
+            if res.enrichment is None:
+                done.append((tid, res.note))
+                self._count("theses_not_enriched")
+                continue
+            self._llm_call("enrich", tid, res.cached, res.usage, res.cost_usd, res.seconds,
+                           self.client.model if self.client else LLM_MODEL,
+                           ENRICH_PROMPT_VERSION)
+            with self.store.tx():
+                self.store.add_enrichment(res.enrichment)
+            self._count("theses_enriched")
+            e = res.enrichment
+            done.append((tid, f"{len(e.candidates)} proposed ("
+                              f"{sum(1 for c in e.candidates if c.listings)} with a verified "
+                              f"US listing), {len(e.refused)} set aside"))
+        return done, refused
+
+    def _scan_enrichment(self, as_of: date) -> None:
+        """The weekly scan's last step: enrich every active thesis whose current version has no
+        set — the theses this week created or changed, and any a manual run left. Nothing here
+        changes the scan's status: a refusal or a missing model is a WARNING on the run."""
+        assert self.run is not None
+        try:
+            done, refused = self._enrich_theses(self._active_ids(), as_of=as_of)
+        except RuntimeError as exc:  # no model client and no cached answer
+            self.run.warnings.append(f"enrichment not run: {exc}")
+            return
+        if refused:
+            left = next((what for _tid, what in done if what.startswith("not run")), "")
+            self.run.warnings.append(f"enrichment stopped by the spend guard — {left[:200]}; "
+                                     f"the rest are enriched by the next run (or `enrich`)")
 
     def run_scan(self, *, window_from: date, window_to: date, as_of: date, max_articles: int,
                  resume_run_id: str | None = None, budget: float | None = None) -> WeeklyRun:
@@ -1118,6 +1146,8 @@ class Pipeline:
                                     f"{queued} QUEUED for the next run")
             self._count("articles_queued", queued)
             self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
+            if self.enrich_in_scan:
+                self._scan_enrichment(as_of)
             failing = [sc.source_id for sc in run.sources
                        if sc.status in ("BLOCKED", "ERROR")
                        and not self.sources[sc.source_id].expect_blocked]

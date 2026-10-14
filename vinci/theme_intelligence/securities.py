@@ -40,8 +40,10 @@ DAL, Delta Air Lines, on the bare prefix "delta"):
   is not a hardware company; observed 2026-10-11) must be compatible with the issuer's SEC
   industry (SIC). A clear incompatibility — fuel cells against "Air Transportation, Scheduled"
   — leaves the entity UNRESOLVED with both stated. The compatibility table is generous (an
-  internet retailer's SIC is compatible with a cloud context), so it vetoes only what is plainly
-  another business; with no business stated, or no SIC on file, nothing is vetoed.
+  internet retailer's SIC is compatible with a cloud context; an industrial or electrical-equipment
+  issuer with a software one, since industrial automation is sold as software), so it vetoes only
+  what is plainly another business; with no business stated, or no SIC on file, nothing is
+  vetoed.
 """
 
 from __future__ import annotations
@@ -122,8 +124,11 @@ _COMPATIBLE: dict[str, frozenset[str]] = {
                           "materials"}),
     "semis_hardware": frozenset({"semis_hardware", "software_internet", "power_equipment",
                                  "industrials", "telecom"}),
+    # industrial automation is sold as software, and the SEC's industry code lags the business:
+    # Emerson, now an automation-software company, is still filed under SIC 3600 (electrical
+    # equipment) — a "software" description refused it (operator, 2026-10-14)
     "software_internet": frozenset({"software_internet", "semis_hardware", "telecom",
-                                    "consumer"}),
+                                    "consumer", "industrials", "power_equipment"}),
     "airlines": frozenset({"airlines", "transport"}),
     "transport": frozenset({"transport", "airlines", "industrials"}),
     "financials": frozenset({"financials", "real_estate"}),
