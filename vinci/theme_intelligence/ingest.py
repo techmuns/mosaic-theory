@@ -537,12 +537,23 @@ def declared_from(meta: dict[str, object], default_source: str | None) -> Declar
     authors: tuple[str, ...] = (
         tuple(a.strip() for a in raw.split(";") if a.strip()) if isinstance(raw, str)
         else tuple(str(a) for a in raw) if isinstance(raw, list | tuple) else ())
-    lp = meta.get("llm_permitted")
     return Declared(source_id=source, url=str(meta["url"]) if meta.get("url") else None,
                     title=str(meta["title"]) if meta.get("title") else None,
                     authors=authors,
                     published=date.fromisoformat(str(pub)) if pub else None,
-                    llm_permitted=bool(lp) if lp is not None else None)
+                    llm_permitted=_permitted(meta.get("llm_permitted")))
+
+
+def _permitted(v: object) -> bool | None:
+    """The licence gate, read strictly: a JSON boolean, or the words "true" / "false" (the
+    registry displays the statement as 'True' / 'False'). Never by truthiness — `bool("false")`
+    is True, and a sidecar saying "false" sent the document to the model. Anything else is
+    refused (ValueError), never guessed."""
+    if v is None or isinstance(v, bool):
+        return v
+    if isinstance(v, str) and v.strip().lower() in ("true", "false"):
+        return v.strip().lower() == "true"
+    raise ValueError(f"llm_permitted must be true or false, not {v!r}")
 
 
 # --- re-ask ONE completeness part ----------------------------------------------------------------

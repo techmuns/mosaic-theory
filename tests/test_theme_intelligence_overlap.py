@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -867,3 +868,93 @@ def test_rerendering_an_old_run_shows_what_that_run_recorded(tmp_path: Path) -> 
     assert [h["version"] for h in card["history"]] == [1]  # v2 did not exist yet
     row = next(r for r in out["dashboard"].archive if r["thesis_id"] == infra.thesis_id)
     assert row["versions"] == 1
+
+
+def test_a_skip_thesis_under_a_hold_can_still_move_to_watch(tmp_path: Path) -> None:
+    """A SKIP thesis held for review (a pass-2 BLOCK on its bottom line) received material
+    evidence: the rules gave WATCH — a hold only blocks RESEARCH NOW — and `compute_priority`
+    raised "a verification hold can never promote", failing the article and the weekly scan.
+    Now it moves to WATCH, still held. NEGATIVE pin: the hold still keeps it from RESEARCH NOW."""
+    from datetime import UTC, datetime
+
+    pipe = make_pipeline(tmp_path)
+    base = pipe._review  # noqa: SLF001
+
+    def blocking(card: Any, claims: Any) -> Any:
+        out = base(card, claims)
+        tid = card.header.thesis_id
+        out.issues.append(VerificationIssue(
+            issue_id=f"VI-test-{tid}-{len(claims)}", run_id="t", scope="card_sentence",
+            ref_id=f"{tid}:s01.0", severity=IssueSeverity.BLOCK, code="REVIEW_UNSUPPORTED",
+            detail="s01.0: UNSUPPORTED — test", created_at=datetime.now(tz=UTC)))
+        return out
+
+    pipe.engine.reviewer = blocking
+    as_of = date(2026, 10, 14)
+    pipe.start_run("ingest", as_of=as_of)
+    a1 = Hypo("op", "Test Publisher", date(2026, 10, 1),
+              [("paragraph", "We think demand for test widgets will be strong.")])
+    ingest(pipe, a1.doc(), extraction(
+        [claim("c1", "b001", "We think demand for test widgets will be strong",
+               "Demand for test widgets will be strong", kind="opinion", epistemic="opinion")],
+        [hyp("h1", "Test widget demand rises", node="healthcare",
+             mechanism="demand_volume_shift", supporting=["c1"])]), as_of=as_of,
+        publisher=a1.publisher)
+    (t,) = pipe.store.theses()
+    v1 = pipe.store.thesis_version(t.thesis_id, 1)
+    assert v1 is not None and v1.priority.research_action is ResearchAction.SKIP
+    a2 = Hypo("metric", "Other Publisher", date(2026, 10, 5), [
+        ("paragraph", "Test widget shipments rose 40% in Q3 2026 and are guided up again.")])
+    ingest(pipe, a2.doc(), extraction(
+        [claim("c1", "b001", "Test widget shipments rose 40% in Q3 2026",
+               "Test widget shipments rose 40% in Q3 2026", metric="shipments", value=40,
+               value_text="40%", unit="%", period="Q3 2026")],
+        [hyp("h1", "Test widget demand rises", node="healthcare",
+             mechanism="demand_volume_shift", supporting=["c1"])]), as_of=as_of,
+        publisher=a2.publisher)
+    t2 = pipe.store.thesis(t.thesis_id)
+    assert t2 is not None and t2.current_version == 2
+    v2 = pipe.store.thesis_version(t.thesis_id, 2)
+    assert v2 is not None and v2.priority.research_action is ResearchAction.WATCH
+    assert "verification hold" in v2.priority.rules_fired[0]
+
+
+def test_a_same_key_merge_keeps_every_role_the_merged_hypothesis_gave_its_evidence(
+        tmp_path: Path) -> None:
+    """Two hypotheses of one article on one identity key are merged — but only supporting,
+    dislocation, counter and affected were folded in: the merged-in hypothesis's CATALYST, its
+    sectors and a market risk tied only to it were dropped (the live energy-drink thesis lost a
+    catalyst and two sectors, and with them its RESEARCH NOW route). NEGATIVE pin: the kept
+    hypothesis's own evidence is unchanged, and the article still makes ONE thesis."""
+    pipe = make_pipeline(tmp_path)
+    as_of = date(2026, 10, 14)
+    pipe.start_run("ingest", as_of=as_of)
+    art = Hypo("merge", "Test Publisher", date(2026, 10, 1), [
+        ("paragraph", "DRAM contract prices rose 9% in 3Q26, the survey shows."),
+        ("paragraph", "PC makers face higher memory costs as Micron raises contract prices on "
+                      "November 1."),
+        ("paragraph", "A sudden PC demand slump could reverse the price increases.")])
+    c1 = claim("c1", "b001", "DRAM contract prices rose 9% in 3Q26", "DRAM prices rose 9%",
+               metric="DRAM contract price", value=9, value_text="9%", unit="%", period="3Q26")
+    c2 = claim("c2", "b002", "Micron raises contract prices on November 1",
+               "Micron raises contract prices on November 1", kind="event")
+    h1 = hyp("h1", "DRAM contract prices are rising", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"])
+    h2 = hyp("h2", "Memory price hikes reach PC makers", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"], catalyst=["c2"],
+             sectors=[("PC makers", "b002", "PC makers face higher memory costs")])
+    risk = {"statement": "A sudden PC demand slump could reverse the price increases",
+            "scope_qualification": "PC demand", "claim_ids": [], "related_hypothesis_ids": ["h2"]}
+    ingest(pipe, art.doc(), extraction([c1, c2], [h1, h2], risks=[risk]), as_of=as_of,
+           publisher=art.publisher)
+    (t,) = pipe.store.theses()
+    (a,) = pipe.store.articles()
+    by_quote = {c.quote: c.claim_id for c in pipe.store.claims_for_article(a.article_id)}
+    roles = {(lk.claim_id, lk.role) for lk in pipe.store.links(t.thesis_id)}
+    assert (by_quote[c1["quote"]], LinkRole.SUPPORTS) in roles
+    assert (by_quote[c2["quote"]], LinkRole.CATALYST) in roles
+    v = pipe.store.thesis_version(t.thesis_id, t.current_version)
+    assert v is not None
+    assert "PC makers" in [s.name for s in v.content.s05_affected.sector_exposures]
+    risks = " ".join(s.text for s in v.content.s07_what_could_go_wrong.market_risks)
+    assert "PC demand slump" in risks

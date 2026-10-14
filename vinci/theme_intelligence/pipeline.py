@@ -134,6 +134,11 @@ class ArticleResult:
     extraction_cost: float | None = None
 
 
+class ReanalysisIncompleteError(RuntimeError):
+    """A re-analysis that RETIRED its theses and then failed: they stay retired (history kept),
+    and the message names the run that finishes it. Never reported as a refusal."""
+
+
 class Pipeline:
     def __init__(self, data_dir: Path, *, sources: tuple[SourceConfig, ...], taxonomy: Taxonomy,
                  client: ToolClient | None, fetcher: PoliteFetcher | None = None,
@@ -323,13 +328,13 @@ class Pipeline:
         if doc.published_at is None and listed is not None:
             # the page states no date, but the publisher's own listing / URL / feed did
             d, basis = listed
-            doc.published_at = datetime(d.year, d.month, d.day)
+            doc.published_at = datetime(d.year, d.month, d.day, tzinfo=UTC)
             doc.published_raw = d.isoformat()
             doc.published_source = f"publisher listing — {basis} (date only)"
             doc.published_status = FieldStatus.KNOWN
         if doc.published_at is None and declared_published is not None:
             d = declared_published
-            doc.published_at = datetime(d.year, d.month, d.day)
+            doc.published_at = datetime(d.year, d.month, d.day, tzinfo=UTC)
             doc.published_raw = d.isoformat()
             doc.published_source = "operator-verified (the page states no date)"
             doc.published_status = FieldStatus.KNOWN
@@ -948,6 +953,10 @@ class Pipeline:
                     raise ValueError(f"{tid} holds evidence from {', '.join(outside)}, which this "
                                      f"run does not re-analyse — retiring it would drop that "
                                      f"evidence; nothing was changed")
+            # everything that can fail on the stored records fails HERE, before anything is
+            # retired: each article's text (an exported registry holds none) and their order
+            stored = {aid: self._stored_document(aid) for aid in wanted}
+            order = sorted(wanted, key=self._published_key)
             now = datetime.now(tz=UTC)
             for tid in retire:
                 t = self.store.thesis(tid)
@@ -966,17 +975,28 @@ class Pipeline:
                                f"{gone.identity})"))
                 self._count("theses_retired")
             touched: list[str] = []
-            for aid in sorted(wanted, key=self._published_key):
-                doc, fr, art = self._stored_document(aid)
-                res = self.process_document(doc, fr, url=art.canonical_url,
-                                            source_id=art.source_id, as_of=as_of,
-                                            fixture=(fixtures or {}).get(aid),
-                                            publisher_override=art.publisher, reanalysis=True)
-                results.append(res)
-                touched += [o.thesis_id for o in res.outcomes]
-            self._scan_enrichment(as_of, [tid for tid in dict.fromkeys(touched)
-                                          if (x := self.store.thesis(tid)) is not None
-                                          and x.status is ThesisStatus.ACTIVE])
+            try:
+                for aid in order:
+                    doc, fr, art = stored[aid]
+                    # an article already held was already accepted: the run budget bounds the
+                    # re-analysis, never the default per-document limit (as a state replay)
+                    res = self.process_document(doc, fr, url=art.canonical_url,
+                                                source_id=art.source_id, as_of=as_of,
+                                                fixture=(fixtures or {}).get(aid),
+                                                publisher_override=art.publisher,
+                                                cost_limit=float("inf"), reanalysis=True)
+                    results.append(res)
+                    touched += [o.thesis_id for o in res.outcomes]
+                self._scan_enrichment(as_of, [tid for tid in dict.fromkeys(touched)
+                                              if (x := self.store.thesis(tid)) is not None
+                                              and x.status is ThesisStatus.ACTIVE])
+            except Exception as exc:
+                if not retire:
+                    raise
+                raise ReanalysisIncompleteError(
+                    f"{', '.join(retire)} retired, but the re-analysis did not complete "
+                    f"({type(exc).__name__}: {exc}) — finish it with `reanalyse` of the same "
+                    f"articles WITHOUT --retire: {' '.join(order)}") from exc
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
                                                     f"{traceback.format_exc()[-1500:]}")
@@ -1238,9 +1258,15 @@ class Pipeline:
                 else:
                     cand = next((c for d in discoveries for c in d.candidates if c.url == url),
                                 None)
-                    res = self.process_url(url, source_id=sid, as_of=as_of, listed=(
-                        (cand.listed_date, cand.date_basis)
-                        if cand is not None and cand.listed_date is not None else None))
+                    try:
+                        res = self.process_url(url, source_id=sid, as_of=as_of, listed=(
+                            (cand.listed_date, cand.date_basis)
+                            if cand is not None and cand.listed_date is not None else None))
+                    except InvalidAnswerError as exc:
+                        # one article's unusable model answer (its spend recorded) is THAT
+                        # article's failure — said, checkpointed — never the whole week's scan
+                        res = ArticleResult(url, "FAILED", article_id_for(url), note=str(exc))
+                        run.warnings.append(f"{url}: {exc}"[:400])
                 if res.status == "BUDGET_HELD":  # checkpointed: offered first next run
                     out_of_budget = True
                     self.store.upsert_candidate(url, sid, "QUEUED", {

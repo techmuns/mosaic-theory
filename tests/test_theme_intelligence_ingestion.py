@@ -714,6 +714,39 @@ def test_the_inbox_imports_and_files_every_document(tmp_path: Path) -> None:
     assert stat.S_IMODE((inbox / "held").stat().st_mode) == 0o700
 
 
+def test_a_sidecar_licence_statement_is_read_strictly_never_by_truthiness(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """`"llm_permitted": "false"` was read `bool("false")` — True — and the document was sent to
+    the model as "the operator states third-party LLM processing is permitted". The registry
+    itself displays the statement as 'False', so copying it inverted the operator's word. Now
+    "false" reads False (the document is HELD), and a value that is not true/false ("no") is
+    refused with the file left in the inbox. NEGATIVE pins: a JSON boolean and "True" read as
+    before."""
+    from vinci.theme_intelligence.__main__ import main
+    from vinci.theme_intelligence.ingest import declared_from
+
+    assert declared_from({"llm_permitted": "false"}, "ms_research").llm_permitted is False  # type: ignore[union-attr]
+    assert declared_from({"llm_permitted": "True"}, "ms_research").llm_permitted is True  # type: ignore[union-attr]
+    assert declared_from({"llm_permitted": True}, "ms_research").llm_permitted is True  # type: ignore[union-attr]
+    assert declared_from({}, "ms_research").llm_permitted is None  # type: ignore[union-attr]
+    for bad in ("no", "0", 1):
+        with pytest.raises(ValueError, match="llm_permitted must be true or false"):
+            declared_from({"llm_permitted": bad}, "ms_research")
+    data, inbox = tmp_path / "data", tmp_path / "inbox"
+    inbox.mkdir()
+    shutil.copyfile(MS_PDF, inbox / "ms.pdf")
+    (inbox / "ms.pdf.meta.json").write_text('{"source": "ms_research", "llm_permitted": "false"}')
+    shutil.copyfile(UNDATED, inbox / "other.pdf")
+    (inbox / "other.pdf.meta.json").write_text('{"source": "ms_research", "llm_permitted": "no"}')
+    rc = main(["--data-dir", str(data), "ingest-inbox", "--inbox", str(inbox), "--as-of",
+               AS_OF.isoformat(), "--cache-only", "--no-review"])
+    assert rc == 2
+    assert (inbox / "held" / "ms.pdf").exists()  # "false" is NOT permitted: held, never sent
+    assert (inbox / "other.pdf").exists()  # refused: left where it is for the operator
+    assert "other.pdf: refused — other.pdf.meta.json: llm_permitted must be true or false" in \
+        capsys.readouterr().out
+
+
 def test_the_cli_releases_a_held_document_by_its_id(tmp_path: Path) -> None:
     """`ingest-file --release <doc id>` re-reads the PRIVATE copy with the statements recorded
     at import; still unauthorised, it stays HELD — no model is asked either way here."""

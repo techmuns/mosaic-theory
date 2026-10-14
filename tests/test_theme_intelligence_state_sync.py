@@ -344,10 +344,10 @@ def test_a_push_refuses_anything_but_derived_records(tmp_path: Path) -> None:
     tree = tmp_path / "t"
     (tree / "registry").mkdir(parents=True)
     (tree / "registry" / "runs.jsonl").write_text("")
-    (tree / "report.pdf").write_bytes(b"%PDF-")
+    (tree / "registry" / "report.pdf").write_bytes(b"%PDF-")  # what a push writes: registry/
     with pytest.raises(state.StateSyncError, match="forbidden file kind"):
         state._check_tree(tree)
-    (tree / "report.pdf").unlink()
+    (tree / "registry" / "report.pdf").unlink()
     payload = json.dumps({"blocks": [{"block_id": "b001", "text": "licensed sentence"}]})
     (tree / "registry" / "article_versions.jsonl").write_text(
         json.dumps({"payload": payload}) + "\n")
@@ -358,3 +358,126 @@ def test_a_push_refuses_anything_but_derived_records(tmp_path: Path) -> None:
 def test_a_remote_url_is_never_printed_with_its_credentials() -> None:
     assert state.mask("https://user:tok@github.com/o/r.git") == "https://***@github.com/o/r.git"
     assert state.mask("/srv/state.git") == "/srv/state.git"
+
+
+def _commit_to_branch(remote: str, tmp: Path, edit: Any, message: str) -> None:
+    """A commit made on the state branch by ANOTHER machine (the scheduled run, newer code)."""
+    co = tmp / "other"
+    if co.exists():
+        shutil.rmtree(co)
+    subprocess.run(["git", "clone", "--quiet", "--branch", state.BRANCH, remote, str(co)],
+                   check=True)
+    edit(co)
+    for args in (["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit",
+                                 "--quiet", "-m", message], ["push", "--quiet", "origin",
+                                                             f"HEAD:{state.BRANCH}"]):
+        subprocess.run(["git", *args], cwd=co, check=True)
+
+
+def test_a_failed_rebuild_restores_the_local_registry_and_changes_nothing(
+        tmp_path: Path) -> None:
+    """A state branch exported by NEWER code (one more column) fails the import AFTER the local
+    registry was replaced: the pull used to leave it empty, and the next pull reported "no
+    local document to replay" — the unpushed upload gone. Now the rebuild is all or nothing.
+    NEGATIVE pin: once the branch is readable again, the same pull rebuilds and replays."""
+    remote = _bare(tmp_path)
+    actions = make_pipeline(tmp_path / "actions")
+    _scan(actions, "week-1")
+    state.push(actions.paths.root, remote)
+    local_root = tmp_path / "laptop" / "ti"
+    state.pull(local_root, remote)
+    laptop = make_pipeline(tmp_path / "laptop")
+    up = _upload(laptop, MS_PDF, _ms_ext())  # unpushed
+    laptop.store.close()
+
+    def newer_schema(co: Path) -> None:
+        f = co / "registry" / "runs.jsonl"
+        f.write_text("".join(json.dumps({**json.loads(ln), "new_column_v6": 1}) + "\n"
+                             for ln in f.read_text().splitlines()))
+    _commit_to_branch(remote, tmp_path, newer_schema, "newer code's export")
+    before = state.sync_state(state.Paths(local_root))
+    with pytest.raises(state.StateSyncError, match="the local registry is restored"):
+        state.pull(local_root, remote)
+    kept = Store(local_root / "registry.db")
+    assert [d.doc_id for d in kept.documents()] == [up.doc_id]  # the upload is still here
+    kept.close()
+    assert state.sync_state(state.Paths(local_root)) == before  # the base did not move
+
+    def readable(co: Path) -> None:
+        f = co / "registry" / "runs.jsonl"
+        f.write_text("".join(json.dumps({k: v for k, v in json.loads(ln).items()
+                                         if k != "new_column_v6"}) + "\n"
+                             for ln in f.read_text().splitlines()))
+    _commit_to_branch(remote, tmp_path, readable, "readable again")
+    import hashlib
+    res = state.pull(local_root, remote, make_pipeline=lambda: make_pipeline(tmp_path / "laptop"),
+                     fixtures={hashlib.sha256(MS_PDF.read_bytes()).hexdigest(): _ms_ext()})
+    assert any(up.doc_id in x and "replayed — INGESTED" in x for x in res.lines), res.lines
+
+
+def test_a_document_a_pull_cannot_replay_is_kept_for_the_next_pull(tmp_path: Path) -> None:
+    """A replay that raises something other than a document error (no cached answer and no
+    model, an API outage) used to abort the pull AFTER the registry was replaced and its base
+    saved: the next pull read "local documents" from the rebuilt registry, the upload was no
+    longer known, and a push went through without it. Now the document is said NOT replayed and
+    kept; the next pull replays it. NEGATIVE pin: once replayed, nothing is pending."""
+    remote = _bare(tmp_path)
+    actions = make_pipeline(tmp_path / "actions")
+    _scan(actions, "week-1")
+    state.push(actions.paths.root, remote)
+    local_root = tmp_path / "laptop" / "ti"
+    state.pull(local_root, remote)
+    laptop = make_pipeline(tmp_path / "laptop")
+    up = _upload(laptop, MS_PDF, _ms_ext())
+    laptop.store.close()
+    _scan(actions, "week-2")
+    state.push(actions.paths.root, remote)  # the branch moves
+    # no fixture and no model: the replay cannot answer
+    res = state.pull(local_root, remote, make_pipeline=lambda: make_pipeline(tmp_path / "laptop"))
+    assert any(up.doc_id in x and "NOT replayed — RuntimeError" in x for x in res.lines), \
+        res.lines
+    assert any("kept for the next pull" in x for x in res.lines)
+    st = state.sync_state(state.Paths(local_root))
+    assert [d["doc_id"] for d in st["pending"]] == [up.doc_id]
+    import hashlib
+    again = state.pull(local_root, remote,
+                       make_pipeline=lambda: make_pipeline(tmp_path / "laptop"),
+                       fixtures={hashlib.sha256(MS_PDF.read_bytes()).hexdigest(): _ms_ext()})
+    assert any(up.doc_id in x and "replayed — INGESTED" in x for x in again.lines), again.lines
+    assert "pending" not in state.sync_state(state.Paths(local_root))
+    done = Store(local_root / "registry.db")
+    assert [d.doc_id for d in done.documents()] == [up.doc_id]
+    done.close()
+
+
+def test_the_scheduled_runs_readouts_on_the_branch_never_block_a_push(tmp_path: Path) -> None:
+    """The weekly workflow commits `readouts/` (index.html, dashboard.md, cards/*.html) beside
+    `registry/` on the state branch. The push's tree check scanned the WHOLE clone, so every
+    laptop push was refused once the scheduled run had committed. Only what a push writes —
+    `registry/` — is checked. NEGATIVE pin: a page inside `registry/` is still refused."""
+    remote = _bare(tmp_path)
+    actions = make_pipeline(tmp_path / "actions")
+    _scan(actions, "week-1")
+    state.push(actions.paths.root, remote)
+
+    def readouts(co: Path) -> None:  # the workflow's commit step, as it lays the branch out
+        r = co / "readouts" / "R-test"
+        (r / "cards").mkdir(parents=True)
+        (r / "index.html").write_text("<html></html>")
+        (r / "dashboard.md").write_text("# readout")
+        (r / "cards" / "TH-1.html").write_text("<html></html>")
+    _commit_to_branch(remote, tmp_path, readouts, "Actions run readout")
+    local_root = tmp_path / "laptop" / "ti"
+    state.pull(local_root, remote)
+    laptop = make_pipeline(tmp_path / "laptop")
+    _upload(laptop, MS_PDF, _ms_ext())
+    laptop.store.close()
+    res = state.push(local_root, remote)
+    assert res.new_commit and "pushed" in res.lines[0]
+    files = _branch_files(remote, tmp_path)
+    assert "readouts/R-test/index.html" in files  # the scheduled run's readout is untouched
+    tree = tmp_path / "t2"
+    (tree / "registry").mkdir(parents=True)
+    (tree / "registry" / "page.html").write_text("<html></html>")
+    with pytest.raises(state.StateSyncError, match="forbidden file kind"):
+        state._check_tree(tree)

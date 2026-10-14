@@ -69,6 +69,7 @@ jobs:
           python -m pytest -m "not network" -p no:warnings --tb=short
 
       - name: Restore the durable registry from the state branch
+        id: restore
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -118,8 +119,11 @@ jobs:
         continue-on-error: true
         run: python -m vinci.theme_intelligence qa --run latest
 
+      # Committed even when the scan failed (its run record is the evidence), but NEVER when the
+      # restore did not succeed: the registry here would then be empty or partial, and pushing it
+      # would make an empty registry the head of the registry of record.
       - name: Commit the registry and this run's readout to the state branch
-        if: always()
+        if: always() && steps.restore.outcome == 'success'
         run: |
           rm -rf "$RUNNER_TEMP/state/registry"
           python -m vinci.theme_intelligence export-state --out "$RUNNER_TEMP/state/registry"

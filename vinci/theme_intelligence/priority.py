@@ -49,7 +49,6 @@ from dataclasses import dataclass
 from datetime import date
 
 from vinci.theme_intelligence.schemas import (
-    ACTION_RANK,
     SOURCE_LABELS,
     Claim,
     ClaimKind,
@@ -409,9 +408,10 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
         f"no change in action ({_diff_reason(previous_factors, factors)})"
         if previous is action else
         f"{previous.value} → {action.value}: " + _diff_reason(previous_factors, factors))
-    if previous is not None and ACTION_RANK[action] > ACTION_RANK[previous] \
-            and st.verification_hold:
-        raise AssertionError("a verification hold can never promote")  # pinned invariant
+    # pinned invariant: a hold blocks RESEARCH NOW (it is one of its unmet conditions) — a
+    # SKIP → WATCH move under a hold is the rules' own result, never a violation
+    if st.verification_hold and action is ResearchAction.RESEARCH_NOW:
+        raise AssertionError("a verification hold can never yield RESEARCH NOW")
     return ResearchPriority(
         research_action=action, evidence_direction=evidence_direction,
         investment_readiness=InvestmentReadiness.NOT_ASSESSED, factors=factors,

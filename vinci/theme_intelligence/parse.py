@@ -36,7 +36,7 @@ import html
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from typing import Any
 from urllib.parse import urljoin
 
@@ -203,11 +203,14 @@ def _clean(s: str) -> str:
 
 
 def parse_iso(raw: str) -> datetime | None:
+    """Always timezone-aware: a date-only or offset-less stamp reads as UTC (a naive instant
+    cannot be compared with an aware one)."""
     raw = raw.strip()
     try:
-        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
-            return datetime.fromisoformat(raw)  # date-only → naive midnight, flagged by caller
-        return datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):  # date-only → midnight UTC, flagged by caller
+            return datetime.fromisoformat(raw).replace(tzinfo=UTC)
+        d = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        return d if d.tzinfo is not None else d.replace(tzinfo=UTC)
     except ValueError:
         return None
 
@@ -215,7 +218,7 @@ def parse_iso(raw: str) -> datetime | None:
 def parse_text_date(raw: str) -> datetime | None:
     for fmt in ("%b %d, %Y", "%B %d, %Y", "%b %d %Y", "%B %d %Y", "%b. %d, %Y"):
         try:
-            return datetime.strptime(raw.replace("Sept", "Sep"), fmt)
+            return datetime.strptime(raw.replace("Sept", "Sep"), fmt).replace(tzinfo=UTC)
         except ValueError:
             continue
     return None

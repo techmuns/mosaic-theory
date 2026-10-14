@@ -435,8 +435,11 @@ def discover_source(src: SourceConfig, f: PoliteFetcher, store: Store, *, window
             cov.skipped_out_of_window += 1
             continue
         cov.in_window += 1
-        if store.article_by_url(url) is not None or (
-                (k := store.candidate(url)) is not None and k[0] in DONE_STATES):
+        # a URL a scan already tried is KNOWN only when that try finished it: a fetch that timed
+        # out or found no body leaves an article row (a BLOCKED record), never a handled one —
+        # the article row decides only for a URL no scan has tried (an `article --url` upload)
+        k = store.candidate(url)
+        if (k[0] in DONE_STATES) if k is not None else store.article_by_url(url) is not None:
             c.status, c.note = "KNOWN", "already in the registry — not re-counted"
             cov.already_known += 1
             continue

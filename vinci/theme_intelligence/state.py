@@ -105,7 +105,17 @@ def sync_state(paths: Paths) -> dict[str, Any]:
 
 
 def _save_state(paths: Paths, **kw: Any) -> None:
+    """`pending`: local documents a pull could not replay (their records are not in the rebuilt
+    registry) — kept across every save until a pull replays them or finds them on the branch."""
+    if "pending" not in kw and (prev := sync_state(paths).get("pending")):
+        kw["pending"] = prev
+    if not kw.get("pending"):
+        kw.pop("pending", None)
     (paths.root / STATE_FILE).write_text(json.dumps(kw, indent=1, sort_keys=True) + "\n")
+
+
+def _pending(paths: Paths) -> list[DocumentRecord]:
+    return [DocumentRecord.model_validate(x) for x in sync_state(paths).get("pending", [])]
 
 
 def _remote_ids(reg: Path, table: str, key: str) -> set[str]:
@@ -185,6 +195,8 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
             return res
         old: Store | None = Store(paths.db) if paths.db.exists() else None
         old_docs: list[DocumentRecord] = old.documents() if old else []
+        held = {d.sha256 for d in old_docs}
+        old_docs += [d for d in _pending(paths) if d.sha256 not in held]
         old_runs = {r.run_id: r for r in old.runs()} if old else {}
         remote_runs = _remote_runs(reg)
         remote_docs = _remote_ids(reg, "documents", "sha256")
@@ -211,19 +223,31 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
             old, [r for r in local_only if r.run_id not in clash])
         uncarried = {c: v for c, v in local_ledger.items() if v[0] in clash}
         local_ledger = {c: v for c, v in local_ledger.items() if v[0] not in clash}
+        backup: Path | None = None
         if old is not None:
             backup = old.backup(paths.backups)
             old.close()
             res.lines.append(f"local registry backed up to {backup}")
-            for suffix in ("", "-wal", "-shm"):
-                p = Path(str(paths.db) + suffix)
-                if p.exists():
-                    p.unlink()
-        new = Store.import_jsonl(reg, paths.db)
-        branch_ledger = new.paid_ledger()
-        res.lines += _carry(new, carried, forced={r.run_id for r in stranded})
-        res.lines.append(_check_ledger(new, local_ledger, branch_ledger, backup_hint=str(
-            paths.backups), not_carried=len(uncarried)))
+        _remove_db(paths)
+        new = None
+        try:
+            new = Store.import_jsonl(reg, paths.db)
+            branch_ledger = new.paid_ledger()
+            res.lines += _carry(new, carried, forced={r.run_id for r in stranded})
+            res.lines.append(_check_ledger(new, local_ledger, branch_ledger, backup_hint=str(
+                paths.backups), not_carried=len(uncarried)))
+        except Exception as exc:
+            # all or nothing: a rebuild that failed (a branch exported by newer code, a ledger
+            # that does not reconcile) never leaves a partial registry in place of the local one
+            if new is not None:
+                new.close()
+            _remove_db(paths)
+            if backup is not None:
+                shutil.copyfile(backup, paths.db)
+            raise StateSyncError(
+                f"the rebuild from {branch}@{head[:12]} failed ({type(exc).__name__}: {exc}); "
+                + ("the local registry is restored as it was" if backup is not None
+                   else "no local registry existed") + " — nothing was changed") from exc
         for rid in sorted(clash):  # forced: said, with what it cost — never silently dropped
             rows = [v for v in uncarried.values() if v[0] == rid]
             res.lines.append(
@@ -239,14 +263,32 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
                     pulled_at=datetime.now(tz=UTC).isoformat())
     todo = [d for d in old_docs if d.sha256 not in remote_docs]
     if not todo:
+        _save_state(paths, **{**sync_state(paths), "pending": []})
         res.lines.append("no local document to replay — the branch holds every one")
         return res
     if not replay or make_pipeline is None:
-        res.lines.append(f"{len(todo)} local document(s) NOT on the branch and not replayed: "
-                         + ", ".join(d.doc_id for d in todo))
+        _save_state(paths, **{**sync_state(paths), "pending": _dumped(todo)})
+        res.lines.append(f"{len(todo)} local document(s) NOT on the branch and not replayed "
+                         f"(kept for the next pull): " + ", ".join(d.doc_id for d in todo))
         return res
-    res.lines += _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates)
+    lines, not_replayed = _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates)
+    _save_state(paths, **{**sync_state(paths), "pending": _dumped(not_replayed)})
+    res.lines += lines
+    if not_replayed:
+        res.lines.append(f"{len(not_replayed)} local document(s) not replayed are kept for the "
+                         f"next pull: " + ", ".join(d.doc_id for d in not_replayed))
     return res
+
+
+def _dumped(docs: list[DocumentRecord]) -> list[dict[str, Any]]:
+    return [d.model_dump(mode="json") for d in docs]
+
+
+def _remove_db(paths: Paths) -> None:
+    for suffix in ("", "-wal", "-shm"):
+        p = Path(str(paths.db) + suffix)
+        if p.exists():
+            p.unlink()
 
 
 #: one paid-call record: (call id, purpose, record as stored)
@@ -325,11 +367,14 @@ def _check_ledger(new: Store, local: dict[str, tuple[str, float | None]],
 def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
             make_pipeline: Callable[[], Pipeline],
             fixtures: dict[str, dict[str, Any]],
-            dates: dict[str, datetime] | None = None) -> list[str]:
-    from vinci.theme_intelligence.documents import Declared, DocumentError
+            dates: dict[str, datetime] | None = None
+            ) -> tuple[list[str], list[DocumentRecord]]:
+    """The replay's lines, and the documents it could NOT replay (kept for the next pull)."""
+    from vinci.theme_intelligence.documents import Declared
     from vinci.theme_intelligence.ingest import ingest_file
 
     lines: list[str] = []
+    not_replayed: list[DocumentRecord] = []
     by_asof: dict[date, list[DocumentRecord]] = {}
     for d in todo:
         r = old_runs.get(d.run_id or "")
@@ -352,6 +397,7 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                 group.append(f"  {d.doc_id}: NOT replayed — its private copy is not on this "
                              f"machine ({d.stored_path})")
                 failed += 1
+                not_replayed.append(d)
                 continue
             dec = d.declared
             declared = Declared(
@@ -373,9 +419,11 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                                   max_cost=float("inf") if d.status in ("INGESTED", "UPGRADED")
                                   else None,
                                   fixture=fixtures.get(d.sha256), replay_of=d)
-            except DocumentError as exc:
-                group.append(f"  {d.doc_id}: NOT replayed — {exc}")
+            except Exception as exc:  # any failure (no model, an API error) is this document's:
+                # said, and the document kept for the next pull — never dropped with the registry
+                group.append(f"  {d.doc_id}: NOT replayed — {type(exc).__name__}: {exc}")
                 failed += 1
+                not_replayed.append(d)
                 continue
             group.append(f"  {d.doc_id} ({d.filename}): replayed — {out.status}"
                          + (f" (was {d.status})" if out.status != d.status else ""))
@@ -384,14 +432,16 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                 if run.cost_usd else "; every model answer from the cache, $0")
         lines += [f"replay run {run.run_id} (as of {as_of}) of "
                   f"{', '.join(run.replay_of) or 'no recorded run'}{paid}:", *group]
-    return lines
+    return lines, not_replayed
 
 
 def _check_tree(tree: Path) -> None:
     """Nothing but derived JSONL leaves this machine: no original document, no page, no
-    database, and no article text in the version records."""
-    bad = [str(p.relative_to(tree)) for p in tree.rglob("*")
-           if p.is_file() and ".git" not in p.parts and p.suffix.lower() in _FORBIDDEN]
+    database, and no article text in the version records. Checked over what a push writes — the
+    `registry/` folder (`git add -A registry`); the scheduled run's own `readouts/` on the branch
+    are not this machine's and never block it."""
+    bad = [str(p.relative_to(tree)) for p in (tree / "registry").rglob("*")
+           if p.is_file() and p.suffix.lower() in _FORBIDDEN]
     if bad:
         raise StateSyncError(f"refusing to push: forbidden file kind(s) in the state tree: "
                              f"{bad[:5]}"

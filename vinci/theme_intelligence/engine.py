@@ -122,6 +122,7 @@ from vinci.theme_intelligence.verify import (
     deterministic_card_checks,
     label_for,
     locate,
+    norm_name,
     overlap_anchor,
     passage_anchor,
     passage_claim,
@@ -463,6 +464,18 @@ class Engine:
                     h.dislocation += [c for c in extra.dislocation if c not in h.dislocation]
                     h.counter += [c for c in extra.counter if c not in h.counter]
                     h.affected += [a for a in extra.affected if a not in h.affected]
+                    # every role the merged hypothesis gave its evidence comes with it — a
+                    # catalyst, a sector the source names, the strongest evidence, an earnings
+                    # step the kept chain lacks (2026-10-14: a merge dropped a live thesis's
+                    # catalyst and two sectors, and with them its RESEARCH NOW route)
+                    h.strongest += [c for c in extra.strongest if c not in h.strongest]
+                    h.catalyst += [c for c in extra.catalyst if c not in h.catalyst]
+                    h.implication_claims += [c for c in extra.implication_claims
+                                             if c not in h.implication_claims]
+                    h.sectors += [x for x in extra.sectors
+                                  if norm_name(x.name) not in {norm_name(y.name)
+                                                               for y in h.sectors}]
+                    h.steps += [x for x in extra.steps if x.step not in {y.step for y in h.steps}]
                 st.add_issue(self._issue(ctx, "hypothesis", key, IssueSeverity.WARN,
                                          "SAME_KEY_IN_ARTICLE",
                                          f"{len(hs)} hypotheses share one identity key in one "
@@ -470,7 +483,8 @@ class Engine:
                                          + "; ".join(f"“{x.raw.title}” "
                                                      f"({merged_notes.get(x.raw.local_id, 'kept')})"
                                                      for x in hs)))
-            risks = [r for r in ve.risks if not r.related or h.raw.local_id in r.related]
+            merged_ids = {x.raw.local_id for x in hs}  # a risk tied to ANY merged hypothesis
+            risks = [r for r in ve.risks if not r.related or merged_ids & set(r.related)]
             existing = self._by_key(key)
             if existing is not None and not prod:
                 # the key is necessary, not sufficient: the thesis it names must be about the same
@@ -1152,6 +1166,8 @@ class Engine:
         prev_v = self.store.thesis_version(thesis_id, t.current_version) if t else None
         if t is None or prev_v is None:
             raise ValueError(f"no thesis {thesis_id} with a current version to reassess")
+        if t.retired:  # replaced by its articles' re-analysis: never updated again
+            return None
         card, prev = prev_v.content, prev_v.priority
         links = self.store.links(thesis_id)
         all_claims = {lk.claim_id: c for lk in links if (c := self.store.claim(lk.claim_id))}
@@ -1627,9 +1643,15 @@ class Engine:
                                        article_version_id=ctx.version.version_id,
                                        origin_id=None, run_id=ctx.run_id)
                     if pc.span_verified:
+                        # its id hashes its content: a passage re-anchored by an earlier run (a
+                        # re-analysis) is the claim first written, kept — never a clash
+                        held = self.store.claim(pc.claim_id)
+                        if held is None:
+                            with self.store.tx():
+                                self.store.add_claim(pc)
+                        else:
+                            pc = held
                         claims[pc.claim_id] = pool[pc.claim_id] = pc
-                        with self.store.tx():
-                            self.store.add_claim(pc)
                         extra = [pc.claim_id]
             if extra:
                 anchors[sid] = extra

@@ -47,3 +47,16 @@ def test_the_local_wrapper_runs_the_same_pipeline() -> None:
     assert "-m vinci.theme_intelligence scan" in src and "-m vinci.theme_intelligence qa" in src
     assert "-m vinci.theme_intelligence backup" in src
     assert WRAPPER.stat().st_mode & 0o111  # executable
+
+
+def test_the_state_branch_is_never_pushed_after_a_failed_restore() -> None:
+    """A restore that fails (a state branch exported by newer code: the import raises after the
+    database was created) leaves an EMPTY registry here; exporting and pushing it would make an
+    empty registry the head of the registry of record. The commit runs only after the restore
+    succeeded — a failed SCAN is still committed. NEGATIVE pin: the condition is not plain
+    `always()`."""
+    lines = _code_lines(WF.read_text())
+    restore = lines.index("- name: Restore the durable registry from the state branch")
+    assert lines[restore + 1] == "id: restore"
+    commit = lines.index("- name: Commit the registry and this run's readout to the state branch")
+    assert lines[commit + 1] == "if: always() && steps.restore.outcome == 'success'"

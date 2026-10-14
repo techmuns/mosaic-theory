@@ -152,7 +152,8 @@ def test_a_broken_adapter_is_an_error_row(tmp_path: Path) -> None:
 # --- scan orchestration --------------------------------------------------------------------------
 
 def _fake_scan(monkeypatch: pytest.MonkeyPatch, pipe: Pipeline, urls: list[str],
-               failing_source: bool = False, interrupt_on: str | None = None) -> list[str]:
+               failing_source: bool = False, interrupt_on: str | None = None,
+               invalid_on: str | None = None) -> list[str]:
     srcs = list(pipe.sources.values())
 
     def discover(src: Any, f: Any, store: Any, *, window_from: date,
@@ -175,6 +176,15 @@ def _fake_scan(monkeypatch: pytest.MonkeyPatch, pipe: Pipeline, urls: list[str],
                     **kw: Any) -> ArticleResult:
         if url == interrupt_on:
             raise KeyboardInterrupt
+        if url == invalid_on:  # the model's cached answer to it is unusable
+            from pydantic import ValidationError
+
+            from vinci.theme_intelligence.extract import Extraction, InvalidAnswerError
+            try:
+                Extraction.model_validate({})
+            except ValidationError as exc:
+                raise InvalidAnswerError("cached extraction X.json", exc, usages=[],
+                                         model="m", prompt_version="p") from exc
         processed.append(url)
         art = Hypo(slug=url.rsplit("/", 1)[1], publisher="Hypo", published=date(2026, 10, 2),
                    blocks=[("paragraph", f"Optical shipments rose {len(processed) + 10}% in "
@@ -381,3 +391,51 @@ def test_every_thesis_is_one_row_with_its_events_and_the_counts_state_their_popu
     assert d.totals_active.get("RESEARCH NOW", 0) == 0  # zero RESEARCH NOW is a valid answer
     assert html.count('class="thesis row"') == 3  # nothing dropped
     assert html.count('<span class="tag">New</span>') == 2 * 3  # on each card and in activity
+
+
+def test_an_article_whose_fetch_failed_is_tried_again_next_scan(tmp_path: Path) -> None:
+    """A fetch that timed out (or returned 403 / no body) stores a BLOCKED article record, and
+    discovery read ANY article row as KNOWN — "already in the registry, not re-counted" — so a
+    transient failure removed the article from every later scan. Now a URL a scan already tried
+    is KNOWN only when that try finished it. NEGATIVE pins: a PROCESSED candidate is KNOWN, and
+    so is an article analysed outside a scan (no candidate record)."""
+    pipe = make_pipeline(tmp_path)
+    url = f"{JPM_BASE}/a-calm-index"
+    pipe.fetcher = FakeFetcher({})  # type: ignore[assignment]  # every fetch: HTTP 403
+    pipe.start_run("scan", as_of=WINDOW[1], window_from=WINDOW[0], window_to=WINDOW[1])
+    res = pipe.process_url(url, source_id="jpm_tmt", as_of=WINDOW[1],
+                           listed=(date(2026, 10, 2), "card"))
+    assert res.status == "BLOCKED" and pipe.store.article_by_url(url) is not None
+    pipe.store.upsert_candidate(url, "jpm_tmt", res.status, {"source_id": "jpm_tmt"})
+    pipe.finish_run(RunStatus.PARTIAL)
+    f = FakeFetcher({JPM_BASE: JPM_LIST})
+
+    def week() -> dict[str, str]:
+        d = discover_source(_src("jpm_tmt"), f, pipe.store,
+                            window_from=WINDOW[0], window_to=WINDOW[1])
+        return {c.url.rsplit("/", 1)[1]: c.status for c in d.candidates}
+
+    assert week()["a-calm-index"] == "IN_WINDOW"  # tried again, never KNOWN
+    pipe.store.upsert_candidate(url, "jpm_tmt", "PROCESSED", {"source_id": "jpm_tmt"})
+    assert week()["a-calm-index"] == "KNOWN"
+    pipe.store.conn.execute("DELETE FROM candidates WHERE url=?", (url,))  # analysed elsewhere
+    assert week()["a-calm-index"] == "KNOWN"
+
+
+def test_one_unusable_model_answer_fails_that_article_never_the_weekly_scan(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """An unsalvageable answer is cached and, by design, never paid for again — but it raised out
+    of `run_scan`, so the whole week's scan FAILED and every candidate behind it went unread, on
+    every resume too. Now that article is FAILED (said, checkpointed) and the scan goes on.
+    NEGATIVE pin: the scan still ends PARTIAL, never SUCCEEDED, and names the article."""
+    pipe = make_pipeline(tmp_path)
+    urls = [f"https://example.test/hypothetical/u{i}" for i in range(3)]
+    done = _fake_scan(monkeypatch, pipe, urls, invalid_on=urls[0])
+    run = pipe.run_scan(window_from=WINDOW[0], window_to=WINDOW[1], as_of=WINDOW[1],
+                        max_articles=10)
+    assert run.status is RunStatus.PARTIAL
+    assert sorted(done) == sorted(urls[1:])  # the rest of the queue was read
+    assert run.checkpoint[urls[0]] == "FAILED"
+    cand = pipe.store.candidate(urls[0])
+    assert cand is not None and cand[0] == "FAILED" and "cached extraction" in cand[1]["note"]
+    assert any(urls[0] in w and "fails its schema" in w for w in run.warnings)

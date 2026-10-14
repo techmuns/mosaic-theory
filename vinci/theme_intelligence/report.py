@@ -980,6 +980,8 @@ class DashRow:
     version: int
     card: str
     kind: str = ThesisKind.INVESTMENT_THESIS.value
+    #: RETIRED by a re-analysis (its articles analysed again): history, never a live decision
+    retired: bool = False
     article_date: str | None = None
     #: when this registry ACTUALLY first ingested the thesis (wall clock, UTC)
     first_ingested: str | None = None
@@ -1237,7 +1239,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             sectors=list(av.sectors), next_action=cur.content.s08_decision.next_step.text,
             last_material_update=t.last_material_update.isoformat(), status=t.status.value,
             flags=sorted(set(flags)), version=cur.version,
-            card=cards.get(tid, {}).get("html", ""), kind=hdr.kind.value,
+            card=cards.get(tid, {}).get("html", ""), kind=hdr.kind.value, retired=bool(t.retired),
             article_date=hdr.latest_article_date.isoformat() if hdr.latest_article_date else None,
             first_ingested=f"{t.created_at:%Y-%m-%d %H:%M} UTC",
             analysis_as_of=cur.as_of.isoformat(),
@@ -1344,6 +1346,7 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
     # could never show one; and a thesis created and challenged in one run sits under NEW, so
     # counting sections hid the challenge (both observed in the 2026-10-10 weekly run).
     rows = [r for rs in d.categories.values() for r in rs] + d.no_evidence
+    live = [r for r in rows if not r.retired]  # a retired thesis is history, not an action
 
     def rank(a: str) -> int:
         return ACTION_RANK[ResearchAction(a)]
@@ -1366,9 +1369,10 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
         "articles_blocked": d.articles_blocked,
         "queued": run.get("counts", {}).get("articles_queued", 0),
         "theses_this_run": len(rows),
-        "research_now": sum(1 for r in rows if r.action == ResearchAction.RESEARCH_NOW.value),
-        "watch": sum(1 for r in rows if r.action == ResearchAction.WATCH.value),
-        "skip": sum(1 for r in rows if r.action == ResearchAction.SKIP.value),
+        "research_now": sum(1 for r in live if r.action == ResearchAction.RESEARCH_NOW.value),
+        "watch": sum(1 for r in live if r.action == ResearchAction.WATCH.value),
+        "skip": sum(1 for r in live if r.action == ResearchAction.SKIP.value),
+        "retired": len(rows) - len(live),
         # EVENTS, not sections: a thesis new this week AND downgraded in it counts in both
         # (observed 2026-10-12: the pilot's re-graded RESEARCH NOW read "downgraded 0")
         "new": sum(1 for r in rows if r.previous_action is None or "New" in r.events),
@@ -1480,7 +1484,8 @@ _RANK = {"RESEARCH NOW": 2, "WATCH": 1, "SKIP": 0}
 def _active_rows(d: Dashboard) -> list[DashRow]:
     """Every thesis this report covers, ONE row each, ranked by research action, then the
     freshest material evidence (a thesis new and downgraded in one week is one row, two events)."""
-    rows = [r for cat in CATEGORY_ORDER for r in d.categories.get(cat.value, [])]
+    rows = [r for cat in CATEGORY_ORDER for r in d.categories.get(cat.value, [])
+            if not r.retired]  # a retired thesis is never something to research this week
     rows.sort(key=lambda r: r.thesis_id)
     rows.sort(key=lambda r: r.last_material_update, reverse=True)
     rows.sort(key=lambda r: -_RANK.get(r.action, 0))
@@ -1976,7 +1981,9 @@ def render_dashboard_md(d: Dashboard) -> str:
               else ""),
            f"- Research Now / Watch / Skip: {k.get('research_now', 0)} / {k.get('watch', 0)} / "
            f"{k.get('skip', 0)} — of the {k.get('theses_this_run', 0)} theses this run created "
-           f"or changed (archived in the registry: {d.archived_total})",
+           f"or changed" + (f", {k['retired']} of them retired (counted in none)"
+                            if k.get("retired") else "")
+           + f" (archived in the registry: {d.archived_total})",
            f"- New / upgraded / downgraded / challenged theses: {k.get('new', 0)} / "
            f"{k.get('upgraded', 0)} / {k.get('downgraded', 0)} / {k.get('challenged', 0)} — "
            f"this run's events; a thesis new this run can also be challenged in it",

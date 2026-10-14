@@ -289,9 +289,14 @@ def cmd_reanalyse(a: argparse.Namespace) -> int:
 
     pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
                     client=_client(required=True), review=not a.no_review)
+    from vinci.theme_intelligence.pipeline import ReanalysisIncompleteError
+
     try:
         run, results = pipe.run_reanalyse(article_ids=a.article, retire=a.retire or (),
                                           reason=a.reason, as_of=_iso(a.as_of), budget=a.budget)
+    except ReanalysisIncompleteError as exc:  # something WAS changed: never called a refusal
+        print(f"INCOMPLETE: {exc}")
+        return 1
     except ValueError as exc:
         print(f"refused: {exc}")
         return 1
@@ -530,7 +535,12 @@ def cmd_ingest_inbox(a: argparse.Namespace) -> int:
         pipe.guard.run_limit = a.budget
     failed = 0
     for f in files:
-        declared = declared_from(sidecar(f), a.source)
+        try:
+            declared = declared_from(sidecar(f), a.source)
+        except ValueError as exc:  # its sidecar is unreadable or says something invalid
+            print(f"  {f.name}: refused — {f.name}.meta.json: {exc} (left in the inbox)")
+            failed += 1
+            continue
         if declared is None and f.suffix.lower() in SUPPORTED:
             print(f"  {f.name}: skipped — no source stated (add {f.name}.meta.json or --source)")
             continue

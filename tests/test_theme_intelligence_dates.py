@@ -128,3 +128,51 @@ def test_the_card_shows_both_dates_with_their_provenance(pipe: Pipeline) -> None
     md = render_markdown(v.content, rc)
     for shown in (table, md):
         assert "2026-10-02" in shown and "2026-09-28" in shown and "page 1-2" in shown
+
+
+# --- one kind of instant (code review of PR #703, 2026-10-14) -----------------------------------
+
+def test_every_publication_instant_is_timezone_aware_so_two_sources_never_crash_a_render(
+        tmp_path: Path) -> None:
+    """A date-only stamp (Citi's Next.js publishDate "2026-07-01") parsed NAIVE, every other
+    source AWARE: once one thesis cited both, `write_desk` raised "can't compare offset-naive and
+    offset-aware datetimes" — and every later render with it. 14 local registries already held
+    such rows. Now the parser, the listing / declared dates and the stored records are aware.
+    NEGATIVE pin: an aware stamp keeps its own offset."""
+    from bs4 import BeautifulSoup  # noqa: F401  (the render below writes real pages)
+
+    from tests.test_theme_intelligence_corrections import CITI_URL
+    from tests.theme_intelligence_support import FIXTURES, Hypo, claim, extraction, hyp, ingest
+    from vinci.theme_intelligence.parse import parse_document, parse_iso, parse_text_date
+    from vinci.theme_intelligence.report import write_run_outputs
+    from vinci.theme_intelligence.schemas import Article, RunStatus
+
+    citi = parse_document((FIXTURES / "citi_page_data.html").read_text(), CITI_URL, CITI_URL)
+    assert citi.published_at == datetime(2026, 7, 1, tzinfo=UTC)
+    assert parse_text_date("Oct 2, 2026") == datetime(2026, 10, 2, tzinfo=UTC)
+    assert parse_iso("2026-10-02T07:00:00") == datetime(2026, 10, 2, 7, tzinfo=UTC)
+    plus8 = parse_iso("2026-10-15T07:00:00+08:00")
+    assert plus8 is not None and plus8.utcoffset() == timedelta(hours=8)
+    # end to end: one thesis cites a date-only (formerly naive) source and an aware one
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("ingest", as_of=date(2026, 10, 14))
+    for slug, when in (("naive", datetime(2026, 9, 1)),
+                       ("aware", datetime(2026, 9, 20, tzinfo=UTC))):
+        art = Hypo(slug, "Test Publisher", date(2026, 9, 1), [
+            ("paragraph", f"DRAM contract prices rose 9% in 3Q26 ({slug}).")])
+        doc = art.doc()
+        doc.published_at = when  # the shape the date-only parser produced
+        ingest(pipe, doc, extraction(
+            [claim("c1", "b001", f"DRAM contract prices rose 9% in 3Q26 ({slug})",
+                   "DRAM prices rose 9%", value=9, value_text="9%", unit="%", period="3Q26")],
+            [hyp("h1", "DRAM prices are rising", node=MEMORY, mechanism="pricing_cycle",
+                 supporting=["c1"])]), as_of=date(2026, 10, 14), publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    (t,) = pipe.store.theses()
+    assert t.current_version == 2  # both sources on one thesis
+    out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
+    assert (out / "theses" / f"{t.thesis_id}.html").exists()
+    # a record stored naive by the earlier parser reads back aware
+    stored = pipe.store.articles()[0].model_dump(mode="json")
+    legacy = Article.model_validate({**stored, "published_at": "2026-07-01T00:00:00"})
+    assert legacy.published_at == datetime(2026, 7, 1, tzinfo=UTC)

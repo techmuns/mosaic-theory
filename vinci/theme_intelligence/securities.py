@@ -429,10 +429,14 @@ class SecResolver:
         def res(status: ResolutionStatus, method: str, listings: tuple[Listing, ...] = (),
                 cik: str | None = None, registrant: str | None = None, note: str = "",
                 other: tuple[Listing, ...] = (), source_ref: str = mapref) -> SecurityResolution:
+            # the id hashes EVERY field the stored record carries (its time aside): one name
+            # resolved two ways in one run ("Citi" with hint C, refused as another issuer's; and
+            # without a hint, refused on identity) is two records — never one id with two
+            # payloads, which the append-only store refuses and which failed the whole article
             rid = "SR-" + hashlib.sha256(
                 f"{m.normalized_name}|{status}|{cik}|{[x.ticker for x in listings]}|"
                 f"{[(x.ticker, x.pit_status.value) for x in other]}|{idx.retrieved}|"
-                f"{as_of}".encode()).hexdigest()[:14]
+                f"{as_of}|{method}|{registrant}|{note}|{source_ref}".encode()).hexdigest()[:14]
             return SecurityResolution(resolution_id=rid, normalized_name=m.normalized_name,
                                       status=status, listings=listings, cik=cik,
                                       registrant=registrant, method=method,

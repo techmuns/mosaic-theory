@@ -15,13 +15,23 @@ buy / sell / target / weight field anywhere (pinned by a schema-walk test).
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
 DB_SCHEMA_VERSION = 5
+
+
+def _aware(d: datetime | None) -> datetime | None:
+    """A publication instant is always timezone-aware: a date-only or offset-less stamp reads as
+    UTC (documents.py's convention). Naive and aware instants cannot be compared, and one naive
+    date in a registry crashed every desk render beside an aware one — stored records too."""
+    return d.replace(tzinfo=UTC) if d is not None and d.tzinfo is None else d
+
+
+PublishedAt = Annotated[datetime | None, AfterValidator(_aware)]
 
 
 class Frozen(BaseModel):
@@ -371,7 +381,7 @@ class Article(Frozen):
     title_source: str | None
     authors: tuple[Author, ...]
     authors_status: FieldStatus
-    published_at: datetime | None
+    published_at: PublishedAt
     published_raw: str | None
     published_source: str | None
     published_status: FieldStatus
@@ -706,7 +716,7 @@ class SourceRef(Frozen):
     authors: tuple[str, ...]
     authors_status: FieldStatus
     publisher: str
-    published_at: datetime | None
+    published_at: PublishedAt
     published_status: FieldStatus
     url: str
     article_class: ArticleClass

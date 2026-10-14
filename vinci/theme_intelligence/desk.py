@@ -1464,7 +1464,8 @@ class Desk:
         areas = sorted(by_area.items(), key=lambda kv: (-len(kv[1]), kv[0]))
         sec = []
         for name, rs in areas:
-            rs = sorted(rs, key=lambda r: (_RANK.get(r.action, 3), r.title))
+            # a retired thesis is history: listed after every live one, whatever its action
+            rs = sorted(rs, key=lambda r: (r.retired, _RANK.get(r.action, 3), r.title))
             rows = [self.change_row(r) for r in rs]
             sec.append(f'<div class="area"><h3>{e(name)} <small>{len(rs)}</small></h3>'
                        f'{capped(rows, "theses", 6)}</div>')
@@ -1547,7 +1548,7 @@ class Desk:
         return (s.publisher, _todate(s.published_at)) if s else ("", None)
 
     def change_row(self, r: DashRow) -> str:
-        unmet = self.unmet(r.thesis_id) if r.action == "WATCH" else []
+        unmet = self.unmet(r.thesis_id) if r.action == "WATCH" and not r.retired else []
         n_open = len(self.open_by_thesis().get(r.thesis_id, []))
         mech = plain(r.mechanism)
         same = re.sub(r"\W+", " ", mech).strip().lower() in re.sub(

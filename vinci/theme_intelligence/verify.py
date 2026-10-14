@@ -187,7 +187,10 @@ def _sha(*parts: str) -> str:
 
 
 def locate(quote: str, text: str) -> tuple[int, int, str] | None:
-    """(start, end, how) of `quote` in `text`; exact first, then typographically normalised."""
+    """(start, end, how) of `quote` in `text`; exact first, then typographically normalised. An
+    empty quote is no span: "" is found at 0 in every text."""
+    if not quote.strip():
+        return None
     i = text.find(quote)
     if i >= 0:
         return i, i + len(quote), "exact"
@@ -245,11 +248,36 @@ _EVIDENCE_KINDS = frozenset({"paragraph", "list_item", "heading", "chart_title",
                              "chart_description", "other"})
 
 
-def reanchor_quote(quote: str, value_text: str | None,
-                   blocks: Iterable[Block]) -> tuple[Block, str, float] | None:
+_NEGATED = re.compile(r"\b(?:not|no|never|neither|nor|without|cannot)\b|n't\b", re.I)
+_UP_WORDS = re.compile(r"\b(?:ris(?:e|es|en|ing)|rose|increas\w*|gr(?:ow|ows|ew|own|owing|owth)"
+                       r"|gain\w*|higher|jump\w*|surg\w*|climb\w*|up)\b", re.I)
+_DOWN_WORDS = re.compile(r"\b(?:fall|falls|fell|fallen|falling|declin\w*|decreas\w*|drop\w*"
+                         r"|lower|slump\w*|shr(?:ink|inks|ank|unk|inking)|plung\w*|down)\b", re.I)
+
+
+def _direction(text: str) -> str:
+    up, down = bool(_UP_WORDS.search(text)), bool(_DOWN_WORDS.search(text))
+    return "up" if up and not down else "down" if down and not up else ""
+
+
+def reverses(sentence: str, said: str) -> bool:
+    """Whether `sentence` says the opposite of `said`: one is negated and the other is not, or
+    each states one direction and they differ ("rose 9%" / "fell 9%"). Content-word overlap
+    cannot see either: "not" is a stop word, and a figure reads the same in both directions."""
+    if bool(_NEGATED.search(sentence)) != bool(_NEGATED.search(said)):
+        return True
+    a, b = _direction(sentence), _direction(said)
+    return bool(a and b and a != b)
+
+
+def reanchor_quote(quote: str, value_text: str | None, blocks: Iterable[Block],
+                   *, also: Iterable[str] = ()) -> tuple[Block, str, float] | None:
     """The ONE verbatim source sentence carrying every claimed figure and at least
     REANCHOR_MIN_OVERLAP of the quote's content words — None when there is none, or when two
-    different sentences tie (never a guess between candidates)."""
+    different sentences tie (never a guess between candidates). A sentence that REVERSES the
+    quote, or any text in `also` (the claim's statement), is never a candidate: the claim would
+    keep the model's wording beside a span that says the opposite."""
+    said = [quote, *(t for t in also if t)]
     want = content_words(quote)
     nums = figure_numbers(value_text)
     if not want:
@@ -264,7 +292,8 @@ def reanchor_quote(quote: str, value_text: str | None,
             sw = content_words(s)
             sc = overlap(want, sw)
             if sc >= REANCHOR_MIN_OVERLAP and len(want & sw) >= REANCHOR_MIN_SHARED \
-                    and overlap(sw, want) >= REANCHOR_MIN_SENTENCE_OVERLAP:
+                    and overlap(sw, want) >= REANCHOR_MIN_SENTENCE_OVERLAP \
+                    and not any(reverses(s, t) for t in said):
                 scored.append((sc, b, s))
     if not scored:
         return None
@@ -491,11 +520,18 @@ _DECLINE_AFTER = re.compile(r"^\s*(?:(?:yoy|y/y|year[- ]over[- ]year)\s+)?"
                             r"(?:decline|drop|fall|decrease|reduction|contraction|lower)\b", re.I)
 
 
+def _whole_figure(vt_n: str) -> re.Pattern[str]:
+    """`vt_n` as a WHOLE figure: '5' is not the tail of '15%', '2,600' is not inside '12,600' or
+    '2,600,000', '1.5' is not inside '21.5'. Only DIGITS bound it — a currency prefix or a unit
+    glued on stays verbatim ('$1.655 billion' in 'US$1.655 billion', '707.5' in '707.5GVA')."""
+    return re.compile(r"(?<!\d)(?<!\d[.,])" + re.escape(vt_n) + r"(?!\d)(?![.,]\d)")
+
+
 def _states_decline(vt_n: str, quote: str) -> bool:
     """The quote states a decline in words directly beside this figure."""
     q = norm_text(quote)
     return any(_DECLINE_BEFORE.search(q[:m.start()]) or _DECLINE_AFTER.match(q[m.end():])
-               for m in re.finditer(re.escape(vt_n), q))
+               for m in _whole_figure(vt_n).finditer(q))
 
 
 def _elided_in(vt_n: str, quote: str) -> bool:
@@ -520,7 +556,7 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
         return None, []
     notes: list[str] = []
     vt = value_text or ""
-    in_quote = bool(vt) and norm_text(vt) in norm_text(quote)
+    in_quote = bool(vt.strip()) and bool(_whole_figure(norm_text(vt)).search(norm_text(quote)))
     vt_n = norm_text(vt)  # "around –10%" carries a typographic minus
     digits = [float(n.replace(",", "")) for n in stated_numbers(vt_n)]
     # a figure written as words: "Two more hikes", "twenty-four months", "doubling" — and beside
@@ -553,6 +589,9 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
         if not reads or any(vt_n[m.end():].lstrip().startswith("%") for m in reads):
             notes.append(f"unit {unit!r} disagrees with a % figure")
             ok = False
+    if ("%" in u or "percent" in u) and re.search(r"\d\s*(?:x|bps?)\b", vt_n, re.I):
+        notes.append(f"unit {unit!r} disagrees with a multiple / basis-point figure {vt!r}")
+        ok = False
     return ok, notes
 
 
@@ -580,7 +619,7 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
                 loc = locate(xc.quote, b.text)
         reanchored = False
         if loc is None:
-            ra = reanchor_quote(xc.quote, xc.value_text, doc.body_blocks)
+            ra = reanchor_quote(xc.quote, xc.value_text, doc.body_blocks, also=[xc.statement])
             if ra is not None:
                 bb, sent, score = ra
                 notes.append(f"re-anchored: the quote is not verbatim in the article; replaced by "
@@ -708,11 +747,17 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
     by_name: dict[str, str] = {}
     seen_m: set[str] = set()
     full_text = {bb.block_id: bb.text for bb in doc.blocks}
+    def name_at(name_l: str, text: str) -> int:
+        """Where the name occurs as whole words ("Meta" is not inside "metadata"), else -1. A
+        digit may follow it: a footnote marker glued on ("COP2814" for COP28, note 14)."""
+        m = re.search(r"(?<![a-z0-9])" + re.escape(name_l) + r"(?![a-z])", text.lower())
+        return m.start() if m else -1
+
     for xm in x.mentions:
         b = blocks.get(xm.block_id)
         name_l = xm.name_as_written.lower()
-        if b is None or name_l not in b.text.lower():
-            mhomes = [k for k, t in full_text.items() if name_l in t.lower()]
+        if b is None or name_at(name_l, b.text) < 0:
+            mhomes = [k for k, t in full_text.items() if name_at(name_l, t) >= 0]
             if not mhomes:
                 issues.append(_issue(run_id, "mention", xm.name_as_written, IssueSeverity.BLOCK,
                                      "UNSUPPORTED_ENTITY",
@@ -722,7 +767,7 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
             b = blocks[mhomes[0]]
         quote = xm.quote if xm.quote and locate(xm.quote, b.text) else None
         if quote is None:
-            i = b.text.lower().find(name_l)
+            i = name_at(name_l, b.text)
             lo, hi = max(0, i - 60), min(len(b.text), i + len(name_l) + 60)
             quote = b.text[lo:hi]
         reco = xm.recommendation_status
@@ -768,8 +813,11 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
         words = [w for w in re.findall(r"[a-z0-9&]+", norm_text(name).lower())
                  if w not in ("the", "sector", "sectors", "industry", "industries", "stocks",
                               "s", "and", "of")]
-        q = norm_text(quote).lower()
-        if not words or not all(w in q for w in words):
+        qw = set(re.findall(r"[a-z0-9&]+", norm_text(quote).lower()))
+        # whole words, a plural allowed ("AI" is not inside "said"; "data center" is in
+        # "data centers")
+        if not words or not all(w in qw or f"{w}s" in qw or f"{w}es" in qw
+                                or (w.endswith("s") and w[:-1] in qw) for w in words):
             return None
         return homes[0].block_id, quote
 
@@ -960,9 +1008,15 @@ def _asserted(text: str) -> str:
 
 
 def _pool_numbers(cited: list[Claim]) -> set[str]:
-    pool = " ".join(norm_text(" ".join(filter(None, [c.quote, c.value_text, c.statement])))
-                    for c in cited)
-    nums = {n.replace(",", "") for n in stated_numbers(pool)}
+    """The numbers the cited claims carry: their VERBATIM evidence (quote, value text) and the
+    structured fields that place it (period, metric, scope: "2027", "3-month"). Never the free
+    model-written statement: cards print that statement, so pooling it checked a line against
+    itself ("rise 40% to $900bn in 2027" beside a quote with no figure)."""
+    pool = " ".join(norm_text(" ".join(filter(None, [c.quote, c.value_text, c.period, c.metric,
+                                                      c.scope]))) for c in cited)
+    # magnitudes: "fell 10%" carries the line's "-10%" — a figure's direction is the re-anchor's
+    # and the review's to check, never this one's
+    nums = {n.replace(",", "").lstrip("-") for n in stated_numbers(pool)}
     nums |= {f"{v:g}" for v in word_numbers(pool)}
     nums |= {f"{_MULT_WORD[w]:g}" for w in re.findall(r"[a-z]+", pool.lower()) if w in _MULT_WORD}
     return nums
@@ -986,8 +1040,22 @@ _NAMED_INDEX = re.compile(
     r"|\b(?:Q[1-4]|[1-4]Q|H[12]|[12]H)(?:\s?'?\d{2}(?:\d{2})?)?\b")
 
 
+#: A capitalised NAME followed by a one-digit version number — "Era 2", "Opus 4.5", "Industry
+#: 5.0", "GPT 6.1": part of the name, as a hyphen-joined one is (`in_hyphenated_name`). Never a
+#: figure with a unit, never two or more integer digits ("Score 72.4" stays checked), never a
+#: month day, or a number after a sentence's function word ("In 2027", "By 40%"). Observed
+#: 2026-10-14: once the model's statement no longer vouched for its own numbers, these names were
+#: read as figures their claims do not carry.
+_VERSION_NAME = re.compile(
+    r"\b(?!(?:In|By|From|At|To|On|For|Since|Until|Through|Over|About|Of|And|Or|The|A|An|Up|"
+    r"Down|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|January|February|March|April|"
+    r"June|July|August|September|October|November|December)\b)([A-Z][A-Za-z]+) "
+    r"(\d(?:\.\d{1,2})?)\b(?![.,]?\d)(?!\s?(?:%|percent|bn|billion|mn|million|m\b|k\b|x\b|"
+    r"bps?|[GMKT]W|[GT]B|pp))")
+
+
 def without_named_indices(text: str) -> str:
-    return _NAMED_INDEX.sub(" ", text)
+    return _VERSION_NAME.sub(r"\1 ", _NAMED_INDEX.sub(" ", text))
 
 
 def deterministic_card_checks(card: CardContent, claims: dict[str, Claim],
@@ -1008,7 +1076,7 @@ def deterministic_card_checks(card: CardContent, claims: dict[str, Claim],
             continue
         pool_nums = _pool_numbers(cited)
         for n in stated_numbers(without_named_indices(norm_text(_asserted(text)))):
-            if n.replace(",", "") not in pool_nums:
+            if n.replace(",", "").lstrip("-") not in pool_nums:
                 issues.append(_issue(run_id, "card_sentence", f"{tid}:{sid}",
                                      IssueSeverity.BLOCK, "NUMBER_NOT_IN_CITED_CLAIMS",
                                      f"{sid} prints {n!r}, which none of its cited claims "

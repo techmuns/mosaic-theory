@@ -980,8 +980,10 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                                     compact=compact, truncated_usage=trunc if compact else None,
                                     dropped=dropped, salvaged=salvaged, lost=lost)
         if refused is not None:  # paid, refused, nothing salvageable: never asked again
-            raise InvalidAnswerError("cached extraction", refused, usages=[], model=model,
-                                     prompt_version=prompt_version) from refused
+            raise InvalidAnswerError(
+                f"cached extraction {p.name} (paid once, never asked again — set that file "
+                f"aside to have the model asked anew)", refused, usages=[], model=model,
+                prompt_version=prompt_version) from refused
     if client is None:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")
