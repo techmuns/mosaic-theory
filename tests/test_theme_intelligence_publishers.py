@@ -270,6 +270,9 @@ def test_the_channel_policies_as_configured() -> None:
     # SemiAnalysis: no subscription (2026-10-13) — paid posts read as their preview, never asked for
     assert {s: by[s].paywalled_posts for s in by if by[s].paywalled_posts != "request"} == {
         "semianalysis": "preview_only"}
+    # Goldman Sachs: its Markets page is a second place to look (2026-10-14) — shown, never fetched
+    assert {s: by[s].research_pages for s in by if by[s].research_pages} == {
+        "gs_research": ("https://www.goldmansachs.com/insights/markets",)}
     assert all(by[s].linked_reports == "request" for s in by if s != "citi_must_c")
     assert "ingest-file" in _UPLOAD  # the health hint points at the document route
 

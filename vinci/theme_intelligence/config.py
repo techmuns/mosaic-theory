@@ -162,6 +162,9 @@ class SourceConfig:
     #: preview is all this channel will give — analysed as the preview it is (still PARTIAL),
     #: never requested. A page's LINKED report is governed by `linked_reports`, not by this.
     paywalled_posts: str = "request"
+    #: further pages of the channel's research for a PERSON to check (shown beside `entry_url`
+    #: as "where to look" on Uploads and Sources) — never discovered, fetched or health-checked
+    research_pages: tuple[str, ...] = ()
     #: "automatic" — discovered and read by every scan; "manual_first" — a lightweight health
     #: check only (no discovery, no retrieval attempt): its research arrives as authorised uploads
     mode: str = "automatic"
@@ -293,6 +296,7 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
                 linked_reports=str(s.get("linked_reports", "request")),
                 max_linked_reports=int(s.get("max_linked_reports", 2)),
                 paywalled_posts=str(s.get("paywalled_posts", "request")),
+                research_pages=tuple(str(u) for u in s.get("research_pages", ())),
                 mode=str(s.get("mode", "automatic")),
             ))
         except KeyError as exc:
@@ -307,6 +311,8 @@ def load_sources(path: Path | None = None) -> tuple[SourceConfig, ...]:
             raise ConfigError(f"{sc.id}: linked_reports must be fetch | request")
         if sc.paywalled_posts not in ("request", "preview_only"):
             raise ConfigError(f"{sc.id}: paywalled_posts must be request | preview_only")
+        if not all(u.startswith("https://") for u in sc.research_pages):
+            raise ConfigError(f"{sc.id}: research_pages must be https:// addresses")
         if sc.manual_llm_processing not in ("permitted", "not_permitted", "unknown"):
             raise ConfigError(f"{sc.id}: manual_llm_processing must be permitted | "
                               f"not_permitted | unknown")

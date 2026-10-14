@@ -36,6 +36,8 @@
 #               reports public on its own site and they may be processed like the page itself.
 #               Bounded by `max_linked_reports` per run (long documents: LLM cost).
 #   "request" — (default) list the report for an authorised upload (`ingest-file`).
+# `research_pages`: further pages of a channel's research for a person to check — shown beside
+#   `entry_url` as "where to look"; never discovered, fetched or health-checked.
 # `paywalled_posts`: a paid post whose page carries only its free preview.
 #   "request"      — (default) list the full post for an authorised upload.
 #   "preview_only" — the operator's decision that the preview is all the channel gives (no
@@ -112,6 +114,9 @@ id = "gs_research"
 publisher = "Goldman Sachs"
 channel = "Goldman Sachs Research insights"
 entry_url = "https://www.goldmansachs.com/insights/goldman-sachs-research/"
+# operator decision 2026-10-14: Research (deep thematic pieces, ~2 a month) stays the main page;
+# Markets (shorter articles weekly, plus podcasts and videos) is the second place to look
+research_pages = ["https://www.goldmansachs.com/insights/markets"]
 adapter = "generic_listing"
 link_pattern = "^https://www\\.goldmansachs\\.com/insights/articles/"
 expect_blocked = true

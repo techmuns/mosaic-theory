@@ -486,6 +486,8 @@ LATAM = "https://www.citigroup.com/global/insights/latam-poised-for-take-off"
 MS_PDF = (Path(__file__).parent / "fixtures" / "theme_intelligence" / "synthetic_documents"
           / "ms_report_synthetic.pdf")
 GS_PAGE = "https://www.goldmansachs.com/insights/goldman-sachs-research/"
+GS_MARKETS = "https://www.goldmansachs.com/insights/markets"  # second place to look, 2026-10-14
+MS_PAGE = "https://www.morganstanley.com/what-we-do/research"
 
 
 def _desk_with_health(tmp_path: Path) -> tuple[Pipeline, Path]:
@@ -567,7 +569,8 @@ def test_sources_say_each_channels_state_in_plain_words_and_fold_the_checks_own(
     assert fold is not None and "paywalled previews" in fold.get_text(" ")
     assert "paywalled previews" not in _outside_folds(BeautifulSoup(str(sa), "html.parser"))
     assert "known restriction" in gs.get_text(" ")
-    assert [a["href"] for a in gs.select("td a")] == [GS_PAGE]
+    assert [a["href"] for a in gs.select("td a")] == [GS_PAGE, GS_MARKETS]  # both, in order
+    assert [a["href"] for a in rows["Morgan Stanley"].select("td a")] == [MS_PAGE]  # one page
     assert "full text, dates and bylines read" in tf.get_text(" ")
     assert tf.select_one("details") is None
     assert not page.select(".hs")  # one check each: no strip
@@ -590,7 +593,8 @@ def test_uploads_link_each_requested_article_say_what_is_held_and_where_to_look(
     gs = next(li for li in page.select("li.ui") if "New research from Goldman Sachs" in
               li.get_text(" "))
     assert "Where to look" in gs.get_text(" ")
-    assert GS_PAGE in [x.get("href") for x in gs.select("a")]
+    hrefs = [x.get("href") for x in gs.select("a")]
+    assert GS_PAGE in hrefs and GS_MARKETS in hrefs
     assert "the channel cannot be read" not in page.get_text(" ")
 
 

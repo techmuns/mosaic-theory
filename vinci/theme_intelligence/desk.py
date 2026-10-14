@@ -860,8 +860,8 @@ class UploadItem:
     audit: str = ""
     #: a channel's articles to supply: (url, title as listed, what is already held of it)
     links: list[tuple[str, str, str]] = field(default_factory=list)
-    #: a channel whose articles the scan cannot list: its research page, to look there by hand
-    where: str = ""
+    #: a channel whose articles the scan cannot list: its research pages, to look there by hand
+    where: list[str] = field(default_factory=list)
 
 
 def _ingest_cmd(sid: str, url: str = "") -> str:
@@ -980,7 +980,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                  f"automated access is {str(row.get('status', 'UNKNOWN')).lower()} — upload "
                  f"the reports you hold, starting with the articles listed"),
             command=_ingest_cmd(sid), detail=rest, links=links,
-            where=src.entry_url if not links else "",
+            where=[src.entry_url, *src.research_pages] if not links else [],
             audit=f"health {row.get('status', 'UNKNOWN')}" + (f" · {row.get('reason', '')[:160]}"
                                                               if row else "")))
     for d in reg.documents:
@@ -1140,6 +1140,11 @@ def _ml(label: str) -> str:
     """A cell's label shown only where the table stacks into cards (a phone), whose column
     headers are hidden — so a bare "1" or "—" never stands without its meaning."""
     return f'<span class="ml">{e(label)}: </span>'
+
+
+def _page_links(urls: list[str]) -> str:
+    """Research pages as links named by host and path, one after another."""
+    return " · ".join(f'<a href="{e(u)}">{e(_host(u))}</a>' for u in urls)
 
 
 def _host(url: str) -> str:
@@ -1699,9 +1704,8 @@ class Desk:
                     + "".join(f'<div class="small">• {_link(url, title)}'
                               + (f' <span class="muted">· {e(note)}</span>' if note else "")
                               + "</div>" for url, title, note in u.links)
-                    + (f'<div class="small">Where to look: <a href="{e(u.where)}">'
-                       f'{e(_host(u.where))}</a> — the scan cannot list its articles</div>'
-                       if u.where else "")
+                    + (f'<div class="small">Where to look: {_page_links(u.where)} — the scan '
+                       f'cannot list its articles</div>' if u.where else "")
                     + "".join(f'<div class="small">→ <a href="{self.thesis_link(t)}">'
                               f'{e(self.title(t))}</a></div>' for t in u.theses if t in self.asof)
                     + f'<span class="aud cc">{e(u.audit)}</span></div><div class="uiside">'
@@ -1785,8 +1789,9 @@ class Desk:
                     if src.linked_reports == "fetch" else "") + (
                 '<div class="small">paid posts read as their preview — by decision</div>'
                 if src.paywalled_posts == "preview_only" else "")
-            where = (f'<div class="small">research page: <a href="{e(src.entry_url)}">'
-                     f'{e(_host(src.entry_url))}</a></div>' if src.mode == "manual_first" else "")
+            pages = [src.entry_url, *src.research_pages]
+            where = (f'<div class="small">research {"pages" if len(pages) > 1 else "page"}: '
+                     f'{_page_links(pages)}</div>' if src.mode == "manual_first" else "")
             out["manual_first" if src.mode == "manual_first" else "automatic"].append(
                 f'<tr><td><b>{e(src.publisher)}</b>{note}{where}'
                 f'<div class="aud"><code>{e(sid)}</code></div></td>'
