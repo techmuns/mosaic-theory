@@ -126,7 +126,14 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   compatible with the issuer's SEC industry (SIC); an incompatible match is refused, and a hint
   naming a foreign listing never resolves by a partial name — the entity stays UNRESOLVED. Found
   2026-10-11: Citi's "Delta" (a solid-oxide fuel-cell competitor — Delta Electronics, TWSE 2308,
-  not SEC-registered) had resolved to Delta Air Lines. Point-in-time listing checks still follow.
+  not SEC-registered) had resolved to Delta Air Lines. Two more guards (2026-10-14):
+  - a hint naming one SEC issuer never lets a partial name pick a different business ("Citi",
+    hint C, had resolved to Citi Trends), while one corporate family stays one ("Entergy
+    Louisiana", hint ETR);
+  - a company the source names as private is matched only by the registrant's exact name
+    ("Cognition", the AI lab, had resolved to Cognition Therapeutics).
+
+  Point-in-time listing checks still follow.
 - **Point-in-time securities.** A named company's exposure lines are the common-equity lines on the
   cover page of its latest 10-K / 10-Q / 20-F / 40-F filed on or before the as-of date
   (inline-XBRL `dei:TradingSymbol` / `Security12bTitle`). Preferred, depositary-preferred and debt
@@ -310,6 +317,12 @@ python -m vinci.theme_intelligence documents --status HELD
   heading is one heading); title, authors (metadata, front matter or a "By …" byline) and the
   document's own date, each with where it was read. Running headers, footers and page numbers are
   left out and counted.
+- **A glyph printed over itself is read once** (2026-10-14). A faux-bold chart label printed three
+  times over itself read "666111%%%" for 61%; the reader collapses overprinted characters
+  (`ti-parse-8`). Digits that repeat side by side ("1100") stay.
+- **A saved page's site suffix is not its title** (2026-10-14). A page saved as PDF keeps its
+  browser-tab title ("… | Morgan Stanley"); a trailing part that repeats the channel's publisher
+  is dropped, on import and on every screen. Any other trailing part stays.
 - **A date the page prints is read wherever it sits** (2026-10-14). A research web page saved as
   PDF can lay its headline and date out in boxes the reader detects as a table (every Morgan
   Stanley page does); the date in such a box is the document's own, never left unknown.
@@ -565,11 +578,14 @@ document is analysed without its licence confirmed.
   mechanism, what changed, the effect on profits, why it is (or is not) Research Now, the next
   question, the source and its dates. A thesis new and re-graded in one week is ONE card showing
   both events. The navigation reaches the activity, the review queue, sources, the archive and
-  **Operations & audit** (run ids, engine codes, upload commands, the validation log).
+  **Operations & audit** (run ids, engine codes, upload commands, the validation log). Its sources
+  say each channel's state in words, as the desk's Sources do ("partly working — some articles
+  are previews or summaries of a fuller report"); each check's own reason stays in Operations &
+  audit (2026-10-14).
 - **The Living Thesis Card** opens with its header (action, horizon, the three dates, and a
-  **Review required** link to each questioned or withheld line) and **At a glance** — the
-  thesis, what changed, the effect on profits, the strongest evidence, why this action, what
-  could invalidate it, the next check — then the nine sections in full.
+  **Review required** link to each questioned or withheld line), then the nine sections in full.
+  **At a glance** — the same seven answers, repeated from the sections — is one closed fold, left
+  out of the print (operator, 2026-10-14).
 - **Audit view** (top right) shows evidence ids, engine codes and the decision trace. Print opens
   every section and prints the audit layer: the PDF is the complete record.
 - **Evidence links** (Audit view) reach their evidence: the key rows of section 04, or its
@@ -577,7 +593,9 @@ document is analysed without its licence confirmed.
   section opens it.
 - **Section 05** lists the **business groups** the source names ("GPU and ASIC manufacturers")
   apart from listed-company exposures — not companies; no ticker is implied, and they do not count
-  toward Research Now.
+  toward Research Now. Its stock exposures are only names in an exposure role, the set the
+  priority rules count: the publisher, a data source or context is "also named", never an
+  exposure (2026-10-14).
 - **The review queue** leads with the findings on the CURRENT cards (each shortened — the whole
   finding is on its card line); incomplete sources, background alerts and **resolved or
   historical** items (a figure that failed a since-corrected check; a review finding a later
@@ -629,13 +647,19 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   articles analysed in the last four weeks; automatic and manual-first coverage apart, the
   manual-first ones with their research page.
 - **The reading page** (`theses/<id>.html`) — the thesis; why this action beside what to
-  investigate next; the strongest figures; how it reaches fundamentals beside what could prove it
-  wrong; what changed beside who is exposed. Open findings, related theses (theses sharing a source
-  are flagged as the same source, not independent confirmation; one entry per thesis); the longer
-  lists (conditions met, more risks, signals to watch) are one fold away. Four tabs close the page.
+  investigate next; **who is exposed** beside what could prove it wrong; the strongest figures
+  (those the thesis statement cites first); how it reaches fundamentals beside what changed.
+  **Who is exposed** groups companies and sectors as *could benefit*, *could be hurt* and *named,
+  direction not stated*, each company with its ticker or why it has none. The publisher, data
+  sources and context are counted apart, never listed as exposures, and a company the source does
+  not name is never added. Open findings, related theses (theses sharing a source are flagged as
+  the same source, not independent confirmation; one entry per thesis; a link that only says "same
+  area" — a thesis filed at an area's root — sits in the broader-area fold); the longer lists
+  (checks passed, more risks, signals to watch) are one fold away. Four tabs close the page.
   **Evidence** lists what goes against the thesis first, then the supporting figures by article,
   then context; each item is one line (figure, what it measures, period, source) that opens to the
-  source's words. **History** is one line per version. **Sources** says how many cited items each
+  source's words; a figure the article states twice for one measure is one line. **History** is
+  one line per version. **Sources** says how many cited items each
   article gave and how many go against. **Full record** opens the nine-section card, or any one
   section.
 - **Timing** — the near-term condition is stated once, met or not, from the stored factor, with
