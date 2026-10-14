@@ -208,6 +208,7 @@ function renderSidebar() {
       <span class="brand-logo" aria-hidden="true"></span>
       <div class="mark">Nostra Vinci</div>
       <button class="theme-tog" id="theme-tog" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+      <button class="nav-tog" id="nav-tog" type="button"></button>
     </div>
     <div class="nav-group"><div class="label">Shared</div>${SHARED.map(sharedItem).join("")}</div>
     <div class="nav-group"><div class="label">Edges</div>${EDGES.map(edgeItem).join("")}</div>
@@ -362,6 +363,33 @@ function applyTheme(t) {
   if (btn) btn.innerHTML = t === "dark" ? SUN : MOON;
   requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
 }
+// the menu rail: full, or collapsed to a thin strip so the content gets the width. The choice is
+// remembered (index.html applies it before first paint, as it does the theme).
+const PANEL = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>`;
+function navCollapsed() {
+  return document.documentElement.getAttribute("data-nav") === "collapsed";
+}
+function paintNavToggle() {
+  const btn = document.getElementById("nav-tog");
+  if (!btn) return;
+  const label = navCollapsed() ? "Show the menu" : "Collapse the menu";
+  btn.innerHTML = PANEL;
+  btn.setAttribute("aria-label", label);
+  btn.setAttribute("title", label);
+  btn.setAttribute("aria-expanded", navCollapsed() ? "false" : "true");
+}
+function wireNavToggle() {
+  const btn = document.getElementById("nav-tog");
+  if (!btn) return;
+  paintNavToggle();
+  btn.addEventListener("click", () => {
+    const root = document.documentElement;
+    if (navCollapsed()) root.removeAttribute("data-nav");
+    else root.setAttribute("data-nav", "collapsed");
+    try { localStorage.setItem("nv-nav", navCollapsed() ? "collapsed" : "open"); } catch (e) { /* private mode */ }
+    paintNavToggle();
+  });
+}
 function wireThemeToggle() {
   const btn = document.getElementById("theme-tog");
   if (!btn) return;
@@ -371,5 +399,6 @@ function wireThemeToggle() {
 
 renderSidebar();
 wireThemeToggle();
+wireNavToggle();
 window.addEventListener("hashchange", dispatch);
 dispatch();

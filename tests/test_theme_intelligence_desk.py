@@ -286,7 +286,9 @@ def test_this_week_groups_its_changes_by_area_and_lists_what_each_article_produc
     s = _soup(out / "index.html")
     run = max((r for r in pipe.store.runs() if r.mode == "scan"), key=lambda r: r.started_at)
     asof = theses_as_of_run(pipe.store, run)
-    for area in s.select("section.main div.area"):
+    areas = s.select("main.wrap div.area")
+    assert areas  # the week's changes, grouped (a selector that finds nothing proves nothing)
+    for area in areas:
         name = area.select_one("h3").contents[0].strip()
         for a in area.select("a.trow"):
             tid = Path(str(a["href"])).stem
@@ -703,3 +705,27 @@ def test_a_sources_request_leaves_uploads_once_every_article_it_lists_is_supplie
     held = [li for li in page.select("li.ui") if "Release command" in li.get_text(" ")]
     assert len(held) == 2  # both supplied copies still wait for their licence decision
     assert "New research from Goldman Sachs" in text  # a manual-first channel's standing request
+
+
+def test_this_week_and_uploads_give_the_content_the_full_width(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """Asked 2026-10-14: the "Needs your attention" panel repeated the tiles beside it and squeezed
+    the week's content. NEGATIVE: neither screen has a side panel. POSITIVE: what the tiles do not
+    already say (failed or blocked articles, theses close to archiving, sources needing attention)
+    is one line of links under them; Uploads' weekly routine is one closed fold holding its four
+    steps, above the list."""
+    _pipe, out, _ = w12
+    week = _soup(out / "index.html")
+    assert not week.select("main.wrap aside") and "Needs your attention" not in week.get_text()
+    line = week.select_one(".hero .headsup")
+    assert line is not None
+    assert {a["href"] for a in line.select("a")} >= {"articles.html", "sources.html"}
+    tiles = {a["href"] for a in week.select(".hero .strip a")}
+    assert {"review.html", "uploads.html"} <= tiles  # findings and uploads stay as tiles
+    up = _soup(out / "uploads.html")
+    assert not up.select("main.wrap aside")
+    howto = up.select_one("details.howto")
+    assert howto is not None and not howto.has_attr("open")
+    assert len(howto.select("ol.steps4 > li")) == 4
+    first = up.select_one("main.wrap details.howto ~ details.ubk")
+    assert first is not None  # the list follows the fold, at full width

@@ -1319,30 +1319,23 @@ class Desk:
                        + " with no verified evidence — kept for the record</summary><ul>" + "".join(
                            f'<li><a href="{self.thesis_link(r.thesis_id)}">{e(r.title)}</a></li>'
                            for r in d.no_evidence) + "</ul></details>")
-        att = []
-        if self.open:
-            att.append(f'<li><a href="review.html"><b>{len(self.open)}</b> open review '
-                       f'{"finding" if len(self.open) == 1 else "findings"}</a>'
-                       + (f'<span>{decisive} affect a research action</span>' if decisive else "")
-                       + "</li>")
-        if waiting:
-            att.append(f'<li><a href="uploads.html"><b>{len(waiting)}</b> upload '
-                       f'{"item" if len(waiting) == 1 else "items"}</a>'
-                       f'<span>documents to supply or clear</span></li>')
+        # what the tiles above do not already say — one line, never a side panel beside the week
+        notes: list[str] = []
         if bad:
-            att.append(f'<li><a href="articles.html"><b>{len(bad)}</b> failed or blocked '
-                       f'{"article" if len(bad) == 1 else "articles"}</a>'
-                       f'<span>this week</span></li>')
+            notes.append(f'<a href="articles.html">{_pl(len(bad), "article")} failed or blocked'
+                         f'</a> this week')
         soon = [t for t, _v in active
                 if STALE_AFTER_DAYS - (w.end - t.last_material_update).days <= 21]
         if soon:
-            att.append(f'<li><a href="themes.html?sort=stale"><b>{len(soon)}</b> close to '
-                       f'archiving</a><span>no new evidence for about three months</span></li>')
+            notes.append(f'<a href="themes.html?sort=stale">{_theses(len(soon))} close to '
+                         f'archiving</a> (no new evidence for about three months)')
         blocked = [r["publisher"] for r in self.health.get("rows", [])
                    if r["status"] in ("BLOCKED", "ERROR", "DEGRADED")]
         if blocked:
-            att.append(f'<li><a href="sources.html"><b>{len(blocked)}</b> sources blocked or '
-                       f'partial</a><span>{e(", ".join(blocked))}</span></li>')
+            notes.append(f'<a href="sources.html">{len(blocked)} of '
+                         f'{len(self.health.get("rows", []))} sources blocked or partial</a> '
+                         f'({e(", ".join(blocked))})')
+        heads_up = (f'<p class="headsup">{" · ".join(notes)}</p>' if notes else "")
         a_counts: dict[str, list[Thesis]] = defaultdict(list)
         for t, _v in active:
             a_counts[self.area[t.thesis_id]].append(t)
@@ -1377,16 +1370,13 @@ class Desk:
         body = (
             f'<section class="hero"><h1>{e(w.label)}</h1><p class="sum">'
             f'{_pl(len(read), "article")} read · {_theses(len(self.rows), "new or changed")} · '
-            f'{rn} at Research Now</p><div class="strip">{strip}</div></section>'
-            f'<div class="cols"><section class="main"><h2>Changes this week '
+            f'{rn} at Research Now</p><div class="strip">{strip}</div>{heads_up}</section>'
+            f'<h2>Changes this week '
             f'<small>{_theses(len(self.rows))} in {_pl(len(areas), "area")}</small></h2>'
             + ("".join(sec) or '<p class="muted">No thesis was created or changed.</p>')
             + f'<h2 class="mt">Articles this week <small>{len(arts)}</small></h2>'
             + self.produced_list(arts, cap=8)
-            + '</section><aside><h2>Needs your attention</h2><ul class="att">'
-            + ("".join(att) or '<li class="muted">Nothing outstanding.</li>')
-            + "</ul></aside></div>"
-            f'<details class="quiet"><summary>All active theses by area '
+            + f'<details class="quiet mt"><summary>All active theses by area '
             f'<span class="muted">{_theses(len(active))} in {_pl(len(a_counts), "area")}</span>'
             f'</summary>'
             + self.table("areas", '<tr><th>Area</th><th>Active</th><th>Changed</th>'
@@ -1726,25 +1716,29 @@ class Desk:
         body = (f'<section class="hero"><h1 class="tabtitle">Uploads</h1><p class="sum">'
                 f'{_pl(waiting, "item")} to supply or clear · {len(by.get("done", []))} imported'
                 f'</p><p class="hint">Nothing here is dismissed by age — an item stays until it is '
-                f'supplied or cleared.</p></section><div class="cols"><section class="main">'
-                + ("".join(blocks) or '<p class="muted">Nothing waiting.</p>')
-                + f'</section><aside><h2>Each week</h2><ol class="steps">'
-                  f'<li><b>Pull</b> the registry<code class="cmd">{cli} state pull</code></li>'
-                  f'<li><b>Import</b> each file with the command on its row, or put them in '
-                  f'<code>data/theme_intelligence/inbox/</code> and run '
-                  f'<code class="cmd">{cli} ingest-inbox</code></li>'
-                  f'<li><b>Clear</b> what is held with the release command on its row</li>'
-                  f'<li><b>Push</b> before Monday 03:00 UTC<code class="cmd">{cli} state push'
-                  f'</code></li></ol><details class="fold"><summary>Rules</summary>'
-                  f'<ul class="small"><li>Add <code>--llm-permitted</code> only when the '
-                  f'document\'s licence allows third-party model processing; without it the '
-                  f'document is held.</li><li>A document needs at least 40 words of readable '
-                  f'text.</li><li>A fuller copy of a preview is the same article, re-checked — '
-                  f'nothing is counted twice.</li><li>A document estimated above the $30 '
-                  f'per-document limit waits for your release.</li><li>An inbox file may carry a '
-                  f'<code>&lt;file&gt;.meta.json</code> with <code>source</code>, '
-                  f'<code>url</code>, <code>title</code>, <code>published</code>, '
-                  f'<code>llm_permitted</code>.</li></ul></details></aside></div>')
+                f'supplied or cleared.</p></section>'
+                # the weekly routine is reference, read once: one line, folded — never a side
+                # panel narrowing the list it is about
+                f'<details class="quiet howto"><summary>How to supply documents each week '
+                f'<span class="muted">pull · import · clear · push</span></summary>'
+                f'<ol class="steps4">'
+                f'<li><b>1. Pull</b> the registry<code class="cmd">{cli} state pull</code></li>'
+                f'<li><b>2. Import</b> each file with the command on its row, or put them in '
+                f'<code>data/theme_intelligence/inbox/</code> and run '
+                f'<code class="cmd">{cli} ingest-inbox</code></li>'
+                f'<li><b>3. Clear</b> what is held with the release command on its row</li>'
+                f'<li><b>4. Push</b> before Monday 03:00 UTC<code class="cmd">{cli} state push'
+                f'</code></li></ol><details class="fold"><summary>Rules</summary>'
+                f'<ul class="small"><li>Add <code>--llm-permitted</code> only when the '
+                f'document\'s licence allows third-party model processing; without it the '
+                f'document is held.</li><li>A document needs at least 40 words of readable '
+                f'text.</li><li>A fuller copy of a preview is the same article, re-checked — '
+                f'nothing is counted twice.</li><li>A document estimated above the $30 '
+                f'per-document limit waits for your release.</li><li>An inbox file may carry a '
+                f'<code>&lt;file&gt;.meta.json</code> with <code>source</code>, '
+                f'<code>url</code>, <code>title</code>, <code>published</code>, '
+                f'<code>llm_permitted</code>.</li></ul></details></details>'
+                + ("".join(blocks) or '<p class="muted">Nothing waiting.</p>'))
         return self.page("Uploads", body, "Uploads")
 
     # -- Sources -------------------------------------------------------------------------------
@@ -2262,7 +2256,11 @@ section{margin-bottom:28px}
 code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
 overflow-wrap:anywhere}
 code.cmd{display:inline-block;white-space:normal}
-aside code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
+aside code.cmd,.howto code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
+.headsup{margin:12px 0 0;font-size:13.5px;color:var(--ink2)}
+.steps4{list-style:none;padding:0;margin:12px 0 6px;display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.steps4 li{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 .filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
 border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
@@ -2405,6 +2403,7 @@ details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-siz
 @media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
 aside{position:static;min-width:0}
 .ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
+.steps4{grid-template-columns:1fr}
 .grid2{grid-template-columns:1fr}.expo{grid-template-columns:1fr}.expo dt{margin-top:6px}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .filters input#q{min-width:0;width:100%;flex-basis:100%}
