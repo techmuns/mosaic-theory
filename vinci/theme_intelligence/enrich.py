@@ -260,7 +260,7 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
             # a US line of a 20-F / 40-F filer (an ADR or a cross-listing): the resolver never
             # substitutes it for common equity; recorded as a fact, from the SEC's own data
             foreign = bool(status is ResolutionStatus.UNRESOLVED and r.cik
-                           and resolver.is_foreign_private_issuer(r.cik))
+                           and resolver.is_foreign_private_issuer(r.cik, as_of=as_of))
         except HttpError as exc:  # the SEC could not be read: the name stays, unverified
             status, listings, registrant = ResolutionStatus.UNRESOLVED, (), None
             rnote = f"the SEC could not be read ({exc}) — not verified"

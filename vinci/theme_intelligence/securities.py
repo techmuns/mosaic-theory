@@ -35,15 +35,28 @@ DAL, Delta Air Lines, on the bare prefix "delta"):
 - a hint that names a listing the SEC data does not hold (a foreign code: 2308, SIE, 6501) says
   the company is listed elsewhere: a PARTIAL name match to some SEC registrant is then refused —
   only the registrant's exact name is accepted;
-- the BUSINESS the source describes FOR THIS COMPANY (its own quote and role — never the
-  surrounding paragraph: CBRE cited as a data source inside a paragraph on data-centre hardware
-  is not a hardware company; observed 2026-10-11) must be compatible with the issuer's SEC
-  industry (SIC). A clear incompatibility — fuel cells against "Air Transportation, Scheduled"
-  — leaves the entity UNRESOLVED with both stated. The compatibility table is generous (an
-  internet retailer's SIC is compatible with a cloud context; an industrial or electrical-equipment
-  issuer with a software one, since industrial automation is sold as software), so it vetoes only
-  what is plainly another business; with no business stated, or no SIC on file, nothing is
-  vetoed.
+- the BUSINESS the source describes FOR THIS COMPANY (its role — what it does, never the quote's
+  wording: "Merck's late-stage pipeline" is not an oil pipeline, 2026-10-14) must be compatible
+  with the issuer's SEC industry (SIC). A clear incompatibility — fuel cells against "Air
+  Transportation, Scheduled" — leaves the entity UNRESOLVED with both stated. The compatibility
+  table is generous (an internet retailer's SIC is compatible with a cloud context; an industrial
+  or electrical-equipment issuer with a software one, since industrial automation is sold as
+  software), so it vetoes only what is plainly another business; with no business stated, or no
+  SIC on file, nothing is vetoed.
+
+A PARTIAL NAME NEEDS BACKING (2026-10-14: "Schneider" resolved to Schneider National, a trucking
+firm; "Delta" described as an AI-rack power supplier to Delta Air Lines). A name that only
+partly matches a registrant resolves only when something confirms it is that company: an
+SEC-listed ticker hint naming the same registrant, the registrant's exact name, or the business
+the source describes being the registrant's OWN industry. A private company is never listed by a
+partial name, with or without a hint.
+
+THE INDUSTRY A COMPANY SERVES IS NOT ITS OWN (2026-10-14: GE, "jet engines for commercial
+aviation", refused as an airline; Thermo Fisher, "tools sold to pharmaceutical companies", as a
+drug maker). The business is read without its customer clause ("… for …", "… sold to …",
+"… supplying …"); "aviation" is not an airline and "pipeline" is oil and gas only when the oil or
+gas is named. The check still refuses a plainly different OWN business ("oil pipeline operator"
+for Merck).
 """
 
 from __future__ import annotations
@@ -78,6 +91,7 @@ _MAJOR = ("NYSE", "Nasdaq", "CBOE", "NYSE American", "NYSE Arca")
 PERIODIC_FORMS = frozenset({"10-K", "10-Q", "20-F", "40-F", "10-K/A", "10-Q/A", "20-F/A",
                             "40-F/A", "10-KT", "10-QT"})
 REGISTRATION_FORMS = frozenset({"8-A12B", "8-A12B/A"})
+_FOREIGN_FORMS = frozenset({"20-F", "40-F"})  # a foreign private issuer's annual report
 _COVER_TAGS = ("dei:TradingSymbol", "dei:Security12bTitle", "dei:SecurityExchangeName")
 _IX = re.compile(r"<ix:nonnumeric\b([^>]*)>(.*?)</ix:nonnumeric>", re.I | re.S)
 
@@ -95,14 +109,15 @@ _FAMILY_TERMS: dict[str, re.Pattern[str]] = {k: re.compile(v, re.I) for k, v in 
     "utilities_power": r"\butilit(?:y|ies)\b|power producer|nuclear power|\bppas?\b|"
                        r"power purchase|independent power|ratepayers?|electric(?:ity)? "
                        r"suppl(?:y|ier)",
-    "oil_gas": r"midstream|pipelines?\b|\blng\b|natural gas producer|oil producer|"
-               r"upstream|refin(?:er|ery|ing)|drilling",
+    "oil_gas": r"midstream|(?:oil|gas|crude|ngl|natural gas|products) pipelines?\b|"
+               r"pipeline (?:operator|compan(?:y|ies)|networks?)|\blng\b|natural gas producer|"
+               r"oil producer|upstream|refin(?:er|ery|ing)|drilling",
     "semis_hardware": r"semiconductors?|\bchips?\b|\bgpus?\b|accelerators?|\bdram\b|"
                       r"\bnand\b|\bhbm\b|foundr(?:y|ies)|wafers?|\bservers?\b|"
                       r"networking equipment|optical (?:modules?|components?)",
     "software_internet": r"software|\bsaas\b|\bcloud\b|hyperscalers?|search engine|"
                          r"social media|online advertising|internet",
-    "airlines": r"airlines?|air carriers?|aviation|passenger flights?",
+    "airlines": r"airlines?|air carriers?|passenger flights?",
     "transport": r"railroads?|trucking|shipping lines?|freight|logistics",
     "financials": r"\bbanks?\b|lenders?|insurers?|asset managers?|brokerages?",
     "healthcare": r"pharmaceuticals?|\bdrugs?\b|biotech|hospitals?|medical devices?",
@@ -141,9 +156,17 @@ _COMPATIBLE: dict[str, frozenset[str]] = {
 }
 
 
+#: a CUSTOMER clause: what follows names the industry served, not the company's own
+_SERVED = re.compile(
+    r"\b(?:for|to|sold to|selling to|serving|supplying|supplies to|used by)\b.*$",
+                     re.I | re.S)
+
+
 def context_families(text: str) -> set[str]:
-    """The business families a source passage describes, by strong terms only."""
-    return {fam for fam, rx in _FAMILY_TERMS.items() if rx.search(text or "")}
+    """The business families a source passage describes, by strong terms only — read without its
+    customer clause ("jet engines for commercial aviation" describes an engine maker)."""
+    own = _SERVED.sub("", text or "")
+    return {fam for fam, rx in _FAMILY_TERMS.items() if rx.search(own)}
 
 
 def sic_families(sic: int | None) -> set[str]:
@@ -166,6 +189,7 @@ def sic_families(sic: int | None) -> set[str]:
         (4500, 4599, "airlines"), (4600, 4699, "oil_gas"), (4700, 4799, "transport"),
         (4800, 4899, "telecom"), (4900, 4919, "utilities_power"), (4920, 4925, "oil_gas"),
         (4926, 4999, "utilities_power"), (5000, 5199, "industrials"), (5200, 5960, "consumer"),
+        (5912, 5912, "healthcare"),  # drug stores (CVS): a pharmacy is a healthcare business
         (5961, 5961, "software_internet"), (5961, 5961, "consumer"), (5962, 5999, "consumer"),
         (6000, 6499, "financials"), (6500, 6553, "real_estate"), (6700, 6797, "financials"),
         (6798, 6798, "real_estate"), (6799, 6799, "financials"), (7000, 7359, "consumer"),
@@ -305,7 +329,9 @@ class SecIndex:
     by_cik: dict[str, list[tuple[str, str]]]  # cik10 -> [(ticker, exchange)]
     names: dict[str, str]  # cik10 -> registrant name
     funds: dict[str, str]  # fund ticker -> cik10
-    retrieved: date
+    #: when the SEC files were fetched (the older of the two maps) — None when the HTTP layer
+    #: holds no fetch time; never the day they were read from the cache
+    retrieved: date | None
 
 
 class SecResolver:
@@ -314,7 +340,10 @@ class SecResolver:
                                         min_interval_sec=0.15, max_retries=4, timeout_sec=60.0,
                                         namespace="sec")
         self._index: SecIndex | None = None
-        self._subs: dict[str, dict[str, Any] | None] = {}
+        self._subs: dict[str, dict[str, Any]] = {}
+        #: why a registrant's submissions could not be read — retried on the next lookup, never
+        #: remembered as "no data" (a cached failure switched the identity check off for the run)
+        self.sub_errors: dict[str, str] = {}
         self._covers: dict[tuple[str, date], tuple[PitCover | None, str]] = {}
 
     def index(self) -> SecIndex:
@@ -337,7 +366,10 @@ class SecResolver:
         mfields = mf["fields"]
         fc, fs = mfields.index("cik"), mfields.index("symbol")
         funds = {str(r[fs]).upper(): str(r[fc]).zfill(10) for r in mf["data"]}
-        self._index = SecIndex(by_ticker, by_cik, names, funds, datetime.now(tz=UTC).date())
+        stamps = [self._http.fetched_at(u) for u in (TICKERS_EXCHANGE, TICKERS_MF)]
+        retrieved = (datetime.fromtimestamp(min(s for s in stamps if s is not None), tz=UTC).date()
+                     if all(s is not None for s in stamps) else None)
+        self._index = SecIndex(by_ticker, by_cik, names, funds, retrieved)
         return self._index
 
     def submissions(self, cik10: str) -> dict[str, Any] | None:
@@ -345,16 +377,25 @@ class SecResolver:
             try:
                 self._subs[cik10] = cast(dict[str, Any], self._http.get_json(
                     SUBMISSIONS.format(cik=cik10), ttl_seconds=86_400.0))
-            except HttpError:
-                self._subs[cik10] = None
+            except HttpError as exc:
+                self.sub_errors[cik10] = str(exc)
+                return None
+            self.sub_errors.pop(cik10, None)
         return self._subs[cik10]
 
-    def is_foreign_private_issuer(self, cik10: str) -> bool | None:
-        sub = self.submissions(cik10)
-        if sub is None:
+    def is_foreign_private_issuer(self, cik10: str, *, as_of: date) -> bool | None:
+        """Whether the issuer files as a foreign private issuer AS OF `as_of`: its latest
+        periodic report on or before that date is a 20-F / 40-F (an amendment restates an earlier
+        period, so it does not decide). None when the submissions cannot be read or hold no
+        periodic report by then. (2026-10-14: any 20-F / 40-F among the recent filings refused
+        Enbridge — a 40-F filer to 2017, a 10-K filer since 2018 — at every date.)"""
+        if self.submissions(cik10) is None:
             return None
-        forms = set(sub.get("filings", {}).get("recent", {}).get("form", []))
-        return bool(forms & {"20-F", "40-F", "20-F/A", "40-F/A"})
+        periodic = [(d, f) for f, d, _a, _p in self._filing_rows(cik10, as_of)
+                    if f in PERIODIC_FORMS and not f.endswith("/A") and d <= as_of]
+        if not periodic:
+            return None
+        return max(periodic)[1] in _FOREIGN_FORMS
 
     def _filing_rows(self, cik10: str, as_of: date) -> list[tuple[str, date, str, str]]:
         """(form, filing date, accession, primary document) — recent first, then older pages
@@ -424,7 +465,9 @@ class SecResolver:
     def resolve(self, m: Mention, *, as_of: date) -> SecurityResolution:
         idx = self.index()
         now = datetime.now(tz=UTC)
-        mapref = f"SEC ticker map retrieved {idx.retrieved.isoformat()} (name match only)"
+        mapref = (f"SEC ticker map retrieved {idx.retrieved.isoformat()} (name match only)"
+                  if idx.retrieved else "SEC ticker map, retrieval date not recorded (name match "
+                                        "only)")
 
         def res(status: ResolutionStatus, method: str, listings: tuple[Listing, ...] = (),
                 cik: str | None = None, registrant: str | None = None, note: str = "",
@@ -449,14 +492,25 @@ class SecResolver:
                              EntityType.BASKET, EntityType.SECTOR):
             return res(ResolutionStatus.NOT_A_SECURITY, f"entity type {m.entity_type.value}")
         if m.entity_type is EntityType.ETF_OR_FUND:
-            stated = re.findall(r"\(([A-Z]{2,6})\)", m.name_as_written + " " + m.quote)
-            for t in stated:
-                if t in idx.funds:
-                    return res(ResolutionStatus.FUND, "ticker printed by the source + SEC fund "
-                               "ticker map", (Listing(ticker=t, exchange=None,
-                                                       note="fund/ETF share class",
-                                                       instrument=InstrumentClass.FUND_SHARE),),
-                               cik=idx.funds[t])
+            # the ticker printed in the fund's own name, or right after it; else the only fund
+            # ticker printed — the FIRST of several picked another fund ("…(SOXX) and the VanEck
+            # Semiconductor ETF (SMH)" resolved VanEck to SOXX)
+            name_t = re.findall(r"\(([A-Z]{2,6})\)", m.name_as_written)
+            beside = re.findall(re.escape(m.name_as_written) + r"\s*\(([A-Z]{2,6})\)", m.quote)
+            printed = list(dict.fromkeys(t for t in re.findall(
+                r"\(([A-Z]{2,6})\)", m.name_as_written + " " + m.quote) if t in idx.funds))
+            own = [t for t in (*name_t, *beside) if t in idx.funds]
+            pick = own[0] if own else printed[0] if len(printed) == 1 else None
+            if pick is not None:
+                return res(ResolutionStatus.FUND, "ticker printed by the source + SEC fund "
+                           "ticker map", (Listing(ticker=pick, exchange=None,
+                                                  note="fund/ETF share class",
+                                                  instrument=InstrumentClass.FUND_SHARE),),
+                           cik=idx.funds[pick])
+            if len(printed) > 1:
+                return res(ResolutionStatus.AMBIGUOUS, "several fund tickers printed",
+                           note=f"the source prints {', '.join(printed)} and none beside "
+                                f"{m.name_as_written!r} — which one is not said")
             return res(ResolutionStatus.UNRESOLVED, "fund named without a verifiable ticker")
 
         written = _tokens(m.name_as_written)
@@ -466,11 +520,18 @@ class SecResolver:
         # a hint naming a listing the SEC data does not hold = the company is listed elsewhere
         foreign_hint = bool(hint) and hint not in idx.by_ticker and hint not in idx.funds
         hinted: str | None = None  # the registrant an SEC-listed hint names, when the name differs
+        hint_backed = False  # the name and an SEC-listed ticker hint name the same registrant
+        issuer_backed = False  # the model's issuer hint picked one registrant by its exact name
         if m.ticker_hint and m.ticker_hint.upper() in idx.by_ticker:
             cik, name, _ = idx.by_ticker[m.ticker_hint.upper()]
             if written and _prefix_match(written, _tokens(name)):
                 cands[cik] = name
                 method = "model ticker hint verified against SEC registrant name"
+                hint_backed = True
+            elif written == [hint.lower()]:  # "GE", hint GE: the name as written is the ticker
+                cands[cik] = name
+                method = "the name as written is the SEC-listed ticker the hint names"
+                hint_backed = True
             else:
                 hinted = name
         if not cands and written:
@@ -483,6 +544,7 @@ class SecResolver:
                 narrowed = {c: n for c, n in cands.items() if _tokens(n) == ihint}
                 if len(narrowed) == 1:
                     cands = narrowed
+                    issuer_backed = True
                     method += " narrowed by the model's issuer hint (exact registrant name)"
             if foreign_hint and cands:
                 exact = {c: n for c, n in cands.items() if _tokens(n) == written}
@@ -507,21 +569,24 @@ class SecResolver:
                                 f"{m.name_as_written!r} does not name; the name only partially "
                                 f"matches " + "; ".join(sorted(cands.values())[:3])
                                 + " — two identities: not resolved")
-            if m.entity_type is EntityType.PRIVATE_COMPANY and cands:
-                # the source's classification stands against a PARTIAL name: only the
-                # registrant's exact name overrides it (2026-10-14: "Cognition", the private AI
-                # lab behind Devin, had resolved to Cognition Therapeutics, CGTX)
-                exact = {c: n for c, n in cands.items() if _tokens(n) == written}
-                if not exact:
-                    return res(ResolutionStatus.UNRESOLVED,
-                               method + "; refused — the source names a private company",
-                               note=f"{m.name_as_written!r} is classified as a private company "
-                                    f"and only partially matches "
-                                    + "; ".join(sorted(cands.values())[:3])
-                                    + " — a partial name is not identity: not resolved")
-                cands = exact
-                method += " (exact registrant name; classified as a private company)"
-        described = " ".join((m.quote, m.role_detail))  # what the source says of THIS company
+        if m.entity_type is EntityType.PRIVATE_COMPANY and cands:
+            # the source's classification stands against a PARTIAL name — on every path, a
+            # ticker hint's included: only the registrant's exact name overrides it (2026-10-14:
+            # "Cognition", the private AI lab behind Devin, had resolved to Cognition
+            # Therapeutics, CGTX — and still did when the extraction hinted CGTX)
+            exact = {c: n for c, n in cands.items() if _tokens(n) == written}
+            if not exact:
+                return res(ResolutionStatus.UNRESOLVED,
+                           method + "; refused — the source names a private company",
+                           note=f"{m.name_as_written!r} is classified as a private company "
+                                f"and only partially matches "
+                                + "; ".join(sorted(cands.values())[:3])
+                                + " — a partial name is not identity: not resolved")
+            cands = exact
+            method += " (exact registrant name; classified as a private company)"
+        # what the source says THIS company does — its role, never the quote's wording ("Merck's
+        # late-stage pipeline" read as oil and gas; 2026-10-14)
+        described = m.role_detail
         if len(cands) > 1 and context_families(described):
             # choosing between registrants: an issuer whose own industry IS among the described
             # businesses first (the generous table is for vetoes — it lets a brewer through a
@@ -554,10 +619,22 @@ class SecResolver:
                        note=f"{m.name_as_written!r} → {name} (CIK {cik}) refused: {conflict}"
                             + (f"; the extraction's hint {hint!r} names a listing the SEC "
                                f"data does not hold" if foreign_hint else ""))
+        # a PARTIAL name needs backing: the hint, the exact name, or the company's own industry
+        own_industry = bool(sic_families(sic) & context_families(described))
+        if not (hint_backed or issuer_backed or _tokens(name) == written or own_industry):
+            unread = self.sub_errors.get(cik)
+            return res(ResolutionStatus.UNRESOLVED,
+                       method + "; refused — a partial name with nothing confirming it",
+                       note=f"{m.name_as_written!r} only partially matches {name} (CIK {cik}), "
+                            f"and no SEC-listed ticker hint, exact name or the business the "
+                            f"source describes confirms it is that company — a partial name is "
+                            f"not identity: not resolved"
+                            + (f"; the SEC submissions could not be read ({unread})"
+                               if unread else ""))
         if sic is not None:
             method += f"; identity checked against the issuer's SEC industry (SIC {sic})"
         current = sorted(idx.by_cik.get(cik, []), key=lambda x: (x[1] not in _MAJOR, x[0]))
-        fpi = self.is_foreign_private_issuer(cik)
+        fpi = self.is_foreign_private_issuer(cik, as_of=as_of)
         if fpi:
             return res(ResolutionStatus.UNRESOLVED, method + "; issuer files 20-F/40-F",
                        cik=cik, registrant=name,

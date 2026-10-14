@@ -100,6 +100,18 @@ class CachedHttp:
     ) -> Any:
         return json.loads(self.get_text(url, ttl_seconds=ttl_seconds, params=params))
 
+    def fetched_at(self, url: str, *, params: dict[str, Any] | None = None) -> float | None:
+        """When the cached copy of ``url`` was fetched (epoch seconds), or None when no readable
+        copy is held — so data read from the cache carries its RETRIEVAL time, never the time it
+        was read back."""
+        path = self._cache_path(self._with_params(url, params))
+        if not path.exists():
+            return None
+        try:
+            return float(json.loads(path.read_text())["fetched_at"])
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            return None
+
     def post_json(
         self,
         url: str,
