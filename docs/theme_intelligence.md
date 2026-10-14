@@ -213,7 +213,7 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 
 | channel | discovery | state |
 |---|---|---|
-| Citi Must C | the page's embedded CMS data (`__NEXT_DATA__`): series items + CMS publishDate | OK — the page embeds its ~20 linked items; older ones are not listed there. Each page links its full report as a public PDF ("Download Here") — read automatically (`linked_reports = "fetch"`) |
+| Citi Must C | the page's embedded CMS data (`__NEXT_DATA__`): series items + CMS publishDate | OK — the page embeds its ~20 linked items; older ones are not listed there. Each page links its full report as a public PDF ("Download Here", or "Read the full article here.") — read automatically (`linked_reports = "fetch"`), however short the page itself |
 | J.P. Morgan Top Market Takeaways | listing cards with dates (sitemap lastmod as a fallback that can only rule a page OUT) | OK |
 | Morgan Stanley Research | **manual-first** (`mode = "manual_first"`): a lightweight health check only; research arrives as authorised uploads | automated access **BLOCKED** — the connection is dropped on every request, robots.txt included; never bypassed, never retried inside its back-off |
 | TrendForce press center | listing pages `?page=N`, date in the article URL | OK |
@@ -309,6 +309,9 @@ python -m vinci.theme_intelligence documents --status HELD
   heading is one heading); title, authors (metadata, front matter or a "By …" byline) and the
   document's own date, each with where it was read. Running headers, footers and page numbers are
   left out and counted.
+- **A date the page prints is read wherever it sits** (2026-10-14). A research web page saved as
+  PDF can lay its headline and date out in boxes the reader detects as a table (every Morgan
+  Stanley page does); the date in such a box is the document's own, never left unknown.
 - **A saved preview stays a preview** (2026-10-13). A paywalled page saved as PDF without a paid
   sign-in ends with the publisher's subscriber notice ("This post is for paid subscribers …");
   the document is then PARTIAL, said why, and Uploads keeps asking for the full post. Save a paid
@@ -611,8 +614,9 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
 - **Uploads** — everything to supply or clear, never dismissed by age, each with its publisher,
   dates and the command to run (folded on its row; the source id is in the command and the audit
   view). A source's request lists its articles by title, linked, and says what is already held of
-  each ("supplied — held until you confirm its licence"); a source whose articles the scan cannot
-  list (Morgan Stanley, Goldman Sachs) points to its research page instead. The weekly steps are
+  each ("supplied — held until you confirm its licence"), and leaves Uploads once every article it
+  lists is supplied or read; a source whose articles the scan cannot list (Morgan Stanley, Goldman
+  Sachs) points to its research page instead. The weekly steps are
   listed beside it.
 - **Sources** — one plain line per channel from its latest check's test results ("some articles
   are previews or summaries of a fuller report"), the check's own findings one fold away, the
