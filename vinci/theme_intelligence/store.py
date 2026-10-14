@@ -478,13 +478,16 @@ class Store:
             link)
 
     def linked_claim_ids(self, claim_ids: list[str]) -> set[str]:
-        """Which of these claims any thesis links to (any role)."""
+        """Which of these claims a LIVE thesis links to (any role). A RETIRED thesis's links are
+        its history: they carry nothing now — counting them hid a re-analysed claim no live
+        thesis carries from the coverage check (the pilot's re-analysis, 2026-10-14)."""
+        retired = {t.thesis_id for t in self.theses() if t.retired}
         out: set[str] = set()
         for i in range(0, len(claim_ids), 500):
             chunk = claim_ids[i:i + 500]
             out |= {str(r[0]) for r in self.conn.execute(
-                f"SELECT DISTINCT claim_id FROM thesis_claim_links WHERE claim_id IN "
-                f"({','.join('?' * len(chunk))})", chunk).fetchall()}
+                f"SELECT claim_id, thesis_id FROM thesis_claim_links WHERE claim_id IN "
+                f"({','.join('?' * len(chunk))})", chunk).fetchall() if r[1] not in retired}
         return out
 
     def links(self, thesis_id: str) -> list[ThesisClaimLink]:

@@ -90,9 +90,17 @@ _NOISE_ATTR = re.compile(
     r"(share|social|related|recommend|newsletter|subscribe|cookie|breadcrumb|site-?footer|"
     r"site-?header|navbar|menu|promo|you-may-also|trending|sidebar|signup|modal|popup|toolbar)",
     re.I)
+#: A related-content heading is the WHOLE heading — a prefix match cut articles at body headings
+#: such as "Recommended positioning for 2027" or "Read more into the guidance" (recorded FULL).
+#: "More from" stops only before a NAME ("More from J.P. Morgan"), never a topic ("More from the
+#: data centre build-out").
 _STOP_HEADINGS = re.compile(
-    r"^(you may also like|related (articles|insights|content)|trending insights|more from|"
-    r"recommended|read more|explore more|latest insights|experience the full possibility)", re.I)
+    r"^(?:(?i:you may also like|related (?:articles|insights|content)|trending insights"
+    r"|recommended(?: for you| reading| articles| insights| content)?"
+    r"|read more(?: insights| articles| stories)?|explore more(?: of our [\w .&'’-]{1,40})?"
+    r"|latest insights"
+    r"|experience the full possibility(?: of [\w .&'’-]{1,40})?)"
+    r"|(?i:more from)(?: [A-Z0-9][\w.&'’-]*){1,4})\s*[:.!…]?$")
 _DISCLAIMER_HEADINGS = re.compile(
     r"^(important information|disclaimer|disclosures?|important disclosures|legal (notice|"
     r"disclaimer)|general risks)", re.I)
@@ -215,10 +223,38 @@ def parse_iso(raw: str) -> datetime | None:
         return None
 
 
+def _states_offset(raw: str) -> bool:
+    """Whether a date stamp states its own UTC offset ("…Z", "…+08:00")."""
+    try:
+        return datetime.fromisoformat(raw.strip().replace("Z", "+00:00")).tzinfo is not None
+    except ValueError:
+        return False
+
+
+def _own_page_text(soup: BeautifulSoup) -> str:
+    """The page's text WITHOUT what is not this article: noise elements (related, sidebar,
+    promo …) and everything from the first related-content heading on. A "You may also like"
+    card's "Published Oct 2, 2026" dated the page it sat on."""
+    s = BeautifulSoup(str(soup), "html.parser")
+    for el in s.find_all(True):
+        if el.parent is not None and _noise(el):
+            el.extract()
+    for h in s.find_all(re.compile(r"^h[1-6]$")):
+        if _STOP_HEADINGS.match(h.get_text(" ", strip=True)):
+            node: Any = h
+            while node is not None and node is not s:
+                for sib in list(node.next_siblings):
+                    sib.extract()
+                node = node.parent
+            h.extract()
+            break
+    return s.get_text(" ", strip=True)
+
+
 def parse_text_date(raw: str) -> datetime | None:
     for fmt in ("%b %d, %Y", "%B %d, %Y", "%b %d %Y", "%B %d %Y", "%b. %d, %Y"):
         try:
-            return datetime.strptime(raw.replace("Sept", "Sep"), fmt).replace(tzinfo=UTC)
+            return datetime.strptime(re.sub(r"\bSept\b", "Sep", raw), fmt).replace(tzinfo=UTC)
         except ValueError:
             continue
     return None
@@ -624,18 +660,16 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
                  if alternates else "no alternate publication versions declared (hreflang)")
 
     # "Published Feb 9, 2026" in the page when no structured date exists
-    if pub_raw is None:
-        page_text = soup.get_text(" ", strip=True)
-        if (m2 := _PUBLISHED_TEXT.search(page_text)):
-            pub_raw, pub_src = m2.group(1), "page text 'Published <date>'"
+    if pub_raw is None and (m2 := _PUBLISHED_TEXT.search(_own_page_text(soup))):
+        pub_raw, pub_src = m2.group(1), "page text 'Published <date>'"
 
     published_at: datetime | None = None
     if pub_raw:
         published_at = parse_iso(pub_raw) or parse_text_date(pub_raw)
         if published_at is None:
             notes.append(f"publication date {pub_raw!r} not parseable to a day — kept raw, UNKNOWN")
-        elif published_at.tzinfo is None:
-            notes.append(f"publication date {pub_raw!r} carries no timezone")
+        elif not _states_offset(pub_raw):
+            notes.append(f"publication date {pub_raw!r} carries no timezone — read as UTC")
     modified_at = (parse_iso(mod_raw) or parse_text_date(mod_raw)) if mod_raw else None
 
     # completeness

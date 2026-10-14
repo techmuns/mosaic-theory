@@ -104,7 +104,16 @@ export async function render(root, params, { item, frame }) {
   }
   const doc = new DOMParser().parseFromString(html, "text/html");
   const main = doc.querySelector("main.wrap");
-  if (!main) throw new Error(`${t.file} is not a research-desk page`);
+  if (!main) {
+    // Cloudflare Pages answers a missing file with the app's own index (HTTP 200)
+    // (lib/snapshots.js): the page is not in the published desk
+    root.innerHTML = t.file === SCREENS[""]
+      ? notPublished(frame, item, `${t.file} is not in the published folder`)
+      : frame(item, { bodyHtml: `<div class="notice"><b>This page is not in the published research
+          desk.</b> <span class="muted">(${escapeHtml(t.file)} — it may belong to an earlier
+          publication)</span><br><a href="#/intel">Open This week</a></div>` });
+    return;
+  }
   const banner = doc.querySelector(".testdata");
   for (const a of main.querySelectorAll("a[href]")) {
     const to = mapHref(a.getAttribute("href"), t.file);

@@ -109,10 +109,18 @@ class ThesisState:
 
 #: A claim states a CHANGE when its VERBATIM quote says so — read from the source, never from the
 #: model's wording.
-_CHANGE = re.compile(r"\b(?:increas|rise|rising|rose|grow|grew|growth|accelerat|decelerat|"
-                     r"declin|fall|fell|drop|jump|surg|plung|rebound|recover|expand|"
-                     r"contracted|contracting|contraction|"  # never the noun: "contract prices"
-                     r"QoQ|YoY|y-o-y|q-o-q|MoM|sequential)\w*", re.I)
+#: Whole WORD FORMS of the original stems, never open stems: "accelerat\w*" read "AI accelerator
+#: revenue was $10bn" as a change, "surg\w*" "surgical procedure volumes", "MoM\w*" "momentum"
+#: and "moment", "contracted" "contracted capacity" — level statements that then corroborated each
+#: other into a RESEARCH NOW inflection route. The vocabulary is unchanged; only the forms are.
+_CHANGE = re.compile(
+    r"\b(?:increas(?:e|es|ed|ing|ingly)|ris(?:e|es|en|ing)|rose|gr(?:ow|ows|ew|own|owing|owth)"
+    r"|accelerat(?:e|es|ed|ing|ion)|decelerat(?:e|es|ed|ing|ion)|declin(?:e|es|ed|ing)"
+    r"|f(?:all|alls|ell|allen|alling)|drop(?:s|ped|ping)?|jump(?:s|ed|ing)?|surg(?:e|es|ed|ing)"
+    r"|plung(?:e|es|ed|ing)|rebound(?:s|ed|ing)?|recover(?:s|ed|ing|y|ies)?"
+    r"|expand(?:s|ed|ing)?"
+    r"|contracted(?=\s+(?:by\s+)?[~≈]?\s?\d)|contracting|contraction"  # never "contract prices"
+    r"|QoQ|YoY|y-o-y|q-o-q|MoM|sequential(?:ly)?)\b", re.I)
 #: …and the changing variable is a FUNDAMENTAL: the verbatim quote names one (a price, revenue,
 #: margin, demand, supply, shipments, inventory, capex …). A technical or workload metric — "the
 #: share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%" (SemiAnalysis,

@@ -32,7 +32,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 from vinci.theme_intelligence.cards import (
     AUDIT_TOGGLE,
@@ -1502,7 +1502,7 @@ class Desk:
                        is ResearchAction.RESEARCH_NOW)
 
         arow = [
-            f'<tr><td><a href="themes.html?area={e(a)}">{e(a)}</a></td><td>{len(ts)}</td>'
+            f'<tr><td><a href="themes.html?area={e(quote(a))}">{e(a)}</a></td><td>{len(ts)}</td>'
             f'<td>{sum(1 for t in ts if t.thesis_id in changed) or "—"}</td>'
             f'<td>{n_now(ts) or "—"}</td><td>'
             f'{_strip(recent, set().union(*[self.activity[t.thesis_id] for t in ts]))}</td></tr>'

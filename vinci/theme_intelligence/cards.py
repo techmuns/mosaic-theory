@@ -1742,9 +1742,15 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
           f'{e(readiness_text(d.investment_readiness.value, d.readiness_note))}</div>'
           '<div class="aud"><div class="sub">Decision trace (deterministic rules)</div>'
         + "".join(f'<div class="s cc">{e(t)}</div>' for t in d.rule_trace) + "</div>")
+    def src_title(s: SourceRef) -> str:
+        """Linked only to a WEB address (desk.py's `_link` rule): an article's canonical URL
+        comes from the page itself, and a `javascript:` one stayed clickable on the card."""
+        title = e(clean_title(s.title, s.publisher) or 'title UNKNOWN')
+        return (f'<a href="{e(s.url)}">{title}</a>'
+                if s.url.startswith(("http://", "https://")) else title)
+
     src_rows = "".join(
-        f"<tr><td><a href=\"{e(s.url)}\">"
-        f"{e(clean_title(s.title, s.publisher) or 'title UNKNOWN')}</a>"
+        f"<tr><td>{src_title(s)}"
         f"<div class=note>{e(s.article_class.value.replace('_', ' '))} · retrieval "
         f"{e(rc.retrieval_now.get(s.article_id, s.retrieval_state.value))}</div>"
         f"<div class=\"cc aud\">{e(s.article_id)}</div></td>"

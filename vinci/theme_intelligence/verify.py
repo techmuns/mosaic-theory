@@ -745,6 +745,7 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
     # mentions
     mentions: list[Mention] = []
     by_name: dict[str, str] = {}
+    by_norm: dict[str, str] = {}  # the normalised name ("caterpillar") → its mention
     seen_m: set[str] = set()
     full_text = {bb.block_id: bb.text for bb in doc.blocks}
     def name_at(name_l: str, text: str) -> int:
@@ -790,6 +791,8 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
             issuer_name_hint=xm.issuer_name_hint, ticker_hint=xm.ticker_hint,
             claim_ids=tuple(cmap[c] for c in xm.claim_ids if c in cmap)))
         by_name.setdefault(xm.name_as_written.lower(), mid)
+        if nn:
+            by_norm.setdefault(nn, mid)
 
     def ids(local: list[str], ctx: str) -> list[str]:
         out: list[str] = []
@@ -826,7 +829,11 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
         ctx = f"{h.local_id} {h.title[:50]}"
         affected: list[tuple[str, str]] = []
         for a in h.affected_mentions:
-            mid2 = by_name.get(a.name_as_written.lower())
+            # the name as written, else the same entity written another way — "Caterpillar (CAT)"
+            # for the mention "Caterpillar", "GE Vernova" for "GE Vernova (GEV)": the corpus held
+            # 22 such refusals, the exposure dropped from the thesis each time
+            mid2 = by_name.get(a.name_as_written.lower()) or by_norm.get(
+                norm_name(a.name_as_written))
             if mid2 is None:
                 issues.append(_issue(run_id, "hypothesis", ctx, IssueSeverity.BLOCK,
                                      "UNSUPPORTED_ENTITY",
@@ -1037,7 +1044,22 @@ def number_passes(c: Claim) -> bool:
 _NAMED_INDEX = re.compile(
     r"\b(?:S&P|Russell|Nasdaq|NASDAQ|FTSE|Nikkei|STOXX|Stoxx|CAC|DAX|ASX|KOSPI|Hang Seng)"
     r"(?:[ -]?(?:MidCap|SmallCap|Composite))?[ -]?\d{2,4}\b|\bMag(?:nificent)?[ -]?7\b"
-    r"|\b(?:Q[1-4]|[1-4]Q|H[12]|[12]H)(?:\s?'?\d{2}(?:\d{2})?)?\b")
+    r"|\b(?:Q[1-4]|[1-4]Q|H[12]|[12]H)(?:'?\d{2}(?!\d)|\s?(?:19|20)\d{2})?\b")
+
+#: A quarter / half-year LABEL with its year when one is attached: "3Q26", "Q3'26", "Q1 2027",
+#: "2H25". A figure after it is never part of it ("In Q3 45% of …": the 45 is a figure).
+_PERIOD_LABEL = re.compile(
+    r"\b(?:Q([1-4])|([1-4])Q|H([12])|([12])H)(?:'?(\d{2})(?!\d)|\s?((?:19|20)\d{2}))?\b")
+
+
+def period_labels(text: str) -> set[tuple[str, int, int | None]]:
+    """(Q or H, its number, its year or None) for every period label in `text`."""
+    out: set[tuple[str, int, int | None]] = set()
+    for m in _PERIOD_LABEL.finditer(text):
+        q, qq, h, hh, y2, y4 = m.groups()
+        kind, n = ("Q", int(q or qq)) if (q or qq) else ("H", int(h or hh))
+        out.add((kind, n, 2000 + int(y2) if y2 else int(y4) if y4 else None))
+    return out
 
 
 #: A capitalised NAME followed by a one-digit version number — "Era 2", "Opus 4.5", "Industry
@@ -1052,6 +1074,10 @@ _VERSION_NAME = re.compile(
     r"June|July|August|September|October|November|December)\b)([A-Z][A-Za-z]+) "
     r"(\d(?:\.\d{1,2})?)\b(?![.,]?\d)(?!\s?(?:%|percent|bn|billion|mn|million|m\b|k\b|x\b|"
     r"bps?|[GMKT]W|[GT]B|pp))")
+
+
+def _label_text(lab: tuple[str, int, int | None]) -> str:
+    return f"{lab[1]}{lab[0]}" + (f"{lab[2] % 100:02d}" if lab[2] is not None else "")
 
 
 def without_named_indices(text: str) -> str:
@@ -1075,6 +1101,19 @@ def deterministic_card_checks(card: CardContent, claims: dict[str, Claim],
                                                        f"no verified claim: {text[:100]!r}"))
             continue
         pool_nums = _pool_numbers(cited)
+        # a period LABEL is excused as a number, never as a period: when the cited claims carry
+        # labels of the same kind, the line's must be one of them (a line "rose 9% in 4Q27"
+        # citing only "rose 9% in 3Q26" passed every check)
+        cited_labels = set().union(*(period_labels(" ".join(filter(None, [
+            c.quote, c.value_text, c.period, c.metric, c.scope]))) for c in cited))
+        for lab in sorted(period_labels(_asserted(text)), key=str):
+            same_kind = {x for x in cited_labels if x[0] == lab[0]}
+            if same_kind and lab not in same_kind and not (
+                    lab[2] is None and any(x[1] == lab[1] for x in same_kind)):
+                issues.append(_issue(run_id, "card_sentence", f"{tid}:{sid}",
+                                     IssueSeverity.BLOCK, "NUMBER_NOT_IN_CITED_CLAIMS",
+                                     f"{sid} prints the period {_label_text(lab)!r}, which none "
+                                     f"of its cited claims carry: {text[:100]!r}"))
         for n in stated_numbers(without_named_indices(norm_text(_asserted(text)))):
             if n.replace(",", "").lstrip("-") not in pool_nums:
                 issues.append(_issue(run_id, "card_sentence", f"{tid}:{sid}",

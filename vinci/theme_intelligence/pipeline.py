@@ -582,12 +582,13 @@ class Pipeline:
         # evidence shares their paragraph, as the source's opinion (coverage.py)
         risks_found = scan_source_risks(doc, ve, report)
         self._place_source_risks(ve, risks_found, doc, aid, version.version_id)
-        if reanalysis:
-            # a claim or mention id hashes its CONTENT (version, paragraph, quote, statement /
-            # name, role): an id already stored is the same record — kept as first written, its
-            # provenance untouched (an id must never mean two things)
-            ve.claims = [self.store.claim(c.claim_id) or c for c in ve.claims]
-            ve.mentions = [self.store.mention(m.mention_id) or m for m in ve.mentions]
+        # a claim or mention id hashes its CONTENT (version, paragraph, quote, statement / name,
+        # role): an id already stored is the same record — kept as first written, its provenance
+        # untouched (an id must never mean two things). Reached by a re-analysis, and by a retry
+        # of a run that died after writing this article's records but before marking it applied
+        # (the retry's extraction id differs: the registry context then held its new thesis)
+        ve.claims = [self.store.claim(c.claim_id) or c for c in ve.claims]
+        ve.mentions = [self.store.mention(m.mention_id) or m for m in ve.mentions]
         outcomes = self.engine.apply(ctx, ve, resolutions)
         # every proposition and verified material fact accounted for (coverage.py) — alerts are
         # WARN issues for review; nothing here creates or merges a thesis
@@ -1101,8 +1102,9 @@ class Pipeline:
         try:
             done, refused = self._enrich_theses(
                 self._active_ids() if targets is None else targets, as_of=as_of)
-        except RuntimeError as exc:  # no model client and no cached answer
-            self.run.warnings.append(f"enrichment not run: {exc}")
+        except Exception as exc:  # noqa: BLE001 — no model, no cached answer, an API outage
+            # (the SDK's errors are not RuntimeErrors): a WARNING, never the finished run's status
+            self.run.warnings.append(f"enrichment not run: {type(exc).__name__}: {exc}")
             return
         if refused:
             left = next((what for _tid, what in done if what.startswith("not run")), "")

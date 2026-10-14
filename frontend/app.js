@@ -330,7 +330,9 @@ async function dispatch() {
     const loader = VIEWS[route];   // base route (first hash segment) → the view module
     if (loader) {
       const mod = await loader();
-      return mod.render(root, params, { item, frame });
+      // awaited: a returned promise skips this try, so a view's failure left a blank or stale
+      // screen with no message (the research desk on a host that serves its index for a miss)
+      return await mod.render(root, params, { item, frame });
     }
     root.innerHTML = frame(item, {
       bodyHtml: `<div class="notice">This live screen is built in the next pass. The frame, breadcrumb, and orientation above are final.</div>`,
