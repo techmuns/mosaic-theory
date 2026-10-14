@@ -1,0 +1,28 @@
+runs: [('R-20261011T101643Z-article', 'article', '2026-09-15', 'PARTIAL', 0.0), ('R-20261011T101644Z-article', 'article', '2026-10-02', 'SUCCEEDED', 0.0)]
+ARTICLE A-46796449712e J.P. Morgan Private Bank — 'A calm index, a restless market'
+   url https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market
+   published 2026-10-02 (json-ld Article.datePublished); authors ['Kriti Gupta', 'Nick Roberts']
+   version AV-52f13ebe82955750 FULL 1100 words retrieved 2026-10-11 08:22 — fetched (cache); body truncated at related-content heading 'you may also like'; author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also cred
+ARTICLE A-c59b789dbac0 SemiAnalysis — 'Everyone Says Datacenter Moratoriums Are Killing the US Buildout. We Mapped All 300 of Them'
+   url https://newsletter.semianalysis.com/p/everyone-says-datacenter-moratoriums
+   published 2026-09-15 (json-ld Article.datePublished); authors ['Maya Barkin', 'Reyk Knuhtsen', 'Jeremie Eliahou Ontiveros', 'Dylan Patel']
+   version AV-cfafd53bdd866f67 PARTIAL 3607 words retrieved 2026-10-10 13:16 — fetched (cache); no alternate publication versions declared (hreflang); paywall / subscriber marker on the page — analysed as an excerpt only
+THESIS TH-0F127079D1 v1 WATCH NEW ACTIVE ai_infrastructure.datacenter_physical|policy_regulation|positive|US
+   Datacenter moratoriums barely dent the US AI buildout pipeline
+   contributions: [('SemiAnalysis', 'A-c59b789dbac0', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)
+THESIS TH-30F6348B8B v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.power_grid|policy_regulation|negative|US|seg:grid_utilities
+   Rate rise and datacenter moratoriums have pressured utilities exposed to the AI trade
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-1b22bbfd754a6a: measured 2026-09-30 (2 days before the as-of); C-c79c88e88540c5: measured 2026-10-02 (0 days before the as-of); C-2b3aa74af5c311: measured 2026-10-02 (0 days
+THESIS TH-4BC577D53A v1 RESEARCH NOW NEW ACTIVE macro_market|dispersion_selection|positive|US
+   Low stock correlation makes sector and thematic selection the key diversifier within equities
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-2a5ee12b031485: measured 2026-10-02 (0 days before the as-of); C-0e01fcdfe7d3c0: measured 2026-10-02 (0 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (0 days
+THESIS TH-5C603995DA v1 WATCH NEW ACTIVE ai_infrastructure.power_grid|demand_volume_shift|positive|United States (esp. Texas)|seg:onsite_generation
+   Grid friction pushes datacenters behind-the-meter, benefiting on-site generation suppliers
+   contributions: [('SemiAnalysis', 'A-c59b789dbac0', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)
+RELATION TH-5C603995DA -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-30F6348B8B -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-30F6348B8B -> TH-5C603995DA RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (demand_volume_shift vs policy_regulation); a different segment (Behind-the-meter / on-site generati

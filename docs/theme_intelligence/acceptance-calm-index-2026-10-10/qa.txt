@@ -1,0 +1,21 @@
+  [PASS] run status recorded: status SUCCEEDED; counts {'figures_in_articles': 19, 'figures_uncaptured': 0, 'claims_added_by_completeness': 2, 'theses_added_by_completeness': 0, 'articles_processed': 1, 'claims_extracted': 22, 'claims_verified': 22, 'mentions': 12, 'theses_created': 2, 'theses_updated': 0, 'attributions_only': 0, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 54635, 'replayed_from_cache_output_tokens': 15538, 'llm_calls': 5, 'llm_calls_cached': 5, 'http_requests': 0, 'http_cache_hits': 1}
+  [PASS] no unverified claim is linked to a thesis: 20 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 22 verified claim(s) in 1 article(s)
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-10
+  [PASS] cards keep the nine sections in order: 2 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 2 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-10
+  [PASS] completeness ledger recorded for every analysed article: 1 article(s)
+  [PASS] every reported figure captured or judged immaterial: 19 figure(s) accounted for
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 1 article(s)
+  [PASS] append-only triggers present: 14 history tables
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/calm-index-16/runs/R-20261010T191507Z-article
+QA R-20261010T191507Z-article: 20/20 passed · scan execution SUCCEEDED · research verification FULLY_VERIFIED — every figure and argument paragraph accounted for, full text read (over the 1 article(s) this run analysed: 0 of 19 stated figure(s) and 0 of 10 argument paragraph(s) open)

@@ -1,0 +1,175 @@
+# --reread of the real PDF into a COPY of the baseline registry (final-a: the first reading's
+# 16 Gridlock theses), harness: alignment hints off so every answer is the paid run's — $0
+# registry identity-reread, run R-20261012T083646Z-ingest
+
+articles 3 (Gridlock: 1) · documents 1 · versions of A-82a8a9210bae: 2
+theses 22: version counts {1: 8, 2: 14}
+repeated quote+value rows on any card: 0
+links by class: {'novelty_unverified': 320, 'no material change': 24, 'new': 44, 'repeated': 181, 'correction': 3, 'contradictory': 8}
+SAME_ARTICLE_SIBLING flags: 1 (all listed)
+   TH-DDEE0B7EF0 / TH-F14CB7F84C (A-82a8a9210bae): SIBLING of “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”: 14 of its 17 sentence(s) were already on that thesis from an earlier version of this article, but it differs in 
+MECHANISM_COVERAGE alerts: 9 (all listed)
+   page 41: a risk the source states that no model pass listed — “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching genera
+   page 16: a risk the source states that no model pass listed — “The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI se
+   page 45: a risk the source states that no model pass listed — “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital 
+   sibling thesis: “Fuel cells gain data center share on speed-to-power despite CCGT cost edge” — SIBLING of “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”: 14 of
+   page 28: a risk the source states that no model pass listed — “However, there is community pushback, including noise quality and air quality, such that they often have tighter air permitting (Inside C
+   page 7: 4 verified material facts no thesis carries — a mechanism no card holds?
+   proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — completeness part 4: named by the paid answer (malforme
+   page 52: a risk the source states that no model pass listed — “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” (now in 07 of “Energy 
+   page 40: a risk the source states that no model pass listed — “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as poli
+paid-call ledger: 0 records
+
+# ---- what the re-read did to each Gridlock thesis ----
+CREATED                                              TH-051E7711B1            — -> SKIP         Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Ta
+CREATED (held for review: SAME_ARTICLE_SIBLING)      TH-F14CB7F84C            — -> WATCH        Fuel cells gain data center share on speed-to-power despite CCGT cost edge
+MATCHED — updated (attribution only)                 TH-5EDF9760FB        WATCH -> WATCH        Powered-land (grid-connected sites, converted coal) commands premiums as speed-t
+MATCHED — updated (new version)                      TH-1F366737A1        WATCH -> WATCH        AI datacenter power buildout drives multi-year transformer and grid equipment de
+MATCHED — updated (new version)                      TH-8178B565CB         SKIP -> SKIP         China all-of-the-above power buildout drives nuclear, hydro and pumped-storage e
+MATCHED — updated (new version)                      TH-BAA07551ED         SKIP -> SKIP         Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure ow
+MATCHED — updated (new version)                      TH-C0F7401B12         SKIP -> SKIP         US gas pipeline underinvestment creates attractive midstream growth capex cycle
+MATCHED — updated (new version)                      TH-CA02B7A83B         SKIP -> SKIP         Skilled-labor shortage is a persistent structural bottleneck on power and datace
+MATCHED — updated (new version)                      TH-CE04BAA34C         SKIP -> SKIP         Energy security accelerates renewables, EVs and energy storage demand globally
+RE-VERIFIED — re-assessed, new version               TH-566BFB9D39        WATCH -> SKIP         Low-cost US natural gas gives US a structural advantage in powering datacenters
+RE-VERIFIED — re-assessed, new version               TH-DDEE0B7EF0        WATCH -> WATCH        Fuel cells gain niche data-center power share on speed and grid-constraint advan
+UPDATED by key (attribution only)                    TH-C840A76413         SKIP -> SKIP         European grid expansion is primary beneficiary of electrification, even if datac
+UPDATED by key (new version)                         TH-110E3113B1        WATCH -> WATCH        Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+UPDATED by key (new version)                         TH-126BEECA00         SKIP -> SKIP         Uneven US regional power-market regulation makes regional selection drive grid/g
+UPDATED by key (new version)                         TH-426034EB2D         SKIP -> SKIP         Nuclear and SMR interest rising as supportive policy and power demand grow
+UPDATED by key (new version)                         TH-5BA11D6167         SKIP -> SKIP         Energy infrastructure is a multi-year structural growth story across four pillar
+UPDATED by key (new version)                         TH-D803766B8B         SKIP -> SKIP         Australia develops behind-the-meter gas power market for data centers
+untouched                                            TH-6EFAD379CB         SKIP -> SKIP         Selective continued exposure to US, South Korea, Taiwan AI capex theme
+
+18 Gridlock theses; independent-confirmation links on them: 0
+
+# ---- identity keys and the match / sibling issues ----
+TH-1F366737A1 v2 WATCH         ACTIVE         ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:onsite_generation
+    “AI datacenter power buildout drives multi-year transformer and grid equipment demand”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] In Europe a portion of announced datacenter capacity may remain 'bragawatts' rather than realized load given long connection queues and high energy costs. (scope: Europea
+    07 risk [FORECAST] A skilled-labor shortage across trades (at least 222,600 workers) could delay data center and power infrastructure projects and raise development costs through at least 2
+    07 risk [FORECAST] Reliability risk from AI data centers' large, volatile load (~40-50% demand swings; NERC Level 3 alert after 1GW+ sudden load drops) could destabilize grids and trigger p
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-D803766B8B v2 SKIP          ACTIVE         ai_infrastructure.power_grid|demand_volume_shift|positive|Australia|seg:onsite_generation
+    “Australia develops behind-the-meter gas power market for data centers”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+    07 risk [SOURCE OPINION] AEMO has raised concerns over potential Australian grid instability and voltage disturbances that could cause massive outages as data center load grows. (scope: Australia
+    07 risk [MODEL INFERENCE] Rising Australian construction costs, trade shortages (compounded by Brisbane 2032 Olympics, roads, rail, mining) and higher material prices after the Middle East conflic
+TH-8178B565CB v2 SKIP          ACTIVE         ai_infrastructure.power_grid|capex_spending_cycle|positive|China
+    “China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+    07 risk [SOURCE OPINION] This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector. (scope: ⟨the source's own words, page 52 — a risk no mod
+TH-051E7711B1 v1 SKIP          ACTIVE         ai_infrastructure|capex_spending_cycle|positive|US, South Korea, Taiwan
+    “Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Taiwan”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-0F127079D1 v1 WATCH         ACTIVE         ai_infrastructure.datacenter_physical|policy_regulation|positive|US
+    “Datacenter moratoriums barely dent the US AI buildout pipeline”
+    07 risk [SOURCE OPINION] Public sentiment is significantly negative on datacenters (46% unfavorable, 46% would oppose one locally), and SemiAnalysis warns this gap could widen with AI doomsday na
+    07 risk [MEASURED OBSERVATION] Election-year politics (November 2026 midterms) could raise the political cost of approving datacenter projects, as candidates like Vivek Ramaswamy pledge strict conditio
+    07 risk [SOURCE OPINION] Regional clustering can make local moratorium activity self-reinforcing, with opposition arguments, advocacy groups, model ordinance language and political pressure sprea
+TH-5BA11D6167 v2 SKIP          ACTIVE         ai_infrastructure.power_grid|capex_spending_cycle|positive|Global
+    “Energy infrastructure is a multi-year structural growth story across four pillars”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+    07 risk [SOURCE OPINION] This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector. (scope: ⟨the source's own words, page 52 — a risk no mod
+TH-CE04BAA34C v2 SKIP          ACTIVE         ai_infrastructure.materials_commodities|demand_volume_shift|positive|Global ex-US
+    “Energy security accelerates renewables, EVs and energy storage demand globally”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [FORECAST] Surging raw-material cost inflation (lithium, copper, aluminium) could pressure the IRR of ESS projects and bring uncertainty to ESS project progress. (scope: Global ener
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-C840A76413 v1 SKIP          ACTIVE         ai_infrastructure.power_grid|capex_spending_cycle|positive|Europe|seg:grid_utilities
+    “European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+TH-F14CB7F84C v1 WATCH         REVIEW_NEEDED  ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation|prod:fuel_cells
+    “Fuel cells gain data center share on speed-to-power despite CCGT cost edge”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+    07 risk [MODEL INFERENCE] Scandium supply concentration in China and Russia is a scaling constraint for Bloom Energy SOFC production if scaled rapidly. (scope: Supply-chain risk specific to SOFC/f
+TH-DDEE0B7EF0 v2 WATCH         ACTIVE         ai_infrastructure.power_grid|competitive_share_shift|positive|US|seg:onsite_generation
+    “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MEASURED OBSERVATION] Scandium supply-chain dependence (largely produced in China and Russia as a mining byproduct) exposes SOFC fuel-cell production to constraint risk, especially if SOFC pro
+TH-7F02181484 v2 WATCH         ACTIVE         ai_infrastructure.power_grid|demand_volume_shift|positive|United States (esp. Texas)
+    “Grid friction pushes datacenters behind-the-meter, benefiting on-site generation suppliers”
+TH-4BC577D53A v1 RESEARCH NOW  ACTIVE         macro_market|dispersion_selection|positive|US
+    “Low stock correlation makes sector and thematic selection the key diversifier within equities”
+    07 risk [SOURCE OPINION] The stock-bond correlation has turned positive, so stocks and bonds can rise and fall together, reducing the diversification bonds historically provided to equity portfol
+    07 risk [MEASURED OBSERVATION] Benchmark gains are concentrated in a handful of heavyweight technology companies while breadth is narrow (only ~43% of S&P 500 stocks above their 200-day average), so a 
+TH-566BFB9D39 v2 SKIP          ACTIVE         ai_infrastructure.power_grid|cost_inflation|positive|US
+    “Low-cost US natural gas gives US a structural advantage in powering datacenters”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+TH-426034EB2D v2 SKIP          ACTIVE         ai_infrastructure.power_grid|demand_volume_shift|positive|Global
+    “Nuclear and SMR interest rising as supportive policy and power demand grow”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-BAA07551ED v2 SKIP          ACTIVE         ai_infrastructure.hyperscaler_capex|competitive_share_shift|positive|US
+    “Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-5EDF9760FB v1 WATCH         ACTIVE         ai_infrastructure.datacenter_physical|valuation_rerating|positive|Europe
+    “Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+TH-98FD8D046C v1 RESEARCH NOW  ACTIVE         ai_infrastructure.power_grid|policy_regulation|negative|US
+    “Rate rise and datacenter moratoriums have pressured utilities exposed to the AI trade”
+TH-6EFAD379CB v1 SKIP          ACTIVE         macro_market|capex_spending_cycle|positive|US, South Korea, Taiwan
+    “Selective continued exposure to US, South Korea, Taiwan AI capex theme”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+TH-CA02B7A83B v2 SKIP          ACTIVE         ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:grid_utilities
+    “Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [FORECAST] A skilled-labor shortage across trades (at least 222,600 workers) could delay data center and power infrastructure projects and raise development costs through at least 2
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-110E3113B1 v2 WATCH         ACTIVE         ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation
+    “Speed-to-power drives BYOG gas generation equipment multi-year growth cycle”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] A repeat of the early-2000s gas-build overbuild could leave excess gas generation capacity and ratepayer burden if projected AI power demand fails to materialize. (scope:
+    07 risk [FORECAST] A skilled-labor shortage across trades (at least 222,600 workers) could delay data center and power infrastructure projects and raise development costs through at least 2
+    07 risk [FORECAST] Reliability risk from AI data centers' large, volatile load (~40-50% demand swings; NERC Level 3 alert after 1GW+ sudden load drops) could destabilize grids and trigger p
+    07 risk [SOURCE OPINION] A significant capacity buildout of onsite gas power equipment (turbines, large engines) across the industry through 2030+ raises the debate of whether incremental demand 
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] A repeat of the early-2000s gas-build overbuild: demand expected then did not materialize, leaving excess capacity and ratepayer burden, raising durability-of-demand conc
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-C0F7401B12 v2 SKIP          ACTIVE         ai_infrastructure.power_grid|capex_spending_cycle|positive|US|seg:grid_utilities+onsite_generation
+    “US gas pipeline underinvestment creates attractive midstream growth capex cycle”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Growing datacenter NIMBYism, affordability concerns and state moratoriums (13 states) amid 2026 midterm elections could delay approvals and datacenter/power expansion. (s
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] Data center NIMBYism, affordability concerns and state moratorium proposals (13 states) could drive bipartisan pushback to data center expansion. (scope: Policy/regulatio
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+TH-126BEECA00 v2 SKIP          ACTIVE         ai_infrastructure.power_grid|dispersion_selection|positive|US
+    “Uneven US regional power-market regulation makes regional selection drive grid/generation returns”
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in US, South Korea and Taiwan AI-exposed markets are stretched; price-to-book near all-time highs with crowded inflows that could exacer
+    07 risk [MODEL INFERENCE] Equity valuations and positioning in U.S., South Korea and Taiwan AI/tech supply-chain markets must be carefully considered after exceptionally strong performance and mas
+    07 risk [MODEL INFERENCE] AI data center load volatility (~40-50% demand swings) prompted NERC Level 3 alert in May 2026, creating grid reliability risk from sudden drops and spikes. (scope: Grid 
+    07 risk [MEASURED OBSERVATION] Data center developers with in-flight ERCOT projects may not complete buildout because only 20% of the $50,000 per MW required down payment is non-refundable. (scope: ERC
+    07 risk [SOURCE OPINION] Strong landowner opposition, air-permit politics, gas pipeline feedstock limits and water-usage constraints could cause missed timelines, cost overruns and cancellation r
+    07 risk [SOURCE OPINION] The PJM reliability backstop design forces regulated wires companies to assume uncompensated risks and requires legislative reform across 13 states, making the solution u
+    07 risk [SOURCE OPINION] Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as politics and weather which create tim
+    07 risk [SOURCE OPINION] This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching generation will come online, which coul
+    07 risk [SOURCE OPINION] Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital to execute on these growth opport
+
+[PRODUCT_SPLIT] hypothesis:ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation|prod:fuel_cells — “Fuel cells gain data center share on speed-to-power despite CCGT cost edge” and “Speed-to-power demand drives multi-year cycle for gas generation equipment makers” share one identity key but no supporting claim, and their evidence names different products (fuel_cells vs gas_turbines) — separate theses; 1 market risk(s) naming fuel_cells follow it
+[SAME_ARTICLE_MATCH] thesis:TH-1F366737A1 — a later version of A-82a8a9210bae keyed “Transformer shortage drives multi-year demand and pricing for transformer makers” as ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:onsite_generation; 61 of its 68 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis
+[SAME_ARTICLE_MATCH] thesis:TH-5EDF9760FB — a later version of A-82a8a9210bae keyed “Power-ready land (retired coal sites) commands premiums on scarce grid access in Europe” as ai_infrastructure.power_grid|valuation_rerating|positive|Europe; 2 of its 2 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis; the two reads place it at different val
+[SAME_ARTICLE_MATCH] thesis:TH-8178B565CB — a later version of A-82a8a9210bae keyed “China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers” as ai_infrastructure.power_grid|demand_volume_shift|positive|China; 11 of its 11 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis
+[SAME_ARTICLE_MATCH] thesis:TH-BAA07551ED — a later version of A-82a8a9210bae keyed “Power scarcity shifts bargaining power to hyperscalers and infrastructure owners over model labs” as ai_models_platforms|competitive_share_shift|positive|US; 1 of its 2 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis; the two reads place it at different va
+[SAME_ARTICLE_MATCH] thesis:TH-C0F7401B12 — a later version of A-82a8a9210bae keyed “Gas demand surge drives record midstream capex and strong project returns” as energy|capex_spending_cycle|positive|US; 15 of its 20 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis; the two reads place it at different value-chain nodes (energy vs ai_infrast
+[SAME_ARTICLE_MATCH] thesis:TH-CA02B7A83B — a later version of A-82a8a9210bae keyed “Skilled-labor shortages constrain data center and power buildout into the 2030s” as ai_infrastructure.datacenter_physical|supply_constraint|positive|Global; 2 of its 4 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis; the two reads place it at different val
+[SAME_ARTICLE_MATCH] thesis:TH-CE04BAA34C — a later version of A-82a8a9210bae keyed “Energy security accelerates EV and ESS battery demand, boosting Chinese clean-tech” as industrials|demand_volume_shift|positive|Global ex-U.S.; 28 of its 33 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis; the two reads place it at different value-chain no
+[SAME_ARTICLE_SIBLING] thesis:TH-F14CB7F84C — TH-DDEE0B7EF0 / TH-F14CB7F84C (A-82a8a9210bae): SIBLING of “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”: 14 of its 17 sentence(s) were already on that thesis from an earlier version of this article, but it differs in economic mechanism (demand_volume_shift, volume vs competitive_share_shift, competition) — not merged, held for review (never an independent
+[SOURCE_RISK_OMITTED] thesis:TH-126BEECA00 — page 40 (b375) of A-82a8a9210bae: “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as politics and weather which create timeline uncertainty.” — a risk the source states beside this thesis's evidence that no model pass listed; now in 07 as SOURCE OPINION — review
+[SOURCE_RISK_OMITTED] thesis:TH-126BEECA00 — page 41 (b379) of A-82a8a9210bae: “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching generation will come online, which could also lead to timeline mismatch and uncertainty around transmission buildout that would connect data centers to the grid.” — a risk the source states beside this thesis's evidence that no model 
+[SOURCE_RISK_OMITTED] thesis:TH-126BEECA00 — page 45 (b414) of A-82a8a9210bae: “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital to execute on these growth opportunities pose uncertainty to data center growth.” — a risk the source states beside this thesis's evidence that no model pass listed; now in 07 as SOURCE OPINION — review
+[SOURCE_RISK_OMITTED] thesis:TH-5BA11D6167 — page 52 (b478) of A-82a8a9210bae: “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” — a risk the source states beside this thesis's evidence that no model pass listed; now in 07 as SOURCE OPINION — review
+[SOURCE_RISK_OMITTED] thesis:TH-8178B565CB — page 52 (b478) of A-82a8a9210bae: “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” — a risk the source states beside this thesis's evidence that no model pass listed; now in 07 as SOURCE OPINION — review

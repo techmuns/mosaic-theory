@@ -1,0 +1,98 @@
+runs: [('R-20261011T100947Z-article', 'article', '2026-10-11', 'PARTIAL', 0.4109), ('R-20261011T101121Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 9.469)]
+ARTICLE A-446cf596aeca Citi — 'LatAm Poised for Take-Off'
+   url https://www.citigroup.com/global/insights/latam-poised-for-take-off
+   published 2026-09-14 (Next.js page data publishDate (this page's own entry)); authors ['Ernesto Revilla', 'Felipe Juncal', 'Andrés Cardona', 'Luis Costa', 'Donato Guarino']
+   version AV-615a0cd5a1c66b28 PARTIAL 570 words retrieved 2026-10-11 08:21 — fetched (cache); no alternate publication versions declared (hreflang); publication date '2026-09-14' carries no timezone; the page summarises a fuller report i
+   version AV-fc4ce9a39928805c FULL 24960 words retrieved 2026-10-11 10:11 — operator-supplied copy — a MANUAL UPLOAD of an authorized document (pdf, 57 page(s); D-3a233ec9d60e00bb); page 1: carries graphics (5 image(s), 7 vector object(
+DOCUMENT D-3a233ec9d60e00bb UPGRADED pdf 57pp 7 tables — Citi LatAm Poised for Take-Off.pdf
+   article A-446cf596aeca version AV-fc4ce9a39928805c; published 2026-09-10 (the document text (page 1-2)); received 2026-10-11 10:11 UTC
+   declared {'url': 'https://www.citigroup.com/global/insights/latam-poised-for-take-off', 'llm_permitted': 'True'}
+   basis: the operator states its URL; a fuller document for a PARTIAL article (title overlap 100%, held text found in the new document 7%, new text found in the held 0%; held 570 words (PARTIAL), new 24960 wor
+   issues: 38 (showing 3): ['page 1: carries graphics (5 image(s), 7 vector object(s)) — chart labels are read as text,', 'page 7: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text,', 'page 8: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text,']
+THESIS TH-0D0AD5B0D7 v1 SKIP NEW ACTIVE macro_market|capex_spending_cycle|positive|Latin America
+   LatAm capex demand broadens across energy, minerals, infrastructure and agriculture
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: SKIP-1 no verified material evidence
+THESIS TH-3A53B04C0B v1 WATCH NEW ACTIVE macro_market|valuation_rerating|positive|Brazil
+   Brazil equities geared to USD turn and post-election fiscal credibility
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: premise is conditional in the source)
+THESIS TH-49B78DCABF v1 WATCH NEW ACTIVE energy|demand_volume_shift|positive|Argentina
+   Argentina at the start of a long virtuous cycle led by energy and mining exports
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+THESIS TH-4C9C960EBD v1 SKIP NEW ACTIVE macro_market|pricing_cycle|positive|Latin America
+   LatAm FX and rates carry draws EM capital rotation despite easing risks
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: SKIP-2 no fundamental transmission step (a price or valuation move is not one)
+THESIS TH-7F5295AC45 v2 WATCH MIXED ACTIVE macro_market|demand_volume_shift|positive|Latin America
+   Weak dollar and strong commodities set up Latin American growth acceleration
+   contributions: [('Citi', 'A-446cf596aeca', 'contradictory'), ('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)
+THESIS TH-9E1F31CAD0 v1 WATCH NEW ACTIVE macro_market|valuation_rerating|positive|Latin America
+   LatAm equities positioned for re-rating as macro backdrop and flows improve
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: premise is conditional in the source)
+THESIS TH-AAAE8338E0 v1 WATCH NEW ACTIVE ai_infrastructure.materials_commodities|demand_volume_shift|positive|Latin America
+   LatAm the diversification beneficiary of AI-concentrated EM, via minerals and adoption
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+THESIS TH-BCAA34CC82 v1 WATCH NEW ACTIVE macro_market|dispersion_selection|positive|Latin America
+   Fiscal credibility and execution dispersion drives sovereign and country selection in LatAm
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+THESIS TH-BD4B215CA8 v1 WATCH NEW ACTIVE macro_market|demand_volume_shift|positive|Panama, Dominican Republic, Costa Rica, Paraguay
+   LatAm Hummingbird economies offer structural, commodity-independent convergence story
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)
+THESIS TH-BE1AF62F71 v1 SKIP NEW ACTIVE financials|valuation_rerating|positive|Latin America
+   LatAm credit as a tight-valuation safe haven within EM
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: SKIP-2 no fundamental transmission step (a price or valuation move is not one)
+THESIS TH-DA1F96C4BB v1 SKIP NEW ACTIVE materials|demand_volume_shift|positive|Peru
+   Peru equities offer direct and indirect leverage to the regional commodity upcycle
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: SKIP-1 no verified material evidence
+THESIS TH-EB2A081D45 v1 SKIP NEW ACTIVE energy|valuation_rerating|positive|Colombia
+   Colombia high-beta recovery: commodity leverage plus valuation re-rating on normalization
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: SKIP-1 no verified material evidence
+THESIS TH-F21991785D v1 WATCH NEW ACTIVE materials|valuation_rerating|positive|Chile
+   Chile equity re-rating led by copper, investment recovery and tax reform
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)
+THESIS TH-F4A90F739D v1 WATCH NEW ACTIVE macro_market|competitive_share_shift|positive|Mexico
+   Mexico the nearshoring and AI-supply-chain beneficiary of North American trade reconfiguration
+   contributions: [('Citi', 'A-446cf596aeca', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)
+RELATION TH-4C9C960EBD -> TH-3A53B04C0B SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs pricing_cycle); a different geography (Brazil vs Latin America) — adjacent support: context, never a confirmati
+RELATION TH-0D0AD5B0D7 -> TH-BD4B215CA8 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different geography (Panama, Dominican Republic, Costa Rica, Paraguay vs Latin Americ
+RELATION TH-3A53B04C0B -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs valuation_rerating); a different geography (Latin America vs Brazil) — adjacent support: context, never a conf
+RELATION TH-4C9C960EBD -> TH-BD4B215CA8 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs pricing_cycle); a different geography (Panama, Dominican Republic, Costa Rica, Paraguay vs Latin America) — ad
+RELATION TH-BCAA34CC82 -> TH-F4A90F739D SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs dispersion_selection); a different geography (Mexico vs Latin America); a timeframe only one of them state
+RELATION TH-BD4B215CA8 -> TH-9E1F31CAD0 SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs demand_volume_shift); a different geography (Latin America vs Panama, Dominican Republic, Costa Rica, Paraguay)
+RELATION TH-4C9C960EBD -> TH-BCAA34CC82 SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs pricing_cycle) — adjacent support: context, never a confirmation
+RELATION TH-BD4B215CA8 -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different geography (Latin America vs Panama, Dominican Republic, Costa Rica, Paraguay); no overlapping timeframe — adjacent support: context, never a con
+RELATION TH-0D0AD5B0D7 -> TH-9E1F31CAD0 SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs capex_spending_cycle); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-0D0AD5B0D7 -> TH-F4A90F739D SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs capex_spending_cycle); a different geography (Mexico vs Latin America) — adjacent support: context, never 
+RELATION TH-0D0AD5B0D7 -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-0D0AD5B0D7 -> TH-4C9C960EBD SIBLING None | same value-chain node, not the same claim — a different mechanism (pricing_cycle vs capex_spending_cycle); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-4C9C960EBD -> TH-9E1F31CAD0 SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs pricing_cycle); no overlapping timeframe — adjacent support: context, never a confirmation
+RELATION TH-0D0AD5B0D7 -> TH-3A53B04C0B SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs capex_spending_cycle); a different geography (Brazil vs Latin America); a timeframe only one of them states — a
+RELATION TH-F4A90F739D -> TH-3A53B04C0B SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs competitive_share_shift); a different geography (Brazil vs Mexico); a timeframe only one of them states — adjac
+RELATION TH-BCAA34CC82 -> TH-3A53B04C0B SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs dispersion_selection); a different geography (Brazil vs Latin America) — adjacent support: context, never a con
+RELATION TH-BCAA34CC82 -> TH-9E1F31CAD0 SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs dispersion_selection); no overlapping timeframe — adjacent support: context, never a confirmation
+RELATION TH-BCAA34CC82 -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs dispersion_selection) — adjacent support: context, never a confirmation
+RELATION TH-9E1F31CAD0 -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs valuation_rerating) — adjacent support: context, never a confirmation
+RELATION TH-F4A90F739D -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs competitive_share_shift); a different geography (Latin America vs Mexico); a timeframe only one of them states
+RELATION TH-4C9C960EBD -> TH-F4A90F739D SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs pricing_cycle); a different geography (Mexico vs Latin America); a timeframe only one of them states — adj
+RELATION TH-0D0AD5B0D7 -> TH-BCAA34CC82 SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs capex_spending_cycle); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-BD4B215CA8 -> TH-F4A90F739D SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs demand_volume_shift); a different geography (Mexico vs Panama, Dominican Republic, Costa Rica, Paraguay); 
+RELATION TH-4C9C960EBD -> TH-7F5295AC45 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs pricing_cycle) — adjacent support: context, never a confirmation
+RELATION TH-EB2A081D45 -> TH-49B78DCABF SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs valuation_rerating); a different geography (Argentina vs Colombia); a timeframe only one of them states — adja
+RELATION TH-F4A90F739D -> TH-9E1F31CAD0 SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs competitive_share_shift); a different geography (Latin America vs Mexico); a timeframe only one of them states 
+RELATION TH-3A53B04C0B -> TH-9E1F31CAD0 SIBLING None | same value-chain node, not the same claim — a different geography (Latin America vs Brazil); no overlapping timeframe — adjacent support: context, never a confirmation
+RELATION TH-BCAA34CC82 -> TH-BD4B215CA8 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs dispersion_selection); a different geography (Panama, Dominican Republic, Costa Rica, Paraguay vs Latin Americ
+RELATION TH-DA1F96C4BB -> TH-F21991785D SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs demand_volume_shift); a different geography (Chile vs Peru); a timeframe only one of them states — adjacent sup
+RELATION TH-BD4B215CA8 -> TH-3A53B04C0B SIBLING None | same value-chain node, not the same claim — a different mechanism (valuation_rerating vs demand_volume_shift); a different geography (Brazil vs Panama, Dominican Republic, Costa Rica, Paraguay) — adja
+ISSUE LINKED_REPORT_UPLOAD A-446cf596aeca: https://www.citigroup.com/global/insights/latam-poised-for-take-off summarises a fuller report it links to (https://ir.citi.com/d-5vuJiD7Hf-CjTIizbzlF5UZLnoLYiNDtkJOFLKTY5LJi33HczLOEECds-yzdoP_vrAXLKFFra-g3SWYmkGRBExYlRj

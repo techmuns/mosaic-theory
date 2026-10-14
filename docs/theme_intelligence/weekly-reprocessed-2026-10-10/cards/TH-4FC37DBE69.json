@@ -1,0 +1,1116 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "ai_adoption"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:44.016338Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-07",
+   "latest_article_date": "2026-10-07",
+   "region": "Asia ex-Japan",
+   "research_action": "WATCH",
+   "sector": "AI adoption by end users (broad)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-4FC37DBE69",
+   "title": "Asian tech/AI boom and energy normalization support Singapore, Malaysia region equities"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-0674f7c6ebb9a8",
+     "C-cdae08f4f73f0a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Nomura sees sustained AI demand and gradual energy supply-chain normalization supporting a constructive Asia ex-China outlook, with Malaysia and Singapore outperformers and Singapore core inflation lifted above 2.0% by tech-boom spillovers. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-0674f7c6ebb9a8"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Nomura draws a constructive regional outlook from AI demand, favoring Malaysia and Singapore while cautious on Indonesia and Thailand."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Tech/AI-driven demand spillovers in ASEAN could benefit regional equities and tech supply chains, but the article does not quantify any listed-company earnings effect."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cdae08f4f73f0a"
+     ],
+     "original_date": "2026-10-07",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Nomura expects Singapore to benefit from tech boom spillovers and strong demand, lifting core inflation above 2.0%. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-aed8402ebdba57"
+     ],
+     "original_date": "2026-10-07",
+     "period": "FY27",
+     "provenance": "FORECAST",
+     "text": "Nomura expects Japan's economy to stay on a recovery path driven by capital spending on software, digitalization and automation to address labor shortages."
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0674f7c6ebb9a8"
+     ],
+     "original_date": "2026-10-07",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Sustained AI demand and gradual normalization of energy supply chains support a constructive outlook across Asia ex-China."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0674f7c6ebb9a8"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Sustained AI demand and energy supply-chain normalization support Asian economies."
+   },
+   {
+    "claim_ids": [
+     "C-cdae08f4f73f0a"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Tech boom-related spillovers lift domestic demand, raising Singapore core inflation above 2.0%. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-0674f7c6ebb9a8",
+     "C-cdae08f4f73f0a"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Regional equities could benefit from stronger tech demand, though the article does not quantify earnings effects. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b057",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cdae08f4f73f0a",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Singapore core inflation",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "above",
+     "tech boom spillovers"
+    ],
+    "quote": "Singapore should benefit from tech boom-related spillovers and strong domestic demand, lifting core inflation to above 2.0%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 2.0,
+    "value_text": "above 2.0%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b055",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0674f7c6ebb9a8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Sustained AI demand and gradual normalization of energy supply chains support a constructive outlook across Asia ex-China.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "constructive regional outlook"
+    ],
+    "quote": "sustained AI demand and the gradual normalization of the energy supply chains support a constructive regional outlook",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-131d13deb534",
+    "block_id": "b044",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-aed8402ebdba57",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Nomura expects Japan's economy to stay on a recovery path driven by capital spending on software, digitalization and automation to address labor shortages.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "FY27",
+    "qualifiers": [
+     "labor shortage",
+     "capex-led recovery"
+    ],
+    "quote": "we continue to expect Japan\u2019s economy to stay on a recovery path, driven by capital spending, as there is a growing need to tackle the labor shortage through investment in technologies such as software, digitalization and automation",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-536086286f497d",
+     "name_as_written": "US Federal Reserve",
+     "other_securities": [],
+     "quote": "A hike in December by the US Federal Reserve",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US central bank whose policy rate Nomura forecasts"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7c5a9ee787bff1",
+     "name_as_written": "European Central Bank",
+     "other_securities": [],
+     "quote": "Two more hikes by the European Central Bank",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Euro area central bank whose policy rate Nomura forecasts"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d0b8728e31b8f",
+     "name_as_written": "Bank of Japan",
+     "other_securities": [],
+     "quote": "Two more hikes from the Bank of Japan",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Japan central bank whose policy rate Nomura forecasts"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-735185f01101e2",
+     "name_as_written": "Bank of England",
+     "other_securities": [],
+     "quote": "None for the Bank of England",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "UK central bank whose policy Nomura forecasts (no hikes)"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-496cb318bf0b2a",
+     "name_as_written": "Bank of Canada",
+     "other_securities": [],
+     "quote": "Bank of Canada",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Canada central bank whose policy Nomura forecasts (no hikes)"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": "0001163653",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d1111cffa89e4d",
+     "name_as_written": "Nomura",
+     "other_securities": [],
+     "quote": "This content has been prepared by Nomura",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research note"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cc5bd9689782b2",
+     "name_as_written": "Takaichi cabinet",
+     "other_securities": [],
+     "quote": "The Takaichi cabinet\u2019s decision to not issue a second FY26 supplementary budget",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Japanese cabinet whose fiscal budget decision informs Japan's public investment and growth outlook"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-131d13deb534",
+     "claim_ids": [
+      "C-0674f7c6ebb9a8"
+     ],
+     "direction": "positive",
+     "name": "AI demand",
+     "provenance": "SOURCE OPINION",
+     "quote": "sustained AI demand and the gradual normalization of the energy supply chains support a constructive regional outlook"
+    },
+    {
+     "article_id": "A-131d13deb534",
+     "claim_ids": [
+      "C-cdae08f4f73f0a"
+     ],
+     "direction": "positive",
+     "name": "tech boom-related spillovers",
+     "provenance": "FORECAST",
+     "quote": "Singapore should benefit from tech boom-related spillovers and strong domestic demand"
+    }
+   ],
+   "sectors": [
+    "technology",
+    "Asian regional economies"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-0674f7c6ebb9a8",
+      "C-cdae08f4f73f0a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Nomura is constructive on Asia ex-China near term, favoring Malaysia and Singapore. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-0674f7c6ebb9a8",
+      "C-cdae08f4f73f0a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI demand and tech-boom spillovers are a durable support for parts of Asia's economies. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-071ebde5e2cce6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Elevated oil, El Ni\u00f1o and rising memory prices pose upside inflation risks that could force hawkish central bank action."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-071ebde5e2cce6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Elevated oil prices, El Ni\u00f1o and rising memory prices pose upside risks to Asian inflation."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Slowing AI demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory price spikes or energy disruptions re-escalating"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Weakening ASEAN domestic demand"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-071ebde5e2cce6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Elevated oil prices, El Ni\u00f1o and rising memory prices pose upside risks to Asian inflation, keeping most Asian central banks hawkish. (scope: Asia ex-Japan inflation and monetary policy; upside inflation risk factors.)"
+    },
+    {
+     "claim_ids": [
+      "C-2e1c8b03c4deb8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China's ongoing AI boom could widen demographic and geographic inequality, which could further dent domestic demand. (scope: China domestic demand risk from AI-driven inequality.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies capture the AI/tech demand spillovers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the AI demand earns a return for suppliers and economies"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Magnitude of any earnings or revenue impact"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI demand cools"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Energy or memory price shocks disrupt the region"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed ASEAN and tech supply-chain companies most exposed to AI demand spillovers in Malaysia and Singapore."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued AI demand strength confirmed in regional data"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Singapore core inflation and growth surprise to the upside"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-131d13deb534",
+    "authors": [
+     "Rob Subbaraman (Head of Global Macro Research)",
+     "Aichi Amemiya (Senior US Economist)",
+     "George Buckley (Chief UK & Euro Area Economist)",
+     "Ting Lu (Chief China Economist)",
+     "Kyohei Morita (Chief Economist, Japan)",
+     "Euben Paracuelles (Week Ahead Podcast Host and Chief ASEAN Economist)",
+     "Jeremy Schwartz",
+     "Sonal Varma (Chief Economist, India and Asia ex-Japan)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0674f7c6ebb9a8",
+     "C-cdae08f4f73f0a",
+     "C-aed8402ebdba57",
+     "C-071ebde5e2cce6",
+     "C-2e1c8b03c4deb8"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-07T03:25:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Nomura",
+    "retrieval_state": "FULL",
+    "title": "Central Banks Recalibrating Monetary Policies",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies/"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191513Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-131d13deb534",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "ai_adoption"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:44.016338Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-07",
+     "latest_article_date": "2026-10-07",
+     "region": "Asia ex-Japan",
+     "research_action": "WATCH",
+     "sector": "AI adoption by end users (broad)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-4FC37DBE69",
+     "title": "Asian tech/AI boom and energy normalization support Singapore, Malaysia region equities"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0674f7c6ebb9a8",
+       "C-cdae08f4f73f0a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Nomura sees sustained AI demand and gradual energy supply-chain normalization supporting a constructive Asia ex-China outlook, with Malaysia and Singapore outperformers and Singapore core inflation lifted above 2.0% by tech-boom spillovers. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0674f7c6ebb9a8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Nomura draws a constructive regional outlook from AI demand, favoring Malaysia and Singapore while cautious on Indonesia and Thailand."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Tech/AI-driven demand spillovers in ASEAN could benefit regional equities and tech supply chains, but the article does not quantify any listed-company earnings effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cdae08f4f73f0a"
+       ],
+       "original_date": "2026-10-07",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Nomura expects Singapore to benefit from tech boom spillovers and strong demand, lifting core inflation above 2.0%. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-aed8402ebdba57"
+       ],
+       "original_date": "2026-10-07",
+       "period": "FY27",
+       "provenance": "FORECAST",
+       "text": "Nomura expects Japan's economy to stay on a recovery path driven by capital spending on software, digitalization and automation to address labor shortages."
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0674f7c6ebb9a8"
+       ],
+       "original_date": "2026-10-07",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Sustained AI demand and gradual normalization of energy supply chains support a constructive outlook across Asia ex-China."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-07; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0674f7c6ebb9a8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Sustained AI demand and energy supply-chain normalization support Asian economies."
+     },
+     {
+      "claim_ids": [
+       "C-cdae08f4f73f0a"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Tech boom-related spillovers lift domestic demand, raising Singapore core inflation above 2.0%. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0674f7c6ebb9a8",
+       "C-cdae08f4f73f0a"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Regional equities could benefit from stronger tech demand, though the article does not quantify earnings effects. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b057",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cdae08f4f73f0a",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Singapore core inflation",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "above",
+       "tech boom spillovers"
+      ],
+      "quote": "Singapore should benefit from tech boom-related spillovers and strong domestic demand, lifting core inflation to above 2.0%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 2.0,
+      "value_text": "above 2.0%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b055",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0674f7c6ebb9a8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Sustained AI demand and gradual normalization of energy supply chains support a constructive outlook across Asia ex-China.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "constructive regional outlook"
+      ],
+      "quote": "sustained AI demand and the gradual normalization of the energy supply chains support a constructive regional outlook",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-131d13deb534",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aed8402ebdba57",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Nomura expects Japan's economy to stay on a recovery path driven by capital spending on software, digitalization and automation to address labor shortages.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "FY27",
+      "qualifiers": [
+       "labor shortage",
+       "capex-led recovery"
+      ],
+      "quote": "we continue to expect Japan\u2019s economy to stay on a recovery path, driven by capital spending, as there is a growing need to tackle the labor shortage through investment in technologies such as software, digitalization and automation",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-536086286f497d",
+       "name_as_written": "US Federal Reserve",
+       "other_securities": [],
+       "quote": "A hike in December by the US Federal Reserve",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US central bank whose policy rate Nomura forecasts"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7c5a9ee787bff1",
+       "name_as_written": "European Central Bank",
+       "other_securities": [],
+       "quote": "Two more hikes by the European Central Bank",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Euro area central bank whose policy rate Nomura forecasts"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d0b8728e31b8f",
+       "name_as_written": "Bank of Japan",
+       "other_securities": [],
+       "quote": "Two more hikes from the Bank of Japan",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Japan central bank whose policy rate Nomura forecasts"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-735185f01101e2",
+       "name_as_written": "Bank of England",
+       "other_securities": [],
+       "quote": "None for the Bank of England",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "UK central bank whose policy Nomura forecasts (no hikes)"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-496cb318bf0b2a",
+       "name_as_written": "Bank of Canada",
+       "other_securities": [],
+       "quote": "Bank of Canada",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Canada central bank whose policy Nomura forecasts (no hikes)"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": "0001163653",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1111cffa89e4d",
+       "name_as_written": "Nomura",
+       "other_securities": [],
+       "quote": "This content has been prepared by Nomura",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research note"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cc5bd9689782b2",
+       "name_as_written": "Takaichi cabinet",
+       "other_securities": [],
+       "quote": "The Takaichi cabinet\u2019s decision to not issue a second FY26 supplementary budget",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Japanese cabinet whose fiscal budget decision informs Japan's public investment and growth outlook"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-131d13deb534",
+       "claim_ids": [
+        "C-0674f7c6ebb9a8"
+       ],
+       "direction": "positive",
+       "name": "AI demand",
+       "provenance": "SOURCE OPINION",
+       "quote": "sustained AI demand and the gradual normalization of the energy supply chains support a constructive regional outlook"
+      },
+      {
+       "article_id": "A-131d13deb534",
+       "claim_ids": [
+        "C-cdae08f4f73f0a"
+       ],
+       "direction": "positive",
+       "name": "tech boom-related spillovers",
+       "provenance": "FORECAST",
+       "quote": "Singapore should benefit from tech boom-related spillovers and strong domestic demand"
+      }
+     ],
+     "sectors": [
+      "technology",
+      "Asian regional economies"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-0674f7c6ebb9a8",
+        "C-cdae08f4f73f0a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Nomura is constructive on Asia ex-China near term, favoring Malaysia and Singapore. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-0674f7c6ebb9a8",
+        "C-cdae08f4f73f0a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI demand and tech-boom spillovers are a durable support for parts of Asia's economies. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-071ebde5e2cce6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Elevated oil, El Ni\u00f1o and rising memory prices pose upside inflation risks that could force hawkish central bank action."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-071ebde5e2cce6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Elevated oil prices, El Ni\u00f1o and rising memory prices pose upside risks to Asian inflation."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Slowing AI demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory price spikes or energy disruptions re-escalating"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weakening ASEAN domestic demand"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-071ebde5e2cce6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Elevated oil prices, El Ni\u00f1o and rising memory prices pose upside risks to Asian inflation, keeping most Asian central banks hawkish. (scope: Asia ex-Japan inflation and monetary policy; upside inflation risk factors.)"
+      },
+      {
+       "claim_ids": [
+        "C-2e1c8b03c4deb8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China's ongoing AI boom could widen demographic and geographic inequality, which could further dent domestic demand. (scope: China domestic demand risk from AI-driven inequality.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies capture the AI/tech demand spillovers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the AI demand earns a return for suppliers and economies"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Magnitude of any earnings or revenue impact"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI demand cools"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy or memory price shocks disrupt the region"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed ASEAN and tech supply-chain companies most exposed to AI demand spillovers in Malaysia and Singapore."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued AI demand strength confirmed in regional data"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Singapore core inflation and growth surprise to the upside"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-131d13deb534",
+      "authors": [
+       "Rob Subbaraman (Head of Global Macro Research)",
+       "Aichi Amemiya (Senior US Economist)",
+       "George Buckley (Chief UK & Euro Area Economist)",
+       "Ting Lu (Chief China Economist)",
+       "Kyohei Morita (Chief Economist, Japan)",
+       "Euben Paracuelles (Week Ahead Podcast Host and Chief ASEAN Economist)",
+       "Jeremy Schwartz",
+       "Sonal Varma (Chief Economist, India and Asia ex-Japan)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0674f7c6ebb9a8",
+       "C-cdae08f4f73f0a",
+       "C-aed8402ebdba57",
+       "C-071ebde5e2cce6",
+       "C-2e1c8b03c4deb8"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-07T03:25:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Nomura",
+      "retrieval_state": "FULL",
+      "title": "Central Banks Recalibrating Monetary Policies",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies/"
+     }
+    ]
+   },
+   "content_sha": "7ef736ee2458abd5611ddfe772803cee10f7b24279a814525d420c13f832d498",
+   "created_at": "2026-10-10T19:15:44.019528Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-cdae08f4f73f0a",
+       "C-aed8402ebdba57"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-b1b554fedeb9",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-aed8402ebdba57"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-aed8402ebdba57: forecast window 2027-01-01..2027-12-31 (fy27 (fiscal year read as the calendar year \u2014 approximate))); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: AI demand, sector: tech boom-related spillovers",
+      "value": "0 listed \u00b7 2 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-071ebde5e2cce6"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.1",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T191513Z-scan",
+   "thesis_id": "TH-4FC37DBE69",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {
+  "s01.1": "REVIEW_UNSUPPORTED \u2014 s01.1: UNSUPPORTED \u2014 The only cited span supports the constructive regional outlook from AI demand, but there is no support for favoring Malaysia and Singapore or caution on Indonesia and Thailand. | 'Nomura draws a constructive regional outlook from AI demand, favoring Malaysia and Singapore while c'"
+ }
+}

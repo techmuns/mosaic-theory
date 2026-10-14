@@ -1,0 +1,17 @@
+parse.py         'if not codes:'                                            KILLED — 1 failed, 5 passed in 0.29s
+parse.py         'return True'                                              KILLED — 1 failed, 4 passed in 0.24s
+documents.py     'if False:'                                                KILLED — 1 failed, 11 passed in 0.34s
+documents.py     'pass'                                                     KILLED — 1 failed, 11 passed in 0.31s
+documents.py     'if words < SCANNED_MAX_WORDS and page.images and not t'   KILLED — 1 failed, 11 passed in 0.32s
+documents.py     'if unreadable_glyphs(text):'                              KILLED — 1 failed, 8 passed in 0.25s
+documents.py     'if (chars and in_broken >= GLYPH_MIN_SHARE * len(chars'   KILLED — 1 failed, 9 passed in 0.25s
+documents.py     'if coded[f] >= GLYPH_MIN_CODES}'                          KILLED — 1 failed, 9 passed in 0.25s
+documents.py     'if False:'                                                KILLED — 1 failed, 11 passed in 0.32s
+completeness.py  'if False:'                                                KILLED — 1 failed, 13 passed in 0.36s
+completeness.py  'if b.kind in ARGUMENT_KINDS and len(text.split()) \\'     KILLED — 1 failed, 13 passed in 0.38s
+ingest.py        'rereading = (changed and held_art is not None and prio'   KILLED — 1 failed, 17 passed in 0.66s
+ingest.py        'pass'                                                     KILLED — 1 failed, 30 passed in 1.24s
+ingest.py        ')'                                                        KILLED — 1 failed, 17 passed in 1.14s
+ingest.py        'if False:'                                                KILLED — 1 failed, 17 passed in 0.65s
+report.py        'if False:'                                                KILLED — 1 failed, 29 passed in 0.86s
+report.py        'if False:'                                                KILLED — 1 failed, 29 passed in 0.86s

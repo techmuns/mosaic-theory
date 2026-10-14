@@ -1,0 +1,252 @@
+runs: [('R-20261010T165609Z-article', 'article', '2026-09-15', 'PARTIAL', 0.0), ('R-20261010T165610Z-article', 'article', '2026-10-02', 'SUCCEEDED', 0.0), ('R-20261011T100624Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 46.6736), ('R-20261011T110003Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 0.0)]
+ARTICLE A-46796449712e J.P. Morgan Private Bank — 'A calm index, a restless market'
+   url https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market
+   published 2026-10-02 (json-ld Article.datePublished); authors ['Kriti Gupta', 'Nick Roberts']
+   version AV-52f13ebe82955750 FULL 1100 words retrieved 2026-10-10 12:07 — fetched (cache); body truncated at related-content heading 'you may also like'; author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also cred
+ARTICLE A-82a8a9210bae Citi — 'Overcoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security'
+   url urn:document:sha256:c6f361d4d57a61964ee0a6941fb7c3f18a5f3cc43107e8ed09989a4350b31f72
+   published 2026-06-28 (the document text (page 1-2)); authors ['Citi Research', 'Anthony Yuen', 'Pierre Lau, CFA', 'Andrew Kaplowitz', 'Scott Gruber', 'Jenny Ping', 'Ryan Levine', 'Spiro Dounis']
+   version AV-51c14867d6652aa1 FULL 18976 words retrieved 2026-10-11 10:06 — operator-supplied copy — a MANUAL UPLOAD of an authorized document (pdf, 60 page(s); D-c6f361d4d57a6196); page 1: carries graphics (1 image(s), 16 vector object
+ARTICLE A-c59b789dbac0 SemiAnalysis — 'Everyone Says Datacenter Moratoriums Are Killing the US Buildout. We Mapped All 300 of Them'
+   url https://newsletter.semianalysis.com/p/everyone-says-datacenter-moratoriums
+   published 2026-09-15 (json-ld Article.datePublished); authors ['Maya Barkin', 'Reyk Knuhtsen', 'Jeremie Eliahou Ontiveros', 'Dylan Patel']
+   version AV-cfafd53bdd866f67 PARTIAL 3607 words retrieved 2026-10-10 13:16 — fetched (cache); no alternate publication versions declared (hreflang); paywall / subscriber marker on the page — analysed as an excerpt only
+DOCUMENT D-c6f361d4d57a6196 INGESTED pdf 60pp 2 tables — Citi Overcoming Gridlock 2.0.pdf
+   article A-82a8a9210bae version AV-51c14867d6652aa1; published 2026-06-28 (the document text (page 1-2)); received 2026-10-11 10:06 UTC
+   declared {'llm_permitted': 'True'}
+   basis: no article of this publisher resembles it
+   issues: 39 (showing 3): ['page 1: carries graphics (1 image(s), 16 vector object(s)) — chart labels are read as text', 'page 4: carries graphics (1 image(s), 3 vector object(s)) — chart labels are read as text,', 'page 5: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text,']
+THESIS TH-0F127079D1 v1 WATCH NEW ACTIVE ai_infrastructure.datacenter_physical|policy_regulation|positive|US
+   Datacenter moratoriums barely dent the US AI buildout pipeline
+   contributions: [('SemiAnalysis', 'A-c59b789dbac0', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)
+THESIS TH-110E3113B1 v1 WATCH NEW ACTIVE ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation
+   Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+THESIS TH-126BEECA00 v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.power_grid|dispersion_selection|positive|US
+   Uneven US regional power-market regulation makes regional selection drive grid/generation returns
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-1531955ab5c112: scheduled event window 2027-03-01..2027-03-31 (march 2027); C-c0d5bb4d67ed8c: scheduled event window 2026-11-01..2026-11-30 (november 2026); source-named exp
+THESIS TH-1F366737A1 v1 WATCH NEW ACTIVE ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:onsite_generation
+   AI datacenter power buildout drives multi-year transformer and grid equipment demand
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+THESIS TH-426034EB2D v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|demand_volume_shift|positive|Global
+   Nuclear and SMR interest rising as supportive policy and power demand grow
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-4BC577D53A v1 RESEARCH NOW NEW ACTIVE macro_market|dispersion_selection|positive|US
+   Low stock correlation makes sector and thematic selection the key diversifier within equities
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-2a5ee12b031485: measured 2026-10-02 (0 days before the as-of); C-0e01fcdfe7d3c0: measured 2026-10-02 (0 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (0 days
+THESIS TH-566BFB9D39 v1 WATCH NEW ACTIVE ai_infrastructure.power_grid|cost_inflation|positive|US
+   Low-cost US natural gas gives US a structural advantage in powering datacenters
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)
+THESIS TH-5BA11D6167 v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|capex_spending_cycle|positive|Global
+   Energy infrastructure is a multi-year structural growth story across four pillars
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-5EDF9760FB v1 WATCH NEW ACTIVE ai_infrastructure.datacenter_physical|valuation_rerating|positive|Europe
+   Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; verification hold)
+THESIS TH-6EFAD379CB v1 SKIP NEW ACTIVE macro_market|capex_spending_cycle|positive|US, South Korea, Taiwan
+   Selective continued exposure to US, South Korea, Taiwan AI capex theme
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-1 no verified material evidence
+THESIS TH-7F02181484 v2 WATCH WEAKER ACTIVE ai_infrastructure.power_grid|demand_volume_shift|positive|United States (esp. Texas)
+   Grid friction pushes datacenters behind-the-meter, benefiting on-site generation suppliers
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'contradictory'), ('SemiAnalysis', 'A-c59b789dbac0', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; counter-evidence outweighs support)
+THESIS TH-8178B565CB v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|capex_spending_cycle|positive|China
+   China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-98FD8D046C v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.power_grid|policy_regulation|negative|US
+   Rate rise and datacenter moratoriums have pressured utilities exposed to the AI trade
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-1b22bbfd754a6a: measured 2026-09-30 (2 days before the as-of); C-c79c88e88540c5: measured 2026-10-02 (0 days before the as-of); C-2b3aa74af5c311: measured 2026-10-02 (0 days
+THESIS TH-BAA07551ED v1 SKIP NEW ACTIVE ai_infrastructure.hyperscaler_capex|competitive_share_shift|positive|US
+   Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-1 no verified material evidence
+THESIS TH-C0F7401B12 v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|capex_spending_cycle|positive|US|seg:grid_utilities+onsite_generation
+   US gas pipeline underinvestment creates attractive midstream growth capex cycle
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-C840A76413 v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|capex_spending_cycle|positive|Europe|seg:grid_utilities
+   European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-CA02B7A83B v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:grid_utilities
+   Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-CE04BAA34C v1 SKIP NEW ACTIVE ai_infrastructure.materials_commodities|demand_volume_shift|positive|Global ex-US
+   Energy security accelerates renewables, EVs and energy storage demand globally
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-D803766B8B v1 SKIP NEW ACTIVE ai_infrastructure.power_grid|demand_volume_shift|positive|Australia|seg:onsite_generation
+   Australia develops behind-the-meter gas power market for data centers
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-DDEE0B7EF0 v1 WATCH NEW ACTIVE ai_infrastructure.power_grid|competitive_share_shift|positive|US|seg:onsite_generation
+   Fuel cells gain niche data-center power share on speed and grid-constraint advantages
+   contributions: [('Citi', 'A-82a8a9210bae', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; verification hold)
+RELATION TH-D803766B8B -> TH-126BEECA00 SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs demand_volume_shift); a different segment (no named segment vs Behind-the-meter / on-site generation); a diff
+RELATION TH-D803766B8B -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift) — adjacent support: context, never a confirmation
+RELATION TH-CE04BAA34C -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.materials_commodities)
+RELATION TH-566BFB9D39 -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs cost_inflation); a different segment (Behind-the-meter / on-site generation vs no named segment); a timefr
+RELATION TH-5BA11D6167 -> TH-C840A76413 SIBLING None | same value-chain node, not the same claim — a different segment (Grid-connected utilities vs no named segment) — adjacent support: context, never a confirmation
+RELATION TH-D803766B8B -> TH-426034EB2D SIBLING None | same value-chain node, not the same claim — a different segment (no named segment vs Behind-the-meter / on-site generation) — adjacent support: context, never a confirmation
+RELATION TH-110E3113B1 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-110E3113B1 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift) — adjacent support: context, never a confirmation
+RELATION TH-8178B565CB -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-CE04BAA34C -> TH-7F02181484 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.materials_commodities)
+RELATION TH-CE04BAA34C -> TH-110E3113B1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.materials_commodities)
+RELATION TH-426034EB2D -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs demand_volume_shift); no overlapping timeframe — related, never used as counte
+RELATION TH-D803766B8B -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs demand_volume_shift); a different segment (no named segment vs Behind-the-mete
+RELATION TH-5EDF9760FB -> TH-C0F7401B12 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-5EDF9760FB -> TH-110E3113B1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-8178B565CB -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs no named segment); a 
+RELATION TH-126BEECA00 -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-CA02B7A83B -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs supply_constraint); a different segment (Behind-the-meter / on-site generation vs Grid-connected utilities) — 
+RELATION TH-C840A76413 -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-DDEE0B7EF0 -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-110E3113B1 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs demand_volume_shift); a different segment (no named segment vs Behind-the-mete
+RELATION TH-126BEECA00 -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs dispersion_selection); a different segment (Grid-connected utilities + Behind-the-meter / on-site generation 
+RELATION TH-8178B565CB -> TH-426034EB2D SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle) — adjacent support: context, never a confirmation
+RELATION TH-D803766B8B -> TH-5EDF9760FB SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-5BA11D6167 -> TH-566BFB9D39 SIBLING None | same value-chain node, not the same claim — a different mechanism (cost_inflation vs capex_spending_cycle); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-8178B565CB -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs no named segment); a diff
+RELATION TH-5EDF9760FB -> TH-DDEE0B7EF0 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-C0F7401B12 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (no named segment vs Grid-connected utilities + Behind-the-meter / 
+RELATION TH-CE04BAA34C -> TH-98FD8D046C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.materials_commodities)
+RELATION TH-D803766B8B -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-D803766B8B -> TH-C840A76413 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift); a different segment (Grid-connected utilities vs Behind-the-meter / on-site generation)
+RELATION TH-126BEECA00 -> TH-566BFB9D39 SIBLING None | same value-chain node, not the same claim — a different mechanism (cost_inflation vs dispersion_selection); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-8178B565CB -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-CA02B7A83B -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-426034EB2D -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs demand_volume_shift); a different segment (Grid-connected utilities vs no named segment) — adjacent support: con
+RELATION TH-D803766B8B -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different geography (US vs Australia) — adjacent support: context, never a confirmation
+RELATION TH-DDEE0B7EF0 -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-426034EB2D -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-CA02B7A83B -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-426034EB2D -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift); a different segment (Behind-the-meter / on-site generation vs no named segment) — adjac
+RELATION TH-DDEE0B7EF0 -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs competitive_share_shift); overlapping but different segments (Grid-connected utilities + Behind-the-meter / o
+RELATION TH-566BFB9D39 -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-BAA07551ED -> TH-C0F7401B12 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-5BA11D6167 -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different segment (Grid-connected utilities + Behind-the-meter / on-site generation vs no named segment) — adjacent support: context, never a confirmation
+RELATION TH-566BFB9D39 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs cost_inflation); a different segment (Behind-the-meter / on-site generation vs no named segment); a timeframe
+RELATION TH-126BEECA00 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs dispersion_selection); a different segment (Behind-the-meter / on-site generation vs no named segment) — adja
+RELATION TH-5BA11D6167 -> TH-D803766B8B SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs no named segment) — adjac
+RELATION TH-C840A76413 -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-566BFB9D39 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs cost_inflation); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-126BEECA00 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs dispersion_selection); no overlapping timeframe — related, never used as count
+RELATION TH-5EDF9760FB -> TH-CA02B7A83B SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-8178B565CB -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different segment (Grid-connected utilities + Behind-the-meter / on-site generation vs no named segment); a different geography (US vs China) — adjacent s
+RELATION TH-566BFB9D39 -> TH-426034EB2D SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs cost_inflation); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-BAA07551ED -> TH-1F366737A1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-126BEECA00 -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-5BA11D6167 -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-DDEE0B7EF0 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs competitive_share_shift); a different segment (no named segment vs Behind-the-meter / on-site generation) — ad
+RELATION TH-426034EB2D -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift); a different segment (Grid-connected utilities + Behind-the-meter / on-site generation v
+RELATION TH-8178B565CB -> TH-5EDF9760FB SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-5BA11D6167 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-6EFAD379CB -> TH-4BC577D53A SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs capex_spending_cycle); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-D803766B8B -> TH-8178B565CB SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift); a different segment (no named segment vs Behind-the-meter / on-site generation); a diff
+RELATION TH-566BFB9D39 -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs cost_inflation); a different segment (Behind-the-meter / on-site generation vs no named segment); a timeframe 
+RELATION TH-1F366737A1 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs capex_spending_cycle); a different segment (no named segment vs Behind-the-met
+RELATION TH-C840A76413 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs capex_spending_cycle); a different segment (no named segment vs Grid-connected
+RELATION TH-DDEE0B7EF0 -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs competitive_share_shift) — adjacent support: context, never a confirmation
+RELATION TH-5EDF9760FB -> TH-C840A76413 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-BAA07551ED -> TH-7F02181484 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-DDEE0B7EF0 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs competitive_share_shift); a different segment (no named segment vs Behind-the-
+RELATION TH-C840A76413 -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs capex_spending_cycle) — adjacent support: context, never a confirmation
+RELATION TH-1F366737A1 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-5EDF9760FB -> TH-1F366737A1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-5BA11D6167 -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs no named segment) — adjac
+RELATION TH-5BA11D6167 -> TH-426034EB2D SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle) — adjacent support: context, never a confirmation
+RELATION TH-126BEECA00 -> TH-426034EB2D SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs dispersion_selection) — adjacent support: context, never a confirmation
+RELATION TH-566BFB9D39 -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs cost_inflation); a different segment (Grid-connected utilities + Behind-the-meter / on-site generation vs no 
+RELATION TH-8178B565CB -> TH-C840A76413 SIBLING None | same value-chain node, not the same claim — a different segment (Grid-connected utilities vs no named segment); a different geography (Europe vs China) — adjacent support: context, never a confirmatio
+RELATION TH-426034EB2D -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-126BEECA00 -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs dispersion_selection); a different segment (Grid-connected utilities vs no named segment); no overlapping timefr
+RELATION TH-C0F7401B12 -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); overlapping but different segments (Behind-the-meter / on-site generation vs Grid-conne
+RELATION TH-110E3113B1 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different segment (no named segment vs Behind-the-meter / on-site generation) — adjacent support: context, never a confirmation
+RELATION TH-426034EB2D -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different segment (Behind-the-meter / on-site generation vs no named segment) — adjacent support: context, never a confirmation
+RELATION TH-7F02181484 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-BAA07551ED -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-CA02B7A83B -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs supply_constraint); a different segment (no named segment vs Grid-connected utilities); no overlapping timefra
+RELATION TH-C0F7401B12 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs capex_spending_cycle); a different segment (no named segment vs Grid-connected
+RELATION TH-D803766B8B -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-BAA07551ED -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-426034EB2D -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-C840A76413 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (no named segment vs Grid-connected utilities); a different geograp
+RELATION TH-BAA07551ED -> TH-110E3113B1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-8178B565CB -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs capex_spending_cycle); a different segment (Grid-connected utilities vs no named segment) — adjacent support: co
+RELATION TH-D803766B8B -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-C840A76413 -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — overlapping but different segments (Grid-connected utilities + Behind-the-meter / on-site generation vs Grid-connected utilities); a different geography (US
+RELATION TH-D803766B8B -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs demand_volume_shift); a different segment (Grid-connected utilities vs Behind-the-meter / on-site generation) — 
+RELATION TH-426034EB2D -> TH-7F02181484 SIBLING None | the same claim at an overlapping but different geography (Global vs United States (esp. Texas)) — a separate thesis, never merged; adjacent support, never an automatic confirmation
+RELATION TH-5BA11D6167 -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs no named segment) — a
+RELATION TH-8178B565CB -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-DDEE0B7EF0 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-8178B565CB -> TH-126BEECA00 SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs capex_spending_cycle); a different geography (US vs China) — adjacent support: context, never a confirmation
+RELATION TH-5EDF9760FB -> TH-426034EB2D SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-D803766B8B -> TH-566BFB9D39 SIBLING None | same value-chain node, not the same claim — a different mechanism (cost_inflation vs demand_volume_shift); a different segment (no named segment vs Behind-the-meter / on-site generation); a different 
+RELATION TH-566BFB9D39 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-DDEE0B7EF0 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs competitive_share_shift) — adjacent support: context, never a confirmation
+RELATION TH-CA02B7A83B -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs supply_constraint); overlapping but different segments (Grid-connected utilities + Behind-the-meter / on-site
+RELATION TH-C840A76413 -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs Grid-connected utilit
+RELATION TH-5EDF9760FB -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.datacenter_physical)
+RELATION TH-CA02B7A83B -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs supply_constraint); a different segment (no named segment vs Grid-connected ut
+RELATION TH-126BEECA00 -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs dispersion_selection); a different segment (Behind-the-meter / on-site generation vs no named segment) — adjac
+RELATION TH-CE04BAA34C -> TH-C0F7401B12 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.materials_commodities)
+RELATION TH-5EDF9760FB -> TH-126BEECA00 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-5BA11D6167 -> TH-5EDF9760FB SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-C0F7401B12 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — overlapping but different segments (Behind-the-meter / on-site generation vs Grid-connected utilities + Behind-the-meter / on-site generation) — adjacent su
+RELATION TH-5EDF9760FB -> TH-7F02181484 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-126BEECA00 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-CA02B7A83B -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-8178B565CB -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different geography (United States (esp. Texas) vs China) — adjacent support: context
+RELATION TH-C840A76413 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different segment (Behind-the-meter / on-site generation vs Grid-connected utilities) — adjacent support: context, never a confirmation
+RELATION TH-98FD8D046C -> TH-7F02181484 COMPETING None | opposite investment directions on the same value-chain node (demand_volume_shift positive vs policy_regulation negative) — linked, never merged
+RELATION TH-C840A76413 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-DDEE0B7EF0 -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs competitive_share_shift); a different segment (Grid-connected utilities vs Behind-the-meter / on-site generation
+RELATION TH-426034EB2D -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs demand_volume_shift); a different segment (Behind-the-meter / on-site generation vs no named segment) — ad
+RELATION TH-CE04BAA34C -> TH-1F366737A1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.materials_commodities)
+RELATION TH-C840A76413 -> TH-426034EB2D SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (no named segment vs Grid-connected utilities) — adjacent support: 
+RELATION TH-126BEECA00 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs dispersion_selection) — adjacent support: context, never a confirmation
+RELATION TH-5EDF9760FB -> TH-98FD8D046C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-BAA07551ED -> TH-98FD8D046C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.hyperscaler_capex)
+RELATION TH-C840A76413 -> TH-126BEECA00 SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs capex_spending_cycle); a different segment (no named segment vs Grid-connected utilities); a different geogra
+RELATION TH-126BEECA00 -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs dispersion_selection); a different segment (Behind-the-meter / on-site generation vs no named segment) — a
+RELATION TH-1F366737A1 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (no named segment vs Behind-the-meter / on-site generation) — adjac
+RELATION TH-CA02B7A83B -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs supply_constraint); a different segment (Behind-the-meter / on-site generation vs Grid-connected utilities) —
+RELATION TH-5EDF9760FB -> TH-566BFB9D39 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.power_grid vs ai_infrastructure.datacenter_physical)
+RELATION TH-566BFB9D39 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs cost_inflation); a timeframe only one of them states — related, never used as 
+RELATION TH-5BA11D6167 -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs capex_spending_cycle); a different segment (Grid-connected utilities vs no named segment) — adjacent support: co
+RELATION TH-98FD8D046C -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-5BA11D6167 -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different segment (Behind-the-meter / on-site generation vs no named segment) — adjacent support: context, never a confirmation
+RELATION TH-5EDF9760FB -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.datacenter_physical)
+RELATION TH-5BA11D6167 -> TH-CE04BAA34C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.materials_commodities vs ai_infrastructure.power_grid)
+RELATION TH-5BA11D6167 -> TH-8178B565CB SIBLING None | the same claim at an overlapping but different geography (Global vs China) — a separate thesis, never merged; adjacent support, never an automatic confirmation
+RELATION TH-5BA11D6167 -> TH-126BEECA00 SIBLING None | same value-chain node, not the same claim — a different mechanism (dispersion_selection vs capex_spending_cycle) — adjacent support: context, never a confirmation
+RELATION TH-8178B565CB -> TH-1F366737A1 SIBLING None | same value-chain node, not the same claim — a different segment (Behind-the-meter / on-site generation vs no named segment) — adjacent support: context, never a confirmation
+RELATION TH-5EDF9760FB -> TH-0F127079D1 SIBLING None | same value-chain node, not the same claim — a different mechanism (policy_regulation vs valuation_rerating); a different geography (US vs Europe); a timeframe only one of them states — adjacent suppor
+RELATION TH-C0F7401B12 -> TH-0F127079D1 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.datacenter_physical vs ai_infrastructure.power_grid)
+RELATION TH-C840A76413 -> TH-566BFB9D39 SIBLING None | same value-chain node, not the same claim — a different mechanism (cost_inflation vs capex_spending_cycle); a different segment (no named segment vs Grid-connected utilities); a different geography (U
+RELATION TH-566BFB9D39 -> TH-BAA07551ED SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.hyperscaler_capex vs ai_infrastructure.power_grid)
+RELATION TH-D803766B8B -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different segment (no named segment vs Behind-the-meter / on-site generation); a different geography (United States (esp. Texas) vs Australia); no overlap
+RELATION TH-8178B565CB -> TH-566BFB9D39 SIBLING None | same value-chain node, not the same claim — a different mechanism (cost_inflation vs capex_spending_cycle); a different geography (US vs China); a timeframe only one of them states — adjacent support:
+RELATION TH-8178B565CB -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs capex_spending_cycle); a different geography (US vs China); no overlapping tim
+RELATION TH-566BFB9D39 -> TH-CA02B7A83B SIBLING None | same value-chain node, not the same claim — a different mechanism (supply_constraint vs cost_inflation); a different segment (Grid-connected utilities vs no named segment); a timeframe only one of the
+RELATION TH-D803766B8B -> TH-C0F7401B12 SIBLING None | same value-chain node, not the same claim — a different mechanism (capex_spending_cycle vs demand_volume_shift); overlapping but different segments (Grid-connected utilities + Behind-the-meter / on-si
+RELATION TH-D803766B8B -> TH-DDEE0B7EF0 SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs demand_volume_shift); a different geography (US vs Australia) — adjacent support: context, never a confirm
+RELATION TH-C840A76413 -> TH-110E3113B1 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle); a different segment (Behind-the-meter / on-site generation vs Grid-connected utilities)
+RELATION TH-5BA11D6167 -> TH-7F02181484 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs capex_spending_cycle) — adjacent support: context, never a confirmation
+RELATION TH-5BA11D6167 -> TH-98FD8D046C RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (policy_regulation vs capex_spending_cycle); no overlapping timeframe — related, never used as count

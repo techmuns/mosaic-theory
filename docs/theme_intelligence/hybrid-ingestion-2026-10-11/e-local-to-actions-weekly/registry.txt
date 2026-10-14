@@ -1,0 +1,85 @@
+runs: [('R-20261011T083033Z-scan', 'scan', '2026-10-10', 'SUCCEEDED', 0.0), ('R-20261011T103541Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 0.0), ('R-20261011T103656Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 0.6871), ('R-20261011T110031Z-scan', 'scan', '2026-10-11', 'SUCCEEDED', 0.0)]
+ARTICLE A-131d13deb534 Nomura — 'Central Banks Recalibrating Monetary Policies'
+   url https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies/
+   published 2026-10-07 (json-ld Article.datePublished); authors ['Rob Subbaraman', 'Aichi Amemiya', 'George Buckley', 'Ting Lu', 'Kyohei Morita', 'Euben Paracuelles', 'Jeremy Schwartz', 'Sonal Varma']
+   version AV-f5e39ab47f8b46d7 FULL 1244 words retrieved 2026-10-11 08:23 — fetched (cache); no alternate publication versions declared (hreflang)
+ARTICLE A-19eb305b208e TrendForce — 'Rising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipment Declines and Price Increases, Says TrendForce'
+   url https://www.trendforce.com/presscenter/news/20261008-13264.html
+   published 2026-10-08 (json-ld Article.datePublished); authors ['TrendForce']
+   version AV-4bae180da9c0a5bd FULL 664 words retrieved 2026-10-11 08:23 — fetched (cache); no alternate publication versions declared (hreflang)
+ARTICLE A-291cb465969d SemiAnalysis — 'Anthropic Subscriptions Offer 5x+ More Value Than OpenAI'
+   url https://newsletter.semianalysis.com/p/anthropic-subscriptions-offer-5x
+   published 2026-10-05 (json-ld Article.datePublished); authors ['Andrew Megalaa', 'Max Kan', 'Dylan Patel']
+   version AV-f45a634144cbefaa PARTIAL 2799 words retrieved 2026-10-11 08:10 — fetched (cache); no alternate publication versions declared (hreflang); paywall / subscriber marker on the page — analysed as an excerpt only
+ARTICLE A-46796449712e J.P. Morgan Private Bank — 'A calm index, a restless market'
+   url https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market
+   published 2026-10-02 (json-ld Article.datePublished); authors ['Kriti Gupta', 'Nick Roberts']
+   version AV-52f13ebe82955750 FULL 1100 words retrieved 2026-10-11 08:22 — fetched (cache); body truncated at related-content heading 'you may also like'; author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also cred
+ARTICLE A-5576af910bf8 TrendForce — 'Six Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reach 650 Million Units by 2031, Says TrendForce'
+   url https://www.trendforce.com/presscenter/news/20261008-13260.html
+   published 2026-10-08 (json-ld Article.datePublished); authors ['TrendForce']
+   version AV-01be0d765ed4e358 FULL 563 words retrieved 2026-10-11 08:09 — fetched (cache); no alternate publication versions declared (hreflang)
+ARTICLE A-5bfa8fff567e SemiAnalysis — 'Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime'
+   url https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier
+   published 2026-10-08 (json-ld Article.datePublished); authors ['Mark Chen', 'Doug', 'Dylan Patel']
+   version AV-2395b03fac4480e2 FULL 4697 words retrieved 2026-10-11 08:23 — fetched (cache); no alternate publication versions declared (hreflang)
+ARTICLE A-decec490fcdd TrendForce — 'AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce'
+   url https://www.trendforce.com/presscenter/news/20260930-13258.html
+   published 2026-09-30 (json-ld Article.datePublished); authors ['TrendForce']
+   version AV-d09770a67754253e FULL 962 words retrieved 2026-10-11 10:36 — operator-supplied copy — a MANUAL UPLOAD of an authorized document (html, ? page(s); D-bac61ba06ddc5cc9); no alternate publication versions declared (hreflang)
+DOCUMENT D-bac61ba06ddc5cc9 INGESTED html Nonepp 0 tables — TrendForce 20260930-13258 AI server memory.html
+   article A-decec490fcdd version AV-d09770a67754253e; published 2026-09-30 (json-ld Article.datePublished); received 2026-10-11 10:35 UTC
+   declared {'llm_permitted': 'True'}
+   basis: no article of this publisher resembles it
+   issues: 0 (showing 0): []
+THESIS TH-07643AD5F6 v1 WATCH NEW ACTIVE consumer_electronics|policy_regulation|negative|Global
+   Cost pressures prompt notebook production to reshore from emerging locations back to China
+   contributions: [('TrendForce', 'A-19eb305b208e', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)
+THESIS TH-1C1CAEA8AF v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.memory|pricing_cycle|positive|Global|seg:dram_hbm+nand_ssd
+   AI server demand keeps DRAM and NAND memory undersupplied, sustaining price increases in 4Q26
+   contributions: [('TrendForce', 'A-decec490fcdd', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-ba0032959d0836: forecast window 2026-10-01..2026-12-31 (4q26); C-5e7bfaa2a93a45: forecast window 2026-10-01..2026-12-31 (4q26); C-af6e5de53922c6: forecast window 2026-10-01.
+THESIS TH-4BC0244112 v2 WATCH STRONGER ACTIVE consumer_electronics|cost_inflation|negative|Global
+   Rising component costs threaten 2027 notebook shipments and brand margins
+   contributions: [('TrendForce', 'A-19eb305b208e', 'novelty_unverified'), ('TrendForce', 'A-decec490fcdd', 'new')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)
+THESIS TH-4BC577D53A v1 RESEARCH NOW NEW ACTIVE macro_market|dispersion_selection|positive|US
+   Low implied correlation makes equity sector and theme selection the key diversifier
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-88f388db8c7f04: measured 2026-10-02 (8 days before the as-of); C-91f359d4567e78: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days
+THESIS TH-4FC37DBE69 v1 WATCH NEW ACTIVE ai_adoption|demand_volume_shift|positive|Asia ex-Japan
+   Asian tech/AI boom and energy normalization support Singapore, Malaysia region equities
+   contributions: [('Nomura', 'A-131d13deb534', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)
+THESIS TH-588B6416E4 v1 RESEARCH NOW NEW ACTIVE utilities|policy_regulation|negative|US
+   Rate, political and AI-power forces have pressured utilities as an AI enabler
+   contributions: [('J.P. Morgan Private Bank', 'A-46796449712e', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-90533479f480e9: measured 2026-10-02 (8 days before the as-of); C-15345e9a075e87: measured 2026-10-02 (8 day
+THESIS TH-6BDD0881AD v1 WATCH NEW ACTIVE ai_models_platforms|competitive_share_shift|positive|Global
+   Anthropic subscriptions outvalue OpenAI's, signaling differing lab unit economics
+   contributions: [('SemiAnalysis', 'A-291cb465969d', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); retrieval PARTIAL)
+THESIS TH-70E56311B3 v1 WATCH NEW ACTIVE ai_models_platforms|pricing_cycle|positive|Global
+   Labs can silently cut subscription value by not raising limits after price cuts
+   contributions: [('SemiAnalysis', 'A-291cb465969d', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a — a mark
+THESIS TH-921772E86C v1 SKIP NEW ARCHIVED ai_infrastructure.optical_networking|demand_volume_shift|positive|Global
+   AI datacenter optical shift drives VCSEL NPO suppliers' unit demand to 2031
+   contributions: [('TrendForce', 'A-5576af910bf8', 'novelty_unverified')]
+   rule: SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+THESIS TH-C619388BB6 v1 WATCH NEW REVIEW_NEEDED macro_market|other|positive|Global|review:e4fb211f
+   Global central banks resume hiking but Nomura sees far fewer hikes than markets price
+   contributions: [('Nomura', 'A-131d13deb534', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst)
+THESIS TH-EBC230CDDD v1 WATCH NEW ACTIVE ai_models_platforms|competitive_share_shift|negative|Global
+   China's frontier labs race ahead without safety gating, intensifying competition for US labs
+   contributions: [('SemiAnalysis', 'A-5bfa8fff567e', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names))
+RELATION TH-4BC577D53A -> TH-C619388BB6 SIBLING None | same value-chain node, not the same claim — an unclassified thesis (no taxonomy node or mechanism) — not comparable by key; a different mechanism (other vs dispersion_selection) — adjacent support: co
+RELATION TH-1C1CAEA8AF -> TH-921772E86C SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.optical_networking vs ai_infrastructure.memory)
+RELATION TH-07643AD5F6 -> TH-4BC0244112 SIBLING None | same value-chain node, not the same claim — a different mechanism (cost_inflation vs policy_regulation) — adjacent support: context, never a confirmation
+RELATION TH-70E56311B3 -> TH-6BDD0881AD SIBLING None | same value-chain node, not the same claim — a different mechanism (competitive_share_shift vs pricing_cycle) — adjacent support: context, never a confirmation
+RELATION TH-6BDD0881AD -> TH-EBC230CDDD RELATED None | the opposite direction on the same value-chain node, but not the same claim — a timeframe only one of them states — related, never used as counter-evidence
+RELATION TH-70E56311B3 -> TH-EBC230CDDD RELATED None | the opposite direction on the same value-chain node, but not the same claim — a different mechanism (competitive_share_shift vs pricing_cycle); a timeframe only one of them states — related, never use
+ISSUE DOCUMENT_REVIEW A-19eb305b208e: D-bac61ba06ddc5cc9 (TrendForce 20260930-13258 AI server memory.html): an uncertain match — a human decides (title overlap 21%, held text found in the new document 0%, new text found in the held 0%; held 664 words (FULL),

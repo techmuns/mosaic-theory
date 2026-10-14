@@ -1,0 +1,1466 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "ai_models_platforms"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T08:31:47.694483Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "market_regime",
+   "last_material_update": "2026-10-05",
+   "latest_article_date": "2026-10-05",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-70E56311B3",
+   "title": "Labs can silently cut subscription value by not raising limits after price cuts"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-7997c02b9804b8",
+     "C-82ebca68615b63",
+     "C-7566dcc31cf5b2"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Both OpenAI and Anthropic cut API token prices but did not fully raise subscription token limits in step, so API-equivalent subscription value fell without the headline price changing; tracking these shifts is a research opportunity for modeling lab economics. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-7997c02b9804b8",
+     "C-82ebca68615b63",
+     "C-7566dcc31cf5b2"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues you need to re-check per-plan/model/token costs continuously to accurately model AI lab financials. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Because subscription value can drift silently, analysts modeling AI-lab subscription revenue and margins must track real-time (plan, model, token) limits rather than headline prices."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-291cb465969d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-82ebca68615b63"
+     ],
+     "original_date": "2026-10-05",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30% \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7566dcc31cf5b2"
+     ],
+     "original_date": "2026-10-05",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7997c02b9804b8"
+     ],
+     "original_date": "2026-10-05",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-05; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-82ebca68615b63",
+     "C-7566dcc31cf5b2",
+     "C-7997c02b9804b8",
+     "C-ca99bfc56e35e5",
+     "C-fb16f5b0206efb",
+     "C-d1497cca0714f5"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Labs cut API token prices (e.g. 6.1 Sol, Opus 5.5, Fable 5.1) but left subscription token limits unchanged or only partially raised. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-82ebca68615b63"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "margins",
+    "text": "Holding limits while cutting prices lowers the API-equivalent value delivered per subscription, improving lab subscription margins silently. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-291cb465969d",
+    "block_id": "b075",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7566dcc31cf5b2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "token limit increase",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Tokenomics Model",
+    "period": null,
+    "qualifiers": [
+     "Anthropic",
+     "Max plans",
+     "Pro plan +50%",
+     "approximate"
+    ],
+    "quote": "the ~20% token increase for Max plans and ~50% increase for the Pro plan weren\u2019t enough to fully offset the API price cut",
+    "role": "supports",
+    "unit": "%",
+    "value": 20.0,
+    "value_text": "~20%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-291cb465969d",
+    "block_id": "b073",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-82ebca68615b63",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "API-equivalent value drop",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Tokenomics Model",
+    "period": null,
+    "qualifiers": [
+     "OpenAI",
+     "$200 plan",
+     "approximate"
+    ],
+    "quote": "We already showed earlier that OpenAI didn\u2019t change Sol token limits on the $200/month plan when they released 6.1 Sol. This caused the API-equivalent value to drop ~30%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 30.0,
+    "value_text": "~30%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-291cb465969d",
+    "block_id": "b074",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7997c02b9804b8",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "token limit adjustment after price cut",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Anthropic also didn\u2019t increase Fable token limits at all with the release of 5.1, but they did up Opus token limits with the 5.5 price cut.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-42cdb15adefcec",
+     "name_as_written": "Codex",
+     "other_securities": [],
+     "quote": "the recent surge in Codex adoption",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "OpenAI coding product cited as benefiting from subscription goodwill"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-73a0c239be75f0",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Tokenomics Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and author of the analysis; operator of the Tokenomics Model and Subscriptions Dashboard"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3d14217caa8702",
+     "name_as_written": "Tokenomics Model",
+     "other_securities": [],
+     "quote": "available exclusively to Tokenomics Model subscribers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "SemiAnalysis subscription product providing the data and dashboard"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-72b4698d27cbd3",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Provider whose subscriptions are tracked on the dashboard"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6a74e4c1796108",
+     "name_as_written": "SpaceXAI",
+     "other_securities": [],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Provider whose subscriptions are tracked on the dashboard"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c3efe3006625f6",
+     "name_as_written": "Cursor",
+     "other_securities": [],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Third-party wrapper plan compared against first-party plans"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": "0001455365",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-07 (accession 0001104659-26-092362) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.001 per share",
+       "ticker": "CGTX"
+      }
+     ],
+     "mention_id": "M-e89c997f955a25",
+     "name_as_written": "Cognition",
+     "other_securities": [],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Maker of Devin third-party wrapper plan compared against first-party plans"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-49e135c77f027c",
+     "name_as_written": "Z.ai",
+     "other_securities": [],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Chinese lab provider whose subscriptions are tracked"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": "0002109556",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8454718ff29d8e",
+     "name_as_written": "MiniMax",
+     "other_securities": [
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "MMXGY"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "MNMXF"
+      }
+     ],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Chinese lab provider whose subscriptions are tracked"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0be696ce57e3eb",
+     "name_as_written": "Moonshot",
+     "other_securities": [],
+     "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Chinese lab provider whose subscriptions are tracked"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-df592ebca3f2b6",
+     "name_as_written": "Artificial Analysis",
+     "other_securities": [],
+     "quote": "Many people like to cite this chart from Artificial Analysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Provider of the AA Intelligence Index token-efficiency benchmark the article disputes"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a6302b98f19a7d",
+     "name_as_written": "Tibo",
+     "other_securities": [],
+     "quote": "OpenAI\u2019s $200 plan announced by Tibo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source that announced OpenAI's $200 plan value reduction"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e4519418f276e5",
+     "name_as_written": "Devin",
+     "other_securities": [],
+     "quote": "third party apps like Devin",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Cognition's product used as a third-party app for subscription testing"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bbf7af1a2c0bbc",
+     "name_as_written": "Claude Code",
+     "other_securities": [],
+     "quote": "Screenshot of Claude Code meters",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Anthropic product whose usage meters were measured"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bb1ef113ed46e0",
+     "name_as_written": "Fable",
+     "other_securities": [],
+     "quote": "sometimes a separate meter for a model like Fable",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Anthropic model tier referenced in meter structure and value comparisons"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-68ba8032c81f7d",
+     "name_as_written": "ChatGPT",
+     "other_securities": [],
+     "quote": "testing the limits when using your ChatGPT subscription on third party apps like Devin",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "OpenAI subscription product tested on third-party apps"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-47f91e8f327eb2",
+     "name_as_written": "Sonnet",
+     "other_securities": [],
+     "quote": "The drop off is small between Sonnet 5.5 and Opus 5.5",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Anthropic model tier used in API-equivalent value comparison"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-7f53a5b80d20f6",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "OpenAI\u2019s generous resets",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "AI lab whose subscription plans and recent cuts are analyzed and compared against Anthropic"
+    },
+    {
+     "article_id": "A-291cb465969d",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-3d7b87d0147fb8",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "has forced Anthropic to repeatedly walk back planned subscription nerfs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "AI lab whose Claude subscription plans are measured and found to offer more value than OpenAI"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "AI labs / model providers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-82ebca68615b63",
+      "C-7566dcc31cf5b2",
+      "C-7997c02b9804b8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Recent price cuts (6.1 Sol, Opus 5.5, Fable 5.1) were not fully offset by limit increases, so measured subscription value has already dropped ~30% on some plans. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-7997c02b9804b8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Subscription value is a moving target that labs can adjust silently, so continuous measurement is needed to model their unit economics."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6BDD0881AD: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-EBC230CDDD: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Labs raising subscription limits one-for-one with future API price cuts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Public disclosure requiring stable advertised subscription value"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether these limit/price adjustments materially change reported lab revenue or margins; the article quantifies per-plan value shifts but not aggregate financial impact."
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Labs commit to stable advertised subscription value"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Subscriptions shrink to an immaterial share of lab revenue"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Use the SemiAnalysis Subscriptions Dashboard to track per-(plan, model, token) API-equivalent value over time and quantify how silent limit/price changes flow through to each lab's subscription revenue and margins."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further API price cuts without matching limit increases"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that subscription margin shifts materially change lab financials"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-291cb465969d",
+    "authors": [
+     "Andrew Megalaa",
+     "Max Kan",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-7997c02b9804b8",
+     "C-82ebca68615b63",
+     "C-7566dcc31cf5b2"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-05T20:01:09Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Anthropic Subscriptions Offer 5x+ More Value Than OpenAI",
+    "upstream_origins": [
+     "SemiAnalysis Tokenomics Model",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/anthropic-subscriptions-offer-5x"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 11:03 UTC from the registry (ti-engine-2; run R-20261011T110031Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-291cb465969d",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "ai_models_platforms"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T08:31:47.694483Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "market_regime",
+     "last_material_update": "2026-10-05",
+     "latest_article_date": "2026-10-05",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI model developers and AI platforms / applications",
+     "status": "ACTIVE",
+     "thesis_id": "TH-70E56311B3",
+     "title": "Labs can silently cut subscription value by not raising limits after price cuts"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-7997c02b9804b8",
+       "C-82ebca68615b63",
+       "C-7566dcc31cf5b2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Both OpenAI and Anthropic cut API token prices but did not fully raise subscription token limits in step, so API-equivalent subscription value fell without the headline price changing; tracking these shifts is a research opportunity for modeling lab economics. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-7997c02b9804b8",
+       "C-82ebca68615b63",
+       "C-7566dcc31cf5b2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues you need to re-check per-plan/model/token costs continuously to accurately model AI lab financials. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Because subscription value can drift silently, analysts modeling AI-lab subscription revenue and margins must track real-time (plan, model, token) limits rather than headline prices."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-291cb465969d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-82ebca68615b63"
+       ],
+       "original_date": "2026-10-05",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "OpenAI didn't change Sol token limits when releasing 6.1 Sol, causing API-equivalent value to drop ~30% \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7566dcc31cf5b2"
+       ],
+       "original_date": "2026-10-05",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Anthropic's ~20% token increase for Max plans and ~50% for Pro plan didn't fully offset the Opus 5.5 API price cut \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7997c02b9804b8"
+       ],
+       "original_date": "2026-10-05",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Anthropic did not increase Fable token limits with the 5.1 release but did increase Opus token limits with the 5.5 price cut."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-05; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-82ebca68615b63",
+       "C-7566dcc31cf5b2",
+       "C-7997c02b9804b8",
+       "C-ca99bfc56e35e5",
+       "C-fb16f5b0206efb",
+       "C-d1497cca0714f5"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Labs cut API token prices (e.g. 6.1 Sol, Opus 5.5, Fable 5.1) but left subscription token limits unchanged or only partially raised. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-82ebca68615b63"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "margins",
+      "text": "Holding limits while cutting prices lowers the API-equivalent value delivered per subscription, improving lab subscription margins silently. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-291cb465969d",
+      "block_id": "b075",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7566dcc31cf5b2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "token limit increase",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Tokenomics Model",
+      "period": null,
+      "qualifiers": [
+       "Anthropic",
+       "Max plans",
+       "Pro plan +50%",
+       "approximate"
+      ],
+      "quote": "the ~20% token increase for Max plans and ~50% increase for the Pro plan weren\u2019t enough to fully offset the API price cut",
+      "role": "supports",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "~20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-291cb465969d",
+      "block_id": "b073",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-82ebca68615b63",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "API-equivalent value drop",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Tokenomics Model",
+      "period": null,
+      "qualifiers": [
+       "OpenAI",
+       "$200 plan",
+       "approximate"
+      ],
+      "quote": "We already showed earlier that OpenAI didn\u2019t change Sol token limits on the $200/month plan when they released 6.1 Sol. This caused the API-equivalent value to drop ~30%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 30.0,
+      "value_text": "~30%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-291cb465969d",
+      "block_id": "b074",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7997c02b9804b8",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "token limit adjustment after price cut",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Anthropic also didn\u2019t increase Fable token limits at all with the release of 5.1, but they did up Opus token limits with the 5.5 price cut.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-42cdb15adefcec",
+       "name_as_written": "Codex",
+       "other_securities": [],
+       "quote": "the recent surge in Codex adoption",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "OpenAI coding product cited as benefiting from subscription goodwill"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-73a0c239be75f0",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Tokenomics Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and author of the analysis; operator of the Tokenomics Model and Subscriptions Dashboard"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3d14217caa8702",
+       "name_as_written": "Tokenomics Model",
+       "other_securities": [],
+       "quote": "available exclusively to Tokenomics Model subscribers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "SemiAnalysis subscription product providing the data and dashboard"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-72b4698d27cbd3",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Provider whose subscriptions are tracked on the dashboard"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6a74e4c1796108",
+       "name_as_written": "SpaceXAI",
+       "other_securities": [],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Provider whose subscriptions are tracked on the dashboard"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c3efe3006625f6",
+       "name_as_written": "Cursor",
+       "other_securities": [],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Third-party wrapper plan compared against first-party plans"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": "0001455365",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-07 (accession 0001104659-26-092362) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.001 per share",
+         "ticker": "CGTX"
+        }
+       ],
+       "mention_id": "M-e89c997f955a25",
+       "name_as_written": "Cognition",
+       "other_securities": [],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Maker of Devin third-party wrapper plan compared against first-party plans"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-49e135c77f027c",
+       "name_as_written": "Z.ai",
+       "other_securities": [],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Chinese lab provider whose subscriptions are tracked"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": "0002109556",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8454718ff29d8e",
+       "name_as_written": "MiniMax",
+       "other_securities": [
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "MMXGY"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-10-10 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "MNMXF"
+        }
+       ],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Chinese lab provider whose subscriptions are tracked"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0be696ce57e3eb",
+       "name_as_written": "Moonshot",
+       "other_securities": [],
+       "quote": "we also track Meta, SpaceXAI, Cursor, Cognition, Z.ai, MiniMax, and Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Chinese lab provider whose subscriptions are tracked"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-df592ebca3f2b6",
+       "name_as_written": "Artificial Analysis",
+       "other_securities": [],
+       "quote": "Many people like to cite this chart from Artificial Analysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Provider of the AA Intelligence Index token-efficiency benchmark the article disputes"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a6302b98f19a7d",
+       "name_as_written": "Tibo",
+       "other_securities": [],
+       "quote": "OpenAI\u2019s $200 plan announced by Tibo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source that announced OpenAI's $200 plan value reduction"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e4519418f276e5",
+       "name_as_written": "Devin",
+       "other_securities": [],
+       "quote": "third party apps like Devin",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Cognition's product used as a third-party app for subscription testing"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bbf7af1a2c0bbc",
+       "name_as_written": "Claude Code",
+       "other_securities": [],
+       "quote": "Screenshot of Claude Code meters",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Anthropic product whose usage meters were measured"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bb1ef113ed46e0",
+       "name_as_written": "Fable",
+       "other_securities": [],
+       "quote": "sometimes a separate meter for a model like Fable",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Anthropic model tier referenced in meter structure and value comparisons"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-68ba8032c81f7d",
+       "name_as_written": "ChatGPT",
+       "other_securities": [],
+       "quote": "testing the limits when using your ChatGPT subscription on third party apps like Devin",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "OpenAI subscription product tested on third-party apps"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-47f91e8f327eb2",
+       "name_as_written": "Sonnet",
+       "other_securities": [],
+       "quote": "The drop off is small between Sonnet 5.5 and Opus 5.5",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Anthropic model tier used in API-equivalent value comparison"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-7f53a5b80d20f6",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "OpenAI\u2019s generous resets",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "AI lab whose subscription plans and recent cuts are analyzed and compared against Anthropic"
+      },
+      {
+       "article_id": "A-291cb465969d",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-3d7b87d0147fb8",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "has forced Anthropic to repeatedly walk back planned subscription nerfs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "AI lab whose Claude subscription plans are measured and found to offer more value than OpenAI"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "AI labs / model providers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-82ebca68615b63",
+        "C-7566dcc31cf5b2",
+        "C-7997c02b9804b8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Recent price cuts (6.1 Sol, Opus 5.5, Fable 5.1) were not fully offset by limit increases, so measured subscription value has already dropped ~30% on some plans. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-7997c02b9804b8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Subscription value is a moving target that labs can adjust silently, so continuous measurement is needed to model their unit economics."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6BDD0881AD: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-EBC230CDDD: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs pricing_cycle); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Labs raising subscription limits one-for-one with future API price cuts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Public disclosure requiring stable advertised subscription value"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether these limit/price adjustments materially change reported lab revenue or margins; the article quantifies per-plan value shifts but not aggregate financial impact."
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Labs commit to stable advertised subscription value"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Subscriptions shrink to an immaterial share of lab revenue"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Use the SemiAnalysis Subscriptions Dashboard to track per-(plan, model, token) API-equivalent value over time and quantify how silent limit/price changes flow through to each lab's subscription revenue and margins."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further API price cuts without matching limit increases"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that subscription margin shifts materially change lab financials"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-291cb465969d",
+      "authors": [
+       "Andrew Megalaa",
+       "Max Kan",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-7997c02b9804b8",
+       "C-82ebca68615b63",
+       "C-7566dcc31cf5b2"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-05T20:01:09Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Anthropic Subscriptions Offer 5x+ More Value Than OpenAI",
+      "upstream_origins": [
+       "SemiAnalysis Tokenomics Model",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/anthropic-subscriptions-offer-5x"
+     }
+    ]
+   },
+   "content_sha": "e57dec253b619f84272724da7da410c5e16c438008a8143dc5b2656550e2cd30",
+   "created_at": "2026-10-11T08:31:47.700984Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-7997c02b9804b8",
+       "C-82ebca68615b63",
+       "C-7566dcc31cf5b2"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-f6e9aa8b2590",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "a market-regime record argues a market structure, not an earnings mechanism",
+      "value": "n/a (market-regime record)"
+     },
+     {
+      "claim_ids": [
+       "C-82ebca68615b63",
+       "C-7566dcc31cf5b2"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-82ebca68615b63: measured 2026-10-05 (5 days before the as-of); C-7566dcc31cf5b2: measured 2026-10-05 (5 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-7566dcc31cf5b2"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "n/a \u2014 a market-regime record argues no earnings mechanism",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst, and the near-term inflection does not qualify (n/a \u2014 a market-regime record argues no earnings mechanism); retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T083033Z-scan",
+   "thesis_id": "TH-70E56311B3",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

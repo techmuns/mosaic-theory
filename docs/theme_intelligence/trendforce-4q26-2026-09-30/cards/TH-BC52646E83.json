@@ -1,0 +1,929 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-09-30",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.memory"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:10.907032Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-30",
+   "latest_article_date": "2026-09-30",
+   "region": "Global",
+   "research_action": "RESEARCH NOW",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-BC52646E83",
+   "title": "Enterprise SSD demand from CSP AI inference drives accelerating price growth"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-ee57adcf2c3286",
+     "C-ff901694d7e7a3",
+     "C-57018f1da7d774"
+    ],
+    "provenance": "FORECAST",
+    "text": "Enterprise SSD bit demand is projected to grow more than 80% YoY in 2026 as CSPs expand AI inference infrastructure, with price growth expected to accelerate in 4Q26 \u2014 the only memory category to see a larger increase than the prior quarter. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-57018f1da7d774",
+     "C-ff901694d7e7a3"
+    ],
+    "provenance": "FORECAST",
+    "text": "Enterprise SSDs are uniquely positioned to see accelerating price growth driven by CSP AI inference buildout."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Enterprise SSDs stand out as the strongest memory sub-segment, with committed incremental supply and AI deployment demand supporting accelerating prices; earnings impact for specific producers is not quantified."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ee57adcf2c3286"
+     ],
+     "original_date": "2026-09-30",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Enterprise SSD bit demand is projected to grow more than 80% YoY in 2026 as CSPs expand AI inference infrastructure. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ff901694d7e7a3"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "Enterprise SSD price growth is expected to accelerate in 4Q26, the only memory category to see a larger increase than the prior quarter."
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-108504edb84ae7"
+     ],
+     "original_date": "2026-09-30",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Large-scale agentic AI rollout drives exponential data volume growth and rising QLC penetration in vector databases."
+    },
+    {
+     "article_id": "A-decec490fcdd",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-288aafc4d8b9ca"
+     ],
+     "original_date": "2026-09-30",
+     "period": "4Q26",
+     "provenance": "SOURCE OPINION",
+     "text": "Most incremental enterprise SSD supply has already been committed, leaving little available on the open market."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-09-30, from a source published 2026-09-30; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-108504edb84ae7"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Demand shifts from LLM training toward actual AI deployment, with agentic AI driving data volume growth and QLC vector-database penetration."
+   },
+   {
+    "claim_ids": [
+     "C-ee57adcf2c3286"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Enterprise SSD bit demand projected to grow more than 80% YoY in 2026. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-ff901694d7e7a3",
+     "C-57018f1da7d774"
+    ],
+    "provenance": "FORECAST",
+    "step": "pricing",
+    "text": "Enterprise SSD price growth expected to accelerate in 4Q26, the only category with a larger increase than the prior quarter."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Accelerating prices and volumes would raise producers' enterprise SSD revenue; the article does not quantify it."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ee57adcf2c3286",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "enterprise SSD bit demand growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "more than",
+     "AI inference infrastructure"
+    ],
+    "quote": "Bit demand for enterprise SSDs is projected to grow by more than 80% YoY in 2026 as CSPs continue to expand AI inference infrastructure",
+    "role": "supports",
+    "unit": "% YoY",
+    "value": 80.0,
+    "value_text": "more than 80%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-108504edb84ae7",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Large-scale agentic AI rollout drives exponential data volume growth and rising QLC penetration in vector databases.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the large-scale rollout of agentic AI is driving exponential growth in data volumes for real-time retrieval and caching, while QLC penetration in vector databases continues to rise",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-288aafc4d8b9ca",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Most incremental enterprise SSD supply has already been committed, leaving little available on the open market.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [],
+    "quote": "most incremental supply has already been committed, leaving little available on the open market",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-decec490fcdd",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-57018f1da7d774",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "enterprise SSD price growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "only category to accelerate",
+     "driven by CSP demand"
+    ],
+    "quote": "Enterprise SSDs are the only category expected to see price growth accelerate due to strong demand from CSPs",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-decec490fcdd",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-38e499d89ffb04",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the memory industry report and its forecasts."
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-decec490fcdd",
+     "claim_ids": [
+      "C-ee57adcf2c3286"
+     ],
+     "direction": "positive",
+     "name": "enterprise SSD",
+     "provenance": "FORECAST",
+     "quote": "Bit demand for enterprise SSDs is projected to grow by more than 80% YoY in 2026"
+    }
+   ],
+   "sectors": [
+    "Enterprise SSD",
+    "NAND Flash",
+    "Semiconductors"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "4Q26 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-ee57adcf2c3286",
+      "C-ff901694d7e7a3"
+     ],
+     "provenance": "FORECAST",
+     "text": "Enterprise SSD price growth accelerating in 4Q26 with bit demand up more than 80% YoY in 2026. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-108504edb84ae7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI inference deployment and agentic AI data growth structurally expand enterprise SSD/QLC demand."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-1C1CAEA8AF: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs demand_volume_shift); overlapping but different segments (DRAM / HBM + NAND / SSD vs NAND / SSD) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Enterprise SSD bit demand growth falling short of 80% YoY"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CSP AI inference capex slowing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Open-market enterprise SSD supply loosening"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-5bc472e0144745",
+      "C-ddaab26d3b09f3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "For eMMC/UFS, demand is so weak that OEMs buy only minimum volumes to maintain supplier relationships, narrowing negotiations to price confirmation on small order volumes and limiting suppliers' ability to push through broader price increases. (scope: eMMC/UFS segment (smartphone, TV, set-top box, wearable applications) in 4Q26)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed NAND producers capture the enterprise SSD demand and how it flows to earnings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Sustainability of 80%+ bit demand growth beyond 2026"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Enterprise SSD supply becomes widely available on open market"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Demand shift back toward training slows deployment"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map enterprise SSD and QLC NAND exposure across listed memory makers and compare to 2026 bit-demand growth forecast."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Enterprise SSD price acceleration confirmed in 4Q26 reports"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CSP AI inference capex guidance raised"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026); C-57018f1da7d774: forecast window 2026-10-01..2026-12-31 (4q26); C-ff901694d7e7a3: forecast window 2026-10-01..2026-12-31 (4q26); source-named exposure(s): sector: enterprise SSD; a near-term fundamental inflection \u2014 C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for enterprise SSD already reflect enterprise SSD bit demand growth of more than 80% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-decec490fcdd",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-ff901694d7e7a3",
+     "C-ee57adcf2c3286",
+     "C-108504edb84ae7",
+     "C-288aafc4d8b9ca",
+     "C-57018f1da7d774",
+     "C-5bc472e0144745"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-30T15:52:15+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191510Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-09-30",
+   "change_summary": "Initial record \u2014 created from A-decec490fcdd",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-09-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.memory"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:10.907032Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-30",
+     "latest_article_date": "2026-09-30",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-BC52646E83",
+     "title": "Enterprise SSD demand from CSP AI inference drives accelerating price growth"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-ee57adcf2c3286",
+       "C-ff901694d7e7a3",
+       "C-57018f1da7d774"
+      ],
+      "provenance": "FORECAST",
+      "text": "Enterprise SSD bit demand is projected to grow more than 80% YoY in 2026 as CSPs expand AI inference infrastructure, with price growth expected to accelerate in 4Q26 \u2014 the only memory category to see a larger increase than the prior quarter. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-57018f1da7d774",
+       "C-ff901694d7e7a3"
+      ],
+      "provenance": "FORECAST",
+      "text": "Enterprise SSDs are uniquely positioned to see accelerating price growth driven by CSP AI inference buildout."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Enterprise SSDs stand out as the strongest memory sub-segment, with committed incremental supply and AI deployment demand supporting accelerating prices; earnings impact for specific producers is not quantified."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ee57adcf2c3286"
+       ],
+       "original_date": "2026-09-30",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Enterprise SSD bit demand is projected to grow more than 80% YoY in 2026 as CSPs expand AI inference infrastructure. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ff901694d7e7a3"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "Enterprise SSD price growth is expected to accelerate in 4Q26, the only memory category to see a larger increase than the prior quarter."
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-108504edb84ae7"
+       ],
+       "original_date": "2026-09-30",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Large-scale agentic AI rollout drives exponential data volume growth and rising QLC penetration in vector databases."
+      },
+      {
+       "article_id": "A-decec490fcdd",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-288aafc4d8b9ca"
+       ],
+       "original_date": "2026-09-30",
+       "period": "4Q26",
+       "provenance": "SOURCE OPINION",
+       "text": "Most incremental enterprise SSD supply has already been committed, leaving little available on the open market."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-09-30, from a source published 2026-09-30; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-108504edb84ae7"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Demand shifts from LLM training toward actual AI deployment, with agentic AI driving data volume growth and QLC vector-database penetration."
+     },
+     {
+      "claim_ids": [
+       "C-ee57adcf2c3286"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Enterprise SSD bit demand projected to grow more than 80% YoY in 2026. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-ff901694d7e7a3",
+       "C-57018f1da7d774"
+      ],
+      "provenance": "FORECAST",
+      "step": "pricing",
+      "text": "Enterprise SSD price growth expected to accelerate in 4Q26, the only category with a larger increase than the prior quarter."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Accelerating prices and volumes would raise producers' enterprise SSD revenue; the article does not quantify it."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ee57adcf2c3286",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "enterprise SSD bit demand growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "more than",
+       "AI inference infrastructure"
+      ],
+      "quote": "Bit demand for enterprise SSDs is projected to grow by more than 80% YoY in 2026 as CSPs continue to expand AI inference infrastructure",
+      "role": "supports",
+      "unit": "% YoY",
+      "value": 80.0,
+      "value_text": "more than 80%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-108504edb84ae7",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Large-scale agentic AI rollout drives exponential data volume growth and rising QLC penetration in vector databases.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the large-scale rollout of agentic AI is driving exponential growth in data volumes for real-time retrieval and caching, while QLC penetration in vector databases continues to rise",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-288aafc4d8b9ca",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Most incremental enterprise SSD supply has already been committed, leaving little available on the open market.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [],
+      "quote": "most incremental supply has already been committed, leaving little available on the open market",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-decec490fcdd",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-57018f1da7d774",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "enterprise SSD price growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "only category to accelerate",
+       "driven by CSP demand"
+      ],
+      "quote": "Enterprise SSDs are the only category expected to see price growth accelerate due to strong demand from CSPs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-decec490fcdd",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-38e499d89ffb04",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the memory industry report and its forecasts."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-decec490fcdd",
+       "claim_ids": [
+        "C-ee57adcf2c3286"
+       ],
+       "direction": "positive",
+       "name": "enterprise SSD",
+       "provenance": "FORECAST",
+       "quote": "Bit demand for enterprise SSDs is projected to grow by more than 80% YoY in 2026"
+      }
+     ],
+     "sectors": [
+      "Enterprise SSD",
+      "NAND Flash",
+      "Semiconductors"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "4Q26 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ee57adcf2c3286",
+        "C-ff901694d7e7a3"
+       ],
+       "provenance": "FORECAST",
+       "text": "Enterprise SSD price growth accelerating in 4Q26 with bit demand up more than 80% YoY in 2026. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-108504edb84ae7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI inference deployment and agentic AI data growth structurally expand enterprise SSD/QLC demand."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-1C1CAEA8AF: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs demand_volume_shift); overlapping but different segments (DRAM / HBM + NAND / SSD vs NAND / SSD) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Enterprise SSD bit demand growth falling short of 80% YoY"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CSP AI inference capex slowing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Open-market enterprise SSD supply loosening"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-5bc472e0144745",
+        "C-ddaab26d3b09f3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "For eMMC/UFS, demand is so weak that OEMs buy only minimum volumes to maintain supplier relationships, narrowing negotiations to price confirmation on small order volumes and limiting suppliers' ability to push through broader price increases. (scope: eMMC/UFS segment (smartphone, TV, set-top box, wearable applications) in 4Q26)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed NAND producers capture the enterprise SSD demand and how it flows to earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Sustainability of 80%+ bit demand growth beyond 2026"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Enterprise SSD supply becomes widely available on open market"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Demand shift back toward training slows deployment"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map enterprise SSD and QLC NAND exposure across listed memory makers and compare to 2026 bit-demand growth forecast."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Enterprise SSD price acceleration confirmed in 4Q26 reports"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CSP AI inference capex guidance raised"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026); C-57018f1da7d774: forecast window 2026-10-01..2026-12-31 (4q26); C-ff901694d7e7a3: forecast window 2026-10-01..2026-12-31 (4q26); source-named exposure(s): sector: enterprise SSD; a near-term fundamental inflection \u2014 C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for enterprise SSD already reflect enterprise SSD bit demand growth of more than 80% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-decec490fcdd",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-ff901694d7e7a3",
+       "C-ee57adcf2c3286",
+       "C-108504edb84ae7",
+       "C-288aafc4d8b9ca",
+       "C-57018f1da7d774",
+       "C-5bc472e0144745"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-30T15:52:15+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html"
+     }
+    ]
+   },
+   "content_sha": "ab2029793433490d4c3d7cb198170edfce29f1214f1fe321acf47f0b5dddcba8",
+   "created_at": "2026-10-10T19:15:10.911288Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026); C-57018f1da7d774: forecast window 2026-10-01..2026-12-31 (4q26); C-ff901694d7e7a3: forecast window 2026-10-01..2026-12-31 (4q26); source-named exposure(s): sector: enterprise SSD; a near-term fundamental inflection \u2014 C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for enterprise SSD already reflect enterprise SSD bit demand growth of more than 80% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-ee57adcf2c3286",
+       "C-57018f1da7d774",
+       "C-ff901694d7e7a3"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-ee57adcf2c3286",
+       "C-57018f1da7d774",
+       "C-ff901694d7e7a3"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026); C-57018f1da7d774: forecast window 2026-10-01..2026-12-31 (4q26); C-ff901694d7e7a3: forecast window 2026-10-01..2026-12-31 (4q26)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: enterprise SSD",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-ff901694d7e7a3",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-ee57adcf2c3286"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for enterprise SSD already reflect enterprise SSD bit demand growth of more than 80% YoY in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026); C-57018f1da7d774: forecast window 2026-10-01..2026-12-31 (4q26); C-ff901694d7e7a3: forecast window 2026-10-01..2026-12-31 (4q26); source-named exposure(s): sector: enterprise SSD; a near-term fundamental inflection \u2014 C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for enterprise SSD already reflect enterprise SSD bit demand growth of more than 80% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T191510Z-article",
+   "thesis_id": "TH-BC52646E83",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

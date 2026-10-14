@@ -1,0 +1,73 @@
+== final-a AV-51c14867d6652aa1: 6 figure(s) + 4 paragraph(s) open (all listed)
+-- FIG b093 (page 8, heading) '~$400 billion' [capture_not_verified]
+   text: '~$400 billion Large Unit Lead Times ='
+   theses with evidence on page 8: WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”; SKIP TH-CE04BAA34C “Energy security accelerates renewables, EVs and energy storage demand ”
+   candidate restatement C-e8a08584172ba8 b179 (p18): 'annual grid investment to rise about 50% from today’s ~$400 billion'
+   candidate restatement C-eb45bbd64c4d0f b179 (p18): 'from today’s ~$400 billion'
+-- FIG b095 (page 8, paragraph) '80%' [verification_failed]
+   text: 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, subst'
+   theses with evidence on page 8: WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”; SKIP TH-CE04BAA34C “Energy security accelerates renewables, EVs and energy storage demand ”
+   candidate restatement C-37c71ee8a2f059 b176 (p18): 'transformer prices have risen about 80% over five years'
+   candidate restatement C-83254e9245b982 b202 (p21): 'imports account for an estimated 80% of U.S. power transformer supply and 50% of distribution transformer supply'
+   candidate restatement C-ca620ee55f5eb0 b243 (p25): 'imports are estimated to have accounted for about 80% of U.S. power transformer supply'
+-- FIG b095 (page 8, paragraph) '24-48' [verification_failed]
+   text: 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, subst'
+   theses with evidence on page 8: WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”; SKIP TH-CE04BAA34C “Energy security accelerates renewables, EVs and energy storage demand ”
+   candidate restatement C-4febb7c8ccd560 b183 (p19): 'The wait time of 24–48 months is common for many large units.'
+-- FIG b095 (page 8, paragraph) '12 - 30' [capture_not_verified]
+   text: 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, subst'
+   theses with evidence on page 8: WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”; SKIP TH-CE04BAA34C “Energy security accelerates renewables, EVs and energy storage demand ”
+   candidate restatement C-31f5b65a527f83 b454 (p49): 'consumption is forecast by AEMO to expand to 12.0 TWh'
+   candidate restatement C-4d8153c9da5a8e b070 (p7): 'AI is the dominant source of tracked data center Declining PUE reflects ongoing efficiency gains that demand increasing form 4.3 GW (~12% sh'
+   candidate restatement C-56fb6adf2d214d b314 (p33): 'taking up 45%, 14%, and 12% of global ESS installation by 2030 respectively'
+   candidate restatement C-58c171e286c41c b314 (p33): '45%, 14%, and 12% of global ESS installation by 2030 respectively'
+   candidate restatement C-5c51ab95c8c093 b275 (p28): '12–18 months for light industrial turbines'
+   candidate restatement C-683ad6b8913327 b314 (p33): '14%, and 12% of global ESS installation by 2030 respectively'
+   … 2 more candidate(s) not shown (of 8)
+-- FIG b095 (page 8, paragraph) 'five years' [verification_failed]
+   text: 'Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substations, and rooms, subst'
+   theses with evidence on page 8: WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”; SKIP TH-CE04BAA34C “Energy security accelerates renewables, EVs and energy storage demand ”
+   candidate restatement C-37c71ee8a2f059 b176 (p18): 'transformer prices have risen about 80% over five years'
+   candidate restatement C-826b5f2dd693d3 b447 (p49): 'China approved another 10 new nuclear reactors across five coastal projects with estimated total outlay at Rmb200bn'
+   candidate restatement C-8d25596cc854b3 b349 (p38): 'We forecast annual capex over the next five years to be >2x the prior five years'
+   candidate restatement C-a6003238027398 b049 (p6): 'gas turbine backlogs of up to five years'
+   candidate restatement C-fe3a8f49bc79b4 b289 (p30): 'after averaging ~42GW per year in the five-year period from 2019–2023'
+-- FIG b208 (page 21, paragraph) '10' [capture_not_verified]
+   text: 'We forecast global high voltage power transformer supply to rise 59% in 2025-2028 and 95% in 2025-2030, taking into account the expansion plans of the global top-10 suppliers (see Figure 14).'
+   theses with evidence on page 21: WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”
+   candidate restatement C-0cb1739790eb5f b423 (p46): 'EU27+UK demand down ~10% over the past 15 years'
+   candidate restatement C-159294abc754a6 b242 (p25): 'power transformers and distribution transformers had deficits of 30% and 10% respectively in the U.S.'
+   candidate restatement C-2f7dcf328b5d1e b197 (p20): 'the top-10 companies were dominant, representing 79.4% of global market share in 2025'
+   candidate restatement C-62c1cca0c433a9 b242 (p25): 'power transformers and distribution transformers had deficits of 30% and 10% respectively in the U.S.'
+   candidate restatement C-826b5f2dd693d3 b447 (p49): 'China approved another 10 new nuclear reactors across five coastal projects with estimated total outlay at Rmb200bn'
+   candidate restatement C-8d1604ec0d4d0b b272 (p28): 'Large nuclear reactors take years to build, at times 10 years or more.'
+   … 2 more candidate(s) not shown (of 8)
+-- PARA b153 (page 15, paragraph) '' [account_names_no_record]
+   text: "pass 1b called it covered — 'Durability concern/early-2000s overbuild is already carried as a first-pass market risk.' — but named no verified claim or hypothesis, so the account cannot be checked"
+   theses with evidence on page 15: WATCH TH-110E3113B1 “Speed-to-power drives BYOG gas generation equipment multi-year growth ”; WATCH TH-1F366737A1 “AI datacenter power buildout drives multi-year transformer and grid eq”
+-- PARA b329 (page 35, paragraph) '' [account_names_no_record]
+   text: "pass 1b called it covered — 'Scandium supply-chain constraint already captured as a first-pass market risk.' — but named no verified claim or hypothesis, so the account cannot be checked"
+   theses with evidence on page 35: none
+-- PARA b483 (page 52, paragraph) '' [account_names_no_record]
+   text: "pass 1b called it covered — 'Valuation caution restates stretched-valuation market risk already recorded.' — but named no verified claim or hypothesis, so the account cannot be checked"
+   theses with evidence on page 52: SKIP TH-426034EB2D “Nuclear and SMR interest rising as supportive policy and power demand ”; SKIP TH-5BA11D6167 “Energy infrastructure is a multi-year structural growth story across f”; SKIP TH-8178B565CB “China all-of-the-above power buildout drives nuclear, hydro and pumped”
+-- PARA b486 (page 53, paragraph) '' [account_names_no_record]
+   text: "pass 1b called it covered — 'Positioning/concentration caution restates stretched-valuation/positioning market risk already recorded.' — but named no verified claim or hypothesis, so the account cannot be checked"
+   theses with evidence on page 53: none
+== final2-c AV-fc4ce9a39928805c: 1 figure(s) + 0 paragraph(s) open (all listed)
+-- FIG b157 (page 27, table) '23' [capture_not_verified]
+   text: "Spending freezes and executive decrees can contribute at the margin (see Figure | | | ; | 23), as evidenced by the government's COP21.9tn expenditure reduction for 2026, but meaningful consolidation | | | ; | ultimately "
+   theses with evidence on page 27: SKIP TH-BCAA34CC82 “Fiscal credibility and execution dispersion drives sovereign and count”
+   candidate restatement C-3f28d78aaa601a b190 (p33): 'a gradual reduction in the corporate tax rate from 27% to 23% by 2029'
+== final-b2 AV-16c30c3205b23791: 1 figure(s) + 0 paragraph(s) open (all listed)
+-- FIG b017 (page 3, paragraph) '$10 trillion' [capture_not_verified]
+   text: 'A year ago, we opined on the roadmap to the next $10 trillion in U.S.'
+   theses with evidence on page 3: SKIP TH-1373DCCE1F “Active and differentiated ETFs drive next phase of U.S. ETF industry g”
+   candidate restatement C-004844aa1f860b b026 (p4): 'Our base case reflects the 10 year historical trend, excluding 2024 and 2025.'
+   candidate restatement C-215e13ee9f1276 b061 (p8): 'Bear Case: 11% in 2030, 10% in 2035.'
+   candidate restatement C-268eb6c743fada b076 (p10): 'Currently, Active ETFs on an annual run rate basis, control 22% of U.S. ETF industry revenue on 10% of AUM.'
+   candidate restatement C-5ef1813d607adc b057 (p8): 'Active ETFs in the U.S. account for roughly $1.4 trillion in AUM. This compares to $12 trillion in index products, meaning Active share of U'
+   candidate restatement C-aa565adfae2f9e b043 (p6): 'A +4% bear case and +8% bull case equate to 10th and 74th percentiles, respectively.'
+   candidate restatement C-ae1adb9dd42d57 b054 (p7): 'we expect Active ETF share of total U.S. industry AUM will more than double to 21% from 10% currently.'
+   … 3 more candidate(s) not shown (of 9)
+== final-b2 AV-6fec183b75098414: 0 figure(s) + 0 paragraph(s) open (all listed)

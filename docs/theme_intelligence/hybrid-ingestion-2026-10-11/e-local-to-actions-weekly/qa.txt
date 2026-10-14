@@ -1,0 +1,23 @@
+  [PASS] run status recorded: status SUCCEEDED; counts {'articles_queued': 0, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 30, 'http_cache_hits': 42}
+  [PASS] no unverified claim is linked to a thesis: 155 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 0 of 0 verified claim(s) in 0 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 0 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 0 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 0 article(s)
+  [PASS] every reported figure captured or judged immaterial: 0 figure(s) accounted for
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 0 article(s)
+  [PASS] source health recorded for every scanned channel: 8 channel(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] every configured source reported with consistent counts: 8 sources
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/hybrid-actions-3/runs/R-20261011T110031Z-scan
+QA R-20261011T110031Z-scan: 22/22 passed · scan execution SUCCEEDED · research verification NOTHING_ANALYSED — no article was analysed in this run

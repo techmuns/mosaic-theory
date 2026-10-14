@@ -1,0 +1,43 @@
+RE-ASK ONLY THE AFFECTED COMPLETENESS PART — the real Gridlock registry, copies, $0
+=================================================================================
+2026-10-12. Registry: copies of `glyph-paid` (the one paid cleaned run, R-20261012T050655Z-ingest).
+Nothing was sent to the model in this file.
+
+What still needs the model after the $0 recovery (1-salvage-…txt): ONE proposition — the
+malformed `added_hypotheses` of part 4 named it, "Regulatory reform to accelerate large-load grid
+connection creates electric wires and generation investment opportunity" (hx4_1). Its evidence
+(14 claims, 4 mentions, 1 risk, 50 reviews) was recovered at $0. The command that would ask part 4
+again — and only part 4:
+
+    python -m vinci.theme_intelligence reask-part --doc D-c6f361d4d57a6196 --part 4 --max-cost 1.20
+
+(the one call is bounded at $0.98 before it is sent; --max-cost is required, there is no default;
+the completeness share of a document limit is 85%, so 1.20 covers 0.98). NOT RUN — no paid call
+without your approval.
+
+1. It refuses before sending when the bound does not fit (copy `reask-check2`):
+
+   $ reask-part --doc D-c6f361d4d57a6196 --part 4 --max-cost 0.01
+   refused — nothing sent: a completeness call bounded at $0.98 does not fit the remaining $0.01
+   of the retry / completeness limit $0.01 (D-c6f361d4d57a6196 part 4) — not sent
+
+2. It reproduces the paid requests exactly — proven with a STUB client that never reaches the
+   API (scratchpad tools/reask_stub.py; the stub answers the one re-asked part with an empty,
+   valid answer — NOT a model answer, it proves the bookkeeping only):
+
+   sent to the stub: ['record_completeness'] | cost recorded: 0.0
+   kept as: llm_cache/complete/164163f7e2a4177e….reask-1.json  (beside the paid original, which is
+            unchanged)
+   part 4: the answer failed as a whole (added_hypotheses: Input should be a valid list) — the
+           re-asked answer …reask-1.json is used; the paid original is kept
+
+   Before anything is sent, the WHOLE chain is replayed from the cache: the stored copy read by
+   the current reader (its text must be the analysed version's), the stored extraction, the run's
+   as-of, the channel's publisher. All 13 parts were reproduced byte for byte — 12 from the cache,
+   1 (part 4) sent to the stub. A part that cannot be reproduced refuses the re-ask with nothing
+   sent (pinned: test_a_reask_sends_nothing_when_another_part_cannot_be_reproduced).
+
+3. Where its answer goes: beside the paid original (`<key>.reask-N.json`); it is used — field by
+   field, verified like any answer — whenever that article version is analysed again (a replay
+   into a rebuilt registry, or a re-read). The records already analysed are not rewritten: the
+   registry is append-only and an analysed version is never re-applied in place.

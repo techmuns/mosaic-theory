@@ -1,0 +1,153 @@
+== 1. THE DROPPED COMPLETENESS PART (new run; model answer malformed, recorded MALFORMED_ITEM_DROPPED)
+  the answer's added_hypotheses came back as a STRING (4,420 chars) that is not valid JSON either — the whole part was dropped, as designed
+  what that part carried and the run does NOT hold: 14 added claims, 4 mentions, 1 risk, 25 figure reviews, 25 paragraph reviews, 1 proposed hypothesis title(s) (all listed):
+     * Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity
+  its paragraph reviews name blocks on pages [13, 14, 15, 16, 17, 18, 19]
+     claim (lost): p14 more than 50GW 'more than 50GW of data center capacity was operating in the U.S. at the end of 2025'
+     claim (lost): p14 ~24%           'up at a ~24% compound annual growth rate (CAGR) since 2020'
+     claim (lost): p14 ~43%           'Midwest Independent System Operator (MISO) had the fastest growth at ~43% CAGR, followed by ERCOT'
+     claim (lost): p14 25             'Cancellations jumped to 25 in 2025 from six in 2024, mainly due to power access, public pushback, an'
+     claim (lost): p15 ~40% to 50%    'AI data centers can exhibit ~40% to 50% swings in demand over short periods depending on workload in'
+     claim (lost): p16 1GW            'customer-initiated load reduction in 2024 and 2025, in which 1GW or more dropped off the bulk power '
+     claim (lost): p16 about 90 days  'The plan seeks to slash approval timelines to about 90 days, compared with the years-long process th'
+     claim (lost): p17 €11 billion    'fragmented national grid planning which cost €11 billion in 2024'
+     claim (lost): p18 $20 billion    'projected to grow from $20 billion to $65 billion between 2025 and 2030'
+     claim (lost): p18 2,600GW        'Active U.S. power plant interconnection requests have exceeded 2,600GW, more than double the existin'
+     claim (lost): p19 24–48 months   'The wait time of 24–48 months is common for many large units.'
+     claim (lost): p19 up to 3–4 years 'The wait time is up to 3–4 years in some cases.'
+     claim (lost): p19 12 months, or even 30 or more 'Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.'
+     claim (lost): p13                'The shortage is unlikely to clear before 2030 for structural reasons: retirements, too few apprentic'
+     mention (lost): North American Electric Reliability Corporation (NERC) (data_source)
+     mention (lost): Construction Dive (data_source)
+     mention (lost): European Union (context)
+     mention (lost): Lawrence Berkeley National Laboratory (data_source)
+  open items in the new run's ledger: 27 of 403 figures, 27 of 287 paragraphs
+  'no_account' open items by page: {8: 1, 13: 5, 14: 7, 15: 8, 16: 7, 17: 7, 18: 4, 19: 9}
+  open paragraphs that were in the dropped part: 25 of 27
+
+== 2. THESES — matched by SHARED VERIFIED QUOTES (key evidence + bottom line), not by title
+  base 16 theses | new 14 theses (all that cite the Gridlock article)
+  TH-8178B565CB SKIP   -> TH-F59A0872CA SKIP   shared-quote J=0.77 [id changed]
+      base: China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment  [capex_spending_cycle|China]
+      new : China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers  [demand_volume_shift|China]
+  TH-C840A76413 SKIP   -> TH-C840A76413 SKIP   shared-quote J=0.70 [same id]
+      base: European grid expansion is primary beneficiary of electrification, even if datacenters s  [capex_spending_cycle|Europe]
+      new : European grid expansion is primary beneficiary of electrification and data centre demand  [capex_spending_cycle|Europe]
+  TH-5EDF9760FB WATCH  -> TH-9F45C42C9E WATCH  shared-quote J=0.67 [id changed]
+      base: Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power   [valuation_rerating|Europe]
+      new : Power-ready land (retired coal sites) commands premiums on scarce grid access in Europe  [valuation_rerating|Europe]
+  TH-C0F7401B12 SKIP   -> TH-3EA660BB0A WATCH  shared-quote J=0.43 [id changed]  ACTION CHANGED
+      base: US gas pipeline underinvestment creates attractive midstream growth capex cycle  [capex_spending_cycle|US]
+      new : Gas demand surge drives record midstream capex and strong project returns  [capex_spending_cycle|US]
+  TH-CA02B7A83B SKIP   -> TH-B1F096684F WATCH  shared-quote J=0.33 [id changed]  ACTION CHANGED
+      base: Skilled-labor shortage is a persistent structural bottleneck on power and datacenter bui  [supply_constraint|Global]
+      new : Skilled-labor shortages constrain data center and power buildout into the 2030s  [supply_constraint|Global]
+  TH-CE04BAA34C SKIP   -> TH-EA64717B05 SKIP   shared-quote J=0.33 [id changed]
+      base: Energy security accelerates renewables, EVs and energy storage demand globally  [demand_volume_shift|Global ex-US]
+      new : Energy security accelerates EV and ESS battery demand, boosting Chinese clean-tech  [demand_volume_shift|Global ex-U.S.]
+  TH-1F366737A1 WATCH  -> TH-2312D83A80 WATCH  shared-quote J=0.26 [id changed]
+      base: AI datacenter power buildout drives multi-year transformer and grid equipment demand  [capex_spending_cycle|Global]
+      new : Transformer shortage drives multi-year demand and pricing for transformer makers  [supply_constraint|Global]
+  TH-110E3113B1 WATCH  -> TH-110E3113B1 WATCH  shared-quote J=0.21 [same id]
+      base: Speed-to-power drives BYOG gas generation equipment multi-year growth cycle  [demand_volume_shift|US]
+      new : Speed-to-power demand drives multi-year cycle for gas generation equipment makers  [demand_volume_shift|US]
+  TH-DDEE0B7EF0 WATCH  -> TH-110E3113B1 WATCH  shared-quote J=0.17 [id changed]
+      base: Fuel cells gain niche data-center power share on speed and grid-constraint advantages  [competitive_share_shift|US]
+      new : Speed-to-power demand drives multi-year cycle for gas generation equipment makers  [demand_volume_shift|US]
+  TH-426034EB2D SKIP   -> TH-5BA11D6167 SKIP   shared-quote J=0.17 [id changed]
+      base: Nuclear and SMR interest rising as supportive policy and power demand grow  [demand_volume_shift|Global]
+      new : Citi Wealth sees multi-year structural energy infrastructure growth across four pillars  [capex_spending_cycle|Global]
+  TH-D803766B8B SKIP   -> TH-B4AE1EA1AA SKIP   shared-quote J=0.17 [id changed]
+      base: Australia develops behind-the-meter gas power market for data centers  [demand_volume_shift|Australia]
+      new : Australian data center demand creates behind-the-meter gas power market opportunity  [demand_volume_shift|Australia]
+  TH-126BEECA00 SKIP   -> TH-01EB1E98A3 SKIP   shared-quote J=0.16 [id changed]
+      base: Uneven US regional power-market regulation makes regional selection drive grid/generatio  [dispersion_selection|US]
+      new : Uneven U.S. regional power regulation creates selective wires and generation investment   [dispersion_selection|US]
+  TH-5BA11D6167 SKIP   -> NO NEW THESIS SHARES >=15% OF ITS EVIDENCE (best J=0.12 TH-5BA11D6167)
+      base: Energy infrastructure is a multi-year structural growth story across four pillars  [capex_spending_cycle|Global] key-evidence pages [51, 52]
+  TH-566BFB9D39 WATCH  -> NO NEW THESIS SHARES >=15% OF ITS EVIDENCE (best J=0.00 TH-01EB1E98A3)
+      base: Low-cost US natural gas gives US a structural advantage in powering datacenters  [cost_inflation|US] key-evidence pages [37]
+  TH-6EFAD379CB SKIP   -> NO NEW THESIS SHARES >=15% OF ITS EVIDENCE (best J=0.00 TH-01EB1E98A3)
+      base: Selective continued exposure to US, South Korea, Taiwan AI capex theme  [capex_spending_cycle|US, South Korea, Taiwan] key-evidence pages []
+  TH-BAA07551ED SKIP   -> NO NEW THESIS SHARES >=15% OF ITS EVIDENCE (best J=0.00 TH-01EB1E98A3)
+      base: Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners ove  [competitive_share_shift|US] key-evidence pages [10]
+  NEW ONLY TH-051E7711B1 SKIP   Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Ta [capex_spending_cycle|US, South Korea, Taiwan] key-evidence pages [53]
+  NEW ONLY TH-426034EB2D WATCH  Nuclear revival, including SMRs, lifts equipment makers over the coming decade [demand_volume_shift|Global] key-evidence pages [36]
+  NEW ONLY TH-4F00D4815E SKIP   Power scarcity shifts bargaining power to hyperscalers and infrastructure owners [competitive_share_shift|US] key-evidence pages [9, 10]
+
+== 3. BASE-ONLY THESES: is their key evidence captured in the new run's claims?
+  TH-566BFB9D39 'Low-cost US natural gas gives US a structural advantage in powering da': 4 of 4 key-evidence quotes also verified in the new run; its blocks open in the new ledger: 0 of 2 ([])
+  TH-5BA11D6167 'Energy infrastructure is a multi-year structural growth story across f': 2 of 4 key-evidence quotes also verified in the new run; its blocks open in the new ledger: 0 of 3 ([])
+  TH-6EFAD379CB 'Selective continued exposure to US, South Korea, Taiwan AI capex theme': 0 of 0 key-evidence quotes also verified in the new run; its blocks open in the new ledger: 0 of 0 ([])
+  TH-BAA07551ED 'Power scarcity bifurcates AI market, favoring hyperscalers and infrast': 1 of 2 key-evidence quotes also verified in the new run; its blocks open in the new ledger: 0 of 2 ([])
+
+== 4. BASE FIGURES ABSENT FROM THE NEW RUN — where they sit
+  'two years' p34 b320: 'which is expected to increase by two years with advancement in technology'
+      new run: block not open; in the dropped part: False
+  'four years' p18 b176: 'Large unit lead times have reached four years'
+      new run: block OPEN in the new ledger; in the dropped part: True
+  'four years' p22 b212: 'the new capacity to be added gradually over four years from 2025 to 2028'
+      new run: block not open; in the dropped part: False
+
+== 5. COMPANIES the base names that the new run does not
+  Ariston Advisory       data_provider    role data_source    p23 b222: 'according to industry research firm Ariston Advisory'  [new: block open=False]
+  Australia Energy Market Operator (AEMO) government_or_agency role data_source    p50 b458: 'Source: Citi Research, Australia Energy Market Operator (AEMO)'  [new: block open=False]
+  BPA (Bonneville Power Administration) government_or_agency role context        p45 b417: 'BPA (Bonneville Power Administration) transmission access is scarce'  [new: block open=False]
+  CAISO                  government_or_agency role context        p45 b412: 'CAISO: California'  [new: block open=False]
+  Carwow                 private_company  role context        p12 b126: 'sharp increases in EV enquiries and orders across Renault, Volvo, Carwow and OLX'  [new: block open=False]
+  CBRE                   company          role data_source    p13 b135: '(CBRE, Feb 25)'  [new: block open=False]
+  Construction Dive      publisher        role data_source    p14 b150: '(Construction Dive, April 22)'  [new: block open=True]
+  COP28                  other_organization role context        p52 b478: 'The COP2814 pledge to triple renewable energy capacity by 2030'  [new: block open=False]
+  Cox Automotive         other_organization role data_source    p12 b127: 'the same oil shock–driven reacceleration seen elsewhere (Cox Automotive, April 10)'  [new: block open=False]
+  Dodge Construction     data_provider    role data_source    p41 b377: 'Source: Citi Research, Dodge Construction, Federal Reserve Bank of Dallas'  [new: block open=False]
+  European Union         government_or_agency role context        p17 b172: "the European Union's 2025 Grid Package"  [new: block open=True]
+  Federal Reserve Bank of Dallas government_or_agency role data_source    p41 b377: 'Source: Citi Research, Dodge Construction, Federal Reserve Bank of Dallas'  [new: block open=False]
+  Lawrence Berkeley National Laboratory government_or_agency role data_source    p19 b181: 'US Lawrence Berkeley National Laboratory via ScienceDirect'  [new: block open=True]
+  Maryland               government_or_agency role context        p17 b171: 'Maryland’s governor has pushed for reforms'  [new: block open=True]
+  NERC                   government_or_agency role context        p16 b160: 'The North American Electric Reliability Corporation (NERC) warned'  [new: block open=False]
+  NYISO                  government_or_agency role context        p45 b416: 'NYISO'  [new: block open=False]
+  OLX                    private_company  role context        p12 b126: 'sharp increases in EV enquiries and orders across Renault, Volvo, Carwow and OLX'  [new: block open=False]
+  Renault                company          role sector_example p12 b126: 'sharp increases in EV enquiries and orders across Renault, Volvo, Carwow and OLX'  [new: block open=False]
+  SPP                    government_or_agency role context        p40 b374: 'Southeast (SPP) regions'  [new: block open=False]
+  Volvo                  company          role sector_example p12 b126: 'sharp increases in EV enquiries and orders across Renault, Volvo, Carwow and OLX'  [new: block open=False]
+
+== 6. SECTION 7 (WHAT COULD GO WRONG) — sentences across the theses citing the article
+  base: {'counter_evidence': 0, 'alternative_mechanisms': 164, 'disconfirming_observables': 34, 'unknowns': 38, 'market_risks': 27}
+  new: {'counter_evidence': 4, 'alternative_mechanisms': 66, 'disconfirming_observables': 36, 'unknowns': 38, 'market_risks': 36}
+  base distinct market risks (9, all listed):
+     - a repeat of the early-2000s gas-build overbuild could leave excess gas generation capacity and ratep
+     - a significant capacity buildout of onsite gas power equipment (turbines, large engines) across the i
+     - a skilled-labor shortage across trades (at least 222,600 workers) could delay data center and power 
+     - equity valuations and positioning in us, south korea and taiwan ai-exposed markets are stretched; pr
+     - growing datacenter nimbyism, affordability concerns and state moratoriums (13 states) amid 2026 midt
+     - in europe a portion of announced datacenter capacity may remain 'bragawatts' rather than realized lo
+     - reliability risk from ai data centers' large, volatile load (~40-50% demand swings; nerc level 3 ale
+     - scandium supply-chain dependence (largely produced in china and russia as a mining byproduct) expose
+     - surging raw-material cost inflation (lithium, copper, aluminium) could pressure the irr of ess proje
+  new distinct market risks (10, all listed):
+     - a repeat of the early-2000s gas-build overbuild: demand expected then did not materialize, leaving e
+     - aemo has raised concerns over potential australian grid instability and voltage disturbances that co
+     - ai data center load volatility (~40-50% demand swings) prompted nerc level 3 alert in may 2026, crea
+     - data center developers with in-flight ercot projects may not complete buildout because only 20% of t
+     - data center nimbyism, affordability concerns and state moratorium proposals (13 states) could drive 
+     - equity valuations and positioning in u.s., south korea and taiwan ai/tech supply-chain markets must 
+     - rising australian construction costs, trade shortages (compounded by brisbane 2032 olympics, roads, 
+     - scandium supply concentration in china and russia is a scaling constraint for bloom energy sofc prod
+     - strong landowner opposition, air-permit politics, gas pipeline feedstock limits and water-usage cons
+     - the pjm reliability backstop design forces regulated wires companies to assume uncompensated risks a
+
+== 7. CARD SHAPE AND PAGE REFERENCES (new run)
+  TH-01EB1E98A3 SKIP   s01 3 s03 3 s04 10 s05 co 0 sec 1 s07 13 s09 1 | key-evidence pages [41, 42, 43, 44][]
+  TH-051E7711B1 SKIP   s01 3 s03 3 s04 3 s05 co 1 sec 5 s07 20 s09 1 | key-evidence pages [53][]
+  TH-110E3113B1 WATCH  s01 3 s03 3 s04 46 s05 co 10 sec 0 s07 13 s09 1 | key-evidence pages [4, 6, 27, 28, 29, 30, 31, 34][]
+  TH-2312D83A80 WATCH  s01 3 s03 3 s04 61 s05 co 6 sec 0 s07 8 s09 1 | key-evidence pages [4, 8, 18, 19, 20, 21, 22, 23, 24, 25][]
+  TH-3EA660BB0A WATCH  s01 3 s03 3 s04 18 s05 co 4 sec 0 s07 12 s09 1 | key-evidence pages [5, 32, 37, 38, 39, 40][]
+  TH-426034EB2D WATCH  s01 3 s03 3 s04 2 s05 co 2 sec 0 s07 12 s09 1 | key-evidence pages [36][]
+  TH-4F00D4815E SKIP   s01 3 s03 3 s04 2 s05 co 4 sec 2 s07 7 s09 1 | key-evidence pages [9, 10][]
+  TH-5BA11D6167 SKIP   s01 3 s03 3 s04 4 s05 co 1 sec 4 s07 18 s09 1 | key-evidence pages [51, 52][]
+  TH-9F45C42C9E WATCH  s01 3 s03 3 s04 2 s05 co 0 sec 0 s07 13 s09 1 | key-evidence pages [48][]
+  TH-B1F096684F WATCH  s01 3 s03 3 s04 2 s05 co 0 sec 2 s07 9 s09 1 | key-evidence pages [12, 13][]
+  TH-B4AE1EA1AA SKIP   s01 3 s03 3 s04 7 s05 co 0 sec 1 s07 20 s09 1 | key-evidence pages [49, 50][]
+  TH-C840A76413 SKIP   s01 3 s03 3 s04 8 s05 co 0 sec 2 s07 12 s09 1 | key-evidence pages [46, 47, 48][]
+  TH-EA64717B05 SKIP   s01 3 s03 3 s04 33 s05 co 0 sec 2 s07 10 s09 1 | key-evidence pages [8, 11, 12, 32, 33][]
+  TH-F59A0872CA SKIP   s01 3 s03 3 s04 11 s05 co 0 sec 2 s07 13 s09 1 | key-evidence pages [49, 52][]

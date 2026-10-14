@@ -1,0 +1,54 @@
+== hybrid-a A-82a8a9210bae: latest version 18,976 words, 504 blocks, article text in the message ≈ 437,034 chars
+   extract-truncated  in  303,723 out 21,333 $  2.05 cached=False
+   extract            in  303,842 out 19,553 $  2.01 cached=False
+   complete-1         in  309,342 out  4,728 $  1.66 cached=False
+   complete-2         in  311,140 out  7,406 $  1.74 cached=False
+   complete-3         in  311,575 out 10,198 $  1.81 cached=False
+   complete-4         in  312,647 out 10,251 $  1.82 cached=False
+   complete-5         in  314,930 out  8,714 $  1.79 cached=False
+   complete-6         in  316,351 out 10,238 $  1.84 cached=False
+   complete-7         in  317,107 out  7,564 $  1.77 cached=False
+   complete-8         in  319,497 out 13,157 $  1.93 cached=False
+   complete-9         in  320,553 out 12,434 $  1.91 cached=False
+   complete-10        in  322,058 out  9,511 $  1.85 cached=False
+   complete-11        in  323,627 out 16,545 $  2.03 cached=False
+   complete-12        in  324,664 out  9,963 $  1.87 cached=False
+   complete-13        in  333,002 out  3,319 $  1.75 cached=False
+   complete-14        in  333,673 out  3,408 $  1.75 cached=False
+   complete-15        in  333,425 out  3,269 $  1.75 cached=False
+   complete-16        in  333,511 out  3,284 $  1.75 cached=False
+   complete-17        in  333,739 out  3,343 $  1.75 cached=False
+   complete-18        in  334,027 out  3,058 $  1.75 cached=False
+   complete-19        in  333,597 out  2,995 $  1.74 cached=False
+   complete-20        in  333,608 out  3,631 $  1.76 cached=False
+   complete-21        in  333,800 out  3,650 $  1.76 cached=False
+   complete-22        in  325,096 out    861 $  1.65 cached=False
+   TOTAL extract   calls   2 input    607,565 output   40,886  $   4.06
+   TOTAL complete  calls  22 input  7,130,969 output  151,527  $  39.44
+== hybrid-c A-446cf596aeca: latest version 24,960 words, 366 blocks, article text in the message ≈ 168,536 chars
+   extract-truncated  in   66,855 out 21,333 $  0.87 cached=False
+   extract            in   66,974 out 14,365 $  0.69 cached=False
+   complete-1         in   75,326 out  4,033 $  0.48 cached=False
+   complete-2         in   74,064 out  5,792 $  0.52 cached=False
+   complete-3         in   72,899 out 10,134 $  0.62 cached=False
+   complete-4         in   74,178 out  9,530 $  0.61 cached=False
+   complete-5         in   75,275 out 13,045 $  0.70 cached=False
+   complete-6         in   76,593 out 13,145 $  0.71 cached=False
+   complete-7         in   76,782 out 12,303 $  0.69 cached=False
+   complete-8         in   81,215 out  4,487 $  0.52 cached=False
+   complete-9         in   81,495 out  2,932 $  0.48 cached=False
+   complete-10        in   78,296 out  1,051 $  0.42 cached=False
+   TOTAL extract   calls   2 input    133,829 output   35,698  $   1.56
+   TOTAL complete  calls  10 input    766,123 output   76,452  $   5.74
+== hybrid-b2 A-d8bce0154d69: latest version 15,673 words, 235 blocks, article text in the message ≈ 105,745 chars
+   extract            in   12,574 out  6,589 $  0.00 cached=True
+   complete           in   16,898 out  2,409 $  0.00 cached=True
+   extract            in   45,946 out 12,465 $  0.00 cached=True
+   complete-1         in   52,068 out  6,187 $  0.00 cached=True
+   complete-2         in   52,478 out  5,495 $  0.00 cached=True
+   complete-3         in   52,327 out  7,293 $  0.00 cached=True
+   complete-4         in   53,475 out  7,640 $  0.00 cached=True
+   complete-5         in   57,003 out  3,342 $  0.00 cached=True
+   complete-6         in   56,593 out  2,894 $  0.00 cached=True
+   TOTAL extract   calls   2 input     58,520 output   19,054  $   0.00
+   TOTAL complete  calls   7 input    340,842 output   35,260  $   0.00

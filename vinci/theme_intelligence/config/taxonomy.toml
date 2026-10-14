@@ -1,0 +1,399 @@
+# Controlled vocabulary for thesis IDENTITY — editable configuration.
+#
+# A thesis is keyed by (value-chain node, profit mechanism, direction, geography). The extractor
+# must pick a node and a mechanism from these lists; anything else comes back as `other` and the
+# thesis is created REVIEW_NEEDED — never merged by similarity. Nodes are hierarchical by dotted
+# path: a parent (`ai_infrastructure`) and a child (`ai_infrastructure.memory`) are DIFFERENT
+# economics and are never merged; they are linked PARENT_CHILD.
+#
+# Adding a node or mechanism is a deliberate edit. Renaming one re-keys every thesis that uses it,
+# so do not rename — add, and archive the old one.
+
+[[node]]
+id = "macro_market"
+label = "Market-wide / multi-sector (index level, concentration, correlation, rates)"
+
+[[node]]
+id = "ai_infrastructure"
+label = "AI infrastructure build-out (spans spenders, chips, power, materials)"
+
+[[node]]
+id = "ai_infrastructure.hyperscaler_capex"
+label = "Hyperscaler / cloud AI capital expenditure and the companies spending it"
+
+[[node]]
+id = "ai_infrastructure.compute_semis"
+label = "AI accelerators, GPUs, custom silicon and their direct supply chain"
+
+[[node]]
+id = "ai_infrastructure.memory"
+label = "Memory (DRAM, HBM, NAND): supply, pricing, capacity"
+
+[[node]]
+id = "ai_infrastructure.optical_networking"
+label = "Optical interconnects, transceivers and datacenter networking"
+
+[[node]]
+id = "ai_infrastructure.power_grid"
+label = "Power generation, grid and interconnection for AI datacenters"
+
+[[node]]
+id = "ai_infrastructure.datacenter_physical"
+label = "Datacenter construction, cooling, racks and physical inputs"
+
+[[node]]
+id = "ai_infrastructure.materials_commodities"
+label = "Materials and commodities consumed by the AI build"
+
+[[node]]
+id = "ai_infrastructure.semicap_foundry"
+label = "Semiconductor equipment and foundry capacity"
+
+[[node]]
+id = "software"
+label = "Software industry (broad)"
+
+[[node]]
+id = "software.application_saas"
+label = "Application software / SaaS"
+
+[[node]]
+id = "software.infrastructure"
+label = "Infrastructure, data and security software"
+
+[[node]]
+id = "ai_adoption"
+label = "AI adoption by end users (broad)"
+
+[[node]]
+id = "ai_adoption.enterprise_margins"
+label = "Productivity and margin effects at companies adopting AI"
+
+[[node]]
+id = "ai_models_platforms"
+label = "AI model developers and AI platforms / applications"
+
+[[node]]
+id = "semiconductors_non_ai"
+label = "Semiconductors outside the AI build (consumer, auto, industrial, analog)"
+
+[[node]]
+id = "consumer_electronics"
+label = "Consumer electronics and devices (PCs, notebooks, phones, displays)"
+
+[[node]]
+id = "electronic_components"
+label = "Passive and electronic components (MLCC, VCSEL, connectors)"
+
+[[node]]
+id = "energy"
+label = "Energy (oil, gas, renewables) outside AI power"
+
+[[node]]
+id = "financials"
+label = "Banks, insurers, asset managers, exchanges"
+
+[[node]]
+id = "healthcare"
+label = "Healthcare, pharma, medtech"
+
+# Healthcare's children (operator, 2026-10-14). With healthcare as ONE node, every article arguing
+# rising US healthcare demand shared one key: the pilot's Alzheimer drug-market thesis absorbed a
+# direct-to-consumer cash-pay piece and a conference piece on GLP-1 access. Added, never renamed:
+# the four theses already keyed at `healthcare` keep their keys.
+
+[[node]]
+id = "healthcare.pharma_biotech"
+label = "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing"
+
+[[node]]
+id = "healthcare.life_science_tools"
+label = "Life-science tools and R&D services: CROs, CDMOs, lab instruments, research data and AI drug-discovery platforms"
+
+[[node]]
+id = "healthcare.medtech_diagnostics"
+label = "Medical devices, equipment and diagnostics (tests, imaging, monitoring)"
+
+[[node]]
+id = "healthcare.services_payers"
+label = "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)"
+
+[[node]]
+id = "industrials"
+label = "Industrials, defense, transport, capital goods"
+
+[[node]]
+id = "consumer"
+label = "Consumer discretionary and staples"
+
+[[node]]
+id = "materials"
+label = "Materials and mining outside the AI build"
+
+[[node]]
+id = "real_estate"
+label = "Real estate"
+
+[[node]]
+id = "telecom_media"
+label = "Telecom and media"
+
+[[node]]
+id = "utilities"
+label = "Utilities outside AI power"
+
+[[node]]
+id = "other"
+label = "None of the above — the thesis is created REVIEW_NEEDED"
+
+# MECHANISM FAMILIES — which profit mechanisms describe the same kind of economics, for
+# IDENTITY checks only (engine.py; never sent to the model): one story labelled
+# capex_spending_cycle in one answer and supply_constraint in the next is still a volume
+# story; a share shift is not. Face validity, never tuned on outcomes.
+
+[[mechanism]]
+id = "capex_spending_cycle"
+family = "volume"
+label = "Investment / capex growth or cuts change suppliers' revenue"
+
+[[mechanism]]
+id = "demand_volume_shift"
+family = "volume"
+label = "Unit demand / volume growth or decline"
+
+[[mechanism]]
+id = "pricing_cycle"
+family = "price_cost"
+label = "Contract or average selling price moves from the supply-demand balance"
+
+[[mechanism]]
+id = "supply_constraint"
+family = "volume"
+label = "Capacity or supply bottleneck limits output"
+
+[[mechanism]]
+id = "cost_inflation"
+family = "price_cost"
+label = "Input-cost changes squeeze or widen margins"
+
+[[mechanism]]
+id = "margin_expansion_adoption"
+family = "price_cost"
+label = "Margin / productivity gains from adopting a technology"
+
+[[mechanism]]
+id = "disruption_revenue_erosion"
+family = "competition"
+label = "A new technology erodes incumbents' revenue or terminal value"
+
+[[mechanism]]
+id = "valuation_dislocation"
+family = "valuation"
+label = "Prices or valuations moved without a matching change in fundamentals (indiscriminate selling or buying)"
+
+[[mechanism]]
+id = "valuation_rerating"
+family = "valuation"
+label = "Valuation recovery or re-rating as expectations change"
+
+[[mechanism]]
+id = "policy_regulation"
+family = "policy"
+label = "Policy, trade or regulatory change"
+
+[[mechanism]]
+id = "competitive_share_shift"
+family = "competition"
+label = "Market-share shift between competitors"
+
+[[mechanism]]
+id = "market_structure_risk"
+family = "market_structure"
+label = "Concentration, correlation or positioning risk at market level"
+
+[[mechanism]]
+id = "dispersion_selection"
+family = "market_structure"
+label = "Low correlation / narrow breadth widens dispersion, so sector, theme or stock selection drives returns"
+
+[[mechanism]]
+id = "other"
+family = "other"
+label = "None of the above — the thesis is created REVIEW_NEEDED"
+
+# SEGMENTS — finer identity WITHIN a node, read from the VERBATIM quotes of a hypothesis's
+# verified evidence (never from the model's wording; never sent to the model). Two theses on the
+# same node, mechanism, direction and geography but naming different segments are DIFFERENT
+# theses, linked as SIBLINGS: evidence about enterprise SSD / NAND pricing does not confirm a
+# claim about DRAM / HBM capacity, and a fall in utility share prices says nothing direct about
+# demand for on-site generation. A hypothesis naming no segment term keeps the bare key.
+# Terms match whole words, case-insensitively. Adding a segment re-keys theses that name it.
+
+[[segment]]
+node = "ai_infrastructure.memory"
+id = "dram_hbm"
+label = "DRAM / HBM"
+terms = ["HBM", "high-bandwidth memory", "high bandwidth memory", "DRAM", "DDR4", "DDR5",
+         "LPDDR", "LPDDR5", "GDDR", "GDDR6", "GDDR7", "RDIMM", "host memory"]
+
+[[segment]]
+node = "ai_infrastructure.memory"
+id = "nand_ssd"
+label = "NAND / SSD"
+terms = ["NAND", "SSD", "SSDs", "flash", "QLC", "TLC", "eMMC", "UFS"]
+
+[[segment]]
+node = "ai_infrastructure.power_grid"
+id = "grid_utilities"
+label = "Grid-connected utilities"
+terms = ["utility", "utilities", "ratepayer", "ratepayers", "rate base", "grid-connected"]
+
+[[segment]]
+node = "ai_infrastructure.power_grid"
+id = "onsite_generation"
+label = "Behind-the-meter / on-site generation"
+terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
+         "onsite generation", "on-site power", "onsite power", "gas turbine", "gas turbines",
+         "fuel cell", "fuel cells", "reciprocating engine", "reciprocating engines"]
+
+# The grid's own EQUIPMENT — what transformer and switchgear makers sell (2026-10-12: Citi's
+# transformer thesis was keyed on-site generation from one CCGT comparison in its evidence).
+[[segment]]
+node = "ai_infrastructure.power_grid"
+id = "grid_equipment"
+label = "Transformers / grid equipment"
+terms = ["transformer", "transformers", "switchgear", "substation", "substations",
+         "grid equipment", "high-voltage equipment", "electrical equipment", "circuit breaker",
+         "circuit breakers", "GOES", "grain-oriented electrical steel"]
+
+# Pharma & biotech by what is sold and how (operator, 2026-10-14). On the first real run under
+# healthcare's children, a "$26bn biopharma direct-to-consumer cash-pay" hypothesis still keyed
+# onto the Alzheimer drug-market thesis — the same node, mechanism, direction and geography. A
+# therapy area or a sales channel is a different claim.
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "neurology"
+label = "Neurology (Alzheimer's, dementia)"
+terms = ["Alzheimer's", "Alzheimer", "Alzheimers", "dementia", "neurodegenerative",
+         "neurodegeneration", "Parkinson's", "amyloid", "tau", "neurology"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "obesity_metabolic"
+label = "Obesity and metabolic (GLP-1)"
+terms = ["GLP-1", "GLP-1s", "obesity", "anti-obesity", "weight loss", "weight-loss", "diabetes",
+         "semaglutide", "tirzepatide", "incretin", "incretins"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "oncology"
+label = "Oncology"
+terms = ["oncology", "cancer", "cancers", "tumor", "tumors", "tumour", "tumours", "ADC", "ADCs",
+         "antibody-drug conjugate", "antibody-drug conjugates", "immuno-oncology"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "direct_to_consumer"
+label = "Direct-to-consumer / cash-pay"
+terms = ["direct-to-consumer", "DTC", "cash-pay", "cash pay", "out-of-pocket", "out of pocket",
+         "self-pay"]
+
+# PRODUCTS — finer than segments, for CLAIM-level contradiction checks (contradiction.py): two
+# claims contradict only when they speak about the same product, variable, period and geography
+# with opposite directions. Read from the verbatim quote (and the claim's metric / scope); the
+# most specific term wins ("conventional DRAM" is not the generic "DRAM"). `covers`: the
+# specific products a generic term spans — a generic claim against one of them is AMBIGUOUS.
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "hbm"
+label = "HBM"
+terms = ["HBM", "HBM3", "HBM3E", "HBM4", "HBM4E", "high-bandwidth memory",
+         "high bandwidth memory"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "conventional_dram"
+label = "Conventional DRAM"
+terms = ["conventional DRAM", "commodity DRAM", "standard DRAM", "DDR4", "DDR5", "LPDDR",
+         "LPDDR4", "LPDDR4X", "LPDDR5", "LPDDR5X", "GDDR6", "GDDR7", "server DRAM", "PC DRAM",
+         "mobile DRAM", "graphics DRAM", "RDIMM"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "dram"
+label = "DRAM (generic)"
+terms = ["DRAM"]
+covers = ["hbm", "conventional_dram"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "nand_flash"
+label = "NAND Flash"
+terms = ["NAND", "NAND Flash", "NAND wafer", "NAND wafers", "flash", "QLC", "TLC"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "enterprise_ssd"
+label = "Enterprise SSD"
+terms = ["enterprise SSD", "enterprise SSDs", "eSSD", "data-center SSD", "datacenter SSD"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "client_ssd"
+label = "Client SSD"
+terms = ["client SSD", "client SSDs", "PC SSD", "consumer SSD"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "ssd"
+label = "SSD (generic)"
+terms = ["SSD", "SSDs"]
+covers = ["enterprise_ssd", "client_ssd"]
+
+[[product]]
+node = "ai_infrastructure.memory"
+id = "emmc_ufs"
+label = "eMMC / UFS"
+terms = ["eMMC", "UFS"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "grid_utilities"
+label = "Grid-connected utilities"
+terms = ["utility", "utilities", "ratepayer", "ratepayers", "rate base"]
+
+# On-site generation is three TECHNOLOGIES with different economics, suppliers and evidence
+# (2026-10-12: a fuel-cell share hypothesis merged into a gas-generation thesis on one key, 0 of
+# 17 supporting claims shared). The generic term covers them; a thesis whose evidence is
+# dominated by one technology is identified by it (engine.product_signature).
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "gas_turbines"
+label = "Gas turbines"
+terms = ["gas turbine", "gas turbines", "combustion turbine", "combustion turbines",
+         "aeroderivative", "aeroderivatives", "aeroderivative turbine", "aeroderivative turbines",
+         "CCGT", "CCGTs", "combined cycle", "combined-cycle", "heavy-duty turbine",
+         "heavy-duty turbines", "heavy-duty gas turbine", "heavy-duty gas turbines"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "reciprocating_engines"
+label = "Reciprocating engines"
+terms = ["reciprocating engine", "reciprocating engines", "recip", "recips", "gas engine",
+         "gas engines", "large engine", "large engines"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "fuel_cells"
+label = "Fuel cells"
+terms = ["fuel cell", "fuel cells", "SOFC", "SOFCs", "solid oxide", "solid-oxide"]
+
+[[product]]
+node = "ai_infrastructure.power_grid"
+id = "onsite_generation"
+label = "Behind-the-meter / on-site generation (generic)"
+terms = ["behind-the-meter", "behind the meter", "BtM", "on-site generation",
+         "onsite generation", "on-site power", "onsite power"]
+covers = ["gas_turbines", "reciprocating_engines", "fuel_cells"]
+

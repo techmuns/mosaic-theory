@@ -1,0 +1,5 @@
+FAILS WHOLE: 164163f7e2a4177e — ['added_hypotheses', '  Input should be a valid list [type=list_type, input_value=\'[{"local_id": "hx4_1", "...n or state politics"]}]\', input_type=str]']
+RECOVERED: 14 claim(s), 4 mention(s), 1 risk(s), 0 hypothesis(-es), 2 addition(s) to hypotheses, 25 figure and 25 paragraph review(s)
+  - added_hypotheses: the whole field discarded — 4,420 characters of text where a list belongs, not valid JSON (Expecting property name enclosed in double quotes: line 1 column 938, character 937); it named 1 item(s): hx4_1
+  LOST (named in the discarded text, not used): added_hypotheses hx4_1 “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity”
+  the paid answer file is unchanged: 164163f7e2a4177e11a8c3d3b728bd5a09fdb602a41aedad48e87d3ad7007e95.json

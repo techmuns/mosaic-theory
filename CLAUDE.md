@@ -154,6 +154,11 @@ verdict placement.
   per-ticker `dossier.json`. **If the repo or the deploy ever becomes public, the graph + dossiers
   revert to git-ignored / local-only.** (`data/graph_test0.json` — the falsified Edge-3 test artifact —
   stays git-ignored; only `graph_coverage.json` is authorized.)
+  **Theme intelligence** (operator decision 2026-10-13, PR #703): **`frontend/theme-intelligence/`**
+  — the research desk published into the app (`python -m vinci.theme_intelligence publish`):
+  derived analysis with titles, figures and SHORT verbatim source quotes, for internal use on the
+  authed deploy. Never an article's text, never a local path; it reverts to git-ignored with the
+  dossiers if the repo or deploy ever becomes public.
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.

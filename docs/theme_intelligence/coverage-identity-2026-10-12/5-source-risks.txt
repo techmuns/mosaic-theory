@@ -1,0 +1,113 @@
+# P1 — risks the SOURCE states that no model pass listed (coverage.scan_source_risks)
+# (a) the final run's every risk sentence and what carries it; (b) the cue's precision on other publishers' stored text; (c) the earlier run on the SAME cleaned text before
+# alternative mechanisms counted as carried — the flag path on both regression risks
+
+== (a) final run R-20261012T083630Z-ingest
+18 risk sentence(s) in 287 argument paragraph(s): {'CARRIED': 12, 'ALERT': 2, 'PLACED': 4}
+
+p14 b149: CARRIED
+   “Cancellations jumped to 25 in 2025 from six in 2024, mainly due to power access, public pushback, and new legislation in some regions (Construction Dive, April 22).”
+   by: evidence on its card: Cancellations jumped to 25 in 2025 from six in 2024, mainly due to power access, public pushback, and new legislation
+
+p15 b152: CARRIED
+   “Nonetheless, a key consideration in the current market is the durability of long-term power demand, because there was an overbuild of natural gas–fired generation around the 2000 period.”
+   by: proposed risk drawn from this paragraph: A repeat of the early-2000s gas-build overbuild: demand expected then did not materialize, leaving excess capacity and ratepayer burden, raising durability-of-demand concern for new gas generation.
+
+p15 b152: CARRIED
+   “Demand expected back then did not materialize, leaving excess capacity and ratepayer burden.”
+   by: proposed risk: A repeat of the early-2000s gas-build overbuild: demand expected then did not materialize, leaving excess capacity and ratepayer burden, raising durability-of-demand concern for new gas generation.
+
+p16 b166: ALERT (cut by a page break — never placed)
+   “The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI sector, while also”
+
+p28 b269: ALERT (cut by a page break — never placed)
+   “However, there is community pushback, including noise quality and air quality, such that they often have tighter air permitting (Inside Climate News, Nov 2025),”
+
+p33 b314: CARRIED
+   “Despite surging cost inflation from raw materials (i.e. lithium, copper and ali) that might put downward pressure on the IRR of ESS projects YTD, bringing uncertainties on the progress of ESS projects, we still see secular demand growth of global energy storage market (namely ESS) in the medium term.”
+   by: alternative mechanism on its card: Surging raw-material cost inflation (lithium, copper, aluminum) could pressure ESS project IRRs and progress.
+
+p35 b329: CARRIED
+   “Risks to growth The debate around scaling constraints and supply-chain dependencies centers around availability of scandium, which is a key element used in BE SOFCs.”
+   by: proposed risk drawn from this paragraph: Scandium supply concentration in China and Russia is a scaling constraint for Bloom Energy SOFC production if scaled rapidly.
+
+p35 b329: CARRIED
+   “The location and method of production expose the scandium supply chain to various risks.”
+   by: proposed risk drawn from this paragraph: Scandium supply concentration in China and Russia is a scaling constraint for Bloom Energy SOFC production if scaled rapidly.
+
+p39 b360: CARRIED
+   “While the opportunity set is robust, growing data center NIMBYism and energy affordability concerns are driving bipartisan pushback to data center expansion across many states.”
+   by: proposed risk: Data center NIMBYism, affordability concerns and state moratorium proposals (13 states) could drive bipartisan pushback to data center expansion.
+
+p39 b361: CARRIED
+   “The bipartisan pushback comes during a midterm election cycle with 36 gubernatorial elections in 2026.”
+   by: counter-evidence: The bipartisan pushback comes during a midterm election cycle with 36 gubernatorial elections in 2026
+
+p40 b375: PLACED in 07 + flagged
+   “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as politics and weather which create timeline uncertainty.”
+   on: TH-01EB1E98A3 “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity”
+
+p41 b379: PLACED in 07 + flagged
+   “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching generation will come online, which could also lead to timeline mismatch and uncertainty around transmission buildout that would connect data centers to the grid.”
+   on: TH-01EB1E98A3 “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity”
+
+p43 b394: CARRIED
+   “We expect these lines to not meet 180-day approval timelines, have some cost overrun, and potentially get rerouted with increased cancellation risk.”
+   by: proposed risk drawn from this paragraph: Data center developers with in-flight ERCOT projects may not complete buildout because only 20% of the $50,000 per MW required down payment is non-refundable.
+
+p43 b394: CARRIED
+   “Lastly, there is a risk that data center developers with projects in-flight will not complete their buildout given only 20% of the $50,000 per MW required down payment is non-refundable.”
+   by: proposed risk: Data center developers with in-flight ERCOT projects may not complete buildout because only 20% of the $50,000 per MW required down payment is non-refundable.
+
+p45 b414: PLACED in 07 + flagged
+   “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital to execute on these growth opportunities pose uncertainty to data center growth.”
+   on: TH-01EB1E98A3 “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity”
+
+p47 b432: CARRIED
+   “Structural constraints – long connection queues, renewable intermittency, and high energy costs – are not easily resolved, meaning a portion of announced capacity risks remaining “bragawatts” rather than realised load.”
+   by: alternative mechanism on its card: A portion of announced data centre capacity risks remaining 'bragawatts' rather than realised load due to connection queues, intermittency and high costs.
+
+p52 b478: CARRIED
+   “While past projects have faced significant delays and cost overruns, there is a clear path to cost reduction through standardization and repeatability, as seen in other countries.”
+   by: alternative mechanism on its card: Past nuclear projects have faced significant delays and cost overruns; SMRs still need time to commercialize.
+
+p52 b478: PLACED in 07 + flagged
+   “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.”
+   on: TH-5BA11D6167 “Citi Wealth sees multi-year structural energy infrastructure growth across four pillars”
+   on: TH-F59A0872CA “China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers”
+
+== (b) other publishers (stored article text, no model)
+== Nomura | Central Banks Recalibrating Monetary Policies | 61 sentences, 4 cue hit(s)
+   pNone [increasing the risk] Renewed tensions in the Middle East have driven a sharp rise in energy prices, and crude oil prices have the potential to remain elevated in the coming months, increasing the risk of broader spillovers.
+   pNone [risks to the] Recent data demonstrate little progress on inflation, with core personal consumption expenditure (PCE) essentially stuck at above 3% y-o-y, while the surge in energy prices has further tilted risks to the upside.
+   pNone [headwinds] GDP growth accelerated in Q2, despite widely expected headwinds from the Iran war and higher energy prices.
+   pNone [pose upside risk] Elevated oil prices, El Niño and rising memory prices pose upside risks to inflation.
+== TrendForce | Rising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipme | 34 sentences, 2 cue hit(s)
+   pNone [risks weakening] Raising retail prices risks weakening demand, while absorbing higher costs would squeeze gross margins.
+   pNone [could undermine] Alternatively, reducing specifications such as memory capacity to control BOM costs could undermine product competitiveness.
+== SemiAnalysis | Anthropic Subscriptions Offer 5x+ More Value Than OpenAI | 144 sentences, 0 cue hit(s)
+== J.P. Morgan Private Bank | A calm index, a restless market | 42 sentences, 0 cue hit(s)
+== TrendForce | Six Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reac | 25 sentences, 0 cue hit(s)
+== SemiAnalysis | Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regi | 223 sentences, 0 cue hit(s)
+== SemiAnalysis | Everyone Says Datacenter Moratoriums Are Killing the US Buildout. We M | 179 sentences, 1 cue hit(s)
+   pNone [COULD delay] To be 100% clear, we think moratoriums COULD delay the buildout, but they just aren’t yet at scale.
+== J.P. Morgan Private Bank | Software Shock: AI’s Broken Logic | 41 sentences, 0 cue hit(s)
+== TrendForce | AI Server Demand Sustains Memory Contract Price Increases in 4Q26, Whi | 49 sentences, 0 cue hit(s)
+
+9 article version(s), 798 paragraph sentences, 7 cue hit(s)
+
+== (c) R-20261012T081536Z-ingest (same answers; alternatives not yet counted as carried) — the alerts it raised
+ (13):
+     ! proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — completeness part 4: named by the paid answer (malformed); the re-asked ans
+     ! page 16: a risk the source states that no model pass listed — “The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI sector, while also” (o
+     ! page 28: a risk the source states that no model pass listed — “However, there is community pushback, including noise quality and air quality, such that they often have tighter air permitting (Inside Climate News, Nov 202
+     ! page 33: a risk the source states that no model pass listed — “Despite surging cost inflation from raw materials (i.e. lithium, copper and ali) that might put downward pressure on the IRR of ESS projects YTD, bringing un
+     ! page 40: a risk the source states that no model pass listed — “Meanwhile, other regions are dealing with limited grid capacity, problems with power market incentives, and external factors such as politics and weather whi
+     ! page 41: a risk the source states that no model pass listed — “This uneven pace of regulatory processes around the country creates a lack of clarity around when data center load and/or matching generation will come onlin
+     ! page 45: a risk the source states that no model pass listed — “Grid constraints, high cost of grid upgrades, overhang from wildfire risks and resulting reduced ability for utilities to access capital to execute on these 
+     ! page 47: a risk the source states that no model pass listed — “Structural constraints – long connection queues, renewable intermittency, and high energy costs – are not easily resolved, meaning a portion of announced cap
+     ! page 52: a risk the source states that no model pass listed — “While past projects have faced significant delays and cost overruns, there is a clear path to cost reduction through standardization and repeatability, as se
+     ! page 52: a risk the source states that no model pass listed — “This suggests that while execution risk remains, the long-term potential is not yet fully priced into the sector.” (now in 07 of “Citi Wealth sees multi-year
+     ! page 7: 6 verified material facts no thesis carries — a mechanism no card holds?
+     ! page 16: 2 verified material facts no thesis carries — a mechanism no card holds?
+     ! page 37: 4 verified material facts no thesis carries — a mechanism no card holds?

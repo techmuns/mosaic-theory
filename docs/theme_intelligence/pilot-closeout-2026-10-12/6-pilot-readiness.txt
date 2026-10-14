@@ -1,0 +1,71 @@
+# P1 — the ten pilot-readiness checks on the final runs ($0; reads registries, runs the pinning tests)
+
+
+[PASS] 1. re-reading the fuel-cell story creates no second opportunity
+      re-read registry: 1 fuel-cell thesis — TH-DDEE0B7EF0 v2 “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”
+      fresh registry: 1 — TH-F14CB7F84C
+      SAME_ARTICLE_SIBLING flags in the re-read: 0
+
+[PASS] 2. the transformer thesis is keyed by its subject (grid equipment)
+      re-read: TH-1F366737A1 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:grid_equipment
+      fresh: TH-D942C46E78 ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:grid_equipment
+      key corrected: identity key ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:onsite_generation → ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:grid_equipment (segment onsite_generation → grid_equipmen
+
+[PASS] 3. historical thesis identities, versions and source dates intact
+      20 theses of the baseline registry: every id present (0 lost), every earlier version byte-identical (0 changed), first-ingested times unchanged (0 moved)
+      article A-82a8a9210bae: published 2026-06-28 00:00:00+00:00 (baseline 2026-06-28 00:00:00+00:00); first seen 2026-10-11 14:18:10.482947+00:00; versions 2
+
+[PASS] 4. no repeated source claim counted as independent confirmation
+      links by class (re-read registry): {'novelty_unverified': 302, 'no material change': 24, 'new': 47, 'repeated': 181, 'correction': 3, 'contradictory': 8}
+      independent confirmations: 0; repeated quote+value rows on any card: 0
+
+[PASS] 5. mechanism, numerical and risk coverage limits stay visible
+      research verification: INCOMPLETE — NOT fully verified — over the 1 article(s) this run analysed: 5 of 403 stated figure(s) and 4 of 287 argument paragraph(s) open; causes: account_names_no_record 3, no_account 1, verification_failed 5;
+      coverage alerts: 10 {'verified facts no thesis carries': 4, 'risk the source states': 6}
+      open figures 5 of 403; open paragraphs 4 of 287
+
+[PASS] 6. all nine Living Thesis Card sections intact
+      36 rendered cards (both registries), nine section headings each — 01 BOTTOM LINE, 02 WHAT CHANGED?, 03 WHY COULD STOCKS BENEFIT OR SUFFER?, 04 KEY EVIDENCE & NUMBERS, 05 AFFECTED COMPANIES / SECTORS, 06 WHY NOW? (NEXT 2-4 QUARTERS), 07 WHAT COULD GO WRONG?, 08 DECISION & NEXT TRIGGER, 09 SOURCES & CHANGE HISTORY
+
+[PASS] 7. the seven-source configuration and source-health checks unchanged
+      7 channels: Citi [automatic], J.P. Morgan Private Bank [automatic], Morgan Stanley [manual_first], Nomura [automatic], TrendForce [automatic], SemiAnalysis [automatic], Goldman Sachs [manual_first]
+      changed since 0bbbf03f (sources / retired / health / fetch / publishers): nothing
+      4 pinning test(s): 4 passed in 0.33s
+        test_exactly_seven_active_channels_and_bank_of_america_retired
+        test_a_fresh_installation_reports_seven_channels
+        test_every_configured_channel_receives_a_status_and_a_last_checked_time
+        test_http_403_is_blocked_and_never_retried
+
+[PASS] 8. the automatic and manual paths share one registry
+      4 pinning test(s): 4 passed in 1.34s
+        test_the_weekly_report_takes_in_manual_runs_since_the_previous_scan
+        test_pull_ingest_push_then_the_scheduled_scan_reports_it
+        test_the_input_method_never_changes_research_priority
+        test_the_local_wrapper_runs_the_same_pipeline
+
+[PASS] 9. default cost limits, licensing checks and privacy protections active
+      per-document limit DOC_COST_LIMIT_USD = $30 (default; raised only by an explicit --max-cost)
+      9 pinning test(s): 9 passed in 0.80s
+        test_a_document_estimated_above_the_cost_limit_is_held_until_raised
+        test_a_run_budget_stops_every_further_call
+        test_a_call_that_does_not_fit_is_never_sent
+        test_an_unstated_licence_holds_the_document_and_release_processes_it
+        test_a_refused_licence_holds_and_a_channel_policy_permits
+        test_no_research_document_is_tracked_by_git
+        test_a_push_refuses_anything_but_derived_records
+        test_a_remote_url_is_never_printed_with_its_credentials
+        test_export_import_round_trip_keeps_history_and_drops_article_text
+
+[PASS] 10. no fund investment-decision logic changes
+      this PR changes 587 files; fund code under vinci/ outside the package: none
+      outside the package, reviewed: pyproject.toml — adds the pdfplumber dependency the package reads supplied PDFs with
+      outside the package, reviewed: tests/test_theme_thesis.py — adds two theme-intelligence files to an EXISTING fund guard (card-only fields never in an LLM tool schema) — stricter
+      outside the package, unexplained: none
+      5 pinning test(s): 5 passed in 0.88s
+        test_no_fund_module_imports_theme_intelligence
+        test_theme_intelligence_imports_only_shared_plumbing
+        test_its_registry_is_its_own
+        test_no_record_has_a_trading_field
+        test_priority_reads_no_prices_or_returns
+
+ALL TEN PASS

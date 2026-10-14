@@ -1,0 +1,118 @@
+blocks: base 504, new 495; same id AND same text: 176; first divergence at index 76 (base b077 p7)
+
+== BASE KEY-EVIDENCE / FIGURE CLAIMS NOT VERIFIED IN THE NEW RUN (quote not among the new run's verified quotes) — all listed
+  p14 '25'                   'Cancellations jumped to 25 in 2025 from six in 2024'
+      -> new b149 p14: paragraph unreviewed/no_account; figure '25' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p49 '15-20'                'The mega Yarlung Zangbo Hydropower Project will likely take 15-20 years'
+      -> new b452 p49: paragraph anchored; figure '15GW' added_by_completeness_pass, '15-20' immaterial (Project construction duration context for Yarlung Zangbo project, not )
+  p23 '35-45%'               '35-45% in China'
+      -> new b219 p23: paragraph anchored; figure '$450-500 million' immaterial (US$450-500 million per 1 GVA already captured in first pass as b5.k5_2), '25-35%' added_by_completeness_pass, '35-45%' added_by_completeness_pass
+  p22 'US$450-500 million'   'We assume a cost of US$450-500 million to build a new GVA production line'
+      -> new b211 p22: paragraph anchored; figure '$450-500 million' added_by_completeness_pass
+  p34 'two years'            'which is expected to increase by two years with advancement in technology'
+      -> new b320 p34: paragraph anchored
+  p22 '$1.655 billion'       'It will spend US$1.655 billion to build a new high voltage transformer productio'
+      -> new b211 p22: paragraph anchored; figure '$1.655 billion' added_by_completeness_pass
+  p8 '18-36'                'Market expected to grow to $65 Used in natural gas-fired power billion by 2030 p'
+      -> new b091 p8: paragraph covered; figure '18-36' immaterial (Critical component lead times 18-36 months already captured in c4.)
+  p19 '12 - 30+'             'Depending on the voltage and class, wait times can extend to 12 months, or even '
+      -> new b184 p19: paragraph covered; figure '12' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given), '30' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p12 '~27%'                 'U.S. EV sales in 1Q 2026 were down ~27% YoY'
+      -> new b125 p12: paragraph anchored; figure '~27%' captured (restated here; captured where the article states it (b126: C-2abdaae98)
+  p28 '1–4'                  'A BESS generally uses lithium-ion batteries and can provide 1–4 hours of power.'
+      -> new b271 p28: paragraph covered; figure '1-4' immaterial (descriptive BESS duration, technology context not an investable metric)
+  p19 '500'                  'A 500-MW solar+storage project, a 500-MW data center campus, and a 500-MW gas pl'
+      -> new b181 p19: paragraph unreviewed/no_account; figure '500' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p19 '24-48'                'The wait time of 24–48 months is common for many large units.'
+      -> new b182 p19: paragraph unreviewed/no_account; figure '24-48' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p22 '40-50'                'high voltage transformers of around 40-50 GVA per annum in full utilization'
+      -> new b211 p22: paragraph anchored; figure '40-42%' added_by_completeness_pass, '$450-500 million' added_by_completeness_pass, '40-50' added_by_completeness_pass
+  p28 '12–18'                '12–18 months for light industrial turbines'
+      -> new b275 p28: paragraph anchored; figure '12-29' added_by_completeness_pass, '12-18' added_by_completeness_pass
+  p25 '50%'                  '50% of the distribution transformer supply'
+      -> new b242 p25: paragraph anchored; figure '$150 million' added_by_completeness_pass, '50%' immaterial (duplicate of c10 distribution transformer import share already capture)
+  p23 'US$450-500 million'   'build new high voltage transformer production capacity (>220kV) at US$450-500 mi'
+      -> new b219 p23: paragraph anchored; figure '$450-500 million' immaterial (US$450-500 million per 1 GVA already captured in first pass as b5.k5_2)
+  p28 '12–29'                'gas equipment lead times to be between 12–29 months for engines'
+      -> new b275 p28: paragraph anchored; figure '12-29' added_by_completeness_pass, '12-18' added_by_completeness_pass
+  p18 '2,600GW'              'Active U.S. power plant interconnection requests have exceeded 2,600GW, more tha'
+      -> new b178 p18: paragraph anchored; figure '2,600GW' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p8 '3- 4'                 'up to 3- 4 years'
+      -> new b093 p8: paragraph not in ledger; figure '3- 4' added_by_completeness_pass
+  p23 '20-30%'               '20-30% in Europe'
+      -> new b219 p23: paragraph anchored; figure '15-20%' added_by_completeness_pass, '20-30%' added_by_completeness_pass
+  p16 'about 90 days'        'The plan seeks to slash approval timelines to about 90 days'
+      -> new b166 p16: paragraph unreviewed/no_account; figure '90' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p14 '~24%'                 'up at a ~24% compound annual growth rate (CAGR) since 2020'
+      -> new b143 p14: paragraph anchored; figure '~24%' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p20 '30%'                  'an assumed 30% deficit'
+      -> new b191 p20: paragraph anchored; figure '30%' immaterial (same 30% deficit already captured as c8; duplicate figure in same cont)
+  p28 '10'                   'Large nuclear reactors take years to build, at times 10 years or more.'
+      -> new b272 p28: paragraph covered; figure '10' immaterial (general statement that large nuclear reactors take 10+ years, context )
+  p48 '1.2GW'                '1.2GW pipeline'
+      -> new b443 p48: paragraph anchored; figure '1.2GW' added_by_completeness_pass
+  p23 '25-35%'               '25-35% in Korea'
+      -> new b219 p23: paragraph anchored; figure '25-35%' added_by_completeness_pass, '35-45%' added_by_completeness_pass
+  p23 '30-35'                'exceeding their designed useful lives of roughly 30-35 years'
+      -> TEXT NOT FOUND IN NEW VERSION
+  p28 '1-3 MW'               'often multiple 1-3 MW units per building or block'
+      -> new b269 p28: paragraph covered; figure '1-3 MW' immaterial (descriptive sizing of diesel backup units, context for technology desc)
+  p15 '~40% to 50%'          'AI data centers can exhibit ~40% to 50% swings in demand over short periods'
+      -> new b155 p15: paragraph unreviewed/no_account; figure '~40%' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given), '50%' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p18 'more than 2,500GW'    'more than 2,500GW of renewable, storage, and large-load projects are already sta'
+      -> new b178 p18: paragraph anchored; figure '2,500GW' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p17 '€11 billion'          'fragmented national grid planning which cost €11 billion in 2024'
+      -> new b171 p17: paragraph unreviewed/no_account; figure '€11 billion' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p19 '3–4'                  'The wait time is up to 3–4 years in some cases.'
+      -> new b183 p19: paragraph unreviewed/no_account; figure '3-4' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p34 '$9'                   '$9 for recips'
+      -> new b325 p34: paragraph anchored; figure '$9' added_by_completeness_pass
+  p21 '59%'                  'global high voltage power transformer supply to rise 59% in 2025–2028'
+      -> new b207 p21: paragraph anchored; figure '59%' added_by_completeness_pass
+  p19 '12 ... 30 or more'    'wait times can extend to 12 months, or even 30 or more'
+      -> new b184 p19: paragraph covered; figure '12' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given), '30' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p25 '80%'                  'imports are estimated to have accounted for about 80% of U.S. power transformer '
+      -> new b242 p25: paragraph anchored; figure '80%' immaterial (duplicate of c10/b5.k5 import share already captured)
+  p14 'more than 50GW'       'more than 50GW of data center capacity was operating in the U.S. at the end of 2'
+      -> new b143 p14: paragraph anchored; figure '50GW' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p29 '20-200%'              'Manufacturers plan output increases of 20-200%'
+      -> TEXT NOT FOUND IN NEW VERSION
+  p22 'four years'           'the new capacity to be added gradually over four years from 2025 to 2028'
+      -> new b211 p22: paragraph anchored
+  p16 '1GW or more'          'in which 1GW or more dropped off the bulk power system'
+      -> new b159 p16: paragraph unreviewed/no_account; figure '1GW' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  p44 'July 23'              'reforming PJM’s governance and stakeholder process with a conference scheduled f'
+      -> new b406 p44: paragraph anchored
+  p23 '50%'                  "GEV's recently closed acquisition of the remaining 50% stake in Prolec GE that i"
+      -> TEXT NOT FOUND IN NEW VERSION
+  p21 '95%'                  '95% in 2025–2030'
+      -> new b207 p21: paragraph anchored; figure '95%' added_by_completeness_pass
+  p34 '$5'                   '$5 for fuel cells'
+      -> new b325 p34: paragraph anchored; figure '$5' added_by_completeness_pass
+  p8 '25%'                  '25% in Thailand'
+      -> new b084 p8: paragraph anchored; figure '25%' added_by_completeness_pass
+  p14 '~43%'                 'Midwest Independent System Operator (MISO) had the fastest growth at ~43% CAGR'
+      -> new b143 p14: paragraph anchored; figure '~43%' uncaptured/no_account (no verified claim quotes it and no immaterial verdict was given)
+  total: 46 base figure claims whose quote the new run did not verify
+
+== BASE-NAMED ENTITIES THE NEW RUN DOES NOT NAME — located by text
+  Federal Reserve Bank of Dallas government_or_agency data_source    -> new b378 p41: paragraph not in ledger
+  Renault                        company            sector_example -> new b125 p12: paragraph anchored
+  European Union                 government_or_agency context        -> new b171 p17: paragraph unreviewed/no_account
+  Australia Energy Market Operator (AEMO) government_or_agency data_source    -> new b459 p50: paragraph not in ledger
+  NERC                           government_or_agency context        -> new b159 p16: paragraph unreviewed/no_account
+  Dodge Construction             data_provider      data_source    -> new b378 p41: paragraph not in ledger
+  Ariston Advisory               data_provider      data_source    -> new b221 p23: paragraph anchored
+  Cox Automotive                 other_organization data_source    -> new b126 p12: paragraph anchored
+  Construction Dive              publisher          data_source    -> new b149 p14: paragraph unreviewed/no_account
+  OLX                            private_company    context        -> new b125 p12: paragraph anchored
+  CAISO                          government_or_agency context        -> new b413 p45: paragraph not in ledger
+  BPA (Bonneville Power Administration) government_or_agency context        -> new b418 p45: paragraph covered
+  COP28                          other_organization context        -> new b479 p52: paragraph anchored
+  Lawrence Berkeley National Laboratory government_or_agency data_source    -> new b180 p19: paragraph unreviewed/no_account
+  SPP                            government_or_agency context        -> new b375 p40: paragraph added
+  NYISO                          government_or_agency context        -> new b417 p45: paragraph covered
+  Volvo                          company            sector_example -> new b125 p12: paragraph anchored
+  CBRE                           company            data_source    -> new b134 p13: paragraph anchored
+  Maryland                       government_or_agency context        -> new b170 p17: paragraph unreviewed/no_account
+  Carwow                         private_company    context        -> new b125 p12: paragraph anchored

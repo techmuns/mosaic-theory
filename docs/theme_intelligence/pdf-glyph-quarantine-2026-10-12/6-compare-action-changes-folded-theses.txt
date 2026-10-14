@@ -1,0 +1,80 @@
+== VERSIONS (section 7 sentences carry forward from earlier versions — cards.py:329)
+  base: 16 theses, current versions [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  new: 14 theses, current versions [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+== ACTION CHANGES — the deterministic rule trace on each side
+  base TH-C0F7401B12 SKIP: US gas pipeline underinvestment creates attractive midstream growth capex cycle
+       SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+       s04 rows 15; s03 steps ['industry_shift', 'volumes', 'listed_earnings', 'market_reaction']
+  new TH-3EA660BB0A WATCH: Gas demand surge drives record midstream capex and strong project returns
+       WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)
+       s04 rows 18; s03 steps ['industry_shift', 'cash_flow', 'listed_earnings']
+
+  base TH-CA02B7A83B SKIP: Skilled-labor shortage is a persistent structural bottleneck on power and datace
+       SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+       s04 rows 2; s03 steps ['industry_shift', 'costs', 'listed_earnings']
+  new TH-B1F096684F WATCH: Skilled-labor shortages constrain data center and power buildout into the 2030s
+       WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; retrieval PARTIAL; verification hold)
+       s04 rows 2; s03 steps ['industry_shift', 'costs', 'listed_earnings']
+
+  base TH-426034EB2D SKIP: Nuclear and SMR interest rising as supportive policy and power demand grow
+       SKIP-3 longer-term only — no dated window inside the next 2-4 quarters
+       s04 rows 2; s03 steps ['industry_shift', 'listed_earnings']
+  new TH-426034EB2D WATCH: Nuclear revival, including SMRs, lifts equipment makers over the coming decade
+       WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window; no verified dislocation or catalyst; retrieval PARTIAL; verification hold)
+       s04 rows 2; s03 steps ['industry_shift', 'volumes', 'listed_earnings']
+
+== BASE-ONLY THESES WITHOUT A SAME-SHAPE COUNTERPART — where their evidence went
+  base TH-566BFB9D39 WATCH 'Low-cost US natural gas gives US a structural advantage in powering datacenters'
+     p37 $2 to $4         verified in new: True  in new theses: []  'U.S. natural gas prices at the benchmark Henry Hub are generally within a range '
+     p37 $5 to $8         verified in new: True  in new theses: []  'the global LNG glut expected towards the end of this decade should bring natural'
+     p37 ~$20             verified in new: False in new theses: []  'surged to ~$20/MMBtu or higher'
+     p37 $8               verified in new: True  in new theses: []  'Asian LNG and European natural gas prices did fall to around $8/MMBtu or slightl'
+     companies: ['WMB', 'KMI']
+  base TH-DDEE0B7EF0 WATCH 'Fuel cells gain niche data-center power share on speed and grid-constraint advantages'
+     p34 ~$3,050          verified in new: False in new theses: []  'our modeled ASP for BE of ~$3,050/kW in 2026'
+     p34 ~$1,000          verified in new: True  in new theses: ['TH-110E3113B1']  'stack replacement cost is 30% of the total, which equates to ~$1,000/kW'
+     p34 two years        verified in new: False in new theses: []  'which is expected to increase by two years with advancement in technology'
+     p34 $4.0             verified in new: True  in new theses: ['TH-110E3113B1']  'At a flatlined $4.0 gas cost ($/MMBtu)'
+     p36 ~7GW             verified in new: False in new theses: []  'Current expectations embed meaningful growth (~7GW of installs by 2030)'
+     p34 $2               verified in new: False in new theses: []  'we assume variable O&M costs/MWh of $2 for CCGT'
+     p34 ~40              verified in new: False in new theses: []  '~15 acres per 1GW vs. ~40 acres for CCGT'
+     p34 ~15              verified in new: True  in new theses: ['TH-110E3113B1']  'compact footprints (~15 acres per 1GW vs. ~40 acres for CCGT)'
+     p34 $3,000           verified in new: True  in new theses: ['TH-110E3113B1']  'New greenfield CCGT projects are estimated to have overnight costs of approximat'
+     p34 $7,818           verified in new: True  in new theses: ['TH-110E3113B1']  'This came in at $7,818/kW'
+     p34 $9               verified in new: True  in new theses: ['TH-110E3113B1']  '$9 for recips'
+     p34 $1,600           verified in new: True  in new theses: ['TH-110E3113B1']  'this is above the highend of $1,600/kW per Lazard’s June 2025 LCOE analysis'
+     p34 31%              verified in new: True  in new theses: ['TH-110E3113B1']  'the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fue'
+     p34 32%              verified in new: True  in new theses: ['TH-110E3113B1']  'the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fue'
+     p34 30%              verified in new: False in new theses: []  'a 30% ITC but no ITC adders'
+     p34 25%              verified in new: True  in new theses: ['TH-110E3113B1']  'the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fue'
+     p34 $5               verified in new: True  in new theses: ['TH-110E3113B1']  '$5 for fuel cells'
+     p34 $5,000           verified in new: False in new theses: []  'For fuel cells, we assume an upfront capital cost of $5,000/kW'
+     p34 ~5.5             verified in new: False in new theses: []  'BE systems demonstrating ~5.5 year median stack lifetimes'
+     companies: ['Bloom Energy (BE)', 'Ceres Power', 'Weichai', 'Delta']
+  new TH-110E3113B1 companies: ['Caterpillar (CAT)', 'Cummins (CMI)', 'GE Vernova (GEV)', 'Siemens Energy', 'Bloom Energy (BE)', 'Doosan Enerbility', 'Baker Hughes', 'Ceres Power', 'Weichai', 'Delta']
+  new TH-110E3113B1 key-evidence rows naming fuel cells / Bloom / SOFC: 6
+     p34 31%          'the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fuel cells LCOE'
+     p34 25%          'the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fuel cells LCOE'
+     p34 32%          'the gas cost makes up 31%, 32%, and 25%, respectively, for CCGT, recips, and fuel cells LCOE'
+     p34 $5,000/kW    'For fuel cells, we assume an upfront capital cost of $5,000/kW and a 30% ITC but no ITC adders.'
+     p34 ~100MW       'companies like Bloom Energy indicating ~100MW can be delivered in ~120 days'
+     p34 $5           '$5 for fuel cells'
+
+== THE THREE BASE FIGURES ABSENT FROM THE NEW RUN — what the new run holds on that block
+  b320 p34: block text: 'Key advantages Fuel cells offer a compelling set of advantages for mission-critical, distributed power applications, particularly in AI data centers. They provide very low local emissions (minimal NOx/SOx), minimal water usage, and simpler '
+     new claim '~15 acres per 1GW vs. ~40 acres' verified=True 'compact footprints (~15 acres per 1GW vs. ~40 acres for CCGT)'
+     new claim '~5.5 year'          verified=True 'BE systems demonstrating ~5.5 year median stack lifetimes, which is expected to increase by two years'
+     new claim '~100MW'             verified=True 'companies like Bloom Energy indicating ~100MW can be delivered in ~120 days'
+  b176 p18: block text: 'Figure 11. Power equipment demand — degree of overlap between usage by data centers and usage by renewables and storage'
+  b212 p22: block text: '2. Siemens Energy will add new transformer production capacity primarily in Germany, the U.S. and India. For Germany, it will invest €220 million (about US$260 million) in a new GVA transformer production line to be completed in 2028. In th'
+     new claim '$1 billion'         verified=True 'it has invested US$1 billion in two new GVA transformer production lines to be completed in February 2026'
+     new claim '85'                 verified=True 'the company is increasing transformer capacity by 85 GVA to 2028, which translates into a 30- 50% capacity inc'
+     new claim 'US$291 million'     verified=True 'In India, it will invest a total of US$291 million to add transformer production capacity mostly in 2030–2032.'
+     new claim '€220 million'       verified=True 'it will invest €220 million (about US$260 million) in a new GVA transformer production line to be completed in'
+
+== ENTITIES THE NEW RUN NAMES THAT THE BASE DOES NOT
+  Citi Wealth                    other_organization publisher      p51 'A Conversation with Citi Wealth'
+  Citi Research                  publisher          publisher      p1 'Citi Research'
+  MISO                           government_or_agency context        p7 'PJM ERCOT West MISO SE SPP Other'
+  Arizton Advisory               data_provider      data_source    p20 ', largely in line with the forecasts of industry consultant Arizton Advisory & I'

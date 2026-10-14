@@ -1,0 +1,39 @@
+== Gridlock (Citi Overcoming Gridlock 2.0.pdf) — 60 pages, file sha256 c6f361d4d57a6196
+   BEFORE (old reader + old ledger, as stored by the paying run): 851 figures, 292 argument paragraphs; 955 gaps sent to review = 20 part(s) of 50
+   text identical to the stored version: False
+   tokens as sent: 293,161 -> 44,476 (85% fewer)
+   blocks 504 -> 495; ledger figures 510 -> 403; argument paragraphs 293 -> 287
+   cost preflight: estimated $7–$38 (list price): up to 17 completeness part(s) for 510 stated figure(s) and 293 argument paragraph(s)  ->  estimated $6–$31 (list price): up to 14 completeness part(s) for 403 stated figure(s) and 287 argument paragraph(s)
+   retrieval state PARTIAL; title 'Overcoming Gridlock 2.0: Solving Power Bottlenecks to Drive AI & Energy Security'; published 2026-06-28 (the document text (page 1-2)); authors ['Citi Research']
+   QUARANTINED page 54: 57 line(s), 0 cell(s), 34,879 chars, sha256 42456c907512981e
+   QUARANTINED page 55: 65 line(s), 0 cell(s), 47,843 chars, sha256 86a83fe717928cda
+   QUARANTINED page 56: 64 line(s), 0 cell(s), 56,781 chars, sha256 ef32c92761d77c3a
+   QUARANTINED page 57: 63 line(s), 0 cell(s), 50,559 chars, sha256 55833f049b074bca
+   QUARANTINED page 58: 64 line(s), 0 cell(s), 49,052 chars, sha256 1fded1b987d269ae
+   QUARANTINED page 59: 64 line(s), 0 cell(s), 55,838 chars, sha256 57ac45a430cd8ad0
+   QUARANTINED page 60: 15 line(s), 0 cell(s), 13,229 chars, sha256 ee70aed6b9412ec2
+   pages with readable blocks: 60 -> 54; lost [54, 55, 56, 57, 58, 59]
+   KEPT p60 b495 paragraph: '60 Citi Research | Must C | June 2026'
+   old blocks without glyph codes: 494; all kept with the same text and page: False (changed: 7)
+     changed p7: 'Sources: Citi Telecommunications Research , Woodmac, FERC'
+     changed p7: '7 Citi Research | Must C | June 2026'
+     changed p8: 'Sources: Citi Research, IEA, Woodmac, Reuters'
+     changed p8: '8 Citi Research | Must C | June 2026 © Citi Research 2026'
+     changed p9: 'Overcoming Gridlock The drivers: AI and energy security Commodities Strategy Views Anthony Yuen 1.What the AI market is telling us about pow'
+     … 2 more (showing 5 of 7)
+== LatAm (Citi LatAm Poised for Take-Off.pdf) — 57 pages, file sha256 3a233ec9d60e00bb
+   BEFORE (old reader + old ledger, as stored by the paying run): 319 figures, 208 argument paragraphs; 410 gaps sent to review = 9 part(s) of 50
+   text identical to the stored version: True
+   blocks 366 -> 366; ledger figures 319 -> 319; argument paragraphs 208 -> 208
+   cost preflight: estimated $4–$25 (list price): up to 11 completeness part(s) for 319 stated figure(s) and 208 argument paragraph(s)  ->  estimated $4–$25 (list price): up to 11 completeness part(s) for 319 stated figure(s) and 208 argument paragraph(s)
+   retrieval state FULL; title "LatAm Poised for Take-Off: The Macro Cycle Turns Latin America's Way"; published 2026-09-10 (the document text (page 1-2)); authors ['Citi Research']
+   pages with readable blocks: 57 -> 57; lost []
+   old blocks without glyph codes: 366; all kept with the same text and page: True (changed: 0)
+== ETF (Citi Sizing the ETF Opportunity.pdf) — 34 pages, file sha256 d63e0bd383d6fce6
+   BEFORE (old reader + old ledger, as stored by the paying run): 232 figures, 144 argument paragraphs; 264 gaps sent to review = 6 part(s) of 50
+   text identical to the stored version: True
+   blocks 235 -> 235; ledger figures 232 -> 232; argument paragraphs 144 -> 144
+   cost preflight: estimated $3–$19 (list price): up to 8 completeness part(s) for 232 stated figure(s) and 144 argument paragraph(s)  ->  estimated $3–$19 (list price): up to 8 completeness part(s) for 232 stated figure(s) and 144 argument paragraph(s)
+   retrieval state FULL; title 'Must C - Sizing the ETF Opportunity: Active ETFs Move to Center Stage'; published 2026-04-08 (the document text (page 1-2)); authors ['Citi Research']
+   pages with readable blocks: 34 -> 34; lost []
+   old blocks without glyph codes: 235; all kept with the same text and page: True (changed: 0)

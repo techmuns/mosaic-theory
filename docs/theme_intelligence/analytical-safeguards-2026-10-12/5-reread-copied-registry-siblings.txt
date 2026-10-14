@@ -1,0 +1,24 @@
+articles 3 (Gridlock: 1) · documents 1 · versions of A-82a8a9210bae: 2
+theses 28: version counts {1: 22, 2: 6}
+repeated quote+value rows on any card: 0
+links by class: {'novelty_unverified': 440, 'no material change': 24, 'contradictory': 7, 'new': 38, 'repeated': 44}
+SAME_ARTICLE_SIBLING flags: 7 (all listed)
+   TH-8178B565CB / TH-F59A0872CA (A-82a8a9210bae): SIBLING of “China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand”: 11 of its 11 sentence(s) were already on that thesis from an earlier version of this article, under an
+   TH-1F366737A1 / TH-2312D83A80 (A-82a8a9210bae): SIBLING of “AI datacenter power buildout drives multi-year transformer and grid equipment demand”: 60 of its 67 sentence(s) were already on that thesis from an earlier version of this article, under another ident
+   TH-C0F7401B12 / TH-3EA660BB0A (A-82a8a9210bae): SIBLING of “US gas pipeline underinvestment creates attractive midstream growth capex cycle”: 13 of its 20 sentence(s) were already on that thesis from an earlier version of this article, under another identity k
+   TH-1F366737A1 / TH-B1F096684F (A-82a8a9210bae): SIBLING of “AI datacenter power buildout drives multi-year transformer and grid equipment demand”: 2 of its 3 sentence(s) were already on that thesis from an earlier version of this article, under another identit
+   TH-5EDF9760FB / TH-9F45C42C9E (A-82a8a9210bae): SIBLING of “Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value”: 2 of its 2 sentence(s) were already on that thesis from an earlier version of this article, u
+   TH-BAA07551ED / TH-4F00D4815E (A-82a8a9210bae): SIBLING of “Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs”: 1 of its 2 sentence(s) were already on that thesis from an earlier version of this article, under
+   TH-CE04BAA34C / TH-EA64717B05 (A-82a8a9210bae): SIBLING of “Energy security accelerates renewables, EVs and energy storage demand globally”: 27 of its 33 sentence(s) were already on that thesis from an earlier version of this article, under another identity ke
+MECHANISM_COVERAGE alerts: 10 (all listed)
+   sibling thesis: “Power-ready land (retired coal sites) commands premiums on scarce grid access in Europe” — SIBLING of “Powered-land (grid-connected sites, converted coal) commands premiums as speed-t
+   page 7: 4 verified material facts no thesis carries — a mechanism no card holds?
+   sibling thesis: “Energy security accelerates EV and ESS battery demand, boosting Chinese clean-tech” — SIBLING of “Energy security accelerates renewables, EVs and energy storage demand globally”: 27 o
+   sibling thesis: “Power scarcity shifts bargaining power to hyperscalers and infrastructure owners over model labs” — SIBLING of “Power scarcity bifurcates AI market, favoring hyperscalers and infrastr
+   propositions merged: “Fuel cells gain data center share on speed-to-power despite CCGT cost edge” — merged with h2 “Speed-to-power demand drives multi-year cycle for gas generation equipment makers” u
+   sibling thesis: “Transformer shortage drives multi-year demand and pricing for transformer makers” — SIBLING of “AI datacenter power buildout drives multi-year transformer and grid equipment demand”: 
+   sibling thesis: “Skilled-labor shortages constrain data center and power buildout into the 2030s” — SIBLING of “AI datacenter power buildout drives multi-year transformer and grid equipment demand”: 2
+   proposition dropped: “Regulatory reform to accelerate large-load grid connection creates electric wires and generation investment opportunity” — named in completeness part 4's malformed added_hypothes
+   sibling thesis: “China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers” — SIBLING of “China all-of-the-above power buildout drives nuclear, hydro and pumped-storage 
+   sibling thesis: “Gas demand surge drives record midstream capex and strong project returns” — SIBLING of “US gas pipeline underinvestment creates attractive midstream growth capex cycle”: 13 of its 20
+paid-call ledger: 0 records

@@ -1,0 +1,1328 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1 model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-extract-6",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 14125,
+   "max_tokens": 16384,
+   "output_tokens": 14804
+  }
+ },
+ "output": {
+  "article_classification": {
+   "article_class": "publisher_commentary",
+   "basis": "J.P. Morgan Private Bank investment strategy commentary authored by a Global Investment Strategist, offering interpretive market views rather than formal research; article itself states it 'should not be regarded as a research report'.",
+   "basis_block_ids": [
+    "b001",
+    "b002",
+    "b032",
+    "b040",
+    "b041"
+   ]
+  },
+  "attributed_authors": [
+   {
+    "block_id": "b040",
+    "name": "Kriti Gupta",
+    "quote": "Kriti Gupta"
+   }
+  ],
+  "claims": [
+   {
+    "approximate": false,
+    "attributed_source": "publisher_own",
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "assertion",
+    "local_id": "c1",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "The S&P 500 Software Index has fallen into a bear market.",
+    "statement": "The S&P 500 Software Index has fallen into a bear market.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": "b008",
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c2",
+    "measured_as_of": "2026-02-05",
+    "metric": "RSI",
+    "period": null,
+    "qualifiers": [
+     "most oversold since 1990"
+    ],
+    "quote": "With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990.",
+    "scope": "S&P 500 Software Index",
+    "statement": "The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990.",
+    "unit": null,
+    "value": 18,
+    "value_text": "18"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b005",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "opinion",
+    "kind": "assertion",
+    "local_id": "c3",
+    "measured_as_of": null,
+    "metric": "RSI",
+    "period": null,
+    "qualifiers": [
+     "below 30"
+    ],
+    "quote": "Historically, anything below 30 incentivizes inflows. But few are buying.",
+    "scope": "S&P 500 Software Index",
+    "statement": "Historically RSI below 30 incentivizes inflows, but few are buying this time.",
+    "unit": null,
+    "value": 30,
+    "value_text": "30"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": "b008",
+    "attributed_source": "Bloomberg Finance L.P.",
+    "block_id": "b009",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c4",
+    "measured_as_of": "2026-02-05",
+    "metric": "RSI",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The latest reading is 18.",
+    "scope": "S&P 500 Software Index",
+    "statement": "The latest S&P 500 Software Index RSI reading is 18.",
+    "unit": null,
+    "value": 18,
+    "value_text": "18"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b010",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c5",
+    "measured_as_of": null,
+    "metric": "spread to 200-day moving average",
+    "period": null,
+    "qualifiers": [
+     "over",
+     "widest spread since the tail end of the dotcom crash"
+    ],
+    "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average, the widest spread since the tail end of the dotcom crash.",
+    "scope": "iShares Expanded Tech-Software Sector ETF (IGV)",
+    "statement": "IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash.",
+    "unit": "%",
+    "value": 20,
+    "value_text": "over 20%"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b011",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "assertion",
+    "local_id": "c6",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "why are stocks also down that should benefit from the disruption—like the hyperscalers that invested early in AI technology, chipmakers fulfilling demand from the infrastructure build, and even the materials needed for the process—also down?",
+    "statement": "Stocks that should benefit from AI disruption (hyperscalers, chipmakers, materials) are also down.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b011",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c7",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "And therein lies the broken logic. The market is selling indiscriminately.",
+    "statement": "The author argues the market is selling indiscriminately.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b012",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "event",
+    "local_id": "c8",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "Capital expenditure forecasts, as one example, from the likes of Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+    "statement": "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b013",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c9",
+    "measured_as_of": null,
+    "metric": "pairwise correlation percentile",
+    "period": null,
+    "qualifiers": [
+     "after testing thousands of possible combinations"
+    ],
+    "quote": "the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
+    "scope": "top 10 stocks in S&P 500",
+    "statement": "The actual top 10 stocks in the S&P 500 yielded a pairwise correlation in the 99th percentile versus random samples.",
+    "unit": "percentile",
+    "value": 99,
+    "value_text": "99th percentile"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b013",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "risk",
+    "local_id": "c10",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "if the technology and AI narrative falters, a large portion of the S&P 500 could experience a simultaneous drawdown",
+    "statement": "If the tech/AI narrative falters, a large portion of the S&P 500 could experience a simultaneous drawdown.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b014",
+    "chart_derived": false,
+    "comparator": "November 2022",
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c11",
+    "measured_as_of": null,
+    "metric": "EV/sales multiple",
+    "period": "November 2022 comparison",
+    "qualifiers": [
+     "near levels seen in November of 2022"
+    ],
+    "quote": "Take a look at the sector’s enterprise value (EV) to sales ratio: It’s near levels seen in November of 2022, when the world was bracing for recession",
+    "scope": "S&P 500 Software Index",
+    "statement": "The software sector's EV/sales ratio is near levels seen in November 2022.",
+    "unit": "x",
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b014",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c12",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "This valuation collapse could signal a structurally lower growth rate and terminal value for software companies due to AI disruption.",
+    "statement": "The valuation collapse could signal structurally lower growth and terminal value for software companies due to AI disruption.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b014",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c13",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [
+     "conditional on belief"
+    ],
+    "quote": "if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look if you want to find an entry point.",
+    "statement": "If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": true,
+    "as_of_block_id": null,
+    "attributed_source": null,
+    "block_id": "b017",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c14",
+    "measured_as_of": null,
+    "metric": "EV/sales multiple",
+    "period": "as of 2026-02-05",
+    "qualifiers": [
+     "latest reading"
+    ],
+    "quote": "in 2025 reaches about 11.5–11.6x before a sharp decline. The latest reading is 8x.",
+    "scope": "S&P 500 Software Index",
+    "statement": "The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x.",
+    "unit": "x",
+    "value": 8,
+    "value_text": "8x"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b018",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c15",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "The macro thesis of AI stands. It’s going to change the productivity landscape, and the companies that lean into it will be rewarded in the long run.",
+    "statement": "The macro thesis of AI stands; companies that lean into it will be rewarded long term.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b018",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "risk",
+    "local_id": "c16",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "more bouts of volatility are likely as the technology itself continues to leapfrog previous generations, and as long as portfolios remain so skewed to tech.",
+    "statement": "More bouts of volatility are likely while tech leapfrogs and portfolios remain skewed to tech.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b019",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c17",
+    "measured_as_of": null,
+    "metric": "margin expansion outperformance",
+    "period": null,
+    "qualifiers": [
+     "outpaces index and non-adopters"
+    ],
+    "quote": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI by 2–3 percentage points.",
+    "scope": "S&P 500 AI adopters vs index and non-adopters",
+    "statement": "S&P 500 AI adopters posted margin expansion outpacing the index and non-adopters by 2-3 percentage points.",
+    "unit": "percentage points",
+    "value": null,
+    "value_text": "2–3"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": "b022",
+    "attributed_source": "22V, FactSet",
+    "block_id": "b022",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "c18",
+    "measured_as_of": "2026-02-02",
+    "metric": "basket constituent count",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Note: AI Usage basket include 145 companies in the S&P 500.",
+    "scope": "S&P 500 AI Usage basket",
+    "statement": "The AI Usage basket includes 145 companies in the S&P 500.",
+    "unit": "companies",
+    "value": 145,
+    "value_text": "145"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": "b022",
+    "attributed_source": "22V, FactSet",
+    "block_id": "b023",
+    "chart_derived": true,
+    "confidence": "high",
+    "epistemic": "forecast",
+    "kind": "metric",
+    "local_id": "c19",
+    "measured_as_of": "2026-02-02",
+    "metric": "NTM net margin",
+    "period": "NTM at Feb 2026",
+    "qualifiers": [],
+    "quote": "At Feb ’26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "scope": "S&P 500",
+    "statement": "At Feb 2026 NTM net margin for the S&P 500 was 14.5%.",
+    "unit": "%",
+    "value": 14.5,
+    "value_text": "14.5%"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": "b022",
+    "attributed_source": "22V, FactSet",
+    "block_id": "b023",
+    "chart_derived": true,
+    "confidence": "high",
+    "epistemic": "forecast",
+    "kind": "metric",
+    "local_id": "c20",
+    "measured_as_of": "2026-02-02",
+    "metric": "NTM net margin",
+    "period": "NTM at Feb 2026",
+    "qualifiers": [],
+    "quote": "At Feb ’26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "scope": "S&P 500 AI Usage basket",
+    "statement": "At Feb 2026 NTM net margin for the S&P 500 AI Usage basket was 16.4%.",
+    "unit": "%",
+    "value": 16.4,
+    "value_text": "16.4%"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": "b022",
+    "attributed_source": "22V, FactSet",
+    "block_id": "b023",
+    "chart_derived": true,
+    "confidence": "high",
+    "epistemic": "forecast",
+    "kind": "metric",
+    "local_id": "c21",
+    "measured_as_of": "2026-02-02",
+    "metric": "NTM net margin",
+    "period": "NTM at Feb 2026",
+    "qualifiers": [],
+    "quote": "At Feb ’26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "scope": "S&P 500 Ex AI Usage",
+    "statement": "At Feb 2026 NTM net margin for the Ex AI Usage group was 13.0%.",
+    "unit": "%",
+    "value": 13.0,
+    "value_text": "13.0%"
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b024",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "recommendation",
+    "local_id": "c22",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "Keep the focus on the large-cap leaders that are likely to see a strong return on their AI investments, as well as the chipmakers and commodity-related players in the AI supply chain.",
+    "statement": "The author recommends focusing on large-cap leaders, chipmakers and commodity-related players in the AI supply chain.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b024",
+    "chart_derived": false,
+    "confidence": "high",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c23",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "They’ve been swept up in the software sell-off for now, but they are most likely to benefit in the long term.",
+    "statement": "The large-cap leaders, chipmakers and commodity players have been swept up in the software sell-off but are most likely to benefit long term.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b004",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "event",
+    "local_id": "c24",
+    "measured_as_of": null,
+    "metric": null,
+    "period": "Over the last few weeks",
+    "qualifiers": [],
+    "quote": "Anthropic has released several new models and features that have once again shaken up the AI landscape.",
+    "statement": "Anthropic has released new models and features that shook up the AI landscape.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "approximate": false,
+    "as_of_block_id": null,
+    "attributed_source": "publisher_own",
+    "block_id": "b004",
+    "chart_derived": false,
+    "confidence": "medium",
+    "epistemic": "opinion",
+    "kind": "opinion",
+    "local_id": "c25",
+    "measured_as_of": null,
+    "metric": null,
+    "period": null,
+    "qualifiers": [],
+    "quote": "Therefore, one day, software companies could become obsolete.",
+    "statement": "The author notes a view that one day software companies could become obsolete.",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "hypotheses": [
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "S&P 500 Software Index",
+      "role": "market_instrument"
+     },
+     {
+      "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+      "role": "market_instrument"
+     },
+     {
+      "name_as_written": "Claude Code",
+      "role": "disruptor"
+     },
+     {
+      "name_as_written": "DeepSeek",
+      "role": "comparator"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c1",
+      "c2",
+      "c5",
+      "c14"
+     ],
+     "provenance": "source_stated",
+     "text": "The S&P 500 Software Index is in a bear market with RSI at 18 (most oversold since 1990) and EV/sales near 8x, down from ~11.5-11.6x, with IGV over 20% below its 200-day moving average."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c11",
+      "c13",
+      "c14"
+     ],
+     "provenance": "model_inference",
+     "text": "If the AI-disruption fear is overdone, the extreme oversold and valuation readings in software could represent an entry point, but the article does not quantify what growth/terminal-value impairment the price already discounts."
+    },
+    "catalyst": {
+     "claim_ids": [],
+     "provenance": "model_inference",
+     "window_text": null
+    },
+    "cited_baskets": [],
+    "counter_claim_ids": [
+     "c12",
+     "c25"
+    ],
+    "direction": "positive",
+    "disconfirming_observables": [
+     "Continued software underperformance despite RSI below 30",
+     "Evidence of actual SaaS revenue/seat erosion from agentic AI tools",
+     "Further EV/sales compression below 2022 lows"
+    ],
+    "dislocation_claim_ids": [
+     "c2",
+     "c5",
+     "c14"
+    ],
+    "geography": "US",
+    "horizon": "next_2_4_quarters",
+    "kind": "investment_thesis",
+    "local_id": "h1",
+    "lower_priority_if": [
+     "SaaS companies report accelerating revenue erosion from AI tools",
+     "EV/sales keeps compressing on worsening fundamentals"
+    ],
+    "mechanism": "valuation_dislocation",
+    "near_term_view": {
+     "claim_ids": [
+      "c2",
+      "c5",
+      "c14"
+     ],
+     "provenance": "source_stated",
+     "text": "Software is at extreme oversold and depressed valuation levels now, an immediately investigable dislocation."
+    },
+    "next_research_step": "Assess whether agentic AI tools (Claude Code) are materially displacing SaaS revenue/seats, and compare current software EV/sales against estimated growth/terminal-value impairment to judge if the sell-off is overdone.",
+    "opposing_explanations": [
+     {
+      "claim_ids": [
+       "c12",
+       "c25"
+      ],
+      "provenance": "source_stated",
+      "text": "The valuation collapse could instead signal a structurally lower growth rate and terminal value for software companies due to permanent AI disruption, making the sector a value trap."
+     }
+    ],
+    "premise_condition": "if you believe Claude Code is just another DeepSeek moment rather than permanent AI disruption of software",
+    "raise_priority_if": [
+     "Software RSI stays sub-30 while fundamentals (billings, net retention) hold up",
+     "Evidence that agentic AI adoption has not dented SaaS revenue"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b014",
+      "claim_ids": [
+       "c13",
+       "c14"
+      ],
+      "direction": "positive",
+      "name": "software",
+      "quote": "current software valuations are worth a look if you want to find an entry point."
+     }
+    ],
+    "sectors": [
+     "software"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c13"
+     ],
+     "provenance": "source_stated",
+     "text": "The article states that if you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point."
+    },
+    "stance_in_source": "conditional",
+    "strongest_evidence_claim_ids": [
+     "c2",
+     "c5",
+     "c14"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c15",
+      "c16"
+     ],
+     "provenance": "source_stated",
+     "text": "The long-term AI macro thesis stands and companies leaning into AI will be rewarded, but more volatility is likely."
+    },
+    "supporting_claim_ids": [
+     "c1",
+     "c2",
+     "c4",
+     "c5",
+     "c11",
+     "c13",
+     "c14"
+    ],
+    "title": "Indiscriminate software sell-off oversold the whole software sector",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c24",
+       "c25"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "Agentic AI (Anthropic/Claude Code) could let users replace traditional SaaS functions, raising fears of software obsolescence."
+     },
+     {
+      "claim_ids": [
+       "c1",
+       "c2",
+       "c5",
+       "c14"
+      ],
+      "provenance": "source_stated",
+      "step": "market_reaction",
+      "text": "Software index fell into a bear market; RSI 18, EV/sales fell to ~8x, IGV >20% below 200-day MA."
+     },
+     {
+      "claim_ids": [
+       "c12"
+      ],
+      "provenance": "model_inference",
+      "step": "listed_earnings",
+      "text": "For the bear case to hold, software growth rates and terminal value must be structurally lower; otherwise current earnings power is intact and the selling is indiscriminate (model inference on what would need to be true)."
+     }
+    ],
+    "unknowns": [
+     "Whether Claude Code/agentic AI permanently erodes SaaS revenue or is a transient scare",
+     "What degree of growth/terminal-value impairment is already priced into the ~8x EV/sales",
+     "Whether oversold RSI readings reliably precede inflows this cycle (article notes few are buying)"
+    ],
+    "value_chain_node": "software"
+   },
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "Meta",
+      "role": "spending_customer"
+     },
+     {
+      "name_as_written": "Amazon",
+      "role": "spending_customer"
+     },
+     {
+      "name_as_written": "Alphabet",
+      "role": "spending_customer"
+     },
+     {
+      "name_as_written": "Microsoft",
+      "role": "spending_customer"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c6",
+      "c7",
+      "c8"
+     ],
+     "provenance": "source_stated",
+     "text": "Stocks that should benefit from AI (hyperscalers, chipmakers, materials) also fell in the software sell-off, and hyperscaler capex forecasts (Meta, Amazon, Alphabet, Microsoft) were scorned, which the author calls indiscriminate selling."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c23"
+     ],
+     "provenance": "model_inference",
+     "text": "If AI software disruption actually requires physical build-out, the infrastructure names sold off alongside software may be mispriced, but the article does not quantify the capex volumes or earnings impact."
+    },
+    "catalyst": {
+     "claim_ids": [],
+     "provenance": "model_inference",
+     "window_text": null
+    },
+    "cited_baskets": [],
+    "counter_claim_ids": [
+     "c14"
+    ],
+    "direction": "positive",
+    "disconfirming_observables": [
+     "Hyperscaler capex cuts or guidance reductions",
+     "Chip/materials order cancellations",
+     "Continued infrastructure stock declines on weakening demand signals"
+    ],
+    "dislocation_claim_ids": [
+     "c6"
+    ],
+    "geography": "US",
+    "horizon": "longer_term",
+    "kind": "investment_thesis",
+    "local_id": "h2",
+    "lower_priority_if": [
+     "Hyperscalers cut capex forecasts",
+     "Evidence AI build requires far less physical infrastructure"
+    ],
+    "mechanism": "valuation_dislocation",
+    "near_term_view": {
+     "claim_ids": [
+      "c23"
+     ],
+     "provenance": "source_stated",
+     "text": "Infrastructure names have been swept into the sell-off now, but the article frames their benefit as long term."
+    },
+    "next_research_step": "Check whether hyperscaler capex guidance (Meta, Amazon, Alphabet, Microsoft) and chip/materials orders remain intact, and gauge how far AI-infrastructure names fell relative to unchanged demand fundamentals.",
+    "opposing_explanations": [
+     {
+      "claim_ids": [
+       "c14"
+      ],
+      "provenance": "source_stated",
+      "text": "If AI disruption is real but doesn't require much new physical investment (a DeepSeek-style efficiency leap), the infrastructure build thesis weakens."
+     }
+    ],
+    "premise_condition": null,
+    "raise_priority_if": [
+     "Hyperscalers reaffirm or raise capex while their shares stay depressed",
+     "Chip/materials demand signals hold despite the sell-off"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b011",
+      "claim_ids": [
+       "c6"
+      ],
+      "direction": "positive",
+      "name": "the hyperscalers that invested early in AI technology",
+      "quote": "the hyperscalers that invested early in AI technology, chipmakers fulfilling demand from the infrastructure build, and even the materials needed for the process"
+     },
+     {
+      "block_id": "b024",
+      "claim_ids": [
+       "c22"
+      ],
+      "direction": "positive",
+      "name": "chipmakers and commodity-related players in the AI supply chain",
+      "quote": "the chipmakers and commodity-related players in the AI supply chain"
+     }
+    ],
+    "sectors": [
+     "hyperscalers",
+     "chipmakers",
+     "materials in the AI supply chain"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c22",
+      "c23"
+     ],
+     "provenance": "source_stated",
+     "text": "The article advises keeping focus on large-cap leaders with strong AI ROI, plus chipmakers and commodity-related players in the AI supply chain, as most likely to benefit long term."
+    },
+    "stance_in_source": "asserted",
+    "strongest_evidence_claim_ids": [
+     "c7",
+     "c8"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c22",
+      "c23"
+     ],
+     "provenance": "source_stated",
+     "text": "AI build-out requires physical inputs; large-cap leaders, chipmakers and commodity players are most likely to benefit in the long term."
+    },
+    "supporting_claim_ids": [
+     "c6",
+     "c7",
+     "c8",
+     "c22",
+     "c23"
+    ],
+    "title": "Hyperscalers, chipmakers and materials mispriced after being swept into software rout",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c14"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "Agentic AI's rise still requires compute; AI model companies and hyperscalers must invest in semiconductors, electricity, cooling, networking and grid interconnection."
+     },
+     {
+      "claim_ids": [
+       "c8"
+      ],
+      "provenance": "source_stated",
+      "step": "volumes",
+      "text": "Hyperscaler capex drives infrastructure suppliers' volumes; the article cites continued capex forecasts from Meta, Amazon, Alphabet and Microsoft."
+     },
+     {
+      "claim_ids": [
+       "c6",
+       "c7",
+       "c23"
+      ],
+      "provenance": "source_stated",
+      "step": "market_reaction",
+      "text": "Hyperscalers, chipmakers and materials names also sold off, which the author argues is indiscriminate."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "model_inference",
+      "step": "listed_earnings",
+      "text": "The article does not quantify the earnings or revenue benefit to these infrastructure names from AI capex."
+     }
+    ],
+    "unknowns": [
+     "Whether hyperscaler capex actually earns a return",
+     "The magnitude of capex and its earnings impact on chipmakers and materials players (unquantified)",
+     "Whether the sold-off infrastructure names are oversold relative to fundamentals"
+    ],
+    "value_chain_node": "ai_infrastructure"
+   },
+   {
+    "affected_mentions": [
+     {
+      "name_as_written": "S&P 500",
+      "role": "comparator"
+     }
+    ],
+    "bottom_line_fact": {
+     "claim_ids": [
+      "c17",
+      "c18",
+      "c19",
+      "c20",
+      "c21"
+     ],
+     "provenance": "source_stated",
+     "text": "S&P 500 AI adopters have posted margin expansion outpacing the index and non-adopters by 2-3 percentage points; at Feb 2026 NTM net margins were 16.4% for the AI Usage basket (145 companies) vs 14.5% for the S&P 500 and 13.0% for Ex AI Usage."
+    },
+    "bottom_line_inference": {
+     "claim_ids": [
+      "c17",
+      "c20",
+      "c21"
+     ],
+     "provenance": "model_inference",
+     "text": "The margin gap between AI adopters and non-adopters is an association the article presents as evidence AI is already paying off; causation and the durability of the gap are not demonstrated."
+    },
+    "catalyst": {
+     "claim_ids": [],
+     "provenance": "model_inference",
+     "window_text": null
+    },
+    "cited_baskets": [
+     {
+      "claim_ids": [
+       "c18",
+       "c20"
+      ],
+      "description": "S&P 500 AI Usage basket of 145 companies (members not named), tracked for NTM net margins by 22V/FactSet"
+     }
+    ],
+    "counter_claim_ids": [],
+    "direction": "positive",
+    "disconfirming_observables": [
+     "AI Usage basket margin advantage narrowing in future NTM readings",
+     "Adopter margins converging with non-adopters"
+    ],
+    "dislocation_claim_ids": [],
+    "geography": "US",
+    "horizon": "next_2_4_quarters",
+    "kind": "investment_thesis",
+    "local_id": "h3",
+    "lower_priority_if": [
+     "Margin gap narrows",
+     "Evidence the gap is driven by sector composition rather than AI use"
+    ],
+    "mechanism": "margin_expansion_adoption",
+    "near_term_view": {
+     "claim_ids": [
+      "c19",
+      "c20",
+      "c21"
+     ],
+     "provenance": "source_stated",
+     "text": "NTM net margins (forward estimates to Feb 2026) already show the adopter gap."
+    },
+    "next_research_step": "Investigate the composition of the 145-company AI Usage basket and whether its margin advantage reflects AI adoption causally or pre-existing higher margins.",
+    "opposing_explanations": [],
+    "premise_condition": null,
+    "raise_priority_if": [
+     "AI Usage basket margin gap widens in subsequent NTM readings",
+     "Company disclosures attribute margin gains specifically to AI"
+    ],
+    "sector_exposures": [
+     {
+      "block_id": "b019",
+      "claim_ids": [
+       "c17"
+      ],
+      "direction": "positive",
+      "name": "AI adopters in the S&P 500",
+      "quote": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI"
+     }
+    ],
+    "sectors": [
+     "S&P 500 AI adopters"
+    ],
+    "source_implication": {
+     "claim_ids": [
+      "c17"
+     ],
+     "provenance": "source_stated",
+     "text": "The article states corporate AI adopters are already seeing positive margin impact and that revenue/productivity gains will be worth it."
+    },
+    "stance_in_source": "asserted",
+    "strongest_evidence_claim_ids": [
+     "c17",
+     "c20",
+     "c21"
+    ],
+    "structural_view": {
+     "claim_ids": [
+      "c15"
+     ],
+     "provenance": "source_stated",
+     "text": "AI will change the productivity landscape and companies that lean into it will be rewarded long term."
+    },
+    "supporting_claim_ids": [
+     "c17",
+     "c18",
+     "c19",
+     "c20",
+     "c21"
+    ],
+    "title": "AI adopters show measurable margin expansion versus non-adopters",
+    "transmission_chain": [
+     {
+      "claim_ids": [
+       "c17"
+      ],
+      "provenance": "source_stated",
+      "step": "industry_shift",
+      "text": "Companies adopting AI gain productivity."
+     },
+     {
+      "claim_ids": [
+       "c17",
+       "c20",
+       "c21"
+      ],
+      "provenance": "source_stated",
+      "step": "margins",
+      "text": "AI adopters show NTM net margins of 16.4% vs 13.0% for non-adopters, a 2-3pp outperformance."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "model_inference",
+      "step": "listed_earnings",
+      "text": "Higher margins would flow to adopters' earnings, though the article does not isolate the earnings impact beyond margins."
+     }
+    ],
+    "unknowns": [
+     "Whether the margin comparison reflects causation or selection (AI adopters may already be higher-margin firms)",
+     "Whether the margin gap persists or widens",
+     "Which specific companies compose the 145-name AI Usage basket (not disclosed)"
+    ],
+    "value_chain_node": "ai_adoption.enterprise_margins"
+   }
+  ],
+  "market_risks": [
+   {
+    "claim_ids": [
+     "c9",
+     "c10"
+    ],
+    "related_hypothesis_ids": [
+     "h1",
+     "h2"
+    ],
+    "scope_qualification": "S&P 500 concentration / top-10 pairwise correlation; based on the publisher's own analysis testing random 10-stock samples; contrasts with past more sector-diversified leadership.",
+    "statement": "Because tech dominates the S&P 500 and its top companies (most with AI-linked revenue), the actual top 10 stocks have pairwise correlation in the 99th percentile, so if the tech/AI narrative falters a large portion of the index could draw down simultaneously."
+   },
+   {
+    "claim_ids": [
+     "c16"
+    ],
+    "related_hypothesis_ids": [
+     "h1",
+     "h2"
+    ],
+    "scope_qualification": "Author's forward-looking opinion on tech-concentrated portfolios; not quantified.",
+    "statement": "More bouts of volatility are likely as AI technology continues to leapfrog previous generations and as long as portfolios remain heavily skewed to tech."
+   },
+   {
+    "claim_ids": [
+     "c12"
+    ],
+    "related_hypothesis_ids": [
+     "h1"
+    ],
+    "scope_qualification": "Applies to the software sector; framed as an alternative interpretation of the EV/sales decline, conditional on AI permanently disrupting software.",
+    "statement": "The software valuation collapse could signal a structurally lower growth rate and terminal value for software companies due to AI disruption, rather than an overdone sell-off."
+   }
+  ],
+  "mentions": [
+   {
+    "block_id": "b004",
+    "claim_ids": [
+     "c24"
+    ],
+    "direction": "neutral",
+    "entity_type": "private_company",
+    "issuer_name_hint": "Anthropic PBC",
+    "name_as_written": "Anthropic",
+    "quote": "Anthropic has released several new models and features",
+    "recommendation_status": "not_a_recommendation",
+    "role": "disruptor",
+    "role_detail": "AI model developer whose new models/features (Claude Code) drive the software disruption narrative",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b005",
+    "claim_ids": [
+     "c1",
+     "c2",
+     "c4",
+     "c11",
+     "c14"
+    ],
+    "direction": "negative",
+    "entity_type": "index",
+    "issuer_name_hint": null,
+    "name_as_written": "S&P 500 Software Index",
+    "quote": "The S&P 500 Software Index has fallen into a bear market.",
+    "recommendation_status": "not_a_recommendation",
+    "role": "market_instrument",
+    "role_detail": "Index whose bear market, RSI and EV/sales valuation are the article's core evidence",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b008",
+    "claim_ids": [
+     "c2",
+     "c4"
+    ],
+    "direction": "neutral",
+    "entity_type": "data_provider",
+    "issuer_name_hint": "Bloomberg Finance L.P.",
+    "name_as_written": "Bloomberg Finance L.P.",
+    "quote": "Source: Bloomberg Finance L.P. Data as of February 5, 2026.",
+    "recommendation_status": "not_a_recommendation",
+    "role": "data_source",
+    "role_detail": "Source for the S&P 500 Software Index RSI data",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b010",
+    "claim_ids": [
+     "c5"
+    ],
+    "direction": "negative",
+    "entity_type": "etf_or_fund",
+    "issuer_name_hint": "iShares Trust - iShares Expanded Tech-Software Sector ETF",
+    "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+    "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+    "recommendation_status": "not_a_recommendation",
+    "role": "market_instrument",
+    "role_detail": "Software ETF cited as trading over 20% below its 200-day moving average",
+    "ticker_hint": "IGV"
+   },
+   {
+    "block_id": "b012",
+    "claim_ids": [
+     "c8"
+    ],
+    "direction": "unclear",
+    "entity_type": "company",
+    "issuer_name_hint": "Meta Platforms, Inc.",
+    "name_as_written": "Meta",
+    "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+    "recommendation_status": "not_a_recommendation",
+    "role": "spending_customer",
+    "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off",
+    "ticker_hint": "META"
+   },
+   {
+    "block_id": "b012",
+    "claim_ids": [
+     "c8"
+    ],
+    "direction": "unclear",
+    "entity_type": "company",
+    "issuer_name_hint": "Amazon.com, Inc.",
+    "name_as_written": "Amazon",
+    "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+    "recommendation_status": "not_a_recommendation",
+    "role": "spending_customer",
+    "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off",
+    "ticker_hint": "AMZN"
+   },
+   {
+    "block_id": "b012",
+    "claim_ids": [
+     "c8"
+    ],
+    "direction": "unclear",
+    "entity_type": "company",
+    "issuer_name_hint": "Alphabet Inc.",
+    "name_as_written": "Alphabet",
+    "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+    "recommendation_status": "not_a_recommendation",
+    "role": "spending_customer",
+    "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off",
+    "ticker_hint": "GOOGL"
+   },
+   {
+    "block_id": "b012",
+    "claim_ids": [
+     "c8"
+    ],
+    "direction": "unclear",
+    "entity_type": "company",
+    "issuer_name_hint": "Microsoft Corporation",
+    "name_as_written": "Microsoft",
+    "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+    "recommendation_status": "not_a_recommendation",
+    "role": "spending_customer",
+    "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "block_id": "b013",
+    "claim_ids": [
+     "c9",
+     "c10",
+     "c19"
+    ],
+    "direction": "neutral",
+    "entity_type": "index",
+    "issuer_name_hint": null,
+    "name_as_written": "S&P 500",
+    "quote": "Tech’s heavy presence in the S&P 500",
+    "recommendation_status": "not_a_recommendation",
+    "role": "market_instrument",
+    "role_detail": "Index whose concentration and top-10 pairwise correlation is the market-structure risk argument",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b022",
+    "claim_ids": [
+     "c18",
+     "c19",
+     "c20",
+     "c21"
+    ],
+    "direction": "neutral",
+    "entity_type": "data_provider",
+    "issuer_name_hint": "22V Research",
+    "name_as_written": "22V",
+    "quote": "Sources: 22V, FactSet.",
+    "recommendation_status": "not_a_recommendation",
+    "role": "data_source",
+    "role_detail": "Source for the NTM net margins / AI Usage basket data",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b022",
+    "claim_ids": [
+     "c18",
+     "c19",
+     "c20",
+     "c21"
+    ],
+    "direction": "neutral",
+    "entity_type": "data_provider",
+    "issuer_name_hint": "FactSet Research Systems Inc.",
+    "name_as_written": "FactSet",
+    "quote": "Sources: 22V, FactSet.",
+    "recommendation_status": "not_a_recommendation",
+    "role": "data_source",
+    "role_detail": "Source for the NTM net margins / AI Usage basket data",
+    "ticker_hint": "FDS"
+   },
+   {
+    "block_id": "b014",
+    "claim_ids": [
+     "c13"
+    ],
+    "direction": "neutral",
+    "entity_type": "product",
+    "issuer_name_hint": "Anthropic PBC",
+    "name_as_written": "Claude Code",
+    "quote": "if you believe Claude Code is just another DeepSeek moment",
+    "recommendation_status": "not_a_recommendation",
+    "role": "disruptor",
+    "role_detail": "Anthropic product cited as the disruptive catalyst for the software sell-off",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b003",
+    "claim_ids": [
+     "c13"
+    ],
+    "direction": "neutral",
+    "entity_type": "private_company",
+    "issuer_name_hint": "DeepSeek",
+    "name_as_written": "DeepSeek",
+    "quote": "Unlike the DeepSeek episode",
+    "recommendation_status": "not_a_recommendation",
+    "role": "comparator",
+    "role_detail": "Prior AI episode used as a comparison for the current software repricing",
+    "ticker_hint": null
+   },
+   {
+    "block_id": "b034",
+    "claim_ids": [],
+    "direction": "neutral",
+    "entity_type": "publisher",
+    "issuer_name_hint": "JPMorgan Chase & Co.",
+    "name_as_written": "J.P. Morgan Private Bank",
+    "quote": "Legal Disclaimer for J.P. Morgan Private Bank",
+    "recommendation_status": "not_a_recommendation",
+    "role": "publisher",
+    "role_detail": "Publisher of the commentary",
+    "ticker_hint": "JPM"
+   }
+  ]
+ }
+}

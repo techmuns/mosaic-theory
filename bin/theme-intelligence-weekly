@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# THEME INTELLIGENCE — the weekly scan on a laptop or server (the equivalent of
+# .github/workflows/theme-intelligence-weekly.yml where Actions is not used).
+#
+#   bin/theme-intelligence-weekly                 # 10-day window ending today, 25-article cap
+#   DAYS=7 MAX_ARTICLES=40 bin/theme-intelligence-weekly
+#
+# It runs the SAME pipeline as `python -m vinci.theme_intelligence scan`. The registry of record is
+# data/theme_intelligence/registry.db (git-ignored WAL SQLite, append-only history tables); a dated
+# backup is taken BEFORE every run, so a bad run can always be rolled back by hand.
+#
+# Exit status: 0 SUCCEEDED · 2 PARTIAL (the readout names the source / article that failed) ·
+# 1 FAILED or QA did not pass. A failed run still writes its run record and readout — it is never
+# reported as a quiet week. This script installs nothing: schedule it yourself with cron or
+# launchd (templates in docs/theme_intelligence.md).
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+PY="${PY:-.venv/bin/python}"
+DAYS="${DAYS:-10}"
+MAX_ARTICLES="${MAX_ARTICLES:-25}"
+LOG="data/theme_intelligence/weekly.log"
+mkdir -p data/theme_intelligence
+
+stamp() { date -u +"%Y-%m-%dT%H:%M:%SZ"; }
+echo "$(stamp) start days=$DAYS max_articles=$MAX_ARTICLES" >> "$LOG"
+
+"$PY" -m vinci.theme_intelligence backup >> "$LOG" 2>&1
+
+set +e
+"$PY" -m vinci.theme_intelligence scan --days "$DAYS" --max-articles "$MAX_ARTICLES" 2>&1 \
+  | tee -a "$LOG"
+code=${PIPESTATUS[0]}
+"$PY" -m vinci.theme_intelligence qa --run latest 2>&1 | tee -a "$LOG"
+qa=${PIPESTATUS[0]}
+set -e
+
+if [ "$qa" -ne 0 ] && [ "$code" -eq 0 ]; then
+  code=1
+fi
+echo "$(stamp) end scan_exit=$code qa_exit=$qa" >> "$LOG"
+exit "$code"

@@ -1,0 +1,102 @@
+[
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-10-11T10:16:44.320499Z",
+  "detail": "'J.P. Morgan Private Bank' does not occur in the article text \u2014 dropped (no unnamed entity may be source-mentioned)",
+  "issue_id": "VI-065d6cf7296276",
+  "ref_id": "J.P. Morgan Private Bank",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "mention",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-11T10:16:44.320691Z",
+  "detail": "h1 Low stock correlation makes sector and thematic se cites ['C-f3b6838cb01018'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-1aa5532450cdd9",
+  "ref_id": "h1 Low stock correlation makes sector and thematic se",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-11T10:16:44.477864Z",
+  "detail": "s07.2 prints '2026', which none of its cited claims carry: 'Benchmark gains are concentrated in a handful of heavyweight technology companies while breadth is n'",
+  "issue_id": "VI-539a601c2d805a",
+  "ref_id": "TH-4BC577D53A:s07.2",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:16:44.478222Z",
+  "detail": "s06.0: The phrase 'conditions the article presents as present-tense and actionable for portfolio construction now' is an editorial characterization not found in the cited measured-observation spans. The underlying figures (11.2 'currently', ~43%, 10-15) are supported, but the actionability framing is not anchored. | 'Currently implied correlation is in the 10-15 range and breadth is at ~43%, conditions the article p'",
+  "issue_id": "VI-82064f6afce674",
+  "ref_id": "TH-4BC577D53A:s06.0",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:16:44.482439Z",
+  "detail": "s03.3: Cited span says both price and P/E begin to decline after the moratorium, but does not state P/E 'compressed' specifically; close but the P/E compression framing adds slightly. Still, the decline of P/E after moratoriums is supported by C-c79c88e88540c5. | 'S&P 500 Utilities fell from above 10% to around -10% price return since May, with P/E compressing af'",
+  "issue_id": "VI-84e760e7a81b72",
+  "ref_id": "TH-30F6348B8B:s03.3",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_METADATA_DISCREPANCY",
+  "created_at": "2026-10-11T10:16:44.321382Z",
+  "detail": "author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also credited on the page: Nick Roberts (by schema.org/Person microdata)",
+  "issue_id": "VI-9bc49fa0208462",
+  "ref_id": "A-46796449712e",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:16:44.478230Z",
+  "detail": "s07.2: The ~43% breadth and down-from-75% are supported. 'Benchmark gains are concentrated in a handful of heavyweight technology companies' is not in the cited spans \u2014 C-651d24fcd2c927 only states 'seven straight quarters of corporate earnings growth', which does not support concentration in tech heavyweights. The concentration claim is unsupported by cited spans and not clearly in the pool. | 'Benchmark gains are concentrated in a handful of heavyweight technology companies while breadth is n'",
+  "issue_id": "VI-bcd9750c841581",
+  "ref_id": "TH-4BC577D53A:s07.2",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:16:44.478215Z",
+  "detail": "s01.0: The sentence states the long-run average of the correlation index is 41 (from C-2a5ee12b031485: 'well below the long run average of 41'), which is supported. The 11.2, ~43%, and 75% figures are all supported. However, the cited figure label marks 11.2 as approximate when the span gives it as exact (11.2, approximate=False) \u2014 a minor mismatch in the figure labels, but the stated values themselves match. All claim values are present in cited spans. | 'The Cboe 3-month implied correlation index sits at 11.2 versus a long-run average of 41, and only ~4'",
+  "issue_id": "VI-bd6dab911b0d69",
+  "ref_id": "TH-4BC577D53A:s01.0",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-11T10:16:44.478226Z",
+  "detail": "s07.0: Only C-f3b6838cb01018 (correlation 10-15) is cited. The claims 'It is not unusual to see wide dispersion', 'could normalize back toward the ~40 average', and 'as it has after past brief spikes' are not in the cited span. These normalization/past-spike claims are not supported by any pool span either (the ~40 average is in C-0e01fcdfe7d3c0 but the normalization dynamic and past spikes are absent). | 'It is not unusual to see wide dispersion between stocks and sectors; low correlation could normalize'",
+  "issue_id": "VI-f22fc62a49b011",
+  "ref_id": "TH-4BC577D53A:s07.0",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-11T10:16:44.482434Z",
+  "detail": "s03.1: UNSUPPORTED \u2014 Cited span only says state governments placed moratoriums weighing on the sector; it does not say rising reliance raised electricity prices for consumers, nor mention political backlash as cause. Labelled MEASURED OBSERVATION but asserts an unsupported causal chain. | 'Rising reliance on utilities raised electricity prices for consumers, triggering political backlash '",
+  "issue_id": "VI-f7e49b3a30d4b4",
+  "ref_id": "TH-30F6348B8B:s03.1",
+  "run_id": "R-20261011T101644Z-article",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ }
+]

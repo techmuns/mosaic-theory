@@ -1,0 +1,36 @@
+$ --data-dir data/theme_intelligence/v2/glyph-paid ingest-file --path data/theme_intelligence/v2/public_reports/Citi Overcoming Gridlock 2.0.pdf --source citi_must_c --llm-permitted --as-of 2026-10-11
+run R-20261012T045041Z-ingest: ingest SUCCEEDED — Citi Overcoming Gridlock 2.0.pdf
+  D-c6f361d4d57a6196  HELD       article —  COST: estimated $6–$31 (list price): up to 14 completeness part(s) for 403 stated figure(s) and 287 argument paragraph(s) — above the per-document limit $30; nothing was sent to the model. Analyse it deliberately: ingest-file --release D-c6
+      flagged: page 1: carries graphics (1 image(s), 16 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 4: carries graphics (1 image(s), 3 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 5: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 7: carries graphics (0 image(s), 156 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 8: carries graphics (0 image(s), 163 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 9: carries graphics (2 image(s), 5 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      … 40 more flagged item(s) on the document record
+cost $0.0 · outputs: data/theme_intelligence/v2/glyph-paid/runs/R-20261012T045041Z-ingest
+exit=0
+$ --data-dir data/theme_intelligence/v2/glyph-paid ingest-file --release D-c6f361d4d57a6196 --max-cost 31 --llm-permitted --as-of 2026-10-11
+run R-20261012T045936Z-ingest: ingest SUCCEEDED — c6f361d4d57a61964ee0a6941fb7c3f18a5f3cc43107e8ed09989a4350b31f72.pdf
+  D-c6f361d4d57a6196  HELD       article —  COST: estimated $6–$31 (list price): up to 14 completeness part(s) for 403 stated figure(s) and 287 argument paragraph(s) — above the per-document limit $31; nothing was sent to the model. Analyse it deliberately: ingest-file --release D-c6
+      flagged: page 1: carries graphics (1 image(s), 16 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 4: carries graphics (1 image(s), 3 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 5: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 7: carries graphics (0 image(s), 156 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 8: carries graphics (0 image(s), 163 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 9: carries graphics (2 image(s), 5 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      … 40 more flagged item(s) on the document record
+cost $0.0 · outputs: data/theme_intelligence/v2/glyph-paid/runs/R-20261012T045936Z-ingest
+exit=0
+$ --data-dir data/theme_intelligence/v2/glyph-paid ingest-file --release D-c6f361d4d57a6196 --max-cost 32 --llm-permitted --as-of 2026-10-11
+run R-20261012T050655Z-ingest: ingest SUCCEEDED — c6f361d4d57a61964ee0a6941fb7c3f18a5f3cc43107e8ed09989a4350b31f72.pdf
+  D-c6f361d4d57a6196  INGESTED   article A-82a8a9210bae  no article of this publisher resembles it; pipeline PARTIAL_PROCESSED
+      flagged: page 1: carries graphics (1 image(s), 16 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 4: carries graphics (1 image(s), 3 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 5: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 7: carries graphics (0 image(s), 156 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 8: carries graphics (0 image(s), 163 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 9: carries graphics (2 image(s), 5 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      … 40 more flagged item(s) on the document record
+cost $11.7015 · outputs: data/theme_intelligence/v2/glyph-paid/runs/R-20261012T050655Z-ingest
+exit=0

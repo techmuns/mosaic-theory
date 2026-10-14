@@ -14,6 +14,10 @@
           t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", t);
+        /* the menu rail: collapsed when the reader last left it collapsed (app.js toggles it) */
+        if (localStorage.getItem("nv-nav") === "collapsed") {
+          document.documentElement.setAttribute("data-nav", "collapsed");
+        }
       } catch (e) {}
     })();
   </script>

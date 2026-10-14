@@ -1,0 +1,49 @@
+== final-a A-82a8a9210bae: 16 theses, 120 pairs examined
+  SAME node+mechanism: ai_infrastructure.power_grid|demand_volume_shift geo=US
+     TH-110E3113B1 WATCH  Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+     TH-426034EB2D SKIP   Nuclear and SMR interest rising as supportive policy and power demand grow
+  SAME node+mechanism: ai_infrastructure.power_grid|demand_volume_shift geo=US
+     TH-110E3113B1 WATCH  Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+     TH-D803766B8B SKIP   Australia develops behind-the-meter gas power market for data centers
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-1F366737A1 WATCH  AI datacenter power buildout drives multi-year transformer and grid equipment demand
+     TH-5BA11D6167 SKIP   Energy infrastructure is a multi-year structural growth story across four pillars
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-1F366737A1 WATCH  AI datacenter power buildout drives multi-year transformer and grid equipment demand
+     TH-8178B565CB SKIP   China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-1F366737A1 WATCH  AI datacenter power buildout drives multi-year transformer and grid equipment demand
+     TH-C0F7401B12 SKIP   US gas pipeline underinvestment creates attractive midstream growth capex cycle
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-1F366737A1 WATCH  AI datacenter power buildout drives multi-year transformer and grid equipment demand
+     TH-C840A76413 SKIP   European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal
+  SAME node+mechanism: ai_infrastructure.power_grid|demand_volume_shift geo=Global
+     TH-426034EB2D SKIP   Nuclear and SMR interest rising as supportive policy and power demand grow
+     TH-D803766B8B SKIP   Australia develops behind-the-meter gas power market for data centers
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-5BA11D6167 SKIP   Energy infrastructure is a multi-year structural growth story across four pillars
+     TH-8178B565CB SKIP   China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-5BA11D6167 SKIP   Energy infrastructure is a multi-year structural growth story across four pillars
+     TH-C0F7401B12 SKIP   US gas pipeline underinvestment creates attractive midstream growth capex cycle
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=Global
+     TH-5BA11D6167 SKIP   Energy infrastructure is a multi-year structural growth story across four pillars
+     TH-C840A76413 SKIP   European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=China
+     TH-8178B565CB SKIP   China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand
+     TH-C0F7401B12 SKIP   US gas pipeline underinvestment creates attractive midstream growth capex cycle
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=China
+     TH-8178B565CB SKIP   China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand
+     TH-C840A76413 SKIP   European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal
+  SAME node+mechanism: ai_infrastructure.power_grid|capex_spending_cycle geo=US
+     TH-C0F7401B12 SKIP   US gas pipeline underinvestment creates attractive midstream growth capex cycle
+     TH-C840A76413 SKIP   European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal
+  13 candidate pair(s)
+== final2-c A-446cf596aeca: 14 theses, 91 pairs examined
+  SAME node+mechanism: macro_market|valuation_rerating geo=Brazil
+     TH-3A53B04C0B WATCH  Brazil equities geared to USD turn and post-election fiscal credibility
+     TH-9E1F31CAD0 WATCH  LatAm equities positioned for re-rating as macro backdrop and flows improve
+  SAME node+mechanism: macro_market|demand_volume_shift geo=Latin America
+     TH-7F5295AC45 WATCH  Weak dollar and strong commodities set up Latin American growth acceleration
+     TH-BD4B215CA8 WATCH  LatAm Hummingbird economies offer structural, commodity-independent convergence story
+  2 candidate pair(s)

@@ -299,6 +299,201 @@ PR (CLAUDE.md: coin-time translation).
   refuses to assemble (`vinci/dossier/assemble.py` `_finalist`); with one, the page says so in its
   main body. `log-verdict <screen candidate id>` refuses either way for a name followed under
   another book (`vinci/cli.py` `_screen_id_book_conflict`) — log it by ticker.
+- **Living Thesis Card** — theme intelligence's nine-section research card
+  (`vinci/theme_intelligence/`). Plain words: *a versioned, source-cited summary of one investable
+  idea that publisher articles support, and whether an analyst should look at it now* — RESEARCH
+  NOW / WATCH / SKIP is a call on ANALYST ATTENTION, never a buy. Not the operator-typed house theme
+  card (`vinci/themes/thesis.py`) and not on the decision path. Guide: `docs/theme_intelligence.md`.
+- **Market-regime record** (theme intelligence, `ThesisKind.MARKET_REGIME`) — plain words: *a card
+  for a market-STRUCTURE condition an article measures (breadth, correlation, dispersion) and the
+  research opportunity it draws — e.g. "pick sectors, not the index" — that names no stock and
+  argues no earnings mechanism*. A market-structure RISK stays a market risk, never a record.
+- **Completeness ledger / pass 1b** (theme intelligence, `completeness.py`) — plain words: *every
+  figure and argument paragraph the article's TEXT contains, listed before the model is consulted,
+  then a second model read that must account for each gap (add it, or call it immaterial with a
+  reason)*. An unaccounted figure is an open issue, never a silent drop.
+- **Re-anchoring** (theme intelligence) — plain words: *before a card line is withheld for citing
+  the wrong passage, point it at the passage that does carry it and check again*; never turns the
+  tool's own inference into the source's word.
+- **Compact extraction / completeness in parts** (theme intelligence, `EXTRACTION_COMPACT`,
+  `COMPLETENESS_IN_PARTS`) — plain words: *how an article too long for one model answer is still
+  read in full: a shorter, declared extraction, then the gap review split into parts of at most 50
+  gaps, each shown what the earlier parts added*. A part that still overruns is split once, then
+  fails loud.
+- **Segment** (theme intelligence, `taxonomy.toml` `[[segment]]`) — plain words: *the part of a
+  value-chain node the evidence is about (DRAM / HBM vs NAND / SSD), read from verbatim quotes and
+  made part of thesis identity*, so evidence about one segment never confirms another.
+- **Evidence role** (theme intelligence, `EvidenceRole`) — plain words: *how one thesis's evidence
+  bears on another*: DIRECT_CONFIRMATION (the same claim — may strengthen it), ADJACENT_SUPPORT
+  (related, same direction — context only), CONTRADICTION (the same claim, opposite outcome — the
+  only thing that weakens), REPEATED_SOURCE (the same origin again — attribution only), RELATED
+  (opposite direction, not the same claim — never counter-evidence).
+- **Near-term fundamental inflection / F12** (theme intelligence, `priority.py`) — plain words:
+  *the second road to RESEARCH NOW: a credible, source-explained change in a fundamental within
+  2-4 quarters, plus the question "is it already in estimates?"* — never a forecast alone.
+- **Source health** (theme intelligence, `health.py`, `sources --check-health`) — plain words: *is
+  each publisher channel still being read — access, discovery, a few real articles and their
+  dates — checked cheaply and kept as history*: HEALTHY / DEGRADED / BLOCKED / ERROR / UNKNOWN,
+  with content freshness (FRESH / QUIET) kept apart; a third status beside a scan's execution and
+  its research verification.
+- **Research-verification status** (theme intelligence, `report.research_verification`) — plain
+  words: *how much of what a run read is accounted for*, shown apart from whether the run
+  executed; a completed scan with open gaps reads INCOMPLETE, never verified.
+- **Claim-level contradiction** (theme intelligence, `contradiction.py`) — plain words: *two theses
+  contradict only when a pair of their claims measures the same product, variable, period and
+  place and points opposite ways*; HBM up beside conventional DRAM down is compatible, and an
+  unclear pairing is held for review (CONTRADICTION_REVIEW), never applied.
+- **Manual document / ingest-file** (theme intelligence, `documents.py`, `ingest.py`) — plain
+  words: *a report the operator supplies, entering the same pipeline as a fetched article*;
+  identified before any model call as DUPLICATE, UPGRADED (a fuller version of the same article),
+  REVIEW (a human decides) or new; HELD until its licence allows third-party LLM processing.
+- **Same-article continuity** (theme intelligence, `engine._same_article_thesis`) — plain words:
+  *a later, fuller version of an article updates the thesis its earlier version created*, even when
+  it names more segments — never a twin thesis from one article.
+- **Linked report** (theme intelligence, `ParsedDocument.linked_reports`, sources.toml
+  `linked_reports`) — plain words: *the fuller report a page says it summarises and links to*:
+  fetched as a fuller version where the channel's policy is "fetch", otherwise listed for upload.
+- **Research intake** (theme intelligence, `report.research_intake`) — plain words: *what reached
+  the registry this week and by which route, and what needs a human*: ingestion coverage, a fourth
+  status beside execution, research verification and source health.
+- **State pull / push** (theme intelligence, `state.py`) — plain words: *carry the one registry
+  between the operator's machine and the state branch*; push is fast-forward only, pull replays
+  local documents the branch lacks.
+- **Manual-first channel** (theme intelligence, sources.toml `mode = "manual_first"`) — plain
+  words: *a publisher whose research arrives as uploads; its automated access is only
+  health-checked, never retried for full text*.
+- **Retired source** (theme intelligence, sources.toml `[[retired]]`) — plain words: *a removed
+  publisher kept as history: nothing new is read, checked, requested or accepted from it*.
+- **Spend guard / call bound** (theme intelligence, `budget.py`) — plain words: *the worst-case
+  cost of one model call, computed from its size before it is sent, refused if it does not fit
+  the run / document / retry limit left*.
+- **Identity before ticker** (theme intelligence, `securities.identity_conflict`) — plain words:
+  *a company is matched to a registrant only if the source's description fits the issuer's SEC
+  industry; otherwise it stays unresolved*.
+- **Restated figure** (theme intelligence, `completeness.states_figure`) — plain words: *a number
+  repeated in a caption, table or summary, counted as captured where the prose states it*.
+- **Version dates** (theme intelligence, `ArticleVersion.document_date`, `SourceRef.version_dates`)
+  — plain words: *each version of an article keeps the date its own document states and where
+  it was read*.
+- **Glyph quarantine / unreadable glyphs** (theme intelligence, `documents._quarantine`,
+  `parse.unreadable_glyphs`, `DocumentRecord.quarantined`) — plain words: *PDF text that came out
+  as `(cid:N)` codes because its font has no character map is left out before anything reads it,
+  recorded per page, and the page is flagged for a human to look at (no OCR)*.
+- **Re-read** (theme intelligence, `ingest-file --reread`, `verify.same_sentence_reread`) — plain
+  words: *the same file analysed again because today's reader reads it differently: a new version
+  of the same article, nothing earlier rewritten, and a sentence read again is repeated evidence,
+  never new*.
+- **Mechanism coverage** (theme intelligence, `coverage.py`, `MechanismCoverage`) — plain words:
+  *after an analysis, a check that every argument the model proposed ended on a card (or was
+  merged / dropped, said why) and that verified facts no card carries are flagged by page*.
+- **Salvage / re-ask a part** (theme intelligence, `extract.salvage_fields`, `reask-part`) — plain
+  words: *a model answer with one broken field keeps its other fields; paying again for only the
+  one review chunk whose answer broke, never the whole document*.
+- **Sibling thesis** (theme intelligence, `SAME_ARTICLE_SIBLING`) — plain words: *a new thesis a
+  re-read created that repeats at least half the sentences of a thesis the earlier reading
+  created but differs on direction, geography, kind of mechanism, segment, product or horizon —
+  kept separate, held for review, flagged for a human*.
+- **Same-article match** (theme intelligence, `SAME_ARTICLE_MATCH`) — plain words: *a re-read's
+  story that repeats at least half of an earlier thesis's sentences and agrees on everything but
+  a label updates that thesis instead of creating a second one*.
+- **Re-verified thesis** (theme intelligence, `engine._reverify`) — plain words: *an earlier
+  thesis whose sentences a re-read repeats but no new story claimed: kept, its evidence marked
+  repeated, and re-scored under today's rules*.
+- **Product-qualified identity** (theme intelligence, `|prod:`, `PRODUCT_SPLIT`) — plain words:
+  *two stories on one identity key about different technologies (fuel cells vs gas turbines),
+  sharing no evidence, are two theses*.
+- **Mechanism family** (theme intelligence, `taxonomy.toml` `family`) — plain words: *the kind of
+  economics a mechanism label belongs to (volume, price / cost, competition, valuation, policy,
+  market structure); two labels in one family are the same kind of claim*.
+- **One causal chain** (theme intelligence, `engine._identity_differences`,
+  `SAME_EVIDENCE_SHARE`) — plain words: *two readings of one article that rest on the same
+  evidence are one thesis even when they name different kinds of mechanism (share gain, demand
+  volume); only evidence of their own makes them a second claim to judge*.
+- **Key correction / subject segment** (theme intelligence, `engine.subject_segment`,
+  `KEY_CORRECTED`) — plain words: *a thesis's segment is what its statement, product or evidence
+  is about, never a passing mention; a key an older rule got wrong is fixed when a re-read reaches
+  the thesis — same id, history kept*.
+- **Not a research opportunity** (theme intelligence, weekly page) — plain words: *a proposition
+  with no verified material evidence (SKIP-1), listed apart from the opportunities with why*.
+- **Source-stated risk** (theme intelligence, `coverage.scan_source_risks`,
+  `SOURCE_RISK_OMITTED`) — plain words: *a downside the report states in its own words that no
+  model pass listed, put verbatim on the cards whose evidence sits in the same paragraph*.
+- **Back matter** (theme intelligence, `documents.classify_unread`) — plain words: *unreadable
+  trailing pages the readable document itself shows are fine-print disclosures (after the last
+  section its contents list names), so the analysis text counts as complete for the research
+  action while the document stays partial*.
+- **Deletion-only repair** (theme intelligence, `extract.repair_list_text`, `ANSWER_SALVAGED`) —
+  plain words: *a list the model wrote as broken JSON text is mended only by DELETING a stray
+  brace or an unkeyed value, never by inserting anything; a hypothesis still unreadable is named
+  lost and leaves the article INCOMPLETE*.
+- **Straddling window** (theme intelligence, `timewindow.straddles`) — plain words: *a forecast
+  window that runs past the next four quarters with most of it inside them (next year's
+  full-year figure read in October): not near-term evidence, and not longer-term only either*.
+- **Bare label** (theme intelligence, `verify.bare_label`, `SECTOR_LABEL_ONLY`) — plain words: *a
+  page line that says nothing but a sector's name (a category tag); it names a sector without
+  saying it is exposed, so it never anchors an exposure*.
+- **Reassess** (theme intelligence, `Engine.reassess`, `reassess` CLI) — plain words: *re-grade a
+  stored thesis under the current rules from its stored evidence — no article read, no model
+  call; a changed action is a new version*.
+- **Retrieval correction** (theme intelligence, `RETRIEVAL_CORRECTED`) — plain words: *a stored
+  version recorded FULL that the current reader finds is a preview is read as PARTIAL from then
+  on; its row, first-seen date and spend are never edited*.
+- **Analyst correction** (theme intelligence, `SentenceCorrection`, `reassess --corrections`,
+  `ANALYST_CORRECTION`) — plain words: *the operator's replacement text for ONE card line, citing
+  verified claims the thesis already links and passing the card's number check — or refused
+  whole; its label is derived from those claims, and the reason shows on the line*.
+- **Price context** (theme intelligence, `WhatCouldGoWrong.price_context`,
+  `cards.refile_price_moves`) — plain words: *a share-price or index performance line the source
+  states; market context, never counted as evidence for or against an earnings thesis*.
+- **Named-index exclusion** (theme intelligence, `verify.without_named_indices`) — plain words:
+  *the number inside a named index or period label ("S&P 500", "Q3", "1H27") is part of a name,
+  not a figure the line asserts; every other number is still checked against its cited claims*.
+- **Business group** (theme intelligence, `cards.NamedGroup`, `named_groups`) — plain words: *a
+  group of businesses the source names ("GPU and ASIC manufacturers", "suppliers"), read verbatim
+  from paragraphs holding the thesis's verified evidence; never a company, never an exposure, no
+  ticker implied, and the research action never reads it*.
+- **Resolved finding** (theme intelligence, `report._resolved_by_relabel`, `finding_scope`) — plain
+  words: *a card review finding about a fact label ALONE that the line no longer carries (the
+  re-grade relabelled it SOURCE OPINION); shown on the line as history, never counted as open. A
+  finding that also objects to content (mixed), or cannot be read as label-only (ambiguous),
+  stays open*.
+- **Historical figure** (theme intelligence, `superseded_items_plain`, `verify.number_passes`) —
+  plain words: *an open figure whose claim failed a number check that today's check passes; the
+  stored failure stands and the figure is still not evidence, but it is history, not an open gap*.
+- **Research desk** (theme intelligence, `desk.py`, `write_desk`) — plain words: *the analyst's
+  weekly product written beside a run's outputs — This Week, Themes, Articles, Review, Uploads,
+  Sources and a reading page per thesis — read from the registry's records, writing nothing*.
+- **Decision-affecting finding** (theme intelligence, `desk.decision_claims`, `DECISION_FACTORS`)
+  — plain words: *a withheld line, a near-term timing conflict, or a review finding on a line that
+  cites a claim the research action counts (F2/F5/F7/F12); it orders the review queue and never
+  changes an action*.
+- **Near-term reading vs horizon framing** (theme intelligence, `desk.near_term_reading`,
+  `NearTerm.conflict`) — plain words: *the near-term condition is the stored F5 factor, stated once
+  as met or not; the source's horizon label is a description, never a test; when the factor's own
+  claims, re-dated today, give another value, the thesis shows Review required and keeps its
+  action until reassessed*.
+- **Not reviewed / not re-reviewed** (theme intelligence, `report.review_carry`,
+  `cards.CarriedFinding`) — plain words: *a thesis version whose run recorded REVIEW_NOT_RUN
+  (`--no-review`, the review budget exhausted, no client and no cache) says it was not reviewed;
+  the earlier open findings stay open on it — on the unchanged line as before, on a changed line
+  as NOT RE-REVIEWED, on a removed line as listed — read from the run that made them, never
+  copied, never resolved by the skip*.
+- **Publish (theme intelligence)** (`publish.py`, `python -m vinci.theme_intelligence publish`) —
+  plain words: *write one run's research desk into `frontend/theme-intelligence/`, which the main
+  app shows as its Theme intelligence section: the standalone pages, the desk's own script and its
+  styles scoped to the section on the app's design tokens — one renderer, two frames; a test-domain
+  registry is refused*.
+- **Theme (theme intelligence)** (`cards.THEME_CSS`, `cards.topnav`) — plain words: *the one
+  palette (light and dark), type, nav bar and audit switch every theme-intelligence page uses — the
+  desk, the Living Thesis Card and the weekly report*.
+- **Not checkable on this machine** (theme intelligence, `report.groups_unread`) — plain words: *a
+  paragraph whose text this registry does not hold (an exported registry, the weekly runner):
+  business groups there are reported as not checkable, never as none*.
+- **Week in progress** (theme intelligence, `desk.desk_weeks`) — plain words: *the manual runs
+  since the last weekly scan, shown as the desk's current week until a scan closes it*.
+- **Stress registry** (theme intelligence, `tests/theme_intelligence_stress.py`) — plain words: *a
+  SYNTHETIC multi-week registry built through the real engine on a reserved `.test` domain, for
+  scale tests only — never the real registry or production state*.
 
 ## Local setup (every laptop, every contributor)
 

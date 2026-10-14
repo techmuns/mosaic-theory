@@ -1,0 +1,182 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen pass-1 and pass-1b outputs cite, and within paragraphs only the sentences a cited quote touches (verbatim; bylines and data-date notes whole). Not the full article: the full text is not stored.",
+  "trimmed_blocks": [
+   "b009",
+   "b010",
+   "b011",
+   "b012",
+   "b013",
+   "b014",
+   "b015",
+   "b016",
+   "b017",
+   "b018",
+   "b019",
+   "b020"
+  ],
+  "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+  "retrieved_at": "2026-10-10T15:16:42.135562+00:00",
+  "parser_version": "ti-parse-4",
+  "full_body_sha256": "d09770a67754253ee6abf650f79d0d029460ab7b0e5a696cf2e8462786b6584b",
+  "full_body_word_count": 962,
+  "blocks_total": 22,
+  "blocks_in_excerpt": 17,
+  "retrieval_state": "FULL",
+  "built_at": "2026-10-10T19:06:47.867037+00:00"
+ },
+ "canonical_url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+ "title": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+ "title_source": "json-ld Article.headline",
+ "authors": [
+  {
+   "name": "TrendForce",
+   "title": "organization (as stated)",
+   "source_field": "json-ld Article.author (Organization)"
+  }
+ ],
+ "author_discrepancy": null,
+ "published_at": "2026-09-30T15:52:15+08:00",
+ "published_raw": "2026-09-30T15:52:15+08:00",
+ "published_source": "json-ld Article.datePublished",
+ "article_class_hint": null,
+ "article_class_basis": null,
+ "blocks": [
+  {
+   "block_id": "b004",
+   "kind": "byline",
+   "text": "TrendForce",
+   "sha256": "879429374c3560b4b01653a148e39ee3b636ceaca8403882fd6acc14f68a4724",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 4
+  },
+  {
+   "block_id": "b005",
+   "kind": "list_item",
+   "text": "Conventional DRAM contract prices are projected to grow 10–15% QoQ in 4Q26, while NAND Flash contract prices are expected to increase 15–20%",
+   "sha256": "77947ad6cf61df4320d39cf18e6f3b2a58c8487d2393bc5b7c47f757bd3e7eb9",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 5
+  },
+  {
+   "block_id": "b006",
+   "kind": "list_item",
+   "text": "Enterprise SSDs are the only category expected to see price growth accelerate due to strong demand from CSPs",
+   "sha256": "3b9c5f9aa237ae38b7ffa7cca01238e1c302a16ff95779072a40c01548184768",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 6
+  },
+  {
+   "block_id": "b007",
+   "kind": "dek",
+   "text": "TrendForce’s latest memory industry research reveals that DRAM suppliers continue to prioritize advanced-process capacity for high-performance server products in 4Q26, keeping the overall market undersupplied. However, the pace of contract price increases is expected to moderate, with conventional DRAM prices projected to rise 10–15% QoQ.",
+   "sha256": "c50bde7c63dd1d6ba53d363ecc82dbec99efb42ecf71fc79dc2e95dbf3b6b2f2",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 7
+  },
+  {
+   "block_id": "b008",
+   "kind": "paragraph",
+   "text": "Meanwhile, the NAND Flash market is seeing a divergence between accelerating AI demand and weak consumer demand, although prices are still rising across segments. Overall NAND Flash contract prices are projected to increase 15–20% QoQ.",
+   "sha256": "d57fd0811dcfa9d2d0bedd0fdd08b45a575bcdb667ad18b2abe790944fc3cc9c",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 8
+  },
+  {
+   "block_id": "b009",
+   "kind": "paragraph",
+   "text": "Nevertheless, PC OEMs continue to procure aggressively amid expectations that DRAM supply will remain tight in 2027, providing continued support for prices. However, the PC DRAM supply could decline in 2027 as more capacity shifts to server applications.",
+   "sha256": "b17a89f4a184ae3936934e1a0a2cdb7764e27e480f2a65decbc3388479f514a6",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 9
+  },
+  {
+   "block_id": "b010",
+   "kind": "paragraph",
+   "text": "In the server DRAM market, improving server CPU availability has prompted CSPs and server OEMs to increase bit procurement from suppliers to meet growing RDIMM demand for general servers supporting agentic AI workloads. Server DRAM is therefore expected to remain undersupplied in 4Q26. On the pricing front, increases for some suppliers are expected to lag the market average due to pricing mechanisms stipulated in long-term agreements (LTAs).",
+   "sha256": "858f37a2886e297fc71c7e8295fc74fbc9f1d8b4976e3267dc540db7108a8c6d",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 10
+  },
+  {
+   "block_id": "b011",
+   "kind": "paragraph",
+   "text": "For mobile DRAM, rising costs and the depletion of low-cost inventories continue to weigh on smartphone production, suppressing overall bit demand. At the same time, strong demand and higher margins in AI-related applications are prompting suppliers to continue shifting capacity toward server products, leaving mobile DRAM allocations tight.",
+   "sha256": "5735700e8f89650fe6e7e2c18b8acfe46f7e8264d05d9bfb86f9da8b933e7122",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 11
+  },
+  {
+   "block_id": "b012",
+   "kind": "paragraph",
+   "text": "GDDR7 demand, meanwhile, continues to be driven primarily by AI chips, with procurement momentum outperforming the PC market. These constraints are expected to keep graphics DRAM prices on an upward trajectory.",
+   "sha256": "d499bec3378b7aafc58a3e1bb0df4e7c5cf74e58ced48c8108629930ac8ce28a",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 12
+  },
+  {
+   "block_id": "b013",
+   "kind": "paragraph",
+   "text": "In particular, the improved outlook for QLC SSD demand has increased corresponding demand for DRAM components. Prices are therefore expected to continue rising—albeit at a slower pace.",
+   "sha256": "4896b0a5ecfb414e20165f769720c84f02b8dda3b78a3ea7df32c444ef09d86e",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 13
+  },
+  {
+   "block_id": "b014",
+   "kind": "paragraph",
+   "text": "With buyers holding sufficient inventories and purchasing requirements remaining limited, NAND Flash suppliers have adopted a more flexible pricing stance, restraining the magnitude of price increases.",
+   "sha256": "68c3c6c589b55c09907a1dd99288bb8fcfadbfee30297a9669f9230c0f36f778",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 14
+  },
+  {
+   "block_id": "b015",
+   "kind": "paragraph",
+   "text": "Bit demand for enterprise SSDs is projected to grow by more than 80% YoY in 2026 as CSPs continue to expand AI inference infrastructure. Additionally, the large-scale rollout of agentic AI is driving exponential growth in data volumes for real-time retrieval and caching, while QLC penetration in vector databases continues to rise.",
+   "sha256": "79480a0a64a304c15046cb44bf181692eda6f7a92c473d2228d1ca082d49b1de",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 15
+  },
+  {
+   "block_id": "b016",
+   "kind": "paragraph",
+   "text": "However, most incremental supply has already been committed, leaving little available on the open market. Enterprise SSD price growth is therefore expected to accelerate in 4Q26, making it the only memory product category to see a larger increase than in the previous quarter.",
+   "sha256": "d5d3b4bf71adca90d5b1c307269ce5ab83a685c197261e6702f786bd3f9b1a1f",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 16
+  },
+  {
+   "block_id": "b017",
+   "kind": "paragraph",
+   "text": "For eMMC/UFS, smartphone brands—the primary source of demand—are largely relying on existing inventories to support fourth-quarter production, resulting in very limited incremental procurement from suppliers.",
+   "sha256": "ad4d581da52a6747215f820808fc7266234cfc4b5bef2841a10d41d5927debae",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 17
+  },
+  {
+   "block_id": "b018",
+   "kind": "paragraph",
+   "text": "As a result, negotiations have effectively narrowed to price confirmation for relatively small order volumes.",
+   "sha256": "9bedba987734de87e9c5385b703ce1cdb326d5113627ee88dcdd5c7b2732dea9",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 18
+  },
+  {
+   "block_id": "b019",
+   "kind": "paragraph",
+   "text": "In the NAND Flash wafer market, prices have reached historical highs that downstream retail channels are increasingly unable to absorb.",
+   "sha256": "a8e64350f510c6c474909d8f7beb26b7ad3ecf279c762cdae62cee889686b730",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 19
+  },
+  {
+   "block_id": "b020",
+   "kind": "paragraph",
+   "text": "However, weak purchasing momentum among module makers is expected to limit overall price growth to a modest increase.",
+   "sha256": "b145be9887618761073971961235b5444918e414d994c6a926c74040ea3323db",
+   "section": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce",
+   "order": 20
+  }
+ ]
+}

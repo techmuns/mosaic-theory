@@ -1,0 +1,252 @@
+{
+ "provenance": {
+  "what": "the FULL-ARTICLE completeness ledger persisted by the real run (derived analysis: figure as written, its sentence clipped to 240 characters, status and reason)",
+  "run_id": "R-20261010T190326Z-article"
+ },
+ "report": {
+  "article_version_id": "AV-d09770a67754253e",
+  "run_id": "R-20261010T190326Z-article",
+  "figures": [
+   {
+    "block_id": "b005",
+    "figure": "10-15%",
+    "sentence": "Conventional DRAM contract prices are projected to grow 10-15% QoQ in 4Q26, while NAND Flash contract prices are expected to increase 15-20%",
+    "status": "captured",
+    "claim_ids": [
+     "C-3f7e73201081b5"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "15-20%",
+    "sentence": "Conventional DRAM contract prices are projected to grow 10-15% QoQ in 4Q26, while NAND Flash contract prices are expected to increase 15-20%",
+    "status": "captured",
+    "claim_ids": [
+     "C-693890fc60180f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b008",
+    "figure": "15-20%",
+    "sentence": "Overall NAND Flash contract prices are projected to increase 15-20% QoQ.",
+    "status": "captured",
+    "claim_ids": [
+     "C-6df11f36208bf7"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "80%",
+    "sentence": "Bit demand for enterprise SSDs is projected to grow by more than 80% YoY in 2026 as CSPs continue to expand AI inference infrastructure.",
+    "status": "captured",
+    "claim_ids": [
+     "C-0679481de62c79"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "6.0",
+    "sentence": "In response, suppliers are expanding QLC capacity and the availability of high-capacity products, while PCIe 6.0 adoption is ramping alongside next-generation AI server platforms.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "PCIe 6.0 is a product/interface generation reference, not a decision-relevant market figure or forecast.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b022",
+    "figure": "650 Million",
+    "sentence": "Previous Article Six Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reach 650 Million Units by 2031, Says TrendForce Next Article HBM Supply Constraints Persist, 2027 Price Outlook Revised Upward with Blended ASP Forecast to ",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Appears only in the navigation teaser for a separate (previous) VCSEL article, not part of this article's argument.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b022",
+    "figure": "121%",
+    "sentence": "Previous Article Six Leading Suppliers Bet on VCSEL NPO; VCSEL Demand Projected to Reach 650 Million Units by 2031, Says TrendForce Next Article HBM Supply Constraints Persist, 2027 Price Outlook Revised Upward with Blended ASP Forecast to ",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Appears only in the navigation teaser for a separate (next) HBM article, not part of this article's argument.",
+    "open_cause": ""
+   }
+  ],
+  "argument_blocks": [
+   "b005",
+   "b006",
+   "b008",
+   "b009",
+   "b010",
+   "b011",
+   "b012",
+   "b013",
+   "b014",
+   "b015",
+   "b016",
+   "b017",
+   "b018",
+   "b019",
+   "b020",
+   "b021",
+   "b022"
+  ],
+  "blocks_without_claims": [
+   "b021",
+   "b022"
+  ],
+  "added_claims": 1,
+  "added_mentions": 0,
+  "added_hypotheses": 0,
+  "added_risks": 0,
+  "prompt_version": "ti-complete-1",
+  "created_at": "2026-10-10T19:03:26.435530Z",
+  "blocks": [
+   {
+    "block_id": "b005",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b006",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b008",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b009",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b010",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b013",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b019",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b020",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Contact/promotional boilerplate directing readers to TrendForce report pages; not an argument or claim.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b022",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Previous/next article navigation teasers for unrelated reports; not part of this article's argument.",
+    "claim_ids": [],
+    "open_cause": ""
+   }
+  ],
+  "pass_ran": true,
+  "note": ""
+ }
+}

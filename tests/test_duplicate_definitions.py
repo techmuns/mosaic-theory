@@ -70,6 +70,12 @@ BASELINE: frozenset[tuple[str, ...]] = frozenset({
 })
 
 
+#: JS GENERATED from the python source, not a hand-copied twin: `publish` writes the research
+#: desk's script (vinci/theme_intelligence/desk.py `JS`) into the published folder byte for byte on
+#: every publish, so it cannot drift (pinned equal by tests/test_theme_intelligence_publish.py).
+GENERATED_FROM_PYTHON = ROOT / "frontend" / "theme-intelligence"
+
+
 def _literal_sets(path: pathlib.Path) -> set[frozenset[str]]:
     """Every bracketed literal of >= 3 DISTINCT quoted strings in one file.
 
@@ -91,7 +97,7 @@ def _duplicated_across_twins() -> dict[tuple[str, ...], tuple[list[str], list[st
         for s in _literal_sets(p):
             py[s].append(str(p.relative_to(ROOT)))
     for p in sorted((ROOT / "frontend").rglob("*.js")):
-        if "node_modules" in str(p):
+        if "node_modules" in str(p) or p.is_relative_to(GENERATED_FROM_PYTHON):
             continue
         for s in _literal_sets(p):
             js[s].append(str(p.relative_to(ROOT)))
