@@ -21,7 +21,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 4
+DB_SCHEMA_VERSION = 5
 
 
 class Frozen(BaseModel):
@@ -497,13 +497,46 @@ class SecurityResolution(Frozen):
 
 class EnrichmentCandidate(Frozen):
     """OPTIONAL, separately-labelled external hypothesis: a company the SOURCE DID NOT NAME. It
-    never appears in a card's source-explicit company list."""
+    never appears in a card's source-explicit company list, and no priority rule reads it."""
 
     enrichment_id: str
     thesis_id: str
     name: str
+    #: how the thesis's step reaches this company's earnings, in the model's words
     rationale: str
+    #: the card line the proposal rests on ("s03.1: <the step's text>") — the thesis, not a source
     evidence: str
+    label: Literal["EXTERNAL HYPOTHESIS — not named by the source"] = (
+        "EXTERNAL HYPOTHESIS — not named by the source")
+    # (2026-10-14, the enrichment step) — defaults keep every stored card's empty list valid
+    direction: Direction = Direction.UNCLEAR
+    step_id: str = ""  # the card's transmission line it rests on (s03.N)
+    business: str = ""  # what the company does, as the model states it (the identity check's input)
+    ticker_hint: str | None = None  # the model's ticker — never shown unless the SEC verifies it
+    resolution_status: ResolutionStatus = ResolutionStatus.UNRESOLVED
+    listings: tuple[Listing, ...] = ()  # point-in-time verified common-equity lines only
+    registrant: str | None = None
+    resolution_note: str = ""
+    #: the SEC files the issuer as a FOREIGN private issuer (20-F / 40-F): its US line is an ADR
+    #: or a cross-listing, never substituted for verified common equity
+    foreign_filer: bool = False
+
+
+class EnrichmentSet(Frozen):
+    """One enrichment pass over ONE thesis version: the companies its mechanism implies, as the
+    model proposes them — each an EXTERNAL HYPOTHESIS, never a source fact. Append-only; a later
+    pass over a later version is a new set. What validation refused is kept beside it."""
+
+    set_id: str
+    thesis_id: str
+    thesis_version: int
+    run_id: str
+    as_of: date
+    created_at: datetime
+    model: str
+    prompt_version: str
+    candidates: tuple[EnrichmentCandidate, ...]
+    refused: tuple[str, ...] = ()  # proposals validation set aside, each with why
     label: Literal["EXTERNAL HYPOTHESIS — not named by the source"] = (
         "EXTERNAL HYPOTHESIS — not named by the source")
 

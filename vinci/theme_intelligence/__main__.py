@@ -10,6 +10,8 @@
         [--url U] [--title T] [--author A] [--published YYYY-MM-DD] [--llm-permitted]
     python -m vinci.theme_intelligence ingest-inbox [--inbox DIR] [--source S]
     python -m vinci.theme_intelligence documents [--status HELD]
+    python -m vinci.theme_intelligence enrich --as-of YYYY-MM-DD [--thesis TH-…] [--refresh] \
+        [--budget USD]
     python -m vinci.theme_intelligence state pull|push|status --remote <git remote> \
         [--branch theme-intelligence-state]
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
@@ -254,6 +256,27 @@ def cmd_reassess(a: argparse.Namespace) -> int:
     out = write_run_outputs(pipe.store, run.run_id)
     print(f"outputs: {out['dir']}")
     return 0
+
+
+def cmd_enrich(a: argparse.Namespace) -> int:
+    """The enrichment step: the listed companies each thesis's own steps imply, as EXTERNAL
+    HYPOTHESES checked against the SEC (enrich.py) — one paid call per thesis, never a new
+    thesis version, never read by a priority rule."""
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=_client(required=False), review=False)
+    run, done = pipe.run_enrich(as_of=_iso(a.as_of), thesis_ids=a.thesis or (),
+                                refresh=a.refresh, budget=a.budget)
+    print(f"run {run.run_id}: enrich {run.status.value} — "
+          f"{run.counts.get('theses_enriched', 0)} thesis(es) enriched")
+    for tid, what in done:
+        print(f"  {tid}: {what}")
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"cost ${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · outputs: "
+          f"{out['dir']}")
+    return _EXIT[run.status]
 
 
 def cmd_qa(a: argparse.Namespace) -> int:
@@ -692,6 +715,18 @@ def main(argv: list[str] | None = None) -> int:
                                           "verified claims the thesis links and pass the card "
                                           "checks, or nothing is applied")
     ra.set_defaults(fn=cmd_reassess)
+
+    en = sub.add_parser("enrich", help="propose the listed companies each thesis's own steps "
+                                       "imply — external hypotheses, checked against the SEC, "
+                                       "never read by a priority rule (one model call per thesis)")
+    en.add_argument("--as-of", required=True, help="YYYY-MM-DD the SEC listings are checked as of")
+    en.add_argument("--thesis", action="append", help="a thesis id (repeatable; default: every "
+                                                      "active thesis not yet enriched)")
+    en.add_argument("--refresh", action="store_true",
+                    help="ask again for a version that already has a set")
+    en.add_argument("--budget", type=float, help="the run's spending limit in USD")
+    en.add_argument("--out", help="where the run's outputs are written")
+    en.set_defaults(fn=cmd_enrich)
 
     qa = sub.add_parser("qa", help="re-check a run's stored records")
     qa.add_argument("--run", default="latest")

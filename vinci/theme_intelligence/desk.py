@@ -43,7 +43,10 @@ from vinci.theme_intelligence.cards import (
     _anchor,
     _clean_display,
     _plain_text,
+    card_steps,
     e,
+    enrichment_lines,
+    enrichment_listing,
     exposures_of,
     foot_html,
     groups_unchecked_note,
@@ -84,6 +87,7 @@ from vinci.theme_intelligence.schemas import (
     CompletenessReport,
     Direction,
     DocumentRecord,
+    EnrichmentSet,
     MentionRole,
     Provenance,
     ResearchAction,
@@ -391,7 +395,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
     linked = {i.ref_id for i in store.issues() if i.code == "LINKED_REPORT_UPLOAD"}
     rows: dict[str, ArticleRow] = {}
     for r in week.runs:
-        if r.mode == "reassess":  # a re-grade of stored evidence reads no article
+        if r.mode in ("reassess", "enrich"):  # a re-grade or an enrichment reads no article
             continue
         reps: dict[str, list[CompletenessReport]] = defaultdict(list)
         for rep in reg.ledger(r.run_id):
@@ -1151,7 +1155,7 @@ def _lean(direction: Direction, role: MentionRole) -> str:
 def _where(c: AffectedCompany) -> str:
     """Where a named company trades — or why no listing is shown."""
     if c.listings:
-        return ", ".join(x.ticker for x in c.listings)
+        return ", ".join(dict.fromkeys(x.ticker for x in c.listings))
     if c.resolution_status is ResolutionStatus.PRIVATE:
         return "private"
     if c.resolution_status in (ResolutionStatus.FUND, ResolutionStatus.INDEX):
@@ -1161,7 +1165,9 @@ def _where(c: AffectedCompany) -> str:
             else "no verified US listing")
 
 
-def exposure_html(av: AffectedView, groups: list[str], groups_unread: int) -> str:
+def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
+                  enrichment: EnrichmentSet | None = None, version: int = 0,
+                  steps: dict[str, str] | None = None) -> str:
     """Who is exposed, as a fund reads it: who could BENEFIT, who could be HURT, and who the
     source names without a direction — companies (listed or not) and sectors together, each with
     its listing or why it has none. Only names in an exposure role (the priority rules' own set,
@@ -1202,6 +1208,7 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int) -> st
     elif not any(c.listings for c in exp):
         out += ('<p class="small">No US-listed company is named as exposed. A company the source '
                 'does not name is never added.</p>')
+    out += _hypotheses_html(enrichment, version, steps or {})
     if groups or groups_unread:
         out += ('<p class="small"><b>Business groups the source names:</b> '
                 + (f'{e("; ".join(groups))} — groups, not companies' if groups else "")
@@ -1242,6 +1249,33 @@ def _merge_restated(rows: list[tuple[str, dict[str, Any]]]) -> list[tuple[str, d
         twin["ids"].append(x["id"])
         twin["period"] = twin["period"] or x["period"]
     return out
+
+
+def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, str]) -> str:
+    """The companies the thesis's own steps imply (enrich.py) — OUR hypotheses, boxed apart from
+    what the source names, each with its SEC-verified ticker or "not verified", the step it
+    rests on and how. Nothing when no set was proposed."""
+    if es is None:
+        return ""
+    head, _rows = enrichment_lines(es, version, steps)
+    sides: dict[str, list[str]] = {"up": [], "down": []}
+    for x in es.candidates:
+        side = "up" if x.direction is Direction.POSITIVE else "down"
+        sides[side].append(
+            f'<li><b>{e(x.name)}</b> <span class="tk">{e(enrichment_listing(x))}</span> '
+            f'<span class="muted">through {e(STEP_LABEL.get(steps.get(x.step_id, ""), x.step_id))}'
+            f'</span><div class="small">{e(x.rationale)}</div>'
+            f'<span class="aud cc">{e(x.resolution_status.value)} · {e(x.resolution_note)}'
+            f'</span></li>')
+    body = "".join(f'<h4>{w}</h4><ul class="who">{"".join(sides[k])}</ul>'
+                   for k, w in (("up", "Could benefit"), ("down", "Could be hurt")) if sides[k])
+    none = next((r for r in es.refused if r.startswith("none proposed:")), "")
+    return (f'<div class="hypo"><h3>Companies the thesis implies <span class="tag">our '
+            f'hypothesis</span></h3><p class="small muted">{e(head)}</p>'
+            + (body or f'<p class="small">None proposed{e(": " + none[15:]) if none else "."}'
+                       f'</p>')
+            + (f'<div class="aud cc">set aside: {e("; ".join(es.refused))}</div>'
+               if es.refused else "") + "</div>")
 
 
 def _ml(label: str) -> str:
@@ -2088,7 +2122,8 @@ class Desk:
                if once(dsn.next_step.text) else "")
         raise_ = [f"<li>{line(s.text)}</li>" for s in dsn.raise_priority_if if once(s.text)]
         lower = [f"<li>{line(s.text)}</li>" for s in dsn.lower_priority_if if once(s.text)]
-        expo = exposure_html(c.s05_affected, groups, rc.groups_unread)
+        expo = exposure_html(c.s05_affected, groups, rc.groups_unread, rc.enrichment, v.version,
+                             card_steps(c))
         related = self.related_html(tid)
         evid, n_ev, per_src = self.evidence_html(c, rc)
         hist = "".join(
@@ -2529,6 +2564,8 @@ font-size:13.5px;margin:6px 0}
 .next p{font-size:15.5px;margin:0 0 6px}
 .who{list-style:none;padding:0;margin:0 0 10px;font-size:14.5px}.who li{padding:5px 0;
 border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
+.hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
+.hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
 .tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
 padding:0 6px;margin-left:4px;white-space:nowrap}
 .tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}

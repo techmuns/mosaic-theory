@@ -39,6 +39,7 @@ from vinci.theme_intelligence.schemas import (
     Claim,
     CompletenessReport,
     DocumentRecord,
+    EnrichmentSet,
     EvidenceSource,
     Mention,
     RetrievalState,
@@ -62,7 +63,7 @@ _V1_APPEND_ONLY = (
     "snapshots", "verification_issues", "llm_calls",
 )
 #: Every append-only history table at the current schema.
-APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health")
+APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health", "enrichments")
 #: the verification-issue code that corrects a version's retrieval state FULL -> PARTIAL
 RETRIEVAL_CORRECTED = "RETRIEVAL_CORRECTED"
 
@@ -151,6 +152,18 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
     (4, [
         "CREATE TABLE documents (doc_id TEXT PRIMARY KEY, sha256 TEXT NOT NULL UNIQUE,"
         " status TEXT NOT NULL, payload TEXT NOT NULL)",
+    ]),
+    # v5 (2026-10-14): ENRICHMENT — the companies a thesis's mechanism implies, proposed by the
+    # model and checked against the SEC, one set per pass over one thesis version. External
+    # hypotheses, kept apart from the sealed thesis versions: no priority rule reads this table.
+    (5, [
+        "CREATE TABLE enrichments (set_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL,"
+        " thesis_version INTEGER NOT NULL, run_id TEXT NOT NULL, payload TEXT NOT NULL)",
+        "CREATE INDEX ix_enrich_thesis ON enrichments(thesis_id, thesis_version)",
+        "CREATE TRIGGER enrichments_no_update BEFORE UPDATE ON enrichments "
+        "BEGIN SELECT RAISE(ABORT, 'enrichments is append-only'); END",
+        "CREATE TRIGGER enrichments_no_delete BEFORE DELETE ON enrichments "
+        "BEGIN SELECT RAISE(ABORT, 'enrichments is append-only'); END",
     ]),
 ]
 
@@ -599,6 +612,17 @@ class Store:
         return self._rows("SELECT payload FROM completeness WHERE run_id=? ORDER BY "
                           "article_version_id", [run_id], CompletenessReport)
 
+    def add_enrichment(self, e: EnrichmentSet) -> bool:
+        return self._append("enrichments", {"set_id": e.set_id, "thesis_id": e.thesis_id,
+                                            "thesis_version": e.thesis_version,
+                                            "run_id": e.run_id}, e)
+
+    def enrichments(self, thesis_id: str) -> list[EnrichmentSet]:
+        """Every enrichment set of a thesis, oldest first."""
+        sets = self._rows("SELECT payload FROM enrichments WHERE thesis_id=?", [thesis_id],
+                          EnrichmentSet)
+        return sorted(sets, key=lambda x: (x.created_at, x.set_id))
+
     def add_llm_call(self, call_id: str, run_id: str, purpose: str,
                      record: dict[str, Any]) -> None:
         self.conn.execute("INSERT OR IGNORE INTO llm_calls (call_id, run_id, purpose, payload) "
@@ -654,7 +678,7 @@ class Store:
               "mentions", "security_resolutions", "theses", "thesis_versions",
               "thesis_claim_links", "contributions", "relations", "change_events", "runs",
               "snapshots", "verification_issues", "llm_calls", "candidates", "completeness",
-              "source_health", "documents")
+              "source_health", "documents", "enrichments")
 
     def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY

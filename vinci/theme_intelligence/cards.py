@@ -47,6 +47,7 @@ from vinci.theme_intelligence.schemas import (
     Decision,
     Direction,
     EnrichmentCandidate,
+    EnrichmentSet,
     Epistemic,
     EvidenceDirection,
     EvidenceRow,
@@ -948,6 +949,9 @@ class RenderContext:
     targets: frozenset[str] = frozenset()
     #: the version's card-review status: not run, and the earlier findings read onto its lines
     carry: ReviewCarry = field(default_factory=ReviewCarry)
+    #: the latest ENRICHMENT set of the thesis (enrich.py) — external hypotheses, stored apart
+    #: from the version: shown labelled, never counted
+    enrichment: EnrichmentSet | None = None
 
 
 @dataclass(frozen=True)
@@ -1159,6 +1163,56 @@ def _section(fid: str, title: str, body: str, *, print_mode: bool, summary: str 
 
 def _listing_text(ls: Iterable[Listing]) -> str:
     return ", ".join(f"{x.ticker}" + (f" ({x.exchange})" if x.exchange else "") for x in ls)
+
+
+def card_steps(card: CardContent) -> dict[str, str]:
+    """The card's transmission lines: sentence id (s03.N) -> step name."""
+    return {f"s03.{i}": st.step for i, st in enumerate(card.s03_transmission)}
+
+
+def enrichment_lines(es: EnrichmentSet | None, version: int,
+                     steps: dict[str, str]) -> tuple[str, list[str]]:
+    """(the set's provenance line, one line per proposed company) — the words every surface
+    shows for an enrichment set. A ticker the SEC did not verify is said unverified."""
+    if es is None:
+        return "", []
+    head = (f"Proposed by the model on {es.as_of.isoformat()} from the thesis's own steps"
+            + (f" (version {es.thesis_version}; the card is now version {version})"
+               if es.thesis_version != version else "")
+            + " — not named by the source, never counted toward the research action.")
+    rows = []
+    for x in es.candidates:
+        side = {Direction.POSITIVE: "could benefit", Direction.NEGATIVE: "could be hurt"}.get(
+            x.direction, "direction not stated")
+        rows.append(f"{x.name} ({enrichment_listing(x)}) — {side}, through "
+                    f"{STEP_LABEL.get(steps.get(x.step_id, ''), x.step_id)} [{x.step_id}]: "
+                    f"{x.rationale}")
+    return head, rows
+
+
+def enrichment_listing(x: EnrichmentCandidate) -> str:
+    """A proposed company's listing as the SEC verified it — or why there is none."""
+    if x.listings:
+        return ", ".join(dict.fromkeys(v.ticker for v in x.listings))
+    if x.ticker_hint and x.foreign_filer:
+        return f"{x.ticker_hint} — the US line of a foreign filer, not checked point-in-time"
+    if x.ticker_hint:
+        return f"{x.ticker_hint} — not verified by the SEC"
+    return "no verified US listing"
+
+
+def enrichment_html(es: EnrichmentSet | None, card: CardContent, rc: RenderContext) -> str:
+    if es is None:
+        return ('<div class="note">Not proposed yet. Unnamed companies are never added to the '
+                'source lists above.</div>')
+    version = rc.history[-1].version if rc.history else es.thesis_version
+    head, rows = enrichment_lines(es, version, card_steps(card))
+    return (f'<div class="note">{e(head)}</div>'
+            + ("".join(f'<div class="s"><span class="lab unk">our hypothesis</span> {e(r)}</div>'
+                       for r in rows)
+               or '<div class="note">None proposed.</div>')
+            + (f'<div class="note aud">set aside: {e("; ".join(es.refused))}</div>'
+               if es.refused else ""))
 
 
 def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[AffectedCompany]]:
@@ -1598,10 +1652,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + ("".join(_sent(s, f"s05.b{i}", rc) for i, s in enumerate(av.baskets)) or
            '<div class="note">None.</div>')
         + '<div class="sub">Enrichment — EXTERNAL HYPOTHESES, not named by the source</div>'
-        + ("".join(f'<div class="s"><span class="lab unk">{e(x.label)}</span> {e(x.name)} — '
-                   f'{e(x.rationale)}</div>' for x in av.enrichment)
-           or '<div class="note">None recorded. Unnamed companies are never added to the '
-              'source lists above.</div>'))
+        + enrichment_html(rc.enrichment, card, rc))
     summaries["s05_affected"] = (f"{len(av.sector_exposures)} sector(s) · "
                                  + (f"{len(rc.groups)} business group(s) named · "
                                     if rc.groups else "business groups not checkable here · "
@@ -1822,8 +1873,11 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     md.append(f"**Sector labels:** {', '.join(av.sectors) or '—'}")
     md.append("**Cited baskets (members not named by the source):**")
     md += _md_sents(av.baskets, "s05.b", rc) or ["- none"]
+    head, rows = enrichment_lines(rc.enrichment, rc.history[-1].version if rc.history else 0,
+                                  card_steps(card))
     md.append("**Enrichment — external hypotheses, not named by the source:** "
-             + ("; ".join(f"{x.name} ({x.rationale})" for x in av.enrichment) or "none"))
+              + (head or "not proposed yet"))
+    md += [f"- {r}" for r in rows]
     wn = card.s06_why_now
     md += ["", f"## {titles['s06_why_now']}", "**Near term:**"]
     md += _md_sents(wn.near_term, "s06", rc)
@@ -1904,6 +1958,8 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "named_business_groups": [
             {"name": g.name, "article_id": g.article_id, "block_ids": list(g.block_ids),
              "excerpt": g.excerpt, "claim_ids": list(g.claim_ids)} for g in rc.groups],
+        "enrichment": (json.loads(rc.enrichment.model_dump_json())
+                       if rc.enrichment is not None else None),
         "other_cited_evidence": [c for c in cited_claim_ids(card)
                                  if c not in {r.claim_id for r in card.s04_key_evidence}],
         "generated": rc.generated_note,

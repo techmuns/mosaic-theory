@@ -43,6 +43,7 @@ from vinci.theme_intelligence.completeness import (
 from vinci.theme_intelligence.config import (
     COMPLETE_PROMPT_VERSION,
     ENGINE_VERSION,
+    ENRICH_PROMPT_VERSION,
     EXTRACT_PROMPT_VERSION,
     LLM_MODEL,
     LLM_PROVIDER,
@@ -870,6 +871,68 @@ class Pipeline:
                                                     f"{traceback.format_exc()[-1500:]}")
             raise
         return self.finish_run(RunStatus.SUCCEEDED), outs
+
+    def run_enrich(self, *, as_of: date, thesis_ids: Sequence[str] = (), refresh: bool = False,
+                   budget: float | None = None) -> tuple[WeeklyRun, list[tuple[str, str]]]:
+        """The ENRICHMENT step (enrich.py) over stored theses: the listed companies each one's own
+        steps imply, as external hypotheses, checked against the SEC and stored apart from the
+        thesis (no new version, no priority read). Default: every ACTIVE thesis whose current
+        version has no set yet (`refresh` asks again). One paid call per thesis, through the
+        spend guard; a refusal stops the pass and says so. Returns (run, [(thesis id, what
+        happened)])."""
+        from vinci.theme_intelligence.enrich import enrich_thesis
+        from vinci.theme_intelligence.report import thesis_groups
+
+        run = self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of)
+        if budget is not None:
+            self.guard.run_limit = budget
+        targets = list(thesis_ids or [t.thesis_id for t in self.store.theses()
+                                      if t.status is ThesisStatus.ACTIVE])
+        done: list[tuple[str, str]] = []
+        status = RunStatus.SUCCEEDED
+        try:
+            for tid in targets:
+                t = self.store.thesis(tid)
+                v = self.store.thesis_version(tid, t.current_version) if t else None
+                if t is None or v is None:
+                    raise ValueError(f"no thesis {tid} in this registry")
+                if not refresh and any(x.thesis_version == v.version
+                                       for x in self.store.enrichments(tid)):
+                    done.append((tid, f"already proposed for version {v.version} — skipped "
+                                      f"(--refresh asks again)"))
+                    continue
+                groups = [g.name for g in thesis_groups(self.store, self.store.links(tid))]
+                self.guard.begin_document(f"enrich {tid}")
+                try:
+                    res = enrich_thesis(v.content, version=v.version, area=t.sector,
+                                        groups=groups, client=self.client,
+                                        cache_dir=self.paths.llm_cache, resolver=self.resolver,
+                                        as_of=as_of, run_id=run.run_id)
+                except BudgetExceeded as exc:
+                    done.append((tid, f"not run — budget: {exc}"))
+                    status = RunStatus.PARTIAL
+                    break
+                finally:
+                    self.guard.end_document()
+                if res.enrichment is None:
+                    done.append((tid, res.note))
+                    self._count("theses_not_enriched")
+                    continue
+                self._llm_call("enrich", tid, res.cached, res.usage, res.cost_usd, res.seconds,
+                               self.client.model if self.client else LLM_MODEL,
+                               ENRICH_PROMPT_VERSION)
+                with self.store.tx():
+                    self.store.add_enrichment(res.enrichment)
+                self._count("theses_enriched")
+                e = res.enrichment
+                done.append((tid, f"{len(e.candidates)} proposed ("
+                                  f"{sum(1 for c in e.candidates if c.listings)} with a verified "
+                                  f"US listing), {len(e.refused)} set aside"))
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+        return self.finish_run(status), done
 
     def run_scan(self, *, window_from: date, window_to: date, as_of: date, max_articles: int,
                  resume_run_id: str | None = None, budget: float | None = None) -> WeeklyRun:
