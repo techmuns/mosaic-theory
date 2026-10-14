@@ -134,6 +134,22 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
     ("Cognition", the AI lab, had resolved to Cognition Therapeutics).
 
   Point-in-time listing checks still follow.
+- **Enrichment — the companies a thesis implies, as our hypothesis** (2026-10-14; `enrich`).
+  The sources rarely name companies, so for each thesis the model proposes the US-listed companies
+  its OWN steps to earnings reach (the card's lines only, never the article's text): per company,
+  the step, benefit or hurt, how, and what it does. At most four per side; a company the source
+  names is never proposed again; a thesis with no stated step is not sent. Every name goes through
+  the same SEC identity and point-in-time checks as a source-named company, the identity check
+  reading only what the company does. A ticker the SEC does not verify is never shown as one ("not
+  verified by the SEC"; an ADR or cross-listing is "the US line of a foreign filer"). Sets are
+  stored apart (table `enrichments`), shown boxed as **our hypothesis** under "Who is exposed" and
+  in the card's section 05, and **never read by a priority rule**. One call per thesis (about
+  $0.03), cached; `--refresh` asks again.
+
+  ```
+  python -m vinci.theme_intelligence enrich --as-of YYYY-MM-DD [--thesis TH-…] [--refresh] \
+      [--budget USD]
+  ```
 - **Point-in-time securities.** A named company's exposure lines are the common-equity lines on the
   cover page of its latest 10-K / 10-Q / 20-F / 40-F filed on or before the as-of date
   (inline-XBRL `dei:TradingSymbol` / `Security12bTitle`). Preferred, depositary-preferred and debt
