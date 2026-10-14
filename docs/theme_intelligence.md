@@ -185,6 +185,20 @@ Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
   healthcare demand shared one key, and the pilot's Alzheimer thesis absorbed a cash-pay
   care-delivery piece and a GLP-1 conference piece. Theses already keyed at `healthcare` keep
   their keys (added, never renamed).
+- **Re-analysis — splitting a thesis an earlier taxonomy merged** (2026-10-14; `reanalyse`).
+  Articles already held are analysed again under the current taxonomy and prompts, through the
+  same pipeline as an upload (extraction, completeness, verification, the engine), from their
+  stored text — no fetch. The theses to RETIRE are named; each must hold evidence from the listed
+  articles only, or nothing is done. A retired thesis is archived with a RETIRED event and its
+  reason, its key tagged with the run; its versions, evidence and history stay, and it is never
+  matched, updated or reactivated again — a new thesis on its former key gets a new id. A claim
+  or mention whose content was already stored is kept as first written. The theses the
+  re-analysis creates or changes are enriched. Paid like an upload.
+
+  ```
+  python -m vinci.theme_intelligence reanalyse --article A-… [--article A-…] --retire TH-… \
+      [--retire TH-…] --reason "…" --as-of YYYY-MM-DD [--budget USD]
+  ```
 - **Thesis identity includes the SEGMENT — the thesis's economic SUBJECT** (`taxonomy.toml`
   `[[segment]]`: DRAM / HBM vs NAND / SSD on memory; grid-connected utilities, behind-the-meter /
   on-site generation and transformers / grid equipment on power; neurology, obesity & metabolic,
