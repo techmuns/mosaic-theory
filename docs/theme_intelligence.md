@@ -193,7 +193,10 @@ Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
   reason, its key tagged with the run; its versions, evidence and history stay, and it is never
   matched, updated or reactivated again — a new thesis on its former key gets a new id. A claim
   or mention whose content was already stored is kept as first written. The theses the
-  re-analysis creates or changes are enriched. Paid like an upload.
+  re-analysis creates or changes are enriched. Paid like an upload, bounded by the run budget
+  (no per-document limit). Every article's stored text is read before anything is retired; a
+  failure AFTER the retirement prints `INCOMPLETE:` and names the run that finishes it — the same
+  articles, without `--retire`.
 
   ```
   python -m vinci.theme_intelligence reanalyse --article A-… [--article A-…] --retire TH-… \
@@ -536,7 +539,9 @@ python -m vinci.theme_intelligence documents --status HELD
 - **The inbox.** Put files in `data/theme_intelligence/inbox/` with an optional
   `<file>.meta.json` (`source`, `url`, `title`, `authors`, `published`, `llm_permitted`);
   `ingest-inbox` imports each and files it under `processed/`, `held/`, `review/` or
-  `rejected/`. A file with no source stated is left in place and named.
+  `rejected/`. A file with no source stated is left in place and named. `llm_permitted` is a
+  JSON `true` / `false` (or the words "true" / "false"); any other value refuses that file, left
+  in place — never read as permission.
 - **Ready for licensed reports.** Morgan Stanley / Goldman Sachs / SemiAnalysis PDFs the operator
   is entitled to use need no further development: `ingest-file --source ms_research|gs_research|
   semianalysis --llm-permitted` once their licence permits third-party processing.
@@ -792,7 +797,10 @@ python -m vinci.theme_intelligence state push
 
 - `state pull` rebuilds the local registry from the branch (the local one backed up first), then
   REPLAYS every local document the branch does not hold yet from its private copy, through the same
-  pipeline (an unchanged document's model calls come from the LLM cache). It refuses — unless
+  pipeline (an unchanged document's model calls come from the LLM cache). The rebuild is all or
+  nothing: if it fails (a branch exported by newer code), the local registry is restored and the
+  pull refused. A document the replay cannot process (no model, an API error) is named and kept
+  as PENDING for the next pull — never dropped with the replaced registry. It refuses — unless
   `--force`, with the backup kept — to discard a local scan or article run it cannot replay.
   **Nothing paid is lost or counted twice.** Every run the branch lacks is carried into the
   rebuilt registry for its RECORD — run id, times, cost and every paid-call row, unchanged —
