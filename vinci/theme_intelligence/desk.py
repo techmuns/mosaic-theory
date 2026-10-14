@@ -44,6 +44,7 @@ from vinci.theme_intelligence.cards import (
     _clean_display,
     _plain_text,
     card_steps,
+    distinct_sectors,
     e,
     enrichment_lines,
     enrichment_listing,
@@ -692,7 +693,7 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                  if f4.startswith("n/a") else "no earnings step (a price move is not one)")),
         Gate(near_ok, NEAR_GATE, near_words),
         Gate(exposed, "An exposure the source names",
-             ("sectors: " + ", ".join(s.name for s in av.sector_exposures)
+             ("sectors: " + ", ".join(s.name for s in distinct_sectors(av))
               if av.sector_exposures else "listed companies: " + ", ".join(
                   f"{c.name_as_written} ({', '.join(x.ticker for x in c.listings)})"
                   for c in exposures_of(av)[0] if c.listings))
@@ -1197,7 +1198,7 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
             + (f' <span class="muted">{e(role)}</span>' if role else "")
             + (f'<div class="small">{e(c.role_detail)}</div>' if c.role_detail else "")
             + "</li>")
-    for x in av.sector_exposures:
+    for x in distinct_sectors(av):
         side = {Direction.POSITIVE: "up", Direction.NEGATIVE: "down"}.get(x.direction, "flat")
         kind = ("" if re.search(r"\b(?:sectors?|industr(?:y|ies))$", x.name, re.I)
                 else ' <span class="tk">sector</span>')

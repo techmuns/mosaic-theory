@@ -1215,6 +1215,36 @@ def enrichment_html(es: EnrichmentSet | None, card: CardContent, rc: RenderConte
                if es.refused else ""))
 
 
+def distinct_sectors(av: AffectedView) -> list[SectorExposure]:
+    """The sectors a card names, each ONCE. The extraction can name one sector twice in near
+    words ("Diagnostics and care delivery, as well as the retirement and insurance industries" /
+    "Diagnostics and care delivery, retirement and insurance industries", 2026-10-14): two
+    names are one sector when one's content words are all the other's and at least two-thirds of
+    them. The one with a stated direction is kept, else the first. Two that say OPPOSITE ways
+    both stay: that is a contradiction to read, never one to hide. A single sector inside a list
+    of several ("semiconductors" in "automation, robotics, semiconductors, …") stays apart.
+    Display only: the card's JSON keeps every entry as extracted."""
+    from vinci.theme_intelligence.verify import content_words
+
+    ways = (Direction.POSITIVE, Direction.NEGATIVE)
+
+    def same(x: SectorExposure, y: SectorExposure) -> bool:
+        a, b = content_words(x.name), content_words(y.name)
+        small, large = (a, b) if len(a) <= len(b) else (b, a)
+        return (bool(small) and small <= large and 3 * len(small) >= 2 * len(large)
+                and (x.direction == y.direction or ways.count(x.direction)
+                     + ways.count(y.direction) < 2))
+
+    out: list[SectorExposure] = []
+    for x in av.sector_exposures:
+        i = next((i for i, y in enumerate(out) if same(x, y)), None)
+        if i is None:
+            out.append(x)
+        elif out[i].direction not in ways and x.direction in ways:
+            out[i] = x  # the entry that says which way wins
+    return out
+
+
 def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[AffectedCompany]]:
     """The named companies that ARE exposures of the thesis — a role the source states as one
     (beneficiary, harmed, supplier, customer, disruptor …) — and those merely named on it (the
@@ -1624,7 +1654,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
-        f'{_refs(s.claim_ids, rc)}</div>' for s in av.sector_exposures)
+        f'{_refs(s.claim_ids, rc)}</div>' for s in distinct_sectors(av))
     group_rows = "".join(
         f'<div class="s"><b>{e(g.name)}</b> <span class="q">{e(g.excerpt)}</span> '
         f'<span class="note">paragraph {e(", ".join(_para(b) for b in g.block_ids))}</span>'
@@ -1653,7 +1683,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
            '<div class="note">None.</div>')
         + '<div class="sub">Enrichment — EXTERNAL HYPOTHESES, not named by the source</div>'
         + enrichment_html(rc.enrichment, card, rc))
-    summaries["s05_affected"] = (f"{len(av.sector_exposures)} sector(s) · "
+    summaries["s05_affected"] = (f"{len(distinct_sectors(av))} sector(s) · "
                                  + (f"{len(rc.groups)} business group(s) named · "
                                     if rc.groups else "business groups not checkable here · "
                                     if rc.groups_unread else "")
@@ -1841,7 +1871,7 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     md += ["", f"## {titles['s05_affected']}", "**Sectors / themes the source names as exposed:**"]
     md += [f"- **{s.provenance.value}:** {s.name} — {s.direction.value} — “{s.quote}”"
            + (" [" + ", ".join(s.claim_ids) + "]" if s.claim_ids else "")
-           for s in av.sector_exposures] or ["- none named by the source"]
+           for s in distinct_sectors(av)] or ["- none named by the source"]
     md.append("**Business groups the source names — not companies; no ticker implied:**")
     md += [f"- {g.name} — {g.excerpt} (paragraph {', '.join(_para(b) for b in g.block_ids)})"
            + (" [" + ", ".join(g.claim_ids) + "]" if g.claim_ids else "")

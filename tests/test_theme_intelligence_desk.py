@@ -16,6 +16,7 @@ No network, no model call.
 from __future__ import annotations
 
 import dataclasses
+import json
 import re
 from collections import Counter
 from datetime import UTC, date, datetime, timedelta
@@ -1024,3 +1025,75 @@ def test_the_weekly_reports_sources_say_each_channels_state_in_words(tmp_path: P
                 "MANUAL-FIRST", "DEGRADED", "BLOCKED", "[automated access"):
         assert raw not in text, raw
     assert "(test) 403" in ops.get_text(" ")
+
+
+
+# --- one sector, named twice -------------------------------------------------------------------
+
+DIAG = ("Diagnostics and care delivery, as well as the retirement and insurance industries, could "
+        "benefit from—or need to adapt to—rising demand.")
+MARKETS = ("Treasurys hold steady while US equity and credit could gain; US equity and credit "
+           "markets could fall, and insurance brokers wait.")
+TWICE = [  # (name, direction, verbatim quote) — the pilot's shape (TH-8DDD7B2868, 2026-10-14)
+    ("Diagnostics and care delivery, retirement and insurance industries", "unclear",
+     DIAG.split(" rising")[0]),
+    ("Diagnostics and care delivery, as well as the retirement and insurance industries",
+     "positive", DIAG.split(" from")[0]),
+    ("Treasurys", "unclear", "Treasurys hold steady"),
+    ("US equity and credit", "positive", "US equity and credit could gain"),
+    ("US equity and credit markets", "negative", "US equity and credit markets could fall"),
+    ("insurance", "unclear", "insurance brokers"),
+]
+
+
+def test_a_sector_named_twice_in_near_words_is_shown_once_on_every_surface(
+        tmp_path: Path) -> None:
+    """The extraction named one sector twice from one sentence — "Diagnostics and care delivery,
+    retirement and insurance industries" (no direction) and "…, as well as the retirement and
+    insurance industries" (could benefit) — and the reading page listed both, under two headings.
+    Shown once, the directional one kept: on the reading page, its gate, the card (HTML,
+    Markdown) and the weekly dashboard. NEGATIVE pins: two different one-word sectors stay apart
+    ("Treasurys", "insurance" — the equal-size case once merged them all); one sector inside a
+    list of several ("insurance") stays apart; near names said to benefit AND be hurt both stay
+    — a contradiction is never hidden. The stored version keeps every entry as extracted."""
+    pipe = make_pipeline(tmp_path / "reg")
+    pipe.start_run("ingest", as_of=NOW)
+    art = Hypo("sector-twice", "Test Publisher", PUB, [("paragraph", DIAG), ("paragraph", MARKETS)])
+    h = hyp("h1", "Rising demand lifts care delivery and insurers",
+            node="healthcare.services_payers", mechanism="demand_volume_shift", supporting=["c1"])
+    h["sector_exposures"] = [{"name": n, "direction": d, "block_id": "b001", "quote": q,
+                              "claim_ids": []} for n, d, q in TWICE]
+    x = extraction([claim("c1", "b001", DIAG.rstrip("."), "care delivery could benefit",
+                          kind="event")], [h])
+    ingest(pipe, art.doc(), x, as_of=NOW, publisher=art.publisher)
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    (t,) = pipe.store.theses()
+    v = pipe.store.thesis_version(t.thesis_id, t.current_version)
+    assert v is not None
+    assert [s.name for s in v.content.s05_affected.sector_exposures] == [n for n, _, _ in TWICE]
+    out = _render(pipe, run.run_id, tmp_path / "out")
+    kept = [TWICE[i] for i in (1, 2, 3, 4, 5)]
+
+    page = _soup(out / "theses" / f"{t.thesis_id}.html")
+    heads = {"Could benefit": "up", "Could be hurt": "down",
+             "Named as exposed — direction not stated": "flat"}
+    got = {heads[h3.get_text(strip=True)]: [b.get_text(strip=True)
+                                            for b in h3.find_next_sibling("ul").select("li > b")]
+           for h3 in page.select(".expo h3")}
+    assert got == {"up": [TWICE[1][0], TWICE[3][0]], "down": [TWICE[4][0]],
+                   "flat": [TWICE[2][0], TWICE[5][0]]}
+    gate = page.find(string=re.compile(r"^sectors: "))
+    assert gate == "sectors: " + ", ".join(n for n, _, _ in kept)
+
+    cards = out / "cards"
+    md = (cards / f"{t.thesis_id}.md").read_text()
+    block = md.split("**Sectors / themes the source names as exposed:**")[1].split("**Business")[0]
+    assert [ln for ln in block.splitlines() if ln.startswith("- ")] == [
+        f"- **SOURCE OPINION:** {n} — {d} — “{q}”" for n, d, q in kept]
+    html = (cards / f"{t.thesis_id}.html").read_text()
+    assert html.count("<b>Diagnostics and care delivery") == 1 and "5 sector(s)" in html
+
+    dash = json.loads((out / "dashboard.json").read_text())
+    rows = [r for rs in dash["categories"].values() for r in rs if r["thesis_id"] == t.thesis_id]
+    assert rows and all(r["sector_exposures"] == [f"{n} ({d})" for n, d, _ in kept]
+                        for r in rows)

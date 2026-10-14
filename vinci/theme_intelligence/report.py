@@ -50,6 +50,7 @@ from vinci.theme_intelligence.cards import (
     _line_name,
     cited_claim_ids,
     clip,
+    distinct_sectors,
     e,
     exposures_of,
     finding_names,
@@ -1240,7 +1241,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             article_date=hdr.latest_article_date.isoformat() if hdr.latest_article_date else None,
             first_ingested=f"{t.created_at:%Y-%m-%d %H:%M} UTC",
             analysis_as_of=cur.as_of.isoformat(),
-            sector_exposures=[f"{x.name} ({x.direction.value})" for x in av.sector_exposures],
+            sector_exposures=[f"{x.name} ({x.direction.value})" for x in distinct_sectors(av)],
             why_action=why_action(cur.priority.rules_fired),
             rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit,
             **_analyst_view(store, t, cur, before, this_run, evs, rids, mech_label))
