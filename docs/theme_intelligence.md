@@ -131,7 +131,9 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
     hint C, had resolved to Citi Trends), while one corporate family stays one ("Entergy
     Louisiana", hint ETR);
   - a company the source names as private is matched only by the registrant's exact name
-    ("Cognition", the AI lab, had resolved to Cognition Therapeutics).
+    ("Cognition", the AI lab, had resolved to Cognition Therapeutics);
+  - a software description is compatible with an industrial or electrical-equipment issuer:
+    industrial automation is sold as software, and Emerson is still filed under SIC 3600.
 
   Point-in-time listing checks still follow.
 - **Enrichment — the companies a thesis implies, as our hypothesis** (2026-10-14; `enrich`).
@@ -144,7 +146,9 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   verified by the SEC"; an ADR or cross-listing is "the US line of a foreign filer"). Sets are
   stored apart (table `enrichments`), shown boxed as **our hypothesis** under "Who is exposed" and
   in the card's section 05, and **never read by a priority rule**. One call per thesis (about
-  $0.03), cached; `--refresh` asks again.
+  $0.03), cached; `--refresh` asks again. **The weekly scan ends with it** (2026-10-14), over every
+  active thesis whose current version has no set, inside the scan's own run; a budget refusal or a
+  missing model is a run warning, never a failed scan; `scan --no-enrich` opts out.
 
   ```
   python -m vinci.theme_intelligence enrich --as-of YYYY-MM-DD [--thesis TH-…] [--refresh] \
@@ -176,9 +180,15 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
 
 Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
 
+- **Healthcare has four children** (2026-10-14): pharma & biotech; life-science tools; medtech &
+  diagnostics; health services & payers. With one healthcare node every article arguing rising US
+  healthcare demand shared one key, and the pilot's Alzheimer thesis absorbed a cash-pay
+  care-delivery piece and a GLP-1 conference piece. Theses already keyed at `healthcare` keep
+  their keys (added, never renamed).
 - **Thesis identity includes the SEGMENT — the thesis's economic SUBJECT** (`taxonomy.toml`
   `[[segment]]`: DRAM / HBM vs NAND / SSD on memory; grid-connected utilities, behind-the-meter /
-  on-site generation and transformers / grid equipment on power). In order: the subject the
+  on-site generation and transformers / grid equipment on power; neurology, obesity & metabolic,
+  oncology and direct-to-consumer / cash-pay on pharma & biotech — 2026-10-14). In order: the subject the
   thesis statement names; else the segment of its product, or of the sectors the source names as
   exposed; else segments at least a fifth of its verified quotes name. An incidental comparison
   or customer application never sets it — unassigned rather than wrong (2026-10-12: Citi's
