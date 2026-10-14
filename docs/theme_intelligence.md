@@ -206,7 +206,8 @@ only: no discovery, no health check, no upload request on the weekly report or t
 import (`ingest-file` / `article` refuse the source and any URL on its hosts — for Nomura its site
 and its portal); their earlier evidence, theses and runs stay in the registry untouched and are
 never requeued. Every count — health, coverage, intake — is derived from the configured six,
-never hardcoded.
+never hardcoded. Bank of America stays retired (the operator confirmed it on 2026-10-14, though it is on the
+original shortlist).
 
 Access as probed on 2026-10-09/10 with the honest research User-Agent (no browser spoofing, robots.txt
 honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
@@ -218,7 +219,7 @@ honoured per RFC 9309, a robots.txt that cannot be fetched fails CLOSED):
 | Morgan Stanley Research | **manual-first** (`mode = "manual_first"`): a lightweight health check only; research arrives as authorised uploads | automated access **BLOCKED** — the connection is dropped on every request, robots.txt included; never bypassed, never retried inside its back-off |
 | TrendForce press center | listing pages `?page=N`, date in the article URL | OK |
 | SemiAnalysis | the newsletter's RSS feed (pubDate) | OK — paid posts carry a preview only and are recorded PARTIAL; **preview-only by decision** (2026-10-13, no subscription — `paywalled_posts = "preview_only"`): the preview is analysed and labelled a preview, the full post never requested |
-| Goldman Sachs Research | **manual-first**, as Morgan Stanley | automated access **BLOCKED** — HTTP 403 on entry, sitemap and insights |
+| Goldman Sachs Research | **manual-first**, as Morgan Stanley | automated access **BLOCKED** — HTTP 403 on entry, sitemap and insights. Where to look by hand (`research_pages`, 2026-10-14): the Research page (deep thematic pieces, about two a month) and the Markets page (shorter articles each week, plus podcasts and videos) |
 
 Morgan Stanley and Goldman Sachs are **manual-first**: a scan does not attempt their discovery
 (coverage row `MANUAL_FIRST`), their automated access is still health-checked (`expect_blocked`
