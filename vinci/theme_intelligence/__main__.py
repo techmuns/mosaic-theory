@@ -764,7 +764,10 @@ def main(argv: list[str] | None = None) -> int:
     en.add_argument("--thesis", action="append", help="a thesis id (repeatable; default: every "
                                                       "active thesis not yet enriched)")
     en.add_argument("--refresh", action="store_true",
-                    help="ask again for a version that already has a set")
+                    help="run the pass again for a version that already has a set: the "
+                         "model's paid answer comes from the cache (set its file aside to "
+                         "have the model asked anew) and every name is checked against the "
+                         "SEC again as of --as-of")
     en.add_argument("--budget", type=float, help="the run's spending limit in USD")
     en.add_argument("--out", help="where the run's outputs are written")
     en.set_defaults(fn=cmd_enrich)
