@@ -1,0 +1,186 @@
+# For more information about the robots.txt standard, see:
+# http://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+#Ensure crawlability for images, styles, js
+Allow: /*.js 
+Allow: /*.css 
+Allow: /*.jpg 
+Allow: /*.gif 
+Allow: /*.png
+Disallow: /*.pdf
+# Directories
+Disallow: */jcr_content/*
+Disallow: /akamai/*
+Disallow: /content
+Disallow: /gl/*
+# Paths (clean URLs)
+Disallow: */thank-you
+Disallow: *ieerrormessage.html
+# Parameters
+Disallow: *?q=*
+Disallow: *type=*
+Disallow: *?trk=*
+Disallow: *?pid=*
+Disallow: *?RefID=*
+Disallow: *?refid=*
+Disallow: *?sa=
+Disallow: *?hss_meta=
+
+# Block not wanted search engines or tools
+User-agent: Alexibot
+User-agent: SurveyBot
+User-agent: Xenu's
+User-agent: Sogou
+User-agent: SEOkicks-Robots
+User-agent: BLEXBot
+User-agent: UptimeRobot/2.0
+
+# Specify crawl delay for specific search engines - optional
+User-Agent: Bingbot
+Allow: /
+Crawl-delay: 10
+
+User-Agent: Slurp
+Allow: /
+Crawl-delay: 50
+
+User-Agent: DuckDuckBot
+Allow: /
+Crawl-delay: 20
+
+User-Agent: ia_archiver
+Allow: /
+Crawl-delay: 50
+
+# Allow all AI crawlers with crawl delay
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 10
+
+User-agent: OAI-SearchBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: SearchGPT
+Allow: /
+Crawl-delay: 10
+
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: Claude-User
+Allow: /
+Crawl-delay: 10
+
+User-agent: Claude-SearchBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 10
+
+User-agent: Google-Extended
+Allow: /
+Crawl-delay: 10
+
+User-agent: GoogleOther								
+Allow: /
+Crawl-delay: 10
+
+User-agent: Google-CloudVertexBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: Gemini-Deep-Research
+Allow: /
+Crawl-delay: 10
+
+User-agent: Bard
+Allow: /
+Crawl-delay: 10
+
+User-agent: Gemini
+Allow: /
+Crawl-delay: 10
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 10
+
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: Perplexity-User
+Allow: /
+Crawl-delay: 10
+
+User-agent: FacebookBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: Meta-ExternalAgent
+Allow: /
+Crawl-delay: 10
+
+User-agent: facebookexternalhit
+Allow: /
+Crawl-delay: 10
+
+User-agent: Applebot-Extended
+Allow: /
+Crawl-delay: 10
+
+User-agent: cohere-ai
+Allow: /
+Crawl-delay: 10
+
+User-agent: cohere-training-data-crawler
+Allow: /
+Crawl-delay: 10
+
+User-agent: ChatGPT
+Allow: /
+Crawl-delay: 10
+
+User-agent: GPT-4
+Allow: /
+Crawl-delay: 10
+# Reference to sitemap-index
+Sitemap: https://privatebank.jpmorgan.com/sitemap-index.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/image-sitemap-index.xml
+
+# Include all available sitemaps - optional
+Sitemap: https://privatebank.jpmorgan.com/nam/en/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/nam/fr/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/apac/en/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/apac/cn/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/apac/zh/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/latam/en/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/latam/es/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/latam/pt/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/eur/en/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/eur/it/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/eur/de/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/eur/es/sitemap.xml
+Sitemap: https://privatebank.jpmorgan.com/eur/fr/sitemap.xml
+
+Image-Sitemap: https://privatebank.jpmorgan.com/apac/en/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/apac/cn/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/apac/zh/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/latam/en/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/latam/es/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/latam/pt/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/eur/en/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/eur/it/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/eur/de/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/eur/es/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/eur/fr/image-sitemap.xml
+Image-Sitemap: https://privatebank.jpmorgan.com/nam/en/image-sitemap.xml
