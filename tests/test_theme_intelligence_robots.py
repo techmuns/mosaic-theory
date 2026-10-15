@@ -166,3 +166,34 @@ def test_a_redirect_chain_stops_after_the_limit(tmp_path: Path) -> None:
     res = _fetcher(tmp_path, web).fetch("https://pub.test/0")
     assert res.state is RetrievalState.BLOCKED and "redirects" in res.note
     assert len([u for u in web.log if not u.endswith("robots.txt")]) == MAX_REDIRECTS + 1
+
+
+# --- review of PR #713 (2026-10-15) ------------------------------------------------------------
+
+def test_a_group_naming_our_agent_with_a_version_is_ours() -> None:
+    text = (f"User-agent: {PRODUCT}/0.1\nDisallow: /\n\nUser-agent: *\nAllow: /\n")
+    assert not RobotsRules.parse(text, PRODUCT).allows("https://h.test/research")
+    assert RobotsRules.parse(text, "another-crawler").allows("https://h.test/research")
+
+
+def test_a_redirected_robots_txt_is_followed_whatever_the_client_default(tmp_path: Path) -> None:
+    """RFC 9309: robots.txt follows redirects. With a client that does not follow them by
+    default, a 301 for robots.txt was read as a failure and the host failed closed."""
+    web = Web({"https://pub.test/robots.txt": (301, "", {"location": "/robots-v2.txt"}),
+               "https://pub.test/robots-v2.txt": (200, "User-agent: *\nDisallow: /private\n"),
+               "https://pub.test/notes/a": (200, PAGE)})
+    client = httpx.Client(transport=httpx.MockTransport(web), headers={"User-Agent": USER_AGENT})
+    f = PoliteFetcher(tmp_path / "http", min_delay_s=0.0, max_retries=0, client=client)
+    assert f.fetch("https://pub.test/notes/a").state is RetrievalState.FULL
+    assert not f.allowed("https://pub.test/private/x")[0]  # the redirected file's rules
+
+
+def test_the_rules_are_compiled_once_when_read(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vinci.theme_intelligence import fetch as fetch_mod
+
+    rules = RobotsRules.parse(JPM, PRODUCT)
+
+    def compiled_again(pattern: str) -> Any:
+        raise AssertionError(f"recompiled {pattern!r} on a check")
+    monkeypatch.setattr(fetch_mod, "_robots_pattern", compiled_again)
+    assert not rules.allows(JPM_HOST + "/apac/en/insights/x.pdf")

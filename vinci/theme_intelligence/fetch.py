@@ -45,7 +45,7 @@ class RobotsRules:
     wins a tie. urllib.robotparser read every rule as a plain prefix — J.P. Morgan's
     `Disallow: /*.pdf` allowed every PDF on the host (2026-10-14)."""
 
-    rules: tuple[tuple[bool, str], ...]  # (allow, pattern)
+    rules: tuple[tuple[bool, str, re.Pattern[str]], ...]  # (allow, pattern, compiled once)
     crawl_delay: float | None
 
     @classmethod
@@ -62,7 +62,8 @@ class RobotsRules:
                 if agents is None or in_rules:
                     agents, in_rules = [], False
                     groups.append((agents, [], []))
-                agents.append(value.lower())
+                # the product token without a version: "mosaic-…-intelligence/0.1" names us
+                agents.append(value.split("/", 1)[0].strip().lower())
             elif agents is not None and key in ("allow", "disallow", "crawl-delay"):
                 in_rules = True
                 if key == "crawl-delay":
@@ -75,15 +76,17 @@ class RobotsRules:
         star = [g for g in groups if "*" in g[0]]
         chosen = mine or star
         delays = [d for g in mine for d in g[2]] or [d for g in star for d in g[2]]
-        return cls(tuple(r for g in chosen for r in g[1]), delays[0] if delays else None)
+        return cls(tuple((allow, pattern, _robots_pattern(pattern))
+                         for g in chosen for allow, pattern in g[1]),
+                   delays[0] if delays else None)
 
     def allows(self, url: str) -> bool:
         p = urlparse(url)
         path = (p.path or "/") + (f"?{p.query}" if p.query else "")
         best: tuple[int, bool] | None = None
-        for allow, pattern in self.rules:
+        for allow, pattern, compiled in self.rules:
             longer = best is None or len(pattern) > best[0] or (len(pattern) == best[0] and allow)
-            if longer and _robots_pattern(pattern).match(path):
+            if longer and compiled.match(path):
                 best = (len(pattern), allow)
         return best is None or best[1]
 
@@ -166,7 +169,9 @@ class PoliteFetcher:
         floor = max(self.min_delay_s, self._host_floor.get(host, 0.0))
         try:
             self._space(host, floor)
-            r = self._client.get(robots_url)
+            # robots.txt follows redirects itself (RFC 9309), whatever the injected client's
+            # default: a redirected file read as a 3xx failed closed
+            r = self._client.get(robots_url, follow_redirects=True)
             self.stats.requests += 1
             status = r.status_code
         except httpx.HTTPError as exc:
