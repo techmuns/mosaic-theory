@@ -48,6 +48,7 @@ import re
 from dataclasses import dataclass
 from datetime import date
 
+from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.schemas import (
     SOURCE_LABELS,
     Claim,
@@ -367,7 +368,8 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
             "SKIP-3 longer-term only — no dated window inside the next 2-4 quarters"
             + ("" if long_range else
                f" (the long-dated window is the source's, beside the cited evidence: "
-               f"{', '.join(ids(context_long)[:4])} — {timing[context_long[0].claim_id][1]})")]
+               f"{first_of(list(ids(context_long)), 4, ', ')} — "
+               f"{timing[context_long[0].claim_id][1]})")]
     else:
         unmet: list[str] = []
         if near == "runs_past":
@@ -407,6 +409,7 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
             route = (f"verified dislocation/catalyst ({len(disl)} claim(s))" if disl else
                      f"a near-term fundamental inflection — {inflection_note}")
             fired = ["NOW all conditions met — near-term window(s) " + windows
+                     + (f" (showing 4 of {len(near_claims)})" if len(near_claims) > 4 else "")
                      + "; source-named exposure(s): " + ", ".join(exposures)
                      + f"; {route}; premise asserted; retrieval FULL; reliability "
                        f"{st.reliability}; no hold — an INVESTIGATION of the thesis, not a trade "

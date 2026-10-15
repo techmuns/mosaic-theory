@@ -288,8 +288,8 @@ def _extract(src: SourceConfig, f: PoliteFetcher, o: _Obs,
     if broken:
         o.tests["parser_integrity"] = _t(
             "parser_integrity", "FAIL", f"{len(broken)} of {n} sampled article page(s) answered "
-                                        f"but were not read (parser failure suspected): "
-                                        f"{broken[0].parser_fail}")
+                                        f"but were not read (parser failure suspected) — "
+                                        f"the first: {broken[0].parser_fail}")
     elif read:
         words = sorted(x.words for x in read)
         o.tests["parser_integrity"] = _t(
@@ -448,11 +448,41 @@ def _affected(o: _Obs, store: Store, sid: str) -> tuple[str, ...]:
         if meta.get("source_id") == sid and st in ("INACCESSIBLE", "BLOCKED", "NO_BODY"):
             t = meta.get("title")
             out.append(url + (f" — {t}" if t else " — title not known"))
-    out = list(dict.fromkeys(out))
-    if len(out) > AFFECTED_SHOWN:
-        return (*out[:AFFECTED_SHOWN],
-                f"… and {len(out) - AFFECTED_SHOWN} more (showing {AFFECTED_SHOWN} of {len(out)})")
-    return tuple(out)
+    return tuple(dict.fromkeys(out))
+
+
+#: the closing line of a cut `affected` list — written by `_manual`, recognised by
+#: `affected_shown`
+_MORE = "… and "
+
+
+def _manual(kind: Literal["UPLOAD_REQUIRED", "MANUAL_REVIEW"], issue: str,
+            affected: tuple[str, ...], action: str) -> ManualAction:
+    """A manual action naming at most AFFECTED_SHOWN affected articles, the rest counted in a
+    closing line and the TOTAL kept as a field (U31b: a reader that counted the cut list said
+    "showing 3 of 11" of 25)."""
+    listed = affected
+    if len(affected) > AFFECTED_SHOWN:
+        listed = (*affected[:AFFECTED_SHOWN],
+                  f"{_MORE}{len(affected) - AFFECTED_SHOWN} more (showing {AFFECTED_SHOWN} of "
+                  f"{len(affected)})")
+    return ManualAction(kind=kind, issue=issue, affected=listed, affected_total=len(affected),
+                        action=action)
+
+
+def affected_shown(ma: dict[str, Any], n: int) -> str:
+    """The first `n` affected articles of a stored manual action (as a summary row carries it),
+    saying how many it names in all — never the length of the stored list, which is cut at
+    AFFECTED_SHOWN (U31b). A check stored before `affected_total` says "more than" what it
+    lists."""
+    aff = [str(x) for x in ma.get("affected", [])]
+    items = [x for x in aff if not x.startswith(_MORE)]
+    shown = items[:n]
+    total = int(ma.get("affected_total") or 0)
+    of = (str(total) if total else f"more than {len(items)}" if len(items) < len(aff)
+          else str(len(items)))
+    more = (total or len(items)) > len(shown) or len(items) < len(aff)
+    return "; ".join(shown) + (f" (showing {len(shown)} of {of})" if more else "")
 
 
 def asks_only_for_previews(src: SourceConfig, row: dict[str, Any]) -> bool:
@@ -491,14 +521,13 @@ def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
         act = (f"automatic access is refused or unsafe — never bypassed; re-tested every check. "
                f"Meanwhile {upload}")
         aff = _affected(o, store, src.id) or ("unknown — the channel cannot be read",)
-        return act, ManualAction(kind="UPLOAD_REQUIRED", issue=o.tests["access"].detail,
-                                 affected=aff, action=act)
+        return act, _manual("UPLOAD_REQUIRED", o.tests["access"].detail, aff, act)
     if status is HealthStatus.ERROR:
         act = (f"re-check: python -m vinci.theme_intelligence sources --check-health --sources "
                f"{src.id} --force; if it persists, inspect the configured endpoint")
         if consecutive >= 2:
-            return act, ManualAction(kind="MANUAL_REVIEW", issue=o.tests[d].detail,
-                                     affected=_affected(o, store, src.id), action=act)
+            return act, _manual("MANUAL_REVIEW", o.tests[d].detail,
+                                _affected(o, store, src.id), act)
         return act, None
     if d == "completeness" and src.paywalled_posts == "preview_only" and not o.incomplete:
         return ("none to supply — paid posts are read as their free preview by the operator's "
@@ -506,8 +535,8 @@ def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
     if d in ("extraction", "parser_integrity", "completeness"):
         act = (("review the article parser for this publisher; " if d != "completeness" else "")
                + f"{upload} if you are entitled to the full text")
-        return act, ManualAction(kind="UPLOAD_REQUIRED", issue=o.tests[d].detail,
-                                 affected=_affected(o, store, src.id), action=act)
+        return act, _manual("UPLOAD_REQUIRED", o.tests[d].detail,
+                            _affected(o, store, src.id), act)
     if d == "dates_authors":
         act = ("review: publication dates are not on the pages, so articles are counted UNDATED "
                "and never placed in a window — VERIFY a date, then analyse the article with "
@@ -515,8 +544,7 @@ def _action(src: SourceConfig, status: HealthStatus, o: _Obs, store: Store,
     else:
         act = ("review the listing — no article was found on an accessible page; do NOT conclude "
                "the publisher published nothing")
-    return act, ManualAction(kind="MANUAL_REVIEW", issue=o.tests[d].detail,
-                             affected=_affected(o, store, src.id), action=act)
+    return act, _manual("MANUAL_REVIEW", o.tests[d].detail, _affected(o, store, src.id), act)
 
 
 def _scan_stats(store: Store, sid: str) -> dict[str, Any]:
@@ -865,9 +893,8 @@ def render_text(run: HealthRun, configured: list[SourceConfig]) -> str:
         for r in att:
             out.append(f"  {r['publisher']} ({r['status']}): {r['next_action']}")
             if r["manual_action"]:
-                aff = r["manual_action"]["affected"]
-                out.append(f"      {r['manual_action']['kind']}: " + "; ".join(aff[:3])
-                           + (f" (showing 3 of {len(aff)})" if len(aff) > 3 else ""))
+                out.append(f"      {r['manual_action']['kind']}: "
+                           + affected_shown(r["manual_action"], 3))
     if run.delivery:
         out += ["", f"Alerts: {run.delivery}"]
     return "\n".join(out)

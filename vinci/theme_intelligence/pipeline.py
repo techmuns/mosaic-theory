@@ -246,7 +246,7 @@ class Pipeline:
         run.spend = self.guard.summary()
         if self.guard.refusals:
             run.warnings.append(f"spend guard: {len(self.guard.refusals)} paid call(s) refused "
-                                f"for want of budget — {self.guard.refusals[0]}")
+                                f"for want of budget — the first: {self.guard.refusals[0]}")
         run.counts["http_requests"] = self.fetcher.stats.requests
         run.counts["http_cache_hits"] = self.fetcher.stats.cache_hits
         run.finished_at = datetime.now(tz=UTC)

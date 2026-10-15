@@ -1966,6 +1966,16 @@ class Engine:
                     why = (f"the same claim at an overlapping but different geography "
                            f"({t.key_geography} vs {o.key_geography}) — a separate thesis, never "
                            f"merged; adjacent support, never an automatic confirmation")
+            elif ("." not in o.key_node or "." not in t.key_node) and (
+                    o.key_node.startswith(t.key_node + ".")
+                    or t.key_node.startswith(o.key_node + ".")):
+                # a thesis filed at an AREA's root (no sub-node) is "parent" of every thesis in
+                # the area: the link says only that the two share an area — never adjacent
+                # support (U47: card TH-A097D4722F printed "ADJACENT SUPPORT (parent / child)")
+                root = o.key_node if "." not in o.key_node else t.key_node
+                rel, why = RelationType.SIBLING, (f"same broader area — {root} is the area's "
+                                                  f"root, not a step of one chain; never adjacent "
+                                                  f"support")
             elif o.key_node.startswith(t.key_node + ".") or t.key_node.startswith(o.key_node + "."):
                 rel = RelationType.PARENT_CHILD
                 role = (EvidenceRole.ADJACENT_SUPPORT.value if same_dir

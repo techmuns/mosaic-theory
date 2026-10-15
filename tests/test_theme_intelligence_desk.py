@@ -992,7 +992,9 @@ def test_a_thesis_filed_at_an_areas_root_is_folded_with_the_area_not_listed_as_r
     pipe.finish_run(RunStatus.SUCCEEDED)
     by = {t.key_node: t.thesis_id for t in pipe.store.theses()}
     rels = [r.relation.value for r in pipe.store.relations(by["ai_infrastructure"])]
-    assert "PARENT_CHILD" in rels  # the engine links them …
+    # the engine files an area-root link as the same broader area, never PARENT_CHILD adjacent
+    # support (U47) …
+    assert rels and set(rels) == {"SIBLING"}
     out = _render(pipe, pipe.store.runs()[-1].run_id, tmp_path / "out")
     page = _soup(out / "theses" / f"{by['ai_infrastructure']}.html")
     direct = [a["href"] for ul in page.select("ul.rel") if ul.find_parent("details") is None

@@ -71,6 +71,7 @@ from typing import Any, cast
 
 from vinci.netcache import CachedHttp, HttpError
 from vinci.theme_intelligence.config import USER_AGENT
+from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.schemas import (
     EntityType,
     InstrumentClass,
@@ -629,7 +630,7 @@ class SecResolver:
                                note=f"the extraction's hint {hint!r} is not an SEC-listed "
                                     f"ticker (a listing elsewhere); "
                                     f"{m.name_as_written!r} only partially matches "
-                                    + "; ".join(sorted(cands.values())[:3])
+                                    + first_of(sorted(cands.values()), 3)
                                     + " — a partial name is not identity: not resolved")
                 cands = exact
                 method += " (exact registrant name; the hint names a non-SEC listing)"
@@ -642,7 +643,7 @@ class SecResolver:
                            method + "; refused — the hint names another SEC issuer",
                            note=f"the extraction's hint {hint!r} is {hinted}'s ticker, which "
                                 f"{m.name_as_written!r} does not name; the name only partially "
-                                f"matches " + "; ".join(sorted(cands.values())[:3])
+                                f"matches " + first_of(sorted(cands.values()), 3)
                                 + " — two identities: not resolved")
         if m.entity_type is EntityType.PRIVATE_COMPANY and cands:
             # the source's classification stands against a PARTIAL name — on every path, a
@@ -655,7 +656,7 @@ class SecResolver:
                            method + "; refused — the source names a private company",
                            note=f"{m.name_as_written!r} is classified as a private company "
                                 f"and only partially matches "
-                                + "; ".join(sorted(cands.values())[:3])
+                                + first_of(sorted(cands.values()), 3)
                                 + " — a partial name is not identity: not resolved")
             cands = exact
             method += " (exact registrant name; classified as a private company)"

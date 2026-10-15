@@ -29,6 +29,7 @@ from dataclasses import dataclass, field, replace
 from datetime import date
 from typing import Any, TypeVar
 
+from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.schemas import (
     EXPOSURE_ROLES,
@@ -546,13 +547,35 @@ def with_citations(card: CardContent, anchors: dict[str, list[str]],
 
 
 _PERCENT_UNITS = frozenset({"%", "percent", "per cent", "pct"})
+#: a share written as a fraction word carries its percent: "roughly half", "four-fifths"
+_SHARE_WORDS = r"half|halves|thirds?|quarters?|fifths?|tenths?"
+#: the written forms of one unit — a value written in any of them already carries it, so
+#: "$10 billion" with unit "$bn" never prints "$10 billion bn" (published 2026-10-14, U52)
+_UNIT_FORMS = (
+    ("tn", "trn", "trillion"), ("bn", "billion"), ("m", "mn", "mm", "million"),
+    ("k", "thousand"),
+    ("x", "times", "fold", "twice", "double", "doubled", "doubling", "triple", "tripled",
+     "tripling"),
+    ("ppt", "pp", "percentage point"), ("bp", "bps", "basis point"),
+)
+
+
+def _forms(token: str) -> tuple[str, ...]:
+    """`token` as a value may write it: its other written forms, singular or plural ("month" for
+    "months")."""
+    t = token.lower()
+    group = next((g for g in _UNIT_FORMS if t in g or t.rstrip("s") in g), (t,))
+    return tuple({y for x in group for y in (x, x + "s")} | {t, t.rstrip("s") or t})
 
 
 def unit_shown(value_text: str | None, unit: str | None) -> str:
     """The unit to print after a figure — without what the written value already carries, so
     "~43%" with unit "%" prints "~43%", never "~43% %", and "15–20%" with unit "% QoQ" prints
-    "15–20% QoQ" (both observed 2026-10-10). Display only: the card keeps value and unit as
-    separate fields."""
+    "15–20% QoQ" (both observed 2026-10-10). A unit written another way is carried too ("$10
+    billion" with "$bn", "8.5 month" with "months", "more than four times" with "x"), and a
+    value written in words keeps a unit it does not carry ("more than 60" countries). ONE helper
+    for the card and the desk (U52). Display only: the card keeps value and unit as separate
+    fields."""
     u = (unit or "").strip()
     v = value_text or ""
     # a currency the written value already carries: "$413" with unit "$/year" prints "$413 per
@@ -564,8 +587,9 @@ def unit_shown(value_text: str | None, unit: str | None) -> str:
 
     def carried(token: str) -> bool:
         if token.lower() in _PERCENT_UNITS:
-            return re.search(r"%|percent|per cent", v, re.I) is not None
-        return re.search(rf"(?<![A-Za-z]){re.escape(token)}(?![A-Za-z])", v, re.I) is not None
+            return re.search(rf"%|percent|per cent|\b(?:{_SHARE_WORDS})\b", v, re.I) is not None
+        return any(re.search(rf"(?<![A-Za-z]){re.escape(f)}(?![A-Za-z])", v, re.I)
+                   for f in _forms(token))
 
     if not u or carried(u):
         return ""
@@ -850,13 +874,6 @@ def readiness_text(value: str, note: str) -> str:
 def _once(label: str, note: str) -> str:
     """`LABEL — note`, without repeating a label the note already starts with."""
     return note if note.startswith(label) else f"{label} — {note}"
-
-
-def clip(text: str, n: int) -> str:
-    """A shortened display line PRINTS ITS OWN TRUNCATION — the full value stays in the JSON."""
-    if len(text) <= n:
-        return text
-    return f"{text[:n].rstrip()}… [+{len(text) - n} chars — full text in the JSON export]"
 
 
 def first_detected_line(h: CardHeader) -> str:

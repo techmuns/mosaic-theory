@@ -44,6 +44,7 @@ from vinci.theme_intelligence.config import (
     load_sources,
     load_taxonomy,
 )
+from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.extract import ToolClient
 from vinci.theme_intelligence.fetch import PoliteFetcher
 from vinci.theme_intelligence.schemas import RunStatus
@@ -180,7 +181,9 @@ def cmd_scan(a: argparse.Namespace) -> int:
               f"{sc.in_window:>3} · undated {sc.undated:>3} · new {sc.new:>3} · known "
               f"{sc.already_known:>3} · processed {sc.processed:>3} · queued {sc.queued:>3} · "
               f"out-of-window {sc.skipped_out_of_window:>3} · inaccessible {sc.inaccessible:>3} · "
-              f"errors {len(sc.errors):>2}" + (f" — {sc.errors[0][:120]}" if sc.errors else ""))
+              f"errors {len(sc.errors):>2}"
+              + (f" — the first: {clip(sc.errors[0], 120, 'the run manifest')}"
+                 if sc.errors else ""))
     print(f"counts {run.counts}")
     hs = out["dashboard"].source_health
     print(f"source health (checked at the start of this scan) — {hs.get('line', 'not checked')}")

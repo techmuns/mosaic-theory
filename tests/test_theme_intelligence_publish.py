@@ -101,14 +101,23 @@ def test_a_folder_holding_anything_else_is_never_replaced(tmp_path: Path) -> Non
 
 
 def test_a_republish_replaces_the_last_publication_whole(tmp_path: Path) -> None:
-    pipe = _pipe(tmp_path)
-    out = tmp_path / "pub"
-    publish.publish(pipe.store, _run(pipe), out, allow_test_data=True)
-    (out / "site" / "stale.html").write_text("left from an earlier publication")
+    """A page the last publication wrote and this one does not is removed (a republish is whole);
+    a file the last publication did NOT write is never deleted — the publish is refused and
+    nothing is written (U32e: the docstring promised the refusal, the code deleted the file)."""
     pipe2 = _pipe(tmp_path / "second", n=2)
-    m = publish.publish(pipe2.store, _run(pipe2), out, allow_test_data=True)
-    assert not (out / "site" / "stale.html").exists()
-    assert m["theses"] == 2
+    out = tmp_path / "pub"
+    first = publish.publish(pipe2.store, _run(pipe2), out, allow_test_data=True)
+    pipe = _pipe(tmp_path)
+    m = publish.publish(pipe.store, _run(pipe), out, allow_test_data=True)
+    gone = set(first["files"]) - set(m["files"])
+    assert gone and all(not (out / f).exists() for f in gone)  # the last publication's own page
+    assert m["theses"] == 1
+    (out / "site" / "notes.html").write_text("an operator's file, not a publication's")
+    before = sorted(p.name for p in out.rglob("*"))
+    with pytest.raises(publish.PublishError, match="did not write"):
+        publish.publish(pipe2.store, _run(pipe2), out, allow_test_data=True)
+    assert (out / "site" / "notes.html").exists()  # NEGATIVE pin: never deleted …
+    assert sorted(p.name for p in out.rglob("*")) == before  # … and nothing written
 
 
 def _rules(css: str) -> list[tuple[str, str]]:

@@ -68,6 +68,7 @@ from vinci.theme_intelligence.config import (
     load_sources,
     load_taxonomy,
 )
+from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
@@ -137,6 +138,8 @@ AREA_NAME: dict[str, str] = {
     "telecom_media": "Telecom & media", "utilities": "Utilities", "other": "Unclassified"}
 
 NEAR_GATE = "Near-term relevance (next 2–4 quarters)"
+#: where a line the desk cuts is read in full
+_CARD = "the Full record"
 #: rows a list shows before "showing N of M — show all"
 PAGE_ROWS = 25
 #: the factors whose cited claims the research action counts — a review finding on a line citing
@@ -219,14 +222,6 @@ def plain(text: str) -> str:
     """A stored line as a reader sees it: system labels ⟨…⟩, "page None" and an EMPTY "(scope: )"
     dropped. The stored text is unchanged in the record."""
     return re.sub(r"\s*\(scope:\s*\)", "", _clean_display(_plain_text(text)))
-
-
-def unit_of(value_text: str | None, unit: str | None) -> str:
-    """The unit printed after a value — none after a value written in words ("more than four
-    times", "doubling"): the words already carry it."""
-    words = re.sub(r"\b(?:around|about|roughly|approximately|nearly|over|under)\b", "",
-                   value_text or "")
-    return "" if re.search(r"[A-Za-z]{3,}", words) else unit_shown(value_text, unit)
 
 
 def _day(x: date | datetime | None) -> str:
@@ -395,6 +390,19 @@ class _Registry:
     def publisher(self, sid: str) -> str:
         s = self.sources.get(sid)
         return s.publisher if s else sid
+
+
+def analysed_articles(store: Store, runs: list[WeeklyRun]) -> tuple[int, int]:
+    """(articles analysed in `runs`, of which read only in part) — EACH ARTICLE ONCE, by the same
+    census the Articles screen lists. The weekly report counts with this (U54): its sum of the
+    runs' counters counted an article re-analysed in the week twice (18 "read" of 13)."""
+    if not runs:
+        return 0, 0
+    span = [r.as_of for r in runs]
+    week = Week(key="", start=min(span), end=max(span), runs=tuple(runs), failed=(),
+                scanned=False)
+    read = [a for a in week_articles(_Registry(store), week, latest=False) if a.analysed]
+    return len(read), sum(1 for a in read if a.state == "PARTIAL")
 
 
 def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRow]:
@@ -1424,6 +1432,7 @@ class Desk:
         self.n_articles = len(store.articles())
         self.groups: dict[str, tuple[list[str], int]] = {}
         self.sources_of: dict[str, set[str]] = defaultdict(set)
+        self._related: dict[str, tuple[dict[str, list[str]], set[str]]] | None = None
         for c in self.reg.contributions:
             if c.thesis_id in self.asof and c.run_id in self.week_of_run:
                 self.sources_of[c.thesis_id].add(c.article_id)
@@ -1442,7 +1451,8 @@ class Desk:
         uid = f"more{self._uid}"
         rest = [r.replace("<tr", '<tr class="xtra"') for r in rows[cap:]]
         return (f'<input type="checkbox" class="morebox" id="{uid}" hidden>'
-                f'<div class="hscroll"><table class="arts {cls}"{idattr}>{head}'
+                f'<div class="hscroll"><table class="arts {cls}"{idattr} data-cap="{cap}" '
+                f'data-box="{uid}" data-what="{e(what)}">{head}'
                 + "".join(rows[:cap] + rest) + f'</table></div><label class="morelbl" '
                 f'for="{uid}">Showing {cap} of {n} {e(what)} — show all {n}</label>')
 
@@ -1560,15 +1570,19 @@ class Desk:
             f'<td>{n_now(ts) or "—"}</td><td>'
             f'{_strip(recent, set().union(*[self.activity[t.thesis_id] for t in ts]))}</td></tr>'
             for a, ts in sorted(a_counts.items(), key=lambda kv: (-len(kv[1]), kv[0]))]
+        n_retired = sum(1 for r in self.rows if r.retired)
         tiles = [
             ("articles.html", len(read), "Articles read",
              f"{full} in full · {len(read) - full} preview" + (f" · {queued} queued" if queued
                                                                else ""), False),
-            ("", len(self.rows), "New or changed theses", f"{new} new · {ups} up · {downs} down",
-             False),
+            ("", len(self.rows), "New or changed theses", f"{new} new · {ups} up · {downs} down"
+             + (f" · {n_retired} retired" if n_retired else ""), False),
             ("themes.html", rn, "Research Now", f"of {len(active)} active", False),
+            # every ACTIVE thesis's, not only this week's: said, so the count reads beside the
+            # weekly report's review items on this week's cards (U54)
             ("review.html", len(self.open), "Findings to review",
-             f"{decisive} affect an action" if decisive else "none affect an action",
+             f"on {_theses(len(active), 'active')} · "
+             + (f"{decisive} affect an action" if decisive else "none affect an action"),
              bool(decisive)),
             ("uploads.html", len(waiting), "Upload items", "to supply or clear", bool(waiting))]
         strip = "".join(
@@ -1623,7 +1637,7 @@ class Desk:
         if a.produced:
             return "<br>".join(
                 f'<a href="{self.thesis_link(tid, depth)}">{e(self.title(tid))}</a> '
-                f'<span class="small">· {e(how)}</span>' if tid in self.asof else
+                f'<span class="small">· {e(how)}{e(self.gone(tid))}</span>' if tid in self.asof else
                 f'<span class="small">{e(how)} (a thesis not in this run\'s record)</span>'
                 for tid, how in a.produced)
         return f'<span class="small">{e(_no_thesis(a))}</span>'
@@ -1646,11 +1660,7 @@ class Desk:
         by_t = self.open_by_thesis()
         changed = {r.thesis_id for r in self.rows}
         recent = self.weeks[-12:]
-        rel: dict[str, int] = Counter()
-        for x in self.store.relations():  # a sibling (same broader area) is no direct link
-            if x.relation.value != "SIBLING":
-                rel[x.from_thesis] += 1
-                rel[x.to_thesis] += 1
+        rel = {tid: len(self.related_of(tid)[0]) for tid in self.asof}
         rows: list[tuple[str, str]] = []
         items = sorted(self.asof.values(), key=lambda tv: (
             tv[0].status is ThesisStatus.ARCHIVED,
@@ -1668,7 +1678,8 @@ class Desk:
             sub = [x for x in (note, f'<span class="small">{_theses(rel[tid], "related")}</span>'
                                if rel.get(tid) else "") if x]
             rows.append((a, (
-                f'<tr data-area="{e(a)}" data-action="{e(v.priority.research_action.value)}" '
+                f'<tr data-area="{e(a)}" data-ord="{len(rows)}" '
+                f'data-action="{e(v.priority.research_action.value)}" '
                 f'data-status="{"archived" if arch else "active"}" '
                 f'data-upd="{t.last_material_update.toordinal()}" '
                 f'data-left="{left if not arch else 99999}" data-src="{n_src}" '
@@ -1719,12 +1730,20 @@ class Desk:
                 '<select id="far" onchange="flt()" aria-label="Area"><option value="">All areas'
                 '</option>' + "".join(f"<option>{e(a)}</option>" for a in areas)
                 + '</select><select id="so" onchange="srt()" aria-label="Sort"><option '
+                  'value="">Research action, then latest evidence</option><option '
                   'value="upd">Latest evidence</option><option value="stale">Closest to '
                   'archiving</option><option value="src">Most sources</option><option '
                   'value="rv">Most findings</option></select><span id="cnt" class="small">'
                   '</span></div>'
                 f'<div id="tt">{"".join(groups)}</div>')
         return self.page("Themes", body, "Themes")
+
+    def gone(self, tid: str) -> str:
+        """" · retired" / " · archived" for a thesis this run's record no longer holds open — an
+        article list names it beside what the article gave it (U13), never as a live thesis."""
+        t = self.asof[tid][0]
+        return (" · retired — replaced on re-analysis" if t.retired else
+                " · archived" if t.status is ThesisStatus.ARCHIVED else "")
 
     def archived_why(self, t: Thesis, v: ThesisVersion) -> str:
         if t.retired:
@@ -2120,7 +2139,7 @@ class Desk:
                       if it.period and re.sub(r"^per ", "", it.period) not in plain(it.text)
                       else "")
                    + f"{flag(f's02.{i}')}</li>"
-                   for i, it in enumerate(c.s02_what_changed.items[:3])
+                   for i, it in enumerate(c.s02_what_changed.items)
                    if f"s02.{i}" not in rc.blocked and once(it.text)]
         last = rc.history[-1] if rc.history else v
         prev = rc.history[-2] if len(rc.history) > 1 else None
@@ -2161,7 +2180,7 @@ class Desk:
         pub = {s.article_id: s for s in c.s09_sources}
         fig_html = "".join(
             f'<div class="num"><b>{e(r.value_text)}</b><span class="unit">'
-            f'{e(unit_of(r.value_text, r.unit))}</span><span class="lbl">{e(lbl)}</span>'
+            f'{e(unit_shown(r.value_text, r.unit))}</span><span class="lbl">{e(lbl)}</span>'
             f'<small>{e(_EPI.get(r.epistemic.value, r.epistemic.value))} · '
             f'{e(r.period or "period not stated")}</small><small>'
             + (f"{e(pub[r.article_id].publisher)}, " if r.article_id in pub else "")
@@ -2220,7 +2239,8 @@ class Desk:
             f'<li><span class="hv">Version {h.version}</span><span>{e(_day(h.as_of))}</span>'
             f'{_chip(h.priority.research_action.value)}<span class="muted">'
             f'{e(self.version_how(h))}</span><span class="aud cc">'
-            f'{e(plain(h.change_summary)[:400])}</span></li>' for h in reversed(rc.history))
+            f'{e(clip(plain(h.change_summary), 400, _CARD))}</span></li>'
+            for h in reversed(rc.history))
         def gave(aid: str) -> str:
             n, a = per_src.get(aid, (0, 0))
             return (f" · {n} cited" + (f", {a} against" if a else "")) if n else ""
@@ -2237,7 +2257,7 @@ class Desk:
                        f'{e(re.sub(r"^[0-9]+[ .]*", "", name).capitalize())}</a></li>'
                        for fid, name in SECTION_IDS)
         trace = "".join(f'<div class="cc">{e(x)}</div>' for x in v.priority.rules_fired) + "".join(
-            f'<div class="cc">{e(f.factor_id)} = {e(f.value)} — {e(f.note[:300])}</div>'
+            f'<div class="cc">{e(f.factor_id)} = {e(f.value)} — {e(clip(f.note, 300, _CARD))}</div>'
             for f in v.priority.factors)
         none = '<p class="muted">No bottom line recorded.</p>'
 
@@ -2245,7 +2265,8 @@ class Desk:
             if len(items) <= keep:
                 return "".join(items)
             return ("".join(items[:keep]) + f'<li class="morewrap"><details class="fold">'
-                    f'<summary>{len(items) - keep} more {what}</summary><ul>'
+                    f'<summary>{len(items) - keep} more '
+                    f'{what if len(items) - keep > 1 else what[:-1]}</summary><ul>'
                     + "".join(items[keep:]) + "</ul></details></li>")
 
         # THE TEAR SHEET (operator, 2026-10-15: "make the views how an expert would look at"):
@@ -2274,7 +2295,8 @@ class Desk:
         chain = (f'<section class="panel"><h2>How it reaches fundamentals</h2><ol class="chain">'
                  f'{"".join(steps) or no_step}</ol></section>')
         what = (f'<p class="small">{e(moved)}</p>'
-                + (f"<ul class=\"changed\">{''.join(changed)}</ul>" if changed else ""))
+                + (f"<ul class=\"changed\">{folded(changed, 3, 'changes')}</ul>"
+                   if changed else ""))
         review = (f'<section class="panel" id="review"><h2>Open review findings '
                   f'<small>{len(mine)}</small></h2><ul class="rvitems rvcompact">'
                   + "".join(self.finding_line(f) for f in mine) + "</ul></section>"
@@ -2341,7 +2363,7 @@ class Desk:
         bases = {x.basis for x in nt.claims}
         common = next(iter(bases)) if len(bases) == 1 else ""
         rows = "".join(
-            f'<li>{e((x.claim.metric or x.claim.statement)[:120])} — '
+            f'<li>{e(clip(x.claim.metric or x.claim.statement, 120, "the Evidence tab"))} — '
             f'{e(_TIMING_WORD.get(x.timing, x.timing))}'
             + ("" if common else f'; dated by {e(x.basis)}')
             + f'<span class="aud cc"> {e(x.claim.claim_id)} · {e(x.note)}</span></li>'
@@ -2362,42 +2384,61 @@ class Desk:
                    f'<ul class="small">{rows}{more}</ul>'
                    + (f'<p class="small">All dated by {e(common)}.</p>' if common else "")
                    + "</details>" if rows else "")
-                + f'<div class="aud cc">{e(nt.note[:400])}</div></div>')
+                + f'<div class="aud cc">{e(clip(nt.note, 400, _CARD))}</div></div>')
+
+    def related_of(self, tid: str) -> tuple[dict[str, list[str]], set[str]]:
+        """(direct links: another thesis → every reason, the same-broader-area theses) — ONE
+        reading of the registry's links, which the reading page lists and Themes counts (U47,
+        U32c: Themes said "2 related theses" of two area-root links the page folds away)."""
+        if self._related is None:
+            direct: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
+            area: dict[str, set[str]] = defaultdict(set)
+            for x in self.store.relations():
+                a, b = x.from_thesis, x.to_thesis
+                if a not in self.asof or b not in self.asof:
+                    continue
+                # a thesis filed at an AREA's root (no sub-node) is "parent" of every thesis in
+                # the area: that link says only "same area" (Canada's power and minerals was
+                # listed as related to HBM memory pricing, 2026-10-14) — the broader-area fold
+                root = "." not in self.asof[a][0].key_node or "." not in self.asof[b][0].key_node
+                if x.relation.value == "SIBLING" or (x.relation.value == "PARENT_CHILD" and root):
+                    area[a].add(b)
+                    area[b].add(a)
+                else:
+                    why = _RELATION.get(x.relation.value, x.relation.value.lower())
+                    direct[a][b].append(why)
+                    direct[b][a].append(why)
+            by_art: dict[str, set[str]] = defaultdict(set)
+            for th, arts in self.sources_of.items():
+                if th in self.asof:
+                    for aid in arts:
+                        by_art[aid].add(th)
+            shared: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+            for aid, ths in by_art.items():
+                for th in ths:
+                    for other in ths - {th}:
+                        shared[th][other].add(aid)
+            for th, others in shared.items():
+                for other, aids in others.items():
+                    names = sorted({(ar.publisher if (ar := self.reg.article(aid)) else
+                                     "a source") for aid in aids})
+                    direct[th][other].append(
+                        f"shares {_pl(len(aids), 'source article')} ({', '.join(names)})"
+                        f" — the same source, not independent confirmation")
+            self._related = {th: ({o: list(rs) for o, rs in direct[th].items()},
+                                  area[th] - set(direct[th])) for th in self.asof}
+        return self._related.get(tid, ({}, set()))
 
     def related_html(self, tid: str) -> str:
         """Linked theses — never merged: direct links first, then theses sharing a source (the
         same source, not independent confirmation), then the same-broader-area siblings, folded."""
-        why: dict[str, list[str]] = defaultdict(list)  # a thesis ONCE, with every reason
-        sibling: set[str] = set()
-        for x in self.store.relations(tid):
-            other = x.to_thesis if x.from_thesis == tid else x.from_thesis
-            if other not in self.asof:
-                continue
-            # a thesis filed at an AREA's root (no sub-node) is "parent" of every thesis in the
-            # area: that link says only "same area" (Canada's power and minerals was listed as
-            # related to HBM memory pricing, 2026-10-14) — it joins the broader-area fold
-            root = "." not in self.asof[tid][0].key_node or "." not in self.asof[other][0].key_node
-            if x.relation.value == "SIBLING" or (x.relation.value == "PARENT_CHILD" and root):
-                sibling.add(other)
-            else:
-                why[other].append(_RELATION.get(x.relation.value, x.relation.value.lower()))
-        mine = self.sources_of.get(tid, set())
-        shared: dict[str, set[str]] = defaultdict(set)
-        for other, arts in self.sources_of.items():
-            if other != tid and other in self.asof:
-                for aid in mine & arts:
-                    shared[other].add(aid)
-        for other, aids in shared.items():
-            names = sorted({(a.publisher if (a := self.reg.article(aid)) else "a source")
-                            for aid in aids})
-            why[other].append(f"shares {_pl(len(aids), 'source article')} ({', '.join(names)})"
-                              f" — the same source, not independent confirmation")
+        why, sibling = self.related_of(tid)
         out = [f'<li><a href="{e(other)}.html">{e(self.title(other))}</a>'
                f'<div class="small">{e(self.area[other])} · {e("; ".join(rs))}</div></li>'
                for other, rs in sorted(why.items(), key=lambda kv: self.title(kv[0]))]
         siblings = [f'<li><a href="{e(other)}.html">{e(self.title(other))}</a>'
                     f'<div class="small">{e(self.area[other])}</div></li>'
-                    for other in sibling - set(why)]
+                    for other in sibling]
         if not out and not siblings:
             return ""
         return ((f'<ul class="rel">{"".join(out)}</ul>' if out else "")
@@ -2414,7 +2455,7 @@ class Desk:
         pub = {s.article_id: s for s in c.s09_sources}
         rows: list[tuple[str, dict[str, Any]]] = []
         for r in c.s04_key_evidence:
-            rows.append((r.article_id, {"v": r.value_text, "u": unit_of(r.value_text, r.unit),
+            rows.append((r.article_id, {"v": r.value_text, "u": unit_shown(r.value_text, r.unit),
                                         "label": figure_label(self.store, r.claim_id, r.label),
                                         "quote": r.quote, "period": r.period,
                                         "type": _EPI.get(r.epistemic.value, r.epistemic.value),
@@ -2425,7 +2466,7 @@ class Desk:
                 continue
             role = rc.roles.get(cid, "")
             rows.append((cl.article_id, {
-                "v": cl.value_text, "u": unit_of(cl.value_text, cl.unit),
+                "v": cl.value_text, "u": unit_shown(cl.value_text, cl.unit),
                 "label": figure_label(self.store, cid, " — ".join(
                     z for z in (cl.scope, cl.metric) if z) or cl.statement),
                 "quote": cl.quote, "period": cl.period,
@@ -2803,40 +2844,48 @@ h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 JS = """function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
 function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
 rowsOf('input.morebox').forEach(function(b){b.checked=true})}
+function recap(root){rowsOf(root+' table[data-cap]').forEach(function(t){var cap=+t.dataset.cap,
+k=0;Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
+if(!r.hasAttribute('data-sub')&&r.style.display!=='none')k++;r.classList.toggle('xtra',k>cap)});
+var l=document.querySelector('label[for="'+t.dataset.box+'"]');if(l){l.style.display=k>cap?'':
+'none';if(k>cap)l.textContent='Showing '+cap+' of '+k+' '+t.dataset.what+' \u2014 show all '+k}})}
 function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
 s=document.getElementById('fs').value,a=document.getElementById('fa').value,
 ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
 if(q||a||ar)openAll('#tt');
 all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
-(!ar||r.dataset.area===ar)&&(!q||r.textContent.toLowerCase().indexOf(q)>=0);
+(!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
 r.style.display=ok?'':'none';n+=ok?1:0});
 rowsOf('#tt details[data-grp]').forEach(function(g){var v=Array.prototype.slice.call(
 g.querySelectorAll('tr[data-area]')).some(function(r){return r.style.display!=='none'});
-g.style.display=v?'':'none';if(q||a||ar)g.open=v});
-document.getElementById('cnt').textContent='showing '+n+' of '+all.length}
+g.style.display=v?'':'none';if(q||a||ar)g.open=v});recap('#tt');
+document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
 function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
--r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:-r.dataset.rv};
+-r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:
++r.dataset.ord};
 rowsOf('#tt table').forEach(function(t){var rs=Array.prototype.slice.call(t.querySelectorAll(
-'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)}).forEach(function(r){
-(r.parentNode).appendChild(r)})})}
+'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)||a.dataset.ord-b.dataset.ord})
+.forEach(function(r){(r.parentNode).appendChild(r)})});recap('#tt')}
 function fa(){var r=document.getElementById('fr').value,p=document.getElementById('fp').value,n=0,
 all=rowsOf('#at tr[data-state]');if(r||p)openAll('#at');all.forEach(function(x){var ok=
 (!r||x.dataset.state===r)&&(!p||x.dataset.pub===p);x.style.display=ok?'':'none';n+=ok?1:0});
 rowsOf('#at tr[data-sub]').forEach(function(x){var t=x.previousElementSibling;
-x.style.display=t&&t.style.display==='none'?'none':''});
-document.getElementById('cnt2').textContent='showing '+n+' of '+all.length}
+x.style.display=t&&t.style.display==='none'?'none':''});recap('#at');
+document.getElementById('cnt2').textContent=n+' of '+all.length+' match'}
 function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElementById('frn')
 .checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
 if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
 x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
 n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
 .call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
-document.getElementById('cnt3').textContent='showing '+n+' of '+all.length}
+document.getElementById('cnt3').textContent=n+' of '+all.length+' match'}
 function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
 var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
 x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
 p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
 if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
-u.get('area');if(u.get('sort')){document.getElementById('so').value=u.get('sort');srt()}flt()}
+u.get('area');if(u.get('sort'))document.getElementById('so').value=u.get('sort');srt();flt()}
 if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+window.addEventListener('beforeprint',function(){rowsOf('details').forEach(function(d){
+d.open=true});rowsOf('input.morebox').forEach(function(b){b.checked=true})});
 """
