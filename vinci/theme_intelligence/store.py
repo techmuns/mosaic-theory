@@ -165,6 +165,16 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE TRIGGER enrichments_no_delete BEFORE DELETE ON enrichments "
         "BEGIN SELECT RAISE(ABORT, 'enrichments is append-only'); END",
     ]),
+    # v6 (2026-10-15, U42): the lookups every render repeats were full scans — a thesis's links
+    # (`relations(thesis_id)`, from OR to) and a version's or a run's verification issues
+    # (`issues(ref_id=)` behind every article version read, `issues(run_id=)`). Indexes only:
+    # no row is touched.
+    (6, [
+        "CREATE INDEX ix_rel_from ON relations(from_thesis)",
+        "CREATE INDEX ix_rel_to ON relations(to_thesis)",
+        "CREATE INDEX ix_issues_ref ON verification_issues(ref_id)",
+        "CREATE INDEX ix_issues_run ON verification_issues(run_id)",
+    ]),
 ]
 
 
@@ -199,6 +209,10 @@ class Store:
         self.conn = sqlite3.connect(path, isolation_level=None)  # explicit transactions only
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA foreign_keys=ON")
+        #: article versions read inside `reading()` (U44), by version id and by article — None
+        #: outside one
+        self._memo: dict[str, ArticleVersion | None] | None = None
+        self._memo_by_article: dict[str, list[ArticleVersion]] = {}
         self.migrate(migrations)
 
     # -- schema ----------------------------------------------------------------------------------
@@ -258,10 +272,29 @@ class Store:
     def close(self) -> None:
         self.conn.close()
 
+    @contextmanager
+    def reading(self) -> Iterator[None]:
+        """A read-only pass (a render): each article version is parsed ONCE inside it (U44: one
+        pilot render parsed 15 versions 1,344 times, each read also querying its corrections).
+        Any write inside it drops what was read, and the memo ends with the pass — a version read
+        here is never served to a later write path."""
+        outer = self._memo is not None
+        if not outer:
+            self._memo = {}
+        try:
+            yield
+        finally:
+            if not outer:
+                self._memo = None
+                self._memo_by_article.clear()
+
     # -- generic append / upsert -------------------------------------------------------------------
     def _append(self, table: str, cols: dict[str, Any], model: BaseModel) -> bool:
         """Insert an immutable row. Same id + same payload = no-op (False); same id + different
         payload = StoreIntegrityError. Returns True when a row was actually written."""
+        if self._memo is not None:  # a write inside a read pass: nothing read stays served
+            self._memo.clear()
+            self._memo_by_article.clear()
         payload = _dump(model)
         names = [*cols, "payload"]
         sql = (f"INSERT OR IGNORE INTO {table} ({', '.join(names)}) "
@@ -316,14 +349,25 @@ class Store:
             "content_sha256": v.content_sha256}, v)
 
     def article_versions(self, article_id: str) -> list[ArticleVersion]:
-        return [self._as_read_now(v) for v in self._rows(
+        if self._memo is not None and article_id in self._memo_by_article:
+            return list(self._memo_by_article[article_id])
+        out = [self._as_read_now(v) for v in self._rows(
             "SELECT payload FROM article_versions WHERE article_id=? ORDER BY retrieved_at",
             [article_id], ArticleVersion)]
+        if self._memo is not None:
+            self._memo_by_article[article_id] = out
+            self._memo.update({v.version_id: v for v in out})
+        return list(out)
 
     def article_version(self, version_id: str) -> ArticleVersion | None:
+        if self._memo is not None and version_id in self._memo:
+            return self._memo[version_id]
         r = self._rows("SELECT payload FROM article_versions WHERE version_id=?", [version_id],
                        ArticleVersion)
-        return self._as_read_now(r[0]) if r else None
+        v = self._as_read_now(r[0]) if r else None
+        if self._memo is not None:
+            self._memo[version_id] = v
+        return v
 
     def version_by_content(self, article_id: str, content_sha: str) -> ArticleVersion | None:
         r = self._rows("SELECT payload FROM article_versions WHERE article_id=? AND "

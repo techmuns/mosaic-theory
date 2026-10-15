@@ -258,8 +258,14 @@ def test_memory_optics_and_grid_are_siblings_never_merged(pipe: Pipeline) -> Non
     assert sorted(t.key_node for t in ts) == ["ai_infrastructure.memory",
                                               "ai_infrastructure.optical_networking",
                                               "ai_infrastructure.power_grid"]
-    rels = pipe.store.relations()
-    assert len(rels) == 3 and {r.relation for r in rels} == {RelationType.SIBLING}
+    # three children of one area: never merged, never linked pair by pair (U43 — the area is
+    # read from their keys), each later card counting the area in one line
+    assert pipe.store.relations() == []
+    lines = [s.text for t in ts if (v := pipe.store.thesis_version(t.thesis_id, 1)) is not None
+             for s in v.content.s07_what_could_go_wrong.alternative_mechanisms
+             if s.text.startswith("Registry link")]
+    assert sorted(x.split(" other ")[0] for x in lines) == ["Registry link — 1",
+                                                            "Registry link — 2"]
     # one article, many theses — each links back to the same article id
     assert len({c.article_id for c in pipe.store.contributions()}) == 1
     assert len(pipe.store.contributions()) == 3

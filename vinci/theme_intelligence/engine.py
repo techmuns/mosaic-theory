@@ -3,8 +3,10 @@
 IDENTITY. A thesis is keyed by (value-chain node, profit mechanism, direction, geography) from the
 controlled taxonomy. Same key → the SAME thesis is updated; nothing else ever merges. Similarity is
 never a merge licence: a different mechanism on the same node is a SIBLING, the opposite direction
-is COMPETING (linked, never mashed into one), a parent and a child node are PARENT_CHILD, and an
-`other` hypothesis is created REVIEW_NEEDED with lexically similar theses flagged — never merged.
+is COMPETING (linked, never mashed into one), a parent and a child node are PARENT_CHILD, theses
+that only share a broader area are never linked pair by pair (the area is read from their keys —
+U43), and an `other` hypothesis is created REVIEW_NEEDED with lexically similar theses flagged —
+never merged.
 The thesis id is a hash of the key, so a re-run on an empty registry reproduces the same ids, and a
 populated registry MATCHES an earlier thesis instead of minting a new id.
 
@@ -109,6 +111,7 @@ from vinci.theme_intelligence.schemas import (
     ThesisVersion,
     VerificationIssue,
     identity_key,
+    same_area,
 )
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.timewindow import Window, window_of
@@ -983,11 +986,17 @@ class Engine:
                  for cid, role in roles.items()]
         own = [claims[cid] for cid, role in roles.items() if cid in claims
                 and role in (LinkRole.SUPPORTS, LinkRole.DISLOCATION, LinkRole.CATALYST)]
-        relations = self._relations_for(thesis, ctx, own)
+        relations, n_area = self._relations_for(thesis, ctx, own)
         rel_notes = [CardSentence(text=f"Registry link — {relation_label(r)} "
                                        f"{r.to_thesis if r.from_thesis == tid else r.from_thesis}"
                                        f": {r.reason}", provenance=Provenance.MODEL_INFERENCE)
                      for r in relations]
+        if n_area:  # ONE line for the broader area, never one per thesis in it (U43)
+            rel_notes.append(CardSentence(
+                text=f"Registry link — {n_area} other {'thesis' if n_area == 1 else 'theses'} "
+                     f"in the same broader area ({thesis.key_node.split('.')[0]}) — context only, "
+                     f"never evidence; the desk lists them",
+                provenance=Provenance.MODEL_INFERENCE))
         head, n_evidence = self._headline_claims(h, claims)
         items = [ChangeItem(change_class=ChangeClass.NOVELTY_UNVERIFIED,
                             text=claims[c].statement, provenance=_label([c], claims),
@@ -1883,19 +1892,23 @@ class Engine:
         return out
 
     def _relations_for(self, t: Thesis, ctx: ArticleContext,
-                       own: list[Claim]) -> list[ThemeRelation]:
+                       own: list[Claim]) -> tuple[list[ThemeRelation], int]:
         """How a new thesis relates to every other. COMPETING — the only relation whose evidence
         is filed as CONTRADICTS — needs a DIRECT contradiction: the SAME claim (node, mechanism,
         segment, geography, timeframe) predicted the opposite way. Opposite directions that
         differ in any of those are RELATED: linked, never counter-evidence, never a weakening
         (review of PR #703, round 3: a fall in utility share prices does not contradict rising
         demand for on-site power). Same-direction theses that are not the same claim are
-        ADJACENT SUPPORT: context, never a strengthening."""
+        ADJACENT SUPPORT: context, never a strengthening. Theses that only share a broader area
+        (two children of one sector, or an area root and a child) are COUNTED, never linked: the
+        pair is read from their keys, and a link per pair grew with the square of the theses in a
+        sector (U43: 15,204 of 18,259 links and 42,182 card lines at 52 weeks)."""
         rels: list[ThemeRelation] = []
         now = datetime.now(tz=UTC)
         seg_label = {sg.id: sg.label for sg in self.taxonomy.segments}
         t_windows = evidence_windows(own, ctx.as_of, self._published_of(own))
         cids: tuple[str, ...] = ()
+        n_area = 0
         for o in self.store.theses():
             if o.thesis_id == t.thesis_id or o.retired:  # a retired thesis is history only
                 continue
@@ -1966,16 +1979,12 @@ class Engine:
                     why = (f"the same claim at an overlapping but different geography "
                            f"({t.key_geography} vs {o.key_geography}) — a separate thesis, never "
                            f"merged; adjacent support, never an automatic confirmation")
-            elif ("." not in o.key_node or "." not in t.key_node) and (
-                    o.key_node.startswith(t.key_node + ".")
-                    or t.key_node.startswith(o.key_node + ".")):
-                # a thesis filed at an AREA's root (no sub-node) is "parent" of every thesis in
-                # the area: the link says only that the two share an area — never adjacent
-                # support (U47: card TH-A097D4722F printed "ADJACENT SUPPORT (parent / child)")
-                root = o.key_node if "." not in o.key_node else t.key_node
-                rel, why = RelationType.SIBLING, (f"same broader area — {root} is the area's "
-                                                  f"root, not a step of one chain; never adjacent "
-                                                  f"support")
+            elif same_area(o.key_node, t.key_node):
+                # an area root and a child, or two children of one sector: they share an area and
+                # nothing more — counted, never linked (U43; U47: an area-root link had printed
+                # "ADJACENT SUPPORT (parent / child)")
+                n_area += 1
+                continue
             elif o.key_node.startswith(t.key_node + ".") or t.key_node.startswith(o.key_node + "."):
                 rel = RelationType.PARENT_CHILD
                 role = (EvidenceRole.ADJACENT_SUPPORT.value if same_dir
@@ -1983,11 +1992,6 @@ class Engine:
                 why = (f"{o.key_node} and {t.key_node} are parent and child economics — never "
                        f"merged" + (" — adjacent support, never a confirmation" if same_dir
                                     else " — related, never counter-evidence" if opposite else ""))
-            elif "." in o.key_node and "." in t.key_node and \
-                    o.key_node.split(".")[0] == t.key_node.split(".")[0]:
-                rel, why = RelationType.SIBLING, (f"same parent sector "
-                                                  f"({o.key_node.split('.')[0]}), different child "
-                                                  f"economics ({o.key_node} vs {t.key_node})")
             if t.status is ThesisStatus.REVIEW_NEEDED and rel is None:
                 a = set(re.findall(r"[a-z]{4,}", t.title.lower()))
                 b = set(re.findall(r"[a-z]{4,}", o.title.lower()))
@@ -2004,7 +2008,7 @@ class Engine:
                 created_at=now, evidence_role=role,
                 claim_ids=cids if role == EvidenceRole.CONTRADICTION.value else ()))
             cids = ()
-        return rels
+        return rels, n_area
 
     def _event(self, ctx: ArticleContext, tid: str, version: int | None, etype: str,
                detail: str, diffs: tuple[FieldDiff, ...] = ()) -> ChangeEvent:

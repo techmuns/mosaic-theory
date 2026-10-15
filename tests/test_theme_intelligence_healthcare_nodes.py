@@ -64,7 +64,13 @@ def test_a_drug_market_and_a_care_payment_shift_are_two_theses_never_one(tmp_pat
     assert cash.sector.startswith("Healthcare services and payers")
     rel = {r.relation.value for r in pipe.store.relations(alz.thesis_id)
            if cash.thesis_id in (r.from_thesis, r.to_thesis)}
-    assert rel == {"SIBLING"}  # same parent sector, different child: linked, never merged
+    # same parent sector, different child: never merged, and never linked pair by pair — the
+    # area is read from the keys (U43); the later card counts it in ONE line
+    assert rel == set()
+    v = pipe.store.thesis_version(cash.thesis_id, 1)
+    assert v is not None and any(
+        s.text.startswith("Registry link — 1 other thesis in the same broader area (healthcare)")
+        for s in v.content.s07_what_could_go_wrong.alternative_mechanisms)
     pipe.start_run("ingest", as_of=AS_OF)
     _article(pipe, "alz2", "Alzheimer's drug sales could rise 26% in 2026, a second source says.",
              "healthcare.pharma_biotech", "Alzheimer's drugs open a large market")
