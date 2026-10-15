@@ -1053,6 +1053,9 @@ class Dashboard:
     report_runs: list[str] = field(default_factory=list)
     #: [first, last] date of the runs it covers — the report's window
     span: list[str] = field(default_factory=list)
+    #: figures in the week's articles and those not captured — each article once (the census)
+    figures_in_articles: int = 0
+    figures_uncaptured: int = 0
     #: propositions resting on NO verified material evidence (SKIP-1): never research
     #: opportunities, so kept out of the categories — listed apart, with why, for the audit
     no_evidence: list[DashRow] = field(default_factory=list)
@@ -1169,7 +1172,8 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
 
 
 def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str]],
-                    generated: str, runs: list[WeeklyRun] | None = None) -> Dashboard:
+                    generated: str, runs: list[WeeklyRun] | None = None,
+                    census: tuple[int, int, int, int] | None = None) -> Dashboard:
     """The weekly report of `run_id` over `report_runs` — or over `runs` when given (the research
     desk's week in progress: every manual run since the last weekly scan, desk.desk_weeks)."""
     run = store.run(run_id)
@@ -1304,9 +1308,11 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
     span = [min(r.window_from or r.as_of for r in runs).isoformat(),
             max(r.window_to or r.as_of for r in runs).isoformat()]
     window = f"{span[0]} → {span[1]} (as of {run.as_of.isoformat()}, mode {run.mode})"
-    from vinci.theme_intelligence.desk import analysed_articles  # the desk reads this module
+    if census is None:  # a report built without a desk counts by the desk's census itself
+        from vinci.theme_intelligence.desk import analysed_articles  # the desk reads this module
 
-    n_read, n_part = analysed_articles(store, runs)
+        census = analysed_articles(store, runs)
+    n_read, n_part, n_fig, n_unc = census
     d = Dashboard(
         run=json.loads(run.model_dump_json()), banner=banner, window=window, span=span,
         sources=[json.loads(sc.model_dump_json()) for sc in run.sources],
@@ -1326,6 +1332,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         no_evidence=sorted(no_evidence, key=lambda r: r.thesis_id),
         validation=val, generated=generated)
     d.report_runs = [r.run_id for r in runs]
+    d.figures_in_articles, d.figures_uncaptured = n_fig, n_unc
     d.source_health = source_health_as_of(store, run)
     d.intake = research_intake(store, run, runs, d.source_health)
     d.kpi = kpis(d, store)
@@ -1390,8 +1397,9 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
                               and rank(r.action) < rank(r.previous_action))),
         "challenged": sum(1 for r in rows if "CHALLENGED" in r.flags),
         "archived": d.archived_total,
-        "figures_uncaptured": run.get("counts", {}).get("figures_uncaptured", 0),
-        "figures_in_articles": run.get("counts", {}).get("figures_in_articles", 0),
+        # the week's articles, each once — never one run's counter beside the week's articles
+        "figures_uncaptured": d.figures_uncaptured,
+        "figures_in_articles": d.figures_in_articles,
         "manually_imported": d.intake.get("manual", {}).get("total", 0) if d.intake else 0,
     }
 
@@ -1990,16 +1998,16 @@ def render_dashboard_md(d: Dashboard) -> str:
     md += [f"- Articles analyzed: {k.get('articles_full', 0)} full · "
            f"{k.get('articles_partial', 0)} partial"
            + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")
-           + (f"; queued by the budget cap, not yet read: {k['queued']}" if k.get("queued")
-              else ""),
+           + (f"; queued by the budget cap at the end of the last run, not yet read: "
+              f"{k['queued']}" if k.get("queued") else ""),
            f"- Research Now / Watch / Skip: {k.get('research_now', 0)} / {k.get('watch', 0)} / "
-           f"{k.get('skip', 0)} — of the {k.get('theses_this_run', 0)} theses this run created "
-           f"or changed" + (f", {k['retired']} of them retired (counted in none)"
+           f"{k.get('skip', 0)} — of the {k.get('theses_this_run', 0)} theses the week's runs "
+           f"created or changed" + (f", {k['retired']} of them retired (counted in none)"
                             if k.get("retired") else "")
            + f" (archived in the registry: {d.archived_total})",
            f"- New / upgraded / downgraded / challenged theses: {k.get('new', 0)} / "
            f"{k.get('upgraded', 0)} / {k.get('downgraded', 0)} / {k.get('challenged', 0)} — "
-           f"this run's events; a thesis new this run can also be challenged in it",
+           f"the week's events; a thesis new this week can also be challenged in it",
            f"- Reported figures not yet captured: {k.get('figures_uncaptured', 0)} of "
            f"{k.get('figures_in_articles', 0)}", ""]
     h = d.source_health
@@ -2140,7 +2148,7 @@ def scoped_ids(body: str, prefix: str) -> str:
     printed report carries every card, and each card's "L-s01-0" was then one id many times (U32d:
     42 ids repeated in the pilot's report_print.html). A link to an id outside the card is kept."""
     own = set(re.findall(r'\sid="([^"]+)"', body))
-    return re.sub(r'\b(id="|href="#)([^"]+)"',
+    return re.sub(r'(?<![\w:-])(id="|href="#)([^"]+)"',
                   lambda m: f'{m[1]}{prefix}-{m[2]}"' if m[2] in own else m[0], body)
 
 
@@ -2155,13 +2163,12 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
                  f", review {run.review_prompt_version}, model {run.llm_model}).")
     asof = theses_as_of_run(store, run)
     cards = write_cards(store, out, generated=generated, theses=asof, until=run.finished_at)
-    from vinci.theme_intelligence.desk import desk_weeks, write_desk  # the desk reads this module
+    from vinci.theme_intelligence.desk import Desk  # the desk reads this module
 
-    # ONE week: the full weekly report covers the runs the desk's This week covers (U54: the
-    # published pair read 6 theses / 3 articles beside 18 / 13)
-    weeks = desk_weeks(store, run)
-    d = build_dashboard(store, run_id, cards=cards, generated=generated,
-                        runs=list(weeks[-1].runs) if weeks else None)
+    # ONE week, ONE view: the full weekly report IS the desk's This week report (U54: the
+    # published pair read 6 theses / 3 articles beside 18 / 13) — built once, for both
+    view = Desk(store, run, cards=cards, generated=generated)
+    d = view.d
     (out / "dashboard.html").write_text(render_dashboard_html(d))
     delta_ids = [r.thesis_id for rows in d.categories.values() for r in rows] + [
         r.thesis_id for r in d.no_evidence]  # their cards stay in the printed record
@@ -2183,7 +2190,7 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
     issues = store.issues(run_id=run_id)
     (out / "validation_log.json").write_text(json.dumps(
         [json.loads(i.model_dump_json()) for i in issues], indent=1, sort_keys=True))
-    desk = write_desk(store, run_id, out, cards=cards, generated=generated)
+    desk = view.write(out)
     secs = ((run.finished_at - run.started_at).total_seconds() if run.finished_at else None)
     manifest = {
         "run_id": run.run_id, "mode": run.mode, "status": run.status.value,

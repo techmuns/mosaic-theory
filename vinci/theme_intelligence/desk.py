@@ -31,7 +31,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 from urllib.parse import quote, urlparse
 
 from vinci.theme_intelligence.cards import (
@@ -392,17 +392,33 @@ class _Registry:
         return s.publisher if s else sid
 
 
-def analysed_articles(store: Store, runs: list[WeeklyRun]) -> tuple[int, int]:
-    """(articles analysed in `runs`, of which read only in part) — EACH ARTICLE ONCE, by the same
-    census the Articles screen lists. The weekly report counts with this (U54): its sum of the
-    runs' counters counted an article re-analysed in the week twice (18 "read" of 13)."""
+class ArticleCensus(NamedTuple):
+    """A week's articles as the Articles screen lists them — EACH ARTICLE ONCE (U54: the weekly
+    report's sum of the runs' counters counted an article re-analysed in the week twice, 18
+    "read" of 13)."""
+
+    read: int
+    partial: int
+    figures: int
+    uncaptured: int
+
+
+def census_of(rows: Iterable[ArticleRow]) -> ArticleCensus:
+    """The census of a week's article rows: the analysed ones, their figures from each article's
+    latest completeness record."""
+    read = [a for a in rows if a.analysed]
+    return ArticleCensus(len(read), sum(1 for a in read if a.state == "PARTIAL"),
+                         sum(a.figures for a in read), sum(a.figures - a.captured for a in read))
+
+
+def analysed_articles(store: Store, runs: list[WeeklyRun]) -> ArticleCensus:
+    """`census_of` the articles of `runs`, for a report built without a desk."""
     if not runs:
-        return 0, 0
+        return ArticleCensus(0, 0, 0, 0)
     span = [r.as_of for r in runs]
     week = Week(key="", start=min(span), end=max(span), runs=tuple(runs), failed=(),
                 scanned=False)
-    read = [a for a in week_articles(_Registry(store), week, latest=False) if a.analysed]
-    return len(read), sum(1 for a in read if a.state == "PARTIAL")
+    return census_of(week_articles(_Registry(store), week, latest=False))
 
 
 def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRow]:
@@ -498,7 +514,8 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
             if aid in rows:
                 rows[aid].notes.append("Completed after a failed attempt (the analysis stopped "
                                        "with an error; nothing from it was recorded).")
-                rows[aid].audit.append(f"failed attempt {fr.run_id}: {err.splitlines()[0][:160]}"
+                rows[aid].audit.append(f"failed attempt {fr.run_id}: "
+                                       f"{clip(err.splitlines()[0], 160, 'the run record')}"
                                        if err else f"failed attempt {fr.run_id}")
                 continue
             a = reg.article(aid)
@@ -515,7 +532,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
                    if later else []),
                 follow_up="" if later else "Re-run the article", article_id=aid,
                 audit=[f"{aid} · failed run {fr.run_id}"
-                       + (f": {err.splitlines()[0][:160]}" if err else "")])
+                       + (f": {clip(err.splitlines()[0], 160, 'the run record')}" if err else "")])
     # the weekly scan's other outcomes, url by url
     for r in week.runs:
         if r.mode != "scan":
@@ -953,7 +970,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
             publisher=a.publisher, source_id=a.source_id, published=_todate(a.published_at),
             first_seen=_todate(a.first_seen_at), why=why,
             command=_ingest_cmd(a.source_id, a.canonical_url), url=a.canonical_url,
-            audit=a.article_id + (f" · {upload_issue[a.article_id][:200]}"
+            audit=a.article_id + (f" · {clip(upload_issue[a.article_id], 200, 'Review')}"
                                   if a.article_id in upload_issue else "")))
     done_urls = {a.canonical_url for a in store.articles()
                  if any(v.retrieval_state in (RetrievalState.FULL, RetrievalState.PARTIAL)
@@ -1020,8 +1037,8 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                  f"the reports you hold, starting with the articles listed"),
             command=_ingest_cmd(sid), detail=rest, links=links,
             where=[src.entry_url, *src.research_pages] if not links else [],
-            audit=f"health {row.get('status', 'UNKNOWN')}" + (f" · {row.get('reason', '')[:160]}"
-                                                              if row else "")))
+            audit=f"health {row.get('status', 'UNKNOWN')}"
+            + (f" · {clip(row.get('reason', ''), 160, 'Sources')}" if row else "")))
     for d in reg.documents:
         if d.source_id in retired:
             continue
@@ -1042,12 +1059,14 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                 f"{CLI} ingest-file --release {d.doc_id} --same-as {aid}   (or --as-new, or "
                 f"--duplicate-of {aid})",
                 detail=[f"resembles “{clean_title(like.title, like.publisher)}” ({like.publisher})"]
-                if like else [], audit=f"document {d.doc_id} · {d.match_basis[:160]}"))
+                if like else [], audit=f"document {d.doc_id} · "
+                f"{clip(d.match_basis, 160, 'the document record')}"))
         elif d.status in ("REJECTED", "FAILED"):
             out.append(_doc_item(d, "rejected", _doc_why(d),
                                  "Save it as PDF or text with a readable text layer, then "
-                                 "import it again", audit=f"document {d.doc_id} · "
-                                                          f"{plain(last)[:160]}"))
+                                 "import it again",
+                                 audit=f"document {d.doc_id} · "
+                                       f"{clip(plain(last), 160, 'the document record')}"))
         elif d.status in ("INGESTED", "UPGRADED"):
             made = sorted({c.thesis_id for c in reg.by_article.get(d.article_id or "", [])
                            if c.run_id == d.run_id})
@@ -1398,12 +1417,14 @@ class Desk:
         self.asof: AsOf = theses_as_of_run(store, run)
         self.cards = cards
         self._uid = 0
-        self.d: Dashboard = build_dashboard(store, run.run_id, cards=cards, generated=generated,
-                                            runs=list(self.week.runs))
-        self.rows: list[DashRow] = [r for rs in self.d.categories.values() for r in rs]
         self.week_of_run = {r.run_id: w.key for w in self.weeks for r in (*w.runs, *w.failed)}
         self.articles = {w.key: week_articles(self.reg, w, latest=w is self.week)
                          for w in self.weeks}
+        # the weekly report counts the week's articles by THIS census (one registry read)
+        self.d: Dashboard = build_dashboard(store, run.run_id, cards=cards, generated=generated,
+                                            runs=list(self.week.runs),
+                                            census=census_of(self.articles[self.week.key]))
+        self.rows: list[DashRow] = [r for rs in self.d.categories.values() for r in rs]
         self.health = source_health_as_of(store, run)
         self.area = {tid: area_name(t.key_node) for tid, (t, _v) in self.asof.items()}
         self.activity: dict[str, set[str]] = defaultdict(set)
@@ -2261,13 +2282,12 @@ class Desk:
             for f in v.priority.factors)
         none = '<p class="muted">No bottom line recorded.</p>'
 
-        def folded(items: list[str], keep: int, what: str) -> str:
+        def folded(items: list[str], keep: int, one: str, many: str) -> str:
             if len(items) <= keep:
                 return "".join(items)
             return ("".join(items[:keep]) + f'<li class="morewrap"><details class="fold">'
-                    f'<summary>{len(items) - keep} more '
-                    f'{what if len(items) - keep > 1 else what[:-1]}</summary><ul>'
-                    + "".join(items[keep:]) + "</ul></details></li>")
+                    f'<summary>{_pl(len(items) - keep, "more " + one, "more " + many)}</summary>'
+                    f'<ul>' + "".join(items[keep:]) + "</ul></details></li>")
 
         # THE TEAR SHEET (operator, 2026-10-15: "make the views how an expert would look at"):
         # the decision and its reasons beside the thesis and its key figures on the first
@@ -2283,7 +2303,7 @@ class Desk:
                         if lower else "") + "</details>" if raise_ or lower else "")
                   + f'<div class="aud">{trace}</div></aside>')
         wrong = ('<section class="panel"><h2>What could prove it wrong</h2><ul class="risk">'
-                 + (folded(risks, 3, "risks") or
+                 + (folded(risks, 3, "risk", "risks") or
                     "<li class=muted>None in the sources so far.</li>") + "</ul>"
                  + (f'<details class="fold"><summary>Signals to watch '
                     f'({len(watch)})</summary><ul class="risk">{"".join(watch)}</ul></details>'
@@ -2295,7 +2315,7 @@ class Desk:
         chain = (f'<section class="panel"><h2>How it reaches fundamentals</h2><ol class="chain">'
                  f'{"".join(steps) or no_step}</ol></section>')
         what = (f'<p class="small">{e(moved)}</p>'
-                + (f"<ul class=\"changed\">{folded(changed, 3, 'changes')}</ul>"
+                + (f"<ul class=\"changed\">{folded(changed, 3, 'change', 'changes')}</ul>"
                    if changed else ""))
         review = (f'<section class="panel" id="review"><h2>Open review findings '
                   f'<small>{len(mine)}</small></h2><ul class="rvitems rvcompact">'
@@ -2562,15 +2582,6 @@ class Desk:
         for name, text in files.items():
             (out / name).write_text(text)
         return sorted(files)
-
-
-def write_desk(store: Store, run_id: str, out: Path, *, cards: dict[str, dict[str, str]],
-               generated: str) -> list[str]:
-    """Write the research desk for `run_id` into `out` (beside the run's cards and report)."""
-    run = store.run(run_id)
-    if run is None:
-        raise KeyError(f"no run {run_id}")
-    return Desk(store, run, cards=cards, generated=generated).write(out)
 
 
 
@@ -2844,8 +2855,9 @@ h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 JS = """function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
 function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
 rowsOf('input.morebox').forEach(function(b){b.checked=true})}
-function recap(root){rowsOf(root+' table[data-cap]').forEach(function(t){var cap=+t.dataset.cap,
-k=0;Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
+function recap(root){rowsOf(root+' table[data-cap],table'+root+'[data-cap]').forEach(
+function(t){var cap=+t.dataset.cap,k=0;
+Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
 if(!r.hasAttribute('data-sub')&&r.style.display!=='none')k++;r.classList.toggle('xtra',k>cap)});
 var l=document.querySelector('label[for="'+t.dataset.box+'"]');if(l){l.style.display=k>cap?'':
 'none';if(k>cap)l.textContent='Showing '+cap+' of '+k+' '+t.dataset.what+' \u2014 show all '+k}})}

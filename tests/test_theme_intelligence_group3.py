@@ -64,12 +64,13 @@ def _render(pipe: Pipeline, run_id: str, out: Path) -> Path:
 #: the card printed "$10 billion bn", "8.5 month months", "more than four times x", "roughly
 #: half %"; the desk's helper dropped every unit beside a word ("more than 60" countries)
 CARRIED = [("$10 billion", "$bn"), ("$0.5 trillion", "$tn"), ("US$5.5 trillion", "$tn"),
+           ("$26B", "$bn"), ("$2T", "$tn"),
            ("8.5 month", "months"), ("more than four times", "x"), ("roughly half", "%"),
            ("four-fifths", "%"), ("around 1.3ppt", "percentage points"), ("~43%", "%")]
 KEPT = [("more than 60", "countries", "countries"), ("five", "years", "years"),
         ("21 million", "coins", "coins"), ("eight", "quarters", "quarters"),
         ("seven", "central banks", "central banks"), ("15–20%", "% QoQ", "QoQ"),
-        ("413", "$/year", "$/year"), ("$413", "$/year", "per year")]
+        ("413", "$/year", "$/year"), ("$413", "$/year", "per year"), ("5", "t", "t")]
 
 
 @pytest.mark.parametrize(("value", "unit"), CARRIED)
@@ -296,6 +297,11 @@ def test_the_full_weekly_report_spans_every_run_of_the_week(tmp_path: Path) -> N
     assert re.search(r"\b2 Articles read\b", dash)
     assert _tile(out / "index.html", "Articles read")[0] == 2
     assert "12–14 Oct 2026" in _text(out / "index.html")
+    # the figure line counts the week's articles too, never the last run's counter beside them
+    md = (out / "dashboard.md").read_text()
+    last = pipe.store.runs()[-1].counts.get("figures_in_articles", 0)
+    m = re.search(r"Reported figures not yet captured: (\d+) of (\d+)", md)
+    assert m and int(m[2]) == 2 and last == 1
 
 
 def _article_cells(page: Path, tid: str) -> list[str]:
@@ -408,6 +414,10 @@ def test_the_printed_report_carries_every_card_with_ids_of_its_own(tmp_path: Pat
     assert scoped_ids(card, "TH-1") == ('<article><p id="TH-1-L-s01-0">x</p><a href="#TH-1-L-s01-'
                                         '0">x</a><a href="#top">t</a></article>')
     assert re.findall(r'id="([^"]+)"', card * 2).count("L-s01-0") == 2
+    # only the id attribute moves: a data-id / aria-*-id naming the same value is left alone
+    other = '<article><p id="L-1" data-id="L-1" aria-describedby="L-1">x</p></article>'
+    assert scoped_ids(other, "TH-1") == ('<article><p id="TH-1-L-1" data-id="L-1" '
+                                         'aria-describedby="L-1">x</p></article>')
 
 
 def test_the_desk_script_re_caps_what_a_filter_or_sort_leaves_and_opens_every_fold_to_print(
@@ -448,7 +458,104 @@ def test_a_republish_never_deletes_a_file_it_did_not_write(tmp_path: Path) -> No
     pipe, _tid, rid = _figures_thesis(tmp_path)
     out = tmp_path / "pub"
     publish.publish(pipe.store, rid, out, allow_test_data=True)
+    (out / ".DS_Store").write_bytes(b"Finder metadata")  # OS metadata never blocks a publish
+    publish.publish(pipe.store, rid, out, allow_test_data=True)
     (out / "README.md").write_text("an operator's note")
     with pytest.raises(publish.PublishError, match="1 file.*README.md"):
         publish.publish(pipe.store, rid, out, allow_test_data=True)
     assert (out / "README.md").read_text() == "an operator's note"
+
+
+def test_a_fold_of_one_says_one_more_in_the_singular(tmp_path: Path) -> None:
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=AS_OF)
+    lines = [f"Contract prices rose {10 + i}% in segment {i} during 3Q26." for i in range(4)]
+    art = Hypo("four", "Test Publisher", date(2026, 10, 1), [("paragraph", x) for x in lines])
+    x = extraction([claim(f"c{i}", "b00" + str(i + 1), x.rstrip("."), f"Segment {i} prices up",
+                          metric=f"segment {i} price", value=10 + i, value_text=f"{10 + i}%",
+                          unit="%", period="3Q26") for i, x in enumerate(lines)],
+                   [hyp("h1", "Contract prices rise across segments", node="healthcare",
+                        mechanism="pricing_cycle", supporting=[f"c{i}" for i in range(4)])])
+    ingest(pipe, art.doc(), x, as_of=AS_OF, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    out = _render(pipe, pipe.store.runs()[-1].run_id, tmp_path / "out")
+    (t,) = pipe.store.theses()
+    fold = _soup(out / "theses" / f"{t.thesis_id}.html").select_one("ul.changed details summary")
+    assert fold is not None and fold.get_text(strip=True) == "1 more change"
+
+
+# --- the desk script in a real browser ------------------------------------------------------------
+
+BRAVE = Path("/Applications/Brave Browser.app/Contents/MacOS/Brave Browser")
+
+
+def _in_browser(page: Path, script: str) -> BeautifulSoup:
+    """`page` as a browser leaves it after its own script and then `script` ran (headless Brave,
+    --dump-dom): the desk's behaviour on the RENDERED page, not on a substring of its source."""
+    import subprocess
+
+    probe = page.with_name(page.stem + ".probe.html")
+    probe.write_text(page.read_text().replace("</body>", f"<script>{script}</script></body>"))
+    res = subprocess.run([str(BRAVE), "--headless=new", "--disable-gpu",
+                          "--virtual-time-budget=3000", "--dump-dom", f"file://{probe}"],
+                         capture_output=True, text=True, timeout=120, check=True)
+    return BeautifulSoup(res.stdout, "html.parser")
+
+
+@pytest.fixture(scope="module")
+def stress12(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    from tests.theme_intelligence_stress import build_stress_registry
+
+    root = tmp_path_factory.mktemp("g3stress")
+    pipe, _stats = build_stress_registry(root / "reg", weeks=12)
+    run = max(pipe.store.runs(), key=lambda r: r.started_at)
+    return _render(pipe, run.run_id, root / "out")
+
+
+@pytest.mark.skipif(not BRAVE.exists(), reason="needs a headless Chromium (Brave) on this machine")
+def test_in_a_browser_a_filter_re_caps_the_articles_table_that_carries_the_id_itself(
+        stress12: Path) -> None:
+    """The SYNTHETIC 12-week stress registry's Articles table (`<table id="at">`, over its cap):
+    after a publisher filter, the cap is re-applied to the rows the filter left — the first 25
+    matching rows shown, the rest marked, the label naming the matching total. NEGATIVE pin: a
+    filter leaving fewer rows than the cap marks none and hides the label. (`recap('#at')` once
+    selected `#at table[data-cap]` — nothing, since `#at` IS the table.)"""
+    page = stress12 / "articles.html"
+    s = _soup(page)
+    table = s.select_one("table#at[data-cap]")
+    assert table is not None
+    cap = int(table["data-cap"])
+    pubs = {tr["data-pub"] for tr in table.select("tr[data-state]")}
+    by_pub = {p: sum(1 for tr in table.select("tr[data-state]") if tr["data-pub"] == p)
+              for p in pubs}
+    for pub, n in sorted(by_pub.items(), key=lambda kv: -kv[1])[:1] + sorted(
+            by_pub.items(), key=lambda kv: kv[1])[:1]:
+        dom = _in_browser(page, "document.getElementById('fp').value="
+                                f"{pub!r};document.querySelectorAll('input.morebox').forEach("
+                                "function(b){b.checked=false});fa();recap('#at');")
+        rows = [tr for tr in dom.select("table#at tr[data-state]")
+                if "display: none" not in (tr.get("style") or "")]
+        assert len(rows) == n, pub
+        marked = [tr for tr in rows if "xtra" in (tr.get("class") or [])]
+        assert len(marked) == max(0, n - cap), pub
+        assert all("xtra" not in (tr.get("class") or []) for tr in rows[:cap]), pub
+        total = len(table.select("tr[data-state]"))
+        assert dom.select_one("#cnt2").get_text() == f"{n} of {total} match"
+
+
+@pytest.mark.skipif(not BRAVE.exists(), reason="needs a headless Chromium (Brave) on this machine")
+def test_in_a_browser_themes_search_reads_the_area_and_the_count_says_what_matches(
+        stress12: Path) -> None:
+    """Search found nothing for an area's own name (0 of 23 for "AI infrastructure" on the pilot).
+    NEGATIVE pin: a word in no title and no area matches nothing."""
+    page = stress12 / "themes.html"
+    total = len(_soup(page).select("tr[data-area]"))
+    dom = _in_browser(page, "document.getElementById('fs').value='';"
+                            "document.getElementById('q').value='ai infrastructure';flt();")
+    shown = [tr for tr in dom.select("tr[data-area]")
+             if "display: none" not in (tr.get("style") or "")]
+    assert shown and all("ai infrastructure" in tr["data-area"].lower() for tr in shown)
+    assert dom.select_one("#cnt").get_text() == f"{len(shown)} of {total} match"
+    none = _in_browser(page, "document.getElementById('fs').value='';"
+                             "document.getElementById('q').value='zzqx';flt();")
+    assert none.select_one("#cnt").get_text() == f"0 of {total} match"

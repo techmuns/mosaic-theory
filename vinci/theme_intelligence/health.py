@@ -478,11 +478,11 @@ def affected_shown(ma: dict[str, Any], n: int) -> str:
     aff = [str(x) for x in ma.get("affected", [])]
     items = [x for x in aff if not x.startswith(_MORE)]
     shown = items[:n]
-    total = int(ma.get("affected_total") or 0)
-    of = (str(total) if total else f"more than {len(items)}" if len(items) < len(aff)
-          else str(len(items)))
-    more = (total or len(items)) > len(shown) or len(items) < len(aff)
-    return "; ".join(shown) + (f" (showing {len(shown)} of {of})" if more else "")
+    stored = int(ma.get("affected_total") or 0)
+    cut = len(items) < len(aff)  # a closing "… and N more" line
+    of = str(stored) if stored else f"more than {len(items)}" if cut else str(len(items))
+    whole = len(shown) == (stored or len(items)) and not (cut and not stored)
+    return "; ".join(shown) + ("" if whole else f" (showing {len(shown)} of {of})")
 
 
 def asks_only_for_previews(src: SourceConfig, row: dict[str, Any]) -> bool:

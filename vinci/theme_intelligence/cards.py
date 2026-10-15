@@ -552,7 +552,7 @@ _SHARE_WORDS = r"half|halves|thirds?|quarters?|fifths?|tenths?"
 #: the written forms of one unit — a value written in any of them already carries it, so
 #: "$10 billion" with unit "$bn" never prints "$10 billion bn" (published 2026-10-14, U52)
 _UNIT_FORMS = (
-    ("tn", "trn", "trillion"), ("bn", "billion"), ("m", "mn", "mm", "million"),
+    ("tn", "trn", "t", "trillion"), ("bn", "b", "billion"), ("m", "mn", "mm", "million"),
     ("k", "thousand"),
     ("x", "times", "fold", "twice", "double", "doubled", "doubling", "triple", "tripled",
      "tripling"),

@@ -169,6 +169,7 @@ def publish(store: Store, run_id: str, out: Path, *, allow_test_data: bool = Fal
                            f"refusing to replace them")
     if marker is not None:  # a file the last publication did not write is never deleted (U32e)
         stray = sorted(str(p.relative_to(out)) for p in out.rglob("*") if p.is_file()
+                       and not p.name.startswith(".")  # OS metadata (Finder's .DS_Store)
                        and str(p.relative_to(out)) not in {"index.json", *marker.get("files", [])})
         if stray:
             raise PublishError(f"{out} holds {len(stray)} file(s) the last publication did not "
