@@ -161,3 +161,17 @@ def test_nothing_folded_is_dropped(tmp_path: Path) -> None:
         for q in c.basis_quote:
             assert q in text
     assert eb.NVDA_SOURCE in text
+
+
+def test_an_empty_set_says_none_proposed_and_why(tmp_path: Path) -> None:
+    """Review of #719: the column headings sit over rows only — a set with no company says
+    "None proposed" with the model's reason (the headings had made the fallback unreachable).
+    NEGATIVE: a set with companies has its headings."""
+    page, es = _enriched(tmp_path, {"companies": [],
+                                    "none_reason": "no listed company is clearly exposed"})
+    hypo = page.select_one(".expo .hypo")
+    assert hypo is not None and es.candidates == ()
+    assert hypo.select_one(".hhead") is None
+    assert "None proposed: no listed company is clearly exposed" in hypo.get_text(" ")
+    full, _es = _enriched(tmp_path / "full", eb.ANSWER)
+    assert full.select_one(".expo .hypo .hhead") is not None

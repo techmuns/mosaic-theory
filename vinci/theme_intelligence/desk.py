@@ -1285,8 +1285,7 @@ def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, st
     by_step: dict[str, list[EnrichmentCandidate]] = {}
     for x in es.candidates:
         by_step.setdefault(x.step_id, []).append(x)
-    body = ('<div class="hhead" aria-hidden="true"><span>Ticker</span><span>Company</span>'
-            '<span>Direction</span><span>Earns from (stated)</span><span>10-K</span></div>')
+    body = ""
     for sid, xs in by_step.items():
         cond, _how = proposal_reading(xs[0], steps, card)
         text, label = proposal_step(xs[0], card)
@@ -1299,12 +1298,16 @@ def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, st
     none = next((r for r in es.refused if r.startswith("none proposed:")), "")
     return (f'<div class="hypo"><h3>Companies the thesis implies <span class="tag">our '
             f'hypothesis</span></h3><p class="small muted">{e(head)}</p>'
-            + (body or f'<p class="small">None proposed{e(": " + none[15:]) if none else "."}'
+            + (_HHEAD + body if body else
+               f'<p class="small">None proposed{e(": " + none[15:]) if none else "."}'
                        f'</p>')
             + (f'<div class="aud cc">set aside: {e("; ".join(es.refused))}</div>'
                if es.refused else "") + "</div>")
 
 
+#: the implied companies' column headings — over rows only: an empty set says "None proposed"
+_HHEAD = ('<div class="hhead" aria-hidden="true"><span>Ticker</span><span>Company</span>'
+          '<span>Direction</span><span>Earns from (stated)</span><span>10-K</span></div>')
 #: a proposal's basis as its 10-K reads it: (mark, words)
 _BASIS_MARK = {"IN_FILING": ("✓", "its 10-K's revenue sentence names it"),
                "FILING_NAMES_OTHER": ("≠", "its 10-K's revenue sentence names another way"),
@@ -2146,25 +2149,26 @@ class Desk:
         # three DISTINCT figures: one value and label twice ("$26 billion · DTC cash-pay market
         # size", at peak / at its peak) is one figure on a tear sheet
         seen_fig: set[tuple[str, str]] = set()
-        figs = []
+        figs: list[tuple[Any, str]] = []  # (row, its label) — the label read once
         for r in ranked:
-            k = (r.value_text or "", figure_label(self.store, r.claim_id, r.label).lower())
+            lbl = figure_label(self.store, r.claim_id, r.label)
+            k = (r.value_text or "", lbl.lower())
             if k not in seen_fig:
                 seen_fig.add(k)
-                figs.append(r)
-        figs = figs[:3]
+                figs.append((r, lbl))
+                if len(figs) == 3:
+                    break
         pub = {s.article_id: s for s in c.s09_sources}
         fig_html = "".join(
             f'<div class="num"><b>{e(r.value_text)}</b><span class="unit">'
-            f'{e(unit_of(r.value_text, r.unit))}</span><span class="lbl">'
-            f'{e(figure_label(self.store, r.claim_id, r.label))}</span>'
+            f'{e(unit_of(r.value_text, r.unit))}</span><span class="lbl">{e(lbl)}</span>'
             f'<small>{e(_EPI.get(r.epistemic.value, r.epistemic.value))} · '
             f'{e(r.period or "period not stated")}</small><small>'
             + (f"{e(pub[r.article_id].publisher)}, " if r.article_id in pub else "")
             + (f"measured {e(_day(r.measured_as_of))}" if r.measured_as_of else
                f"published {e(_day(pub[r.article_id].published_at))}"
                if r.article_id in pub else "date not stated")
-            + f'</small><span class="aud cc">{e(r.claim_id)}</span></div>' for r in figs)
+            + f'</small><span class="aud cc">{e(r.claim_id)}</span></div>' for r, lbl in figs)
         steps = []
         for i, st in enumerate(c.s03_transmission):
             if st.step == "market_reaction":
