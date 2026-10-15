@@ -3,8 +3,11 @@
 COMPLIANCE RULES THIS ENFORCES, not just documents:
 - One identifying User-Agent (`config.USER_AGENT`). No browser spoofing, no header games: a site
   that refuses it is BLOCKED and reported as such — never worked around.
-- robots.txt per RFC 9309: a 2xx file is obeyed; a 4xx (incl. 403/404) means "no restrictions"; a
+- robots.txt per RFC 9309: a 2xx file is obeyed — `*` and `$` patterns, the longest matching rule
+  deciding, Allow winning a tie (`RobotsRules`); a 4xx (incl. 403/404) means "no restrictions"; a
   5xx or network failure FAILS CLOSED (treated as disallow-all) and is reported.
+- A redirect is followed one hop at a time, each hop checked against ITS host's robots.txt and
+  spaced like any request there — never followed blind to another host or a disallowed path.
 - Per-host spacing = max(source floor, robots Crawl-delay for our agent or `*`).
 - Paywalls are not bypassed: a fetched page that is only a teaser is classified PARTIAL by the
   parser and never analysed as a full text.
@@ -17,12 +20,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
-import urllib.robotparser
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import httpx
 
@@ -30,6 +33,65 @@ from vinci.theme_intelligence.config import DEFAULT_MIN_CRAWL_DELAY_S, USER_AGEN
 from vinci.theme_intelligence.schemas import RetrievalState
 
 MAX_BYTES = 15_000_000
+#: redirects followed for one page, each hop checked against its own host's robots.txt
+MAX_REDIRECTS = 5
+
+
+@dataclass(frozen=True)
+class RobotsRules:
+    """A robots.txt read per RFC 9309 for one crawler: the rules of the group(s) naming its
+    product token (case-insensitive), else of the `*` group(s); a rule's `*` matches any run of
+    characters and a trailing `$` anchors the end; the longest matching rule decides and Allow
+    wins a tie. urllib.robotparser read every rule as a plain prefix — J.P. Morgan's
+    `Disallow: /*.pdf` allowed every PDF on the host (2026-10-14)."""
+
+    rules: tuple[tuple[bool, str], ...]  # (allow, pattern)
+    crawl_delay: float | None
+
+    @classmethod
+    def parse(cls, text: str, product: str) -> RobotsRules:
+        groups: list[tuple[list[str], list[tuple[bool, str]], list[float]]] = []
+        agents: list[str] | None = None
+        in_rules = False
+        for raw in text.splitlines():
+            key, sep, value = raw.split("#", 1)[0].partition(":")
+            if not sep:
+                continue
+            key, value = key.strip().lower(), value.strip()
+            if key == "user-agent":
+                if agents is None or in_rules:
+                    agents, in_rules = [], False
+                    groups.append((agents, [], []))
+                agents.append(value.lower())
+            elif agents is not None and key in ("allow", "disallow", "crawl-delay"):
+                in_rules = True
+                if key == "crawl-delay":
+                    if re.fullmatch(r"\d+(?:\.\d+)?", value):
+                        groups[-1][2].append(float(value))
+                elif value:  # an empty rule ("Disallow:") restricts nothing
+                    groups[-1][1].append((key == "allow", value))
+        token = product.lower()
+        mine = [g for g in groups if token in g[0]]
+        star = [g for g in groups if "*" in g[0]]
+        chosen = mine or star
+        delays = [d for g in mine for d in g[2]] or [d for g in star for d in g[2]]
+        return cls(tuple(r for g in chosen for r in g[1]), delays[0] if delays else None)
+
+    def allows(self, url: str) -> bool:
+        p = urlparse(url)
+        path = (p.path or "/") + (f"?{p.query}" if p.query else "")
+        best: tuple[int, bool] | None = None
+        for allow, pattern in self.rules:
+            longer = best is None or len(pattern) > best[0] or (len(pattern) == best[0] and allow)
+            if longer and _robots_pattern(pattern).match(path):
+                best = (len(pattern), allow)
+        return best is None or best[1]
+
+
+def _robots_pattern(pattern: str) -> re.Pattern[str]:
+    anchored = pattern.endswith("$")
+    body = re.escape(pattern[:-1] if anchored else pattern).replace(r"\*", ".*")
+    return re.compile(body + ("$" if anchored else ""))
 
 
 @dataclass
@@ -56,7 +118,7 @@ class FetchResult:
 
 @dataclass
 class _HostPolicy:
-    parser: urllib.robotparser.RobotFileParser | None
+    parser: RobotsRules | None
     robots_status: int | None
     crawl_delay: float
     note: str
@@ -113,9 +175,8 @@ class PoliteFetcher:
             self._hosts[host] = pol
             return pol
         if 200 <= status < 300:
-            rp = urllib.robotparser.RobotFileParser()
-            rp.parse(r.text.splitlines())
-            delay = rp.crawl_delay(self.user_agent) or rp.crawl_delay("*")
+            rp = RobotsRules.parse(r.text, self.user_agent.split("/", 1)[0])
+            delay = rp.crawl_delay
             pol = _HostPolicy(rp, status, max(floor, float(delay or 0.0)),
                               f"robots.txt {status} obeyed" + (f"; Crawl-delay {delay}s"
                                                                if delay else ""))
@@ -132,7 +193,7 @@ class PoliteFetcher:
         pol = self.host_policy(url)
         if pol.disallow_all:
             return False, pol.note
-        if pol.parser is not None and not pol.parser.can_fetch(self.user_agent, url):
+        if pol.parser is not None and not pol.parser.allows(url):
             return False, f"robots.txt disallows {urlparse(url).path} for our agent"
         return True, pol.note
 
@@ -177,6 +238,25 @@ class PoliteFetcher:
         res.cache_path = body
 
     # -- fetch -----------------------------------------------------------------------------------
+    def _follow(self, url: str) -> tuple[httpx.Response | None, str]:
+        """GET `url`, following redirects ONE HOP AT A TIME: each hop is checked against the
+        robots.txt of its own host and spaced like any request there. The client had followed
+        them itself, so a redirect to another host — or to a disallowed path — was never checked.
+        (None, why) for a hop that is not fetched."""
+        current = url
+        for _hop in range(MAX_REDIRECTS + 1):
+            r = self._client.get(current, follow_redirects=False)
+            if not r.is_redirect:
+                return r, ""
+            nxt = urljoin(str(r.url), r.headers["location"])
+            ok, why = self.allowed(nxt)
+            if not ok:
+                return None, f"redirected to {nxt}, which is not fetched — {why}"
+            self._space(urlparse(nxt).netloc, self.host_policy(nxt).crawl_delay)
+            self.stats.requests += 1
+            current = nxt
+        return None, f"more than {MAX_REDIRECTS} redirects from {url} — not followed further"
+
     def fetch(self, url: str, *, ttl_s: float | None = 7 * 86_400.0) -> FetchResult:
         if self.ttl_cap is not None:
             ttl_s = self.ttl_cap if ttl_s is None else min(ttl_s, self.ttl_cap)
@@ -196,7 +276,7 @@ class PoliteFetcher:
         for attempt in range(self.max_retries + 1):
             self._space(host, pol.crawl_delay)
             try:
-                r = self._client.get(url)
+                r, refused = self._follow(url)
             except httpx.HTTPError as exc:
                 last_note = f"{type(exc).__name__}: {str(exc)[:160]}"
                 self.stats.requests += 1
@@ -206,6 +286,11 @@ class PoliteFetcher:
                 break
             self.stats.requests += 1
             self.stats.by_host[host] = self.stats.by_host.get(host, 0) + 1
+            if r is None:  # a redirect to what is not fetched: refused, never retried
+                self.stats.seconds += time.monotonic() - t0
+                self.stats.blocked += 1
+                return FetchResult(url, None, None, RetrievalState.BLOCKED, refused, None, None,
+                                   now, None, None, False, time.monotonic() - t0)
             if r.status_code in (429, 500, 502, 503, 504) and attempt < self.max_retries:
                 last_note = f"HTTP {r.status_code}"
                 time.sleep(min(60.0, 10.0 * (attempt + 1)))
