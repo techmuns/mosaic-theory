@@ -119,6 +119,14 @@ def _sha(*parts: str) -> str:
     return h.hexdigest()
 
 
+#: how an article's class basis begins when no page stated a class — the one phrase its writers
+#: (`_article_record`, `_record_blocked`) and its reader (`_stored_document`, U7) share
+CHANNEL_DEFAULT = "channel default"
+#: how an author's source field begins when the article TEXT credits them (`_with_text_authors`;
+#: read by `_article_record`, U25)
+TEXT_CREDIT = "article text "
+
+
 def article_id_for(canonical_url: str) -> str:
     return "A-" + _sha(canonical_url.rstrip("/").lower())[:12]
 
@@ -169,7 +177,8 @@ class Pipeline:
         self._calls = 0
         # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
         # review, and says so in the validation log rather than passing silently
-        self.engine = Engine(self.store, taxonomy, reviewer=self._review)
+        self.engine = Engine(self.store, taxonomy, reviewer=self._review,
+                             reliability_of=self._reliability)
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
         #: replay, from the registry the pull replaced): a re-created record keeps that date
         self.first_ingested = self.engine.first_ingested
@@ -281,6 +290,20 @@ class Pipeline:
              "at": datetime.now(tz=UTC).isoformat(), **({"note": note} if note else {})})
 
     # -- review hook ------------------------------------------------------------------------------
+    def _reliability(self, source_id: str) -> str:
+        """A channel's CURRENT reliability tier — the processing path and a reassess read the same
+        sources.toml (U55: a reassess kept the tier its previous version recorded)."""
+        src = self.sources.get(source_id)
+        return src.reliability if src else "medium"
+
+    def finish_ingest(self, status: RunStatus) -> WeeklyRun:
+        """End an ingest run as every run that changes theses ends: the archive pass (a SKIP thesis
+        leaves the active list at once), then finish (U12: an upload's SKIP theses stayed ACTIVE,
+        and the next enrichment paid for them)."""
+        assert self.run is not None
+        self.engine.archive_pass(run_id=self.run.run_id, as_of=self.run.as_of)
+        return self.finish_run(status)
+
     def _review(self, card: CardContent, claims: dict[str, Claim]) -> ReviewOutcome:
         assert self.run is not None
         issues = deterministic_card_checks(card, claims, self.run.run_id)
@@ -463,7 +486,7 @@ class Pipeline:
         assert self.run is not None
         src = self.sources.get(source_id)
         publisher = publisher_override or (src.publisher if src else "UNKNOWN publisher")
-        reliability = src.reliability if src else "medium"
+        reliability = self._reliability(source_id)
         default_class = ArticleClass(src.default_article_class) if src else ArticleClass.OTHER
         now = datetime.now(tz=UTC)
         aid = article_id_for(doc.canonical_url)
@@ -813,7 +836,7 @@ class Pipeline:
                         f"fetched: " + "; ".join(f"{h} {u}" for h, u in doc.alternates))
         have = {norm_name(a.name) for a in article.authors}
         extra = [Author(name=a.name, title=None,
-                        source_field=f"article text {a.block_id}: {a.quote[:120]!r}")
+                        source_field=f"{TEXT_CREDIT}{a.block_id}: {a.quote[:120]!r}")
                  for a in ve.authors if norm_name(a.name) not in have]
         if not extra:
             return article
@@ -828,15 +851,24 @@ class Pipeline:
     def _article_record(self, aid: str, doc: ParsedDocument, source_id: str, publisher: str,
                         default_class: ArticleClass, now: datetime) -> Article:
         prior = self.store.article(aid)
-        cls, basis = default_class, f"channel default for {source_id}"
+        cls, basis = default_class, f"{CHANNEL_DEFAULT} for {source_id}"
         if doc.article_class_hint is not None:
             cls, basis = doc.article_class_hint, doc.article_class_basis or "page statement"
+        # what an earlier run VERIFIED survives a fetch that cannot restate it (U25: re-running
+        # `article --url` without --published wiped the operator-verified date, and an
+        # ALREADY_INGESTED version never re-credits the authors its text names)
+        dated = doc if doc.published_at is not None or prior is None else prior
+        named = {norm_name(x.name) for x in doc.authors}
+        credited = tuple(x for x in (prior.authors if prior else ())
+                         if x.source_field.startswith(TEXT_CREDIT)
+                         and norm_name(x.name) not in named)
         return Article(
             article_id=aid, canonical_url=doc.canonical_url, source_id=source_id,
             publisher=publisher, title=doc.title, title_source=doc.title_source,
-            authors=doc.authors, authors_status=doc.authors_status,
-            published_at=doc.published_at, published_raw=doc.published_raw,
-            published_source=doc.published_source, published_status=doc.published_status,
+            authors=(*doc.authors, *credited),
+            authors_status=FieldStatus.KNOWN if credited else doc.authors_status,
+            published_at=dated.published_at, published_raw=dated.published_raw,
+            published_source=dated.published_source, published_status=dated.published_status,
             article_class=cls, article_class_basis=basis,
             first_seen_at=prior.first_seen_at if prior else self.first_ingested.get(aid, now))
 
@@ -850,7 +882,7 @@ class Pipeline:
             title=None, title_source=None, authors=(), authors_status=FieldStatus.UNKNOWN,
             published_at=None, published_raw=None, published_source=None,
             published_status=FieldStatus.UNKNOWN, article_class=default_class,
-            article_class_basis="channel default (page not retrieved)", first_seen_at=now)
+            article_class_basis=f"{CHANNEL_DEFAULT} (page not retrieved)", first_seen_at=now)
         v = ArticleVersion(
             version_id="AV-BLOCKED-" + _sha(url, fr.note, fr.fetched_at.isoformat())[:12],
             article_id=aid,
@@ -975,6 +1007,7 @@ class Pipeline:
         if budget is not None:
             self.guard.run_limit = budget
         results: list[ArticleResult] = []
+        retire = list(dict.fromkeys(retire))  # a thesis named twice is retired once (U10)
         try:
             wanted = list(dict.fromkeys(article_ids))
             for aid in wanted:
@@ -1027,6 +1060,9 @@ class Pipeline:
                                                 cost_limit=float("inf"), reanalysis=True)
                     results.append(res)
                     touched += [o.thesis_id for o in res.outcomes]
+                # SKIP theses leave the active list BEFORE enrichment, as in a scan — the pilot's
+                # re-analysis paid to enrich three (U12)
+                self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
                 self._scan_enrichment(as_of, [tid for tid in dict.fromkeys(touched)
                                               if (x := self.store.thesis(tid)) is not None
                                               and x.status is ThesisStatus.ACTIVE])
@@ -1072,7 +1108,13 @@ class Pipeline:
             notes=[f"re-analysis of stored version {v.version_id}"],
             stated_date=((v.document_date, v.document_date_source or "the stored version")
                          if v.document_date else None),
-            unread_back_matter=v.unread_back_matter)
+            unread_back_matter=v.unread_back_matter,
+            # the class the PAGE stated stays stated (U7: re-analysis reverted it to the channel
+            # default); a channel default is re-read from the current sources
+            article_class_hint=(None if a.article_class_basis.startswith(CHANNEL_DEFAULT)
+                                else a.article_class),
+            article_class_basis=(None if a.article_class_basis.startswith(CHANNEL_DEFAULT)
+                                 else a.article_class_basis))
         fr = FetchResult(url=a.canonical_url, final_url=v.final_url, status=v.http_status,
                          state=v.retrieval_state,
                          note=f"re-analysis of stored version {v.version_id} — no fetch",

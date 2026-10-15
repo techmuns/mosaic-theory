@@ -388,10 +388,14 @@ _REANCHORABLE = frozenset({"NUMBER_NOT_IN_CITED_CLAIMS", "FACT_WITHOUT_CLAIM"})
 
 class Engine:
     def __init__(self, store: Store, taxonomy: Taxonomy, *,
-                 reviewer: Reviewer | None = None) -> None:
+                 reviewer: Reviewer | None = None,
+                 reliability_of: Callable[[str], str] | None = None) -> None:
         self.store = store
         self.taxonomy = taxonomy
         self.reviewer = reviewer
+        #: a channel's CURRENT reliability tier (sources.toml), for `reassess` — None: the tier
+        #: the previous version recorded (an engine built without the pipeline's sources)
+        self.reliability_of = reliability_of
         self.node_label = {n.id: n.label for n in taxonomy.nodes}
         #: thesis id -> when this registry FIRST ingested it, for a `state pull` replay: a thesis
         #: it re-creates keeps its original date, never the replay's clock
@@ -400,6 +404,8 @@ class Engine:
         self.destinations: dict[str, tuple[str, str]] = {}
         #: the last `apply`: earlier versions' theses it re-verified and re-assessed (_reverify)
         self.reverified: list[str] = []
+        #: what a deferred `_build_version` held back: (review issues, context links)
+        self.deferred: tuple[list[VerificationIssue], list[ThesisClaimLink]] = ([], [])
 
     # -- public --------------------------------------------------------------------------------
     def apply(self, ctx: ArticleContext, ve: VerifiedExtraction,
@@ -894,7 +900,8 @@ class Engine:
             prev_v.priority.research_action, prev_v.priority.factors, [], [], [],
             change_summary=f"{aid}: re-verified ×{restated} (re-read) — re-assessed",
             classes=dict.fromkeys(found, ChangeClass.REPEATED),
-            contribution=ChangeClass.REPEATED, prev_sha=prev_v.content_sha)
+            contribution=ChangeClass.REPEATED, prev_sha=prev_v.content_sha, defer=True)
+        review_issues, context = self.deferred
         changed = (version.priority.research_action is not prev_v.priority.research_action
                    or version.priority.rules_fired != prev_v.priority.rules_fired)
         first = next_v if changed else t.current_version
@@ -910,9 +917,13 @@ class Engine:
                                              f"the current rules" if changed
                                              else "assessment unchanged — no new version"))
         with st.tx():
-            if changed:
+            if changed:  # the version is kept: its review and its context links with it
                 st.upsert_thesis(t.model_copy(update={"current_version": next_v}))
                 st.add_thesis_version(version)
+                for i in review_issues:
+                    st.add_issue(i)
+                for lk in context:
+                    st.add_link(lk)
             for lk in new_links(first):
                 st.add_link(lk)
             st.add_contribution(contribution)
@@ -1064,7 +1075,10 @@ class Engine:
                                  ["ALREADY_INGESTED"])
         existing_links = st.links(thesis.thesis_id)
         held = {lk.claim_id: st.claim(lk.claim_id) for lk in existing_links}
-        held_claims = [c for c in held.values() if c is not None]
+        # in the order the thesis took them in (oldest first): `classify_claim` reads a new claim
+        # against the latest reading, never against whichever claim id sorts last (U5)
+        linked = sorted(existing_links, key=lambda lk: (lk.first_version, lk.claim_id))
+        held_claims = [x for x in (held[lk.claim_id] for lk in linked) if x is not None]
         roles = self._roles(h, risks)
         classes: dict[str, ChangeClass] = {}
         notes: dict[str, str] = {}
@@ -1311,10 +1325,18 @@ class Engine:
             retrieval_note = (f"analysis text complete — {av.unread_back_matter}; the document "
                               f"itself stays PARTIAL")
         factor = {f.factor_id: f for f in prev.factors}
+        # the holds the update path derives, derived again — never the old note re-joined, which
+        # doubled every reason and kept a cleared HOLD forever (U55); only the review's withheld
+        # lines carry over, since a reassess runs no review
+        holds = self._hold_reasons(links, all_claims)
+        if not t.key_review and self._under_review(t):
+            holds.append(IDENTITY_HOLD)
         hold = factor.get("F10_verification_hold")
-        holds = self._hold_reasons(links, all_claims) + (
-            [hold.note] if hold is not None and hold.value == "HOLD" else [])
-        reliability = factor["F1_source_reliability"].value
+        if hold is not None and hold.value == "HOLD":
+            holds += review_holds(hold.note)
+        art = self.store.article(aid)
+        reliability = (self.reliability_of(art.source_id) if self.reliability_of and art
+                       else factor["F1_source_reliability"].value)
         aff = card.s05_affected
         state = ThesisState(
             reliability=reliability,
@@ -1343,7 +1365,11 @@ class Engine:
                             if s.published_at is not None),
             data_report_articles=tuple(s.article_id for s in card.s09_sources if s.article_class
                                        is ArticleClass.INDUSTRY_DATA_REPORT),
-            timing_context=self._timing_context(by_role, all_claims, ""))
+            # the contributing article's claims are read from the store, as the update path
+            # reads them from its extraction
+            timing_context=self._timing_context(
+                by_role, {**all_claims, **{c.claim_id: c for c in
+                                           self.store.claims_for_article(aid)}}, aid))
         pr = compute_priority(state, previous=prev.research_action,
                               evidence_direction=prev_v.evidence_direction,
                               previous_factors=prev.factors)
@@ -1552,7 +1578,12 @@ class Engine:
                        prev_factors: tuple[object, ...], risk_sents: list[CardSentence],
                        rel_notes: list[CardSentence], counter: list[Claim], *,
                        change_summary: str, classes: dict[str, ChangeClass],
-                       contribution: ChangeClass, prev_sha: str | None = None) -> ThesisVersion:
+                       contribution: ChangeClass, prev_sha: str | None = None,
+                       defer: bool = False) -> ThesisVersion:
+        """The next version of a thesis. Its review issues and the CONTEXT links its card's
+        citations need are written here — or, with `defer`, held in `self.deferred` for a caller
+        that may DISCARD the version (a re-read that changes nothing), which writes them with the
+        version or not at all (U6: a discarded version's links and review issues were stored)."""
         all_claims = dict(claims)
         for lk in links:
             if lk.claim_id not in all_claims and (c := self.store.claim(lk.claim_id)):
@@ -1577,8 +1608,7 @@ class Engine:
         if not thesis.key_review and self._under_review(thesis):
             # an identity held for review is never an independent research opportunity — archived
             # or not
-            hold_reasons = [*hold_reasons, "identity under review — it may be the same thesis "
-                                           "as one an earlier version of this article created"]
+            hold_reasons = [*hold_reasons, IDENTITY_HOLD]
 
         published = tuple((s.article_id, s.published_at.date()) for s in sources
                           if s.published_at is not None)
@@ -1670,14 +1700,19 @@ class Engine:
                 sid for i in blocks if material_sentence(
                     sid := i.ref_id.partition(":")[2], sents.get(sid, ("",))[0])))
             if material:
-                card, pr = make([f"review withheld {len(material)} decision-bearing "
+                card, pr = make([f"{REVIEW_HOLD}{len(material)} decision-bearing "
                                  f"sentence(s): " + ", ".join(material)])
                 if anchors:
                     card = with_citations(card, anchors, all_claims)
+        context = self._context_links(ctx, thesis.thesis_id, version, card, links, all_claims)
+        if defer:
+            self.deferred = (review_issues, context)
+        else:
             with self.store.tx():
                 for i in review_issues:
                     self.store.add_issue(i)
-        self._link_cited(ctx, thesis.thesis_id, version, card, links, all_claims)
+                for lk in context:
+                    self.store.add_link(lk)
         diffs: list[FieldDiff] = []
         if prev is not None:
             diffs = [FieldDiff(field_id=f, change_class=c, old=o, new=n, claim_ids=ids)
@@ -1689,8 +1724,9 @@ class Engine:
             change_summary=change_summary, diffs=tuple(diffs), prior_content_sha=prev_sha,
             content_sha=card_sha(card))
 
-    def _link_cited(self, ctx: ArticleContext, tid: str, version: int, card: CardContent,
-                    links: list[ThesisClaimLink], claims: dict[str, Claim]) -> None:
+    def _context_links(self, ctx: ArticleContext, tid: str, version: int, card: CardContent,
+                       links: list[ThesisClaimLink], claims: dict[str, Claim]
+                       ) -> list[ThesisClaimLink]:
         """Every claim the card cites is LINKED to the thesis. A citation outside the role lists
         — a source implication, a why-now view, a transmission step, a sector span, a re-anchored
         line — becomes a CONTEXT link, so the evidence trail QA re-derives from the registry is the
@@ -1699,15 +1735,11 @@ class Engine:
         cited += [c for se in card.s05_affected.sector_exposures for c in se.claim_ids]
         cited += [c for b in card.s05_affected.baskets for c in b.claim_ids]
         held = {lk.claim_id for lk in links} | {lk.claim_id for lk in self.store.links(tid)}
-        extra = [ThesisClaimLink(
+        return [ThesisClaimLink(
             thesis_id=tid, claim_id=cid, role=LinkRole.CONTEXT, first_version=version,
             change_class=ChangeClass.NO_MATERIAL_CHANGE,
             independence_group=claims[cid].origin_id or ctx.article.article_id)
             for cid in dict.fromkeys(cited) if cid not in held and cid in claims]
-        if extra:
-            with self.store.tx():
-                for lk in extra:
-                    self.store.add_link(lk)
 
     def _review_and_reanchor(self, ctx: ArticleContext, tid: str, version: int,
                              card: CardContent, claims: dict[str, Claim],
@@ -2104,6 +2136,19 @@ def _evidence_overlap(a: VerifiedHypothesis, b: VerifiedHypothesis) -> tuple[int
 MATERIAL_SECTIONS = ("s01.", "s02.", "s08.")
 
 
+#: the hold a review's withheld decision-bearing lines put on a version — the ONE phrase its writer
+#: (`_build_version`) and its reader (`review_holds`) share
+REVIEW_HOLD = "review withheld "
+IDENTITY_HOLD = ("identity under review — it may be the same thesis as one an earlier version of "
+                 "this article created")
+
+
+def review_holds(note: str) -> list[str]:
+    """The review's withheld-lines holds in a stored F10 note (its hold reasons, "; "-joined):
+    the only hold a reassess carries over, since it runs no review."""
+    return [x for x in note.split("; ") if x.startswith(REVIEW_HOLD)]
+
+
 def material_sentence(sid: str, text: str) -> bool:
     return sid.startswith(MATERIAL_SECTIONS) or text.startswith("Dislocation evidence:")
 
@@ -2117,7 +2162,25 @@ def _num_close(a: float, b: float) -> bool:
     return abs(a - b) <= 0.05 * max(abs(a), abs(b), 1e-9)
 
 
+def _reading_for(new: Claim, same_measure: list[Claim]) -> Claim:
+    """The held reading a new claim on the same measure is read against — whatever order the
+    claims came in (U5: claim-id order made a third origin's confirmation of a moved date a
+    "timing change" in 2 of 6 text variants): the same origin's latest (a correction, or a later
+    reading of its series); else the latest it AGREES with (the same event date, or a close
+    figure); else the latest. `same_measure` is in linking order, oldest first."""
+    own = [e for e in same_measure if e.origin_id == new.origin_id]
+    if own:
+        return own[-1]
+    if new.measure_key.startswith("event|"):
+        agree = [e for e in same_measure if (e.period or "") == (new.period or "")]
+    else:
+        agree = [e for e in same_measure if new.value is not None and e.value is not None
+                 and _num_close(new.value, e.value)]
+    return (agree or same_measure)[-1]
+
+
 def classify_claim(new: Claim, role: LinkRole, held: list[Claim]) -> tuple[ChangeClass, str]:
+    """`held`: the thesis's claims in the order it took them in, oldest first."""
     same_fp = [e for e in held if e.fingerprint == new.fingerprint]
     if same_fp:
         return ChangeClass.REPEATED, (f"same measure, value and upstream origin as "
@@ -2132,7 +2195,7 @@ def classify_claim(new: Claim, role: LinkRole, held: list[Claim]) -> tuple[Chang
     same_measure = [e for e in held if e.measure_key == new.measure_key
                     and not e.measure_key.startswith("stmt|")]
     if same_measure:
-        e = same_measure[-1]
+        e = _reading_for(new, same_measure)
         scope_note = (f"held: {e.scope or '—'} / {e.metric or '—'} / {e.period or '—'} / "
                       f"{e.unit or '—'} ({e.claim_id}); new: {new.scope or '—'} / "
                       f"{new.metric or '—'} / {new.period or '—'} / {new.unit or '—'}")
