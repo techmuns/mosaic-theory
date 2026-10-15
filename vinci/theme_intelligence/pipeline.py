@@ -934,7 +934,8 @@ class Pipeline:
         """The ENRICHMENT step (enrich.py) over stored theses: the listed companies each one's own
         steps imply, as external hypotheses, checked against the SEC and stored apart from the
         thesis (no new version, no priority read). Default: every ACTIVE thesis whose current
-        version has no set yet (`refresh` asks again). One paid call per thesis, through the
+        version has no set yet (`refresh` runs the pass again: the paid answer from the cache,
+        every name checked against the SEC again). One paid call per thesis, through the
         spend guard; a refusal by the run's budget stops the pass, one by a thesis's own limit
         holds that thesis — each said. Returns (run, [(thesis id, what happened)])."""
         self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of)
@@ -1101,7 +1102,8 @@ class Pipeline:
             if not refresh and any(x.thesis_version == v.version
                                    for x in self.store.enrichments(tid)):
                 done.append((tid, f"already proposed for version {v.version} — skipped "
-                                  f"(--refresh asks again)"))
+                                  f"(--refresh runs the pass again; the paid answer comes from "
+                                  f"the cache)"))
                 continue
             groups = [g.name for g in thesis_groups(self.store, self.store.links(tid))]
             self.guard.begin_document(f"enrich {tid}")

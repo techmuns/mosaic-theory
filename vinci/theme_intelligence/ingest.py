@@ -616,7 +616,8 @@ def reask_part(pipe: Pipeline, doc_id: str, part: str, *, max_cost: float) -> Re
     x, _bad = validate_items(Extraction, raw)
     src = pipe.sources.get(rec.source_id)
     publisher = src.publisher if src else rec.publisher
-    pipe.guard.begin_document(f"{doc_id} part {part}", limit=max_cost)
+    # `--max-cost` is what THIS ONE call may cost: the whole limit, not a retry's share of it
+    pipe.guard.begin_document(f"{doc_id} part {part}", limit=max_cost, retry_share=1.0)
     try:
         res = run_completeness(doc, x, scan_article(doc), publisher=publisher,
                                as_of=run.as_of.isoformat(), taxonomy=pipe.taxonomy,

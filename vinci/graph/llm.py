@@ -74,6 +74,10 @@ class AnthropicLlmClient(LlmClient):
         return cls(model=(config or get_config()).graph_llm_model)
 
     @property
+    def max_tokens(self) -> int:
+        return self._max_tokens
+
+    @property
     def model(self) -> str:
         return self._model
 

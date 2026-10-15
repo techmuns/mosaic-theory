@@ -92,6 +92,7 @@ class SpendGuard:
     doc_label: str = ""
     retry_spent: float = 0.0
     doc_extractions: int = 0
+    retry_share: float = DOC_RETRY_COMPLETENESS_SHARE
     calls: list[dict[str, Any]] = field(default_factory=list)
     refusals: list[str] = field(default_factory=list)
     #: calls that reached the model, not yet matched to a ledger row (`sent` / `recorded`)
@@ -108,9 +109,14 @@ class SpendGuard:
         self.unrecorded = []
         self.end_document()
 
-    def begin_document(self, label: str, limit: float | None = None) -> None:
+    def begin_document(self, label: str, limit: float | None = None,
+                       retry_share: float = DOC_RETRY_COMPLETENESS_SHARE) -> None:
+        """`retry_share`: the part of the limit retries and completeness passes may take — the
+        whole of it when the document IS one such call (`reask-part`: 2026-10-14, `--max-cost
+        1.00` refused a $0.90 call at its $0.85 share)."""
         self.doc_label = label
         self.doc_limit = DOC_COST_LIMIT_USD if limit is None else limit
+        self.retry_share = retry_share
         self.doc_spent = self.retry_spent = 0.0
         self.doc_extractions = 0
 
@@ -121,7 +127,7 @@ class SpendGuard:
 
     @property
     def retry_limit(self) -> float | None:
-        return None if self.doc_limit is None else self.doc_limit * DOC_RETRY_COMPLETENESS_SHARE
+        return None if self.doc_limit is None else self.doc_limit * self.retry_share
 
     def remaining(self, kind: str) -> tuple[float, str]:
         """The smallest remaining limit that applies to a call of this kind, and its name."""
@@ -208,6 +214,13 @@ class GuardedClient:
     @property
     def model(self) -> str:
         return str(self._inner.model)
+
+    @property
+    def max_tokens(self) -> int | None:
+        """The wrapped client's output cap, when it states one (a truncation marker is read
+        against it)."""
+        cap = getattr(self._inner, "max_tokens", None)
+        return cap if isinstance(cap, int) else None
 
     @property
     def last_usage(self) -> dict[str, int] | None:

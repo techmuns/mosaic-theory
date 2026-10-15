@@ -974,6 +974,18 @@ def _offered(schema: dict[str, Any], value: Any) -> bool:
     return True
 
 
+def marker_holds(marker: Path, client: Any) -> bool:
+    """A truncation marker says no full answer fit THE CAP IT WAS WRITTEN AT: a client whose
+    cap is higher asks the full request again (2026-10-14: a marker written at 16,384 tokens
+    forced COMPACT after the cap was raised to 64,000). A marker or a client stating no cap
+    holds, as before — never a paid re-ask on a guess."""
+    if not marker.exists():
+        return False
+    was = (json.loads(marker.read_text()).get("usage") or {}).get("max_tokens")
+    now = getattr(client, "max_tokens", None) if client is not None else None
+    return not (isinstance(was, int) and isinstance(now, int) and now > was)
+
+
 def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy: Taxonomy,
                    client: ToolClient | None, cache_dir: Path,
                    prompt_version: str = EXTRACT_PROMPT_VERSION,
@@ -1042,7 +1054,7 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")
     trunc_usage: dict[str, int] | None = None
     trunc_now = False
-    if not marker.exists():
+    if not marker_holds(marker, client):
         try:
             parsed, dropped, salvaged, lost, out, usage, seconds = _ask(
                 client, system=system, user=user, tool=tool, path=path, model=model,
