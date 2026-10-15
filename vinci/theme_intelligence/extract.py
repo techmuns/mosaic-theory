@@ -626,6 +626,9 @@ class ExtractionResult:
     compact: bool = False
     #: usage of the truncated full attempt (billed, discarded) — recorded, never hidden
     truncated_usage: dict[str, int] | None = None
+    #: that attempt was billed by THIS call; otherwise an earlier run paid it (its marker), and
+    #: that run's ledger holds it — recording it again counted it twice (2026-10-15)
+    truncated_now: bool = False
     #: items of the answer that failed their schema and were DROPPED (path: error) — never coerced
     dropped: list[str] = field(default_factory=list)
     #: the answer's TOP level failed its schema and it was SALVAGED field by field: what was
@@ -971,6 +974,18 @@ def _offered(schema: dict[str, Any], value: Any) -> bool:
     return True
 
 
+def marker_holds(marker: Path, client: Any) -> bool:
+    """A truncation marker says no full answer fit THE CAP IT WAS WRITTEN AT: a client whose
+    cap is higher asks the full request again (2026-10-14: a marker written at 16,384 tokens
+    forced COMPACT after the cap was raised to 64,000). A marker or a client stating no cap
+    holds, as before — never a paid re-ask on a guess."""
+    if not marker.exists():
+        return False
+    was = (json.loads(marker.read_text()).get("usage") or {}).get("max_tokens")
+    now = getattr(client, "max_tokens", None) if client is not None else None
+    return not (isinstance(was, int) and isinstance(now, int) and now > was)
+
+
 def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy: Taxonomy,
                    client: ToolClient | None, cache_dir: Path,
                    prompt_version: str = EXTRACT_PROMPT_VERSION,
@@ -1038,7 +1053,8 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")
     trunc_usage: dict[str, int] | None = None
-    if not marker.exists():
+    trunc_now = False
+    if not marker_holds(marker, client):
         try:
             parsed, dropped, salvaged, lost, out, usage, seconds = _ask(
                 client, system=system, user=user, tool=tool, path=path, model=model,
@@ -1047,6 +1063,7 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
             if not _truncated(exc):
                 raise
             trunc_usage = getattr(client, "last_usage", None)
+            trunc_now = True
             marker.parent.mkdir(parents=True, exist_ok=True)
             marker.write_text(json.dumps({"model": model, "prompt_version": prompt_version,
                                           "usage": trunc_usage, "error": str(exc)},
@@ -1063,5 +1080,5 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
         prompt_version=cversion, what="compact extraction")
     return ExtractionResult(parsed, out, f"X-{ckey[:16]}", model, cversion, False, usage,
                             cost_of(model, usage), seconds, compact=True,
-                            truncated_usage=trunc_usage, dropped=dropped, salvaged=salvaged,
-                            lost=lost)
+                            truncated_usage=trunc_usage, truncated_now=trunc_now,
+                            dropped=dropped, salvaged=salvaged, lost=lost)

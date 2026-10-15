@@ -679,10 +679,14 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
             lookahead = as_of_d is not None and as_of_d > as_of
             if lookahead:
                 notes.append(f"as-of {as_of_d} is AFTER the run as-of {as_of} — look-ahead")
+            # an undated source is measured against the run's as-of — and says so, never as if
+            # the run date were its publication date
             pub = doc.published_at.date() if doc.published_at else as_of
+            basis = ("publication" if doc.published_at
+                     else "this run's as-of (the source states no publication date)")
             if as_of_d is not None and (pub - as_of_d).days > STALE_SERIES_DAYS:
                 stale = (f"stale series: data as of {as_of_d}, {(pub - as_of_d).days} days "
-                         f"before publication")
+                         f"before {basis}")
                 xc = xc.model_copy(update={"qualifiers": [*xc.qualifiers, stale]})
                 notes.append(stale)
 

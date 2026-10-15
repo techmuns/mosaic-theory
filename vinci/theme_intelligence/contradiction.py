@@ -9,8 +9,11 @@ contradicts its own: a pair of claims about
                          vocabulary (the most specific term wins: "conventional DRAM" is not the
                          generic "DRAM"; a generic term against one of the products it covers is
                          AMBIGUOUS, never assumed equal)
-  the same VARIABLE      price / volume / revenue / margin / capex / inventory / valuation —
-                         read from the quote and the claim's metric
+  the same VARIABLE      price / demand / supply / volume / revenue / margin / capex /
+                         inventory / valuation — read from the quote and the claim's metric.
+                         Demand and supply are DIFFERENT variables: supply falling short and
+                         demand rising are one reading, not two opposite ones; a shipped volume
+                         against either is AMBIGUOUS
   the same PERIOD        the windows the claims state overlap (one unstated: AMBIGUOUS)
   the same GEOGRAPHY     overlapping (Global contains every region)
 
@@ -39,9 +42,11 @@ CONTRADICTS, COMPATIBLE, AMBIGUOUS = "CONTRADICTS", "COMPATIBLE", "AMBIGUOUS"
 VARIABLES: dict[str, tuple[str, ...]] = {
     "price": ("price", "prices", "pricing", "asp", "asps", "contract price", "spot price",
               "average selling price"),
-    "volume": ("shipment", "shipments", "units", "unit", "bit demand", "bit supply", "bits",
-               "demand", "supply", "output", "production", "orders", "bookings", "volume",
-               "volumes"),
+    # demand and supply are two variables (2026-10-14: "supply will fall short" was read as the
+    # opposite of "demand will rise" — the same bullish read filed as a contradiction)
+    "demand": ("demand", "bit demand", "orders", "bookings"),
+    "supply": ("supply", "bit supply", "output", "production"),
+    "volume": ("shipment", "shipments", "units", "unit", "bits", "volume", "volumes"),
     "revenue": ("revenue", "revenues", "sales"),
     "margin": ("margin", "margins", "profitability"),
     "capex": ("capex", "capital expenditure", "capital expenditures", "capital spending"),
@@ -56,6 +61,10 @@ _DOWN = re.compile(r"\b(?:fall\w*|fell|declin\w*|drop\w*|lower|cut|cuts|decreas\
                    r"plung\w*|down\b|compress\w*|weaken\w*|soften\w*|eas(?:e|es|ing|ed)\b|"
                    r"contracted|contracting|contraction|shrink\w*|slow\w*)", re.I)
 _NEG = re.compile(r"\b(?:not|no|never|neither|nor|without|unlikely)\b", re.I)
+#: a shipped VOLUME is neither demand nor supply alone: against either it is unclear, never
+#: "different" (which would make the pair compatible) nor "the same"
+_RELATED = {frozenset({"volume", "demand"}), frozenset({"volume", "supply"})}
+_SIDES = frozenset({"demand", "supply"})
 
 
 @dataclass(frozen=True)
@@ -155,12 +164,22 @@ def compare(ch: Claim, inc: Claim, *, products: list[Product], ref: date,
         return PairVerdict(COMPATIBLE, ch.claim_id, inc.claim_id, (why,))
     (unclear if rel == "unclear" else reasons).append(why)
     va, vb = variables_of(ch), variables_of(inc)
-    if va and vb and not va & vb:
+    related = any(frozenset({x, y}) in _RELATED for x in va for y in vb)
+    if va and vb and not va & vb and not related:
         return PairVerdict(COMPATIBLE, ch.claim_id, inc.claim_id, (
             f"different variables ({', '.join(sorted(va))} vs {', '.join(sorted(vb))})",))
-    (reasons if va & vb else unclear).append(
-        f"same variable ({', '.join(sorted(va & vb))})" if va & vb
-        else "a claim names no measured variable")
+    if va & vb:
+        reasons.append(f"same variable ({', '.join(sorted(va & vb))})")
+    elif related:
+        unclear.append(f"related variables ({', '.join(sorted(va))} vs {', '.join(sorted(vb))}) "
+                       f"— a shipped volume is neither demand nor supply alone")
+    else:
+        unclear.append("a claim names no measured variable")
+    if va & vb & _SIDES and (va >= _SIDES or vb >= _SIDES):
+        # "supply will fall short of demand": its one direction belongs to supply — read against
+        # demand it would be the opposite of the same bullish reading
+        unclear.append("a claim speaks of both demand and supply — which one its direction "
+                       "belongs to is unclear")
     wa = window_of(ch.period, ref) or window_of(ch.quote, ref)
     wb = window_of(inc.period, ref) or window_of(inc.quote, ref)
     if wa and wb:

@@ -59,6 +59,7 @@ from vinci.theme_intelligence.extract import (
     cache_key,
     cost_of,
     first_error,
+    marker_holds,
     salvage_fields,
     system_prompt,
     tool_parts,
@@ -657,7 +658,7 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                 calls.append(_reask(path, out, label, reask_client, model=model, system=system,
                                     user=user, tool=tool))
                 reask_done = True
-        elif marker.exists() and splittable:  # known to overrun: split without paying again
+        elif marker_holds(marker, client) and splittable:  # overran at this cap: split, unpaid
             notes.append(_split_note(label, json.loads(marker.read_text()).get("usage")))
             queue[:0] = whole.halves()
             continue
