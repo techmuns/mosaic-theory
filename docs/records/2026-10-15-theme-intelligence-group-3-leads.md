@@ -65,23 +65,44 @@ disagrees with its page, a retired thesis that looks live.
 
   | Registry | main (7a45244c) | This branch |
   |---|---|---|
-  | Pilot, 5 runs | 0.67 s median | 0.86 s (the article census) |
-  | 52 weeks, 3 runs | 11.3 s | 8.2 s |
+  | Pilot, 5 runs | 0.67 s median | 0.70 s |
+  | 52 weeks, 3 runs | 11.3 s | 7.8 s |
 
   The 52-week render is faster because the links are read once rather than one table scan per
-  page.
-- **Pins:** `tests/test_theme_intelligence_group3.py`, 32 tests, each fix with its negative.
+  page. Before the review fixes the pilot read 0.86 s: the census was computed again by the report.
+- **Pins:** `tests/test_theme_intelligence_group3.py`, 38 tests, each fix with its negative.
   - End to end through the real engine: units on the page and the card; the fold; one week with
     each article once; the two-run, two-day week; the retired marked only from its retirement;
     the area-root and legacy links; the printed report's ids; publish.
   - `compute_priority` on the real `ThesisState`.
-  - The JS is pinned for its parts; its behaviour is the browser run above.
+  - The desk script in a real browser (headless Brave, `--dump-dom`, skipped where none is
+    installed) on a SYNTHETIC 12-week stress registry: the Articles filter re-caps the table that
+    carries the id itself, and Themes search reads the area.
   - Two existing pins asserted the old behaviour and now assert the new one:
     - the engine's PARENT_CHILD for an area root;
     - publish deleting a hand-placed file.
-- **Mutants: 22 of 22 killed.** An unmutated baseline passes. One survived the first pass (the
-  report covering only the last run). The two-run, two-day pin was added for it.
+- **Mutants: 22 of 22 killed, then 7 of 7 for the review fixes.** An unmutated baseline passes.
+  One survived the first pass (the report covering only the last run). The two-run, two-day pin
+  was added for it.
 - Ruff and `mypy --strict vinci` clean. The offline suite result is in the PR.
+
+**REVIEW FIXES** (`/code-review high`, before merge):
+- `recap('#at')` selected nothing: the Articles table carries the id itself. The selector now
+  takes the root table too, pinned in a browser.
+- `publish` refused a republish over Finder's `.DS_Store`. OS metadata (dotfiles) is never a
+  stray file.
+- The report's figure line and queue read the LAST run beside the week's articles. Figures now
+  come from the week's census (pilot: 11 not captured of 353). The queue is labelled as the last
+  run's, since a queue is a state.
+- The report and the desk built the same week twice. `write_run_outputs` builds one Desk and
+  writes its report as `dashboard.html`; the Desk hands its own census to the report.
+  `write_desk` had no caller left and is removed.
+- `scoped_ids` also rewrote `data-id` / `aria-*-id` values. Only the `id` attribute and its
+  links move now.
+- "$26B" with unit "$bn" still printed "bn": billion and trillion take "b" and "t".
+- A fold of one read "1 more changes". Both forms are now named.
+- The desk's remaining silent audit cuts (a failed attempt's error, an upload issue, a health
+  reason, a document's match basis) say they are cut.
 
 **BOUNDARY.**
 - Code: main 7a45244c against this branch, 2026-10-15.
