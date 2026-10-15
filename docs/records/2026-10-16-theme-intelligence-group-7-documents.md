@@ -45,7 +45,8 @@ U15 broke the retired-channel rule in both directions: it fetched what is refuse
   unchanged.
   - **Columns separated:** a web-page PDF's two columns (28 → 46 blocks); a Citi report's
     disclosure page (a column of analyst names had run into a column of legal entities); a
-    web-page PDF's two header cards.
+    web-page PDF's two header cards; one block of a Citi report's infographic, split in two at its
+    gutter.
   - **Compounds kept:** "AI-powered", "AI-focused" and "COVID-driven", one in each of three
     PDFs.
   - **Lines no longer dropped (U30g).** These are the 3 distinct lines the lead counted, and none
