@@ -541,6 +541,25 @@ class EnrichmentCandidate(Frozen):
     #: the SEC files the issuer as a FOREIGN private issuer (20-F / 40-F): its US line is an ADR
     #: or a cross-listing, never substituted for verified common equity
     foreign_filer: bool = False
+    # (2026-10-15) — defaults keep every stored set valid
+    #: the label of the step it rests on, as the card stated it when proposed. A step that is
+    #: not a fact (an opinion, a forecast, our inference) makes the direction a CONDITION: the
+    #: company is exposed, and would benefit / be hurt only IF the step holds. None: proposed
+    #: before the label was recorded (read from the card version the set rests on)
+    step_label: Provenance | None = None
+    #: the BASIS the model states: how the company earns from the exposed line (`BASIS_MODELS`)
+    #: and which line it is — checked against the company's own annual report
+    revenue_model: str = ""
+    revenue_line: str = ""
+    #: IN_FILING — the filing's revenue-source sentence names that model; FILING_NAMES_OTHER — it
+    #: names another and not this one; NOT_DESCRIBED — the filing was read and states no
+    #: revenue-source sentence in these words; UNCHECKED — not read (`basis_note` says why)
+    basis_check: Literal["IN_FILING", "FILING_NAMES_OTHER", "NOT_DESCRIBED", "UNCHECKED"] = (
+        "UNCHECKED")
+    #: the filing's own revenue-source sentence(s), verbatim and capped — what the check read
+    basis_quote: tuple[str, ...] = ()
+    basis_source: str = ""  # "10-K filed 2025-02-26 (0001447669-25-000014)"
+    basis_note: str = ""
 
 
 class EnrichmentSet(Frozen):

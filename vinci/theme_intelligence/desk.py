@@ -43,6 +43,7 @@ from vinci.theme_intelligence.cards import (
     _anchor,
     _clean_display,
     _plain_text,
+    basis_line,
     card_steps,
     distinct_sectors,
     e,
@@ -52,7 +53,9 @@ from vinci.theme_intelligence.cards import (
     foot_html,
     groups_unchecked_note,
     ids_to_audit,
+    proposal_reading,
     review_not_run_words,
+    set_card,
     topnav,
     unit_shown,
     why_reasons,
@@ -84,6 +87,7 @@ from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
     AffectedCompany,
     AffectedView,
+    CardContent,
     Claim,
     CompletenessReport,
     Direction,
@@ -1174,7 +1178,8 @@ def _where(c: AffectedCompany) -> str:
 
 def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
                   enrichment: EnrichmentSet | None = None, version: int = 0,
-                  steps: dict[str, str] | None = None) -> str:
+                  steps: dict[str, str] | None = None,
+                  set_card: CardContent | None = None) -> str:
     """Who is exposed, as a fund reads it: who could BENEFIT, who could be HURT, and who the
     source names without a direction — companies (listed or not) and sectors together, each with
     its listing or why it has none. Only names in an exposure role (the priority rules' own set,
@@ -1215,7 +1220,7 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
     elif not any(c.listings for c in exp):
         out += ('<p class="small">No US-listed company is named as exposed. A company the source '
                 'does not name is never added.</p>')
-    out += _hypotheses_html(enrichment, version, steps or {})
+    out += _hypotheses_html(enrichment, version, steps or {}, set_card)
     if groups or groups_unread:
         out += ('<p class="small"><b>Business groups the source names:</b> '
                 + (f'{e("; ".join(groups))} — groups, not companies' if groups else "")
@@ -1258,24 +1263,38 @@ def _merge_restated(rows: list[tuple[str, dict[str, Any]]]) -> list[tuple[str, d
     return out
 
 
-def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, str]) -> str:
+def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, str],
+                     card: CardContent | None = None) -> str:
     """The companies the thesis's own steps imply (enrich.py) — OUR hypotheses, boxed apart from
     what the source names, each with its SEC-verified ticker or "not verified", the step it
-    rests on and how. Nothing when no set was proposed."""
+    rests on and how. A direction resting on a step that is not a fact is shown as the
+    condition it is, under "Exposed" — never under "Could be hurt" (2026-10-15). The basis the
+    model stated sits beside it with what the company's own annual report says, and that
+    report's sentence on demand. `card`: the card version the set was proposed from. Nothing
+    when no set was proposed."""
     if es is None:
         return ""
-    head, _rows = enrichment_lines(es, version, steps)
-    sides: dict[str, list[str]] = {"up": [], "down": []}
+    head, _rows = enrichment_lines(es, version, steps, card)
+    sides: dict[str, list[str]] = {"up": [], "down": [], "if": []}
     for x in es.candidates:
-        side = "up" if x.direction is Direction.POSITIVE else "down"
+        cond, how = proposal_reading(x, steps, card)
+        side = "if" if cond else "up" if x.direction is Direction.POSITIVE else "down"
+        basis = basis_line(x)
         sides[side].append(
             f'<li><b>{e(x.name)}</b> <span class="tk">{e(enrichment_listing(x))}</span> '
-            f'<span class="muted">through {e(STEP_LABEL.get(steps.get(x.step_id, ""), x.step_id))}'
-            f'</span><div class="small">{e(x.rationale)}</div>'
-            f'<span class="aud cc">{e(x.resolution_status.value)} · {e(x.resolution_note)}'
+            f'<span class="muted">{e(how)}</span><div class="small">{e(x.rationale)}</div>'
+            + (f'<div class="small basis">{e(basis)}</div>' if basis else "")
+            + (f'<details class="filing"><summary>What its {e(x.basis_source.split(" ")[0])} '
+               f'says</summary>'
+               + "".join(f"<p>“{e(q)}”</p>" for q in x.basis_quote)
+               + f'<p class="small muted">{e(x.basis_source)}</p></details>'
+               if x.basis_quote else "")
+            + f'<span class="aud cc">{e(x.resolution_status.value)} · {e(x.resolution_note)}'
             f'</span></li>')
     body = "".join(f'<h4>{w}</h4><ul class="who">{"".join(sides[k])}</ul>'
-                   for k, w in (("up", "Could benefit"), ("down", "Could be hurt")) if sides[k])
+                   for k, w in (("up", "Could benefit"), ("down", "Could be hurt"),
+                                ("if", "Exposed — the direction holds only if its step does"))
+                   if sides[k])
     none = next((r for r in es.refused if r.startswith("none proposed:")), "")
     return (f'<div class="hypo"><h3>Companies the thesis implies <span class="tag">our '
             f'hypothesis</span></h3><p class="small muted">{e(head)}</p>'
@@ -2134,7 +2153,7 @@ class Desk:
         raise_ = [f"<li>{line(s.text)}</li>" for s in dsn.raise_priority_if if once(s.text)]
         lower = [f"<li>{line(s.text)}</li>" for s in dsn.lower_priority_if if once(s.text)]
         expo = exposure_html(c.s05_affected, groups, rc.groups_unread, rc.enrichment, v.version,
-                             card_steps(c))
+                             card_steps(c), set_card(rc.enrichment, rc.history))
         related = self.related_html(tid)
         evid, n_ev, per_src = self.evidence_html(c, rc)
         hist = "".join(
@@ -2578,6 +2597,8 @@ font-size:13.5px;margin:6px 0}
 border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
 .hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
 .hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
+.hypo .basis{color:var(--ink2)}.hypo details.filing{font-size:13px;margin-top:2px}
+.hypo details.filing p{margin:4px 0}
 .tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
 padding:0 6px;margin-left:4px;white-space:nowrap}
 .tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}

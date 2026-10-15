@@ -92,6 +92,7 @@ PERIODIC_FORMS = frozenset({"10-K", "10-Q", "20-F", "40-F", "10-K/A", "10-Q/A", 
                             "40-F/A", "10-KT", "10-QT"})
 REGISTRATION_FORMS = frozenset({"8-A12B", "8-A12B/A"})
 _FOREIGN_FORMS = frozenset({"20-F", "40-F"})  # a foreign private issuer's annual report
+ANNUAL_FORMS = frozenset({"10-K", "20-F", "40-F"})  # an issuer's own annual report (no amendment)
 _COVER_TAGS = ("dei:TradingSymbol", "dei:Security12bTitle", "dei:SecurityExchangeName")
 _IX = re.compile(r"<ix:nonnumeric\b([^>]*)>(.*?)</ix:nonnumeric>", re.I | re.S)
 
@@ -311,6 +312,30 @@ def parse_cover(doc_html: str) -> list[CoverLine]:
     return out
 
 
+def filing_text(html: str) -> str:
+    """A filing document as plain text: scripts and styles dropped, unicode spaces folded. Kept
+    here, not imported from the graph track (`vinci.graph.filings.html_to_text` does the same):
+    this package imports only the shared plumbing it is allowed (test_theme_intelligence_
+    isolation)."""
+    from bs4 import BeautifulSoup
+
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup(["script", "style"]):
+        tag.decompose()
+    return re.sub(r"[\u00a0\u2002-\u200b\u202f\ufeff]", " ", soup.get_text(" ", strip=True))
+
+
+@dataclass(frozen=True)
+class AnnualReport:
+    """An issuer's latest annual report on or before a date, read as plain text."""
+
+    form: str
+    filed: date
+    accession: str
+    url: str
+    text: str
+
+
 @dataclass
 class PitCover:
     form: str
@@ -351,6 +376,7 @@ class SecResolver:
         self.sub_errors: dict[str, str] = {}
         self._rows: dict[tuple[str, date], list[tuple[str, date, str, str]]] = {}
         self._covers: dict[tuple[str, date], tuple[PitCover | None, str]] = {}
+        self._annual: dict[tuple[str, date], tuple[AnnualReport | None, str]] = {}
 
     def index(self) -> SecIndex:
         if self._index is not None:
@@ -412,12 +438,14 @@ class SecResolver:
             self._rows[(cik10, as_of)] = self._walk_filings(cik10, as_of)
         return self._rows[(cik10, as_of)]
 
-    def _walk_filings(self, cik10: str, as_of: date) -> list[tuple[str, date, str, str]]:
+    def _walk_filings(self, cik10: str, as_of: date,
+                      want: frozenset[str] = PERIODIC_FORMS) -> list[tuple[str, date, str, str]]:
+        """`want`: the forms whose first appearance on or before `as_of` ends the walk."""
         sub = self.submissions(cik10)
         if sub is None:
             return []
         rows = _rows(sub.get("filings", {}).get("recent", {}))
-        if any(f in PERIODIC_FORMS and d <= as_of for f, d, _a, _p in rows):
+        if any(f in want and d <= as_of for f, d, _a, _p in rows):
             return rows
         for page in sub.get("filings", {}).get("files", []):
             frm = page.get("filingFrom")
@@ -429,7 +457,7 @@ class SecResolver:
             except (HttpError, KeyError):
                 break
             rows += _rows(older)
-            if any(f in PERIODIC_FORMS and d <= as_of for f, d, _a, _p in rows):
+            if any(f in want and d <= as_of for f, d, _a, _p in rows):
                 break
         return rows
 
@@ -465,6 +493,39 @@ class SecResolver:
                              if f in REGISTRATION_FORMS and filed < d <= as_of]
                     result = (PitCover(form, filed, acc, url, lines, later), "")
         self._covers[key] = result
+        return result
+
+    def annual_report(self, cik10: str, as_of: date) -> tuple[AnnualReport | None, str]:
+        """The issuer's latest ANNUAL report (10-K, 20-F, 40-F — never an amendment) filed on or
+        before `as_of`, as text — or (None, why). Point in time: a report filed later is never
+        read. A filing never changes, so its document is cached for good."""
+        key = (cik10, as_of)
+        if key in self._annual:
+            return self._annual[key]
+        rows = self._filing_rows(cik10, as_of)
+        if not any(f in ANNUAL_FORMS and d <= as_of for f, d, _a, _p in rows):
+            # the shared walk stops at the first PERIODIC filing (a 10-Q will do for a cover
+            # page): a heavy filer's last 10-K can sit on an older page — walked on for it
+            rows = self._walk_filings(cik10, as_of, ANNUAL_FORMS)
+        annual = sorted(((f, d, a, p) for f, d, a, p in rows
+                         if f in ANNUAL_FORMS and d <= as_of and p),
+                        key=lambda r: r[1], reverse=True)
+        result: tuple[AnnualReport | None, str]
+        if not rows:
+            result = (None, "SEC submissions unavailable")
+        elif not annual:
+            result = (None, f"no annual report (10-K / 20-F / 40-F) on or before "
+                            f"{as_of.isoformat()} in the SEC submissions index")
+        else:
+            form, filed, acc, doc = annual[0]
+            url = ARCHIVE_DOC.format(cik=int(cik10), acc=acc.replace("-", ""), doc=doc)
+            try:
+                text = filing_text(self._http.get_text(url, ttl_seconds=None))
+            except HttpError as exc:
+                result = (None, f"{form} {acc} not retrievable: {exc}")
+            else:
+                result = (AnnualReport(form, filed, acc, url, text), "")
+        self._annual[key] = result
         return result
 
     # -- resolution -------------------------------------------------------------------------------
