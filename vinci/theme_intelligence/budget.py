@@ -24,7 +24,15 @@ cost, so the bound is checked against the bill (the run manifest carries both).
 AFTER A REFUSAL. Nothing about the article is written: the pipeline checkpoints it
 (BUDGET_HELD), the answers already paid for stay in the content-addressed cache, and a re-run
 with a higher limit (`--max-cost`, `--budget`, `--release`) resumes without paying for them
-again. A scan stops at the first refusal and queues the rest.
+again. A refusal says WHICH limit refused it (`BudgetExceeded.scope`): a scan stops and queues
+the rest only when its RUN budget is spent; a document's own limit holds that document alone.
+
+THE LEDGER. Every call the model billed is reported (`SpendGuard.sent`), its answer used or
+not; the pipeline records the ones no other path recorded — a call that ended in an exception
+is still a paid call, and was missing from the run's cost (2026-10-14).
+
+A RESUMED run carries its earlier attempt's spend (`start_run(carried=)`): one run id spends its
+limit once.
 """
 
 from __future__ import annotations
@@ -49,7 +57,13 @@ _KIND = {"record_completeness": "completeness", "record_review": "review"}
 
 class BudgetExceeded(Exception):  # noqa: N818 — the operator-facing name
     """A paid call was refused: its bounded cost does not fit the remaining authorised budget.
-    Deliberately NOT a RuntimeError, so no "pass not run" handler swallows it."""
+    Deliberately NOT a RuntimeError, so no "pass not run" handler swallows it. `scope` names the
+    limit that refused it: "run", "document", "retry" (a document's retry / completeness share)
+    or "price" (no price configured)."""
+
+    def __init__(self, msg: str, *, scope: str = "run") -> None:
+        super().__init__(msg)
+        self.scope = scope
 
 
 def call_bound(model: str, system: str, user: str, tool: dict[str, Any],
@@ -57,7 +71,8 @@ def call_bound(model: str, system: str, user: str, tool: dict[str, Any],
     """The conservative cost bound of one call (USD), from its size and output cap."""
     if model not in PRICE_PER_MTOK:
         raise BudgetExceeded(f"no price is configured for {model!r} — a call cannot be bounded, "
-                             f"so it is not made (add it to config.PRICE_PER_MTOK)")
+                             f"so it is not made (add it to config.PRICE_PER_MTOK)",
+                             scope="price")
     pin, pout = PRICE_PER_MTOK[model]
     chars = len(system) + len(user) + len(json.dumps(tool))
     in_tok = chars / CHARS_PER_TOKEN_BOUND
@@ -79,11 +94,18 @@ class SpendGuard:
     doc_extractions: int = 0
     calls: list[dict[str, Any]] = field(default_factory=list)
     refusals: list[str] = field(default_factory=list)
+    #: calls that reached the model, not yet matched to a ledger row (`sent` / `recorded`)
+    unrecorded: list[dict[str, Any]] = field(default_factory=list)
 
-    def start_run(self, mode: str, limit: float | None = None) -> None:
+    def start_run(self, mode: str, limit: float | None = None,
+                  carried: dict[str, Any] | None = None) -> None:
+        """`carried`: a RESUMED run's earlier spend summary — its spend, calls and refusals
+        count against the same limit (a resume restarted at $0 and could spend it twice)."""
         self.run_limit = default_run_limit(mode) if limit is None else limit
-        self.run_spent = 0.0
-        self.calls, self.refusals = [], []
+        self.run_spent = float((carried or {}).get("spent_usd") or 0.0)
+        self.calls = list((carried or {}).get("calls") or [])
+        self.refusals = list((carried or {}).get("refusals") or [])
+        self.unrecorded = []
         self.end_document()
 
     def begin_document(self, label: str, limit: float | None = None) -> None:
@@ -103,18 +125,24 @@ class SpendGuard:
 
     def remaining(self, kind: str) -> tuple[float, str]:
         """The smallest remaining limit that applies to a call of this kind, and its name."""
-        rows: list[tuple[float, str]] = []
+        left, which, _scope = self._tightest(kind)
+        return left, which
+
+    def _tightest(self, kind: str) -> tuple[float, str, str]:
+        rows: list[tuple[float, str, str]] = []
         if self.run_limit is not None:
-            rows.append((self.run_limit - self.run_spent, f"the run budget ${self.run_limit:,.2f}"))
+            rows.append((self.run_limit - self.run_spent, f"the run budget ${self.run_limit:,.2f}",
+                         "run"))
         if self.doc_limit is not None:
             rows.append((self.doc_limit - self.doc_spent,
-                         f"the document limit ${self.doc_limit:,.2f} ({self.doc_label})"))
+                         f"the document limit ${self.doc_limit:,.2f} ({self.doc_label})",
+                         "document"))
             if kind in ("completeness", "retry") and self.retry_limit is not None:
                 rows.append((self.retry_limit - self.retry_spent,
                              f"the retry / completeness limit ${self.retry_limit:,.2f} "
-                             f"({self.doc_label})"))
+                             f"({self.doc_label})", "retry"))
         if not rows:
-            return float("inf"), "no limit"
+            return float("inf"), "no limit", ""
         return min(rows)
 
     def classify(self, tool: dict[str, Any]) -> str:
@@ -126,12 +154,29 @@ class SpendGuard:
         return kind
 
     def check(self, bound: float, kind: str) -> None:
-        left, which = self.remaining(kind)
+        left, which, scope = self._tightest(kind)
         if bound > left:
             msg = (f"a {kind} call bounded at ${bound:,.2f} does not fit the remaining "
                    f"${max(left, 0.0):,.2f} of {which} — not sent")
             self.refusals.append(msg)
-            raise BudgetExceeded(msg)
+            raise BudgetExceeded(msg, scope=scope)
+
+    def sent(self, kind: str, usage: dict[str, int] | None, cost: float | None,
+             error: str = "", tool: str = "") -> None:
+        """A call the model BILLED — its answer used or not (`error`: why not)."""
+        self.unrecorded.append({"kind": kind, "tool": tool, "document": self.doc_label,
+                                "usage": usage, "cost_usd": cost, "error": error})
+
+    def recorded(self, usage: dict[str, int] | None) -> None:
+        """A ledger row was written for one sent call (matched by its usage)."""
+        for i, e in enumerate(self.unrecorded):
+            if e["usage"] == usage:
+                del self.unrecorded[i]
+                return
+
+    def take_unrecorded(self) -> list[dict[str, Any]]:
+        out, self.unrecorded = self.unrecorded, []
+        return out
 
     def record(self, kind: str, bound: float, actual: float | None) -> None:
         spent = bound if actual is None else actual  # an unreported cost counts at its bound
@@ -174,15 +219,22 @@ class GuardedClient:
         from vinci.theme_intelligence.extract import cost_of
 
         kind = self._guard.classify(tool)
+        name = str(tool.get("name", "")).removeprefix("record_")
         bound = call_bound(self.model, system, user, tool)
         self._guard.check(bound, kind)
         before = self.last_usage
         try:
             out: dict[str, Any] = self._inner.extract(system=system, user=user, tool=tool, **kw)
-        except BaseException:
+        except BaseException as exc:
             after = self.last_usage  # billed and then failed (a truncation): still spent
-            self._guard.record(kind, bound, cost_of(self.model, after)
-                               if after is not None and after is not before else None)
+            billed = after if after is not None and after is not before else None
+            cost = cost_of(self.model, billed) if billed is not None else None
+            self._guard.record(kind, bound, cost)
+            if billed is not None:  # no usage reported: not shown billed (the guard counts the
+                self._guard.sent(kind, billed, cost,  # bound all the same)
+                                 f"{type(exc).__name__}: {str(exc)[:200]}", name)
             raise
-        self._guard.record(kind, bound, cost_of(self.model, self.last_usage))
+        cost = cost_of(self.model, self.last_usage)
+        self._guard.record(kind, bound, cost)
+        self._guard.sent(kind, self.last_usage, cost, tool=name)
         return out
