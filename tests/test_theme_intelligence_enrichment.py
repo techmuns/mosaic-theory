@@ -143,7 +143,9 @@ def test_enrichment_is_shown_as_our_hypothesis_never_in_the_source_lists(tmp_pat
     assert "Amazon" not in stock.find_next_sibling().get_text(" ")
     enr = next(s for s in subs if s.get_text().startswith("Enrichment"))
     after = "".join(x.get_text(" ") for x in enr.find_next_siblings())
-    assert "Amazon (AMZN) — could be hurt" in after
+    # the step it rests on ("pricing moves") is our inference, not a fact: a condition, never
+    # a bare "could be hurt" (2026-10-15)
+    assert "Amazon (AMZN) — exposed — would be hurt IF this holds: “pricing moves”" in after
 
 
 def test_enrichment_never_changes_the_thesis_or_its_research_action(tmp_path: Path) -> None:

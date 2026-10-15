@@ -39,7 +39,7 @@ COMPLETE_PROMPT_VERSION = "ti-complete-1"
 REVIEW_PROMPT_VERSION = "ti-review-4"
 #: the enrichment step (enrich.py): the listed companies a thesis's own steps imply, as external
 #: hypotheses — never read by a priority rule
-ENRICH_PROMPT_VERSION = "ti-enrich-1"
+ENRICH_PROMPT_VERSION = "ti-enrich-2"
 PARSER_VERSION = "ti-parse-8"  # 8: overprinted PDF glyphs read once; 7: the paywall marker searched
 #                                 in the whole page; 6: glyphs
 #: 3: a sentence read again from another version is REPEATED · 4: timing read beside the cited

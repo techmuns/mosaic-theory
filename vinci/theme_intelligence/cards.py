@@ -1170,10 +1170,78 @@ def card_steps(card: CardContent) -> dict[str, str]:
     return {f"s03.{i}": st.step for i, st in enumerate(card.s03_transmission)}
 
 
-def enrichment_lines(es: EnrichmentSet | None, version: int,
-                     steps: dict[str, str]) -> tuple[str, list[str]]:
+def without_labels(text: str) -> str:
+    """A card line without its system labels ⟨…⟩."""
+    return re.sub(r"\s*⟨[^⟩]*⟩\s*", " ", text).strip()
+
+
+#: how a company earns from a line of business, in words (enrich.BASIS_MODELS' keys)
+BASIS_LABEL = {"subscription": "subscription", "usage_based": "usage-based",
+               "transaction_fees": "transaction fees", "licences": "licences and maintenance",
+               "product_sales": "product sales", "advertising": "advertising",
+               "services": "services", "other": "other"}
+
+
+def set_card(es: EnrichmentSet | None, history: Iterable[ThesisVersion]) -> CardContent | None:
+    """The card version an enrichment set was proposed from — None when it is not held."""
+    if es is None:
+        return None
+    return next((h.content for h in history if h.version == es.thesis_version), None)
+
+
+def proposal_step(x: EnrichmentCandidate,
+                  card: CardContent | None) -> tuple[str, Provenance | None]:
+    """The step a proposal rests on: its text as recorded with the proposal, and its label —
+    recorded when proposed, else read from the card version the set rests on (only when that
+    card's step is the recorded one); None when neither holds it."""
+    text = x.evidence.split(": ", 1)[1] if ": " in x.evidence else x.evidence
+    if x.step_label is not None:
+        return text, x.step_label
+    m = re.fullmatch(r"s03\.(\d+)", x.step_id)
+    if card is not None and m and int(m.group(1)) < len(card.s03_transmission):
+        st = card.s03_transmission[int(m.group(1))]
+        if without_labels(st.text) == text:
+            return text, capped_label(st.provenance, st.text)
+    return text, None
+
+
+def proposal_reading(x: EnrichmentCandidate, steps: dict[str, str],
+                     card: CardContent | None) -> tuple[bool, str]:
+    """(conditional, the words) for a proposal's direction. A step that is a FACT (a measured
+    or externally verified line): "could be hurt, through Pricing [s03.1]". Any other — the
+    source's opinion, a forecast, our inference, or a label not recorded — makes the direction
+    a CONDITION: "exposed — would be hurt IF this holds: “…” (source opinion) [s03.0]". Never a
+    bare direction on a step that is not established (2026-10-15)."""
+    text, label = proposal_step(x, card)
+    side = {Direction.POSITIVE: "benefit", Direction.NEGATIVE: "be hurt"}.get(x.direction)
+    if label in _FACT_LABELS and side:
+        return False, (f"could {side}, through "
+                       f"{STEP_LABEL.get(steps.get(x.step_id, ''), x.step_id)} [{x.step_id}]")
+    support = label.value.lower() if label is not None else "its support was not recorded"
+    return True, (f"exposed — would {side or 'be affected'} IF this holds: “{text}” ({support})"
+                  f" [{x.step_id}]")
+
+
+def basis_line(x: EnrichmentCandidate) -> str:
+    """The basis the model stated and what the company's own annual report says of it — ""
+    for a proposal made before the basis was asked for."""
+    if not x.revenue_model:
+        return ""
+    stated = (f"basis (the model's): {BASIS_LABEL.get(x.revenue_model, x.revenue_model)}"
+              + (f" — {x.revenue_line}" if x.revenue_line else ""))
+    found = {"IN_FILING": f"{x.basis_source}: {x.basis_note}",
+             "FILING_NAMES_OTHER": f"{x.basis_source}: {x.basis_note}",
+             "NOT_DESCRIBED": f"{x.basis_source}: {x.basis_note}",
+             }.get(x.basis_check, f"not checked — {x.basis_note}")
+    return f"{stated} · {found}"
+
+
+def enrichment_lines(es: EnrichmentSet | None, version: int, steps: dict[str, str],
+                     card: CardContent | None = None) -> tuple[str, list[str]]:
     """(the set's provenance line, one line per proposed company) — the words every surface
-    shows for an enrichment set. A ticker the SEC did not verify is said unverified."""
+    shows for an enrichment set. A ticker the SEC did not verify is said unverified; a direction
+    resting on a step that is not a fact is said as the condition it is (`proposal_reading`).
+    `card`: the card version the set was proposed from."""
     if es is None:
         return "", []
     head = (f"Proposed by the model on {es.as_of.isoformat()} from the thesis's own steps"
@@ -1182,11 +1250,10 @@ def enrichment_lines(es: EnrichmentSet | None, version: int,
             + " — not named by the source, never counted toward the research action.")
     rows = []
     for x in es.candidates:
-        side = {Direction.POSITIVE: "could benefit", Direction.NEGATIVE: "could be hurt"}.get(
-            x.direction, "direction not stated")
-        rows.append(f"{x.name} ({enrichment_listing(x)}) — {side}, through "
-                    f"{STEP_LABEL.get(steps.get(x.step_id, ''), x.step_id)} [{x.step_id}]: "
-                    f"{x.rationale}")
+        _cond, how = proposal_reading(x, steps, card)
+        basis = basis_line(x)
+        rows.append(f"{x.name} ({enrichment_listing(x)}) — {how}: {x.rationale}"
+                    + (f" · {basis}" if basis else ""))
     return head, rows
 
 
@@ -1206,10 +1273,13 @@ def enrichment_html(es: EnrichmentSet | None, card: CardContent, rc: RenderConte
         return ('<div class="note">Not proposed yet. Unnamed companies are never added to the '
                 'source lists above.</div>')
     version = rc.history[-1].version if rc.history else es.thesis_version
-    head, rows = enrichment_lines(es, version, card_steps(card))
+    head, rows = enrichment_lines(es, version, card_steps(card), set_card(es, rc.history))
+    # the filing's own sentence prints with its proposal: the card is the complete record
+    quotes = [x.basis_quote for x in es.candidates]
     return (f'<div class="note">{e(head)}</div>'
-            + ("".join(f'<div class="s"><span class="lab unk">our hypothesis</span> {e(r)}</div>'
-                       for r in rows)
+            + ("".join(f'<div class="s"><span class="lab unk">our hypothesis</span> {e(r)}'
+                       + "".join(f'<div class="note aud">the filing: “{e(q)}”</div>' for q in qs)
+                       + "</div>" for r, qs in zip(rows, quotes, strict=True))
                or '<div class="note">None proposed.</div>')
             + (f'<div class="note aud">set aside: {e("; ".join(es.refused))}</div>'
                if es.refused else ""))
@@ -1910,7 +1980,7 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     md.append("**Cited baskets (members not named by the source):**")
     md += _md_sents(av.baskets, "s05.b", rc) or ["- none"]
     head, rows = enrichment_lines(rc.enrichment, rc.history[-1].version if rc.history else 0,
-                                  card_steps(card))
+                                  card_steps(card), set_card(rc.enrichment, rc.history))
     md.append("**Enrichment — external hypotheses, not named by the source:** "
               + (head or "not proposed yet"))
     md += [f"- {r}" for r in rows]
