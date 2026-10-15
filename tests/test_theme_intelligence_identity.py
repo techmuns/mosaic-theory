@@ -81,6 +81,9 @@ class SecDouble:
                     "files": []}}
         raise HttpError(f"not in the double: {url}")
 
+    def fetched_at(self, url: str, **_kw: Any) -> float | None:
+        return None  # a double records no fetch time
+
     def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
         for c, _n, t, e, _s, _d in REGISTRANTS:
             if url == ARCHIVE_DOC.format(cik=int(c), acc=f"{c}26000001", doc="k.htm"):
