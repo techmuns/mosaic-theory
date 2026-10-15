@@ -146,7 +146,8 @@ Corrected after the PR #703 review (record `docs/records/2026-10-10-theme-intell
   verified by the SEC"; an ADR or cross-listing is "the US line of a foreign filer"). Sets are
   stored apart (table `enrichments`), shown boxed as **our hypothesis** under "Who is exposed" and
   in the card's section 05, and **never read by a priority rule**. One call per thesis (about
-  $0.03), cached; `--refresh` asks again. **The weekly scan ends with it** (2026-10-14), over every
+  $0.03), cached; `--refresh` runs the pass again — the paid answer comes from the cache (set its
+  file aside to have the model asked anew) and every name is checked against the SEC again. **The weekly scan ends with it** (2026-10-14), over every
   active thesis whose current version has no set, inside the scan's own run; a budget refusal or a
   missing model is a run warning, never a failed scan; `scan --no-enrich` opts out.
 
