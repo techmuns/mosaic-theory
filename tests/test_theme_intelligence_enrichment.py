@@ -197,6 +197,9 @@ class MerckSec:
 
     CIK = "0000310158"
 
+    def fetched_at(self, url: str, **_kw: Any) -> float | None:
+        return None  # a double records no fetch time
+
     def get_json(self, url: str, ttl_seconds: float | None = None) -> Any:
         from vinci.netcache import HttpError
         from vinci.theme_intelligence.securities import SUBMISSIONS, TICKERS_EXCHANGE, TICKERS_MF

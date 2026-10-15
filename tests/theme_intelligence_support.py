@@ -137,6 +137,9 @@ class FrozenSecHttp:
         # "point-in-time registration not verifiable" rather than this stub inventing one
         raise HttpError(f"not in the frozen SEC subset: {url}")
 
+    def fetched_at(self, url: str, **_kw: Any) -> float | None:
+        return None  # the frozen subset records no fetch time
+
     def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
         if url in self.covers:
             return cover_html(self.covers[url])
