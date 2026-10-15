@@ -341,7 +341,11 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
                 if prior is not None and prior.article_id else None)
     rereading = (reread and changed and held_art is not None and prior is not None
                  and prior.status in ("INGESTED", "UPGRADED"))
-    if prior is not None and prior.status not in ("HELD", "REVIEW") and not rereading:
+    # HELD, REVIEW and LOOKAHEAD are not analyses: the same file may be processed — a document
+    # refused as published after one run's as-of is analysed by a later run, never refused for
+    # good as a DUPLICATE of its own refusal (2026-10-14)
+    if prior is not None and prior.status not in ("HELD", "REVIEW", "LOOKAHEAD") \
+            and not rereading:
         hint = ""
         if changed and held_v is not None:
             hint = (f" — the current reader ({PARSER_VERSION}) reads it differently from the held "

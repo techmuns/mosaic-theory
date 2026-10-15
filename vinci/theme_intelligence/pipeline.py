@@ -95,6 +95,7 @@ from vinci.theme_intelligence.schemas import (
     VerificationIssue,
     WeeklyRun,
     page_prefix,
+    utc_day,
 )
 from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
@@ -170,6 +171,10 @@ class Pipeline:
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
         #: replay, from the registry the pull replaced): a re-created record keeps that date
         self.first_ingested = self.engine.first_ingested
+        #: article version id -> the extraction(s) it was given before a `state pull` replaced the
+        #: registry, newest first (state.py fills it for a replay): the replay takes that answer
+        #: from the cache
+        self.replay_answers: dict[str, tuple[str, ...]] = {}
 
     # -- runs -----------------------------------------------------------------------------------
     def start_run(self, mode: str, *, as_of: date, window_from: date | None = None,
@@ -498,10 +503,11 @@ class Pipeline:
             self._count("articles_no_body")
             return ArticleResult(url, "NO_BODY", aid, version.version_id,
                                  note=version.retrieval_note)
-        if doc.published_at is not None and doc.published_at.date() > as_of:
+        if doc.published_at is not None and utc_day(doc.published_at) > as_of:
             self._issue("article", aid, IssueSeverity.BLOCK, "LOOKAHEAD",
-                        f"published {doc.published_at.date()} is after the run as-of {as_of} — "
-                        f"not analysed (publication-time replay)")
+                        f"published {doc.published_at.isoformat()} ({utc_day(doc.published_at)} "
+                        f"UTC) is after the run as-of {as_of} — not analysed (publication-time "
+                        f"replay)")
             self._count("articles_lookahead_refused")
             return ArticleResult(url, "LOOKAHEAD", aid, version.version_id)
         if not reanalysis and self._applied(aid, version.version_id):
@@ -510,7 +516,8 @@ class Pipeline:
                                  note="this article version was already applied — no new records")
 
         try:
-            xres = self._extract(doc, publisher, as_of, fixture, self._registry_context())
+            xres = self._extract(doc, publisher, as_of, fixture, self._registry_context(),
+                                 reuse=self.replay_answers.get(version.version_id, ()))
         except BudgetExceeded as exc:
             return self._budget_held(url, aid, version.version_id, exc)
         except InvalidAnswerError as exc:  # paid and unusable: record the spend, then fail loud
@@ -692,7 +699,8 @@ class Pipeline:
 
     def _extract(self, doc: ParsedDocument, publisher: str, as_of: date,
                  fixture: dict[str, Any] | None,
-                 registry: list[tuple[str, str]] | None = None) -> ExtractionResult:
+                 registry: list[tuple[str, str]] | None = None,
+                 reuse: Sequence[str] = ()) -> ExtractionResult:
         if fixture is not None:
             ext = Extraction.model_validate(fixture)
             key = _sha(json.dumps(fixture, sort_keys=True), doc.content_sha256)
@@ -700,7 +708,7 @@ class Pipeline:
                                     "fixture", True, None, 0.0, 0.0)
         return run_extraction(doc, publisher=publisher, as_of=as_of.isoformat(),
                               taxonomy=self.taxonomy, client=self.client,
-                              cache_dir=self.paths.llm_cache, registry=registry)
+                              cache_dir=self.paths.llm_cache, registry=registry, reuse=reuse)
 
     def _complete(self, doc: ParsedDocument, xres: ExtractionResult, ledger: Any,
                   publisher: str, as_of: date, aid: str, fixture_mode: bool,

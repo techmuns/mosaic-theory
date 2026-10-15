@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -438,12 +439,9 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
         if rec is None or rec.stored_path is None:
             raise SystemExit(f"no stored document {a.release}")
         path = Path(a.data_dir) / rec.stored_path
-        d = rec.declared
-        declared = Declared(
-            source_id=rec.source_id, url=d.get("url"), title=d.get("title"),
-            authors=tuple(x.strip() for x in d.get("authors", "").split(";") if x.strip()),
-            published=_iso(d["published"]) if d.get("published") else None,
-            llm_permitted=permitted)
+        declared = Declared.recorded(rec.source_id, rec.declared)  # as recorded, `via` included
+        if permitted is not None:  # the operator's licence statement now overrides the recorded
+            declared = replace(declared, llm_permitted=permitted)
     else:
         if not (a.path and a.source):
             raise SystemExit("--path and --source are required (or --release <doc id>)")

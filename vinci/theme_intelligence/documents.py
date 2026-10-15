@@ -29,6 +29,7 @@ from __future__ import annotations
 import hashlib
 import re
 from collections import Counter
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -81,6 +82,22 @@ class Declared:
     llm_permitted: bool | None = None
     #: how it arrived when not by hand: "linked report fetched automatically from <url> …"
     via: str | None = None
+
+    @classmethod
+    def recorded(cls, source_id: str, statements: Mapping[str, str]) -> Declared:
+        """The statements as a document record holds them (`DocumentRecord.declared`, every value
+        a string) — the ONE reader for every path that processes a stored document again: a
+        `state pull` replay and `ingest-file --release`. Each had rebuilt them, and a release
+        dropped the recorded licence and how the document arrived: a linked report released from
+        REVIEW was HELD again and recorded as a manual upload (2026-10-14)."""
+        return cls(
+            source_id=source_id, url=statements.get("url"), title=statements.get("title"),
+            authors=tuple(x.strip() for x in statements.get("authors", "").split(";")
+                          if x.strip()),
+            published=(date.fromisoformat(statements["published"])
+                       if statements.get("published") else None),
+            llm_permitted={"True": True, "False": False}.get(statements.get("llm_permitted", "")),
+            via=statements.get("via"))
 
 
 @dataclass
