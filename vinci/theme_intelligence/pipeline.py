@@ -133,6 +133,8 @@ class ArticleResult:
     outcomes: list[ThesisOutcome] = field(default_factory=list)
     note: str = ""
     extraction_cost: float | None = None
+    #: BUDGET_HELD: the limit that refused it — "run", "document", "retry" or "price"
+    held_by: str = ""
 
 
 class ReanalysisIncompleteError(RuntimeError):
@@ -206,6 +208,18 @@ class Pipeline:
         run = self.run
         if error:
             run.warnings.append(f"RUN ERROR: {error}")
+        # a paid call whose answer no path recorded (it ended in an exception — a truncated
+        # review, a failed completeness part, a refused split) is still a paid call: written to
+        # the ledger before the run's cost is summed (2026-10-14: $0.45 of reviews read as $0)
+        missed = self.guard.take_unrecorded()
+        for e in missed:
+            self._llm_call(f"{e['tool'] or e['kind']}-unrecorded", e["document"] or run.run_id,
+                           False, e["usage"], e["cost_usd"], 0.0,
+                           self.client.model if self.client is not None else LLM_MODEL, "",
+                           note=e["error"] or "answer not used")
+        if missed:
+            run.warnings.append(f"{len(missed)} paid call(s) ended without an answer the run "
+                                f"used — recorded in the ledger as *-unrecorded")
         calls = self.store.llm_calls(run.run_id)
         tok: dict[str, int] = {}
         replayed: dict[str, int] = {}
@@ -252,16 +266,19 @@ class Pipeline:
         self.run.counts[key] = self.run.counts.get(key, 0) + n
 
     def _llm_call(self, purpose: str, ref: str, res_cached: bool, usage: dict[str, int] | None,
-                  cost: float | None, seconds: float, model: str, prompt_version: str) -> None:
+                  cost: float | None, seconds: float, model: str, prompt_version: str,
+                  note: str = "") -> None:
         assert self.run is not None
         self._calls += 1
+        if not res_cached:
+            self.guard.recorded(usage)
         self.store.add_llm_call(
             "LC-" + _sha(self.run.run_id, purpose, ref, str(self._calls),
                          datetime.now(tz=UTC).isoformat())[:14], self.run.run_id, purpose,
             {"purpose": purpose, "ref": ref, "model": model, "prompt_version": prompt_version,
              "cached": res_cached,
              "usage": usage, "cost_usd": cost, "seconds": round(seconds, 2),
-             "at": datetime.now(tz=UTC).isoformat()})
+             "at": datetime.now(tz=UTC).isoformat(), **({"note": note} if note else {})})
 
     # -- review hook ------------------------------------------------------------------------------
     def _review(self, card: CardContent, claims: dict[str, Claim]) -> ReviewOutcome:
@@ -281,7 +298,11 @@ class Pipeline:
                              run_id=self.run.run_id)
         except BudgetExceeded as exc:  # refused for want of budget: said, never pretended
             issues.append(VerificationIssue(
-                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "budget")[:14],
+                # the id hashes the detail it records: two refusals of one thesis in a run (two
+                # articles, two limits) are two records — one id with two payloads failed the
+                # whole article (2026-10-14)
+                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "budget",
+                                      str(exc))[:14],
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
                 severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
                 detail=f"pass-2 review not run — budget: {exc}",
@@ -289,7 +310,8 @@ class Pipeline:
             return ReviewOutcome(issues)
         except RuntimeError as exc:  # no client and no cache: say so, never pretend reviewed
             issues.append(VerificationIssue(
-                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "noreview")[:14],
+                issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "noreview",
+                                      str(exc))[:14],
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
                 severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN", detail=str(exc),
                 created_at=datetime.now(tz=UTC)))
@@ -531,7 +553,8 @@ class Pipeline:
                 self._llm_call("extract-invalid", aid, False, u, cost_of(exc.model, u), 0.0,
                                exc.model, exc.prompt_version)
             raise
-        if xres.truncated_usage is not None and not xres.cached:  # the billed, discarded attempt
+        if xres.truncated_usage is not None and xres.truncated_now and not xres.cached:
+            # the billed, discarded attempt — once: an earlier run's (its marker) is in its ledger
             self._llm_call("extract-truncated", aid, False, xres.truncated_usage,
                            cost_of(xres.model, xres.truncated_usage), 0.0, xres.model,
                            EXTRACT_PROMPT_VERSION)
@@ -686,7 +709,8 @@ class Pipeline:
                     f"{url} — not analysed: {exc}. Resume with a higher limit (scan --budget / "
                     f"ingest-file --max-cost); answers already paid for are reused from the cache")
         self._count("articles_budget_held")
-        return ArticleResult(url, "BUDGET_HELD", aid, version_id, note=str(exc))
+        return ArticleResult(url, "BUDGET_HELD", aid, version_id, note=str(exc),
+                             held_by=exc.scope)
 
     def _applied(self, aid: str, version_id: str) -> bool:
         rows = self.store.conn.execute(
@@ -911,8 +935,8 @@ class Pipeline:
         steps imply, as external hypotheses, checked against the SEC and stored apart from the
         thesis (no new version, no priority read). Default: every ACTIVE thesis whose current
         version has no set yet (`refresh` asks again). One paid call per thesis, through the
-        spend guard; a refusal stops the pass and says so. Returns (run, [(thesis id, what
-        happened)])."""
+        spend guard; a refusal by the run's budget stops the pass, one by a thesis's own limit
+        holds that thesis — each said. Returns (run, [(thesis id, what happened)])."""
         self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of)
         if budget is not None:
             self.guard.run_limit = budget
@@ -1061,7 +1085,8 @@ class Pipeline:
     def _enrich_theses(self, targets: list[str], *, as_of: date, refresh: bool = False
                        ) -> tuple[list[tuple[str, str]], bool]:
         """The enrichment loop inside the current run: [(thesis id, what happened)], and
-        whether the spend guard refused a call (the pass then stops — said, never pretended)."""
+        whether the spend guard refused a call — said, never pretended. A refusal by the RUN's
+        budget stops the pass; one by a thesis's own limit holds that thesis alone."""
         from vinci.theme_intelligence.enrich import enrich_thesis
         from vinci.theme_intelligence.report import thesis_groups
 
@@ -1088,7 +1113,9 @@ class Pipeline:
             except BudgetExceeded as exc:
                 done.append((tid, f"not run — budget: {exc}"))
                 refused = True
-                break
+                if exc.scope not in ("document", "retry"):  # the run's: none of the rest fits
+                    break
+                continue  # this thesis's own limit: the next one is asked
             finally:
                 self.guard.end_document()
             if res.enrichment is None:
@@ -1122,7 +1149,7 @@ class Pipeline:
             return
         if refused:
             left = next((what for _tid, what in done if what.startswith("not run")), "")
-            self.run.warnings.append(f"enrichment stopped by the spend guard — {left[:200]}; "
+            self.run.warnings.append(f"enrichment held by the spend guard — {left[:200]}; "
                                      f"the rest are enriched by the next run (or `enrich`)")
 
     def run_scan(self, *, window_from: date, window_to: date, as_of: date, max_articles: int,
@@ -1149,11 +1176,26 @@ class Pipeline:
                                   f"{len(prior.checkpoint)} article(s) already done are skipped")
             self.run = prior
             self.store.upsert_run(prior)
-            self.guard.start_run("scan")
+            # the earlier attempts' spend counts against the same limit: a resume restarted the
+            # guard at $0 and one run id could spend its limit twice (2026-10-14). The larger of
+            # the last summary and the ledger: an attempt that died never wrote its summary, but
+            # its ledger rows stand
+            spent_before = dict(prior.spend or {})
+            spent_before["spent_usd"] = max(
+                float(spent_before.get("spent_usd") or 0.0),
+                sum(float(c.get("cost_usd") or 0.0) for c in self.store.llm_calls(prior.run_id)
+                    if not c.get("cached")))
+            self.guard.start_run("scan", carried=spent_before)
         else:
             self.start_run("scan", as_of=as_of, window_from=window_from, window_to=window_to)
         if budget is not None:
             self.guard.run_limit = budget
+        if resume_run_id and self.run is not None:
+            limit = (f"${self.guard.run_limit:,.2f}" if self.guard.run_limit is not None
+                     else "no limit set")
+            self.run.warnings.append(
+                f"resumed with ${self.guard.run_spent:,.2f} already spent by this run — it counts "
+                f"against the run's limit ({limit}; raise it with --budget)")
         run = self.run
         assert run is not None
         try:
@@ -1241,7 +1283,7 @@ class Pipeline:
                     todo.append((c.url, c.source_id, c.date_basis))
                     seen.add(c.url)
             done = queued = failures = too_new = 0
-            out_of_budget = False
+            out_of_budget = doc_held = False
             for url, sid, why in todo:
                 if url in run.checkpoint:
                     continue
@@ -1296,16 +1338,29 @@ class Pipeline:
                         cov[sid].queued += 1
                     continue
                 if res.status == "BUDGET_HELD":  # checkpointed: offered first next run
-                    out_of_budget = True
                     self.store.upsert_candidate(url, sid, "QUEUED", {
                         "source_id": sid, "run_id": run.run_id,
                         "reason": f"spend guard: {res.note[:200]}"})
                     queued += 1
                     if sid in cov:
                         cov[sid].queued += 1
-                    run.warnings.append(f"spend guard: the run budget is exhausted — "
-                                        f"{res.note[:200]}; the remaining candidates are QUEUED "
-                                        f"(resume with --budget)")
+                    # a document's own limit (or its retry share) holds that document alone; any
+                    # other refusal — the run's budget, no price, no scope said — stops the scan
+                    if res.held_by not in ("document", "retry"):
+                        out_of_budget = True
+                        run.warnings.append(f"spend guard: the run budget is exhausted — "
+                                            f"{res.note[:200]}; the remaining candidates are "
+                                            f"QUEUED (resume with --budget)")
+                    else:  # this document's own limit: it alone waits, the scan goes on
+                        doc_held = True  # an in-window article not analysed: PARTIAL
+                        # every scan applies the same per-document limit (`scan --budget` raises
+                        # the RUN's): a scan will hold it again — said, never promised to the
+                        # next run (review of #715)
+                        run.warnings.append(f"spend guard: {url} held by its own limit — "
+                                            f"{res.note[:200]}; QUEUED, and every scan will hold "
+                                            f"it again at the per-document limit: supply it with "
+                                            f"`ingest-file --max-cost` (its paid parts are "
+                                            f"cached), the scan goes on")
                     continue
                 done += 1
                 run.checkpoint[url] = res.status
@@ -1341,7 +1396,7 @@ class Pipeline:
             if degraded:
                 run.warnings.append(f"source(s) partially covered: {', '.join(degraded)}")
             status = (RunStatus.PARTIAL if failing or degraded or failures or out_of_budget
-                      else RunStatus.SUCCEEDED)
+                      or doc_held else RunStatus.SUCCEEDED)
             return self.finish_run(status)
         except KeyboardInterrupt:
             self.finish_run(RunStatus.INTERRUPTED,
