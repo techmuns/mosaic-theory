@@ -93,7 +93,7 @@ INFOGRAPHIC = ("Large Power Transformers Medium/High-Voltage Substation Transfor
 @pytest.mark.parametrize(("sentence", "core", "quote", "same"), [
     ("Wood Mackenzie estimates that power transformers are in a supply deficit of 30% based on "
      "annual supply and demand estimates in 2025.", "30%", "an assumed 30% deficit", True),
-    ("Figure 12. 2025 market share by capacity total 2,358.5GVA", "2,358",
+    ("Figure 12. 2025 market share by capacity total 2,358.5GVA", "2,358.5",
      "based on global transformer supply of 2,358.5GVA", True),  # the same precise number
     ("The U.S. is the exception: 1Q 2026 sales were down ~27% YoY, although the decline slowed "
      "from 4Q 2025.", "27%", EV, True),
@@ -166,7 +166,8 @@ def pipe(tmp_path: Path) -> Pipeline:
 
 def test_a_restated_figure_is_captured_where_stated_and_a_different_fact_stays_open(
         pipe: Pipeline) -> None:
-    comp = {"figure_reviews": [_review("b002#30%", ["c1"]), _review("b004#2,358", ["c2"]),
+    # the ledger reads "2,358.5GVA" whole (it was cut to "2,358" until GVA was a known unit)
+    comp = {"figure_reviews": [_review("b002#30%", ["c1"]), _review("b004#2,358.5", ["c2"]),
                                _review("b005#80%", ["c3"])]}  # c3 is a DIFFERENT 80%
     res = ingest(pipe, DOC.doc(), _x(), as_of=date(2026, 10, 11), publisher="Citi",
                  completeness=comp)
@@ -174,7 +175,7 @@ def test_a_restated_figure_is_captured_where_stated_and_a_different_fact_stays_o
     (rep,) = pipe.store.completeness_for_run(pipe.run.run_id)
     got = {(f.block_id, f.figure): f for f in rep.figures}
     assert got[("b002", "30%")].status == "captured" and "b001" in got[("b002", "30%")].reason
-    assert got[("b004", "2,358")].status == "captured"
+    assert got[("b004", "2,358.5GVA")].status == "captured"
     prices = got[("b005", "80%")]
     assert prices.status == "uncaptured" and prices.open_cause == "capture_not_verified"
     v = research_verification(pipe.store, pipe.run)

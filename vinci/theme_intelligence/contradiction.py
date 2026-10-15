@@ -167,6 +167,12 @@ def compare(ch: Claim, inc: Claim, *, products: list[Product], ref: date,
         if not (wa.start <= wb.end and wb.start <= wa.end):
             return PairVerdict(COMPATIBLE, ch.claim_id, inc.claim_id, (
                 f"different periods ({wa.start}..{wa.end} vs {wb.start}..{wb.end})",))
+        if (wa.to_date or wb.to_date) and (wa.to_date, wa.start) != (wb.to_date, wb.start):
+            # a change accumulated SINCE X and a change over another span can both be true: a
+            # rise since 2019 is not contradicted by a fall in 2026 (2026-10-15)
+            return PairVerdict(COMPATIBLE, ch.claim_id, inc.claim_id, (
+                f"different spans (a change since {(wa if wa.to_date else wb).start} vs one "
+                f"over {(wb if wa.to_date else wa).start}..{(wb if wa.to_date else wa).end})",))
         reasons.append("overlapping periods")
     else:
         unclear.append("a claim states no period")
