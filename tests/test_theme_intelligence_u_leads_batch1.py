@@ -267,3 +267,142 @@ def test_an_unknown_glued_unit_is_missed_never_cut_at_the_decimal(text: str) -> 
 def test_the_taxonomy_lists_the_four_new_pharma_segments() -> None:
     ids = {s.id for s in load_taxonomy().segments_of(PHARMA)}
     assert {"genetic_medicine", "immunology", "vaccines", "cardiovascular"} <= ids
+
+
+# --- review of PR #714 (2026-10-15) ------------------------------------------------------------
+
+def test_since_ends_at_the_source_date_without_cutting_a_later_window() -> None:
+    """The "since" part of a union was ended at the publication date by cutting the WHOLE union:
+    a forecast "since 2019, and again by 2027" read as a window already past."""
+    got, note = timing_of(_c(period="since 2019, and again by 2027",
+                             epistemic=Epistemic.FORECAST, kind=ClaimKind.FORECAST), AS_OF,
+                          PUBLISHED)
+    assert got == "long_range", note
+    from vinci.theme_intelligence.timewindow import window_of
+
+    w = window_of("since May 2026", AS_OF, source_date=PUBLISHED)
+    assert w is not None and w.end == PUBLISHED and w.to_date
+
+
+def test_a_change_since_a_date_does_not_contradict_a_change_over_another_span() -> None:
+    from vinci.theme_intelligence.contradiction import compare
+
+    def c(cid: str, period: str, quote: str) -> Claim:
+        return _c(period=period, epistemic=Epistemic.ACTUAL,
+                  quote=quote).model_copy(update={"claim_id": cid})
+    prods = list(load_taxonomy().products)
+
+    def verdict(a: Claim, b: Claim) -> str:
+        return compare(a, b, products=prods, ref=AS_OF, overlap_geo=lambda x, y: True,
+                       geo_ch="US", geo_inc="US").kind
+    fell = c("C-b", "2026", "[HYPOTHETICAL] HBM prices fell 10% in 2026")
+    assert verdict(c("C-a", "since 2019", "[HYPOTHETICAL] HBM prices rose 40% since 2019"),
+                   fell) == "COMPATIBLE"
+    assert verdict(c("C-c", "2026", "[HYPOTHETICAL] HBM prices rose 12% in 2026"),
+                   fell) == "CONTRADICTS"  # the same span, opposite directions: still
+
+
+def test_a_thesis_evidence_window_since_a_date_ends_at_its_article_date() -> None:
+    from vinci.theme_intelligence.engine import evidence_windows
+
+    c = _c(period="since 2019", epistemic=Epistemic.ACTUAL)
+    [w] = evidence_windows([c], AS_OF, {"A-1": PUBLISHED})
+    assert w.end == PUBLISHED
+    [w0] = evidence_windows([c], AS_OF)  # no date known: to the as-of
+    assert w0.end == AS_OF
+
+
+def test_the_desk_says_a_since_claim_is_dated_by_its_source(tmp_path: Path) -> None:
+    from vinci.theme_intelligence.desk import near_term_reading
+
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("article", as_of=AS_OF)
+    text = "[HYPOTHETICAL] HBM contract prices have risen 40% since May 2026 at suppliers."
+    art = Hypo(slug="hbm", publisher="Hypothetical Memory Research", published=PUBLISHED,
+               blocks=[("paragraph", text)])
+    q = "HBM contract prices have risen 40% since May 2026"
+    ingest(pipe, art.doc(), extraction(
+        [claim("c1", "b001", q, "HBM +40% since May 2026", metric="HBM contract price change",
+               value=40, value_text="40%", unit="%", period="since May 2026")],
+        [hyp("h1", "HBM pricing keeps rising", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", geography="Global", supporting=["c1"])]),
+        as_of=AS_OF, publisher=art.publisher)
+    [t] = pipe.store.theses()
+    v = pipe.store.thesis_version(t.thesis_id, t.current_version)
+    assert v is not None
+    [tc] = near_term_reading(pipe.store, v).claims
+    assert tc.timing == "current" and "since a date runs to the source's own date" in tc.basis
+
+
+@pytest.mark.parametrize(("title", "segment"), [
+    ("GLP-1 cardiovascular outcomes widen obesity demand", "obesity_metabolic"),
+    ("Heart failure data lift semaglutide's obesity franchise", "obesity_metabolic"),
+    ("Lp(a)-lowering therapies open a new cardiovascular market", "cardiovascular"),
+])
+def test_cardiovascular_outcomes_vocabulary_does_not_re_key_a_glp1_thesis(
+        title: str, segment: str) -> None:
+    from vinci.theme_intelligence.engine import subject_segment
+
+    assert subject_segment(PHARMA, title, "", (), (), load_taxonomy()) == segment
+
+
+def test_a_thesis_whose_segment_set_grew_is_found_and_re_keyed(tmp_path: Path) -> None:
+    """The stale-key lookup read only the BARE key: a thesis keyed `obesity_metabolic` before a
+    second segment its statement names existed was missed under the composite key — a duplicate."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("article", as_of=AS_OF)
+    full = pipe.engine.taxonomy
+    pipe.engine.taxonomy = replace(full, segments=tuple(s for s in full.segments
+                                                        if s.id != "cardiovascular"))
+    title = "GLP-1 and Lp(a)-lowering drugs widen cardiometabolic demand"
+    sentence = ("GLP-1 and Lp(a)-lowering drugs are expected to grow their addressable market "
+                "30% in 2027.")
+    art, ext = _pharma_article("cm1", sentence, title, published=date(2026, 10, 2))
+    ingest(pipe, art.doc(), ext, as_of=AS_OF, publisher=art.publisher)
+    [old] = pipe.store.theses()
+    assert old.key_segment == "obesity_metabolic"
+    pipe.engine.taxonomy = full
+    art2, ext2 = _pharma_article("cm2", "GLP-1 and Lp(a) drugs are expected to grow their "
+                                 "addressable market 30% in 2027.",
+                                 "GLP-1 and Lp(a) drugs keep growing", published=date(2026, 10, 9))
+    ingest(pipe, art2.doc(), ext2, as_of=AS_OF, publisher=art2.publisher)
+    [t] = pipe.store.theses()
+    assert t.thesis_id == old.thesis_id and t.key_segment == "cardiovascular+obesity_metabolic"
+
+
+@pytest.mark.parametrize(("period", "window"), [
+    ("2025/26", (date(2025, 1, 1), date(2025, 12, 31))),  # a year, written with its season
+    ("in 2030 per the IEA", (date(2030, 1, 1), date(2030, 12, 31))),
+    ("$2050/oz", None), ("2050 per ounce", None),  # amounts
+])
+def test_per_and_slash_make_an_amount_only_before_a_unit(
+        period: str, window: tuple[date, date] | None) -> None:
+    from vinci.theme_intelligence.timewindow import window_of
+
+    w = window_of(period, AS_OF)
+    assert (None if w is None else (w.start, w.end)) == window
+
+
+@pytest.mark.parametrize("since_first", [True, False])  # the new thesis's windows, the other's
+def test_a_relation_compares_a_since_window_to_its_article_date(
+        tmp_path: Path, since_first: bool) -> None:
+    """The theses' timeframes are compared with a "since X" window ending at its ARTICLE's date
+    (the engine passes each claim's publication), never at the run's as-of."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("article", as_of=AS_OF)
+    pair = [("since", "HBM contract prices have risen 40% since 2019 across suppliers.",
+             "since 2019", "pricing_cycle", PUBLISHED),
+            ("day", "HBM supply tightened 40% on October 12, 2026 across suppliers.",
+             "October 12, 2026", "supply_constraint", date(2026, 10, 13))]
+    for slug, sentence, period, mech, d in (pair if since_first else pair[::-1]):
+        art = Hypo(slug=slug, publisher=f"Hypothetical {slug} Research", published=d,
+                   blocks=[("paragraph", f"[HYPOTHETICAL] {sentence}")])
+        q = sentence.rstrip(".")
+        ingest(pipe, art.doc(), extraction(
+            [claim("c1", "b001", q, q, metric="HBM measure", value=40, value_text="40%",
+                   unit="%", period=period)],
+            [hyp("h1", f"HBM {mech.replace('_', ' ')} story", node="ai_infrastructure.memory",
+                 mechanism=mech, geography="Global", supporting=["c1"])]),
+            as_of=AS_OF, publisher=art.publisher)
+    [rel] = [r for r in pipe.store.relations() if "same value-chain node" in r.reason]
+    assert "no overlapping timeframe" in rel.reason  # 2019..10-08 vs 10-12: they do not meet

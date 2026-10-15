@@ -623,6 +623,8 @@ def near_term_reading(store: Store, v: ThesisVersion) -> NearTerm:
         w = window_of(c.period, v.as_of)
         basis = ("its stated measurement date" if c.measured_as_of else
                  "the period it states" if cls in ("near_term", "straddling", "long_range") else
+                 "the article's publication date — a change since a date runs to the source's "
+                 "own date" if w is not None and w.to_date else
                  "the end of the period it states" if w is not None and w.end <= v.as_of else
                  "the article's publication date — the source states no measurement date")
         out.append(TimedClaim(c, cls, note, basis))

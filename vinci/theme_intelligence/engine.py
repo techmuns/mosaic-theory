@@ -35,7 +35,7 @@ from __future__ import annotations
 import hashlib
 import re
 from collections import Counter
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 
@@ -269,15 +269,17 @@ def geographies_overlap(a: str, b: str) -> bool:
         y in _REGION_CONTAINS.get(x, set()) for x in ra for y in rb)
 
 
-def evidence_windows(claims: list[Claim], ref: date) -> list[Window]:
+def evidence_windows(claims: list[Claim], ref: date,
+                     published: Mapping[str, date] | None = None) -> list[Window]:
     """The calendar windows a thesis's verified evidence states (period first; a forecast or
-    event may state it in its quote)."""
+    event may state it in its quote) — a "since X" window ending at its article's date."""
     out: list[Window] = []
     for c in claims:
-        w = window_of(c.period, ref)
+        to = (published or {}).get(c.article_id)
+        w = window_of(c.period, ref, source_date=to)
         if w is None and (c.epistemic is Epistemic.FORECAST
                           or c.kind in (ClaimKind.FORECAST, ClaimKind.EVENT)):
-            w = window_of(c.quote, ref)
+            w = window_of(c.quote, ref, source_date=to)
         if w is not None:
             out.append(w)
     return out
@@ -486,24 +488,18 @@ class Engine:
             merged_ids = {x.raw.local_id for x in hs}  # a risk tied to ANY merged hypothesis
             risks = [r for r in ve.risks if not r.related or merged_ids & set(r.related)]
             existing = self._by_key(key)
-            if existing is None and seg:
-                # a thesis keyed BEFORE the segment it is about existed still holds the BARE key:
-                # found there (and re-keyed below), never a duplicate under the new key
-                bare = self._by_key(thesis_key(h, "", prod))
-                if bare is not None and not bare.key_segment and self.thesis_segment(bare) == seg:
-                    existing = bare
-            elif (existing is not None and not seg and not existing.key_segment
+            if (existing is not None and not seg and not existing.key_segment
                   and self.taxonomy.segments_of(existing.key_node)
                   and existing.thesis_id not in earlier
                   and not self._shares_evidence(h, existing, claims)):
                 # a segmented node's BARE key names no subject: two theses that each name none of
                 # its segments share it, and the second updates the first. Said, never silent.
+                today = self.thesis_segment(existing)
                 st.add_issue(self._issue(
                     ctx, "hypothesis", key, IssueSeverity.WARN, "UNSEGMENTED_KEY",
                     f"“{h.raw.title}” names none of {existing.key_node}'s segments and shares no "
                     f"evidence with {existing.thesis_id} “{existing.title}”"
-                    + (f" (which today reads as {self.thesis_segment(existing)})"
-                       if self.thesis_segment(existing) else "")
+                    + (f" (which today reads as {today})" if today else "")
                     + " — updated under one bare key: check whether it is the same thesis"))
             if existing is not None and not prod:
                 # the key is necessary, not sufficient: the thesis it names must be about the same
@@ -544,6 +540,11 @@ class Engine:
                               f"already on that thesis from an earlier version of this article, "
                               f"but it differs in {'; '.join(diffs)} — not merged, held for "
                               f"review (never an independent research opportunity)")
+            if existing is None and seg and not review:
+                # a thesis keyed BEFORE a segment it is about existed holds another segment set
+                # (the bare key, or one that has since grown): found by what it reads as TODAY,
+                # and re-keyed below — never a duplicate under the new key
+                existing = self._stale_holder(h, seg, prod)
             sibling = ""
             if existing is None:
                 out = self._create(ctx, key, h, claims, mentions, resolutions, risks, seg,
@@ -624,6 +625,23 @@ class Engine:
                   and (c := self.store.claim(lk.claim_id)) is not None and c.span_verified]
         return subject_segment(t.key_node, t.title, self.thesis_product(t), (), quotes,
                                self.taxonomy)
+
+    def _stale_holder(self, h: VerifiedHypothesis, seg: str, prod: str) -> Thesis | None:
+        """The thesis on this hypothesis's node, mechanism, direction, geography and product
+        whose key names ANOTHER segment set than it reads as today — `seg` — because a segment
+        was added after it was keyed (2026-10-15: a thesis keyed bare, or keyed `obesity_metabolic`
+        before a second segment its statement names existed)."""
+        raw = h.raw
+        for t in self.store.theses():
+            if (t.retired or t.key_segment == seg
+                    or (t.key_node, t.key_mechanism, t.key_direction.value, t.key_geography,
+                        t.key_review, t.key_product) != (
+                        raw.value_chain_node, raw.mechanism, raw.direction.value,
+                        norm_geo(raw.geography), review_tag(h), prod)):
+                continue
+            if self.thesis_segment(t) == seg:
+                return t
+        return None
 
     def _by_key(self, key: str) -> Thesis | None:
         """The thesis holding an identity key — or the one CREATED with it before its key was
@@ -1784,6 +1802,15 @@ class Engine:
                 out.append(f"{lk.claim_id} failed span verification")
         return out
 
+    def _published_of(self, claims: list[Claim]) -> dict[str, date]:
+        """Each claim's article's publication date — where a "since X" window ends."""
+        out: dict[str, date] = {}
+        for aid in {c.article_id for c in claims}:
+            a = self.store.article(aid)
+            if a is not None and a.published_at is not None:
+                out[aid] = a.published_at.date()
+        return out
+
     def _evidence_of(self, tid: str) -> list[Claim]:
         out: list[Claim] = []
         for lk in self.store.links(tid):
@@ -1805,7 +1832,7 @@ class Engine:
         rels: list[ThemeRelation] = []
         now = datetime.now(tz=UTC)
         seg_label = {sg.id: sg.label for sg in self.taxonomy.segments}
-        t_windows = evidence_windows(own, ctx.as_of)
+        t_windows = evidence_windows(own, ctx.as_of, self._published_of(own))
         cids: tuple[str, ...] = ()
         for o in self.store.theses():
             if o.thesis_id == t.thesis_id or o.retired:  # a retired thesis is history only
@@ -1817,9 +1844,11 @@ class Engine:
                                                               Direction.NEGATIVE}
             same_dir = o.key_direction == t.key_direction
             if o.key_node == t.key_node:
+                o_claims = self._evidence_of(o.thesis_id)
                 diffs = claim_differences(t, o, t_windows,
-                                          evidence_windows(self._evidence_of(o.thesis_id),
-                                                           ctx.as_of), seg_label)
+                                          evidence_windows(o_claims, ctx.as_of,
+                                                           self._published_of(o_claims)),
+                                          seg_label)
                 if t.key_product != o.key_product:  # one key, two technologies: say which
                     pt, po = self.thesis_product(t), self.thesis_product(o)
                     if (pt and po and pt != po) or not diffs:  # never "US vs US" for a product

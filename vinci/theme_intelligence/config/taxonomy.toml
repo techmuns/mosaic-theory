@@ -323,12 +323,16 @@ label = "Vaccines"
 terms = ["vaccine", "vaccines", "vaccination", "vaccinations", "immunization", "RSV",
          "pneumococcal"]
 
+# Its terms are the LIPID drug classes' own: "cardiovascular", "heart failure" and
+# "cholesterol" are also the outcome vocabulary of GLP-1 theses (semaglutide's cardiovascular
+# and heart-failure readouts), which would have re-keyed an obesity thesis (review, 2026-10-15).
 [[segment]]
 node = "healthcare.pharma_biotech"
 id = "cardiovascular"
-label = "Cardiovascular (lipids, Lp(a), heart failure)"
-terms = ["cardiovascular", "Lp(a)", "lipoprotein(a)", "LDL", "cholesterol", "PCSK9",
-         "hypertension", "heart failure", "atherosclerosis", "cardiology"]
+label = "Cardiovascular (lipids, Lp(a))"
+terms = ["Lp(a)", "Lp(a)-lowering", "lipoprotein(a)", "LDL", "LDL-C", "PCSK9", "lipid-lowering",
+         "cholesterol-lowering", "statin", "statins", "atherosclerosis",
+         "hypercholesterolemia"]
 
 # PRODUCTS — finer than segments, for CLAIM-level contradiction checks (contradiction.py): two
 # claims contradict only when they speak about the same product, variable, period and geography

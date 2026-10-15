@@ -45,7 +45,7 @@ class Window:
     start: date
     end: date
     basis: str  # the text the window was read from, and how
-    #: "since X": the window runs to the SOURCE'S date — `timing_of` ends it at the publication
+    #: "since X": a change accumulated from X to the SOURCE'S date (`window_of(source_date=)`)
     to_date: bool = False
 
     def __str__(self) -> str:
@@ -64,8 +64,12 @@ _MONTHS_N_WORD = "|".join(sorted(_MONTHS_N, key=len, reverse=True))
 #: a fiscal quarter — not placed (see the module note)
 FISCAL_QUARTER = re.compile(r"\b(?:q[1-4]\s?fy\s?'?\d{2,4}|[1-4]q\s?fy\s?'?\d{2,4}|"
                             r"fy\s?'?\d{2,4}\s?(?:q[1-4]|[1-4]q))\b", re.I)
-#: a four-digit number that is an AMOUNT, not a year: after a currency sign, or before a unit
-_AMOUNT_AFTER = r"(?!\s*(?:%|per\b|/|bn\b|billion|million|mn\b|tonnes?\b|oz\b|barrels?\b))"
+#: a four-digit number that is an AMOUNT, not a year: after a currency sign, or before a unit —
+#: "per" / "/" only before a unit ("$2050 per ounce", "2050/oz"), so "2025/26" and "2030 per the
+#: IEA" stay years
+_PER_UNIT = r"(?:ounce|oz|barrel|bbl|tonne|ton|share|unit|kg|lb|mwh|kwh|gw|mw|t)\b"
+_AMOUNT_AFTER = (rf"(?!\s*(?:%|bn\b|billion|million|mn\b|tonnes?\b|oz\b|barrels?\b|"
+                 rf"per\s+{_PER_UNIT}|/\s*{_PER_UNIT}))")
 _YEARS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
           "nine": 9, "ten": 10, "fifteen": 15, "twenty": 20}
 _YEARS_WORD = "|".join(_YEARS)
@@ -106,9 +110,11 @@ def _month(m: int, y: int) -> tuple[date, date]:
     return date(y, m, 1), end
 
 
-def window_of(text: str | None, ref: date) -> Window | None:
+def window_of(text: str | None, ref: date, *, source_date: date | None = None) -> Window | None:
     """The calendar window `text` names, relative to `ref`; None when it names none readable.
-    Several windows in one text are unioned (earliest start, latest end)."""
+    Several windows in one text are unioned (earliest start, latest end). A "since X" part ends at
+    `source_date` (the source's own date), else at `ref` — only that part: a later window in the
+    same text keeps its own end."""
     if not text:
         return None
     work = _norm(text)
@@ -134,7 +140,8 @@ def window_of(text: str | None, ref: date) -> Window | None:
         if start > ref:
             return None
         since = True
-        return start, ref
+        return start, (source_date if source_date is not None and start <= source_date <= ref
+                       else ref)
 
     # "since X" runs from X to the source's date (2026-10-14: "since May 2026" was read as May
     # alone, dated its end, and called historical — 12 of 520 pilot claims)
@@ -239,11 +246,9 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     """(near_term | straddling | long_range | current | historical | undated, a note naming the
     window)."""
     forward = c.epistemic is Epistemic.FORECAST or c.kind is ClaimKind.FORECAST
-    w = window_of(c.period, ref)
+    w = window_of(c.period, ref, source_date=published)
     if w is None and (forward or c.kind is ClaimKind.EVENT):
-        w = window_of(c.quote, ref)
-    if w is not None and w.to_date and published is not None and published < w.end:
-        w = Window(w.start, published, f"{w.basis} — to the source's date", True)
+        w = window_of(c.quote, ref, source_date=published)
     if forward:
         if w is None:
             fq = FISCAL_QUARTER.search(c.period or "") or FISCAL_QUARTER.search(c.quote or "")
@@ -278,7 +283,7 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     # an opinion / mixed view that NAMES a horizon beyond the next 4 quarters ("unlikely to clear
     # before 2030") is long-dated evidence of the thesis's timing. It never counts as near-term:
     # only a forecast, an event or a measurement can show that.
-    w = w or window_of(c.quote, ref)
+    w = w or window_of(c.quote, ref, source_date=published)
     if w is not None and w.end > ref + timedelta(days=NEAR_TERM_END_DAYS):
         return ("straddling" if straddles(w, ref) else "long_range",
                 f"{c.epistemic.value} naming a window {w} beyond the next 4 quarters (a view's "
