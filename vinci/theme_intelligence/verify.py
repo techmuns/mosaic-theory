@@ -38,7 +38,6 @@ sentence still UNSUPPORTED after that is a BLOCK issue.
 from __future__ import annotations
 
 import hashlib
-import json
 import re
 import time
 import unicodedata
@@ -48,6 +47,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from vinci.theme_intelligence.cachefile import read_json, write_json
 from vinci.theme_intelligence.config import LLM_MODEL, REVIEW_PROMPT_VERSION
 from vinci.theme_intelligence.extract import (
     Extraction,
@@ -1249,11 +1249,11 @@ def review_card(card: CardContent, claims: dict[str, Claim], *, client: ToolClie
     model = client.model if client is not None else LLM_MODEL
     key = cache_key(model, REVIEW_PROMPT_VERSION, REVIEW_TOOL, REVIEW_SYSTEM, user)
     path = cache_dir / "review" / f"{key}.json"
-    cached = path.exists()
+    rec = read_json(path) if path.exists() else None  # a torn file reads as absent (U22)
+    cached = rec is not None
     usage: dict[str, int] | None = None
     seconds = 0.0
-    if cached:
-        rec = json.loads(path.read_text())
+    if rec is not None:
         out = rec["output"]
         usage = rec.get("usage")
     else:
@@ -1263,9 +1263,8 @@ def review_card(card: CardContent, claims: dict[str, Claim], *, client: ToolClie
         out = client.extract(system=REVIEW_SYSTEM, user=user, tool=REVIEW_TOOL)
         seconds = time.monotonic() - t0
         usage = getattr(client, "last_usage", None)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"model": model, "prompt_version": REVIEW_PROMPT_VERSION,
-                                    "usage": usage, "output": out}, sort_keys=True, indent=1))
+        write_json(path, {"model": model, "prompt_version": REVIEW_PROMPT_VERSION,
+                          "usage": usage, "output": out}, sort_keys=True, indent=1)
     verdicts: dict[str, tuple[str, str]] = {}
     anchors: dict[str, list[str]] = {}
     pool_ids = {c.claim_id for c in shown}

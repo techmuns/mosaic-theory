@@ -20,6 +20,8 @@ They exist because the scenarios they test involve documents this repository mus
 | `scanned_page_synthetic.pdf` | a report with a page that has no text layer | the scanned-page flag; PARTIAL |
 | `undated_synthetic.pdf` | a report that prints no publication date | no date from the file name or PDF metadata |
 | `glyph_mixed_synthetic.pdf` | a report whose text layer is partly undecodable — a font with no character map, read as `(cid:N)` codes (written byte by byte by `make_glyph_fixture.py`) | glyph quarantine: a clean page, a mixed page (readable lines, a mention of a CID, an undecodable table cell), an unreadable page |
+| `two_column_synthetic.pdf` | a report page set in two columns (as bank research prints), then a contents page and a bulleted list set right of a margin | the columns are read one at a time, never interleaved; a page number or a bullet beside its line is no gutter |
+| `office_export_synthetic.pdf` | a three-page report exported from an office suite: the placeholder Author "Microsoft Office User" (added by an incremental update, `with_author`), a sentence opening "By 2030,", words hyphenated at a line end, a pull-quote printed twice on one page, a footer on every page | no placeholder or clause read as an author; "AI-driven" kept, "sig-nal" joined; a line repeated on one page is text, the footer is chrome |
 
 The real end-to-end demonstrations (public PDFs, live LLM extraction) are recorded in the build
 record and its worked-output folder, not here: those documents are not ours to redistribute.

@@ -52,6 +52,7 @@ from vinci.theme_intelligence.config import (
     Paths,
     SourceConfig,
     Taxonomy,
+    retired_for,
 )
 from vinci.theme_intelligence.coverage import SourceRisk, coverage_of, scan_source_risks
 from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
@@ -386,6 +387,12 @@ class Pipeline:
         _text, link = doc.linked_reports[0]
         if any(link in d.declared.get("via", "") for d in self.store.documents()):
             return  # already read in an earlier run
+        gone = retired_for(url=link)
+        if gone is not None:  # never fetched, never asked for (U15: it was fetched and stored)
+            self._issue("article", res.article_id, IssueSeverity.INFO, "LINKED_REPORT_RETIRED",
+                        f"{doc.canonical_url} links a report ({link}) on a host of "
+                        f"{gone.publisher}, a channel retired on {gone.retired} — not fetched")
+            return
         upload = (f"upload an authorised copy: python -m vinci.theme_intelligence ingest-file "
                   f"--path <report> --source {source_id} --url {doc.canonical_url}")
         if src is None or src.linked_reports != "fetch":

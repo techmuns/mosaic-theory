@@ -19,7 +19,6 @@ can keep the record in its coverage counts — a blocked article must never vani
 from __future__ import annotations
 
 import hashlib
-import json
 import re
 import time
 from dataclasses import dataclass, field
@@ -29,6 +28,7 @@ from urllib.parse import urljoin, urlparse
 
 import httpx
 
+from vinci.theme_intelligence.cachefile import read_json, write_atomic, write_json
 from vinci.theme_intelligence.config import DEFAULT_MIN_CRAWL_DELAY_S, USER_AGENT
 from vinci.theme_intelligence.schemas import RetrievalState
 
@@ -219,11 +219,15 @@ class PoliteFetcher:
         body, meta = self._paths(url)
         if not (body.exists() and meta.exists()):
             return None
-        m = json.loads(meta.read_text())
+        m = read_json(meta)  # a torn record reads as absent (U22)
+        if m is None:
+            return None
         fetched = datetime.fromisoformat(m["fetched_at"])
         if ttl_s is not None and (datetime.now(tz=UTC) - fetched).total_seconds() > ttl_s:
             return None
         content = body.read_bytes()
+        if m.get("sha256") and hashlib.sha256(content).hexdigest() != m["sha256"]:
+            return None  # a body cut short: never read as the page
         self.stats.cache_hits += 1
         return FetchResult(url=url, final_url=m.get("final_url"), status=m.get("status"),
                            state=RetrievalState(m["state"]), note=m.get("note", "") + " (cache)",
@@ -235,11 +239,11 @@ class PoliteFetcher:
         if res.content is None:
             return
         body, meta = self._paths(res.url)
-        body.write_bytes(res.content)
-        meta.write_text(json.dumps({
+        write_atomic(body, res.content)  # the body first: a record names a whole body
+        write_json(meta, {
             "url": res.url, "final_url": res.final_url, "status": res.status,
             "state": res.state.value, "note": res.note, "content_type": res.content_type,
-            "fetched_at": res.fetched_at.isoformat(), "sha256": res.sha256}, sort_keys=True))
+            "fetched_at": res.fetched_at.isoformat(), "sha256": res.sha256}, sort_keys=True)
         res.cache_path = body
 
     # -- fetch -----------------------------------------------------------------------------------

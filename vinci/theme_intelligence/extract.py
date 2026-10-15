@@ -35,6 +35,7 @@ from typing import Any, Protocol, Union, get_args, get_origin
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from vinci.graph.llm import LlmError
+from vinci.theme_intelligence.cachefile import read_json, write_json
 from vinci.theme_intelligence.config import (
     EXTRACT_PROMPT_VERSION,
     LLM_MODEL,
@@ -876,9 +877,9 @@ def read_answer(out: Any) -> tuple[Extraction, list[str], list[str], list[LostIt
 
 def _keep(path: Path, model: str, prompt_version: str, usage: dict[str, int] | None,
           seconds: float, out: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)  # the paid answer is kept FIRST
-    path.write_text(json.dumps({"model": model, "prompt_version": prompt_version, "usage": usage,
-                                "seconds": seconds, "output": out}, sort_keys=True, indent=1))
+    write_json(path, {"model": model, "prompt_version": prompt_version,  # the paid answer FIRST
+                      "usage": usage, "seconds": seconds, "output": out},
+               sort_keys=True, indent=1)
 
 
 def _set_aside(path: Path) -> list[Path]:
@@ -956,7 +957,9 @@ def _answer_named(cache_dir: Path, extraction_id: str, model: str,
             if len(p.stem) == 64]  # the answer itself — never a truncation marker or set-aside
     if len(hits) != 1:
         return None
-    rec: dict[str, Any] = json.loads(hits[0].read_text())
+    rec = read_json(hits[0])
+    if rec is None:
+        return None
     return rec if rec.get("model") == model and rec.get("prompt_version") in versions else None
 
 
@@ -981,7 +984,10 @@ def marker_holds(marker: Path, client: Any) -> bool:
     holds, as before — never a paid re-ask on a guess."""
     if not marker.exists():
         return False
-    was = (json.loads(marker.read_text()).get("usage") or {}).get("max_tokens")
+    held = read_json(marker)
+    if held is None:  # torn: no marker is known — never a split or a COMPACT on a guess
+        return False
+    was = (held.get("usage") or {}).get("max_tokens")
     now = getattr(client, "max_tokens", None) if client is not None else None
     return not (isinstance(was, int) and isinstance(now, int) and now > was)
 
@@ -1015,7 +1021,10 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
         # salvaged, never paid for again (a truncation marker means no full answer: go to compact)
         refused: ValidationError | None = None
         for src in [p] if p.exists() else _set_aside(p):
-            rec = json.loads(src.read_text())
+            got = read_json(src)
+            if got is None:  # torn: set aside, read as absent (U22)
+                continue
+            rec = got
             try:
                 parsed, dropped, salvaged, lost = read_answer(rec["output"])
             except ValidationError as exc:
@@ -1024,7 +1033,7 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
             if src != p:
                 salvaged.insert(0, f"this request's answer is the one an earlier run paid for "
                                    f"and set aside ({src.name}) — the request is not paid again")
-            trunc = json.loads(marker.read_text()).get("usage") if marker.exists() else None
+            trunc = ((read_json(marker) or {}).get("usage") if marker.exists() else None)
             return ExtractionResult(parsed, rec["output"], f"X-{k[:16]}", rec["model"],
                                     rec["prompt_version"], True, rec.get("usage"), 0.0, 0.0,
                                     compact=compact, truncated_usage=trunc if compact else None,
@@ -1035,19 +1044,19 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                 f"aside to have the model asked anew)", refused, usages=[], model=model,
                 prompt_version=prompt_version) from refused
     for xid in reuse:
-        rec = _answer_named(cache_dir, xid, model, (prompt_version, cversion))
-        if rec is None or not _offered(tool["input_schema"], rec["output"]):
+        named = _answer_named(cache_dir, xid, model, (prompt_version, cversion))
+        if named is None or not _offered(tool["input_schema"], named["output"]):
             continue  # another model's, another prompt's, or another taxonomy's answer
         try:
-            parsed, dropped, salvaged, lost = read_answer(rec["output"])
+            parsed, dropped, salvaged, lost = read_answer(named["output"])
         except ValidationError:  # unreadable under the current schema: a different request now
             continue
         salvaged.insert(0, f"the answer this document was given before the pull ({xid}) — a "
                            f"replay of that analysis, not asked again under the replay's "
                            f"registry context")
-        return ExtractionResult(parsed, rec["output"], xid, rec["model"], rec["prompt_version"],
-                                True, rec.get("usage"), 0.0, 0.0,
-                                compact=rec["prompt_version"] == cversion, dropped=dropped,
+        return ExtractionResult(parsed, named["output"], xid, named["model"],
+                                named["prompt_version"], True, named.get("usage"), 0.0, 0.0,
+                                compact=named["prompt_version"] == cversion, dropped=dropped,
                                 salvaged=salvaged, lost=lost)
     if client is None:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
@@ -1064,16 +1073,15 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                 raise
             trunc_usage = getattr(client, "last_usage", None)
             trunc_now = True
-            marker.parent.mkdir(parents=True, exist_ok=True)
-            marker.write_text(json.dumps({"model": model, "prompt_version": prompt_version,
-                                          "usage": trunc_usage, "error": str(exc)},
-                                         sort_keys=True, indent=1))
+            write_json(marker, {"model": model, "prompt_version": prompt_version,
+                                "usage": trunc_usage, "error": str(exc)},
+                       sort_keys=True, indent=1)
         else:
             return ExtractionResult(parsed, out, f"X-{key[:16]}", model, prompt_version, False,
                                     usage, cost_of(model, usage), seconds, dropped=dropped,
                                     salvaged=salvaged, lost=lost)
     else:
-        trunc_usage = json.loads(marker.read_text()).get("usage")
+        trunc_usage = (read_json(marker) or {}).get("usage")
     # the declared COMPACT retry — a second truncation fails loud (LlmError), never half-kept
     parsed, dropped, salvaged, lost, out, usage, seconds = _ask(
         client, system=csystem, user=user, tool=ctool, path=cpath, model=model,

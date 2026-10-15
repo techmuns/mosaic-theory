@@ -43,7 +43,6 @@ from __future__ import annotations
 
 import functools
 import hashlib
-import json
 import re
 import time
 from dataclasses import dataclass, field
@@ -52,6 +51,7 @@ from pathlib import Path
 from typing import Any
 
 from vinci.netcache import HttpError
+from vinci.theme_intelligence.cachefile import read_json, write_json
 from vinci.theme_intelligence.cards import BASIS_LABEL, capped_label, without_labels
 from vinci.theme_intelligence.config import ENRICH_PROMPT_VERSION, LLM_MODEL
 from vinci.theme_intelligence.extract import ToolClient, cache_key, cost_of
@@ -312,11 +312,11 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
     model = client.model if client is not None else LLM_MODEL
     key = cache_key(model, ENRICH_PROMPT_VERSION, TOOL, SYSTEM, user)
     path = cache_dir / "enrich" / f"{key}.json"
-    cached = path.exists()
+    rec = read_json(path) if path.exists() else None  # a torn file reads as absent (U22)
+    cached = rec is not None
     usage: dict[str, int] | None = None
     seconds = 0.0
-    if cached:
-        rec = json.loads(path.read_text())
+    if rec is not None:
         out, usage = rec["output"], rec.get("usage")
     else:
         if client is None:
@@ -326,9 +326,8 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
         out = client.extract(system=SYSTEM, user=user, tool=TOOL)
         seconds = time.monotonic() - t0
         usage = getattr(client, "last_usage", None)
-        path.parent.mkdir(parents=True, exist_ok=True)  # the paid answer is kept FIRST
-        path.write_text(json.dumps({"model": model, "prompt_version": ENRICH_PROMPT_VERSION,
-                                    "usage": usage, "output": out}, sort_keys=True, indent=1))
+        write_json(path, {"model": model, "prompt_version": ENRICH_PROMPT_VERSION,  # kept FIRST
+                          "usage": usage, "output": out}, sort_keys=True, indent=1)
     named = named_by_source(card)
     labels = step_labels(card)
     refused: list[str] = []

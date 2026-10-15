@@ -26,7 +26,6 @@ of a name ("S&P 500", "Mag 7"), days of a month, clock times and list numbering.
 
 from __future__ import annotations
 
-import json
 import re
 import time
 from dataclasses import dataclass, field
@@ -37,6 +36,7 @@ from typing import Any
 from pydantic import Field, ValidationError
 
 from vinci.graph.llm import LlmError
+from vinci.theme_intelligence.cachefile import read_json, write_json
 from vinci.theme_intelligence.config import (
     COMPLETE_PROMPT_VERSION,
     LLM_MODEL,
@@ -650,8 +650,8 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
         marker = cache_dir / "complete" / f"{key}.truncated.json"
         splittable = b is None or b.label.isdigit()  # a half ("2a") is never split again
         whole = b if b is not None else Batch("1", gaps)
-        if path.exists():
-            rec = json.loads(path.read_text())
+        rec = read_json(path) if path.exists() else None  # a torn file reads as absent (U22)
+        if rec is not None:
             out = rec["output"]
             calls.append(CompletenessCall(label, rec.get("usage"), 0.0, 0.0, True))
             if reask is not None and label == reask:
@@ -659,7 +659,7 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                                     user=user, tool=tool))
                 reask_done = True
         elif marker_holds(marker, client) and splittable:  # overran at this cap: split, unpaid
-            notes.append(_split_note(label, json.loads(marker.read_text()).get("usage")))
+            notes.append(_split_note(label, (read_json(marker) or {}).get("usage")))
             queue[:0] = whole.halves()
             continue
         else:
@@ -675,10 +675,9 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                 if not (_truncated(exc) and splittable):
                     raise
                 usage = getattr(client, "last_usage", None)
-                marker.parent.mkdir(parents=True, exist_ok=True)
-                marker.write_text(json.dumps({"model": model, "usage": usage, "error": str(exc),
-                                              "prompt_version": COMPLETE_PROMPT_VERSION},
-                                             sort_keys=True, indent=1))
+                write_json(marker, {"model": model, "usage": usage, "error": str(exc),
+                                    "prompt_version": COMPLETE_PROMPT_VERSION},
+                           sort_keys=True, indent=1)
                 calls.append(CompletenessCall(label, usage, cost_of(model, usage),
                                               time.monotonic() - t0, False, truncated=True))
                 notes.append(_split_note(label, usage))
@@ -686,10 +685,9 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
                 continue
             seconds = time.monotonic() - t0
             usage = getattr(client, "last_usage", None)
-            path.parent.mkdir(parents=True, exist_ok=True)  # the paid answer is kept FIRST
-            path.write_text(json.dumps({"model": model, "prompt_version": COMPLETE_PROMPT_VERSION,
-                                        "usage": usage, "seconds": seconds, "output": out},
-                                       sort_keys=True, indent=1))
+            write_json(path, {"model": model, "prompt_version": COMPLETE_PROMPT_VERSION,
+                              "usage": usage, "seconds": seconds, "output": out},
+                       sort_keys=True, indent=1)  # the paid answer is kept FIRST
             calls.append(CompletenessCall(label, usage, cost_of(model, usage), seconds, False))
         what = f"part {b.label}" if b is not None else "the completeness answer"
         whole_ok = True
@@ -701,7 +699,7 @@ def run_completeness(doc: ParsedDocument, x: Extraction, ledger: Ledger, *, publ
             # paid for one (`reask-part`), sits beside it and is used instead.
             whole_ok = False
             asked = latest_reask(path)
-            src = out if asked is None else json.loads(asked.read_text())["output"]
+            src = out if asked is None else (read_json(asked) or {"output": out})["output"]
             try:
                 parsed, bad, gone = salvage_fields(CompletenessOutput, src)
             except ValidationError as exc2:
@@ -781,9 +779,9 @@ def _reask(path: Path, out: Any, label: str, client: ToolClient | None, *, model
     n = 1
     while (dest := path.with_name(f"{path.stem}.reask-{n}.json")).exists():
         n += 1
-    dest.write_text(json.dumps({"model": model, "prompt_version": COMPLETE_PROMPT_VERSION,
-                                "usage": usage, "seconds": seconds, "output": new,
-                                "reask_of": path.name}, sort_keys=True, indent=1))
+    write_json(dest, {"model": model, "prompt_version": COMPLETE_PROMPT_VERSION,
+                      "usage": usage, "seconds": seconds, "output": new,
+                      "reask_of": path.name}, sort_keys=True, indent=1)
     return CompletenessCall(label, usage, cost_of(model, usage), seconds, False,
                             kept_as=str(dest))
 
