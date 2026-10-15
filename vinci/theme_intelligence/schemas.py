@@ -34,6 +34,13 @@ def _aware(d: datetime | None) -> datetime | None:
 PublishedAt = Annotated[datetime | None, AfterValidator(_aware)]
 
 
+def utc_day(t: datetime) -> date:
+    """The UTC calendar day of an instant — the day a run's as-of (a UTC date) is compared
+    with. A +08:00 post stamped after 16:00 UTC is on the NEXT day by its own clock: read that
+    way, it was refused as published after the as-of (2026-10-14)."""
+    return (t if t.tzinfo else t.replace(tzinfo=UTC)).astimezone(UTC).date()
+
+
 class Frozen(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 

@@ -95,6 +95,7 @@ from vinci.theme_intelligence.schemas import (
     VerificationIssue,
     WeeklyRun,
     page_prefix,
+    utc_day,
 )
 from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
@@ -170,6 +171,10 @@ class Pipeline:
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
         #: replay, from the registry the pull replaced): a re-created record keeps that date
         self.first_ingested = self.engine.first_ingested
+        #: article version id -> the extraction(s) it was given before a `state pull` replaced the
+        #: registry, newest first (state.py fills it for a replay): the replay takes that answer
+        #: from the cache
+        self.replay_answers: dict[str, tuple[str, ...]] = {}
 
     # -- runs -----------------------------------------------------------------------------------
     def start_run(self, mode: str, *, as_of: date, window_from: date | None = None,
@@ -498,10 +503,11 @@ class Pipeline:
             self._count("articles_no_body")
             return ArticleResult(url, "NO_BODY", aid, version.version_id,
                                  note=version.retrieval_note)
-        if doc.published_at is not None and doc.published_at.date() > as_of:
+        if doc.published_at is not None and utc_day(doc.published_at) > as_of:
             self._issue("article", aid, IssueSeverity.BLOCK, "LOOKAHEAD",
-                        f"published {doc.published_at.date()} is after the run as-of {as_of} — "
-                        f"not analysed (publication-time replay)")
+                        f"published {doc.published_at.isoformat()} ({utc_day(doc.published_at)} "
+                        f"UTC) is after the run as-of {as_of} — not analysed (publication-time "
+                        f"replay)")
             self._count("articles_lookahead_refused")
             return ArticleResult(url, "LOOKAHEAD", aid, version.version_id)
         if not reanalysis and self._applied(aid, version.version_id):
@@ -510,7 +516,8 @@ class Pipeline:
                                  note="this article version was already applied — no new records")
 
         try:
-            xres = self._extract(doc, publisher, as_of, fixture, self._registry_context())
+            xres = self._extract(doc, publisher, as_of, fixture, self._registry_context(),
+                                 reuse=self.replay_answers.get(version.version_id, ()))
         except BudgetExceeded as exc:
             return self._budget_held(url, aid, version.version_id, exc)
         except InvalidAnswerError as exc:  # paid and unusable: record the spend, then fail loud
@@ -692,7 +699,8 @@ class Pipeline:
 
     def _extract(self, doc: ParsedDocument, publisher: str, as_of: date,
                  fixture: dict[str, Any] | None,
-                 registry: list[tuple[str, str]] | None = None) -> ExtractionResult:
+                 registry: list[tuple[str, str]] | None = None,
+                 reuse: Sequence[str] = ()) -> ExtractionResult:
         if fixture is not None:
             ext = Extraction.model_validate(fixture)
             key = _sha(json.dumps(fixture, sort_keys=True), doc.content_sha256)
@@ -700,7 +708,7 @@ class Pipeline:
                                     "fixture", True, None, 0.0, 0.0)
         return run_extraction(doc, publisher=publisher, as_of=as_of.isoformat(),
                               taxonomy=self.taxonomy, client=self.client,
-                              cache_dir=self.paths.llm_cache, registry=registry)
+                              cache_dir=self.paths.llm_cache, registry=registry, reuse=reuse)
 
     def _complete(self, doc: ParsedDocument, xres: ExtractionResult, ledger: Any,
                   publisher: str, as_of: date, aid: str, fixture_mode: bool,
@@ -1226,7 +1234,7 @@ class Pipeline:
                 if c.url not in seen:
                     todo.append((c.url, c.source_id, c.date_basis))
                     seen.add(c.url)
-            done = queued = failures = 0
+            done = queued = failures = too_new = 0
             out_of_budget = False
             for url, sid, why in todo:
                 if url in run.checkpoint:
@@ -1269,6 +1277,18 @@ class Pipeline:
                         # article's failure — said, checkpointed — never the whole week's scan
                         res = ArticleResult(url, "FAILED", article_id_for(url), note=str(exc))
                         run.warnings.append(f"{url}: {exc}"[:400])
+                if res.status == "LOOKAHEAD":
+                    # published after this run's as-of (a listing date can be a day off the
+                    # page's instant): offered to the next run, never dropped — next week's
+                    # window would not hold it again (2026-10-15)
+                    run.checkpoint[url] = res.status
+                    self.store.upsert_candidate(url, sid, "QUEUED", {
+                        "source_id": sid, "run_id": run.run_id,
+                        "reason": "published after this run's as-of — offered to the next run"})
+                    too_new += 1
+                    if sid in cov:
+                        cov[sid].queued += 1
+                    continue
                 if res.status == "BUDGET_HELD":  # checkpointed: offered first next run
                     out_of_budget = True
                     self.store.upsert_candidate(url, sid, "QUEUED", {
@@ -1300,6 +1320,9 @@ class Pipeline:
                                     f"article(s) this run (max_articles={max_articles}); "
                                     f"{queued} QUEUED for the next run")
             self._count("articles_queued", queued)
+            if too_new:
+                run.warnings.append(f"{too_new} candidate(s) published after this run's as-of "
+                                    f"{as_of} — QUEUED for the next run")
             self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
             if self.enrich_in_scan:
                 self._scan_enrichment(as_of)

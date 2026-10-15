@@ -38,7 +38,7 @@ from bs4.element import Tag
 from vinci.theme_intelligence.config import SourceConfig
 from vinci.theme_intelligence.fetch import FetchResult, PoliteFetcher
 from vinci.theme_intelligence.parse import parse_document
-from vinci.theme_intelligence.schemas import RetrievalState, SourceCoverage
+from vinci.theme_intelligence.schemas import RetrievalState, SourceCoverage, utc_day
 from vinci.theme_intelligence.store import Store
 
 #: Listing pages, feeds and sitemaps change weekly; article pages do not. A short cache keeps a
@@ -334,7 +334,7 @@ def semianalysis_feed(src: SourceConfig, f: PoliteFetcher,
         d = None
         if pub:
             try:
-                d = parsedate_to_datetime(pub).date()
+                d = utc_day(parsedate_to_datetime(pub))  # the as-of's day, as the gate reads it
             except (TypeError, ValueError):
                 d = None
         out.append(Candidate(url=canon(link), source_id=src.id,
@@ -427,7 +427,9 @@ def discover_source(src: SourceConfig, f: PoliteFetcher, store: Store, *, window
                             "`article --url <url> --published <verified date>`")
                 cov.undated += 1
                 continue
-            c.listed_date = doc.published_at.date()
+            # the UTC day: the window is the run's (UTC) as-of window, and the look-ahead gate
+            # reads the same day — a local date admitted a post the gate then refused
+            c.listed_date = utc_day(doc.published_at)
             c.date_basis = f"article page metadata ({doc.published_source})"
         assert c.listed_date is not None
         if not window_from <= c.listed_date <= window_to:

@@ -27,6 +27,7 @@ import json
 import re
 import time
 import types
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol, Union, get_args, get_origin
@@ -942,10 +943,44 @@ def cache_key(model: str, prompt_version: str, tool: dict[str, Any], system: str
     return h.hexdigest()
 
 
+def _answer_named(cache_dir: Path, extraction_id: str, model: str,
+                  versions: tuple[str, ...]) -> dict[str, Any] | None:
+    """The cached answer an extraction id names (`X-` + the first 16 hex of its request key),
+    when exactly one is held and it is this model's, at one of these prompt versions."""
+    if not re.fullmatch(r"X-[0-9a-f]{16}", extraction_id):
+        return None
+    hits = [p for p in (cache_dir / "extract").glob(f"{extraction_id[2:]}*.json")
+            if len(p.stem) == 64]  # the answer itself — never a truncation marker or set-aside
+    if len(hits) != 1:
+        return None
+    rec: dict[str, Any] = json.loads(hits[0].read_text())
+    return rec if rec.get("model") == model and rec.get("prompt_version") in versions else None
+
+
+def _offered(schema: dict[str, Any], value: Any) -> bool:
+    """Every value the answer gives a field the tool ENUMERATES (taxonomy nodes and mechanisms,
+    steps, kinds) is one the tool still offers — an answer built for another taxonomy answers
+    another request, even under the same prompt version."""
+    if "enum" in schema and value is not None and value not in schema["enum"]:
+        return False
+    if isinstance(value, dict):
+        props = schema.get("properties", {})
+        return all(_offered(props[k], v) for k, v in value.items() if k in props)
+    if isinstance(value, list) and "items" in schema:
+        return all(_offered(schema["items"], v) for v in value)
+    return True
+
+
 def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy: Taxonomy,
                    client: ToolClient | None, cache_dir: Path,
                    prompt_version: str = EXTRACT_PROMPT_VERSION,
-                   registry: list[tuple[str, str]] | None = None) -> ExtractionResult:
+                   registry: list[tuple[str, str]] | None = None,
+                   reuse: Sequence[str] = ()) -> ExtractionResult:
+    """`reuse`: for a `state pull` replay, the extraction(s) this document was given before the
+    pull, newest first. When THIS request has no cached answer, the first of those held in the
+    cache is taken. The replay's request differs from the original only in the registry
+    context, which the pull rebuilt from the branch: asking again paid twice for the same
+    document and stored a different analysis of it (2026-10-14)."""
     tool = tool_schema(taxonomy)
     system = system_prompt(taxonomy)
     user = user_message(doc, publisher=publisher, as_of=as_of, registry=registry)
@@ -984,6 +1019,21 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                 f"cached extraction {p.name} (paid once, never asked again — set that file "
                 f"aside to have the model asked anew)", refused, usages=[], model=model,
                 prompt_version=prompt_version) from refused
+    for xid in reuse:
+        rec = _answer_named(cache_dir, xid, model, (prompt_version, cversion))
+        if rec is None or not _offered(tool["input_schema"], rec["output"]):
+            continue  # another model's, another prompt's, or another taxonomy's answer
+        try:
+            parsed, dropped, salvaged, lost = read_answer(rec["output"])
+        except ValidationError:  # unreadable under the current schema: a different request now
+            continue
+        salvaged.insert(0, f"the answer this document was given before the pull ({xid}) — a "
+                           f"replay of that analysis, not asked again under the replay's "
+                           f"registry context")
+        return ExtractionResult(parsed, rec["output"], xid, rec["model"], rec["prompt_version"],
+                                True, rec.get("usage"), 0.0, 0.0,
+                                compact=rec["prompt_version"] == cversion, dropped=dropped,
+                                salvaged=salvaged, lost=lost)
     if client is None:
         raise RuntimeError("no cached extraction for this article version and no LLM client — "
                            "run with ANTHROPIC_API_KEY set (or use a fixture)")

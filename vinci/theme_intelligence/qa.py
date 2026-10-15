@@ -44,6 +44,7 @@ from vinci.theme_intelligence.schemas import (
     PitStatus,
     Provenance,
     ResearchAction,
+    utc_day,
 )
 from vinci.theme_intelligence.store import APPEND_ONLY_TABLES, Store
 from vinci.theme_intelligence.verify import (
@@ -108,8 +109,9 @@ def run_qa(store: Store, run_id: str) -> QaResult:
     n_claims = 0
     for aid in article_ids:
         art = store.article(aid)
-        if art and art.published_at and art.published_at.date() > run.as_of:
-            look_bad.append(f"{aid} published {art.published_at.date()} > as-of {run.as_of}")
+        if art and art.published_at and utc_day(art.published_at) > run.as_of:
+            look_bad.append(f"{aid} published {utc_day(art.published_at)} (UTC) > as-of "
+                            f"{run.as_of}")
         for c in store.claims_for_article(aid):
             if not c.span_verified:
                 continue

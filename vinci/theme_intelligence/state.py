@@ -106,11 +106,15 @@ def sync_state(paths: Paths) -> dict[str, Any]:
 
 def _save_state(paths: Paths, **kw: Any) -> None:
     """`pending`: local documents a pull could not replay (their records are not in the rebuilt
-    registry) — kept across every save until a pull replays them or finds them on the branch."""
+    registry) — kept across every save until a pull replays them or finds them on the branch;
+    `pending_answers`, by version, the extraction(s) they were given (the rebuilt registry no
+    longer names them, so the next pull's replay could not take them from the cache)."""
     if "pending" not in kw and (prev := sync_state(paths).get("pending")):
         kw["pending"] = prev
+        kw.setdefault("pending_answers", sync_state(paths).get("pending_answers", {}))
     if not kw.get("pending"):
         kw.pop("pending", None)
+        kw.pop("pending_answers", None)
     (paths.root / STATE_FILE).write_text(json.dumps(kw, indent=1, sort_keys=True) + "\n")
 
 
@@ -198,6 +202,12 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         held = {d.sha256 for d in old_docs}
         old_docs += [d for d in _pending(paths) if d.sha256 not in held]
         old_runs = {r.run_id: r for r in old.runs()} if old else {}
+        # the answers its documents were given, by version, NEWEST first: a replay takes the
+        # latest analysis from the cache (a re-analysis that split a thesis is the one that holds)
+        answers = {d.version_id: tuple(reversed(old.extraction_ids(d.version_id)))
+                   for d in old_docs if old is not None and d.version_id}
+        for vid, ids in sync_state(paths).get("pending_answers", {}).items():
+            answers[vid] = tuple(dict.fromkeys((*answers.get(vid, ()), *ids)))
         remote_runs = _remote_runs(reg)
         remote_docs = _remote_ids(reg, "documents", "sha256")
         local_only = [r for r in old_runs.values() if _run_key(r) not in remote_runs]
@@ -267,12 +277,15 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         res.lines.append("no local document to replay — the branch holds every one")
         return res
     if not replay or make_pipeline is None:
-        _save_state(paths, **{**sync_state(paths), "pending": _dumped(todo)})
+        _save_state(paths, **{**sync_state(paths), "pending": _dumped(todo),
+                               "pending_answers": _answers_of(todo, answers)})
         res.lines.append(f"{len(todo)} local document(s) NOT on the branch and not replayed "
                          f"(kept for the next pull): " + ", ".join(d.doc_id for d in todo))
         return res
-    lines, not_replayed = _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates)
-    _save_state(paths, **{**sync_state(paths), "pending": _dumped(not_replayed)})
+    lines, not_replayed = _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates,
+                                  answers)
+    _save_state(paths, **{**sync_state(paths), "pending": _dumped(not_replayed),
+                           "pending_answers": _answers_of(not_replayed, answers)})
     res.lines += lines
     if not_replayed:
         res.lines.append(f"{len(not_replayed)} local document(s) not replayed are kept for the "
@@ -282,6 +295,13 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
 
 def _dumped(docs: list[DocumentRecord]) -> list[dict[str, Any]]:
     return [d.model_dump(mode="json") for d in docs]
+
+
+def _answers_of(docs: list[DocumentRecord],
+                answers: dict[str, tuple[str, ...]]) -> dict[str, list[str]]:
+    """The extraction(s) each kept document was given, newest first — for the next pull."""
+    return {d.version_id: list(answers[d.version_id]) for d in docs
+            if d.version_id and answers.get(d.version_id)}
 
 
 def _remove_db(paths: Paths) -> None:
@@ -367,7 +387,8 @@ def _check_ledger(new: Store, local: dict[str, tuple[str, float | None]],
 def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
             make_pipeline: Callable[[], Pipeline],
             fixtures: dict[str, dict[str, Any]],
-            dates: dict[str, datetime] | None = None
+            dates: dict[str, datetime] | None = None,
+            answers: dict[str, tuple[str, ...]] | None = None
             ) -> tuple[list[str], list[DocumentRecord]]:
     """The replay's lines, and the documents it could NOT replay (kept for the next pull)."""
     from vinci.theme_intelligence.documents import Declared
@@ -387,6 +408,7 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
     for as_of, docs in sorted(by_asof.items()):
         pipe = make_pipeline()
         pipe.first_ingested.update(dates or {})  # a re-created record keeps its first date
+        pipe.replay_answers.update(answers or {})  # … and its analysis, the answer it was given
         run0 = pipe.start_run("ingest", as_of=as_of)
         run0.replay_of = tuple(sorted({o for d in docs for o in origins(d.run_id)}))
         failed = 0
@@ -400,13 +422,7 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                 not_replayed.append(d)
                 continue
             dec = d.declared
-            declared = Declared(
-                source_id=d.source_id, url=dec.get("url"), title=dec.get("title"),
-                authors=tuple(x.strip() for x in dec.get("authors", "").split(";")
-                              if x.strip()),
-                published=date.fromisoformat(dec["published"]) if dec.get("published") else None,
-                llm_permitted={"True": True, "False": False}.get(dec.get("llm_permitted", "")),
-                via=dec.get("via"))
+            declared = Declared.recorded(d.source_id, dec)
             basis = d.match_basis or ""
             m = re.match(r"the operator states it is article (\S+)$", basis)
             same_as = m.group(1) if m else (d.article_id if dec.get("via") else None)
@@ -469,7 +485,16 @@ def push(data_dir: Path, remote: str, branch: str = BRANCH, *,
             f"onto it), then push")
     with tempfile.TemporaryDirectory() as td:
         tree = Path(td) / "s"
-        _checkout(remote, branch, tree)
+        cloned = _checkout(remote, branch, tree)
+        # the commit this push builds on is the one checked above — another machine's push in
+        # between would be overwritten by a "fast-forward" from a base this registry never saw
+        tip = _git(["rev-parse", "HEAD"], cwd=tree) if cloned is not None else None
+        if tip != head:
+            raise StateSyncError(
+                f"the branch moved during this push (checked at "
+                f"{head[:12] if head else 'nothing'}, now {tip[:12] if tip else 'nothing'}) — "
+                f"nothing was pushed; run `state pull` first (your local documents are replayed "
+                f"onto it), then push")
         reg = tree / "registry"
         if reg.exists():
             shutil.rmtree(reg)
