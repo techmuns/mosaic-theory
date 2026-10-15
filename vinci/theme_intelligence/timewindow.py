@@ -18,7 +18,10 @@ window a period string names ("NTM", "4Q26", "2H 2026", "2025-2031", "FY27", "Se
               assumed near.
 
 A fiscal year is read as the calendar year it is named for, and the note says so (fiscal
-calendars differ by issuer). Nothing here reads prices or returns.
+calendars differ by issuer). A fiscal QUARTER is not placed at all: "Q1 FY27" is NVIDIA's
+February-April 2026 and a calendar issuer's January-March 2027, so read as either it can be a year
+wrong. "Since X" runs from X to the source's own date. A four-digit amount ("$2050 per ounce") is
+not a year. Nothing here reads prices or returns.
 """
 
 from __future__ import annotations
@@ -42,6 +45,8 @@ class Window:
     start: date
     end: date
     basis: str  # the text the window was read from, and how
+    #: "since X": a change accumulated from X to the SOURCE'S date (`window_of(source_date=)`)
+    to_date: bool = False
 
     def __str__(self) -> str:
         return f"{self.start.isoformat()}..{self.end.isoformat()} ({self.basis})"
@@ -53,6 +58,18 @@ _MONTHS = {m: i for i, ms in enumerate(
      ("oct", "october"), ("nov", "november"), ("dec", "december")], start=1) for m in ms}
 _ORD = {"first": 1, "second": 2, "third": 3, "fourth": 4, "1st": 1, "2nd": 2, "3rd": 3, "4th": 4}
 _COUNT = {"two": 2, "three": 3, "four": 4, "2": 2, "3": 3, "4": 4}
+_MONTHS_N = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
+             "nine": 9, "ten": 10, "eleven": 11, "eighteen": 18, "twenty-four": 24}
+_MONTHS_N_WORD = "|".join(sorted(_MONTHS_N, key=len, reverse=True))
+#: a fiscal quarter — not placed (see the module note)
+FISCAL_QUARTER = re.compile(r"\b(?:q[1-4]\s?fy\s?'?\d{2,4}|[1-4]q\s?fy\s?'?\d{2,4}|"
+                            r"fy\s?'?\d{2,4}\s?(?:q[1-4]|[1-4]q))\b", re.I)
+#: a four-digit number that is an AMOUNT, not a year: after a currency sign, or before a unit —
+#: "per" / "/" only before a unit ("$2050 per ounce", "2050/oz"), so "2025/26" and "2030 per the
+#: IEA" stay years
+_PER_UNIT = r"(?:ounce|oz|barrel|bbl|tonne|ton|share|unit|kg|lb|mwh|kwh|gw|mw|t)\b"
+_AMOUNT_AFTER = (rf"(?!\s*(?:%|bn\b|billion|million|mn\b|tonnes?\b|oz\b|barrels?\b|"
+                 rf"per\s+{_PER_UNIT}|/\s*{_PER_UNIT}))")
 _YEARS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
           "nine": 9, "ten": 10, "fifteen": 15, "twenty": 20}
 _YEARS_WORD = "|".join(_YEARS)
@@ -93,13 +110,17 @@ def _month(m: int, y: int) -> tuple[date, date]:
     return date(y, m, 1), end
 
 
-def window_of(text: str | None, ref: date) -> Window | None:
+def window_of(text: str | None, ref: date, *, source_date: date | None = None) -> Window | None:
     """The calendar window `text` names, relative to `ref`; None when it names none readable.
-    Several windows in one text are unioned (earliest start, latest end)."""
+    Several windows in one text are unioned (earliest start, latest end). A "since X" part ends at
+    `source_date` (the source's own date), else at `ref` — only that part: a later window in the
+    same text keeps its own end."""
     if not text:
         return None
     work = _norm(text)
     found: list[tuple[date, date, str]] = []
+    since = False
+    work = FISCAL_QUARTER.sub(lambda m: " " * len(m.group(0)), work)  # never placed
 
     def take(pattern: str, make: Callable[[re.Match[str]], tuple[date, date] | None]) -> None:
         nonlocal work
@@ -110,11 +131,35 @@ def window_of(text: str | None, ref: date) -> Window | None:
             found.append((got[0], got[1], m.group(0).strip()))
             work = work[:m.start()] + " " * (m.end() - m.start()) + work[m.end():]
 
+    def _since(m: re.Match[str]) -> tuple[date, date] | None:
+        nonlocal since
+        y = int(m.group(3))
+        start = (_month(_MONTHS[m.group(2)], y)[0] if m.group(2) else
+                 date(y, 7, 1) if (m.group(1) or "").startswith("mid") else
+                 date(y, 10, 1) if (m.group(1) or "").startswith("late") else date(y, 1, 1))
+        if start > ref:
+            return None
+        since = True
+        return start, (source_date if source_date is not None and start <= source_date <= ref
+                       else ref)
+
+    # "since X" runs from X to the source's date (2026-10-14: "since May 2026" was read as May
+    # alone, dated its end, and called historical — 12 of 520 pilot claims)
+    take(rf"\bsince\s+((?:the\s+)?(?:start|beginning)\s+of\s+|(?:early|mid|late)[- ]?)?"
+         rf"(?:({_MONTH_RE})\.?\s+)?((?:19|20)\d{{2}})\b"
+         rf"(?!\s*(?:-|to|through|thru|until)\b)", _since)
     take(r"\b(ntm|next\s+(?:twelve|12)\s+months|(?:twelve|12)[- ]months?\s+(?:forward|ahead)|"
          r"forward\s+(?:twelve|12)[- ]months?|coming\s+year|year\s+ahead)\b",
          lambda m: (ref, ref + timedelta(days=365)))
-    take(r"\bnext\s+(two|three|four|2|3|4)\s+quarters\b",
-         lambda m: (ref, ref + timedelta(days=92 * _COUNT[m.group(1)])))
+    # N quarters are N fourths of a year: "next four quarters" is the next 12 months (92 days a
+    # quarter made it 368, past the 366-day near-term bound)
+    take(r"\b(?:next|coming|within(?:\s+the)?(?:\s+next)?)\s+(two|three|four|2|3|4)\s+"
+         r"quarters\b",
+         lambda m: (ref, ref + timedelta(days=round(365 * _COUNT[m.group(1)] / 4))))
+    take(rf"\b(?:next|coming|within(?:\s+the)?(?:\s+next)?)\s+({_MONTHS_N_WORD}|\d{{1,2}})\s+"
+         rf"months\b",
+         lambda m: (ref, ref + timedelta(days=round(365 * int(_MONTHS_N.get(m.group(1),
+                                                                          m.group(1))) / 12))))
     take(r"\b(?:next|coming)\s+quarter\b", lambda m: (ref, ref + timedelta(days=92)))
     # relative MULTI-YEAR windows, read from the source's words (observed 2026-10-12: "over the
     # next five years", "over the next decade" and "before 2030" were unread, so long-dated
@@ -134,8 +179,7 @@ def window_of(text: str | None, ref: date) -> Window | None:
     take(r"\b(?:this|current)\s+year\b", lambda m: (date(ref.year, 1, 1), _year_end(ref.year)))
     take(r"\bnext\s+year\b", lambda m: (date(ref.year + 1, 1, 1), _year_end(ref.year + 1)))
     take(rf"\b([1-4])q\s?{_YY}\b", lambda m: _quarter(int(m.group(1)), _year(m.group(2))))
-    take(rf"\bq([1-4])\s?(?:fy\s?)?{_YY}\b", lambda m: _quarter(int(m.group(1)),
-                                                                _year(m.group(2))))
+    take(rf"\bq([1-4])\s?{_YY}\b", lambda m: _quarter(int(m.group(1)), _year(m.group(2))))
     take(r"\b(first|second|third|fourth|1st|2nd|3rd|4th)\s+quarter\s+(?:of\s+)?(\d{4})\b",
          lambda m: _quarter(_ORD[m.group(1)], int(m.group(2))))
     take(rf"\b([12])h\s?{_YY}\b", lambda m: _half(int(m.group(1)), _year(m.group(2))))
@@ -144,16 +188,16 @@ def window_of(text: str | None, ref: date) -> Window | None:
          lambda m: _half(_ORD[m.group(1)], int(m.group(2))))
     take(rf"\bfy\s?{_YY}\b", lambda m: (date(_year(m.group(1)), 1, 1),
                                         _year_end(_year(m.group(1)))))
-    take(r"\b((?:19|20)\d{2})\s*(?:-|to|through|thru|until)\s*((?:19|20)?\d{2})\b",
-         lambda m: _range(int(m.group(1)), m.group(2)))
+    take(r"(?<![$€£¥])\b((?:19|20)\d{2})\s*(?:-|to|through|thru|until)\s*((?:19|20)?\d{2})\b"
+         + _AMOUNT_AFTER, lambda m: _range(int(m.group(1)), m.group(2)))
     take(r"\b(?:by|through|thru|until)\s+(?:the\s+end\s+of\s+)?((?:19|20)\d{2})\b",
          lambda m: (ref, _year_end(int(m.group(1)))) if int(m.group(1)) >= ref.year else None)
     take(rf"\b({_MONTH_RE})\.?\s+(\d{{1,2}}),?\s+((?:19|20)\d{{2}})\b",
          lambda m: _day(m.group(1), m.group(2), m.group(3)))
     take(rf"\b({_MONTH_RE})\.?\s+((?:19|20)\d{{2}})\b",
          lambda m: _month(_MONTHS[m.group(1)], int(m.group(2))))
-    take(r"\b((?:19|20)\d{2})\b", lambda m: (date(int(m.group(1)), 1, 1),
-                                             _year_end(int(m.group(1)))))
+    take(r"(?<![$€£¥])\b((?:19|20)\d{2})\b" + _AMOUNT_AFTER,
+         lambda m: (date(int(m.group(1)), 1, 1), _year_end(int(m.group(1)))))
     if not found:
         return None
     start = min(f[0] for f in found)
@@ -161,7 +205,7 @@ def window_of(text: str | None, ref: date) -> Window | None:
     basis = "; ".join(dict.fromkeys(f[2] for f in found))
     if any(f[2].startswith("fy") for f in found):
         basis += " (fiscal year read as the calendar year — approximate)"
-    return Window(start, end, basis)
+    return Window(start, end, basis, to_date=since)
 
 
 def _range(a: int, b_tok: str) -> tuple[date, date] | None:
@@ -202,11 +246,15 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     """(near_term | straddling | long_range | current | historical | undated, a note naming the
     window)."""
     forward = c.epistemic is Epistemic.FORECAST or c.kind is ClaimKind.FORECAST
-    w = window_of(c.period, ref)
+    w = window_of(c.period, ref, source_date=published)
     if w is None and (forward or c.kind is ClaimKind.EVENT):
-        w = window_of(c.quote, ref)
+        w = window_of(c.quote, ref, source_date=published)
     if forward:
         if w is None:
+            fq = FISCAL_QUARTER.search(c.period or "") or FISCAL_QUARTER.search(c.quote or "")
+            if fq is not None:
+                return "undated", (f"a fiscal quarter ({fq.group(0)}) — the issuer's fiscal "
+                                   f"calendar is not known here, so it is not placed")
             return "undated", "forecast with no readable time window"
         if w.end < ref:
             return "historical", f"forecast window {w} has already ended"
@@ -235,7 +283,7 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     # an opinion / mixed view that NAMES a horizon beyond the next 4 quarters ("unlikely to clear
     # before 2030") is long-dated evidence of the thesis's timing. It never counts as near-term:
     # only a forecast, an event or a measurement can show that.
-    w = w or window_of(c.quote, ref)
+    w = w or window_of(c.quote, ref, source_date=published)
     if w is not None and w.end > ref + timedelta(days=NEAR_TERM_END_DAYS):
         return ("straddling" if straddles(w, ref) else "long_range",
                 f"{c.epistemic.value} naming a window {w} beyond the next 4 quarters (a view's "

@@ -458,8 +458,14 @@ class Pipeline:
         state = (RetrievalState.PARTIAL if fr.state is RetrievalState.PARTIAL
                  else doc.retrieval_state)
         article = self._article_record(aid, doc, source_id, publisher, default_class, now)
+        # a page with NO BODY says nothing about which article it is: two such shells (an empty
+        # JavaScript page, a consent wall) share one content hash, and one version id across two
+        # articles failed the whole scan (2026-10-14, two cached BofA pages) — its id is the
+        # article's own
+        body_less = doc.retrieval_state is RetrievalState.BLOCKED
+        vid = "AV-" + (_sha(aid, doc.content_sha256) if body_less else doc.content_sha256)[:16]
         version = ArticleVersion(
-            version_id="AV-" + doc.content_sha256[:16], article_id=aid,
+            version_id=vid, article_id=aid,
             retrieved_at=fr.fetched_at, http_status=fr.status, final_url=fr.final_url,
             retrieval_state=state, retrieval_note="; ".join([fr.note, *doc.notes]),
             raw_sha256=fr.sha256, content_sha256=doc.content_sha256,

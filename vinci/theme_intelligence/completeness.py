@@ -86,14 +86,19 @@ _MONTHS = ("january|february|march|april|may|june|july|august|september|october|
 #: were added 2026-10-10: the ledger had missed "75GW", "930MW", "1.5GW" (42 figures of one
 #: SemiAnalysis power post) and J.P. Morgan's "99th percentile" — a number glued to letters is
 #: otherwise refused, which is what keeps "5G", "3D" and "B200" out.
-_UNIT = (r"%|percent(?:age points?)?|per cent|basis points?|bps|bp|pp|x(?![a-z])|"
-         r"(?:thousand|million|billion|trillion|mn|bn|tn)\b|"
+_UNIT = (r"%|percent(?:age points?)?|per cent|basis points?|bps|bp|ppt|pp|x(?![a-z])|"
+         r"(?:thousand|million|billion|trillion|mn|bn|tn|bln|mln|trn)\b|"
          r"(?:[kmgt]wh?|[gtp]b|nm|[mg]hz|[gt]bps)\b|"
+         # the units the grid and gas texts print (2026-10-14: "345kV", "707.5GVA", "7.5bcf/d"
+         # were missed, or read with their decimals cut — 34 figures in the local corpus)
+         r"(?:kv|[kmg]va|[bm]?bcf/d|mmcf/d|bcfd|g/kwh)\b|"
          r"(?:st|nd|rd|th)\s+percentile\b")
 #: A scale letter GLUED to its number ("744B" parameters, "77K" tokens) — never spaced.
 _GLUED_SCALE = r"[bkmt](?![a-z0-9])"
 _NUMBER = re.compile(
-    rf"(?P<cur>[$€£¥])?(?P<neg>(?<=[\s(~])-)?(?P<num>(?<![\w.,])\d+(?:[.,]\d+)*)"
+    # the number is read whole (possessive): a figure whose unit is not known is MISSED, never
+    # cut at its decimal point ("707.5GVA" was read as 707)
+    rf"(?P<cur>[$€£¥])?(?P<neg>(?<=[\s(~])-)?(?P<num>(?<![\w.,])\d++(?:[.,]\d+)*+)"
     rf"(?:\s?(?:-|to)\s?(?P<num2>\d+(?:[.,]\d+)*))?"
     rf"(?P<unit>\s?(?:{_UNIT})|{_GLUED_SCALE})?(?![A-Za-z0-9])", re.I)
 #: A number word, compound first ("twenty-four" is one number) — and a word figure may be a
