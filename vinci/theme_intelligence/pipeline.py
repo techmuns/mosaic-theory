@@ -1191,10 +1191,11 @@ class Pipeline:
         if budget is not None:
             self.guard.run_limit = budget
         if resume_run_id and self.run is not None:
+            limit = (f"${self.guard.run_limit:,.2f}" if self.guard.run_limit is not None
+                     else "no limit set")
             self.run.warnings.append(
                 f"resumed with ${self.guard.run_spent:,.2f} already spent by this run — it counts "
-                f"against the run's limit (${self.guard.run_limit or 0:,.2f}; raise it with "
-                f"--budget)")
+                f"against the run's limit ({limit}; raise it with --budget)")
         run = self.run
         assert run is not None
         try:
@@ -1352,9 +1353,14 @@ class Pipeline:
                                             f"QUEUED (resume with --budget)")
                     else:  # this document's own limit: it alone waits, the scan goes on
                         doc_held = True  # an in-window article not analysed: PARTIAL
+                        # every scan applies the same per-document limit (`scan --budget` raises
+                        # the RUN's): a scan will hold it again — said, never promised to the
+                        # next run (review of #715)
                         run.warnings.append(f"spend guard: {url} held by its own limit — "
-                                            f"{res.note[:200]}; QUEUED for the next run (its "
-                                            f"paid parts are cached), the scan goes on")
+                                            f"{res.note[:200]}; QUEUED, and every scan will hold "
+                                            f"it again at the per-document limit: supply it with "
+                                            f"`ingest-file --max-cost` (its paid parts are "
+                                            f"cached), the scan goes on")
                     continue
                 done += 1
                 run.checkpoint[url] = res.status

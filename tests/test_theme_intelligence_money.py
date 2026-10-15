@@ -477,3 +477,23 @@ def test_a_compact_retry_in_the_same_run_records_the_truncation_once(tmp_path: P
     pipe.finish_run(RunStatus.SUCCEEDED)
     assert sorted(r["purpose"] for r in _paid(pipe, run.run_id)) == ["extract",
                                                                      "extract-truncated"]
+
+
+def test_a_held_documents_warning_never_promises_the_next_scan(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #715: every scan applies the same per-document limit, so the document is held
+    again — the warning names the route that can process it, never "the next run"."""
+    _pipe_, run, _seen, _queued = _scan_with_hold(tmp_path, monkeypatch, "document")
+    (w,) = [w for w in run.warnings if "held by its own limit" in w]
+    assert "every scan will hold it again" in w and "ingest-file --max-cost" in w
+    assert "for the next run" not in w
+
+
+def test_a_resumed_run_with_no_limit_says_so(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #715: no limit is never printed as "$0.00"."""
+    _p1, rid = _first_attempt(tmp_path, spent=2.0)
+    monkeypatch.setattr(budget_mod, "default_run_limit", lambda mode: None)
+    _p2, out = _resume(tmp_path, rid)
+    (w,) = [w for w in out.warnings if w.startswith("resumed with")]
+    assert "no limit set" in w and "$0.00" not in w
