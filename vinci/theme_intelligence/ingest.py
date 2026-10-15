@@ -58,6 +58,7 @@ from vinci.theme_intelligence.fetch import FetchResult
 from vinci.theme_intelligence.parse import ParsedDocument
 from vinci.theme_intelligence.schemas import (
     Article,
+    ArticleVersion,
     DocumentRecord,
     FieldStatus,
     IssueSeverity,
@@ -125,14 +126,18 @@ def title_overlap(a: str | None, b: str | None) -> float:
     return len(set(ta) & set(tb)) / len(set(ta) | set(tb))
 
 
-def _held_text(pipe: Pipeline, article_id: str) -> tuple[str, RetrievalState | None, int]:
-    """The latest readable version's text — "" when this machine does not hold it (a registry
-    pulled from the state branch keeps block hashes, never article text)."""
+def _held_version(pipe: Pipeline, article_id: str) -> ArticleVersion | None:
+    """The latest readable version — read ONCE per comparison: its text and its block hashes."""
     vs = [v for v in pipe.store.article_versions(article_id)
           if v.retrieval_state is not RetrievalState.BLOCKED]
-    if not vs:
+    return vs[-1] if vs else None
+
+
+def _held_text(v: ArticleVersion | None) -> tuple[str, RetrievalState | None, int]:
+    """The version's text — "" when this machine does not hold it (a registry pulled from the
+    state branch keeps block hashes, never article text)."""
+    if v is None:
         return "", None, 0
-    v = vs[-1]
     return " ".join(b.text for b in v.blocks).strip(), v.retrieval_state, v.body_word_count
 
 
@@ -141,14 +146,12 @@ def _held_text(pipe: Pipeline, article_id: str) -> tuple[str, RetrievalState | N
 _ARGUMENT_KINDS = frozenset({"paragraph", "list_item"})
 
 
-def _shared_words(pipe: Pipeline, article_id: str, read: DocumentRead) -> int:
+def _shared_words(v: ArticleVersion | None, read: DocumentRead) -> int:
     """Words of the new document's argument blocks whose HASH the held version also has — what
     a pulled registry can still compare (it keeps each block's hash, never its text)."""
-    vs = [v for v in pipe.store.article_versions(article_id)
-          if v.retrieval_state is not RetrievalState.BLOCKED]
-    if not vs:
+    if v is None:
         return 0
-    held = {b.sha256 for b in vs[-1].blocks if b.kind in _ARGUMENT_KINDS}
+    held = {b.sha256 for b in v.blocks if b.kind in _ARGUMENT_KINDS}
     seen: dict[str, int] = {}
     for b in read.doc.blocks:
         if b.kind in _ARGUMENT_KINDS and b.sha256 in held:
@@ -159,7 +162,8 @@ def _shared_words(pipe: Pipeline, article_id: str, read: DocumentRead) -> int:
 def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
              url_basis: str = "the operator states its URL") -> Match:
     """One held article against the new document."""
-    held, state, words = _held_text(pipe, art.article_id)
+    version = _held_version(pipe, art.article_id)
+    held, state, words = _held_text(version)
     new_text = " ".join(b.text for b in read.doc.blocks)
     new_words = len(new_text.split())
     s_old, s_new = shingles(held), shingles(new_text)
@@ -173,7 +177,7 @@ def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
     # automatic merge (2026-10-14: a retitled copy of a held report was analysed, and paid for,
     # a second time on title overlap alone)
     pulled = state is not None and not held
-    shared = _shared_words(pipe, art.article_id, read) if pulled else 0
+    shared = _shared_words(version, read) if pulled else 0
     b_old = shared / words if words else 0.0
     b_new = shared / new_words if new_words else 0.0
     facts = (f"title overlap {t:.0%}, held text found in the new document {c_old:.0%}, new "
