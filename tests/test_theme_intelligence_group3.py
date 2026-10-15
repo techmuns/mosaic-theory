@@ -353,9 +353,7 @@ def test_an_area_root_link_is_filed_as_the_same_area_and_counted_nowhere_as_rela
     pipe.finish_run(RunStatus.SUCCEEDED)
     by = {t.key_node: t.thesis_id for t in pipe.store.theses()}
     root = by["healthcare"]
-    rels = pipe.store.relations(root)
-    assert rels and {r.relation for r in rels} == {RelationType.SIBLING}
-    assert all("area's root" in r.reason and r.evidence_role == "" for r in rels)
+    assert pipe.store.relations(root) == []  # the area is read from the keys (U43)
     # a link stored before the fix: PARENT_CHILD adjacent support between the root and a child
     pipe.store.add_relation(ThemeRelation(
         relation_id="TR-legacy0000000", from_thesis=root, to_thesis=by["healthcare.medtech"],

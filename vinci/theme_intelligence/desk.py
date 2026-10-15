@@ -108,6 +108,7 @@ from vinci.theme_intelligence.schemas import (
     ThesisStatus,
     ThesisVersion,
     WeeklyRun,
+    same_area,
 )
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.timewindow import timing_of, window_of
@@ -2428,6 +2429,18 @@ class Desk:
                     why = _RELATION.get(x.relation.value, x.relation.value.lower())
                     direct[a][b].append(why)
                     direct[b][a].append(why)
+            # the broader area itself, read from the keys: the engine no longer links two theses
+            # that only share an area (U43) — the stored links above are an older registry's
+            by_sector: dict[str, list[str]] = defaultdict(list)
+            for th, (tt, _v) in self.asof.items():
+                if not tt.retired:
+                    by_sector[tt.key_node.split(".")[0]].append(th)
+            for members in by_sector.values():
+                for i, a in enumerate(members):
+                    for b in members[i + 1:]:
+                        if same_area(self.asof[a][0].key_node, self.asof[b][0].key_node):
+                            area[a].add(b)
+                            area[b].add(a)
             by_art: dict[str, set[str]] = defaultdict(set)
             for th, arts in self.sources_of.items():
                 if th in self.asof:

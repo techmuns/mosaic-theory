@@ -2153,6 +2153,13 @@ def scoped_ids(body: str, prefix: str) -> str:
 
 
 def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) -> dict[str, Any]:
+    """Every output of one run — the cards, the weekly report, the desk, the manifest — in ONE
+    read pass (`Store.reading`: each article version parsed once, U44)."""
+    with store.reading():
+        return _write_run_outputs(store, run_id, out_dir)
+
+
+def _write_run_outputs(store: Store, run_id: str, out_dir: Path | None) -> dict[str, Any]:
     run = store.run(run_id)
     if run is None:
         raise KeyError(f"no run {run_id}")

@@ -21,7 +21,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 5
+DB_SCHEMA_VERSION = 6
 
 
 def _aware(d: datetime | None) -> datetime | None:
@@ -289,6 +289,18 @@ class EvidenceRole(StrEnum):
     #: opposite predictions of the same thesis claim whose CLAIMS could not be shown either
     #: contradictory or compatible — held for a human; nothing changes automatically
     CONTRADICTION_REVIEW = "CONTRADICTION_REVIEW"
+
+
+def same_area(a: str, b: str) -> bool:
+    """Two value-chain nodes that share a broader area and nothing more: an area root and a node
+    in it, or two nodes of one area neither of which is the other's parent. ONE rule for the
+    engine (it counts such theses, never links them — U43) and the desk (its "same broader area"
+    fold)."""
+    if a == b or a.split(".")[0] != b.split(".")[0]:
+        return False
+    if "." not in a or "." not in b:
+        return True
+    return not (a.startswith(b + ".") or b.startswith(a + "."))
 
 
 def identity_key(node: str, mechanism: str, direction: str, geography: str,
