@@ -54,7 +54,7 @@ from typing import Any
 from vinci.netcache import HttpError
 from vinci.theme_intelligence.cards import BASIS_LABEL, capped_label, without_labels
 from vinci.theme_intelligence.config import ENRICH_PROMPT_VERSION, LLM_MODEL
-from vinci.theme_intelligence.extract import ToolClient, cache_key, cost_of
+from vinci.theme_intelligence.extract import ToolClient, answer_list, cache_key, cost_of
 from vinci.theme_intelligence.schemas import (
     CardContent,
     Direction,
@@ -334,11 +334,11 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
     refused: list[str] = []
     kept: list[EnrichmentCandidate] = []
     side_n = {Direction.POSITIVE: 0, Direction.NEGATIVE: 0}
-    rows = out.get("companies") if isinstance(out, dict) else None
-    for i, row in enumerate(rows if isinstance(rows, list) else []):
-        if not isinstance(row, dict):
-            refused.append(f"entry {i + 1}: not an object — set aside")
-            continue
+    # a list sent as JSON text is decoded, anything else set aside AND SAID in the set's notes
+    # (U20: `companies` as text gave 0 candidates, 0 refused, an empty note)
+    rows, unread = answer_list(out, "companies")
+    refused.extend(unread)
+    for i, row in enumerate(rows):
         name = str(row.get("name") or "").strip()
         sid = str(row.get("step_id") or "").strip()
         direction = {"benefit": Direction.POSITIVE, "hurt": Direction.NEGATIVE}.get(
