@@ -106,11 +106,15 @@ def sync_state(paths: Paths) -> dict[str, Any]:
 
 def _save_state(paths: Paths, **kw: Any) -> None:
     """`pending`: local documents a pull could not replay (their records are not in the rebuilt
-    registry) — kept across every save until a pull replays them or finds them on the branch."""
+    registry) — kept across every save until a pull replays them or finds them on the branch;
+    `pending_answers`, by version, the extraction(s) they were given (the rebuilt registry no
+    longer names them, so the next pull's replay could not take them from the cache)."""
     if "pending" not in kw and (prev := sync_state(paths).get("pending")):
         kw["pending"] = prev
+        kw.setdefault("pending_answers", sync_state(paths).get("pending_answers", {}))
     if not kw.get("pending"):
         kw.pop("pending", None)
+        kw.pop("pending_answers", None)
     (paths.root / STATE_FILE).write_text(json.dumps(kw, indent=1, sort_keys=True) + "\n")
 
 
@@ -202,6 +206,8 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         # latest analysis from the cache (a re-analysis that split a thesis is the one that holds)
         answers = {d.version_id: tuple(reversed(old.extraction_ids(d.version_id)))
                    for d in old_docs if old is not None and d.version_id}
+        for vid, ids in sync_state(paths).get("pending_answers", {}).items():
+            answers[vid] = tuple(dict.fromkeys((*answers.get(vid, ()), *ids)))
         remote_runs = _remote_runs(reg)
         remote_docs = _remote_ids(reg, "documents", "sha256")
         local_only = [r for r in old_runs.values() if _run_key(r) not in remote_runs]
@@ -271,13 +277,15 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         res.lines.append("no local document to replay — the branch holds every one")
         return res
     if not replay or make_pipeline is None:
-        _save_state(paths, **{**sync_state(paths), "pending": _dumped(todo)})
+        _save_state(paths, **{**sync_state(paths), "pending": _dumped(todo),
+                               "pending_answers": _answers_of(todo, answers)})
         res.lines.append(f"{len(todo)} local document(s) NOT on the branch and not replayed "
                          f"(kept for the next pull): " + ", ".join(d.doc_id for d in todo))
         return res
     lines, not_replayed = _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates,
                                   answers)
-    _save_state(paths, **{**sync_state(paths), "pending": _dumped(not_replayed)})
+    _save_state(paths, **{**sync_state(paths), "pending": _dumped(not_replayed),
+                           "pending_answers": _answers_of(not_replayed, answers)})
     res.lines += lines
     if not_replayed:
         res.lines.append(f"{len(not_replayed)} local document(s) not replayed are kept for the "
@@ -287,6 +295,13 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
 
 def _dumped(docs: list[DocumentRecord]) -> list[dict[str, Any]]:
     return [d.model_dump(mode="json") for d in docs]
+
+
+def _answers_of(docs: list[DocumentRecord],
+                answers: dict[str, tuple[str, ...]]) -> dict[str, list[str]]:
+    """The extraction(s) each kept document was given, newest first — for the next pull."""
+    return {d.version_id: list(answers[d.version_id]) for d in docs
+            if d.version_id and answers.get(d.version_id)}
 
 
 def _remove_db(paths: Paths) -> None:

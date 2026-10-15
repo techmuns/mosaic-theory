@@ -166,12 +166,16 @@ def test_a_replay_is_answered_by_the_analysis_the_document_was_last_given(
 
 
 def _keep_answer(cache: Path, key: str, *, model: str = "claude-opus-4-8",
-                 version: str = EXTRACT_PROMPT_VERSION, name: str | None = None) -> None:
+                 version: str = EXTRACT_PROMPT_VERSION, name: str | None = None,
+                 node: str | None = None) -> None:
     d = cache / "extract"
     d.mkdir(parents=True, exist_ok=True)
+    out = _ms_ext()
+    if node is not None:
+        out["hypotheses"][0]["value_chain_node"] = node
     (d / (name or f"{key}.json")).write_text(json.dumps({
         "model": model, "prompt_version": version, "usage": None, "seconds": 0.0,
-        "output": _ms_ext()}))
+        "output": out}))
 
 
 @pytest.mark.parametrize(("kept", "reused"), [
@@ -179,6 +183,7 @@ def _keep_answer(cache: Path, key: str, *, model: str = "claude-opus-4-8",
     ({"name": "set-aside"}, True),  # an answer set aside beside it is not a second answer
     ({"model": "claude-other"}, False),  # another model's answer is another request
     ({"version": "ti-extract-0"}, False),  # so is an earlier prompt's
+    ({"node": "ai_infrastructure.no_longer_a_node"}, False),  # and another taxonomy's
 ])
 def test_a_replay_reuses_only_the_answer_its_id_names(
         tmp_path: Path, kept: dict[str, str], reused: bool) -> None:
@@ -362,3 +367,117 @@ def test_a_document_refused_as_too_new_is_analysed_by_a_later_run(tmp_path: Path
     # an analysed document is still a duplicate of itself
     pipe.start_run("ingest", as_of=later)
     assert ingest_file(pipe, note, _ms(), as_of=later, fixture=ext).status == "DUPLICATE"
+
+
+# --- review of PR #712 (2026-10-15) ------------------------------------------------------------
+
+def _page(stamp: str) -> str:
+    return (f'<html><head><meta property="article:published_time" content="{stamp}"></head>'
+            f'<body><article>' + "<p>[HYPOTHETICAL] Text of an invented article. " * 60
+            + "</p></article></body></html>")
+
+
+@pytest.mark.parametrize(("stamp", "status"), [
+    ("2026-10-10T22:00:00-04:00", "OUT_OF_WINDOW"),  # 11 October in UTC: next week's window
+    ("2026-10-11T02:00:00+08:00", "IN_WINDOW"),  # 10 October in UTC: this week's
+])
+def test_the_scan_window_reads_the_day_the_look_ahead_gate_reads(
+        tmp_path: Path, stamp: str, status: str) -> None:
+    """The gate compares a publication instant's UTC day with the as-of; the scan window read the
+    publisher's local date. A US evening post was admitted and then refused as too new — and
+    next week's window no longer held it."""
+    from tests.test_theme_intelligence_scan import JPM_BASE, JPM_LIST, WINDOW, FakeFetcher, _src
+    from vinci.theme_intelligence.discovery import discover_source
+
+    pipe = make_pipeline(tmp_path)
+    f = FakeFetcher({JPM_BASE: JPM_LIST, f"{JPM_BASE}/no-date-here": _page(stamp)})
+    d = discover_source(_src("jpm_tmt"), f, pipe.store, window_from=WINDOW[0],
+                        window_to=WINDOW[1])
+    [c] = [c for c in d.candidates if c.url.endswith("no-date-here")]
+    assert c.status == status, (c.listed_date, c.note)
+
+
+def test_a_feed_date_is_read_as_its_utc_day() -> None:
+    from tests.test_theme_intelligence_scan import FakeFetcher, _src
+    from vinci.theme_intelligence.discovery import semianalysis_feed
+    from vinci.theme_intelligence.schemas import SourceCoverage
+
+    feed = "https://example.test/feed"
+    xml = ("<rss><channel><item><title>Hypothetical</title><link>https://example.test/p/a"
+           "</link><pubDate>Sat, 10 Oct 2026 22:00:00 -0400</pubDate></item></channel></rss>")
+    src = replace(_src("semianalysis"), feed_url=feed)
+    cov = SourceCoverage(source_id=src.id, publisher=src.publisher, channel=src.channel,
+                         method="test", status="OK")
+    [c] = semianalysis_feed(src, FakeFetcher({feed: xml}), cov)  # type: ignore[arg-type]
+    assert c.listed_date == date(2026, 10, 11)
+
+
+def test_a_scan_queues_what_is_published_after_its_as_of_for_the_next_run(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A listing date can be a day off the page's own instant: what the gate refuses as too new
+    was recorded LOOKAHEAD and dropped — next week's window would not offer it again."""
+    from tests.test_theme_intelligence_scan import _fake_scan
+
+    pipe = make_pipeline(tmp_path)
+    url = "https://example.test/hypothetical/late-post"
+    done = _fake_scan(monkeypatch, pipe, [url])
+    late = Hypo(slug="late-post", publisher="Hypo", published=date(2026, 10, 11),
+                blocks=[("paragraph", "[HYPOTHETICAL] Optical shipments rose 14% in 3Q26.")])
+    ext = extraction([claim("c1", "b001", "Optical shipments rose 14% in 3Q26",
+                            "Optical shipments +14%", metric="optical shipments", value=14,
+                            value_text="14%", unit="%", period="3Q26")],
+                     [hyp("h1", "Optics ramp", node="ai_infrastructure.optical_networking",
+                          mechanism="demand_volume_shift", supporting=["c1"])])
+
+    def process_url(self: Pipeline, u: str, *, source_id: str, as_of: date, **kw: Any) -> Any:
+        done.append(u)
+        return ingest(self, late.doc(), ext, as_of=as_of)
+    monkeypatch.setattr(Pipeline, "process_url", process_url)
+    run = pipe.run_scan(window_from=date(2026, 10, 1), window_to=date(2026, 10, 10),
+                        as_of=date(2026, 10, 10), max_articles=10)
+    assert [u for u, _, _ in pipe.store.candidates("QUEUED")] == [url]
+    assert any("published after this run's as-of" in w for w in run.warnings)
+    _fake_scan(monkeypatch, pipe, [])  # next week discovers nothing of its own …
+    monkeypatch.setattr(Pipeline, "process_url", process_url)
+    pipe.run_scan(window_from=date(2026, 10, 11), window_to=date(2026, 10, 17),
+                  as_of=date(2026, 10, 17), max_articles=10)
+    assert done == [url, url]  # … and analyses the queued post
+    assert pipe.store.candidates("QUEUED") == [] and pipe.store.theses()
+
+
+def test_a_document_a_pull_kept_pending_is_replayed_from_its_answer_next_time(
+        tmp_path: Path) -> None:
+    """The reuse ids came only from the registry a pull replaces: a document one pull could not
+    replay is no longer in the next one's, so the second replay asked the model again."""
+    remote = _bare(tmp_path)
+    actions = make_pipeline(tmp_path / "actions")
+    _scan(actions, "week-1")
+    state.push(actions.paths.root, remote)
+    local_root = tmp_path / "laptop" / "ti"
+    state.pull(local_root, remote)
+    first = CountingLlm(_ms_ext())
+    laptop = _with_model(tmp_path / "laptop", first)
+    laptop.start_run("ingest", as_of=AS_OF)
+    up = ingest_file(laptop, MS_PDF, Declared(source_id="ms_research", llm_permitted=True),
+                     as_of=AS_OF)
+    laptop.finish_run(RunStatus.SUCCEEDED)
+    rec = laptop.store.document(up.doc_id)
+    assert rec is not None and rec.stored_path is not None
+    laptop.store.close()
+    copy = local_root / rec.stored_path
+    away = tmp_path / "away.pdf"
+    copy.rename(away)  # the private copy is not on this machine for the first pull
+    _memory_scan(actions)
+    state.push(actions.paths.root, remote)
+    res = state.pull(local_root, remote,
+                     make_pipeline=lambda: _with_model(tmp_path / "laptop", CountingLlm({})))
+    assert any("NOT replayed" in x for x in res.lines), res.lines
+    away.rename(copy)
+    _scan(actions, "week-3")
+    state.push(actions.paths.root, remote)
+    second = CountingLlm(_ms_ext())
+    res = state.pull(local_root, remote,
+                     make_pipeline=lambda: _with_model(tmp_path / "laptop", second))
+    assert any(up.doc_id in x and "replayed — INGESTED" in x for x in res.lines), res.lines
+    assert second.calls == []  # its answer from the cache, though no registry names it now
+    assert "pending_answers" not in state.sync_state(state.Paths(local_root))

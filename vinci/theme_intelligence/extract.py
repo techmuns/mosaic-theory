@@ -957,6 +957,20 @@ def _answer_named(cache_dir: Path, extraction_id: str, model: str,
     return rec if rec.get("model") == model and rec.get("prompt_version") in versions else None
 
 
+def _offered(schema: dict[str, Any], value: Any) -> bool:
+    """Every value the answer gives a field the tool ENUMERATES (taxonomy nodes and mechanisms,
+    steps, kinds) is one the tool still offers — an answer built for another taxonomy answers
+    another request, even under the same prompt version."""
+    if "enum" in schema and value is not None and value not in schema["enum"]:
+        return False
+    if isinstance(value, dict):
+        props = schema.get("properties", {})
+        return all(_offered(props[k], v) for k, v in value.items() if k in props)
+    if isinstance(value, list) and "items" in schema:
+        return all(_offered(schema["items"], v) for v in value)
+    return True
+
+
 def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy: Taxonomy,
                    client: ToolClient | None, cache_dir: Path,
                    prompt_version: str = EXTRACT_PROMPT_VERSION,
@@ -1007,8 +1021,8 @@ def run_extraction(doc: ParsedDocument, *, publisher: str, as_of: str, taxonomy:
                 prompt_version=prompt_version) from refused
     for xid in reuse:
         rec = _answer_named(cache_dir, xid, model, (prompt_version, cversion))
-        if rec is None:
-            continue
+        if rec is None or not _offered(tool["input_schema"], rec["output"]):
+            continue  # another model's, another prompt's, or another taxonomy's answer
         try:
             parsed, dropped, salvaged, lost = read_answer(rec["output"])
         except ValidationError:  # unreadable under the current schema: a different request now

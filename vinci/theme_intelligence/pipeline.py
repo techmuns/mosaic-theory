@@ -1234,7 +1234,7 @@ class Pipeline:
                 if c.url not in seen:
                     todo.append((c.url, c.source_id, c.date_basis))
                     seen.add(c.url)
-            done = queued = failures = 0
+            done = queued = failures = too_new = 0
             out_of_budget = False
             for url, sid, why in todo:
                 if url in run.checkpoint:
@@ -1277,6 +1277,18 @@ class Pipeline:
                         # article's failure — said, checkpointed — never the whole week's scan
                         res = ArticleResult(url, "FAILED", article_id_for(url), note=str(exc))
                         run.warnings.append(f"{url}: {exc}"[:400])
+                if res.status == "LOOKAHEAD":
+                    # published after this run's as-of (a listing date can be a day off the
+                    # page's instant): offered to the next run, never dropped — next week's
+                    # window would not hold it again (2026-10-15)
+                    run.checkpoint[url] = res.status
+                    self.store.upsert_candidate(url, sid, "QUEUED", {
+                        "source_id": sid, "run_id": run.run_id,
+                        "reason": "published after this run's as-of — offered to the next run"})
+                    too_new += 1
+                    if sid in cov:
+                        cov[sid].queued += 1
+                    continue
                 if res.status == "BUDGET_HELD":  # checkpointed: offered first next run
                     out_of_budget = True
                     self.store.upsert_candidate(url, sid, "QUEUED", {
@@ -1308,6 +1320,9 @@ class Pipeline:
                                     f"article(s) this run (max_articles={max_articles}); "
                                     f"{queued} QUEUED for the next run")
             self._count("articles_queued", queued)
+            if too_new:
+                run.warnings.append(f"{too_new} candidate(s) published after this run's as-of "
+                                    f"{as_of} — QUEUED for the next run")
             self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
             if self.enrich_in_scan:
                 self._scan_enrichment(as_of)
