@@ -232,18 +232,27 @@ def test_a_direction_on_a_step_that_is_not_a_fact_is_shown_as_a_condition(
     page = BeautifulSoup((out / "theses" / f"{tid}.html").read_text(), "html.parser")
     hypo = page.select_one(".expo .hypo")
     assert hypo is not None
-    groups = {h.get_text(" ", strip=True): h.find_next_sibling("ul").get_text(" ")
-              for h in hypo.select("h4")}
-    assert set(groups) == {"Could benefit",
-                           "Exposed — the direction holds only if its step does"}
-    assert "NVIDIA" in groups["Could benefit"] and "Amazon" not in groups["Could benefit"]
-    exposed = groups["Exposed — the direction holds only if its step does"]
-    assert "Amazon" in exposed and "would be hurt IF this holds" in exposed
-    assert "HBM contract pricing rises" in exposed and "(model inference)" in exposed
-    # the basis beside it, the filing's sentence on demand
-    assert "basis (the model's): product sales" in groups["Could benefit"]
-    filing = hypo.select_one("details.filing")
-    assert filing is not None and NVDA_SOURCE in filing.get_text(" ")
+    # one row per company, grouped under the step it rests on — the condition said ONCE per
+    # step (the tear sheet, 2026-10-15)
+    groups = {h.get_text(" ", strip=True): h.find_next_sibling("div", class_="hrows")
+              for h in hypo.select("h4.cond")}
+    assert len(groups) == 2
+    fact = next(k for k in groups if k.startswith("Through industry shift"))
+    cond = next(k for k in groups if k.startswith("If this holds"))
+    assert "Memory makers ship more HBM" in fact and "reported" in fact
+    assert "HBM contract pricing rises" in cond and "our inference" in cond
+    nv = groups[fact].select_one("details.hrow")
+    am = groups[cond].select_one("details.hrow")
+    assert nv is not None and am is not None
+    nv_row = nv.select_one("summary").get_text(" ", strip=True)
+    am_row = am.select_one("summary").get_text(" ", strip=True)
+    assert "NVDA" in nv_row and "NVIDIA" in nv_row and "could benefit" in nv_row
+    assert "product sales" in nv_row and "✓" in nv_row
+    assert "Amazon" in am_row and "would be hurt" in am_row and "could be hurt" not in am_row
+    assert "usage-based" in am_row and "–" in am_row  # not described in its 10-K
+    # the row opens to the basis and the filing's own sentence
+    assert "basis (the model's): product sales" in nv.get_text(" ")
+    assert NVDA_SOURCE in nv.select_one("p.filing").get_text(" ")
     # the card (and so its print) carries the same reading and the filing's own words
     card = (out / "cards" / f"{tid}.html").read_text()
     assert "would be hurt IF this holds" in card and NVDA_SOURCE in card

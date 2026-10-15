@@ -36,6 +36,7 @@ from urllib.parse import quote, urlparse
 
 from vinci.theme_intelligence.cards import (
     AUDIT_TOGGLE,
+    BASIS_LABEL,
     REVEAL_JS,
     ROBOTS,
     STEP_LABEL,
@@ -54,6 +55,7 @@ from vinci.theme_intelligence.cards import (
     groups_unchecked_note,
     ids_to_audit,
     proposal_reading,
+    proposal_step,
     review_not_run_words,
     set_card,
     topnav,
@@ -92,6 +94,7 @@ from vinci.theme_intelligence.schemas import (
     CompletenessReport,
     Direction,
     DocumentRecord,
+    EnrichmentCandidate,
     EnrichmentSet,
     MentionRole,
     Provenance,
@@ -1275,26 +1278,24 @@ def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, st
     if es is None:
         return ""
     head, _rows = enrichment_lines(es, version, steps, card)
-    sides: dict[str, list[str]] = {"up": [], "down": [], "if": []}
+    # ONE ROW PER COMPANY, grouped under the step it rests on: the step — and so its condition —
+    # is said once per group, never once per company (2026-10-15: eight companies repeated two
+    # step sentences eight times; the box ran to ~1,100 words). A row opens to its rationale,
+    # the basis and the company's own 10-K sentence.
+    by_step: dict[str, list[EnrichmentCandidate]] = {}
     for x in es.candidates:
-        cond, how = proposal_reading(x, steps, card)
-        side = "if" if cond else "up" if x.direction is Direction.POSITIVE else "down"
-        basis = basis_line(x)
-        sides[side].append(
-            f'<li><b>{e(x.name)}</b> <span class="tk">{e(enrichment_listing(x))}</span> '
-            f'<span class="muted">{e(how)}</span><div class="small">{e(x.rationale)}</div>'
-            + (f'<div class="small basis">{e(basis)}</div>' if basis else "")
-            + (f'<details class="filing"><summary>What its {e(x.basis_source.split(" ")[0])} '
-               f'says</summary>'
-               + "".join(f"<p>“{e(q)}”</p>" for q in x.basis_quote)
-               + f'<p class="small muted">{e(x.basis_source)}</p></details>'
-               if x.basis_quote else "")
-            + f'<span class="aud cc">{e(x.resolution_status.value)} · {e(x.resolution_note)}'
-            f'</span></li>')
-    body = "".join(f'<h4>{w}</h4><ul class="who">{"".join(sides[k])}</ul>'
-                   for k, w in (("up", "Could benefit"), ("down", "Could be hurt"),
-                                ("if", "Exposed — the direction holds only if its step does"))
-                   if sides[k])
+        by_step.setdefault(x.step_id, []).append(x)
+    body = ('<div class="hhead" aria-hidden="true"><span>Ticker</span><span>Company</span>'
+            '<span>Direction</span><span>Earns from (stated)</span><span>10-K</span></div>')
+    for sid, xs in by_step.items():
+        cond, _how = proposal_reading(xs[0], steps, card)
+        text, label = proposal_step(xs[0], card)
+        support = _PROV.get(label.value, label.value.lower()) if label else "support not recorded"
+        lead = ("If this holds" if cond
+                else f"Through {STEP_LABEL.get(steps.get(sid, ''), sid).lower()}")
+        body += (f'<h4 class="cond">{e(lead)}: “{e(text)}” <span class="tag">{e(support)}</span>'
+                 f'<span class="aud cc"> {e(sid)}</span></h4><div class="hrows">'
+                 + "".join(_hrow(x, cond) for x in xs) + "</div>")
     none = next((r for r in es.refused if r.startswith("none proposed:")), "")
     return (f'<div class="hypo"><h3>Companies the thesis implies <span class="tag">our '
             f'hypothesis</span></h3><p class="small muted">{e(head)}</p>'
@@ -1302,6 +1303,34 @@ def _hypotheses_html(es: EnrichmentSet | None, version: int, steps: dict[str, st
                        f'</p>')
             + (f'<div class="aud cc">set aside: {e("; ".join(es.refused))}</div>'
                if es.refused else "") + "</div>")
+
+
+#: a proposal's basis as its 10-K reads it: (mark, words)
+_BASIS_MARK = {"IN_FILING": ("✓", "its 10-K's revenue sentence names it"),
+               "FILING_NAMES_OTHER": ("≠", "its 10-K's revenue sentence names another way"),
+               "NOT_DESCRIBED": ("–", "its 10-K states no revenue sentence in these words"),
+               "UNCHECKED": ("·", "not checked")}
+
+
+def _hrow(x: EnrichmentCandidate, cond: bool) -> str:
+    """One implied company as a row: ticker, name, which way (a condition says "would"), how it
+    earns (the model's) and what its 10-K says of that — opening to the rationale, the basis,
+    the filing's own sentence and the SEC check."""
+    pos = x.direction is Direction.POSITIVE
+    side = ("would " if cond else "could ") + ("benefit" if pos else "be hurt")
+    tick = ", ".join(dict.fromkeys(v.ticker for v in x.listings)) or (x.ticker_hint or "—")
+    mark, why = _BASIS_MARK.get(x.basis_check, ("·", "not checked"))
+    earns = BASIS_LABEL.get(x.revenue_model, x.revenue_model) if x.revenue_model else "not stated"
+    basis = basis_line(x)
+    return (f'<details class="hrow"><summary><span class="tkr">{e(tick)}</span>'
+            f'<b>{e(x.name)}</b><span class="side {"up" if pos else "down"}">{e(side)}</span>'
+            f'<span class="earn">{e(earns)}</span><span class="ck" title="{e(why)}">{mark}</span>'
+            f'</summary><div class="hbody"><p>{e(x.rationale)}</p>'
+            f'<p class="small">Listing: {e(enrichment_listing(x))}</p>'
+            + (f'<p class="small basis">{e(basis)}</p>' if basis else "")
+            + "".join(f'<p class="filing">“{e(q)}”</p>' for q in x.basis_quote)
+            + f'<span class="aud cc">{e(x.resolution_status.value)} · {e(x.resolution_note)}'
+            f'</span></div></details>')
 
 
 def _ml(label: str) -> str:
@@ -1792,6 +1821,23 @@ class Desk:
                 f'Open in the full record ↗</a></div>'
                 f'<span class="aud cc">{e(f.audit)}</span></li>')
 
+    def finding_line(self, f: Finding) -> str:
+        """A finding on the THESIS page as one line — whether it affects the action, its kind,
+        the line it questions (clamped) — opening to the review's words and the record. The
+        Review tab keeps the full item (`finding_item`)."""
+        line, scope = split_scope(f.line)
+        return ('<li class="rvi"><details><summary>'
+                + (f'<span class="bdg bad" title="{e(f.decision)}">Affects action</span> '
+                   if f.decision else "")
+                + f'<b>{_KIND_WORD.get(f.kind, "Review")}</b> '
+                f'<span class="clamp1">“{ids_to_audit(e(line))}”</span></summary>'
+                + (f'<span class="aud scope"> ({e(scope)})</span>' if scope else "")
+                + f'<div class="said">{ids_to_audit(e(plain(f.said)))}</div>'
+                f'<div class="rvmeta"><span>raised {e(_day(f.raised))} (version '
+                f'{f.raised_version})</span><a href="'
+                f'{self.card_link(f.thesis_id, 1, self.anchor_of(f))}">Open in the full record ↗'
+                f'</a></div><span class="aud cc">{e(f.audit)}</span></details></li>')
+
     def review(self) -> str:
         w = self.week
         groups: dict[str, list[Finding]] = defaultdict(list)
@@ -2093,10 +2139,20 @@ class Desk:
         # the figures the thesis statement itself cites lead (the Alzheimer thesis led with a
         # gene-editing market size while its own $70bn sat fourth, 2026-10-14)
         lead = {cid for s in s01 for cid in s.claim_ids}
-        figs = sorted((r for r in c.s04_key_evidence if r.value_text),
-                      key=lambda r: (r.claim_id not in lead,
-                                     r.epistemic.value not in ("actual", "forecast"),
-                                     not re.search(r"\d", r.value_text or "")))[:4]
+        ranked = sorted((r for r in c.s04_key_evidence if r.value_text),
+                        key=lambda r: (r.claim_id not in lead,
+                                       r.epistemic.value not in ("actual", "forecast"),
+                                       not re.search(r"\d", r.value_text or "")))
+        # three DISTINCT figures: one value and label twice ("$26 billion · DTC cash-pay market
+        # size", at peak / at its peak) is one figure on a tear sheet
+        seen_fig: set[tuple[str, str]] = set()
+        figs = []
+        for r in ranked:
+            k = (r.value_text or "", figure_label(self.store, r.claim_id, r.label).lower())
+            if k not in seen_fig:
+                seen_fig.add(k)
+                figs.append(r)
+        figs = figs[:3]
         pub = {s.article_id: s for s in c.s09_sources}
         fig_html = "".join(
             f'<div class="num"><b>{e(r.value_text)}</b><span class="unit">'
@@ -2188,13 +2244,19 @@ class Desk:
                     f'<summary>{len(items) - keep} more {what}</summary><ul>'
                     + "".join(items[keep:]) + "</ul></details></li>")
 
-        decide = (f'<section class="panel next"><h2>What to investigate next</h2>{nxt}'
+        # THE TEAR SHEET (operator, 2026-10-15: "make the views how an expert would look at"):
+        # the decision and its reasons beside the thesis and its key figures on the first
+        # screen; who is exposed as rows; the long lists folded to counts. Nothing is dropped —
+        # every line is one click away, and the card is the complete printed record.
+        decide = (f'<aside class="decide"><h2>Why {e(_ACTION.get(action, (action,))[0])}</h2>'
+                  f'{why}{timing}'
+                  + (f'<h3>Next step</h3>{nxt}' if nxt else "")
                   + ('<details class="fold"><summary>When to raise or lower priority</summary>'
                      + (f'<h3>Would raise priority</h3><ul>{"".join(raise_)}</ul>'
                         if raise_ else "")
                      + (f'<h3>Would lower priority</h3><ul>{"".join(lower)}</ul>'
                         if lower else "") + "</details>" if raise_ or lower else "")
-                  + "</section>")
+                  + f'<div class="aud">{trace}</div></aside>')
         wrong = ('<section class="panel"><h2>What could prove it wrong</h2><ul class="risk">'
                  + (folded(risks, 3, "risks") or
                     "<li class=muted>None in the sources so far.</li>") + "</ul>"
@@ -2204,26 +2266,26 @@ class Desk:
                  + (f'<details class="fold"><summary>Competing explanation</summary>'
                     f'<ul class="risk">{"".join(alt)}</ul></details>' if alt else "")
                  + "</section>")
-        q = (f'<section class="panel q1"><h2>The thesis</h2>{thesis or none}</section>'
-             + f'<div class="grid2"><section class="panel"><h2>Why '
-               f'{e(_ACTION.get(action, (action,))[0])}</h2>{why}{timing}'
-               f'<div class="aud">{trace}</div></section>{decide}</div>'
-             + f'<div class="grid2"><section class="panel"><h2>Who is exposed</h2>{expo}'
-               f'</section>{wrong}</div>'
-             + (f'<section class="panel"><h2>The strongest figures</h2><div class="nums">'
-                f'{fig_html}</div></section>' if fig_html else "")
-             + f'<div class="grid2"><section class="panel"><h2>How it reaches fundamentals</h2>'
-               f'<ol class="chain">'
-               f'{"".join(steps) or "<li class=muted>No earnings step stated by the source.</li>"}'
-               f'</ol></section><section class="panel"><h2>What changed</h2>'
-               f'<p class="small">{e(moved)}</p>'
-             + (f"<ul>{''.join(changed)}</ul>" if changed else "") + "</section></div>"
-             + (f'<section class="panel" id="review"><h2>Open review findings '
-                f'<small>{len(mine)}</small></h2><ul class="rvitems">'
-                + "".join(self.finding_item(f, 1) for f in mine) + "</ul></section>"
-                if mine else "")
-             + (f'<section class="panel"><h2>Related theses</h2>{related}</section>'
-                if related else ""))
+        no_step = "<li class=muted>No earnings step stated by the source.</li>"
+        chain = (f'<section class="panel"><h2>How it reaches fundamentals</h2><ol class="chain">'
+                 f'{"".join(steps) or no_step}</ol></section>')
+        what = (f'<p class="small">{e(moved)}</p>'
+                + (f"<ul class=\"changed\">{''.join(changed)}</ul>" if changed else ""))
+        review = (f'<section class="panel" id="review"><h2>Open review findings '
+                  f'<small>{len(mine)}</small></h2><ul class="rvitems rvcompact">'
+                  + "".join(self.finding_line(f) for f in mine) + "</ul></section>"
+                  if mine else "")
+        rel = (f'<section class="panel"><h2>Related theses</h2>{related}</section>'
+               if related else "")
+        q = (f'<section class="panel sheet q1"><div class="sheetmain"><h2>The thesis</h2>'
+             f'{thesis or none}'
+             + (f'<h3 class="numh">Key figures</h3><div class="nums">{fig_html}</div>'
+                if fig_html else "")
+             + f'<h3 class="numh">What changed</h3>{what}'
+             + f'</div>{decide}</section>'
+             + f'<section class="panel"><h2>Who is exposed</h2>{expo}</section>'
+             + f'<div class="grid2">{wrong}{chain}</div>'
+             + (f'<div class="grid2">{review}{rel}</div>' if review and rel else review + rel))
         tabs = (f'<section class="tabs" data-tabs><div class="tabbar" role="tablist">'
                 f'<button data-tab="ev" class="on">Evidence ({n_ev})</button>'
                 f'<button data-tab="hi">History ({len(rc.history)})</button>'
@@ -2569,6 +2631,14 @@ white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
 margin-bottom:16px}
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sheet{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px}
+.sheet .decide{border-left:1px solid var(--line);padding-left:24px}
+.sheet .decide h2{margin-top:0}.sheet .numh{margin:18px 0 8px}
+.sheet .nums{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.rvcompact .rvi summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;
+list-style:none}.rvcompact .rvi summary::-webkit-details-marker{display:none}
+.rvcompact .clamp1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.rvcompact .said{font-size:13.5px;margin:6px 0}
 .grid2 .panel{margin-bottom:0}
 .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
 .num{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
@@ -2597,8 +2667,26 @@ font-size:13.5px;margin:6px 0}
 border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
 .hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
 .hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
-.hypo .basis{color:var(--ink2)}.hypo details.filing{font-size:13px;margin-top:2px}
-.hypo details.filing p{margin:4px 0}
+.hypo .basis{color:var(--ink2)}
+.hypo h4.cond{font-size:13px;font-weight:500;color:var(--ink2);margin:12px 0 4px}
+.hrows{border-top:1px solid var(--line)}
+details.hrow{border-bottom:1px solid var(--line)}
+details.hrow>summary,.hhead{display:grid;grid-template-columns:64px minmax(0,220px) 130px
+minmax(0,170px) 40px;gap:12px;align-items:baseline;padding:6px 2px;font-size:14px}
+details.hrow>summary{cursor:pointer;list-style:none}
+.hhead{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+padding-top:2px}
+details.hrow>summary::-webkit-details-marker{display:none}
+details.hrow .tkr{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600}
+details.hrow .side.up{color:var(--ok)}details.hrow .side.down{color:var(--bad)}
+details.hrow .earn{color:var(--muted);font-size:13px}details.hrow .ck{text-align:center}
+.hbody{padding:2px 2px 10px 82px;font-size:13.5px}.hbody p{margin:4px 0}
+.hbody .filing{color:var(--ink2);border-left:2px solid var(--line);padding-left:8px}
+@media (max-width:880px){.hhead{display:none}
+details.hrow>summary{display:flex;flex-wrap:wrap;gap:2px 10px}
+details.hrow .tkr{width:52px}details.hrow>summary>b{flex:1 1 60%}
+details.hrow .side{margin-left:62px}details.hrow .ck{margin-left:auto}.hbody{padding-left:0}
+.rvcompact .rvi summary{flex-wrap:wrap}.rvcompact .clamp1{flex-basis:100%;white-space:normal}}
 .tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
 padding:0 6px;margin-left:4px;white-space:nowrap}
 .tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
@@ -2691,7 +2779,8 @@ details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-siz
 aside{position:static;min-width:0}
 .ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
 .steps4{grid-template-columns:1fr}
-.grid2{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}.sheet{grid-template-columns:1fr}
+.sheet .decide{border-left:0;padding-left:0;border-top:1px solid var(--line);margin-top:16px}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .filters input#q{min-width:0;width:100%;flex-basis:100%}
 .arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
