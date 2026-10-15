@@ -147,6 +147,14 @@ white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
 margin-bottom:16px}
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sheet{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px}
+.sheet .decide{border-left:1px solid var(--line);padding-left:24px}
+.sheet .decide h2{margin-top:0}.sheet .numh{margin:18px 0 8px}
+.sheet .nums{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.rvcompact .rvi summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;
+list-style:none}.rvcompact .rvi summary::-webkit-details-marker{display:none}
+.rvcompact .clamp1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.rvcompact .said{font-size:13.5px;margin:6px 0}
 .grid2 .panel{margin-bottom:0}
 .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
 .num{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
@@ -175,6 +183,26 @@ font-size:13.5px;margin:6px 0}
 border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
 .hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
 .hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
+.hypo .basis{color:var(--ink2)}
+.hypo h4.cond{font-size:13px;font-weight:500;color:var(--ink2);margin:12px 0 4px}
+.hrows{border-top:1px solid var(--line)}
+details.hrow{border-bottom:1px solid var(--line)}
+details.hrow>summary,.hhead{display:grid;grid-template-columns:64px minmax(0,220px) 130px
+minmax(0,170px) 40px;gap:12px;align-items:baseline;padding:6px 2px;font-size:14px}
+details.hrow>summary{cursor:pointer;list-style:none}
+.hhead{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+padding-top:2px}
+details.hrow>summary::-webkit-details-marker{display:none}
+details.hrow .tkr{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600}
+details.hrow .side.up{color:var(--ok)}details.hrow .side.down{color:var(--bad)}
+details.hrow .earn{color:var(--muted);font-size:13px}details.hrow .ck{text-align:center}
+.hbody{padding:2px 2px 10px 82px;font-size:13.5px}.hbody p{margin:4px 0}
+.hbody .filing{color:var(--ink2);border-left:2px solid var(--line);padding-left:8px}
+@media (max-width:880px){.hhead{display:none}
+details.hrow>summary{display:flex;flex-wrap:wrap;gap:2px 10px}
+details.hrow .tkr{width:52px}details.hrow>summary>b{flex:1 1 60%}
+details.hrow .side{margin-left:62px}details.hrow .ck{margin-left:auto}.hbody{padding-left:0}
+.rvcompact .rvi summary{flex-wrap:wrap}.rvcompact .clamp1{flex-basis:100%;white-space:normal}}
 .tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
 padding:0 6px;margin-left:4px;white-space:nowrap}
 .tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
@@ -267,7 +295,8 @@ details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-siz
 aside{position:static;min-width:0}
 .ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
 .steps4{grid-template-columns:1fr}
-.grid2{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}.sheet{grid-template-columns:1fr}
+.sheet .decide{border-left:0;padding-left:0;border-top:1px solid var(--line);margin-top:16px}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .filters input#q{min-width:0;width:100%;flex-basis:100%}
 .arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
@@ -277,43 +306,52 @@ h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .ml{display:inline;color:var(--muted);font-size:12.5px}
 .tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
 @media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
-</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="index.html">This week</a><a href="themes.html">Themes</a><a href="articles.html">Articles</a><a href="review.html">Review</a><a href="uploads.html">Uploads</a><a href="sources.html" class="on">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><main class="wrap"><section class="hero"><h1 class="tabtitle">Sources</h1><p class="sum">4 automatic · 2 manual-first · 4 need attention</p><p class="hint">A blocked or quiet source is not evidence it published nothing. Documents you upload are analysed once you confirm the licence allows it (<code>--llm-permitted</code>).</p></section><section><h2>Automatic coverage <small>read by the weekly scan; a report a page links to is listed on Uploads</small></h2><div class="hscroll"><table class="arts srct"><tr><th>Publisher</th><th>Access now</th><th>Newest article</th><th>Analysed this week</th></tr><tr><td><b>Citi</b><div class="small">linked reports read by the scan</div><div class="aud"><code>citi_must_c</code></div></td><td><span class="st part">Partial access</span> <span class="small">articles are read only in part; dates or bylines are missing; some articles are previews or summaries of a fuller report; nothing new recently</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>extraction</b> — 3 of 3 sampled article(s) read; 0 full text</li><li><b>dates authors</b> — 3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 0 of 3 carry a byline</li><li><b>completeness</b> — partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a teaser / excerpt); 2 sampled page(s) summarise a report they link to — the scan READS it (linked_reports = &quot;fetch&quot;)</li><li><b>freshness</b> — newest dated article 2026-09-14 — nothing dated since 2026-09-29: QUIET, not unhealthy</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span>14 Sep 2026 <span class="small">· quiet</span></td><td><span class="ml">analysed this week: </span>1</td></tr><tr><td><b>J.P. Morgan Private Bank</b><div class="aud"><code>jpm_tmt</code></div></td><td><span class="st ok">Healthy</span> <span class="small">full text, dates and bylines read</span><div class="small">checked 12 Oct 2026</div></td><td class="nowrap"><span class="ml">newest article: </span>9 Oct 2026</td><td><span class="ml">analysed this week: </span>1</td></tr><tr><td><b>TrendForce</b><div class="aud"><code>trendforce</code></div></td><td><span class="st ok">Healthy</span> <span class="small">full text, dates and bylines read</span><div class="small">checked 12 Oct 2026</div></td><td class="nowrap"><span class="ml">newest article: </span>8 Oct 2026</td><td><span class="ml">analysed this week: </span>1</td></tr><tr><td><b>SemiAnalysis</b><div class="small">paid posts read as their preview — by decision</div><div class="aud"><code>semianalysis</code></div></td><td><span class="st part">Partial access</span> <span class="small">some articles are previews or summaries of a fuller report</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>completeness</b> — partial: 1 of 3 sampled article(s) are paywalled previews — only the preview is readable</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span>8 Oct 2026</td><td><span class="ml">analysed this week: </span>2</td></tr></table></div></section><section><h2>Manual-first coverage <small>the scan does not read these; research arrives only as documents you supply</small></h2><div class="hscroll"><table class="arts srct"><tr><th>Publisher</th><th>Access now</th><th>Newest article</th><th>Analysed this week</th></tr><tr><td><b>Morgan Stanley</b><div class="small">research page: <a href="https://www.morganstanley.com/what-we-do/research">morganstanley.com/what-we-do/research</a></div><div class="aud"><code>ms_research</code></div></td><td><span class="st bad">Blocked</span> <span class="small">the site refuses automated access; a known restriction — supply its research by upload</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>access</b> — robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span>29 Sep 2026</td><td><span class="ml">analysed this week: </span>6</td></tr><tr><td><b>Goldman Sachs</b><div class="small">research pages: <a href="https://www.goldmansachs.com/insights/goldman-sachs-research/">goldmansachs.com/insights/goldman-sachs-research</a> · <a href="https://www.goldmansachs.com/insights/markets">goldmansachs.com/insights/markets</a></div><div class="aud"><code>gs_research</code></div></td><td><span class="st bad">Blocked</span> <span class="small">the site refuses automated access; a known restriction — supply its research by upload</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>access</b> — https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span><span class="muted">not known</span></td><td><span class="ml">analysed this week: </span>—</td></tr></table></div></section><div class="foot">Generated 2026-10-14 13:59 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261014T110419Z-reanalyse, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div><div class="foot"><a href="dashboard.html">Full weekly report</a> · <a href="report_print.html">Printable report</a></div></main><script>function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="index.html">This week</a><a href="themes.html">Themes</a><a href="articles.html">Articles</a><a href="review.html">Review</a><a href="uploads.html">Uploads</a><a href="sources.html" class="on">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><main class="wrap"><section class="hero"><h1 class="tabtitle">Sources</h1><p class="sum">4 automatic · 2 manual-first · 4 need attention</p><p class="hint">A blocked or quiet source is not evidence it published nothing. Documents you upload are analysed once you confirm the licence allows it (<code>--llm-permitted</code>).</p></section><section><h2>Automatic coverage <small>read by the weekly scan; a report a page links to is listed on Uploads</small></h2><div class="hscroll"><table class="arts srct"><tr><th>Publisher</th><th>Access now</th><th>Newest article</th><th>Analysed this week</th></tr><tr><td><b>Citi</b><div class="small">linked reports read by the scan</div><div class="aud"><code>citi_must_c</code></div></td><td><span class="st part">Partial access</span> <span class="small">articles are read only in part; dates or bylines are missing; some articles are previews or summaries of a fuller report; nothing new recently</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>extraction</b> — 3 of 3 sampled article(s) read; 0 full text</li><li><b>dates authors</b> — 3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 0 of 3 carry a byline</li><li><b>completeness</b> — partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a teaser / excerpt); 2 sampled page(s) summarise a report they link to — the scan READS it (linked_reports = &quot;fetch&quot;)</li><li><b>freshness</b> — newest dated article 2026-09-14 — nothing dated since 2026-09-29: QUIET, not unhealthy</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span>14 Sep 2026 <span class="small">· quiet</span></td><td><span class="ml">analysed this week: </span>1</td></tr><tr><td><b>J.P. Morgan Private Bank</b><div class="aud"><code>jpm_tmt</code></div></td><td><span class="st ok">Healthy</span> <span class="small">full text, dates and bylines read</span><div class="small">checked 12 Oct 2026</div></td><td class="nowrap"><span class="ml">newest article: </span>9 Oct 2026</td><td><span class="ml">analysed this week: </span>1</td></tr><tr><td><b>TrendForce</b><div class="aud"><code>trendforce</code></div></td><td><span class="st ok">Healthy</span> <span class="small">full text, dates and bylines read</span><div class="small">checked 12 Oct 2026</div></td><td class="nowrap"><span class="ml">newest article: </span>8 Oct 2026</td><td><span class="ml">analysed this week: </span>1</td></tr><tr><td><b>SemiAnalysis</b><div class="small">paid posts read as their preview — by decision</div><div class="aud"><code>semianalysis</code></div></td><td><span class="st part">Partial access</span> <span class="small">some articles are previews or summaries of a fuller report</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>completeness</b> — partial: 1 of 3 sampled article(s) are paywalled previews — only the preview is readable</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span>8 Oct 2026</td><td><span class="ml">analysed this week: </span>2</td></tr></table></div></section><section><h2>Manual-first coverage <small>the scan does not read these; research arrives only as documents you supply</small></h2><div class="hscroll"><table class="arts srct"><tr><th>Publisher</th><th>Access now</th><th>Newest article</th><th>Analysed this week</th></tr><tr><td><b>Morgan Stanley</b><div class="small">research page: <a href="https://www.morganstanley.com/what-we-do/research">morganstanley.com/what-we-do/research</a></div><div class="aud"><code>ms_research</code></div></td><td><span class="st bad">Blocked</span> <span class="small">the site refuses automated access; a known restriction — supply its research by upload</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>access</b> — robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span>29 Sep 2026</td><td><span class="ml">analysed this week: </span>6</td></tr><tr><td><b>Goldman Sachs</b><div class="small">research pages: <a href="https://www.goldmansachs.com/insights/goldman-sachs-research/">goldmansachs.com/insights/goldman-sachs-research</a> · <a href="https://www.goldmansachs.com/insights/markets">goldmansachs.com/insights/markets</a></div><div class="aud"><code>gs_research</code></div></td><td><span class="st bad">Blocked</span> <span class="small">the site refuses automated access; a known restriction — supply its research by upload</span><div class="small">checked 12 Oct 2026</div><details class="fold"><summary>What the check found</summary><ul><li><b>access</b> — https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)</li></ul></details></td><td class="nowrap"><span class="ml">newest article: </span><span class="muted">not known</span></td><td><span class="ml">analysed this week: </span>—</td></tr></table></div></section><div class="foot">Generated 2026-10-15 17:05 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261014T110419Z-reanalyse, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div><div class="foot"><a href="dashboard.html">Full weekly report</a> · <a href="report_print.html">Printable report</a></div></main><script>function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
 function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
 rowsOf('input.morebox').forEach(function(b){b.checked=true})}
+function recap(root){rowsOf(root+' table[data-cap],table'+root+'[data-cap]').forEach(
+function(t){var cap=+t.dataset.cap,k=0;
+Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
+if(!r.hasAttribute('data-sub')&&r.style.display!=='none')k++;r.classList.toggle('xtra',k>cap)});
+var l=document.querySelector('label[for="'+t.dataset.box+'"]');if(l){l.style.display=k>cap?'':
+'none';if(k>cap)l.textContent='Showing '+cap+' of '+k+' '+t.dataset.what+' — show all '+k}})}
 function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
 s=document.getElementById('fs').value,a=document.getElementById('fa').value,
 ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
 if(q||a||ar)openAll('#tt');
 all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
-(!ar||r.dataset.area===ar)&&(!q||r.textContent.toLowerCase().indexOf(q)>=0);
+(!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
 r.style.display=ok?'':'none';n+=ok?1:0});
 rowsOf('#tt details[data-grp]').forEach(function(g){var v=Array.prototype.slice.call(
 g.querySelectorAll('tr[data-area]')).some(function(r){return r.style.display!=='none'});
-g.style.display=v?'':'none';if(q||a||ar)g.open=v});
-document.getElementById('cnt').textContent='showing '+n+' of '+all.length}
+g.style.display=v?'':'none';if(q||a||ar)g.open=v});recap('#tt');
+document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
 function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
--r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:-r.dataset.rv};
+-r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:
++r.dataset.ord};
 rowsOf('#tt table').forEach(function(t){var rs=Array.prototype.slice.call(t.querySelectorAll(
-'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)}).forEach(function(r){
-(r.parentNode).appendChild(r)})})}
+'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)||a.dataset.ord-b.dataset.ord})
+.forEach(function(r){(r.parentNode).appendChild(r)})});recap('#tt')}
 function fa(){var r=document.getElementById('fr').value,p=document.getElementById('fp').value,n=0,
 all=rowsOf('#at tr[data-state]');if(r||p)openAll('#at');all.forEach(function(x){var ok=
 (!r||x.dataset.state===r)&&(!p||x.dataset.pub===p);x.style.display=ok?'':'none';n+=ok?1:0});
 rowsOf('#at tr[data-sub]').forEach(function(x){var t=x.previousElementSibling;
-x.style.display=t&&t.style.display==='none'?'none':''});
-document.getElementById('cnt2').textContent='showing '+n+' of '+all.length}
+x.style.display=t&&t.style.display==='none'?'none':''});recap('#at');
+document.getElementById('cnt2').textContent=n+' of '+all.length+' match'}
 function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElementById('frn')
 .checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
 if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
 x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
 n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
 .call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
-document.getElementById('cnt3').textContent='showing '+n+' of '+all.length}
+document.getElementById('cnt3').textContent=n+' of '+all.length+' match'}
 function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
 var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
 x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
 p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
 if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
-u.get('area');if(u.get('sort')){document.getElementById('so').value=u.get('sort');srt()}flt()}
+u.get('area');if(u.get('sort'))document.getElementById('so').value=u.get('sort');srt();flt()}
 if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+window.addEventListener('beforeprint',function(){rowsOf('details').forEach(function(d){
+d.open=true});rowsOf('input.morebox').forEach(function(b){b.checked=true})});
 deskInit(document,new URLSearchParams(location.search));</script><script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById(decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){t.classList.remove('hit')},2500)}addEventListener('hashchange',function(){reveal(location.hash)});addEventListener('load',function(){reveal(location.hash)});document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)reveal(location.hash)});</script></body></html>
