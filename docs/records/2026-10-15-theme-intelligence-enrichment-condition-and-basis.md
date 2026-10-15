@@ -20,13 +20,14 @@ offered. Operator: "do both options as one PR".
 | **2. The checkable basis** | The model now states how the company earns from the exposed line (`revenue_model`: subscription, usage-based, transaction fees, licences, product sales, advertising, services, other) and which line it is (`revenue_line`). Both are required by the tool, and the prompt version is `ti-enrich-2`. The basis is checked against the company's OWN latest annual report (10-K / 20-F / 40-F, never an amendment) filed on or before the as-of, read through the same SEC resolver and cache as the listing check, with filings cached for good. The check finds the filing's own revenue-source sentences ("We derive our revenues from …", "Our revenue is primarily derived from …") and compares the ways of earning they name with the one stated. **IN_FILING**: the sentence names it, and also lists the other ways it names. **FILING_NAMES_OTHER**: it names others, not this one. **NOT_DESCRIBED**: no such sentence in these words. **UNCHECKED**: nothing could be read, and the note says why. The quote starts at the filing's own words; a section title glued on by the text layer is dropped. The sentence is shown on demand on the page and in full on the printed card. A registrant the SEC identity check refused is never read. |
 
 **THE DESIGN THAT WAS MEASURED AND REFUSED.** The first design searched the whole 10-K for each
-model's words. On the 12 real filings of the demo's proposals it confirmed almost anything:
+model's words. On the 13 real filings of the demo's first proposals (`ti-enrich-1`), it confirmed
+almost anything:
 - Adobe matched 5 of 7 models;
 - Salesforce's "per seat" hit was a sentence about attrition;
 - most SaaS filings "confirmed" usage-based through a minor AI add-on.
 
-Reading only the filing's own revenue-source sentences fixed this. It found one for 9 of the 12;
-AMD, Broadcom and Vertiv state none in these words.
+Reading only the filing's own revenue-source sentences fixed this. It found one naming a way of
+earning for 10 of the 13; AMD, Broadcom and Vertiv state none in these words.
 
 **DOES THIS SELECT ON FORM?** Yes. The basis check reads a disclosure, so NOT_DESCRIBED or
 FILING_NAMES_OTHER is a statement about the filing's words, never about the business.
