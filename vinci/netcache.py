@@ -69,6 +69,8 @@ class CachedHttp:
         if extra_headers:
             headers.update(extra_headers)
         self._client = httpx.Client(headers=headers, timeout=timeout_sec, follow_redirects=True)
+        #: url -> when the copy this instance last read or wrote was fetched (`fetched_at`)
+        self._fetched: dict[str, float] = {}
 
     # --- public API ---------------------------------------------------------------------------
     def get_text(
@@ -103,8 +105,12 @@ class CachedHttp:
     def fetched_at(self, url: str, *, params: dict[str, Any] | None = None) -> float | None:
         """When the cached copy of ``url`` was fetched (epoch seconds), or None when no readable
         copy is held — so data read from the cache carries its RETRIEVAL time, never the time it
-        was read back."""
-        path = self._cache_path(self._with_params(url, params))
+        was read back. A copy this instance just read or wrote answers from memory (the entry can
+        be megabytes; it is not parsed twice)."""
+        full = self._with_params(url, params)
+        if full in self._fetched:
+            return self._fetched[full]
+        path = self._cache_path(full)
         if not path.exists():
             return None
         try:
@@ -162,11 +168,13 @@ class CachedHttp:
             return None  # corrupt cache → refetch
         if ttl_seconds is not None and (time.time() - entry.fetched_at) > ttl_seconds:
             return None
+        self._fetched[url] = entry.fetched_at
         return entry.text
 
     def _write_cache(self, url: str, text: str) -> None:
         entry = _CacheEntry(url=url, fetched_at=time.time(), text=text)
         self._cache_path(url).write_text(json.dumps(entry.__dict__))
+        self._fetched[url] = entry.fetched_at
 
     def _throttle(self) -> None:
         if self._min_interval <= 0:

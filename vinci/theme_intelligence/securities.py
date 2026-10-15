@@ -156,10 +156,13 @@ _COMPATIBLE: dict[str, frozenset[str]] = {
 }
 
 
-#: a CUSTOMER clause: what follows names the industry served, not the company's own
+#: a CUSTOMER clause: what follows names the industry served, not the company's own. "to" only
+#: after a supplying word — an infinitive "to" introduces the company's OWN business ("expected
+#: to sell fuel cells"), and cutting there left nothing for the identity check to read
 _SERVED = re.compile(
-    r"\b(?:for|to|sold to|selling to|serving|supplying|supplies to|used by)\b.*$",
-                     re.I | re.S)
+    r"\b(?:for|serving|supplying|used by|(?:supplier|suppliers|supplies|supply|sells?|selling|"
+    r"sold|provides?|providing|provider|vendor|exposed|exposure|leases?|leasing)\s+to)\b.*$",
+    re.I | re.S)
 
 
 def context_families(text: str) -> set[str]:
@@ -341,9 +344,12 @@ class SecResolver:
                                         namespace="sec")
         self._index: SecIndex | None = None
         self._subs: dict[str, dict[str, Any]] = {}
-        #: why a registrant's submissions could not be read — retried on the next lookup, never
-        #: remembered as "no data" (a cached failure switched the identity check off for the run)
+        #: why a registrant's submissions could not be read — remembered for this resolver's run
+        #: (every lookup re-paid the whole retry ladder: an SEC outage stretched a scan to hours),
+        #: and never read as "no data": a partial name whose filings were not read is refused
+        #: as unchecked (a cached None had switched the identity check off, 2026-10-14)
         self.sub_errors: dict[str, str] = {}
+        self._rows: dict[tuple[str, date], list[tuple[str, date, str, str]]] = {}
         self._covers: dict[tuple[str, date], tuple[PitCover | None, str]] = {}
 
     def index(self) -> SecIndex:
@@ -373,6 +379,8 @@ class SecResolver:
         return self._index
 
     def submissions(self, cik10: str) -> dict[str, Any] | None:
+        if cik10 in self.sub_errors:
+            return None  # failed once this run: not asked again
         if cik10 not in self._subs:
             try:
                 self._subs[cik10] = cast(dict[str, Any], self._http.get_json(
@@ -380,7 +388,6 @@ class SecResolver:
             except HttpError as exc:
                 self.sub_errors[cik10] = str(exc)
                 return None
-            self.sub_errors.pop(cik10, None)
         return self._subs[cik10]
 
     def is_foreign_private_issuer(self, cik10: str, *, as_of: date) -> bool | None:
@@ -399,7 +406,13 @@ class SecResolver:
 
     def _filing_rows(self, cik10: str, as_of: date) -> list[tuple[str, date, str, str]]:
         """(form, filing date, accession, primary document) — recent first, then older pages
-        until one periodic filing on or before `as_of` is in hand."""
+        until one periodic filing on or before `as_of` is in hand. Walked once per registrant and
+        date: the foreign-filer check, the cover page and enrichment read the same rows."""
+        if (cik10, as_of) not in self._rows:
+            self._rows[(cik10, as_of)] = self._walk_filings(cik10, as_of)
+        return self._rows[(cik10, as_of)]
+
+    def _walk_filings(self, cik10: str, as_of: date) -> list[tuple[str, date, str, str]]:
         sub = self.submissions(cik10)
         if sub is None:
             return []
@@ -496,7 +509,8 @@ class SecResolver:
             # ticker printed — the FIRST of several picked another fund ("…(SOXX) and the VanEck
             # Semiconductor ETF (SMH)" resolved VanEck to SOXX)
             name_t = re.findall(r"\(([A-Z]{2,6})\)", m.name_as_written)
-            beside = re.findall(re.escape(m.name_as_written) + r"\s*\(([A-Z]{2,6})\)", m.quote)
+            spelled = r"\s+".join(re.escape(w) for w in m.name_as_written.split())
+            beside = re.findall(rf"(?i:{spelled})\s*\(([A-Z]{{2,6}})\)", m.quote)
             printed = list(dict.fromkeys(t for t in re.findall(
                 r"\(([A-Z]{2,6})\)", m.name_as_written + " " + m.quote) if t in idx.funds))
             own = [t for t in (*name_t, *beside) if t in idx.funds]
@@ -619,18 +633,23 @@ class SecResolver:
                        note=f"{m.name_as_written!r} → {name} (CIK {cik}) refused: {conflict}"
                             + (f"; the extraction's hint {hint!r} names a listing the SEC "
                                f"data does not hold" if foreign_hint else ""))
+        unread = self.sub_errors.get(cik)
+        if unread is not None and _tokens(name) != written:
+            # the business it files under was not read: a partial name is never resolved unchecked
+            return res(ResolutionStatus.UNRESOLVED,
+                       method + "; refused — identity not checked",
+                       note=f"{m.name_as_written!r} only partially matches {name} (CIK {cik}), "
+                            f"whose SEC submissions could not be read this run ({unread}) — "
+                            f"the business it files under was not checked: not resolved")
         # a PARTIAL name needs backing: the hint, the exact name, or the company's own industry
         own_industry = bool(sic_families(sic) & context_families(described))
         if not (hint_backed or issuer_backed or _tokens(name) == written or own_industry):
-            unread = self.sub_errors.get(cik)
             return res(ResolutionStatus.UNRESOLVED,
                        method + "; refused — a partial name with nothing confirming it",
                        note=f"{m.name_as_written!r} only partially matches {name} (CIK {cik}), "
                             f"and no SEC-listed ticker hint, exact name or the business the "
                             f"source describes confirms it is that company — a partial name is "
-                            f"not identity: not resolved"
-                            + (f"; the SEC submissions could not be read ({unread})"
-                               if unread else ""))
+                            f"not identity: not resolved")
         if sic is not None:
             method += f"; identity checked against the issuer's SEC industry (SIC {sic})"
         current = sorted(idx.by_cik.get(cik, []), key=lambda x: (x[1] not in _MAJOR, x[0]))

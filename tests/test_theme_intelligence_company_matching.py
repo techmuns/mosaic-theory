@@ -31,6 +31,7 @@ from vinci.theme_intelligence.schemas import (
 from vinci.theme_intelligence.securities import (
     ARCHIVE_DOC,
     SUBMISSIONS,
+    SUBMISSIONS_PAGE,
     TICKERS_EXCHANGE,
     TICKERS_MF,
     SecResolver,
@@ -126,6 +127,9 @@ def test_a_fund_takes_the_ticker_printed_beside_its_own_name() -> None:
     assert r.status is ResolutionStatus.FUND and [x.ticker for x in r.listings] == ["SMH"]
     ishares = vaneck.model_copy(update={"name_as_written": "iShares Semiconductor ETF"})
     assert _tickers(ishares) == ["SOXX"]
+    # the name beside its ticker, whatever its case or spacing as the model wrote it
+    for spelt in ("VanEck semiconductor ETF", "VanEck  Semiconductor  ETF"):
+        assert _tickers(vaneck.model_copy(update={"name_as_written": spelt})) == ["SMH"]
     # several printed and none beside the name: which one is not said
     both = vaneck.model_copy(update={"name_as_written": "semiconductor ETFs"})
     rb = _resolver().resolve(both, as_of=AS_OF)
@@ -205,6 +209,19 @@ def test_the_name_as_written_may_be_the_ticker_the_hint_names() -> None:
     assert ro.status is ResolutionStatus.UNRESOLVED and "BOEING CO" in ro.note
 
 
+def test_an_infinitive_to_is_not_a_customer_clause() -> None:
+    """Everything after the first "to" was dropped as the industry served: "Expected to sell SOFC
+    fuel cells to data centres" read as no business at all, and a wrong hint went unchecked."""
+    m = mention("Delta", "Delta was named", "Expected to sell SOFC fuel cells to data centres",
+                hint="DAL")
+    r = _resolver().resolve(m, as_of=AS_OF)
+    assert r.status is ResolutionStatus.UNRESOLVED and "SIC 4512" in r.note
+    # a supplying word before "to" still names the customer, not the company
+    tmo = mention("Thermo Fisher", "Thermo Fisher was named",
+                  "instruments supplier to pharmaceutical companies", hint="TMO")
+    assert _tickers(tmo) == ["TMO"]
+
+
 def test_a_plainly_different_own_business_is_still_refused() -> None:
     m = mention("Merck", "Merck was mentioned", "oil pipeline operator", hint="MRK")
     r = _resolver().resolve(m, as_of=AS_OF)
@@ -234,25 +251,31 @@ def test_the_identity_check_reads_the_role_never_the_quote() -> None:
 
 # --- O12: one failed SEC read is not "no data" --------------------------------------------------
 
-def test_a_failed_submissions_read_is_retried_never_remembered_as_no_data() -> None:
-    """One failed fetch was cached as None for the run: the identity check was off, and Delta (the
-    Taiwanese power-supply maker) resolved to Delta Air Lines on every later lookup."""
+def test_a_failed_submissions_read_fails_closed_and_is_not_asked_again_this_run() -> None:
+    """One failed fetch was cached as None for the run and the identity check was OFF: Delta (the
+    Taiwanese power-supply maker) resolved to Delta Air Lines on every later lookup. Retrying on
+    every lookup instead re-paid the whole retry ladder each time (an SEC outage stretched a scan
+    to hours). A failure is remembered for the run — and a partial name whose filings were not
+    read is refused as unchecked, never resolved without the check."""
     m = mention("Delta", "Ceres Power (and its licensees), Weichai, Doosan, and Delta",
-                "SOFC competitor", role="disruptor")
+                "SOFC competitor", hint="DAL", role="disruptor")
     http = RealSec(fail_submissions=(DAL, 1))
     r = SecResolver(Path("/nonexistent"), http=http)  # type: ignore[arg-type]
     first = r.resolve(m, as_of=AS_OF)
     assert first.status is ResolutionStatus.UNRESOLVED and not first.listings
-    assert "the SEC submissions could not be read" in first.note
-    second = r.resolve(m, as_of=AS_OF)  # the SEC answers now
-    assert second.status is ResolutionStatus.UNRESOLVED and "SIC 4512" in second.note
+    assert "identity not checked" in first.method and "could not be read" in first.note
+    second = r.resolve(m, as_of=AS_OF)  # the SEC would answer now — not asked again this run
+    assert second.status is ResolutionStatus.UNRESOLVED and http.reads[DAL] == 1
+    # the next run reads it again, and the business it files under refuses the airline
+    again = SecResolver(Path("/nonexistent"), http=http)  # type: ignore[arg-type]
+    third = again.resolve(m, as_of=AS_OF)
+    assert third.status is ResolutionStatus.UNRESOLVED and "SIC 4512" in third.note
     assert http.reads[DAL] == 2
-    # a read that succeeded is kept for the run
-    healthy = RealSec()
-    rh = SecResolver(Path("/nonexistent"), http=healthy)  # type: ignore[arg-type]
-    rh.resolve(m, as_of=AS_OF)
-    rh.resolve(m, as_of=AS_OF)
-    assert healthy.reads[DAL] == 1
+    # the registrant's exact name needs no industry check: it is not refused as unchecked
+    exact = m.model_copy(update={"name_as_written": "Delta Air Lines", "role_detail": "airline"})
+    failing = RealSec(fail_submissions=(DAL, 1))
+    fresh = SecResolver(Path("/nonexistent"), http=failing)  # type: ignore[arg-type]
+    assert "identity not checked" not in fresh.resolve(exact, as_of=AS_OF).method
 
 
 # --- U21: foreign-filer status as of the date ---------------------------------------------------
@@ -316,6 +339,49 @@ def test_the_ticker_map_is_stamped_with_the_day_it_was_fetched(tmp_path: Path) -
     # an HTTP layer that holds no fetch time says so — never today's date
     rd = _resolver().resolve(m, as_of=AS_OF)
     assert rd.source_ref == "SEC ticker map, retrieval date not recorded (name match only)"
+
+
+def test_the_filings_are_walked_once_per_registrant_and_date(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """The foreign-filer check and the cover page each walked the older submission pages."""
+    page = "CIK0000310158-submissions-001.json"
+    http = RealSec()
+    real = http.get_json
+    walks: list[str] = []
+
+    def with_page(url: str, ttl_seconds: float | None = None) -> Any:
+        if url == SUBMISSIONS_PAGE.format(name=page):
+            walks.append(url)  # an older page of Merck's filings (added here)
+            return {"form": ["10-K"], "filingDate": ["2019-02-27"],
+                    "accessionNumber": ["0000310158-19-000010"], "primaryDocument": ["k.htm"]}
+        got = real(url, ttl_seconds)
+        if url == SUBMISSIONS.format(cik="0000310158"):
+            got["filings"]["files"] = [{"name": page, "filingFrom": "2010-01-01"}]
+        return got
+    monkeypatch.setattr(http, "get_json", with_page)
+    m = mention("Merck", "Merck was named", "drug maker", hint="MRK")
+    r = SecResolver(Path("/nonexistent"), http=http)  # type: ignore[arg-type]
+    res = r.resolve(m, as_of=date(2020, 1, 1))
+    assert res.registrant == "Merck & Co., Inc." and walks == [SUBMISSIONS_PAGE.format(name=page)]
+    assert r.is_foreign_private_issuer("0000310158", as_of=date(2020, 1, 1)) is False
+    assert len(walks) == 1  # the enrichment's check reads the same rows
+
+
+def test_the_http_cache_remembers_the_fetch_time_of_what_it_read(tmp_path: Path) -> None:
+    """The fetch time was read by parsing the whole cached entry again — megabytes for the SEC
+    ticker map — right after the map itself had been read."""
+    http = CachedHttp(cache_dir=tmp_path, user_agent="test", min_interval_sec=0.0, max_retries=0)
+    read, fresh = "https://example.test/read.json", "https://example.test/fresh.json"
+    stamp = time.time() - 60
+    http._cache_path(read).write_text(json.dumps({"url": read, "fetched_at": stamp,
+                                                  "text": "{}"}))
+    assert http.get_json(read) == {}
+    http._cache_path(read).unlink()  # gone from disk: the time comes from the read itself
+    assert http.fetched_at(read) == stamp
+    http._fetch_with_retries = lambda *_a, **_k: "{}"  # type: ignore[method-assign]
+    assert http.get_json(fresh) == {}
+    http._cache_path(fresh).unlink()
+    assert http.fetched_at(fresh) is not None  # … and from a fresh write
 
 
 def test_the_http_cache_reports_when_its_copy_was_fetched(tmp_path: Path) -> None:
