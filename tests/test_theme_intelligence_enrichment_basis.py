@@ -103,7 +103,7 @@ def test_a_sentence_naming_several_ways_says_so() -> None:
 def test_only_revenue_source_sentences_are_read() -> None:
     """NEGATIVE: a sentence about who pays, and a model word in any other sentence, prove
     nothing — the whole-filing phrase search this replaces "confirmed" nearly every model."""
-    assert revenue_sources(f"{NOW_WHO} {AMZN_ASIDE}") == []
+    assert revenue_sources(f"{NOW_WHO} {AMZN_ASIDE}") == ()
     status, quote, _s, note = check_basis(_report(NOW_WHO, AMZN_ASIDE), "", "subscription")
     assert status == "NOT_DESCRIBED" and quote == () and "not found is not wrong" in note
 
@@ -328,3 +328,37 @@ def test_a_card_stored_before_lines_were_capped_is_capped_when_read(tmp_path: Pa
                               "provenance": Provenance.MEASURED_OBSERVATION}),
         *v.content.s03_transmission[1:])})
     assert step_labels(old)["s03.0"] is Provenance.SOURCE_OPINION
+
+
+def test_an_annual_report_on_an_older_submissions_page_is_found(tmp_path: Path) -> None:
+    """Review of #718: the shared walk stops at the first periodic filing — a 10-Q on the recent
+    page; a heavy filer's last 10-K on an older page was then "no annual report"."""
+    from vinci.netcache import HttpError
+    from vinci.theme_intelligence.securities import SUBMISSIONS, SUBMISSIONS_PAGE
+
+    cik = "0000000001"
+    tenk = ARCHIVE_DOC.format(cik=1, acc="000000000125000001", doc="x-10k.htm")
+
+    class Pages:
+        def get_json(self, url: str, ttl_seconds: float | None = None) -> Any:
+            if url == SUBMISSIONS.format(cik=cik):
+                return {"filings": {"recent": {
+                    "form": ["10-Q"], "filingDate": ["2025-11-01"],
+                    "accessionNumber": ["0000000001-25-000002"], "primaryDocument": ["x-q.htm"]},
+                    "files": [{"name": "CIK0000000001-submissions-001.json",
+                               "filingFrom": "2024-01-01"}]}}
+            if url == SUBMISSIONS_PAGE.format(name="CIK0000000001-submissions-001.json"):
+                return {"form": ["10-K"], "filingDate": ["2025-02-26"],
+                        "accessionNumber": ["0000000001-25-000001"],
+                        "primaryDocument": ["x-10k.htm"]}
+            raise HttpError(url)
+
+        def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
+            if url == tenk:
+                return f"<p>{TWLO_SOURCE}</p>"
+            raise HttpError(url)
+
+    r = SecResolver(tmp_path, http=Pages())  # type: ignore[arg-type]
+    rep, why = r.annual_report(cik, date(2026, 2, 9))
+    assert rep is not None, why
+    assert rep.form == "10-K" and rep.filed == date(2025, 2, 26) and rep.text == TWLO_SOURCE

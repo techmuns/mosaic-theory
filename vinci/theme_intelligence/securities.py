@@ -438,12 +438,14 @@ class SecResolver:
             self._rows[(cik10, as_of)] = self._walk_filings(cik10, as_of)
         return self._rows[(cik10, as_of)]
 
-    def _walk_filings(self, cik10: str, as_of: date) -> list[tuple[str, date, str, str]]:
+    def _walk_filings(self, cik10: str, as_of: date,
+                      want: frozenset[str] = PERIODIC_FORMS) -> list[tuple[str, date, str, str]]:
+        """`want`: the forms whose first appearance on or before `as_of` ends the walk."""
         sub = self.submissions(cik10)
         if sub is None:
             return []
         rows = _rows(sub.get("filings", {}).get("recent", {}))
-        if any(f in PERIODIC_FORMS and d <= as_of for f, d, _a, _p in rows):
+        if any(f in want and d <= as_of for f, d, _a, _p in rows):
             return rows
         for page in sub.get("filings", {}).get("files", []):
             frm = page.get("filingFrom")
@@ -455,7 +457,7 @@ class SecResolver:
             except (HttpError, KeyError):
                 break
             rows += _rows(older)
-            if any(f in PERIODIC_FORMS and d <= as_of for f, d, _a, _p in rows):
+            if any(f in want and d <= as_of for f, d, _a, _p in rows):
                 break
         return rows
 
@@ -501,6 +503,10 @@ class SecResolver:
         if key in self._annual:
             return self._annual[key]
         rows = self._filing_rows(cik10, as_of)
+        if not any(f in ANNUAL_FORMS and d <= as_of for f, d, _a, _p in rows):
+            # the shared walk stops at the first PERIODIC filing (a 10-Q will do for a cover
+            # page): a heavy filer's last 10-K can sit on an older page — walked on for it
+            rows = self._walk_filings(cik10, as_of, ANNUAL_FORMS)
         annual = sorted(((f, d, a, p) for f, d, a, p in rows
                          if f in ANNUAL_FORMS and d <= as_of and p),
                         key=lambda r: r[1], reverse=True)

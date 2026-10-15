@@ -41,6 +41,7 @@ analyst to read.
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import re
@@ -175,13 +176,11 @@ TOOL: dict[str, Any] = {
 }
 
 
-_plain = without_labels
-
-
 def earnings_steps(card: CardContent) -> dict[str, tuple[str, str]]:
     """The card's stated steps to earnings: sentence id (`s03.N`) -> (step, text). A market
     reaction and a step the source leaves UNKNOWN are no mechanism."""
-    return {f"s03.{i}": (st.step, _plain(st.text)) for i, st in enumerate(card.s03_transmission)
+    return {f"s03.{i}": (st.step, without_labels(st.text))
+            for i, st in enumerate(card.s03_transmission)
             if st.step in EARNINGS_STEPS and not st.text.startswith("UNKNOWN")}
 
 
@@ -197,7 +196,9 @@ def models_in(sentence: str) -> set[str]:
     return {k for k, rx in BASIS_MODELS.items() if rx.search(sentence)}
 
 
-def revenue_sources(text: str) -> list[str]:
+@functools.lru_cache(maxsize=16)  # one company is often proposed for several theses; a filing
+# is ~0.5 MB of text, so the cache is kept small
+def revenue_sources(text: str) -> tuple[str, ...]:
     """A filing's OWN revenue-source sentences that name a way of earning — each once, in the
     filing's order, each from its own "We derive / Our revenue is …" words: the page header or
     section title the text layer glued before it is left out (still a verbatim piece of the
@@ -211,7 +212,7 @@ def revenue_sources(text: str) -> list[str]:
         own = s[m.start():].strip()
         if models_in(own) and own not in out:
             out.append(own)
-    return out
+    return tuple(out)
 
 
 def _cut(s: str, n: int = 400) -> str:
@@ -268,7 +269,7 @@ def user_message(card: CardContent, *, version: int, area: str, groups: list[str
     named = named_by_source(card)
     lines = [f"THESIS {h.thesis_id} (version {version}): {h.title}",
              f"Area: {area} · Geography: {h.region}",
-             "Statement: " + " ".join(_plain(s.text) for s in card.s01_bottom_line),
+             "Statement: " + " ".join(without_labels(s.text) for s in card.s01_bottom_line),
              "Steps to company earnings:"]
     lines += [f"  [{sid}] ({step.replace('_', ' ')}) {text}"
               for sid, (step, text) in steps.items()]
