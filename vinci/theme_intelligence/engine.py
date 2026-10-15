@@ -486,6 +486,25 @@ class Engine:
             merged_ids = {x.raw.local_id for x in hs}  # a risk tied to ANY merged hypothesis
             risks = [r for r in ve.risks if not r.related or merged_ids & set(r.related)]
             existing = self._by_key(key)
+            if existing is None and seg:
+                # a thesis keyed BEFORE the segment it is about existed still holds the BARE key:
+                # found there (and re-keyed below), never a duplicate under the new key
+                bare = self._by_key(thesis_key(h, "", prod))
+                if bare is not None and not bare.key_segment and self.thesis_segment(bare) == seg:
+                    existing = bare
+            elif (existing is not None and not seg and not existing.key_segment
+                  and self.taxonomy.segments_of(existing.key_node)
+                  and existing.thesis_id not in earlier
+                  and not self._shares_evidence(h, existing, claims)):
+                # a segmented node's BARE key names no subject: two theses that each name none of
+                # its segments share it, and the second updates the first. Said, never silent.
+                st.add_issue(self._issue(
+                    ctx, "hypothesis", key, IssueSeverity.WARN, "UNSEGMENTED_KEY",
+                    f"“{h.raw.title}” names none of {existing.key_node}'s segments and shares no "
+                    f"evidence with {existing.thesis_id} “{existing.title}”"
+                    + (f" (which today reads as {self.thesis_segment(existing)})"
+                       if self.thesis_segment(existing) else "")
+                    + " — updated under one bare key: check whether it is the same thesis"))
             if existing is not None and not prod:
                 # the key is necessary, not sufficient: the thesis it names must be about the same
                 # PRODUCT, or share the source's sentences — else this is another proposition

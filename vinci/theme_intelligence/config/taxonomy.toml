@@ -298,6 +298,38 @@ label = "Direct-to-consumer / cash-pay"
 terms = ["direct-to-consumer", "DTC", "cash-pay", "cash pay", "out-of-pocket", "out of pocket",
          "self-pay"]
 
+# Four more therapy areas (2026-10-15, review lead U46): with only the four above, a thesis on
+# immunology, vaccines or Lp(a) named no segment and took the BARE key — the key the pilot's
+# in-vivo gene-editing thesis held, so the next such article would have updated it silently.
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "genetic_medicine"
+label = "Genetic medicine (gene editing, gene therapy)"
+terms = ["gene editing", "gene-editing", "base editing", "prime editing", "CRISPR",
+         "gene therapy", "gene therapies", "genetic medicine", "genetic medicines", "RNA editing"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "immunology"
+label = "Immunology (autoimmune and inflammatory disease)"
+terms = ["immunology", "autoimmune", "autoimmunity", "IL-23", "IL-17", "TL1A", "psoriasis",
+         "atopic dermatitis", "rheumatoid arthritis", "inflammatory bowel disease", "IBD",
+         "Crohn's", "ulcerative colitis", "lupus"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "vaccines"
+label = "Vaccines"
+terms = ["vaccine", "vaccines", "vaccination", "vaccinations", "immunization", "RSV",
+         "pneumococcal"]
+
+[[segment]]
+node = "healthcare.pharma_biotech"
+id = "cardiovascular"
+label = "Cardiovascular (lipids, Lp(a), heart failure)"
+terms = ["cardiovascular", "Lp(a)", "lipoprotein(a)", "LDL", "cholesterol", "PCSK9",
+         "hypertension", "heart failure", "atherosclerosis", "cardiology"]
+
 # PRODUCTS — finer than segments, for CLAIM-level contradiction checks (contradiction.py): two
 # claims contradict only when they speak about the same product, variable, period and geography
 # with opposite directions. Read from the verbatim quote (and the claim's metric / scope); the
