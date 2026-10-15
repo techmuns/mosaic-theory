@@ -147,6 +147,15 @@ def norm_geo(g: str) -> str:
     return _GEO.get(k, g.strip() or "Unspecified")
 
 
+def _published(ctx: ArticleContext) -> date | None:
+    """The source's publication date — None when it states none (never the run's as-of)."""
+    return ctx.article.published_at.date() if ctx.article.published_at else None
+
+
+def _iso(d: date | None) -> str | None:
+    return d.isoformat() if d is not None else None
+
+
 def _sha(*parts: str) -> str:
     h = hashlib.sha256()
     for p in parts:
@@ -408,6 +417,12 @@ class Engine:
         mentions = {m.mention_id: m for m in ve.mentions}
         self.destinations = {}
         self.reverified = []
+        if ctx.article.published_at is None:
+            st.add_issue(self._issue(
+                ctx, "article", ctx.article.article_id, IssueSeverity.WARN, "UNDATED_SOURCE",
+                f"{ctx.article.article_id} states no publication date: a thesis it creates starts "
+                f"its clock at this run's as-of {ctx.as_of.isoformat()}; a thesis it updates keeps "
+                f"its own last-evidence date — the run date is never taken for the source's"))
 
         for h in ve.hypotheses:  # the record type is checked before any thesis is touched
             kind, why = record_kind(h, claims)
@@ -450,6 +465,7 @@ class Engine:
                         + (f"; {moved} market risk(s) naming {px} follow it" if moved else "")))
         outcomes: list[ThesisOutcome] = []
         created_now: list[str] = []
+        applied: set[str] = set()  # theses this article version has contributed to so far
         for key0, hs in groups.items():
             key, seg, prod = key0, segments[key0], products.get(key0, "")
             h = hs[0]
@@ -550,6 +566,7 @@ class Engine:
                 out = self._create(ctx, key, h, claims, mentions, resolutions, risks, seg,
                                    product=prod, review=review)
                 created_now.append(out.thesis_id)
+                applied.add(out.thesis_id)
                 if review:
                     sibling = review
                     st.add_issue(self._issue(
@@ -557,7 +574,22 @@ class Engine:
                         f"{match[0].thesis_id if match else '?'} / {out.thesis_id} "
                         f"({ctx.article.article_id}): {review}"))
             else:
-                out = self._update(ctx, existing, h, claims, mentions, resolutions, risks)
+                part = ""
+                if existing.thesis_id in applied:
+                    # another hypothesis of this version, under another key, already reached it:
+                    # its evidence is a contribution of its own — the version's one contribution
+                    # id dropped it as ALREADY_INGESTED, its claims linked nowhere (2026-10-14)
+                    part = h.raw.local_id
+                    st.add_issue(self._issue(
+                        ctx, "thesis", existing.thesis_id, IssueSeverity.WARN,
+                        "SAME_THESIS_IN_ARTICLE",
+                        f"“{h.raw.title}” (key {key}) reached {existing.thesis_id} "
+                        f"“{existing.title}”, which another hypothesis of this article already "
+                        f"updated under another key — applied as a second contribution: review "
+                        f"whether they are one thesis"))
+                out = self._update(ctx, existing, h, claims, mentions, resolutions, risks,
+                                   part=part)
+                applied.add(out.thesis_id)
                 if existing.identity != key:  # reached by another key: is its own one stale?
                     self._correct_segment(ctx, out.thesis_id)
             outcomes.append(out)
@@ -648,7 +680,13 @@ class Engine:
         corrected (its id is that key's hash): a former key finds its thesis, never a duplicate
         that would overwrite it."""
         t = self.store.thesis_by_key(key)
-        t = t if t is not None else self.store.thesis(thesis_id_for(key))
+        if t is None:
+            # the key's id, past every RETIRED holder (`_create` salts past them the same way): a
+            # thesis created there with this key and re-keyed since is found, never collided with
+            # (2026-10-14: a re-keyed thesis at the salted id failed every later bare-key article)
+            tid = thesis_id_for(key)
+            while (t := self.store.thesis(tid)) is not None and t.retired:
+                tid = thesis_id_for(f"{key}|after:{t.thesis_id}")
         # a RETIRED thesis is never matched again: its articles' re-analysis replaces it
         return None if t is None or t.retired else t
 
@@ -827,7 +865,7 @@ class Engine:
         prev_v = st.thesis_version(t.thesis_id, t.current_version)
         assert prev_v is not None
         held = {lk.claim_id for lk in links}
-        published = ctx.article.published_at.date() if ctx.article.published_at else ctx.as_of
+        published = _published(ctx)  # None for an undated source — never the run's as-of
 
         def new_links(first: int) -> list[ThesisClaimLink]:
             return [ThesisClaimLink(thesis_id=t.thesis_id, claim_id=cid, role=role,
@@ -844,7 +882,7 @@ class Engine:
                                 f"re-assessed under the current rules; no new evidence"),
                           provenance=Provenance.MODEL_INFERENCE,
                           claim_ids=tuple(list(found)[:6]), article_id=aid,
-                          original_date=published.isoformat())
+                          original_date=_iso(published))
         version = self._build_version(
             ctx, t.model_copy(update={"current_version": next_v}), next_v, None, prev_v.content,
             links + new_links(next_v), claims, {}, {}, [item],
@@ -922,7 +960,7 @@ class Engine:
             tid = thesis_id_for(f"{key}|after:{held.thesis_id}")
         other = raw.value_chain_node == "other" or raw.mechanism == "other"
         now = self.first_ingested.get(tid) or datetime.now(tz=UTC)
-        published = (ctx.article.published_at.date() if ctx.article.published_at else ctx.as_of)
+        published = _published(ctx)  # None for an undated source — never the run's as-of
         thesis = Thesis(
             thesis_id=tid, key_node=raw.value_chain_node, key_mechanism=raw.mechanism,
             key_direction=Direction(raw.direction.value), key_geography=norm_geo(raw.geography),
@@ -931,7 +969,9 @@ class Engine:
             region=norm_geo(raw.geography),
             status=ThesisStatus.REVIEW_NEEDED if other or review else ThesisStatus.ACTIVE,
             current_version=1, created_at=now, created_as_of=ctx.as_of,
-            last_material_update=published,
+            # an undated source dates nothing: the thesis's clock starts at this run's as-of, said
+            # (UNDATED_SOURCE) — the only date the registry has for it
+            last_material_update=published or ctx.as_of,
             ancestry=self.taxonomy.ancestry(raw.value_chain_node),
             stance=raw.stance_in_source, horizon=raw.horizon, kind=raw.kind,
             key_segment=segment, key_review=review_tag(h), key_product=product)
@@ -952,13 +992,15 @@ class Engine:
         items = [ChangeItem(change_class=ChangeClass.NOVELTY_UNVERIFIED,
                             text=claims[c].statement, provenance=_label([c], claims),
                             claim_ids=(c,), article_id=ctx.article.article_id,
-                            original_date=published.isoformat(), period=claims[c].period)
+                            original_date=_iso(published), period=claims[c].period)
                  for c in head]
         if n_evidence > len(head):
             items.append(_more_item(len(head), n_evidence, ctx.article.article_id))
         vs_prior = (f"New to the registry — first ingested {now:%Y-%m-%d %H:%M} UTC, analysed as "
-                    f"of {ctx.as_of.isoformat()}, from a source published "
-                    f"{published.isoformat()}; not necessarily new to the market.")
+                    f"of {ctx.as_of.isoformat()}, from "
+                    + (f"a source published {published.isoformat()}" if published else
+                       "an UNDATED source (it states no publication date)")
+                    + "; not necessarily new to the market.")
         novelty = ("novelty_unverified — the registry held no earlier verified baseline, so this "
                    "is new TO THE REGISTRY, not demonstrated new to the market")
         version = self._build_version(
@@ -998,9 +1040,12 @@ class Engine:
     def _update(self, ctx: ArticleContext, thesis: Thesis, h: VerifiedHypothesis,
                 claims: dict[str, Claim], mentions: dict[str, Mention],
                 resolutions: dict[str, SecurityResolution],
-                risks: list[VerifiedRisk]) -> ThesisOutcome:
+                risks: list[VerifiedRisk], *, part: str = "") -> ThesisOutcome:
+        """`part`: a SECOND hypothesis of this article version reaching the thesis — its own
+        contribution id, so the version's first contribution does not swallow it."""
         st = self.store
-        cid_contrib = "AC-" + _sha(ctx.version.version_id, thesis.thesis_id)[:14]
+        cid_contrib = "AC-" + _sha(ctx.version.version_id, thesis.thesis_id,
+                                   *([part] if part else []))[:14]
         prev_v = st.thesis_version(thesis.thesis_id, thesis.current_version)
         assert prev_v is not None
         if any(c.contribution_id == cid_contrib for c in st.contributions(thesis.thesis_id)):
@@ -1047,17 +1092,20 @@ class Engine:
                                  ["ATTRIBUTION"])
 
         direction = evidence_direction_of(classes, roles)
-        published = (ctx.article.published_at.date() if ctx.article.published_at else ctx.as_of)
+        published = _published(ctx)  # None for an undated source — never the run's as-of
         thesis = thesis.model_copy(update={
-            "current_version": next_v, "last_material_update": max(thesis.last_material_update,
-                                                                   published),
+            # undated evidence never resets the stale clock: its date is unknown (2026-10-14: an
+            # old undated report read as current last evidence)
+            "current_version": next_v, "last_material_update": (
+                max(thesis.last_material_update, published) if published
+                else thesis.last_material_update),
             "stance": max(thesis.stance, h.raw.stance_in_source, key=lambda s: _STANCE_RANK[s]),
             "horizon": h.raw.horizon if h.raw.horizon is not Horizon.UNCLEAR else thesis.horizon})
         items = [ChangeItem(change_class=classes[cid],
                             text=f"{claims[cid].statement} {LABEL_OPEN}{notes[cid]}{LABEL_CLOSE}",
                             provenance=_label([cid], claims), claim_ids=(cid,),
                             article_id=ctx.article.article_id,
-                            original_date=published.isoformat(), period=claims[cid].period)
+                            original_date=_iso(published), period=claims[cid].period)
                  for cid in roles if classes[cid] is not ChangeClass.REPEATED]
         n_changed = len(items)
         items = items[:UPDATE_ITEMS]
@@ -1074,7 +1122,7 @@ class Engine:
                                     provenance=Provenance.MODEL_INFERENCE,
                                     claim_ids=tuple(repeated[:6]),
                                     article_id=ctx.article.article_id,
-                                    original_date=published.isoformat()))
+                                    original_date=_iso(published)))
         counts: dict[str, int] = {}
         for c in classes.values():
             counts[c.value] = counts.get(c.value, 0) + 1
@@ -1103,11 +1151,16 @@ class Engine:
         events = [ev]
         if thesis.status is ThesisStatus.ARCHIVED and \
                 version.priority.research_action is not ResearchAction.SKIP:
-            thesis = thesis.model_copy(update={"status": ThesisStatus.ACTIVE})
+            # back to what it was: a thesis archived while held for review comes back held
+            # (2026-10-14: it came back ACTIVE, its identity hold gone for good)
+            review = self._under_review(thesis)
+            thesis = thesis.model_copy(update={
+                "status": ThesisStatus.REVIEW_NEEDED if review else ThesisStatus.ACTIVE})
             events.append(self._event(ctx, thesis.thesis_id, next_v, "REACTIVATED",
                                       f"material new evidence from {ctx.article.article_id} "
                                       f"moved an archived thesis back to "
-                                      f"{version.priority.research_action.value}"))
+                                      f"{version.priority.research_action.value}"
+                                      + (" — still held for review" if review else "")))
         with st.tx():
             st.upsert_thesis(thesis)
             st.add_thesis_version(version)
@@ -1122,6 +1175,14 @@ class Engine:
                              [x.event_type for x in events])
 
     # -- archive ------------------------------------------------------------------------------
+    def _under_review(self, t: Thesis) -> bool:
+        """REVIEW_NEEDED — or ARCHIVED while it was (a REVIEW_NEEDED event, set at creation and
+        never cleared): archiving takes a thesis off the active list, never out of review."""
+        if t.status is ThesisStatus.REVIEW_NEEDED:
+            return True
+        return t.status is ThesisStatus.ARCHIVED and any(
+            e.event_type == "REVIEW_NEEDED" for e in self.store.events(thesis_id=t.thesis_id))
+
     def archive_pass(self, *, run_id: str, as_of: date) -> list[ChangeEvent]:
         """Move a thesis OFF the active list — never out of the registry. Two face-validity rules,
         neither tuned on outcomes: (1) its research action is SKIP ("skip, but still archive");
@@ -1504,8 +1565,9 @@ class Engine:
                 prev.s05_affected if prev else None))
         sources = self._sources(thesis.thesis_id, ctx, links, all_claims, contribution)
         hold_reasons = self._hold_reasons(links, all_claims)
-        if thesis.status is ThesisStatus.REVIEW_NEEDED and not thesis.key_review:
-            # an identity held for review is never an independent research opportunity
+        if not thesis.key_review and self._under_review(thesis):
+            # an identity held for review is never an independent research opportunity — archived
+            # or not
             hold_reasons = [*hold_reasons, "identity under review — it may be the same thesis "
                                            "as one an earlier version of this article created"]
 

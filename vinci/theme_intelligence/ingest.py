@@ -136,6 +136,26 @@ def _held_text(pipe: Pipeline, article_id: str) -> tuple[str, RetrievalState | N
     return " ".join(b.text for b in v.blocks).strip(), v.retrieval_state, v.body_word_count
 
 
+#: the blocks that carry the argument — a byline, a date line or a disclaimer is shared by every
+#: report of one publisher and proves nothing
+_ARGUMENT_KINDS = frozenset({"paragraph", "list_item"})
+
+
+def _shared_words(pipe: Pipeline, article_id: str, read: DocumentRead) -> int:
+    """Words of the new document's argument blocks whose HASH the held version also has — what
+    a pulled registry can still compare (it keeps each block's hash, never its text)."""
+    vs = [v for v in pipe.store.article_versions(article_id)
+          if v.retrieval_state is not RetrievalState.BLOCKED]
+    if not vs:
+        return 0
+    held = {b.sha256 for b in vs[-1].blocks if b.kind in _ARGUMENT_KINDS}
+    seen: dict[str, int] = {}
+    for b in read.doc.blocks:
+        if b.kind in _ARGUMENT_KINDS and b.sha256 in held:
+            seen[b.sha256] = len(b.text.split())
+    return sum(seen.values())
+
+
 def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
              url_basis: str = "the operator states its URL") -> Match:
     """One held article against the new document."""
@@ -148,13 +168,23 @@ def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
     t = title_overlap(art.title, read.doc.title)
     same_date = (art.published_at is not None and read.doc.published_at is not None
                  and art.published_at.date() == read.doc.published_at.date())
+    # a PULLED registry holds no text, only block hashes: the argument blocks the two share,
+    # weighted by their words, stand in for the text overlap — evidence for REVIEW, never for an
+    # automatic merge (2026-10-14: a retitled copy of a held report was analysed, and paid for,
+    # a second time on title overlap alone)
+    pulled = state is not None and not held
+    shared = _shared_words(pipe, art.article_id, read) if pulled else 0
+    b_old = shared / words if words else 0.0
+    b_new = shared / new_words if new_words else 0.0
     facts = (f"title overlap {t:.0%}, held text found in the new document {c_old:.0%}, new "
              f"text found in the held {c_new:.0%}; held {words} words "
              f"({state.value if state else 'no readable version'}), new {new_words} words"
              + (f"; dates {art.published_at.date() if art.published_at else '?'} vs "
                 f"{read.doc.published_at.date() if read.doc.published_at else '?'}")
-             + ("; the held text is NOT on this machine (a pulled registry keeps no article "
-                "text) — compared by URL, title and date only" if state and not held else ""))
+             + (f"; the held text is NOT on this machine (a pulled registry keeps no article "
+                f"text) — compared by URL, title, date and block hashes: {shared} word(s) of "
+                f"identical argument blocks, {b_old:.0%} of the held, {b_new:.0%} of the new"
+                if pulled else ""))
     lead = f"{url_basis}; " if stated else ""
     if held and c_old >= SAME_TEXT and c_new >= SAME_TEXT:
         return Match(DUPLICATE, art, f"{lead}the same text in another file or format ({facts})")
@@ -172,7 +202,8 @@ def _compare(pipe: Pipeline, art: Article, read: DocumentRead, *, stated: bool,
         return Match(UPGRADE, art, lead
                      + f"a fuller document for a {state.value if state else 'unread'} article "
                        f"({facts})")
-    if stated or t >= TITLE_REVIEW or c_old >= WEAK_OVERLAP or c_new >= WEAK_OVERLAP:
+    if (stated or t >= TITLE_REVIEW or c_old >= WEAK_OVERLAP or c_new >= WEAK_OVERLAP
+            or b_old >= WEAK_OVERLAP or b_new >= WEAK_OVERLAP):
         return Match(REVIEW, art, f"{lead}an uncertain match — a human decides ({facts})")
     return Match(NEW, None, facts)
 
