@@ -52,6 +52,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from vinci.theme_intelligence.config import Paths
+from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.schemas import DocumentRecord, RunStatus, WeeklyRun
 from vinci.theme_intelligence.store import Store
 
@@ -218,7 +219,8 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         if stranded and not force:
             raise StateSyncError(
                 f"the local registry holds {len(stranded)} run(s) the branch does not, which a "
-                f"pull cannot replay ({', '.join(f'{r.run_id} [{r.mode}]' for r in stranded[:5])}"
+                f"pull cannot replay "
+                f"({first_of([f'{r.run_id} [{r.mode}]' for r in stranded], 5, ', ')}"
                 f"): push first if the branch has not moved, or pass --force (the local "
                 f"registry is backed up before it is replaced)")
         if clash and not force:

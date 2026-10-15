@@ -48,6 +48,7 @@ from vinci.theme_intelligence.config import (
     PARSER_VERSION,
     PRICE_PER_MTOK,
 )
+from vinci.theme_intelligence.display import clip, first_of
 from vinci.theme_intelligence.documents import (
     Declared,
     DocumentError,
@@ -414,7 +415,8 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
                version_id: str | None = None, basis: str = "") -> IngestResult:
         rec.status, rec.article_id, rec.version_id = status, article_id, version_id
         rec.match_basis = basis or rec.match_basis
-        rec.history.append(f"{datetime.now(tz=UTC):%Y-%m-%d %H:%M} UTC {status}: {note[:300]}")
+        rec.history.append(f"{datetime.now(tz=UTC):%Y-%m-%d %H:%M} UTC {status}: "
+                           + clip(note, 300, "the run's notes"))
         with pipe.store.tx():
             pipe.store.upsert_document(rec)
         pipe._count(f"documents_{status.lower()}")  # noqa: SLF001 — the run's own counter
@@ -422,7 +424,7 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
 
     if read.doc.retrieval_state is RetrievalState.BLOCKED:
         return finish("REJECTED", "no readable text (a scanned or image-only document?) — "
-                                  "nothing analysed; " + "; ".join(read.issues[:3]))
+                                  "nothing analysed; " + first_of(read.issues, 3))
     if duplicate_of:
         held = pipe.store.article(duplicate_of)
         if held is None:

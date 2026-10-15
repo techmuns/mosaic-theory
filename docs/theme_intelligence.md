@@ -49,9 +49,10 @@ could not be read; the readout says which) · **1** failed.
   Goldman Sachs [automated access BLOCKED]*, *Articles analyzed: N full · M partial*, *Research
   Now / Watch / Skip*, *New /
   upgraded / downgraded / challenged theses*, *Reported figures not yet captured: X of Y* — then
-  unresolved caveats. Both thesis KPIs count the theses THIS RUN created or changed (a SKIP is
-  archived at once, and still counts) and its events (a thesis new this run can also be
-  challenged in it); each tile says so under its value. Then six categories in a fixed order —
+  unresolved caveats. The report covers the desk's WEEK — the runs This Week covers, its window
+  their span — and counts each article once (2026-10-15, U54). Both thesis KPIs count the theses
+  the week created or changed (a SKIP is archived at once, and still counts) and their events (a
+  thesis new this week can also be challenged in it); each tile says so under its value. Then six categories in a fixed order —
   each thesis in exactly one — new, upgraded, downgraded,
   challenged, unchanged but material, archived — each always printed with its count ("showing X of
   Y" when collapsed); then a searchable archive of every thesis. Each row shows the ARTICLE date

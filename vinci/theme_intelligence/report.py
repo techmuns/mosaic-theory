@@ -49,7 +49,6 @@ from vinci.theme_intelligence.cards import (
     _clean_display,
     _line_name,
     cited_claim_ids,
-    clip,
     distinct_sectors,
     e,
     exposures_of,
@@ -71,6 +70,7 @@ from vinci.theme_intelligence.config import (
     Paths,
     load_taxonomy,
 )
+from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
@@ -409,7 +409,7 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     whose coverage is unknown. Source health, ingestion coverage and research verification stay
     separate statuses; this section is ingestion coverage."""
     from vinci.theme_intelligence.config import load_retired_sources, load_sources
-    from vinci.theme_intelligence.health import asks_only_for_previews
+    from vinci.theme_intelligence.health import affected_shown, asks_only_for_previews
 
     rids = {r.run_id for r in runs}
     as_of = {r.run_id: r.as_of for r in runs}
@@ -479,7 +479,7 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
             continue
         if ma and ma.get("kind") == "UPLOAD_REQUIRED":
             needs_upload.append(f"{row['publisher']} (channel {row['status']}) — {ma['action']}"
-                                + (f" — known: {'; '.join(ma['affected'][:3])}"
+                                + (f" — known: {affected_shown(ma, 3)}"
                                    if ma.get("affected") else ""))
     metadata: list[str] = []
     for d in docs_all:
@@ -628,8 +628,8 @@ ARCHIVING = ("ARCHIVED", "RETIRED")
 def theses_as_of_run(store: Store, run: WeeklyRun) -> AsOf:
     """Every thesis AS THAT RUN LEFT IT: the version its end-of-run snapshot recorded and the
     status its events had set by then. Re-rendering an old run therefore reproduces what it
-    recorded — never a later version, never a thesis born after it. A run with no snapshot yet
-    (still RUNNING) shows the registry as it is now."""
+    recorded — never a later version, never a thesis born after it, never a retirement that came
+    after it (U13). A run with no snapshot yet (still RUNNING) shows the registry as it is now."""
     snaps = store.snapshots(run.run_id)
     vmap = (dict(max(snaps, key=lambda x: x.created_at).thesis_versions) if snaps
             else {t.thesis_id: t.current_version for t in store.theses()})
@@ -641,6 +641,7 @@ def theses_as_of_run(store: Store, run: WeeklyRun) -> AsOf:
         if v is None:
             continue
         status = v.content.header.status
+        retired = ""
         for ev in sorted(store.events(thesis_id=t.thesis_id), key=lambda x: x.created_at):
             if ev.created_at > end:
                 break
@@ -648,8 +649,10 @@ def theses_as_of_run(store: Store, run: WeeklyRun) -> AsOf:
                 status = ThesisStatus.ARCHIVED
             elif ev.event_type == "REACTIVATED":
                 status = ThesisStatus.ACTIVE
+            if ev.event_type == "RETIRED":
+                retired = t.retired
         out[t.thesis_id] = (t.model_copy(update={
-            "current_version": v.version, "status": status,
+            "current_version": v.version, "status": status, "retired": retired,
             "last_material_update": v.content.header.last_material_update}), v)
     return out
 
@@ -1048,6 +1051,11 @@ class Dashboard:
     intake: dict[str, Any] = field(default_factory=dict)
     #: the runs this report covers (a scan's report takes in the manual runs since the last scan)
     report_runs: list[str] = field(default_factory=list)
+    #: [first, last] date of the runs it covers — the report's window
+    span: list[str] = field(default_factory=list)
+    #: figures in the week's articles and those not captured — each article once (the census)
+    figures_in_articles: int = 0
+    figures_uncaptured: int = 0
     #: propositions resting on NO verified material evidence (SKIP-1): never research
     #: opportunities, so kept out of the categories — listed apart, with why, for the audit
     no_evidence: list[DashRow] = field(default_factory=list)
@@ -1164,7 +1172,8 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
 
 
 def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str]],
-                    generated: str, runs: list[WeeklyRun] | None = None) -> Dashboard:
+                    generated: str, runs: list[WeeklyRun] | None = None,
+                    census: tuple[int, int, int, int] | None = None) -> Dashboard:
     """The weekly report of `run_id` over `report_runs` — or over `runs` when given (the research
     desk's week in progress: every manual run since the last weekly scan, desk.desk_weeks)."""
     run = store.run(run_id)
@@ -1294,20 +1303,24 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         banner = ("PARTIAL RUN — at least one source or article could not be processed (see the "
                   "caveats). Absent themes may be unread, not absent.")
     failed = [sc.source_id for sc in run.sources if sc.status in ("BLOCKED", "ERROR")]
-    window = (f"{run.window_from.isoformat() if run.window_from else '—'} → "
-              f"{run.window_to.isoformat() if run.window_to else '—'} (as of "
-              f"{run.as_of.isoformat()}, mode {run.mode})")
+    # the span of every run the report covers — the desk's week, not the last run's own window
+    # (U54: the published report read "14 Oct" beside This week's "12–14 Oct")
+    span = [min(r.window_from or r.as_of for r in runs).isoformat(),
+            max(r.window_to or r.as_of for r in runs).isoformat()]
+    window = f"{span[0]} → {span[1]} (as of {run.as_of.isoformat()}, mode {run.mode})"
+    if census is None:  # a report built without a desk counts by the desk's census itself
+        from vinci.theme_intelligence.desk import analysed_articles  # the desk reads this module
+
+        census = analysed_articles(store, runs)
+    n_read, n_part, n_fig, n_unc = census
     d = Dashboard(
-        run=json.loads(run.model_dump_json()), banner=banner, window=window,
+        run=json.loads(run.model_dump_json()), banner=banner, window=window, span=span,
         sources=[json.loads(sc.model_dump_json()) for sc in run.sources],
         sources_checked=sum(1 for sc in run.sources if sc.status != "NOT_RUN"),
         sources_failed=failed,
-        articles_read=sum(r.counts.get("articles_processed", 0) for r in runs),
-        # counted PARTIAL when analysed, plus any analysed as FULL that a correction record has
-        # since found to be a preview
-        articles_partial=sum(r.counts.get("articles_partial", 0) for r in runs) + len(
-            {x.article_version_id for r in runs for x in store.completeness_for_run(r.run_id)
-             if store.retrieval_corrected(x.article_version_id)}),
+        # each article ONCE, by the Articles screen's census (a preview a correction record has
+        # since found is counted in part, as the store reads it now)
+        articles_read=n_read, articles_partial=n_part,
         articles_blocked=sum(r.counts.get("articles_blocked", 0)
                              + r.counts.get("articles_no_body", 0) for r in runs),
         themes_created=sum(r.counts.get("theses_created", 0) for r in runs),
@@ -1319,6 +1332,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         no_evidence=sorted(no_evidence, key=lambda r: r.thesis_id),
         validation=val, generated=generated)
     d.report_runs = [r.run_id for r in runs]
+    d.figures_in_articles, d.figures_uncaptured = n_fig, n_unc
     d.source_health = source_health_as_of(store, run)
     d.intake = research_intake(store, run, runs, d.source_health)
     d.kpi = kpis(d, store)
@@ -1383,8 +1397,9 @@ def kpis(d: Dashboard, store: Store) -> dict[str, Any]:
                               and rank(r.action) < rank(r.previous_action))),
         "challenged": sum(1 for r in rows if "CHALLENGED" in r.flags),
         "archived": d.archived_total,
-        "figures_uncaptured": run.get("counts", {}).get("figures_uncaptured", 0),
-        "figures_in_articles": run.get("counts", {}).get("figures_in_articles", 0),
+        # the week's articles, each once — never one run's counter beside the week's articles
+        "figures_uncaptured": d.figures_uncaptured,
+        "figures_in_articles": d.figures_in_articles,
         "manually_imported": d.intake.get("manual", {}).get("total", 0) if d.intake else 0,
     }
 
@@ -1803,7 +1818,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
     rows = _active_rows(d)
     rc_n = review_counts(d, rows)
     review_n = rc_n["current"]
-    wf, wt = run.get("window_from") or "—", run.get("window_to") or "—"
+    wf, wt = (d.span or ["—", "—"])[0], (d.span or ["—", "—"])[-1]
     parts = [f'<header class="dhead"><div class="eyebrow">Weekly research brief</div>'
              f'<h1>What to research this week</h1><div class="subline">{e(wf)} – {e(wt)} · as of '
              f'{e(run["as_of"])} · research attention only — never a purchase or sale</div>'
@@ -1817,7 +1832,7 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
         f'<div class="stat"><b>{k.get("watch", 0)}</b><span>Watch</span></div>'
         f'<div class="stat"><b>{k.get("skip", 0)}</b><span>Skip</span></div>'
         f'<a class="stat{" warn" if review_n else ""}" href="#review"><b>{review_n}</b>'
-        f'<span>Review items</span><span class="sm">on current cards</span></a>'
+        f'<span>Review items</span><span class="sm">on this week\'s cards</span></a>'
         f'<a class="stat" href="#review"><b class="vt">{e(vword)}</b><span>Verification · '
         # CURRENT open figures — those that failed a since-corrected check are history, told
         # apart in the review queue (the JSON keeps both counts)
@@ -1825,8 +1840,12 @@ def render_dashboard_html(d: Dashboard, *, print_mode: bool = False,
         f'{v.get("paragraphs_open", 0)} paragraph(s) open</span></a>'
         f'<div class="stat"><b>{k.get("articles_full", 0) + k.get("articles_partial", 0)}</b>'
         f'<span>Articles read · {k.get("articles_partial", 0)} in part</span></div></div>')
-    parts.append(f'<section id="theses"><h2>Theses this week <small class="note">({len(rows)}) '
-                 f'— ranked by research action, then the freshest evidence</small></h2>'
+    # the retired are listed in the archive, never as research: said here so the count reads
+    # with This week's, which names them beside the live (U54)
+    n_retired = sum(1 for rs in d.categories.values() for r in rs if r.retired)
+    parts.append(f'<section id="theses"><h2>Theses this week <small class="note">({len(rows)}'
+                 + (f' · {n_retired} retired on re-analysis, in the archive' if n_retired else "")
+                 + ') — ranked by research action, then the freshest evidence</small></h2>'
                  + ('<div class="theses">' + "".join(_thesis_html(r) for r in rows) + "</div>"
                     if rows else '<div class="empty">No thesis created or changed this week.'
                                  '</div>')
@@ -1908,6 +1927,8 @@ def _health_html(h: dict[str, Any], print_mode: bool) -> str:
     """The compact block: the counts line, NEW changes prominently, only the channels needing
     attention (reason, action, affected article if known), and every channel on demand. Reasons are
     composed sentences — never a stack trace."""
+    from vinci.theme_intelligence.health import affected_shown
+
     if not h:
         return ""
     when = (f"checked {h['checked_at'][:16].replace('T', ' ')} UTC"
@@ -1930,7 +1951,7 @@ def _health_html(h: dict[str, Any], print_mode: bool) -> str:
                    and r["status"] == "BLOCKED" else "")
                 + f'<div class="note">{e(r["reason"])}</div>'
                 + (f'<div class="note"><b>{e(ma["kind"].replace("_", " ").title())}</b>: '
-                   f'{e(ma["action"])}' + (f" — affected: {e('; '.join(ma['affected'][:2]))}"
+                   f'{e(ma["action"])}' + (f" — affected: {e(affected_shown(ma, 2))}"
                                            if ma["affected"] else "") + "</div>"
                    if ma else f'<div class="note">{e(r["next_action"])}</div>') + "</li>")
         out.append("<ul>" + "".join(items) + "</ul>")
@@ -1977,16 +1998,16 @@ def render_dashboard_md(d: Dashboard) -> str:
     md += [f"- Articles analyzed: {k.get('articles_full', 0)} full · "
            f"{k.get('articles_partial', 0)} partial"
            + (f" · {k['articles_blocked']} unreadable" if k.get("articles_blocked") else "")
-           + (f"; queued by the budget cap, not yet read: {k['queued']}" if k.get("queued")
-              else ""),
+           + (f"; queued by the budget cap at the end of the last run, not yet read: "
+              f"{k['queued']}" if k.get("queued") else ""),
            f"- Research Now / Watch / Skip: {k.get('research_now', 0)} / {k.get('watch', 0)} / "
-           f"{k.get('skip', 0)} — of the {k.get('theses_this_run', 0)} theses this run created "
-           f"or changed" + (f", {k['retired']} of them retired (counted in none)"
+           f"{k.get('skip', 0)} — of the {k.get('theses_this_run', 0)} theses the week's runs "
+           f"created or changed" + (f", {k['retired']} of them retired (counted in none)"
                             if k.get("retired") else "")
            + f" (archived in the registry: {d.archived_total})",
            f"- New / upgraded / downgraded / challenged theses: {k.get('new', 0)} / "
            f"{k.get('upgraded', 0)} / {k.get('downgraded', 0)} / {k.get('challenged', 0)} — "
-           f"this run's events; a thesis new this run can also be challenged in it",
+           f"the week's events; a thesis new this week can also be challenged in it",
            f"- Reported figures not yet captured: {k.get('figures_uncaptured', 0)} of "
            f"{k.get('figures_in_articles', 0)}", ""]
     h = d.source_health
@@ -2122,6 +2143,15 @@ def render_dashboard_csv(d: Dashboard) -> str:
 
 # --- one call: everything a run produces ---------------------------------------------------------
 
+def scoped_ids(body: str, prefix: str) -> str:
+    """One embedded card's element ids, and its links to them, prefixed with its thesis id: the
+    printed report carries every card, and each card's "L-s01-0" was then one id many times (U32d:
+    42 ids repeated in the pilot's report_print.html). A link to an id outside the card is kept."""
+    own = set(re.findall(r'\sid="([^"]+)"', body))
+    return re.sub(r'(?<![\w:-])(id="|href="#)([^"]+)"',
+                  lambda m: f'{m[1]}{prefix}-{m[2]}"' if m[2] in own else m[0], body)
+
+
 def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) -> dict[str, Any]:
     run = store.run(run_id)
     if run is None:
@@ -2133,7 +2163,12 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
                  f", review {run.review_prompt_version}, model {run.llm_model}).")
     asof = theses_as_of_run(store, run)
     cards = write_cards(store, out, generated=generated, theses=asof, until=run.finished_at)
-    d = build_dashboard(store, run_id, cards=cards, generated=generated)
+    from vinci.theme_intelligence.desk import Desk  # the desk reads this module
+
+    # ONE week, ONE view: the full weekly report IS the desk's This week report (U54: the
+    # published pair read 6 theses / 3 articles beside 18 / 13) — built once, for both
+    view = Desk(store, run, cards=cards, generated=generated)
+    d = view.d
     (out / "dashboard.html").write_text(render_dashboard_html(d))
     delta_ids = [r.thesis_id for rows in d.categories.values() for r in rows] + [
         r.thesis_id for r in d.no_evidence]  # their cards stay in the printed record
@@ -2144,7 +2179,8 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
         t, v = asof[tid]
         body = render_html(v.content, card_context(store, t, v, generated=generated,
                                                    until=run.finished_at), print_mode=True)
-        embedded.append(body[body.index("<article"):body.index("</article>") + 10])
+        embedded.append(scoped_ids(body[body.index("<article"):body.index("</article>") + 10],
+                                   tid))
     (out / "report_print.html").write_text(render_dashboard_html(d, print_mode=True,
                                                                  embedded_cards=embedded))
     (out / "dashboard.md").write_text(render_dashboard_md(d))
@@ -2154,9 +2190,7 @@ def write_run_outputs(store: Store, run_id: str, out_dir: Path | None = None) ->
     issues = store.issues(run_id=run_id)
     (out / "validation_log.json").write_text(json.dumps(
         [json.loads(i.model_dump_json()) for i in issues], indent=1, sort_keys=True))
-    from vinci.theme_intelligence.desk import write_desk  # the desk reads this module
-
-    desk = write_desk(store, run_id, out, cards=cards, generated=generated)
+    desk = view.write(out)
     secs = ((run.finished_at - run.started_at).total_seconds() if run.finished_at else None)
     manifest = {
         "run_id": run.run_id, "mode": run.mode, "status": run.status.value,

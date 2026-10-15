@@ -41,6 +41,7 @@ from vinci.theme_intelligence.cards import THEME_CSS
 from vinci.theme_intelligence.desk import CSS as DESK_CSS
 from vinci.theme_intelligence.desk import JS as DESK_JS
 from vinci.theme_intelligence.desk import _test_domain, desk_weeks
+from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.report import write_run_outputs
 from vinci.theme_intelligence.store import Store
 
@@ -162,9 +163,18 @@ def publish(store: Store, run_id: str, out: Path, *, allow_test_data: bool = Fal
         raise PublishError(f"the registry holds {len(test)} article(s) from a reserved test "
                            f"domain (e.g. {test[0]}) — synthetic data is never published to the "
                            f"app; pass allow_test_data only for a local preview")
-    if out.exists() and any(out.iterdir()) and (_marker(out) or {}).get("kind") != KIND:
+    marker = _marker(out) if out.exists() else None
+    if out.exists() and any(out.iterdir()) and (marker or {}).get("kind") != KIND:
         raise PublishError(f"{out} holds files that are not a theme-intelligence publication — "
                            f"refusing to replace them")
+    if marker is not None:  # a file the last publication did not write is never deleted (U32e)
+        stray = sorted(str(p.relative_to(out)) for p in out.rglob("*") if p.is_file()
+                       and not p.name.startswith(".")  # OS metadata (Finder's .DS_Store)
+                       and str(p.relative_to(out)) not in {"index.json", *marker.get("files", [])})
+        if stray:
+            raise PublishError(f"{out} holds {len(stray)} file(s) the last publication did not "
+                               f"write ({first_of(stray, 5, ', ')}) — refusing to delete them; "
+                               f"move them out first")
     with tempfile.TemporaryDirectory() as tmp:
         rendered = Path(write_run_outputs(store, run_id, Path(tmp) / "run")["dir"])
         pages = sorted(str(p.relative_to(rendered)) for p in rendered.rglob("*.html")

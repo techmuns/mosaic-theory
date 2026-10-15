@@ -1174,8 +1174,11 @@ class ManualAction(Frozen):
 
     kind: Literal["UPLOAD_REQUIRED", "MANUAL_REVIEW"]
     issue: str
-    #: affected articles as discovered — "url — title as listed"; a title is never invented
+    #: affected articles as discovered — "url — title as listed"; a title is never invented. At
+    #: most health.AFFECTED_SHOWN are listed, the rest counted in a closing line
     affected: tuple[str, ...] = ()
+    #: how many articles are affected in all (0: a check stored before this field)
+    affected_total: int = 0
     action: str
 
 
