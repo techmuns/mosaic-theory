@@ -73,4 +73,5 @@ batch B.
 - **A proposal named like a known company, with a ticker, costs one SEC lookup before it is decided.** It is cached like any resolution.
 - **Names alone still cannot tell two companies apart** when neither has a verified listing. "Meta" and "Meta Materials" with no verified listings stay one company. *Falsifier: a distinct company refused while the SEC verifies it.*
 - **`DocumentRecord` gains two optional fields**, and every record this code writes carries their keys. Code older than this PR refuses such a record (`extra="forbid"`), so the `theme-intelligence` worktree, where the pilot lives, moves to main with the merge.
+- **A J.P. Morgan listing with no card now discovers nothing from JPM for that run.** It used to read the sitemap (blaming "no dates"). The run says so: discovery fails, health raises the alert, and the parser must be fixed before JPM is read again. Failing loud was chosen over reading a sitemap that masks a broken listing. *Falsifier: a week where the listing is legitimately empty while the page works.*
 - **U31f is open** until the first Actions run.
