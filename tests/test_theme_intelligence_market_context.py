@@ -332,3 +332,18 @@ def test_the_research_action_is_the_same_whatever_the_market_says(tmp_path: Path
                               for t in pipe.store.theses()))
     assert actions[0] == actions[1] == actions[2]
     assert set(actions[0]) <= {a.value for a in ResearchAction}
+
+
+
+def test_the_markdown_record_states_figures_in_the_readers_units(tmp_path: Path) -> None:
+    """REVIEW of #731: the record printed "-0.0137" for a 1.4% gap; it reads as the HTML does.
+    And the label leads in plain bold, never the card's grey "unknown" badge."""
+    pipe = _jpm(tmp_path)
+    run, _ = pipe.run_market(as_of=JPM_AS_OF, prices=_prices(), eps=_no_eps)  # type: ignore[arg-type]
+    out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
+    md = "\n".join(p.read_text() for p in (out / "cards").glob("TH-*.md"))
+    lines = [x for x in md.splitlines() if x.startswith("  - vs 200-day avg: ")]
+    assert lines and all(re.match(r"  - vs 200-day avg: ([+−]\d+\.\d%|not held)", x)
+                         for x in lines), lines[:2]
+    card = next((out / "cards").glob("TH-*.html")).read_text()
+    assert f"<b>{MARKET_LABEL}</b>" in card and 'class="lab unk">MARKET CONTEXT' not in card

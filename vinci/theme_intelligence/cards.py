@@ -1309,15 +1309,23 @@ def _ordinal(n: int) -> str:
     return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
+def market_text(f: MarketFigure, kind: str) -> str:
+    """A market figure in the reader's units — one formatter for the HTML and the Markdown record
+    (review of #731: the record printed raw fractions, "-0.0137" for a 1.4% gap)."""
+    if f.value is None:
+        return "not held"
+    v = f.value
+    text = (f"{v * 100:+.1f}%" if kind == "pct" else f"{v * 100:+.1f} pp" if kind == "pp"
+            else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
+    return text.replace("-", "−")
+
+
 def market_cell(f: MarketFigure, kind: str) -> str:
     """One market figure as the reader sees it — its basis on hover, and in the list below the
     table; "not held" when it was not measured (never a blank that reads as zero)."""
     if f.value is None:
         return f'<span class="nh" title="{e(f.basis)}">not held</span>'
-    v = f.value
-    text = (f"{v * 100:+.1f}%" if kind == "pct" else f"{v * 100:+.1f} pp" if kind == "pp"
-            else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
-    return f'<span title="{e(f.basis)}">{e(text.replace("-", "−"))}</span>'
+    return f'<span title="{e(f.basis)}">{e(market_text(f, kind))}</span>'
 
 
 #: (column, field, format) — the table and the measurement list read the same order
@@ -1352,7 +1360,7 @@ def market_html(m: MarketContext | None, *, missing: str) -> str:
         f"<li><b>{e(r.name)}</b><ul>" + "".join(
             f"<li>{e(c)}: {e(getattr(r, fld).basis)}</li>" for c, fld, _k in MARKET_COLUMNS)
         + "</ul></li>" for r in m.rows if r.ticker is not None)
-    return (f'<div class="mkt"><p class="mktl"><span class="lab unk">{e(m.label)}</span></p>'
+    return (f'<div class="mkt"><p class="mktl"><b>{e(m.label)}</b></p>'
             f'<p class="note">As of {e(m.as_of.isoformat())} · against {e(m.benchmark)} · '
             f'{e(m.source)}.</p>'
             + (f'<div class="hscroll"><table class="mktt">{head}{"".join(rows)}</table></div>'
@@ -2100,9 +2108,9 @@ def _md_market(m: MarketContext | None) -> list[str]:
         close = (f"{r.last_close:,.2f} ({r.last_bar.isoformat()})"
                  if r.last_close is not None and r.last_bar else "not held")
         out.append(f"- {r.name} [{r.ticker}] — close {close}")
-        out += [f"  - {c}: " + (f"{getattr(r, fld).value:.4g} — " if getattr(r, fld).value
-                                is not None else "") + getattr(r, fld).basis
-                for c, fld, _k in MARKET_COLUMNS]
+        out += [f"  - {c}: " + (f"{market_text(getattr(r, fld), k)} — "
+                                if getattr(r, fld).value is not None else "")
+                + getattr(r, fld).basis for c, fld, k in MARKET_COLUMNS]
     return out + [f"- {MARKET_REVISIONS_NOTE}"]
 
 
