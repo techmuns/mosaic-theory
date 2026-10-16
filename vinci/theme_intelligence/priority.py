@@ -69,6 +69,17 @@ from vinci.theme_intelligence.schemas import (
 from vinci.theme_intelligence.timewindow import timing_of
 from vinci.theme_intelligence.verify import EARNINGS_STEPS, claim_provenance, is_market_reaction
 
+#: the two counter-evidence verdicts that hold a thesis back from RESEARCH NOW, kept as the F8
+#: factor's VALUE when one applies (U53) — so every surface reads the verdict from the stored
+#: factor, never from the rule trace's words. Otherwise F8's value is the count of material
+#: counter-claims, as it always was.
+F8_CONTESTED = "contested"
+F8_OUTWEIGHS = "outweighs support"
+#: how the WATCH trace states each verdict — read ONLY for a version stored before the verdict was
+#: a value (`counter_verdict`), and written by the rule from these same words
+_CONTESTED_TRACE = "contested: "
+_OUTWEIGHS_TRACE = "counter-evidence outweighs support"
+
 VALUATION_STATUS = ("NOT_ASSESSED — the registry holds no consensus, market-expectation or "
                     "valuation data; an opportunity here is not valuation proof")
 
@@ -256,6 +267,13 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
     def ids(cs: list[Claim]) -> tuple[str, ...]:
         return tuple(dict.fromkeys(c.claim_id for c in cs))
 
+    # the counter-evidence verdict (F8's value when it applies; the WATCH rule's condition below)
+    if external_origins and len(external_origins) >= len(support_origins):
+        counter: str | None = F8_CONTESTED
+    elif own_counter_obs and len(own_counter_obs) >= len(support_obs):
+        counter = F8_OUTWEIGHS
+    else:
+        counter = None
     windows = "; ".join(f"{c.claim_id}: {timing[c.claim_id][1]}" for c in near_claims[:4])
     exposures = ([f"{n} ({t})" for n, t in st.listed_exposures]
                  + [f"sector: {s}" for s in st.sector_exposures])
@@ -339,8 +357,9 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                        "not credible" if candidates and not credible else
                        "absent" if not candidates else "incomplete",
                        note=inflection_note, claim_ids=ids(credible or candidates)),
-        PriorityFactor(factor_id="F8_counterevidence", value=str(len(counter_mat)),
-                       note=f"material counter-claims ({len(st.counter)} counter-claims in total); "
+        PriorityFactor(factor_id="F8_counterevidence", value=counter or str(len(counter_mat)),
+                       note=(f"{len(counter_mat)} " if counter else "")
+                       + f"material counter-claims ({len(st.counter)} counter-claims in total); "
                             f"{len(own_counter_obs)} distinct counter-observation(s) from the "
                             f"supporting sources vs {len(support_obs)} supporting; "
                             f"{len(external_origins)} independent contradicting source(s) vs "
@@ -390,11 +409,11 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                 if candidates else ""))
         if st.stance is not StanceInSource.ASSERTED:
             unmet.append(f"premise is {st.stance.value} in the source")
-        if external_origins and len(external_origins) >= len(support_origins):
-            unmet.append(f"contested: {len(external_origins)} independent source(s) directly "
-                         f"contradict it, against {len(support_origins)} supporting")
-        elif own_counter_obs and len(own_counter_obs) >= len(support_obs):
-            unmet.append("counter-evidence outweighs support")
+        if counter == F8_CONTESTED:
+            unmet.append(f"{_CONTESTED_TRACE}{len(external_origins)} independent source(s) "
+                         f"directly contradict it, against {len(support_origins)} supporting")
+        elif counter == F8_OUTWEIGHS:
+            unmet.append(_OUTWEIGHS_TRACE)
         if st.retrieval is not RetrievalState.FULL:
             unmet.append(f"retrieval {st.retrieval.value}")
         if st.reliability == "low":
@@ -428,6 +447,23 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
         investment_readiness=InvestmentReadiness.NOT_ASSESSED, factors=factors,
         rules_fired=tuple(fired), previous_action=previous, change_reason=reason,
         valuation_status=VALUATION_STATUS)
+
+
+def counter_verdict(pr: ResearchPriority) -> str | None:
+    """The counter-evidence verdict (`F8_CONTESTED` / `F8_OUTWEIGHS`) a stored priority carries, or
+    None — read from the F8 factor's VALUE. A version stored before the verdict was a value has a
+    count there, and the verdict only in its WATCH trace: read from the rule's own words, here and
+    nowhere else (none in the pilot registry, 2026-10-16)."""
+    f8 = next((f.value for f in pr.factors if f.factor_id == "F8_counterevidence"), "")
+    if f8 in (F8_CONTESTED, F8_OUTWEIGHS):
+        return f8
+    if f8.isdigit() and pr.research_action is ResearchAction.WATCH:
+        trace = " ".join(pr.rules_fired)
+        if _CONTESTED_TRACE in trace:
+            return F8_CONTESTED
+        if _OUTWEIGHS_TRACE in trace:
+            return F8_OUTWEIGHS
+    return None
 
 
 def _diff_reason(old: tuple[PriorityFactor, ...], new: tuple[PriorityFactor, ...]) -> str:

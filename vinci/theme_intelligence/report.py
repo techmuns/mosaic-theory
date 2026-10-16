@@ -28,6 +28,7 @@ import csv
 import io
 import json
 import re
+from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -68,6 +69,7 @@ from vinci.theme_intelligence.cards import _anchor as _card_anchor
 from vinci.theme_intelligence.config import (
     ENGINE_VERSION,
     Paths,
+    SourceConfig,
     load_taxonomy,
 )
 from vinci.theme_intelligence.display import clip
@@ -75,8 +77,11 @@ from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
     SOURCE_LABELS,
+    Article,
+    ArticleVersion,
     ChangeEvent,
     Claim,
+    DocumentRecord,
     IssueSeverity,
     Provenance,
     ResearchAction,
@@ -385,6 +390,42 @@ def _only_back_matter(d: Any) -> bool:
                                        for q in d.quarantined)
 
 
+def unread_documents(documents: Iterable[DocumentRecord],
+                     retired: set[str]) -> dict[str, DocumentRecord]:
+    """By article: its supplied document whose pages could not be READ (undecodable glyph output,
+    quarantined). A RETIRED channel's documents are left out — its records are history, never
+    asked about (U56: the desk kept them, the weekly report did not)."""
+    return {d.article_id: d for d in documents
+            if d.quarantined and d.article_id and d.source_id not in retired}
+
+
+def partial_ask(article: Article, versions: Sequence[ArticleVersion], *,
+                unread: DocumentRecord | None, source: SourceConfig | None,
+                linked_upload: bool, retired: set[str]) -> tuple[str, ArticleVersion] | None:
+    """THE partial-awaiting-full rule — what a PARTIAL article asks of the operator — in ONE copy,
+    read by the weekly report's intake and the desk's Uploads (U56: two copies in two orders, and
+    a preview-only channel's unreadable pages were a visual check on the desk, metadata only in
+    the report). With the article's latest unblocked version:
+
+    - None — nothing is asked: a retired channel's article; one whose latest unblocked version is
+      not PARTIAL; one whose only unreadable pages are back matter (its analysis text is whole);
+      a preview-only channel's preview with no linked report to upload (the operator's decision).
+    - "visual" — pages of its supplied document could not be read: a visual / OCR check, never an
+      awaited document — on ANY channel, a preview-only one included (that decision is about
+      asking for a document; this one was supplied).
+    - "full_report" — a complete document is awaited."""
+    if article.source_id in retired:
+        return None
+    vs = [v for v in versions if v.retrieval_state is not RetrievalState.BLOCKED]
+    if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
+        return None
+    if unread is not None:
+        return None if _only_back_matter(unread) else ("visual", vs[-1])
+    if source is not None and source.paywalled_posts == "preview_only" and not linked_upload:
+        return None
+    return "full_report", vs[-1]
+
+
 def _doc_line(store: Store, d: Any, as_of: dict[str, date]) -> str:
     original = (store.path.parent / d.stored_path) if d.stored_path else None
     held = ("original held privately on this machine" if original and original.exists()
@@ -447,26 +488,20 @@ def research_intake(store: Store, run: WeeklyRun, runs: list[WeeklyRun],
     needs_upload: list[str] = []
     # a document whose pages could not be READ is not awaiting another document: those pages need
     # a visual / OCR review (documents.py quarantines undecodable glyph output)
-    unread = {d.article_id: d for d in docs_all if d.quarantined and d.article_id}
+    unread = unread_documents(docs_all, retired)
     active = {s.id: s for s in load_sources()}
     for a in store.articles():
-        if a.source_id in retired:
+        ask = partial_ask(a, store.article_versions(a.article_id),
+                          unread=unread.get(a.article_id), source=active.get(a.source_id),
+                          linked_upload=a.article_id in upload_issue, retired=retired)
+        if ask is None:
             continue
-        src_a = active.get(a.source_id)
-        if (src_a is not None and src_a.paywalled_posts == "preview_only"
-                and a.article_id not in upload_issue):
-            continue  # its free preview is all it gives (the operator's decision): not awaited
-        vs = [v for v in store.article_versions(a.article_id)
-              if v.retrieval_state is not RetrievalState.BLOCKED]
-        if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
-            continue
+        kind, latest = ask
         line = (f"{a.publisher} — “{clean_title(a.title, a.publisher) or 'title UNKNOWN'}” "
                 f"(published "
                 f"{a.published_at.date().isoformat() if a.published_at else 'UNKNOWN'}; "
-                f"{vs[-1].body_word_count} words read) [{a.article_id}]")
-        if a.article_id in unread:
-            if _only_back_matter(unread[a.article_id]):
-                continue  # its analysis text is whole: a visual check, never an awaited document
+                f"{latest.body_word_count} words read) [{a.article_id}]")
+        if kind == "visual":
             line += (f" — not a missing document: {_unread_pages(unread[a.article_id])} could "
                      f"not be read (undecodable font glyphs) — visual / OCR review")
         awaiting.append(line)
@@ -779,6 +814,10 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
     line id) as NOT RE-REVIEWED; and, when the line is gone, listed as removed, never resolved.
     Nothing is copied or edited: each finding is read from the run that made it, with that
     version and date. The deterministic card checks are each version's own (they always run)."""
+    shared = store.derived()  # one render: each version's findings derived once (U41)
+    hit = shared.get(("findings", thesis_id, v.version)) if shared is not None else None
+    if isinstance(hit, _VersionFindings):
+        return hit
     if v.version in memo:
         return memo[v.version]
     sents = card_sentences(v.content)
@@ -846,6 +885,8 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
                            ReviewCarry(reason, {k: f for k, f in carried.items()
                                                 if k not in resolved}, tuple(removed)), opened)
     memo[v.version] = out
+    if shared is not None:  # read only issues and versions: append-only rows (Store.derived)
+        shared[("findings", thesis_id, v.version)] = out
     return out
 
 
@@ -1173,13 +1214,15 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
 
 def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str]],
                     generated: str, runs: list[WeeklyRun] | None = None,
-                    census: tuple[int, int, int, int] | None = None) -> Dashboard:
+                    census: tuple[int, int, int, int] | None = None,
+                    asof: AsOf | None = None) -> Dashboard:
     """The weekly report of `run_id` over `report_runs` — or over `runs` when given (the research
-    desk's week in progress: every manual run since the last weekly scan, desk.desk_weeks)."""
+    desk's week in progress: every manual run since the last weekly scan, desk.desk_weeks).
+    `asof`: the run's `theses_as_of_run`, when the caller already holds it (U41)."""
     run = store.run(run_id)
     if run is None:
         raise KeyError(f"no run {run_id}")
-    asof = theses_as_of_run(store, run)
+    asof = asof if asof is not None else theses_as_of_run(store, run)
     runs = runs or report_runs(store, run)
     rids = {r.run_id for r in runs}
     events = [ev for r in runs for ev in store.events(run_id=r.run_id)]
@@ -1227,6 +1270,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
         hdr = cur.content.header
+        view = _analyst_view(store, t, cur, before, this_run, evs, rids, mech_label)
         row = DashRow(
             category=cat.value, thesis_id=tid, title=t.title, action=now_action.value,
             previous_action=prev_action.value if prev_action else None,
@@ -1253,9 +1297,11 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             first_ingested=f"{t.created_at:%Y-%m-%d %H:%M} UTC",
             analysis_as_of=cur.as_of.isoformat(),
             sector_exposures=[f"{x.name} ({x.direction.value})" for x in distinct_sectors(av)],
-            why_action=why_action(cur.priority.rules_fired),
-            rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit,
-            **_analyst_view(store, t, cur, before, this_run, evs, rids, mech_label))
+            # the action's reasons ONCE, from the stored factor values (`cards.why_reasons`) —
+            # the row's "why" list and this line can never disagree (U53: a regex over the rule
+            # trace named a contested WATCH that the list beside it did not)
+            why_action=" ".join(view["why"]),
+            rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit, **view)
         if any(r.startswith(NO_EVIDENCE_RULE) for r in cur.priority.rules_fired):
             no_evidence.append(row)  # not an opportunity: never under NEW / UPGRADED / …
             continue
@@ -1416,25 +1462,6 @@ def dates_line(r: DashRow, *, explain: bool = True) -> str:
                if explain and r.category == WeeklyCategory.NEW.value else "")
             + f" · analysed as of {r.analysis_as_of or 'UNKNOWN'}"
             + (" (a historical replay — a simulated date, not a detection)" if replay else ""))
-
-
-def why_action(rules: tuple[str, ...] | list[str]) -> str:
-    """The deterministic rule that set the action, said plainly (the trace stays in the audit)."""
-    if not rules:
-        return ""
-    r = rules[0]
-    m = re.match(r"WATCH \(RESEARCH NOW unmet: (.*)\)$", r)
-    if m:
-        return "Watch — not yet Research Now: " + m.group(1)
-    if r.startswith("NOW "):
-        # the inflection route says WHY in the first view: its research question (no ids in it)
-        q = re.search(r"research question: (.*?\?)", r)
-        if "a near-term fundamental inflection" in r and q:
-            return ("Research Now — no recent mispricing or dated catalyst, but a credible "
-                    f"near-term change in a fundamental: {q.group(1)} An investigation, not a "
-                    "trade.")
-        return "Research Now — every check passed. An investigation, not a trade."
-    return re.sub(r"^SKIP-\d+ ", "Skip — ", r)
 
 
 def _plain(text: str) -> str:
@@ -1762,19 +1789,6 @@ def _ops_html(d: Dashboard, print_mode: bool) -> str:
                      + "".join(f'<div class="s note">{e(x)}</div>'
                                for x in d.no_material_change) + "</details>")
     return '<div class="ops">' + "".join(parts) + "</div>"
-
-
-def _standing(d: Dashboard) -> list[str]:
-    return [s["source_id"] for s in d.sources
-            if any("standing access limitation" in w for w in s.get("warnings", []))]
-
-
-def _failed_label(d: Dashboard) -> str:
-    standing = set(_standing(d))
-    new = [x for x in d.sources_failed if x not in standing]
-    return f"{len(new)} new" + (f" + {len(standing)} standing ({', '.join(sorted(standing))})"
-                                if standing else "")
-
 
 
 def _coverage_html(v: dict[str, Any], print_mode: bool) -> str:
@@ -2174,7 +2188,7 @@ def _write_run_outputs(store: Store, run_id: str, out_dir: Path | None) -> dict[
 
     # ONE week, ONE view: the full weekly report IS the desk's This week report (U54: the
     # published pair read 6 theses / 3 articles beside 18 / 13) — built once, for both
-    view = Desk(store, run, cards=cards, generated=generated)
+    view = Desk(store, run, cards=cards, generated=generated, asof=asof)
     d = view.d
     (out / "dashboard.html").write_text(render_dashboard_html(d))
     delta_ids = [r.thesis_id for rows in d.categories.values() for r in rows] + [
@@ -2233,8 +2247,3 @@ def _write_run_outputs(store: Store, run_id: str, out_dir: Path | None) -> dict[
     if out.parent.name == "runs" and run_id == newest:  # names the NEWEST run, not the last
         (out.parent / "LATEST").write_text(run_id + "\n")  # one re-rendered
     return {"dir": str(out), "cards": cards, "dashboard": d, "manifest": manifest, "desk": desk}
-
-
-def week_of(d: date) -> tuple[date, date]:
-    start = date.fromordinal(d.toordinal() - d.weekday())
-    return start, date.fromordinal(start.toordinal() + 6)

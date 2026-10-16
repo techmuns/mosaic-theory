@@ -80,10 +80,12 @@ from vinci.theme_intelligence.report import (
     build_dashboard,
     card_context,
     line_findings,
+    partial_ask,
     report_runs,
     review_carry,
     source_health_as_of,
     theses_as_of_run,
+    unread_documents,
 )
 from vinci.theme_intelligence.schemas import (
     EXPOSURE_ROLES,
@@ -941,19 +943,17 @@ def upload_items(reg: _Registry, health: dict[str, Any],
     retired = {r.id for r in load_retired_sources()}
     upload_issue = {i.ref_id: i.detail for i in store.issues()
                     if i.code == "LINKED_REPORT_UPLOAD"}
-    unread = {d.article_id: d for d in reg.documents if d.quarantined and d.article_id}
+    unread = unread_documents(reg.documents, retired)
     for a in store.articles():
-        if a.source_id in retired:
+        # the ONE partial-awaiting-full rule, shared with the weekly report's intake (U56)
+        ask = partial_ask(a, reg.versions(a.article_id), unread=unread.get(a.article_id),
+                          source=reg.sources.get(a.source_id),
+                          linked_upload=a.article_id in upload_issue, retired=retired)
+        if ask is None:
             continue
-        vs = [v for v in reg.versions(a.article_id)
-              if v.retrieval_state is not RetrievalState.BLOCKED]
-        if not vs or vs[-1].retrieval_state is not RetrievalState.PARTIAL:
-            continue
-        doc = unread.get(a.article_id)
-        if doc is not None:
-            kinds = {q.kind for q in doc.quarantined}
-            if kinds == {"back_matter"}:
-                continue  # its analysis text is whole — never an awaited document
+        kind, latest = ask
+        if kind == "visual":
+            doc = unread[a.article_id]
             pages = sorted(q.page for q in doc.quarantined)
             out.append(UploadItem(
                 kind="visual", title=clean_title(a.title, a.publisher) or "title not recorded",
@@ -965,13 +965,9 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                 detail=[f"pages {', '.join(str(p) for p in pages)}"],
                 audit=f"{a.article_id} · document {doc.doc_id}"))
             continue
-        src_a = reg.sources.get(a.source_id)
-        if (src_a is not None and src_a.paywalled_posts == "preview_only"
-                and a.article_id not in upload_issue):
-            continue  # its free preview is all it gives (the operator's decision): never asked for
         why = ("the page links a fuller report that needs an authorised copy"
                if a.article_id in upload_issue else
-               f"only a preview could be read ({vs[-1].body_word_count:,} words)")
+               f"only a preview could be read ({latest.body_word_count:,} words)")
         out.append(UploadItem(
             kind="full_report", title=clean_title(a.title, a.publisher) or "title not recorded",
             publisher=a.publisher, source_id=a.source_id, published=_todate(a.published_at),
@@ -1415,14 +1411,16 @@ class Desk:
     """The desk's view model over one run of the registry, and its pages."""
 
     def __init__(self, store: Store, run: WeeklyRun, *, cards: dict[str, dict[str, str]],
-                 generated: str) -> None:
+                 generated: str, asof: AsOf | None = None) -> None:
+        """`asof`: the run's `theses_as_of_run`, when the caller already holds it (U41: one
+        render built it three times)."""
         self.store, self.run, self.generated = store, run, generated
         self.reg = _Registry(store)
         self.weeks = desk_weeks(store, run)
         if not self.weeks:
             raise ValueError(f"run {run.run_id} has no week to report")
         self.week = self.weeks[-1]
-        self.asof: AsOf = theses_as_of_run(store, run)
+        self.asof: AsOf = asof if asof is not None else theses_as_of_run(store, run)
         self.cards = cards
         self._uid = 0
         self.week_of_run = {r.run_id: w.key for w in self.weeks for r in (*w.runs, *w.failed)}
@@ -1431,7 +1429,8 @@ class Desk:
         # the weekly report counts the week's articles by THIS census (one registry read)
         self.d: Dashboard = build_dashboard(store, run.run_id, cards=cards, generated=generated,
                                             runs=list(self.week.runs),
-                                            census=census_of(self.articles[self.week.key]))
+                                            census=census_of(self.articles[self.week.key]),
+                                            asof=self.asof)
         self.rows: list[DashRow] = [r for rs in self.d.categories.values() for r in rs]
         self.health = source_health_as_of(store, run)
         self.area = {tid: area_name(t.key_node) for tid, (t, _v) in self.asof.items()}

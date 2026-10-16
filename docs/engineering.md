@@ -364,6 +364,18 @@ PR (CLAUDE.md: coin-time translation).
   health-checked, never retried for full text*.
 - **Retired source** (theme intelligence, sources.toml `[[retired]]`) — plain words: *a removed
   publisher kept as history: nothing new is read, checked, requested or accepted from it*.
+- **Enrichment / `enrich`** (theme intelligence, `enrich.py`, table `enrichments`) — plain words:
+  *the US-listed companies a thesis's own steps to earnings imply, proposed by the model and checked
+  against the SEC like a source-named company — shown boxed as OUR hypothesis, never read by a
+  priority rule*.
+- **Re-analysis / RETIRED thesis** (theme intelligence, `reanalyse`, `Pipeline.run_reanalyse`,
+  `Thesis.retired`) — plain words: *articles already held, analysed again under today's taxonomy
+  and prompts; a thesis an earlier taxonomy merged is RETIRED — archived with its reason and its
+  history kept, never matched, updated or reactivated again*. Not a retired SOURCE (above).
+- **Preview-only channel** (theme intelligence, sources.toml `paywalled_posts = "preview_only"`) —
+  plain words: *a publisher whose paid posts are read as their free preview, by the operator's
+  decision: analysed and labelled a preview, never asked for in full* — unless the page links a
+  fuller report, or a supplied copy has pages that could not be read (a visual check).
 - **Spend guard / call bound** (theme intelligence, `budget.py`) — plain words: *the worst-case
   cost of one model call, computed from its size before it is sent, refused if it does not fit
   the run / document / retry limit left*.
