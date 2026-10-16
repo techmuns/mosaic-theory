@@ -1555,10 +1555,11 @@ BROAD_MARKET_FUNDS = frozenset({
 #: implied correlation index — Cboe's estimate, from option prices, of how closely the 50 largest
 #: S&P 500 stocks will move together — counted as an exposure on 33 current versions of the local
 #: registry copies. Matched on whole words of the name; an equity index or fund that SELECTS stocks
-#: by volatility ("S&P 500 Low Volatility Index", "MSCI USA Minimum Volatility Index") holds stocks
-#: and is not one.
+#: by volatility ("S&P 500 Low Volatility Index", "MSCI USA Minimum-Volatility Index") holds stocks
+#: and is not one, spaced or hyphenated.
 MARKET_INDICATOR = re.compile(
-    r"\b(?:implied (?:correlation|volatility)|(?<!low )(?<!minimum )(?<!min )volatility index"
+    r"\b(?:implied (?:correlation|volatility)"
+    r"|(?<!low )(?<!low-)(?<!minimum )(?<!minimum-)(?<!min )(?<!min-)volatility index"
     r"|dispersion index|skew index|move index|vix|vvix|vxn|vxd|rvx|vstoxx|v2x|dspx"
     r"|cor(?:1m|3m|6m|9m|1y))\b", re.IGNORECASE)
 
@@ -1596,6 +1597,26 @@ def indicator_words(names: Sequence[str]) -> str:
     """Why a thesis whose only attached instrument is a market indicator counts no exposure."""
     return (f"only a market indicator ({', '.join(names)}) — a measure, not a holding, is not "
             f"counted as an exposure")
+
+
+def _uncounted_parts(counted: CountedExposures) -> list[str]:
+    """What a thesis names that is not counted, one phrase per class."""
+    return ([f"a broad market index ({', '.join(counted.broad)})"] if counted.broad else []) + (
+        [f"a market indicator ({', '.join(counted.indicators)})"] if counted.indicators else [])
+
+
+def stale_count_words(pr: ResearchPriority | None, counted: CountedExposures) -> str:
+    """When the STORED rule counted more exposures than today's rules do — a version assessed
+    before a counting ruling, whose action stands until it is re-graded — what is no longer
+    counted, and that a re-grade applies it; else "". REVIEW of #736: a version stored counting
+    the S&P 500 passed its gate with "not point-in-time verified" as the reason, which was false."""
+    n = exposures_counted(pr) if pr is not None else None
+    now = len(counted.listed) + len(counted.instruments) + len(counted.sectors)
+    parts = _uncounted_parts(counted)
+    if n is None or n <= now or not parts:
+        return ""
+    return (f"counted {n} exposure{'s' if n != 1 else ''} when the thesis was assessed; today's "
+            f"rules do not count " + " and ".join(parts) + " — a re-grade ($0) applies them")
 
 
 def uncounted_words(counted: CountedExposures) -> str:
@@ -1834,7 +1855,15 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
                 groups: Iterable[str] = (), *, groups_unchecked: bool = False) -> list[str]:
     """Why the research action is what it is, in plain words — from the STORED priority's factor
     VALUES and the card's own exposures, never from the rule trace's text (which stays in the
-    audit view)."""
+    audit view). A version whose stored count took what today's rules do not count says so,
+    whatever its action (`stale_count_words`)."""
+    stale = stale_count_words(pr, counted_exposures(card.s05_affected))
+    return _why_reasons(card, pr, groups, groups_unchecked=groups_unchecked) + (
+        [f"Exposure — {stale}."] if stale else [])
+
+
+def _why_reasons(card: CardContent, pr: ResearchPriority | None,
+                 groups: Iterable[str] = (), *, groups_unchecked: bool = False) -> list[str]:
     if pr is None:
         return []
     f = {x.factor_id: x.value for x in pr.factors}
@@ -2152,6 +2181,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     inst = exposure_instruments(av)
     broad = broad_market_instruments(av)
     indic = market_indicators(av)
+    attached = _attached(av)
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
@@ -2183,11 +2213,11 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + (f'<div class="sub">{INDICATOR_INSTRUMENTS}</div>' + _company_rows(indic)
            if indic else "")
         + f'<div class="sub">{NAMED_INSTRUMENTS}</div>'
-        + _company_rows([c for c in av.instruments if c not in inst + broad + indic])
+        + _company_rows([c for c in av.instruments if c not in attached])
         + '<div class="sub">Private or unlisted (stay private)</div>'
         + _company_rows(av.private_or_unlisted)
         + '<div class="sub">Named, not securities (products, baskets, agencies)</div>'
-        + _company_rows([c for c in av.not_securities if c not in inst + broad + indic])
+        + _company_rows([c for c in av.not_securities if c not in attached])
         + '<div class="sub">Also named in the source — mentions, NOT exposures of this thesis'
           '</div>' + _company_rows(exposures_of(av)[1] + list(av.also_named))
         + '<div class="sub">Sector labels</div><div class="s">' + e(", ".join(av.sectors) or "—")
@@ -2434,17 +2464,16 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     inst = exposure_instruments(av)
     broad = broad_market_instruments(av)
     indic = market_indicators(av)
+    attached = _attached(av)
     for label, grp, expo in (("Stock exposures of this thesis", exposures_of(av)[0], True),
                              (INSTRUMENT_EXPOSURES, inst, True),
                              *(((BROAD_INSTRUMENTS, broad, False),) if broad else ()),
                              *(((INDICATOR_INSTRUMENTS, indic, False),) if indic else ()),
                              (NAMED_INSTRUMENTS,
-                              [c for c in av.instruments if c not in inst + broad + indic],
-                              False),
+                              [c for c in av.instruments if c not in attached], False),
                              ("Private or unlisted", av.private_or_unlisted, False),
                              ("Named, not securities (products, baskets, agencies)",
-                              [c for c in av.not_securities if c not in inst + broad + indic],
-                              False),
+                              [c for c in av.not_securities if c not in attached], False),
                              ("Also named in the source — mentions, NOT exposures of this thesis",
                               exposures_of(av)[1] + list(av.also_named), False)):
         md.append(f"**{label}:**")

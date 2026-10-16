@@ -64,6 +64,7 @@ from vinci.theme_intelligence.cards import (
     refused_sectors,
     review_not_run_words,
     set_card,
+    stale_count_words,
     topnav,
     uncounted_words,
     unit_shown,
@@ -741,6 +742,7 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                else bool(counted.listed or counted.instruments or counted.sectors))
     unverified = any(r.code == "listing_unverified"
                      for r in watch_reasons_of(v.priority, counted.unverified))
+    stale = stale_count_words(v.priority, counted)
     named = "; ".join(x for x in (
         "listed companies: " + ", ".join(f"{n} ({tk})" for n, tk in counted.listed)
         if counted.listed else "",
@@ -764,9 +766,10 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
         Gate(exposed, "An exposure the source names",
              # counted when the thesis was assessed, but nothing on the card verifies today (an
              # older version counted listings that are not point-in-time verified now)
-             (named or f"counted when the thesis was assessed: "
-                       f"{', '.join(counted.unverified) or _pl(n_counted or 0, 'exposure')} — "
-                       f"not point-in-time verified on the card now")
+             ("; ".join(x for x in (named, stale) if x)
+              or (f"counted when the thesis was assessed: {', '.join(counted.unverified)} — "
+                  f"not point-in-time verified on the card now" if counted.unverified
+                  else f"counted when the thesis was assessed: {_pl(n_counted or 0, 'exposure')}"))
              if exposed else (unverified_words(counted.unverified)
                               if unverified else uncounted_words(counted)
                               if counted.broad or counted.indicators or counted.not_sectors else

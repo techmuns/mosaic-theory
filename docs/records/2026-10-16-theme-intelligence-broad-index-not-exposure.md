@@ -105,6 +105,31 @@ only exposure is TH-5C3B51DF57 in a local registry copy.
   - each page collapsed and with every `<details>` opened;
   - section 05 of both cards, expanded.
 
+**REVIEW FIXES (code review of #736/#737, 2026-10-16).**
+- **A stale count is said, never disguised.** A version stored under the earlier rule keeps its
+  action until it is re-graded. Its exposure gate took pass/fail from the STORED count but its
+  words from today's. With nothing left to name, it passed with "not point-in-time verified" as
+  the reason, which was false.
+  - `stale_count_words` now says what today's rules no longer count, and that a re-grade ($0)
+    applies them, on the gate and on the why-line, whatever the action.
+  - Real case: the committed calm-index fixture graded on main 11e77e49 (stored "0 listed ·
+    1 sector · 2 instrument", Research Now), rendered with this branch. Its gate reads "counted 3
+    exposures when the thesis was assessed; today's rules do not count a broad market index (S&P
+    500) and a market indicator (Cboe 3-month implied correlation index) — a re-grade ($0)
+    applies them".
+- **Hyphenated low-volatility indices** ("S&P 500 Low-Volatility Index", "MSCI USA
+  Minimum-Volatility Index") hold stocks and are no longer read as indicators.
+- **The dashboard row names an excluded instrument once, labelled.** It had been listed under
+  `named_instruments` (printed as "Exposure the source names") AND under `other_named` as "named,
+  not attached to the thesis". It now appears only under `other_named`, as "broad market index /
+  market indicator — not counted".
+- **"Not attached" is one test** (`_attached`), instead of a concatenation re-derived in four
+  places.
+- Pins: hyphenated negatives; the stale gate and why-line on a stored Research Now, with a negative
+  for a version whose count matches today's; the fallback for a count nothing on the card accounts
+  for; an attached index never under "not attached". 7 mutants on the fixes, all killed; the
+  earlier 19 re-run on this code, all killed.
+
 **ALSO DONE (operator, 2026-10-16: "move the pilot to main").** The pilot checkout moved from
 8afbe671 to main 11e77e49.
 - The live registry is untouched: schema v5, md5 5fcc240d4b087d2feb1f81e6d6fabc3c.
