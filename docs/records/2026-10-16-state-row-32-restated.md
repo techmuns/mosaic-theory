@@ -13,7 +13,7 @@ superseded-by:
 `docs/records/2026-10-14-theme-intelligence-unverified-leads-verified.md` found row 32 breaking
 the rule that a closed item's row is deleted and a build adds at most a short claim. Row 32 had
 become one line holding:
-- 37 struck (closed) items;
+- 38 struck (closed) items: item (4) and 37 inside item (8);
 - 9 "awaiting approval" items, every one belonging to #703, which merged on 2026-10-14;
 - two "(8)"s under a heading that says "seven".
 
@@ -31,7 +31,7 @@ Row 32 now holds only what is open:
 Nomura 2026-10-13). Six `[[source]]` entries are configured at ac5a87dc. Both texts removed from
 row 32 are kept verbatim at the end of this record, so nothing is lost; git keeps them too.
 
-**WHY.** §5.0 is the one place that answers "what is next". A row that mixes 37 closed items with
+**WHY.** §5.0 is the one place that answers "what is next". A row that mixes 38 closed items with
 the open ones answers it wrongly. Nine of its "awaiting approval" lines asked for approvals given
 two days earlier.
 
