@@ -79,3 +79,17 @@ overlap the source excludes. U17d also failed every replay of a malformed answer
   reads their regions.
 - **"North America" overlaps the US** (`_PART_OF`) but is not the US; a thesis about it keeps its
   own key.
+
+**REVIEW FIXES (2026-10-16, `/code-review high` of #723–#725).** Three findings on this PR, all
+fixed before merge:
+- **"grid upgrades to add 20 GW" still read as recommendation language,** because "add", "hold",
+  "positive" and "negative" are ratings too. The rating word must now END the phrase: punctuation,
+  the line's end, or a word such as "rating", "from", "on", "as" or "citing". "Upgraded … to
+  Overweight after the print" still counts.
+- **The cut-short month rule took any word that merely starts with a month stem** ("14 marketing
+  2026"). The word must now begin a month's name ("Septemb", "Sept").
+- **An enrichment entry set aside was numbered among the objects read, but labelled as if it
+  were the answer's position.** It now says its population: "object 1 of 1 read".
+- **The corpus result is unchanged:** 496 figures, 0 recommendation quotes, 0 card issues,
+  20 geographies, 190 pairs, identical key for key, on the same pilot copy and registries.
+- **Mutants:** 3 of 3 killed. 39 tests.
