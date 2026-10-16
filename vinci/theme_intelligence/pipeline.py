@@ -180,6 +180,8 @@ class Pipeline:
         self._calls = 0
         # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
         # review, and says so in the validation log rather than passing silently
+        #: the retired channels' publishers, read once (sources.toml does not change mid-run)
+        self._retired_publishers = sorted({r.publisher for r in load_retired_sources()})
         self.engine = Engine(self.store, taxonomy, reviewer=self._review,
                              reliability_of=self._configured_reliability)
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
@@ -684,7 +686,7 @@ class Pipeline:
                           + (comp.lost if comp else []), store=self.store,
                           risks_found=risks_found, reverified=self.engine.reverified,
                           publishers=[*{s.publisher for s in self.sources.values()},
-                                      *{r.publisher for r in load_retired_sources()}],
+                                      *self._retired_publishers],
                           own=ctx.article.publisher)
         report = report.model_copy(update={"coverage": cov})
         for alert in cov.alerts:

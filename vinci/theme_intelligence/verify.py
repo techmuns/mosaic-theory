@@ -199,7 +199,8 @@ def same_company(a: str, b: str) -> bool:
     and hid "AT", and a name with no ASCII letters hid every later name). Names alone cannot tell
     "Meta" (Meta Platforms) from "Meta Materials" (U11): a caller holding verified listings for
     both asks `distinct_listings` as well."""
-    if norm_name(a) and norm_name(a) == norm_name(b):
+    na = norm_name(a)
+    if na and na == norm_name(b):
         return True
     x, y = _name_words(a), _name_words(b)
     n = min(len(x), len(y))
