@@ -105,6 +105,18 @@ def test_an_authoring_tools_placeholder_and_a_sentence_opening_by_are_no_authors
     assert r.doc.authors == ()  # main: "Microsoft Office User", "2030" and two clauses
 
 
+@pytest.mark.parametrize(("line", "names"), [
+    ("By Émile Durand and Jane Doe", ["Émile Durand", "Jane Doe"]),  # review of #725: ASCII-only
+    ("By Ángel Ruiz", ["Ángel Ruiz"]),
+    ("By Ursula von der Leyen", ["Ursula von der Leyen"]),
+    ("By 2030, synthetic demand doubles", []),  # NEGATIVE: still no one
+])
+def test_a_byline_name_may_begin_with_any_capital_letter(line: str, names: list[str]) -> None:
+    from vinci.theme_intelligence.documents import _byline
+
+    assert [a.name for a in _byline([line])] == names
+
+
 def test_a_real_byline_and_real_metadata_are_still_read() -> None:
     """POSITIVE: a byline of names, and a person in the Author field."""
     assert [a.name for a in _read("semianalysis_full_synthetic.pdf").doc.authors] == [
@@ -168,6 +180,28 @@ def test_text_repeated_outside_a_table_is_still_read_once() -> None:
     alt = "<p>[HYPOTHETICAL] Chart: invented memory prices by quarter, rising in each.</p>"
     doc = parse_document(_page(article=alt + alt), URL)
     assert sum(b.text == alt[3:-4] for b in doc.blocks) == 1
+
+
+@pytest.mark.parametrize(("og", "title"), [
+    ("Hypothetical Note | Example", "Hypothetical Note"),  # the page's own host names the site
+    ("Hypothetical Note | Another Desk", "Hypothetical Note | Another Desk"),  # NEGATIVE
+])
+def test_with_no_site_name_og_title_loses_a_part_naming_the_host(og: str, title: str) -> None:
+    """Review of #725: with no og:site_name the " | Site" suffix the old split removed was kept."""
+    head = f"<meta property='og:title' content='{og}'>"
+    assert parse_document(_page(head=head), URL).title == title  # URL: https://example.test/…
+
+
+def test_the_chrome_free_copy_is_parsed_only_when_the_page_holds_a_marker(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #725: every full page was parsed twice."""
+    from vinci.theme_intelligence import parse
+
+    def never(soup: Any) -> str:
+        raise AssertionError("re-parsed a page with no subscriber marker")
+
+    monkeypatch.setattr(parse, "_without_chrome", never)
+    assert parse_document(_page(), URL).retrieval_state is RetrievalState.FULL
 
 
 @pytest.mark.parametrize(("og", "site", "title"), [
@@ -270,6 +304,27 @@ def test_a_torn_record_is_set_aside_and_read_as_absent_a_whole_one_is_read(
         assert read_json(torn) is None
     [aside] = _aside(tmp_path)
     assert not torn.exists() and aside.read_text() == '{"output": {"a": 1}}'[:10]  # kept
+
+
+def test_a_torn_file_is_recorded_on_the_run_that_set_it_aside(tmp_path: Path) -> None:
+    """Review of #725: a re-paid answer was known only to stderr. NEGATIVE pin: a run that set
+    nothing aside records nothing."""
+    from vinci.theme_intelligence.schemas import RunStatus
+
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=AS_OF)
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    assert not [i for i in pipe.store.issues() if i.code == "CACHE_FILE_TORN"]
+    torn = tmp_path / "answer.json"
+    write_json(torn, {"output": {"a": 1}})
+    _tear(torn)
+    pipe.start_run("ingest", as_of=AS_OF)
+    with pytest.warns(UserWarning, match="torn cache file"):
+        read_json(torn)
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    [i] = [i for i in pipe.store.issues() if i.code == "CACHE_FILE_TORN"]
+    assert i.run_id == run.run_id and "answer.json.torn-" in i.detail
+    assert any("CACHE_FILE_TORN" in w for w in run.warnings)
 
 
 def test_a_write_that_fails_leaves_the_earlier_file_whole_and_no_partial_file(

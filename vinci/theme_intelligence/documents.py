@@ -65,8 +65,17 @@ _GENERIC_TITLE = re.compile(r"^(untitled|microsoft (word|powerpoint)|document\d*
 #: a PDF's Author field as an authoring tool fills it, not a person (U30b: "Microsoft Office User")
 _PLACEHOLDER_AUTHOR = re.compile(r"^(microsoft office user|windows user|user|administrator|admin|"
                                  r"author|owner|unknown)$", re.I)
-#: a name in a byline: one to five capitalised words, no digits ("By 2030, demand …" names no one)
-_NAME = re.compile(r"[A-Z][\w'’.-]*(?:\s+(?:[A-Z][\w'’.-]*|de|van|von|da|di|le|la))*")
+#: lowercase words a name may hold ("Ursula von der Leyen")
+_NAME_PARTICLES = frozenset({"de", "van", "von", "der", "den", "da", "di", "le", "la", "du"})
+
+
+def _is_name(n: str) -> bool:
+    """A name in a byline: one to five words, the first and every non-particle one capitalised in
+    ANY script ("Émile", "Ángel"), none a number ("By 2030, demand …" names no one)."""
+    words = n.split()
+    return 1 <= len(words) <= 5 and words[0][0].isupper() and all(
+        w in _NAME_PARTICLES or (w[0].isupper() and re.fullmatch(r"[^\W\d_][\w'’.-]*", w))
+        for w in words)
 
 
 class DocumentError(ValueError):
@@ -164,7 +173,7 @@ def _byline(texts: list[str]) -> list[Author]:
         m = _BYLINE.match(t.strip())
         names = [n.strip() for n in re.split(r",|;| and | & ", m.group(1))
                  if n.strip()] if m and len(m.group(1).split()) <= 20 else []
-        if names and all(_NAME.fullmatch(n) and len(n.split()) <= 5 for n in names):
+        if names and all(_is_name(n) for n in names):
             return [Author(name=n, source_field="a byline in the document text") for n in names]
     return []
 

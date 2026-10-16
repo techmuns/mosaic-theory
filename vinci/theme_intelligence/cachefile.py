@@ -14,6 +14,17 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+#: every torn file set aside in this process, until a run takes them (`take_set_aside`) and
+#: records each as an issue — a re-paid answer is never known only to stderr
+_SET_ASIDE: list[Path] = []
+
+
+def take_set_aside() -> list[Path]:
+    """The torn files set aside since the last call, oldest first; the list is emptied."""
+    out = list(_SET_ASIDE)
+    _SET_ASIDE.clear()
+    return out
+
 
 def write_atomic(path: Path, data: str | bytes) -> None:
     """Write `data` to `path` whole or not at all: a temporary file in the same folder, flushed,
@@ -47,5 +58,6 @@ def read_json(path: Path) -> dict[str, Any] | None:
         return rec
     aside = path.with_name(f"{path.name}.torn-{datetime.now(tz=UTC):%Y%m%dT%H%M%S%fZ}")
     path.replace(aside)
+    _SET_ASIDE.append(aside)
     warnings.warn(f"a torn cache file was set aside, read as absent: {aside}", stacklevel=2)
     return None

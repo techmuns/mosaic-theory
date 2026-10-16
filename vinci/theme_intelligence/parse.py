@@ -38,7 +38,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 from bs4.element import (
@@ -141,13 +141,18 @@ def clean_title(title: str | None, publisher: str = "") -> str:
     return t
 
 
-def _without_site(title: str, site: str | None) -> str:
-    """An og:title without a trailing " | Site" part that only NAMES the site (`og:site_name`). The
-    first separator was cut at, so Citi's "Overcoming Gridlock 2.0 — <subtitle>" was stored as
-    its first half (U30f); a part that is not the site's name is the title's own and stays."""
+def _without_site(title: str, site: str | None, host: str = "") -> str:
+    """An og:title without a trailing " | Site" part that only NAMES the site — `og:site_name`, or
+    with none, the page's own host ("| Morgan Stanley" on morganstanley.com). The first separator
+    was cut at, so Citi's "Overcoming Gridlock 2.0 — <subtitle>" was stored as its first half
+    (U30f); a part that is not the site's name is the title's own and stays."""
     m = _SITE_SUFFIX.search(title)
-    if m and site and m.start() > 0 and _name_tokens(m.group(1)) == _name_tokens(site):
-        return title[:m.start()].rstrip()
+    if m and m.start() > 0:
+        part = _name_tokens(m.group(1))
+        labels = host.lower().removeprefix("www.").split(".")
+        if (site and part == _name_tokens(site)) or (
+                not site and len(labels) > 1 and "".join(part) == labels[-2]):
+            return title[:m.start()].rstrip()
     return title.strip()
 
 
@@ -559,7 +564,9 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
     if art.get("headline"):
         title, title_src = _clean(str(art["headline"])), "json-ld Article.headline"
     elif (og := _meta(soup, "og:title")):
-        title, title_src = _without_site(og, _meta(soup, "og:site_name")), "meta og:title"
+        title, title_src = (_without_site(og, _meta(soup, "og:site_name"),
+                                          urlparse(final_url or url).hostname or ""),
+                            "meta og:title")
     elif soup.find("h1"):
         title, title_src = _clean(soup.find("h1").get_text(" ", strip=True)), "h1"  # type: ignore[union-attr]
     elif soup.title and soup.title.string:
@@ -706,7 +713,9 @@ def parse_document(html: str, url: str, final_url: str | None = None) -> ParsedD
         notes.append(f"no article body recovered ({body_words} words)")
     # the WHOLE page: a long free preview puts the subscriber marker past any fixed window
     # (pilot 2026-10-12: a SemiAnalysis paid post, marker at character 29,821 — read as FULL)
-    elif _PAYWALL.search(page_text_l) or _PAYWALL.search(_without_chrome(soup)):
+    elif _PAYWALL.search(page_text_l) or (_PAYWALL.search(soup.get_text(" ", strip=True))
+                                          and _PAYWALL.search(_without_chrome(soup))):
+        # the chrome-free copy is parsed only when the page holds a marker at all
         state = RetrievalState.PARTIAL
         notes.append("paywall / subscriber marker on the page — analysed as an excerpt only")
     elif body_words < 150:
