@@ -512,7 +512,9 @@ python -m vinci.theme_intelligence documents --status HELD
 - **Spending limits, checked before EVERY paid call** (`budget.py`). A run (scan $40, a manual
   batch $100 — `--budget`), a document ($30 or `--max-cost`) and its retries + completeness
   passes (85% of the document limit) each have a limit. Before a call its cost is BOUNDED — input
-  at (characters / 2.5) tokens priced as cache writes, plus the full output cap — and a call
+  at (request characters / 2.0) tokens, below every ratio measured on real calls, each priced at
+  the rate it is billed at (a call that writes the prompt cache at the cache-write rate), plus the
+  full output cap (2026-10-16, U28) — and a call
   whose bound does not fit the smallest remaining limit is never sent: the article is
   checkpointed BUDGET_HELD (a scan stops and queues the rest), the answers already paid for stay
   cached, and a re-run with a higher limit resumes without paying for them again. Actual cost is

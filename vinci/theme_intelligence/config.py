@@ -85,10 +85,6 @@ NEAR_TERM_END_DAYS = 366
 #: the article's publication date) is at most one quarter before the as-of.
 CURRENT_OBSERVATION_DAYS = 92
 
-#: Weekly-dashboard display collapse per category. NOT a cut: the rest of the category sits one
-#: click below, and the heading prints "showing X of Y".
-DASHBOARD_ROWS_PER_CATEGORY = 12
-
 #: A supplied or linked DOCUMENT's model cost, estimated BEFORE any call from the TEXT the reader
 #: will send — its characters, after undecodable glyph output is quarantined — and from what the
 #: completeness pass will review: at most ceil((stated figures + argument paragraphs) /
@@ -117,9 +113,17 @@ DOC_COST_LIMIT_USD = 30.0
 SCAN_BUDGET_USD = 40.0
 BATCH_BUDGET_USD = 100.0
 DOC_RETRY_COMPLETENESS_SHARE = 0.85
-#: a call's input is bounded at (characters / this) tokens — conservative for English prose and
-#: tables (~3.5-4 characters per token measured); a bound from size, never a billing cap
-CHARS_PER_TOKEN_BOUND = 2.5
+#: a call's input is bounded at (characters of the REQUEST — system prompt, message, tool schema —
+#: / this) tokens, each priced at the rate it is billed at (a call that writes the prompt cache:
+#: the cache-write rate); a bound from size, never a billing cap. MEASURED 2026-10-16 (U28) on 104
+#: distinct real paid calls: 2.098 to 2.845 request characters per billed input token (median
+#: 2.614; the lowest an enrichment call, whose tool schema is dense JSON) — so the bound holds,
+#: with the output at its cap, for every one of them, uncached or as a cache write. It was 2.5
+#: with EVERY call priced as a cache write: the same bound for an uncached call, but a cache write
+#: (`PROMPT_CACHE_PARTS`) kept no margin, and 4 measured completeness parts tokenise below 2.5.
+#: The 1.3-1.6 of DOC_COST_CHARS_PER_TOKEN is another measure: DOCUMENT characters per token
+#: billed over a whole pipeline that resends the text.
+CHARS_PER_TOKEN_BOUND = 2.0
 #: the parts of a split completeness review send the article as a cached first block (llm.py) —
 #: the same text, billed at a tenth after the first part. OFF until its evidence quality is shown
 #: equivalent (brief, 2026-10-11). Measured on Citi's ETF report, one run each over the same

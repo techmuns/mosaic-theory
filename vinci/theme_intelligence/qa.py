@@ -38,7 +38,6 @@ from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
     SOURCE_LABELS,
-    CardContent,
     FieldStatus,
     InstrumentClass,
     InvestmentReadiness,
@@ -85,6 +84,16 @@ def _fail_list(items: list[str], n: int = 5) -> str:
     shown = items[:n]
     return "; ".join(shown) + (f" … (showing {len(shown)} of {len(items)})" if len(items) > n
                                else "")
+
+
+def _stored_sections(store: Store, thesis_id: str, version: int) -> list[str]:
+    """The card sections of one stored version, in the order its payload holds them (the header
+    left out). A parsed version always has the model's field order, so only the stored JSON can
+    show a section out of place."""
+    row = store.conn.execute("SELECT payload FROM thesis_versions WHERE thesis_id=? AND "
+                             "version=?", (thesis_id, version)).fetchone()
+    content = json.loads(row[0]).get("content", {}) if row else {}
+    return [k for k in content if k != "header"]
 
 
 def run_qa(store: Store, run_id: str) -> QaResult:
@@ -172,7 +181,9 @@ def run_qa(store: Store, run_id: str) -> QaResult:
     names_bad: list[str] = []
     names_unchecked: list[str] = []
     for v in versions:
-        fields = [f for f in CardContent.model_fields if f != "header"]
+        # the STORED version's sections, in the order its payload holds them — never the
+        # class's fields, which are the same for every version and so always passed (U27)
+        fields = _stored_sections(store, v.thesis_id, v.version)
         if fields != order:
             struct_bad.append(f"{v.thesis_id} v{v.version}: {fields}")
         if card_sha(v.content) != v.content_sha:
