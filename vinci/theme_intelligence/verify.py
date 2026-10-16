@@ -89,12 +89,17 @@ _FORWARD = re.compile(r"\bNTM\b|next twelve months|next 12 months|forecast|estim
                       r"projected|projection|outlook|forward", re.I)
 #: Recommendation language, as WORDS (U17b: "rating" inside "operating", "upgrades" in "grid
 #: upgrades" and "add to" in "add to revenue" vouched for a recommendation label): an upgrade or
-#: downgrade counts when it is TO a rating, "add to" when it is to a position.
+#: downgrade counts when it is TO a rating, "add to" when it is to a position. The rating word
+#: must END the phrase (punctuation, the line's end, or "rating" / "from" / "on" / "as" …):
+#: "grid upgrades to add 20 GW" and "upgrades to hold down losses" name no rating.
 _RATING = (r"buy|overweight|outperform|accumulate|add|neutral|hold|sell|underweight|"
            r"equal[- ]weight|market perform|positive|negative")
+_RATING_END = (r"(?=\s*(?:$|[.,;:!?)]|(?:rating|from|on|with|and|in|after|as|at|following|"
+               r"citing|given|ahead)\b))")
 _RECO = re.compile(
     r"recommend|\bbuy\b|\boverweight\b|\boutperform|\btop pick|\bratings?\b|\brated\b|"
-    rf"\b(?:up|down)grade[sd]?\b(?:\s+[\w.&'-]+){{0,3}}\s+to\s+(?:an?\s+)?(?:{_RATING})\b|"
+    rf"\b(?:up|down)grade[sd]?\b(?:\s+[\w.&'-]+){{0,3}}\s+to\s+(?:an?\s+)?(?:{_RATING})\b"
+    rf"{_RATING_END}|"
     r"\bfavou?r\b|\baccumulate\b|\badd to (?:positions?|holdings?|exposure|the stock|shares)\b",
     re.I)
 #: A number as written. The minus sign counts only where it cannot be a range dash or a hyphen

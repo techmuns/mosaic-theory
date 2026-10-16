@@ -151,6 +151,17 @@ _NOT_A_NAME = frozenset({
     "these", "those", "through", "to", "under", "until", "up", "with"})
 
 
+_MONTH_NAMES = ("january", "february", "march", "april", "june", "july", "august", "september",
+                "october", "november", "december")
+
+
+def _cut_month(after: str) -> bool:
+    """A month name a PDF cut short, then a year ("Septemb 2026"): the word must BEGIN a month's
+    name — "marketing 2026" and "decades 2026" are no dates."""
+    m = re.match(r"^\s*([a-z]{3,9})\.?\s+(?:19|20)\d{2}\b", after, re.I)
+    return m is not None and any(n.startswith(m.group(1).lower()) for n in _MONTH_NAMES)
+
+
 def _skip_number(text: str, m: re.Match[str]) -> bool:
     num, unit, cur = m.group("num"), m.group("unit"), m.group("cur")
     if text[max(0, m.start("num") - 5):m.start("num")].lower() == "(cid:":
@@ -170,8 +181,7 @@ def _skip_number(text: str, m: re.Match[str]) -> bool:
         return True  # "200-day", "10-year", a clock time
     if re.search(rf"\b(?:{_MONTHS})\.?$", before, re.I) or \
             re.match(rf"^\s*(?:{_MONTHS})\b", after, re.I) or \
-            re.match(r"^\s*(?:jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(?:19|20)\d{2}\b",
-                     after, re.I):
+            _cut_month(after):
         return True  # a day of a month — a month word a PDF cut short too ("14 Septemb 2026")
     prev = re.search(r"([A-Za-z&][\w&.'-]*)[\s-]?$", before)
     if prev and (prev.group(1)[0].isupper() or "&" in prev.group(1)) and "." not in num \

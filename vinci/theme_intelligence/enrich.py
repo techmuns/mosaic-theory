@@ -352,7 +352,8 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
         if not why and direction is not None and side_n[direction] >= PER_SIDE:
             why = f"more than {PER_SIDE} on one side"
         if why or direction is None:
-            refused.append(f"{name or f'entry {i + 1}'}: {why} — set aside")
+            # numbered among the objects READ: an item set aside above is not counted
+            refused.append(f"{name or f'object {i + 1} of {len(rows)} read'}: {why} — set aside")
             continue
         side_n[direction] += 1
         business = str(row.get("business") or "").strip()

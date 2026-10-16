@@ -78,6 +78,9 @@ def test_an_as_of_date_is_found_whole_in_its_source_note(tmp_path: Path, note: s
     ("operating margins expanded on mix", False),  # "rating" inside "operating"
     ("grid upgrades will lift utility capex", False),  # an upgrade TO no rating
     ("the contract could add to revenue next year", False),  # "add to" no position
+    ("We upgrade the stock to Buy, citing HBM pricing", True),
+    ("utilities plan grid upgrades to add 20 GW of capacity", False),  # "add" names no rating
+    ("grid upgrades to hold down losses", False),  # nor "hold" (review of #724)
 ])
 def test_recommendation_language_is_words_never_a_fragment(quote: str, reco: bool) -> None:
     assert (_RECO.search(quote) is not None) is reco
@@ -189,6 +192,13 @@ def test_an_enrichment_answer_sent_as_text_is_read_and_a_broken_one_is_said(
     pipe2.run_enrich(as_of=date(2026, 2, 9))
     (es2,) = pipe2.store.enrichments(tid2)
     assert not es2.candidates and any("not valid JSON" in r for r in es2.refused)
+    # an entry set aside is numbered among the objects READ, so the count says its population
+    pipe3, tid3 = _memory_thesis(tmp_path / "mixed")
+    pipe3.client = GuardedClient(StandIn({"companies": ["oops", {"direction": "benefit"}]}),
+                                 pipe3.guard)
+    pipe3.run_enrich(as_of=date(2026, 2, 9))
+    (es3,) = pipe3.store.enrichments(tid3)
+    assert any(r.startswith("object 1 of 1 read: no name") for r in es3.refused), es3.refused
 
 
 # --- U19: a figure after a sentence's first word, and a word figure read whole --------------------
@@ -209,6 +219,9 @@ def test_a_figure_after_a_sentence_initial_word_is_a_figure_and_a_name_still_is_
     names = scan_article(_doc("The S&P 500 rose while the Mag 7 lagged.",
                               "On 14 Septemb 2026, he wrote that fears were overdone."))
     assert not {f.core for f in names.figures} & {"500", "7", "14"}
+    # NEGATIVE (review of #724): a word that only BEGINS with a month stem is no month
+    not_dates = scan_article(_doc("Spend reached 14 marketing 2026 budgets across the group."))
+    assert "14" in {f.core for f in not_dates.figures}
 
 
 def test_a_figure_in_words_is_covered_only_by_its_words() -> None:
