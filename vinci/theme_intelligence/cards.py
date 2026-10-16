@@ -36,6 +36,7 @@ from vinci.theme_intelligence.priority import (
     F8_OUTWEIGHS,
     counter_verdict,
     exposures_counted,
+    unverified_words,
     watch_label,
     watch_reasons_of,
 )
@@ -1607,8 +1608,12 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
         return []
     f = {x.factor_id: x.value for x in pr.factors}
     a = pr.research_action.value
-    # the exposure the stored RULE counted — the line never contradicts the action it explains
-    exposed = exposures_counted(pr) > 0
+    # the exposure the stored RULE counted — the line never contradicts the action it explains;
+    # a version that carries no readable count is read from its own card
+    counted = counted_exposures(card.s05_affected)
+    n = exposures_counted(pr)
+    exposed = n > 0 if n is not None else bool(counted.listed or counted.instruments
+                                               or counted.sectors)
     if a == "RESEARCH NOW":
         # the inflection route says WHY with its research question (composed by the priority
         # rules from the claim's structured fields)
@@ -1636,12 +1641,10 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
     elif near and near != "yes":
         out.append("Timing — no dated window inside the next 2-4 quarters in the evidence.")
     names = list(dict.fromkeys(groups))
-    unverified = next((r for r in watch_reasons_of(
-        pr, counted_exposures(card.s05_affected).unverified)
-        if r.code == "listing_unverified"), None)
-    if not exposed and unverified is not None:  # missing data, not a missing exposure
-        out.append("Exposure — " + unverified.text.removeprefix(
-            "no source-named exposure counted — ") + ".")
+    unverified = any(r.code == "listing_unverified"
+                     for r in watch_reasons_of(pr, counted.unverified))
+    if not exposed and unverified:  # missing data, not a missing exposure
+        out.append("Exposure — " + unverified_words(counted.unverified) + ".")
     elif not exposed:
         out.append("Exposure — no listed company or verified sector exposure; the source names "
                    f"business groups only ({'; '.join(names)}), not companies"
@@ -2105,8 +2108,10 @@ def _md_market(m: MarketContext | None) -> list[str]:
 
 def render_markdown(card: CardContent, rc: RenderContext) -> str:
     h = card.header
+    q = (watch_of(rc.priority, card.s05_affected)
+         if rc.priority is not None and rc.priority.research_action is h.research_action else "")
     md = [f"# {h.title}", "",
-         f"**{h.research_action.value}** · {KIND_LABEL[h.kind]} · evidence "
+         f"**{h.research_action.value}{f' · {q}' if q else ''}** · {KIND_LABEL[h.kind]} · evidence "
          f"{h.evidence_direction.value} · {h.sector} · {h.region} · horizon {h.horizon} · status "
          f"{h.status.value}", "", first_detected_line(h), "",
          f"`{h.thesis_id}` · {' › '.join(h.ancestry)}", "", f"_{LEGEND}_", ""]
