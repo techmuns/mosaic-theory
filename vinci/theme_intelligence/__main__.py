@@ -24,6 +24,19 @@ the report says which); 1 = FAILED. A failed or partial run is never presented a
 
 from __future__ import annotations
 
+# ruff: noqa: E402
+# (the imports below follow the `.env` load on purpose — it must run before any of them)
+from vinci.config import load_local_env
+
+if __name__ == "__main__":
+    # `python -m vinci.theme_intelligence` only, and FIRST: modules imported below read the
+    # environment at import (config.USER_AGENT from SEC_USER_AGENT), so the repo-root `.env` must
+    # be in it before they load. On Actions there is none and injected secrets win
+    # (override=False). Importing this module (a test) never runs this, so tests stay hermetic.
+    # 2026-10-16: `market` failed locally on POLYGON_API_KEY while `.env` was loaded only inside
+    # the model-client setup; REVIEW of #739: loading it after these imports missed USER_AGENT.
+    load_local_env()
+
 import argparse
 import json
 import sys
@@ -58,9 +71,8 @@ _EXIT = {RunStatus.SUCCEEDED: 0, RunStatus.PARTIAL: 2, RunStatus.FAILED: 1,
 def _client(required: bool) -> ToolClient | None:
     import os
 
-    from vinci.config import load_local_env
-
-    load_local_env()
+    # the key comes from the environment the `python -m` entry loaded (`.env` locally, Actions
+    # secrets in CI); loading it here as well made a test that calls `main` read the real `.env`
     if not os.environ.get("ANTHROPIC_API_KEY"):
         if required:
             raise SystemExit("ANTHROPIC_API_KEY is not set — extraction needs the LLM (cached "
