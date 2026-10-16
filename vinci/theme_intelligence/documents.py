@@ -62,6 +62,20 @@ SCANNED_MAX_WORDS = 15
 CHART_MIN_OBJECTS = 40
 _GENERIC_TITLE = re.compile(r"^(untitled|microsoft (word|powerpoint)|document\d*|slide \d+)\b|"
                             r"\.(docx?|pdf|pptx?|html?|txt|md)$", re.I)
+#: a PDF's Author field as an authoring tool fills it, not a person (U30b: "Microsoft Office User")
+_PLACEHOLDER_AUTHOR = re.compile(r"^(microsoft office user|windows user|user|administrator|admin|"
+                                 r"author|owner|unknown)$", re.I)
+#: lowercase words a name may hold ("Ursula von der Leyen")
+_NAME_PARTICLES = frozenset({"de", "van", "von", "der", "den", "da", "di", "le", "la", "du"})
+
+
+def _is_name(n: str) -> bool:
+    """A name in a byline: one to five words, the first and every non-particle one capitalised in
+    ANY script ("Émile", "Ángel"), none a number ("By 2030, demand …" names no one)."""
+    words = n.split()
+    return 1 <= len(words) <= 5 and words[0][0].isupper() and all(
+        w in _NAME_PARTICLES or (w[0].isupper() and re.fullmatch(r"[^\W\d_][\w'’.-]*", w))
+        for w in words)
 
 
 class DocumentError(ValueError):
@@ -157,9 +171,10 @@ def _byline(texts: list[str]) -> list[Author]:
     """Authors from a byline in the document's own opening lines ("By A and B")."""
     for t in texts:
         m = _BYLINE.match(t.strip())
-        if m and len(m.group(1).split()) <= 20:
-            return [Author(name=n.strip(), source_field="a byline in the document text")
-                    for n in re.split(r",|;| and | & ", m.group(1)) if n.strip()]
+        names = [n.strip() for n in re.split(r",|;| and | & ", m.group(1))
+                 if n.strip()] if m and len(m.group(1).split()) <= 20 else []
+        if names and all(_is_name(n) for n in names):
+            return [Author(name=n, source_field="a byline in the document text") for n in names]
     return []
 
 
@@ -340,7 +355,8 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 boxes = [t.bbox for t in found]
                 tables = [(float(t.bbox[1]), t.extract()) for t in found]
                 body = page.filter(_outside(boxes)) if boxes else page
-                lines = body.extract_text_lines(strip=True, return_chars=True)
+                lines = _in_columns(body, body.extract_text_lines(strip=True,
+                                                                  return_chars=True))
             except Exception as exc:  # noqa: BLE001 — one bad page never loses the document
                 read.issues.append(f"page {n}: could not be read ({type(exc).__name__})")
                 partial = True
@@ -377,8 +393,8 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
             tables_by_page.append(tables)
         body_size = Counter(round(s, 1) for s in sizes).most_common(1)[0][0] if sizes else 0.0
         # running headers / footers: the same short line on more than half the pages
-        counts = Counter(str(ln.get("text", "")).strip() for page_lines in lines_by_page
-                         for ln in page_lines)
+        counts = Counter(t for page_lines in lines_by_page  # PAGES a line is on (U30g)
+                         for t in {str(ln.get("text", "")).strip() for ln in page_lines})
         n_pages = max(1, len(lines_by_page))
         chrome = {t for t, c in counts.items() if c > n_pages / 2 and n_pages > 2
                   and len(t.split()) <= 12}
@@ -423,6 +439,8 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                 footnote = (body_size > 0 and size <= body_size * 0.85
                             and re.match(r"^(\d{1,3}|[*†‡§])\s", text) is not None)
                 new_para = (last_bottom is None or gap > max(4.0, body_size * 0.9)
+                            # back UP the page: the next column begins a paragraph of its own
+                            or gap < -max(4.0, body_size)
                             or abs(size - last_size) > 1.0)
                 if heading and heading_bottom is not None and blocks \
                         and blocks[-1].kind == "heading" and top - heading_bottom < size:
@@ -465,7 +483,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
         title_src = "the largest text on page 1"
     authors = ([Author(name=a.strip(), source_field="PDF document metadata (Author)")
                 for a in re.split(r"[;,]| and ", read.meta.get("Author", "")) if a.strip()
-                and not _GENERIC_TITLE.search(a)])
+                and not _GENERIC_TITLE.search(a) and not _PLACEHOLDER_AUTHOR.match(a.strip())])
     doc_date = _date_from(page1_texts[:80])
     back = ""
     if read.quarantined:
@@ -482,6 +500,88 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                    doc_date=doc_date, date_src="the document text (page 1-2)" if doc_date
                    else None, declared=declared, canonical=_canonical(declared, read),
                    partial=partial, back_matter=back)
+
+
+#: a gap between two characters of one line wider than this (points), within the middle of the
+#: page, is a column gutter when at least COLUMN_MIN_LINES lines share it
+COLUMN_GAP_PT = 12.0
+COLUMN_MIN_LINES = 3
+#: characters a column's part of a line holds at least — a bullet alone is no column
+COLUMN_MIN_CHARS = 4
+
+
+def _gutter(lines: list[dict[str, Any]], width: float) -> tuple[float, float] | None:
+    """The empty vertical BAND (x from, x to) between two columns: at least COLUMN_MIN_LINES lines
+    each holding a gap of COLUMN_GAP_PT or more in the middle of the page, all leaving the band
+    empty. None for a one-column page, which is read as before."""
+    gaps: list[tuple[float, float]] = []
+    for ln in lines:
+        chars = sorted((c for c in ln.get("chars") or [] if str(c.get("text", "")).strip()),
+                       key=lambda c: float(c["x0"]))
+        best: tuple[float, float] | None = None
+        for i, (a, b) in enumerate(zip(chars, chars[1:], strict=False), 1):
+            lo, hi = float(a["x1"]), float(b["x0"])
+            # text on BOTH sides: a bullet beside its item is no gutter
+            if hi - lo >= COLUMN_GAP_PT and 0.3 * width <= (lo + hi) / 2 <= 0.7 * width \
+                    and min(i, len(chars) - i) >= COLUMN_MIN_CHARS \
+                    and (best is None or hi - lo > best[1] - best[0]):
+                best = (lo, hi)
+        if best is not None:
+            gaps.append(best)
+    if len(gaps) < COLUMN_MIN_LINES:
+        return None
+    lo, hi = max(g[0] for g in gaps), min(g[1] for g in gaps)
+    return (lo, hi) if hi > lo else None  # no band all leave empty: a table-like line
+
+
+def _in_columns(body: Any, lines: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """A two-column page read one column at a time (U30a: each line had run across both columns,
+    interleaving their sentences). A line with a character inside the gutter band runs the full
+    width (a title, a banner) and stays where it is; each run of lines between such lines that
+    holds COLUMN_MIN_LINES lines split by the band is read as its left half, then its right half
+    (each character by the half its centre is in). A one-column page is unchanged."""
+    band = _gutter(lines, float(body.width))
+    if band is None:
+        return lines
+    blo, bhi = band
+
+    def chars(ln: dict[str, Any]) -> list[dict[str, Any]]:
+        return [c for c in ln.get("chars") or [] if str(c.get("text", "")).strip()]
+
+    def crosses(ln: dict[str, Any]) -> bool:
+        return any(float(c["x1"]) > blo and float(c["x0"]) < bhi for c in chars(ln))
+
+    def split(ln: dict[str, Any]) -> bool:
+        cs = chars(ln)
+        return any(float(c["x1"]) <= blo for c in cs) and any(float(c["x0"]) >= bhi for c in cs)
+
+    gutter = (blo + bhi) / 2
+    out: list[dict[str, Any]] = []
+    run: list[dict[str, Any]] = []
+
+    def flush() -> None:
+        if sum(1 for ln in run if split(ln)) >= COLUMN_MIN_LINES:
+            # the run's OWN characters only (never a full-width line beside it), each to the half
+            # its centre is in: a crop keeping what lies wholly inside drops a glyph that pokes
+            # past the gutter line
+            mine = {(c["x0"], c["top"], c.get("text")) for ln in run for c in ln.get("chars") or []}
+            for left in (True, False):
+                def keep(o: dict[str, Any], left: bool = left) -> bool:
+                    return ((o.get("x0"), o.get("top"), o.get("text")) in mine
+                            and ((float(o["x0"]) + float(o["x1"])) / 2 < gutter) == left)
+                out.extend(body.filter(keep).extract_text_lines(strip=True, return_chars=True))
+        else:
+            out.extend(run)
+        run.clear()
+
+    for ln in sorted(lines, key=lambda x: float(x.get("top", 0))):
+        if crosses(ln):
+            flush()
+            out.append(ln)
+        else:
+            run.append(ln)
+    flush()
+    return out
 
 
 def _quarantine(page: int, lines: list[dict[str, Any]],
@@ -562,7 +662,9 @@ def _dehyphenate(lines: list[str]) -> str:
     out = ""
     for ln in lines:
         if out.endswith("-") and ln[:1].islower():
-            out = out[:-1] + ln
+            # "AI-" + "driven" is "AI-driven", never "AIdriven" (U30e): a hyphen after a capital
+            # or a digit belongs to the compound; after a lowercase letter it split the word
+            out = (out if re.search(r"[A-Z0-9]-$", out) else out[:-1]) + ln
         else:
             out = f"{out} {ln}" if out else ln
     return out

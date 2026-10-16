@@ -32,6 +32,7 @@ from typing import Any
 
 from vinci.graph.llm import LlmError
 from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
+from vinci.theme_intelligence.cachefile import take_set_aside
 from vinci.theme_intelligence.completeness import (
     CompletenessOutput,
     CompletenessResult,
@@ -52,6 +53,7 @@ from vinci.theme_intelligence.config import (
     Paths,
     SourceConfig,
     Taxonomy,
+    retired_for,
 )
 from vinci.theme_intelligence.coverage import SourceRisk, coverage_of, scan_source_risks
 from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
@@ -191,6 +193,7 @@ class Pipeline:
     def start_run(self, mode: str, *, as_of: date, window_from: date | None = None,
                   window_to: date | None = None, run_id: str | None = None) -> WeeklyRun:
         now = datetime.now(tz=UTC)
+        take_set_aside()  # set aside before this run (a render's read): already warned, not ours
         rid = run_id or f"R-{now.strftime('%Y%m%dT%H%M%SZ')}-{mode}"
         if run_id is None:  # two runs in one second must never share — and overwrite — an id
             base, n = rid, 2
@@ -229,6 +232,14 @@ class Pipeline:
         if missed:
             run.warnings.append(f"{len(missed)} paid call(s) ended without an answer the run "
                                 f"used — recorded in the ledger as *-unrecorded")
+        torn = take_set_aside()  # a cache file torn by a crash: its request was asked again
+        for p in torn:
+            self._issue("run", run.run_id, IssueSeverity.WARN, "CACHE_FILE_TORN",
+                        f"a torn cache file was set aside and its request asked or fetched "
+                        f"again: {p}")
+        if torn:
+            run.warnings.append(f"{len(torn)} torn cache file(s) set aside — each request asked "
+                                f"or fetched again (CACHE_FILE_TORN)")
         calls = self.store.llm_calls(run.run_id)
         tok: dict[str, int] = {}
         replayed: dict[str, int] = {}
@@ -415,6 +426,12 @@ class Pipeline:
         _text, link = doc.linked_reports[0]
         if any(link in d.declared.get("via", "") for d in self.store.documents()):
             return  # already read in an earlier run
+        gone = retired_for(url=link)
+        if gone is not None:  # never fetched, never asked for (U15: it was fetched and stored)
+            self._issue("article", res.article_id, IssueSeverity.INFO, "LINKED_REPORT_RETIRED",
+                        f"{doc.canonical_url} links a report ({link}) on a host of "
+                        f"{gone.publisher}, a channel retired on {gone.retired} — not fetched")
+            return
         upload = (f"upload an authorised copy: python -m vinci.theme_intelligence ingest-file "
                   f"--path <report> --source {source_id} --url {doc.canonical_url}")
         if src is None or src.linked_reports != "fetch":

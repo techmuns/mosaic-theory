@@ -47,6 +47,7 @@ from vinci.theme_intelligence.config import (
     LLM_MODEL,
     PARSER_VERSION,
     PRICE_PER_MTOK,
+    retired_for,
 )
 from vinci.theme_intelligence.display import clip, first_of
 from vinci.theme_intelligence.documents import (
@@ -298,9 +299,13 @@ class InactiveSourceError(DocumentError):
     """The named channel is retired or not configured: nothing from it is imported."""
 
 
-def _require_active(pipe: Pipeline, declared: Declared) -> None:
-    from vinci.theme_intelligence.config import retired_for
-
+def _require_active(pipe: Pipeline, declared: Declared, *, replay: bool = False) -> None:
+    """Nothing new is imported from a retired or unknown channel. A `state pull` REPLAY of a
+    document accepted while its channel was live is history, not an import: it is replayed, its
+    record attributable (U15: refused on replay, it stayed pending for ever)."""
+    if replay and (retired_for(source_id=declared.source_id) is not None
+                   or (declared.url and retired_for(url=declared.url) is not None)):
+        return
     if declared.source_id in pipe.sources:
         r = retired_for(url=declared.url) if declared.url else None
         if r is not None:
@@ -363,11 +368,12 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
     from a cache built on the old one."""
     assert pipe.run is not None
     now = datetime.now(tz=UTC)
-    _require_active(pipe, declared)  # before the file is even read or stored
+    _require_active(pipe, declared, replay=replay_of is not None)  # before it is read
     read = read_document(path, declared)  # DocumentError on an unreadable file
     doc_id = "D-" + read.sha256[:16]
     src = pipe.sources.get(declared.source_id)
-    publisher = src.publisher if src else declared.source_id
+    gone = None if src else retired_for(source_id=declared.source_id)  # a replayed retired one
+    publisher = src.publisher if src else gone.publisher if gone else declared.source_id
     prior = pipe.store.document_by_sha(read.sha256)
     arrived = prior or replay_of  # the record of the file's first arrival, if any
     held_v = (pipe.store.article_version(prior.version_id)

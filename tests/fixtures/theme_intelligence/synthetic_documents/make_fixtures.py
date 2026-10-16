@@ -11,6 +11,7 @@ the tests read — regenerate only to change a fixture, then re-run the ingestio
 import base64
 import io
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -142,6 +143,85 @@ def html_undated() -> str:
             f"<h1>Synthetic Undated Note</h1>{paras}</body></html>")
 
 
+def html_two_column() -> str:
+    """A report page set in TWO COLUMNS (as bank research prints): each printed line runs across
+    both, so a reader taking whole lines interleaves the two columns' sentences. Then two
+    ONE-column pages whose lines also hold a wide gap mid-page, as a Citi report's do: a contents
+    page (each title, then its page number at the right edge) and a bulleted list set right of a
+    margin (each bullet 14pt or more before its text) — neither is a gutter."""
+    left = ["Left column paragraph one: synthetic memory demand rose 12% in the quarter as "
+            "hyperscale clusters expanded and contract terms lengthened at every supplier we "
+            "track.",
+            "Left column paragraph two: synthetic HBM allocation stays tight through next year, "
+            "with lead times near 30 weeks and buyers prepaying for capacity they need later."]
+    right = ["Right column paragraph one: synthetic grid queues reached 2,600 GW as "
+             "interconnection studies slowed and transformer deliveries stretched beyond two "
+             "years.",
+             "Right column paragraph two: synthetic utilities plan capex up 18% this year, the "
+             "largest rise in a decade, much of it for transmission upgrades and substations."]
+    cols = ("<div style='column-count:2;column-gap:1.2cm'>"
+            + "".join(f"<p style='margin:0 0 10pt 0'>{p}</p>" for p in left)
+            + "<p style='break-before:column;margin:0'></p>"
+            + "".join(f"<p style='margin:0 0 10pt 0'>{p}</p>" for p in right) + "</div>")
+    contents = "".join(
+        f"<p style='display:flex;justify-content:space-between;margin:0 0 6pt 0'>"
+        f"<span>{title}</span><span>{page}</span></p>"
+        for title, page in (("Synthetic Executive Summary", 3), ("Synthetic Memory Outlook", 9),
+                            ("Synthetic Grid Bottlenecks", 18), ("Synthetic Transformers", 19),
+                            ("Synthetic Regional Views", 26)))
+    bullets = "".join(
+        f"<p style='margin:0 0 8pt 40%'><span style='display:inline-block;width:20pt'>"
+        f"&#8226;</span>{item}</p>"
+        for item in ("Synthetic lead times: two-year backlogs.",
+                     "Synthetic customisation: built to order.",
+                     "Synthetic labour: short of skilled staff.",
+                     "Synthetic delays: permits outlast the build."))
+    return (f"<html><head><title>Synthetic Two-Column Note</title>{CSS}</head><body>{BANNER}"
+            f"<h1>Synthetic Two-Column Note</h1>{cols}"
+            f"<div class='pb'></div><h2>Contents</h2>{contents}"
+            f"<div class='pb'></div><h2>Synthetic Constraints</h2>{bullets}</body></html>")
+
+
+def html_office_export() -> str:
+    """A three-page report as an office suite exports it: a sentence that OPENS "By 2030, …" (no
+    byline), words hyphenated at a line's end ("AI-" / "driven" is a compound, "sig-" / "nal" a
+    split word), a pull-quote printed twice on ONE page, and a footer on EVERY page. The
+    placeholder Author metadata is added after printing (`with_author`)."""
+    footer = "<p>Synthetic Office Export, internal draft</p>"
+    quote = "<p><b>Grid queues doubled in two synthetic years.</b></p>"
+    page1 = ("<h1>Synthetic Office Export Note</h1>"
+             "<p>By 2030, synthetic data-centre demand doubles in this invented model, and the "
+             "grid queues that serve it lengthen every year.</p>"
+             "<p>Operators describe an AI-<br>driven build-out that strains the grid, and the "
+             "sig-<br>nal from interconnection studies is that waits are lengthening.</p>"
+             + footer)
+    page2 = ("<div class='pb'></div><h2>Grid queues</h2>" + quote
+             + "<p>Interconnection studies slowed in every synthetic region we model, and "
+               "transformer deliveries stretched beyond two years.</p>" + quote + footer)
+    page3 = ("<div class='pb'></div><h2>Outlook</h2><p>Synthetic utilities plan capex up 18% "
+             "this year, much of it for transmission upgrades.</p>" + footer)
+    return (f"<html><head><title>Synthetic Office Export Note</title>{CSS}</head><body>{BANNER}"
+            f"{page1}{page2}{page3}</body></html>")
+
+
+def with_author(path: Path, title: str, author: str) -> None:
+    """Give a printed PDF an Info dictionary with an Author, by an INCREMENTAL UPDATE appended to
+    the file (Chromium writes no Author; an office suite writes its placeholder user)."""
+    data = path.read_bytes()
+    prev = int(re.findall(rb"startxref\s+(\d+)", data)[-1])
+    trailer = re.findall(rb"trailer\s*<<(.*?)>>", data, re.S)[-1]
+    size = int(re.search(rb"/Size\s+(\d+)", trailer).group(1))  # type: ignore[union-attr]
+    root = re.search(rb"/Root\s+(\d+ \d+ R)", trailer).group(1)  # type: ignore[union-attr]
+    pad = b"" if data.endswith(b"\n") else b"\n"
+    at = len(data) + len(pad)
+    obj = b"%d 0 obj\n<< /Title (%s) /Author (%s) >>\nendobj\n" % (size, title.encode(),
+                                                                  author.encode())
+    xref = at + len(obj)
+    path.write_bytes(data + pad + obj + b"xref\n%d 1\n%010d 00000 n \n" % (size, at)
+                     + b"trailer\n<< /Size %d /Root %s /Info %d 0 R /Prev %d >>\n"
+                       b"startxref\n%d\n%%%%EOF\n" % (size + 1, root, size, prev, xref))
+
+
 (OUT / "ms_report_synthetic.html").write_text(html_ms_report())
 for name, html in (("semianalysis_full_synthetic.pdf", html_semianalysis_full()),
                    ("semianalysis_preview_saved_synthetic.pdf", html_semianalysis_saved_preview()),
@@ -149,13 +229,17 @@ for name, html in (("semianalysis_full_synthetic.pdf", html_semianalysis_full())
                    ("overprinted_chart_synthetic.pdf", html_overprinted_chart_labels()),
                    ("ms_report_synthetic.pdf", html_ms_report()),
                    ("scanned_page_synthetic.pdf", html_scanned()),
-                   ("undated_synthetic.pdf", html_undated())):
+                   ("undated_synthetic.pdf", html_undated()),
+                   ("two_column_synthetic.pdf", html_two_column()),
+                   ("office_export_synthetic.pdf", html_office_export())):
     with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False) as fh:
         fh.write(html)
     target = OUT / name
     subprocess.run([BROWSER, "--headless=new", "--disable-gpu", "--no-pdf-header-footer",
                     f"--print-to-pdf={target}", f"file://{fh.name}"], check=True,
                    capture_output=True, timeout=120)
+    if name == "office_export_synthetic.pdf":
+        with_author(target, "Synthetic Office Export Note", "Microsoft Office User")
     print(name, target.stat().st_size)
 (OUT / "semianalysis_preview_synthetic.txt").write_text("\n\n".join(PREVIEW) + "\n")
 print("preview text written")
