@@ -1436,6 +1436,79 @@ def distinct_sectors(av: AffectedView) -> list[SectorExposure]:
     return out
 
 
+#: words that NAME NO POPULATION: a sector name made only of these (and stop words) is a phrase
+#: fragment, not a sector — "at both a sector and thematic level", "seven sectors"
+_SECTOR_META = frozenset({
+    "sector", "sectors", "sub-sector", "subsector", "industry", "industries", "sub-industry",
+    "thematic", "theme", "themes", "level", "levels", "segment", "segments", "area", "areas",
+    "set", "broad", "broader", "various", "several", "many", "multiple", "other", "all", "both",
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"})
+_STOP = frozenset({"a", "an", "the", "of", "and", "or", "at", "in", "on", "for", "to", "with",
+                   "as", "by", "its", "their", "itself", "well", "within"})
+#: geography — a name made only of a region and an equity word is the whole market of it
+_REGION = frozenset({
+    "us", "u.s", "usa", "american", "america", "north", "latin", "latam", "andean", "andeans",
+    "european", "europe", "eurozone", "uk", "british", "asian", "asia", "chinese", "china",
+    "japanese", "japan", "korean", "korea", "indian", "india", "brazilian", "mexican", "global",
+    "world", "domestic", "international", "emerging", "developed", "em", "dm", "g7", "g10", "g20",
+    "la5"})
+_EQUITY = frozenset({"equity", "equities", "stock", "stocks", "shares", "market", "markets",
+                     "large-cap", "mid-cap", "small-cap"})
+_EQUITY_MORE = frozenset({"large", "mid", "small", "cap", "caps", "leaders", "broadly",
+                          "overall", "whole", "entire"})
+#: a non-equity ASSET CLASS — government bonds, credit, currencies — is not a sector of equities
+_ASSET = frozenset({"treasurys", "treasuries", "treasury", "bond", "bonds", "gilts", "bunds",
+                    "credit", "fx", "currency", "currencies", "debt", "usd", "dollar", "dollars",
+                    "fixed"})
+_ASSET_MORE = frozenset({"income", "sovereign", "government", "general", "assets", "rates",
+                         "yields"})
+
+
+def not_a_sector(name: str) -> str | None:
+    """Why a name read as a SECTOR exposure is not one — or None when it names a population.
+    Operator, 2026-10-16: the calm-index regime reached Research Now on "at both a sector and
+    thematic level" and "equities market itself"; a pilot thesis counted "Treasurys", "US
+    equity" and "USD assets". A span can be verbatim in the source and still name no sector: the
+    verification checks the WORDS, this checks what they name. Three classes, by whole words:
+    - a phrase FRAGMENT — nothing left once the generic words are removed;
+    - the WHOLE MARKET — a region and an equity word only (the sector-field twin of
+      `is_broad_market`: "US equity" is not counted where "S&P 500" is not);
+    - an ASSET CLASS outside equities — a region and a bond / credit / currency word only (or
+      both: "US equity and credit").
+    A name that also names a population ("information technology sector", "U.S. natural gas",
+    "consumer credit") is a sector."""
+    # a word's trailing full stop is punctuation ("US equities." is "US equities"), so "u.s." is
+    # held as "u.s" (REVIEW of #737)
+    words = [w for t in re.findall(r"[a-z0-9][a-z0-9&.\-]*", name.lower().replace("’", "'"))
+             if (w := t.rstrip(".-")) not in _STOP]
+    if not words:
+        return None
+    rest = set(words)
+    if rest <= _SECTOR_META:
+        return "a phrase, not a named sector"
+    market = _REGION | _EQUITY | _EQUITY_MORE | _ASSET | _ASSET_MORE
+    if rest <= market and rest & (_EQUITY | _ASSET):
+        return ("the whole market, not a sector" if not rest & _ASSET
+                else "an asset class outside equities, not a sector" if not rest & _EQUITY
+                else "the whole market and an asset class outside equities, not a sector")
+    return None
+
+
+def split_sectors(
+        av: AffectedView) -> tuple[list[SectorExposure], list[tuple[SectorExposure, str]]]:
+    """The card's distinct sector exposures in ONE pass: those that name a sector (the count takes
+    them) and those that name none, each with why (named on every surface, never counted)."""
+    kept: list[SectorExposure] = []
+    refused: list[tuple[SectorExposure, str]] = []
+    for s in distinct_sectors(av):
+        why = not_a_sector(s.name)
+        if why is None:
+            kept.append(s)
+        else:
+            refused.append((s, why))
+    return kept, refused
+
+
 def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[AffectedCompany]]:
     """The named companies that ARE exposures of the thesis — a role the source states as one
     (beneficiary, harmed, supplier, customer, disruptor …) — and those merely named on it (the
@@ -1535,7 +1608,11 @@ def indicator_words(names: Sequence[str]) -> str:
 def _uncounted_parts(counted: CountedExposures) -> list[str]:
     """What a thesis names that is not counted, one phrase per class."""
     return ([f"a broad market index ({', '.join(counted.broad)})"] if counted.broad else []) + (
-        [f"a market indicator ({', '.join(counted.indicators)})"] if counted.indicators else [])
+        [f"a market indicator ({', '.join(counted.indicators)})"] if counted.indicators else []) + (
+        [("a name read as a sector that is not one (" if len(counted.not_sectors) == 1
+          else "names read as sectors that are not sectors (")
+         + "; ".join(f"{n} — {why}" for n, why in counted.not_sectors) + ")"]
+        if counted.not_sectors else [])
 
 
 def stale_count_words(pr: ResearchPriority | None, counted: CountedExposures) -> str:
@@ -1553,8 +1630,11 @@ def stale_count_words(pr: ResearchPriority | None, counted: CountedExposures) ->
 
 
 def uncounted_words(counted: CountedExposures) -> str:
-    """Why the instruments a thesis attaches count no exposure: the whole market, a market
-    indicator, or both — ONE phrasing for the card's why-line and the desk's gate."""
+    """Why what a thesis names counts no exposure: the whole market, a market indicator, a name
+    that is not a sector, or several — ONE phrasing for the card's why-line and the desk's gate."""
+    if counted.not_sectors:
+        return ("only " + " and ".join(_uncounted_parts(counted))
+                + " — none is counted as an exposure")
     if counted.broad and counted.indicators:
         return (f"only a broad market index ({', '.join(counted.broad)}) and a market indicator "
                 f"({', '.join(counted.indicators)}) — neither the whole market nor a measure is "
@@ -1571,6 +1651,8 @@ BROAD_INSTRUMENTS = ("Broad market indices the source attaches — the whole mar
 INDICATOR_INSTRUMENTS = ("Market indicators the source attaches — a measure (volatility, "
                          "correlation), not a holding; not counted as this thesis's exposure")
 NAMED_INSTRUMENTS = "Named instruments / indices — not attached to this thesis"
+NOT_SECTORS = ("Read as a sector, but not one — a phrase, the whole market or an asset class "
+               "outside equities; not counted as this thesis's exposure")
 
 
 @dataclass(frozen=True)
@@ -1590,6 +1672,9 @@ class CountedExposures:
     broad: tuple[str, ...] = ()
     #: market indicators (volatility, correlation …) the source attaches — named, never counted
     indicators: tuple[str, ...] = ()
+    #: names read as sector exposures that name no sector, with why (`not_a_sector`) — never
+    #: counted
+    not_sectors: tuple[tuple[str, str], ...] = ()
 
 
 def _with_tickers(c: AffectedCompany) -> str:
@@ -1642,20 +1727,24 @@ def counted_exposures(av: AffectedView,
     source attaches to the thesis COUNTS (2026-10-16: "software may be oversold" named the
     software ETF and index it would be expressed through, and read "no exposure") — unless it is
     the whole market (`is_broad_market`) or a market indicator (`is_market_indicator`), which are
-    named and never counted."""
+    named and never counted. A sector exposure that names no sector (`not_a_sector`) is named and
+    never counted either."""
     exp = [c for c in av.companies
            if c.resolution_status is ResolutionStatus.LISTED_EQUITY and c.role in EXPOSURE_ROLES]
     verified = listed_exposures(av)
+    secs = list(av.sector_exposures if sectors is None else sectors)
     inst = exposure_instruments(av)
     return CountedExposures(
         listed=tuple((c.name_as_written, "/".join(x.ticker for x in c.listings
                                                   if x.pit_status is PitStatus.VERIFIED))
                      for c in verified),
         instruments=tuple(_with_tickers(c) for c in inst),
-        sectors=tuple(s.name for s in (av.sector_exposures if sectors is None else sectors)),
+        sectors=tuple(s.name for s in secs if not_a_sector(s.name) is None),
         unverified=tuple(c.name_as_written for c in exp if c not in verified),
         broad=tuple(_with_tickers(c) for c in broad_market_instruments(av)),
-        indicators=tuple(_with_tickers(c) for c in market_indicators(av)))
+        indicators=tuple(_with_tickers(c) for c in market_indicators(av)),
+        not_sectors=tuple((s.name, why) for s in secs
+                          if (why := not_a_sector(s.name)) is not None))
 
 
 def _company_rows(cs: Iterable[AffectedCompany], *, exposures: bool = False) -> str:
@@ -1821,7 +1910,7 @@ def _why_reasons(card: CardContent, pr: ResearchPriority | None,
                      for r in watch_reasons_of(pr, counted.unverified))
     if not exposed and unverified:  # missing data, not a missing exposure
         out.append("Exposure — " + unverified_words(counted.unverified) + ".")
-    elif not exposed and (counted.broad or counted.indicators):
+    elif not exposed and (counted.broad or counted.indicators or counted.not_sectors):
         out.append("Exposure — " + uncounted_words(counted) + ".")
     elif not exposed:
         out.append("Exposure — no listed company or verified sector exposure; the source names "
@@ -2098,17 +2187,23 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     broad = broad_market_instruments(av)
     indic = market_indicators(av)
     attached = _attached(av)
+    kept_sectors, junk = split_sectors(av)
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
-        f'{_refs(s.claim_ids, rc)}</div>' for s in distinct_sectors(av))
+        f'{_refs(s.claim_ids, rc)}</div>' for s in kept_sectors)
+    junk_rows = "".join(
+        f'<div class="s"><b>{e(s.name)}</b> — {e(why)} <span class="q">“{e(s.quote)}”</span>'
+        f'{_refs(s.claim_ids, rc)}</div>' for s, why in junk)
     group_rows = "".join(
         f'<div class="s"><b>{e(g.name)}</b> <span class="q">{e(g.excerpt)}</span> '
         f'<span class="note">paragraph {e(", ".join(_para(b) for b in g.block_ids))}</span>'
         f'{_refs(g.claim_ids, rc)}</div>' for g in rc.groups)
     bodies["s05_affected"] = (
         '<div class="sub">Sectors / themes the source names as exposed</div>'
-        + (sector_rows or '<div class="note">None named by the source.</div>')
+        + (sector_rows or ('<div class="note">None counted.</div>' if junk else
+                           '<div class="note">None named by the source.</div>'))
+        + (f'<div class="sub">{NOT_SECTORS}</div>' + junk_rows if junk else "")
         + '<div class="sub">Business groups the source names — not companies; no ticker is '
           'implied and the research action does not count them</div>'
         + group_rows + (f'<div class="note">{e(groups_unchecked_note(rc.groups_unread))}</div>'
@@ -2136,7 +2231,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
            '<div class="note">None.</div>')
         + '<div class="sub">Enrichment — EXTERNAL HYPOTHESES, not named by the source</div>'
         + enrichment_html(rc.enrichment, card, rc))
-    summaries["s05_affected"] = (f"{len(distinct_sectors(av))} sector(s) · "
+    summaries["s05_affected"] = (f"{len(kept_sectors)} sector(s) · "
                                  + (f"{len(rc.groups)} business group(s) named · "
                                     if rc.groups else "business groups not checkable here · "
                                     if rc.groups_unread else "")
@@ -2355,10 +2450,14 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
             f"{_ROLE_WORD.get(rc.roles.get(c.claim_id, ''), rc.roles.get(c.claim_id, '—'))} — "
             f"“{c.quote}” ({c.article_id} {c.block_id}; {c.claim_id})" for c in others]
     av = card.s05_affected
+    kept_sectors, junk = split_sectors(av)
     md += ["", f"## {titles['s05_affected']}", "**Sectors / themes the source names as exposed:**"]
     md += [f"- **{s.provenance.value}:** {s.name} — {s.direction.value} — “{s.quote}”"
            + (" [" + ", ".join(s.claim_ids) + "]" if s.claim_ids else "")
-           for s in distinct_sectors(av)] or ["- none named by the source"]
+           for s in kept_sectors] or ["- none counted" if junk else "- none named by the source"]
+    if junk:
+        md.append(f"**{NOT_SECTORS}:**")
+        md += [f"- {s.name} — {why} — “{s.quote}”" for s, why in junk]
     md.append("**Business groups the source names — not companies; no ticker implied:**")
     md += [f"- {g.name} — {g.excerpt} (paragraph {', '.join(_para(b) for b in g.block_ids)})"
            + (" [" + ", ".join(g.claim_ids) + "]" if g.claim_ids else "")

@@ -1034,16 +1034,18 @@ def test_the_weekly_reports_sources_say_each_channels_state_in_words(tmp_path: P
 
 DIAG = ("Diagnostics and care delivery, as well as the retirement and insurance industries, could "
         "benefit from—or need to adapt to—rising demand.")
-MARKETS = ("Treasurys hold steady while US equity and credit could gain; US equity and credit "
-           "markets could fall, and insurance brokers wait.")
+MARKETS = ("Banks hold steady while US regional banks could gain; US regional banks and lenders "
+           "could fall, and insurance brokers wait.")
 TWICE = [  # (name, direction, verbatim quote) — the pilot's shape (TH-8DDD7B2868, 2026-10-14)
     ("Diagnostics and care delivery, retirement and insurance industries", "unclear",
      DIAG.split(" rising")[0]),
     ("Diagnostics and care delivery, as well as the retirement and insurance industries",
      "positive", DIAG.split(" from")[0]),
-    ("Treasurys", "unclear", "Treasurys hold steady"),
-    ("US equity and credit", "positive", "US equity and credit could gain"),
-    ("US equity and credit markets", "negative", "US equity and credit markets could fall"),
+    # sectors, not asset classes: "Treasurys" and "US equity and credit" are refused as sectors
+    # since 2026-10-16 (`cards.not_a_sector`), so these pins use real ones of the same shape
+    ("Banks", "unclear", "Banks hold steady"),
+    ("US regional banks", "positive", "US regional banks could gain"),
+    ("US regional banks and lenders", "negative", "US regional banks and lenders could fall"),
     ("insurance", "unclear", "insurance brokers"),
 ]
 
@@ -1055,7 +1057,7 @@ def test_a_sector_named_twice_in_near_words_is_shown_once_on_every_surface(
     insurance industries" (could benefit) — and the reading page listed both, under two headings.
     Shown once, the directional one kept: on the reading page, its gate, the card (HTML,
     Markdown) and the weekly dashboard. NEGATIVE pins: two different one-word sectors stay apart
-    ("Treasurys", "insurance" — the equal-size case once merged them all); one sector inside a
+    ("Banks", "insurance" — the equal-size case once merged them all); one sector inside a
     list of several ("insurance") stays apart; near names said to benefit AND be hurt both stay
     — a contradiction is never hidden. The stored version keeps every entry as extracted."""
     pipe = make_pipeline(tmp_path / "reg")

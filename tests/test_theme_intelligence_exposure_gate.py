@@ -47,6 +47,7 @@ from vinci.theme_intelligence.cards import (
     INDICATOR_INSTRUMENTS,
     INSTRUMENT_EXPOSURES,
     NAMED_INSTRUMENTS,
+    NOT_SECTORS,
     affected_from,
     broad_market_instruments,
     counted_exposures,
@@ -54,6 +55,7 @@ from vinci.theme_intelligence.cards import (
     is_broad_market,
     is_market_indicator,
     market_indicators,
+    not_a_sector,
     watch_of,
     why_reasons,
 )
@@ -88,6 +90,7 @@ from vinci.theme_intelligence.schemas import (
     ResolutionStatus,
     RetrievalState,
     RunStatus,
+    SectorExposure,
     SecurityResolution,
     StanceInSource,
     TransmissionStep,
@@ -571,12 +574,13 @@ def test_a_market_indicator_is_named_and_never_counted() -> None:
     assert ce.indicators == ("Cboe 3-month implied correlation index",)
 
 
-def test_the_calm_index_regime_names_its_index_and_its_indicator_and_counts_neither(
+def test_the_calm_index_regime_names_its_index_its_indicator_and_its_non_sector_and_counts_none(
         tmp_path: Path) -> None:
     """End to end on the committed J.P. Morgan "calm index" fixture: the dispersion regime
-    attaches the S&P 500 and the Cboe 3-month implied correlation index. Neither is counted — its
-    exposure is the sector it names, and its action stands — and every surface names both. With
-    the sector gone, the gate gives both reasons in one line."""
+    attaches the S&P 500 and the Cboe 3-month implied correlation index, and its only "sector" is
+    the phrase "at both a sector and thematic level". None of the three is counted — so the
+    regime that read Research Now on them is WATCH — and every surface names all three, the gate
+    and the why-line giving every reason in one line."""
     from vinci.theme_intelligence.desk import NearTerm, gates
 
     pipe = make_pipeline(tmp_path / "p", sec_dirs=(CALM_DIR,))
@@ -588,36 +592,183 @@ def test_the_calm_index_regime_names_its_index_and_its_indicator_and_counts_neit
     current = [_current(pipe, t.thesis_id) for t in pipe.store.theses()]
     (v,) = [v for v in current if market_indicators(v.content.s05_affected)]
     cor, spx = "Cboe 3-month implied correlation index", "S&P 500"
+    phrase = "at both a sector and thematic level"
+    assert [s.name for s in v.content.s05_affected.sector_exposures] == [phrase]  # stored as read
     f = {x.factor_id: x.value for x in v.priority.factors}  # type: ignore[union-attr]
-    assert f["F6_recognizable_exposures"] == "0 listed · 1 sector · 0 instrument"
-    assert v.priority.research_action is ResearchAction.RESEARCH_NOW  # type: ignore[union-attr]
+    assert f["F6_recognizable_exposures"] == "0 listed · 0 sector · 0 instrument"
+    assert v.priority.research_action is ResearchAction.WATCH  # type: ignore[union-attr]
     card = BeautifulSoup((out / "cards" / f"{v.thesis_id}.html").read_text(), "html.parser")
     assert _names_under(card, INDICATOR_INSTRUMENTS) == [cor]
     assert _names_under(card, BROAD_INSTRUMENTS) == [spx]
     assert cor not in _names_under(card, INSTRUMENT_EXPOSURES)
+    junk = card.find("div", class_="sub", string=NOT_SECTORS)
+    assert junk is not None and phrase in junk.find_next_sibling("div").get_text()
+    counted_head = card.find("div", class_="sub",
+                             string="Sectors / themes the source names as exposed")
+    assert counted_head.find_next_sibling("div").get_text() == "None counted."
     md = (out / "cards" / f"{v.thesis_id}.md").read_text()
     assert f"- {cor} — " in md.split(f"**{INDICATOR_INSTRUMENTS}:**")[1].split("**")[0]
+    assert f"- {phrase} — " in md.split(f"**{NOT_SECTORS}:**")[1].split("**")[0]
+    counted_md = md.split("**Sectors / themes the source names as exposed:**")[1].split(
+        f"**{NOT_SECTORS}:**")[0]
+    assert phrase not in counted_md and "- none counted" in counted_md
     page = _text(out / "theses" / f"{v.thesis_id}.html")
     assert f"{cor} (market indicator — not counted)" in page
+    assert f"{phrase} (not a sector — not counted)" in page
+    soup = BeautifulSoup((out / "theses" / f"{v.thesis_id}.html").read_text(), "html.parser")
+    assert phrase not in [b.get_text() for b in soup.select(".expo ul.who li > b")]
     rows = {r.thesis_id: r for rs in res["dashboard"].categories.values() for r in rs}
-    assert f"{cor} [market indicator — not counted]" in rows[v.thesis_id].other_named
-    assert not any(x.startswith(cor) for x in rows[v.thesis_id].named_instruments)
+    row = rows[v.thesis_id]  # named ONCE each, labelled — never among the exposures (REVIEW)
+    assert f"{cor} [market indicator — not counted]" in row.other_named
+    assert not any(x.startswith(cor) for x in row.named_instruments)
+    assert f"{phrase} [not a sector — not counted]" in row.other_named
+    assert not any(x.startswith(phrase) for x in row.sector_exposures)
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    g = next(x for x in gates(v, [], nt) if x.name == "An exposure the source names")
+    assert not g.ok and f"broad market index ({spx})" in g.detail
+    assert f"market indicator ({cor})" in g.detail and phrase in g.detail
+    why = " ".join(why_reasons(v.content, v.priority))
+    assert f"market indicator ({cor})" in why and phrase in why
+    # without its non-sector, the index and the indicator are the whole reason, said as one
     av = v.content.s05_affected.model_copy(update={"sector_exposures": ()})
+    two = v.model_copy(update={"content": v.content.model_copy(update={"s05_affected": av})})
+    g = next(x for x in gates(two, [], nt) if x.name == "An exposure the source names")
+    assert g.detail == (f"only a broad market index ({spx}) and a market indicator ({cor}) — "
+                        f"neither the whole market nor a measure is counted as an exposure")
+
+
+
+def test_a_thesis_whose_only_sectors_are_not_sectors_counts_no_exposure_and_says_why(
+        tmp_path: Path) -> None:
+    """The live pilot's shape (TH-2FFD9B58A8, 2026-10-16): its only "sectors" were "Treasurys",
+    "US equity" and "USD assets". On the real J.P. Morgan record with those as its only names, the
+    gate and the why-line say each is not a sector — no instrument reason stands in for them."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    v = next(v for v in (_current(pipe, t.thesis_id) for t in pipe.store.theses())
+             if v.content.s05_affected.sector_exposures)
+    se = v.content.s05_affected.sector_exposures[0]
+    av = v.content.s05_affected.model_copy(update={
+        "instruments": (), "not_securities": (), "companies": (),
+        "sector_exposures": tuple(se.model_copy(update={"name": n})
+                                  for n in ("Treasurys", "US equity", "USD assets"))})
     f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
                         value="0 listed · 0 sector · 0 instrument", note="")
     kept = tuple(x for x in v.priority.factors  # type: ignore[union-attr]
                  if not x.factor_id.startswith("F6")) + (f6,)
-    # with no exposure the rules hold it at WATCH (the why-line explains a WATCH's conditions)
     alone = v.model_copy(update={
         "content": v.content.model_copy(update={"s05_affected": av}),
         "priority": v.priority.model_copy(update={  # type: ignore[union-attr]
             "factors": kept, "research_action": ResearchAction.WATCH, "watch_reasons": ()})})
     nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
     g = next(x for x in gates(alone, [], nt) if x.name == "An exposure the source names")
-    assert not g.ok and f"broad market index ({spx})" in g.detail
-    assert f"market indicator ({cor})" in g.detail
+    assert not g.ok and "Treasurys — an asset class outside equities" in g.detail
+    assert "US equity — the whole market" in g.detail and "market index" not in g.detail
+    assert g.detail.startswith("only names read as sectors that are not sectors (")
     why = " ".join(why_reasons(alone.content, alone.priority))
-    assert f"market indicator ({cor})" in why
+    assert "Treasurys — an asset class outside equities" in why
+
+
+def test_a_version_that_counted_a_non_sector_says_it_is_no_longer_counted(
+        tmp_path: Path) -> None:
+    """REVIEW of #737: a version STORED counting "US equity" as a sector keeps its action until it
+    is re-graded; its gate says the name is no longer counted and that a re-grade applies it."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    v = next(v for v in (_current(pipe, t.thesis_id) for t in pipe.store.theses())
+             if v.content.s05_affected.sector_exposures)
+    se = v.content.s05_affected.sector_exposures[0]
+    av = v.content.s05_affected.model_copy(update={
+        "instruments": (), "not_securities": (), "companies": (),
+        "sector_exposures": (se.model_copy(update={"name": "US equity"}),)})
+    f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
+                        value="0 listed · 1 sector · 0 instrument", note="")
+    kept = tuple(x for x in v.priority.factors  # type: ignore[union-attr]
+                 if not x.factor_id.startswith("F6")) + (f6,)
+    old = v.model_copy(update={
+        "content": v.content.model_copy(update={"s05_affected": av}),
+        "priority": v.priority.model_copy(update={"factors": kept})})  # type: ignore[union-attr]
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    g = next(x for x in gates(old, [], nt) if x.name == "An exposure the source names")
+    assert g.ok and g.detail == (
+        "counted 1 exposure when the thesis was assessed; today's rules do not count a name read "
+        "as a sector that is not one (US equity — the whole market, not a sector) — a re-grade "
+        "($0) applies them")
+
+
+def test_the_enrichment_prompt_names_only_the_sectors_that_are_sectors(tmp_path: Path) -> None:
+    """REVIEW of #737: the paid enrichment call was told "Treasurys; US equity; USD assets" were
+    the sectors the source names as exposed. On the real J.P. Morgan card, a name that is not a
+    sector stays out of that line and a real one stays in."""
+    from vinci.theme_intelligence.enrich import user_message
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    v = next(v for v in (_current(pipe, t.thesis_id) for t in pipe.store.theses())
+             if v.content.s05_affected.sector_exposures)
+    se = v.content.s05_affected.sector_exposures[0]
+    card = v.content.model_copy(update={"s05_affected": v.content.s05_affected.model_copy(
+        update={"sector_exposures": (se.model_copy(update={"name": "Treasurys"}),
+                                     se.model_copy(update={"name": "utilities"}))})})
+    line = next(x for x in user_message(card, version=v.version, area="x", groups=[]).splitlines()
+                if x.startswith("Sectors the source names as exposed:"))
+    assert "utilities" in line and "Treasurys" not in line
+
+@pytest.mark.parametrize(("name", "refused"), [
+    # read as sector exposures in the local registry copies (2026-10-16), and not sectors
+    ("at both a sector and thematic level", True),
+    ("both a sector and thematic level", True),
+    ("seven sectors", True),
+    ("broader set of sectors and industries", True),
+    ("equities market itself", True),
+    ("US equity", True),
+    ("Domestic Equity", True),
+    ("Latin American equities", True),
+    ("large-cap leaders", True),
+    ("Treasurys", True),
+    ("USD assets", True),
+    ("Fixed Income", True),
+    ("LatAm FX", True),
+    ("LatAm credit", True),
+    ("LA5 general government debt", True),
+    # constructed: the whole market and an asset class together
+    ("US equity and credit markets", True),
+    # REVIEW of #737: a sentence-final full stop is punctuation, and "U.S." is still a region
+    ("US equities.", True),
+    ("U.S. equity", True),
+    ("Treasurys.", True),
+    # NEGATIVE — sectors read in the same copies: a population is named beside the generic word
+    ("information technology sector", False),
+    ("midstream sector", False),
+    ("the software sector", False),
+    ("ETF industry", False),
+    ("Registered Investment Adviser (RIA) sub-industry", False),
+    ("U.S. natural gas", False),
+    ("behind-the-meter power market in Australia", False),
+    ("large-cap productivity gains", False),
+    ("Tech", False),
+    ("AI demand", False),  # a demand driver: left counted for an operator ruling
+    # constructed: a credit or bank population is a sector
+    ("consumer credit", False),
+    ("US regional banks", False),
+])
+def test_a_name_read_as_a_sector_is_told_from_a_sector(name: str, refused: bool) -> None:
+    assert (not_a_sector(name) is not None) is refused
+
+
+def test_a_name_that_is_not_a_sector_is_named_and_never_counted() -> None:
+    def sec(n: str) -> SectorExposure:
+        return SectorExposure(name=n, direction=Direction.UNCLEAR,
+                              provenance=Provenance.SOURCE_OPINION, quote="[HYPOTHETICAL]",
+                              article_id="A-x")
+    ce = counted_exposures(_view(sector_exposures=(sec("Treasurys"), sec("utilities"))))
+    assert ce.sectors == ("utilities",)
+    assert ce.not_sectors == (("Treasurys", "an asset class outside equities, not a sector"),)
+
 
 
 def test_a_version_counted_before_the_ruling_says_what_is_no_longer_counted(

@@ -52,7 +52,7 @@ from typing import Any
 
 from vinci.netcache import HttpError
 from vinci.theme_intelligence.cachefile import read_json, write_json
-from vinci.theme_intelligence.cards import BASIS_LABEL, capped_label, without_labels
+from vinci.theme_intelligence.cards import BASIS_LABEL, capped_label, not_a_sector, without_labels
 from vinci.theme_intelligence.config import ENRICH_PROMPT_VERSION, LLM_MODEL
 from vinci.theme_intelligence.extract import ToolClient, answer_list, cache_key, cost_of
 from vinci.theme_intelligence.schemas import (
@@ -265,7 +265,11 @@ def user_message(card: CardContent, *, version: int, area: str, groups: list[str
     h = card.header
     steps = earnings_steps(card)
     av = card.s05_affected
-    sectors = "; ".join(f"{s.name} ({s.direction.value})" for s in av.sector_exposures)
+    # only names that ARE sectors: a phrase, the whole market or an asset class is no population
+    # to propose companies from (REVIEW of #737: "Treasurys; US equity; USD assets" fed a paid
+    # call)
+    sectors = "; ".join(f"{s.name} ({s.direction.value})" for s in av.sector_exposures
+                        if not_a_sector(s.name) is None)
     named = named_by_source(card)
     lines = [f"THESIS {h.thesis_id} (version {version}): {h.title}",
              f"Area: {area} · Geography: {h.region}",
