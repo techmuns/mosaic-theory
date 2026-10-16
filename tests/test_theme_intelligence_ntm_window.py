@@ -83,3 +83,10 @@ def test_what_is_not_an_ntm_reading_keeps_its_window() -> None:
     assert "2026-02-01..2026-02-28" in timing_of(plain, JPM_AS_OF, JPM_AS_OF)[1]
     assert "2026-02-09..2027-02-09" in timing_of(_claim("NTM", measured=None), JPM_AS_OF,
                                                  None)[1]
+
+
+def test_an_ntm_multiple_mentioned_beside_another_figure_does_not_re_window_it() -> None:
+    """NEGATIVE (review of #732): the FIGURE is NTM only when its period or metric says so."""
+    quote = "Shipments rise 5% in September 2026; the stock trades at 20x NTM P/E"
+    c = _claim("September 2026", metric="shipment growth", quote=quote)
+    assert "2026-09-01..2026-09-30" in timing_of(c, JPM_AS_OF, JPM_AS_OF)[1]
