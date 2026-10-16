@@ -606,10 +606,9 @@ def _alert(prev: SourceHealthCheck | None, status: HealthStatus, decisive: str,
             return ""
         return ("KNOWN_RESTRICTION" if expect_blocked and status is HealthStatus.BLOCKED
                 else "NEW_FAILURE")
-    if _RANK[status] < _RANK[prev.status]:
-        return "RECOVERED"
-    if not failing:
-        return ""
+    if not failing:  # recovered only when no longer failing: ERROR → DEGRADED is still a
+        # failure, a changed one (U31a: it alerted "RECOVERED")
+        return "RECOVERED" if _RANK[status] < _RANK[prev.status] else ""
     prev_decisive = _decisive_of(prev)
     if _RANK[status] > _RANK[prev.status] or (status, decisive) != (prev.status, prev_decisive):
         return "NEW_FAILURE"

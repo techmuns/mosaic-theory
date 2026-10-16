@@ -1294,6 +1294,12 @@ class DocumentRecord(Mutable):
     article_id: str | None = None
     version_id: str | None = None
     match_basis: str = ""  # why it was matched (or not) to an article already held
+    #: the operator's own identity statement as a VALUE — "same_as" / "duplicate_of" / "new" —
+    #: and the article it names (U33: a replay read it back out of `match_basis`, a display
+    #: sentence; a record from before 2026-10-16 has none, and `ingest.operator_decision` reads
+    #: its sentence)
+    decision: Literal["same_as", "duplicate_of", "new"] | None = None
+    decision_article: str | None = None
     title: str | None = None
     published: date | None = None
     published_source: str | None = None

@@ -257,7 +257,10 @@ def jpm_tmt(src: SourceConfig, f: PoliteFetcher, cov: SourceCoverage) -> list[Ca
     links = card_links(_soup(fr), fr.final_url or src.entry_url, pat)
     out = [Candidate(url=u, source_id=src.id, title=t, listed_date=d,
                      date_basis="listing card date" if d else "undated") for u, t, d in links]
-    if out and any(c.listed_date for c in out) or not src.sitemap_url:
+    if not out:  # an accessible listing with no card is a layout change, never "no dates":
+        # read from the sitemap instead, it masked the "dropped to zero" alert (U31d)
+        raise RuntimeError("the listing page holds no article card — the page layout changed")
+    if any(c.listed_date for c in out) or not src.sitemap_url:
         return out
     cov.warnings.append("listing cards carried no dates — falling back to the sitemap")
     sm = _get(f, src.sitemap_url, cov)

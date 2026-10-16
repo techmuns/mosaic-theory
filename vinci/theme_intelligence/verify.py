@@ -71,6 +71,7 @@ from vinci.theme_intelligence.schemas import (
     Epistemic,
     EvidenceSource,
     IssueSeverity,
+    Listing,
     Mention,
     Provenance,
     RecommendationStatus,
@@ -179,6 +180,38 @@ def norm_name(s: str) -> str:
     s = _SUFFIX.sub(" ", s)
     s = re.sub(r"[^a-z0-9&+ ]", " ", s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+def _name_words(s: str) -> list[str]:
+    """A name's words as WRITTEN — lower case, punctuation and a parenthesis dropped, "the"
+    dropped, legal-form words KEPT."""
+    s = re.sub(r"\(.*?\)", " ", norm_text(s).lower())
+    return [w for w in re.sub(r"[^a-z0-9&+ ]", " ", s).split() if w != "the"]
+
+
+def same_company(a: str, b: str) -> bool:
+    """One company spelt two ways: the same name once legal forms are dropped ("Siemens AG" /
+    "Siemens", "The AES Corporation" / "AES"), or one name's words, as written, leading the
+    other's ("Micron" / "Micron Technology Inc", "Zhipu Z.ai" / "Zhipu (Z.ai)"). A legal form
+    only ever EQUALS two names: dropped before a prefix test, "Siemens AG" became a bare
+    "siemens" that led "Siemens Energy" (19 stored versions). A name with nothing left matches
+    nothing. ONE rule for the enrichment and the desk (U60a: the desk split "AT&T" into "at", "t"
+    and hid "AT", and a name with no ASCII letters hid every later name). Names alone cannot tell
+    "Meta" (Meta Platforms) from "Meta Materials" (U11): a caller holding verified listings for
+    both asks `distinct_listings` as well."""
+    if norm_name(a) and norm_name(a) == norm_name(b):
+        return True
+    x, y = _name_words(a), _name_words(b)
+    n = min(len(x), len(y))
+    return n > 0 and x[:n] == y[:n]
+
+
+def distinct_listings(a: Iterable[Listing], b: Iterable[Listing]) -> bool:
+    """Two companies the SEC verified apart: both sides carry verified listings and share no
+    ticker. A side with none (unverified, private, or a model's unverified ticker) proves
+    nothing, so the names decide."""
+    ta, tb = {x.ticker for x in a}, {x.ticker for x in b}
+    return bool(ta) and bool(tb) and not ta & tb
 
 
 def content_words(s: str) -> set[str]:
