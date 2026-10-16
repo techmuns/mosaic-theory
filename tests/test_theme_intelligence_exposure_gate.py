@@ -40,12 +40,16 @@ from tests.theme_intelligence_support import (
 )
 from vinci.netcache import HttpError
 from vinci.theme_intelligence.cards import (
+    BROAD_INSTRUMENTS,
     INSTRUMENT_EXPOSURES,
     NAMED_INSTRUMENTS,
     affected_from,
+    broad_market_instruments,
     counted_exposures,
     exposure_instruments,
+    is_broad_market,
     watch_of,
+    why_reasons,
 )
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.priority import (
@@ -413,19 +417,23 @@ def test_every_surface_lists_the_instruments_the_count_takes(tmp_path: Path) -> 
     dashboard row name the SAME instruments as the thesis's exposure. On 2026-10-16 the count
     took J.P. Morgan's software ETF and index while the card and the desk still listed them as
     "named, not exposures" — the page contradicted its own Watch box. NEGATIVE: an instrument
-    the thesis does not attach stays a mention."""
+    the thesis does not attach stays a mention. And a WHOLE-MARKET index the thesis attaches (J.P.
+    Morgan's "S&P 500", operator ruling 2026-10-16) is named on every surface under its own words
+    and never among the exposures."""
     pipe = _jpm(tmp_path)
     run = pipe.finish_run(RunStatus.SUCCEEDED)
     res = write_run_outputs(pipe.store, run.run_id, tmp_path / "out")
     out = Path(res["dir"])
     rows = {r.thesis_id: r for rs in res["dashboard"].categories.values() for r in rs}
-    taken = 0
+    taken = whole = 0
     for t in pipe.store.theses():
         av = _current(pipe, t.thesis_id).content.s05_affected
         inst = [c.name_as_written for c in exposure_instruments(av)]
+        broad = [c.name_as_written for c in broad_market_instruments(av)]
         loose = [c.name_as_written for c in av.instruments
-                 if c.name_as_written not in inst]
+                 if c.name_as_written not in inst and c.name_as_written not in broad]
         taken += len(inst)
+        whole += len(broad)
         page = BeautifulSoup((out / "theses" / f"{t.thesis_id}.html").read_text(), "html.parser")
         who = next(x for x in page.select("section.panel")
                    if x.h2 is not None and x.h2.get_text() == "Who is exposed")
@@ -436,14 +444,87 @@ def test_every_surface_lists_the_instruments_the_count_takes(tmp_path: Path) -> 
         md = (out / "cards" / f"{t.thesis_id}.md").read_text().split("## 05")[1]
         md_attached = md.split(f"**{INSTRUMENT_EXPOSURES}:**")[1].split(
             f"**{NAMED_INSTRUMENTS}:**")[0]
+        md_counted = md_attached.split(f"**{BROAD_INSTRUMENTS}:**")[0]
         for n in inst:
             assert n in listed and f"{n} (" not in also, (t.thesis_id, n)
             assert n in _names_under(card, INSTRUMENT_EXPOSURES), (t.thesis_id, n)
-            assert f"- {n} — " in md_attached, (t.thesis_id, n)
+            assert f"- {n} — " in md_counted, (t.thesis_id, n)
             assert any(x.startswith(f"{n} [") for x in rows[t.thesis_id].named_instruments)
+        for n in broad:
+            assert n not in listed and f"{n} (broad market index — not counted)" in also
+            assert n in _names_under(card, BROAD_INSTRUMENTS)
+            assert n not in _names_under(card, INSTRUMENT_EXPOSURES)
+            assert f"- {n} — " in md_attached.split(f"**{BROAD_INSTRUMENTS}:**")[1]
+            assert f"- {n} — " not in md_counted
+            assert f"{n} [broad market index — not counted]" in rows[t.thesis_id].named_instruments
         assert loose == []  # the fixture attaches every instrument it names: see the next pin
     assert taken >= 2  # the software thesis's ETF and index, at least
+    assert whole == 1  # the market-regime thesis's S&P 500
 
+
+
+# --- the whole market is no thesis's exposure (operator ruling 2026-10-16) ----------------------
+
+@pytest.mark.parametrize(("name", "status", "tickers", "broad"), [
+    # the whole-market instruments attached across 152 local registry copies (2026-10-16)
+    ("S&P 500", ResolutionStatus.INDEX, (), True),
+    ("Ibovespa", ResolutionStatus.INDEX, (), True),
+    ("IPC", ResolutionStatus.INDEX, (), True),
+    ("Colcap", ResolutionStatus.INDEX, (), True),
+    ("BVL", ResolutionStatus.INDEX, (), True),
+    # constructed: the same index written another way, and a fund that tracks it
+    ("The S&P 500 Index", ResolutionStatus.INDEX, (), True),
+    ("SPDR S&P 500 ETF Trust", ResolutionStatus.FUND, ("SPY",), True),
+    # NEGATIVE — the sector and theme instruments attached in the same copies: matched on the
+    # WHOLE name, so an index named after the S&P 500 is still a sector index
+    ("S&P 500 Software Index", ResolutionStatus.INDEX, (), False),
+    ("S&P 500 Utilities", ResolutionStatus.INDEX, (), False),
+    ("S&P 500 AI Usage", ResolutionStatus.NOT_A_SECURITY, (), False),
+    ("Magnificent 7", ResolutionStatus.NOT_A_SECURITY, (), False),
+    ("iShares Expanded Tech-Software Sector ETF (IGV)", ResolutionStatus.FUND, ("IGV",), False),
+])
+def test_a_whole_market_index_is_told_from_a_sector_one(
+        name: str, status: ResolutionStatus, tickers: tuple[str, ...], broad: bool) -> None:
+    assert is_broad_market(_co(name, MentionRole.MARKET_INSTRUMENT, status, *tickers)) is broad
+
+
+def test_the_whole_market_is_named_and_never_counted() -> None:
+    spx = _co("S&P 500", MentionRole.MARKET_INSTRUMENT, ResolutionStatus.INDEX)
+    igv = _co("iShares Expanded Tech-Software Sector ETF (IGV)", MentionRole.MARKET_INSTRUMENT,
+              ResolutionStatus.FUND, "IGV")
+    ce = counted_exposures(_view(instruments=(spx, igv)))
+    assert ce.instruments == ("iShares Expanded Tech-Software Sector ETF (IGV)",)
+    assert ce.broad == ("S&P 500",)
+
+
+def test_a_thesis_whose_only_instrument_is_the_whole_market_counts_no_exposure(
+        tmp_path: Path) -> None:
+    """End to end on the real fixture: J.P. Morgan's market-regime thesis attaches the S&P 500
+    and names one sector. Its stored rule counts the sector and NOT the index ("0 instrument");
+    with the sector gone — the real shape of TH-5C3B51DF57 in a local registry copy, "0 listed ·
+    0 sector · 1 instrument" before the ruling — the gate says why there is no exposure."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    current = [_current(pipe, t.thesis_id) for t in pipe.store.theses()]
+    (v,) = [v for v in current if [c.name_as_written for c in broad_market_instruments(
+        v.content.s05_affected)] == ["S&P 500"]]
+    f = {x.factor_id: x.value for x in v.priority.factors}  # type: ignore[union-attr]
+    assert f["F6_recognizable_exposures"] == "0 listed · 1 sector · 0 instrument"
+    av = v.content.s05_affected.model_copy(update={"sector_exposures": ()})
+    f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
+                        value="0 listed · 0 sector · 0 instrument", note="")
+    kept = tuple(x for x in v.priority.factors  # type: ignore[union-attr]
+                 if not x.factor_id.startswith("F6")) + (f6,)
+    alone = v.model_copy(update={
+        "content": v.content.model_copy(update={"s05_affected": av}),
+        "priority": v.priority.model_copy(update={"factors": kept})})  # type: ignore[union-attr]
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    g = next(x for x in gates(alone, [], nt) if x.name == "An exposure the source names")
+    assert not g.ok and "S&P 500" in g.detail and "whole market" in g.detail
+    why = " ".join(why_reasons(alone.content, alone.priority))
+    assert "Exposure — only a broad market index (S&P 500)" in why
 
 def test_an_instrument_named_only_as_a_comparator_stays_a_mention(tmp_path: Path) -> None:
     """NEGATIVE, through the store: an index the source names as a COMPARATOR is not an exposure

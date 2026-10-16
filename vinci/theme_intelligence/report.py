@@ -49,6 +49,7 @@ from vinci.theme_intelligence.cards import (
     ReviewCarry,
     _clean_display,
     _line_name,
+    broad_market_instruments,
     cited_claim_ids,
     distinct_sectors,
     e,
@@ -1296,7 +1297,9 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             named_instruments=[c.name_as_written + (
                 f" [fund {'/'.join(x.ticker for x in c.listings)}]" if c.listings
                 else " [basket — members not named]" if c.role.value == "cited_basket"
-                else f" [{c.resolution_status.value.lower()}]") for c in inst],
+                else f" [{c.resolution_status.value.lower()}]") for c in inst] + [
+                c.name_as_written + " [broad market index — not counted]"
+                for c in broad_market_instruments(av)],
             private_named=[f"{c.name_as_written} [private company]"
                            for c in av.private_or_unlisted],
             other_named=[f"{c.name_as_written} ["
