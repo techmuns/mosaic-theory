@@ -469,7 +469,7 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
         pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}")
         print(f"failed: {type(exc).__name__}: {exc}")
         return 1
-    run = pipe.finish_run(RunStatus.SUCCEEDED if res.status in (
+    run = pipe.finish_ingest(RunStatus.SUCCEEDED if res.status in (
         "INGESTED", "UPGRADED", "DUPLICATE", "HELD", "REVIEW") else RunStatus.PARTIAL)
     print(f"run {run.run_id}: ingest {run.status.value} — {path.name}")
     _print_ingest(res)
@@ -502,7 +502,7 @@ def cmd_reask_part(a: argparse.Namespace) -> int:
         pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}")
         print(f"failed: {type(exc).__name__}: {exc}")
         return 1
-    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    run = pipe.finish_ingest(RunStatus.SUCCEEDED)
     print(f"run {run.run_id}: re-asked part {res.part} of {res.doc_id} (article "
           f"{res.article_id}, version {res.version_id}) — cost ${res.cost_usd:.4f}")
     print(f"  {res.recovered}")
@@ -565,7 +565,7 @@ def cmd_ingest_inbox(a: argparse.Namespace) -> int:
         meta = f.with_name(f.name + ".meta.json")
         if meta.exists():
             meta.rename(dest_dir / meta.name)
-    run = pipe.finish_run(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
+    run = pipe.finish_ingest(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
     print(f"run {run.run_id}: ingest {run.status.value} · {len(files)} file(s) · cost "
           f"${run.cost_usd if run.cost_usd is not None else 'UNKNOWN'} · outputs: {out['dir']}")
