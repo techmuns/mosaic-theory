@@ -124,6 +124,8 @@ jobs:
         env:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          # five years of P/E history (Tiingo); absent, the panel reads the two Polygon serves
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python -m vinci.theme_intelligence market --as-of "$(date -u +%F)"
 
       # Committed even when the scan failed (its run record is the evidence), but NEVER when the

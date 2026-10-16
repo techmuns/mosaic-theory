@@ -189,8 +189,9 @@ def test_the_fund_rule_misses_nvidias_2024_split_and_basis_breaks_finds_it() -> 
     assert share_basis_change([p for p in NVDA if p.concept != "shares"
                                and p.period_end >= since]) is None
     found = basis_breaks(NVDA, since, AS_OF)
-    assert any("11.93 as first filed, 1.19" in b for b in found)
-    assert any("2,460,000,000 on 2024-05-24, 24,530,000,000 on 2024-08-23" in b for b in found)
+    assert any(k == "eps" and "11.93 as first filed, 1.19" in w for k, w in found)
+    assert any(k == "shares" and "2,460,000,000 on 2024-05-24, 24,530,000,000 on 2024-08-23" in w
+               for k, w in found)
 
 
 def test_basis_breaks_reads_only_filings_known_by_the_date() -> None:
@@ -265,3 +266,34 @@ def test_the_market_step_carries_five_years_into_the_stored_rows(tmp_path: Path)
                              and "five years not" not in r.pe_percentile.basis
                              for r in with_deep)
     assert all("no Tiingo key configured" in r.pe_percentile.basis for r in without)
+
+
+
+def test_a_dotted_ticker_is_asked_of_tiingo_in_its_own_spelling(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """REVIEW of #734: Polygon's BRK.B is Tiingo's brk-b — asked as brk.b it 404s every run."""
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+    monkeypatch.setattr("vinci.netcache.CachedHttp", FakeHttp)
+    FakeHttp.held, FakeHttp.sent = set(), []
+    tiingo_deep(tmp_path)("BRK.B", date(2021, 1, 1), date(2024, 12, 31))
+    assert FakeHttp.sent == ["https://api.tiingo.com/tiingo/daily/brk-b/prices"]
+
+
+def test_a_failed_tiingo_request_is_said_as_that_never_as_a_missing_key() -> None:
+    """REVIEW of #734: a 429 or 404 fell back to "no Tiingo key configured" — a false cause."""
+    def failing(symbol: str, start: date, end: date) -> list[DeepRow]:
+        raise RuntimeError("HTTP 429")
+
+    errors: list[str] = []
+    _pe, pct = pe_five_or_two(_recent(), _flat_eps(), AS_OF, "X", failing, errors)
+    assert pct.detail == "2y" and "the Tiingo request failed (RuntimeError)" in pct.basis
+    assert "no Tiingo key" not in pct.basis
+    assert errors and "X: Tiingo history failed" in errors[0]
+
+
+def test_the_weekly_actions_run_hands_the_market_step_its_tiingo_key() -> None:
+    """REVIEW of #734: the secret existed and the step's environment did not carry it."""
+    wf = (Path(__file__).resolve().parents[1] / ".github" / "workflows"
+          / "theme-intelligence-weekly.yml").read_text()
+    step = wf.split("- name: Market context", 1)[1].split("- name:", 1)[0]
+    assert "TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}" in step

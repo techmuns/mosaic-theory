@@ -129,7 +129,8 @@ def tiingo_deep(cache_dir: Path, *, budget: int = TIINGO_PER_RUN) -> DeepSource:
     spent = [0]
 
     def get(symbol: str, start: date, end: date) -> list[DeepRow] | None:
-        url = f"https://api.tiingo.com/tiingo/daily/{symbol.lower()}/prices"
+        # Tiingo spells a share class with a hyphen (brk-b), where Polygon and the SEC use a dot
+        url = f"https://api.tiingo.com/tiingo/daily/{symbol.lower().replace('.', '-')}/prices"
         params = {"startDate": start.isoformat(), "endDate": end.isoformat(), "format": "json"}
         if http.fetched_at(url, params=params) is None:
             if spent[0] >= budget:
@@ -223,12 +224,17 @@ def edgar_eps() -> EpsSource:
 BASIS_BREAK = 1.5
 
 
-def basis_breaks(points: Sequence[ConceptPoint], since: date, as_of: date) -> list[str]:
-    """Every change of per-share basis the filings known by `as_of` show after `since`: an annual
-    EPS period a later filing restated by `BASIS_BREAK` or more, and a share count that moved by it
-    between consecutive cover pages."""
+BreakKind = Literal["eps", "shares"]
+
+
+def basis_breaks(points: Sequence[ConceptPoint], since: date,
+                 as_of: date) -> list[tuple[BreakKind, str]]:
+    """Every change of per-share basis the filings known by `as_of` show after `since`, as (kind,
+    words): an annual EPS period a later filing restated by `BASIS_BREAK` or more ("eps"), and a
+    share count that moved by it between consecutive cover pages ("shares"). Callers branch on the
+    KIND, never on the words."""
     known = [p for p in points if p.filed <= as_of]
-    out: list[str] = []
+    out: list[tuple[BreakKind, str]] = []
     by: dict[date, list[ConceptPoint]] = {}
     for p in known:
         if p.concept != "shares" and p.is_annual and p.period_end >= since:
@@ -240,14 +246,16 @@ def basis_breaks(points: Sequence[ConceptPoint], since: date, as_of: date) -> li
         a = max(abs(p.value) for p in ps if p.filed == filed[0])
         b = max(abs(p.value) for p in ps if p.filed == filed[-1])
         if a and b and max(a / b, b / a) >= BASIS_BREAK:
-            out.append(f"the year ending {end.isoformat()}: EPS {a:g} as first filed, {b:g} as "
-                       f"filed {filed[-1].isoformat()} (×{max(a / b, b / a):.1f})")
+            out.append(("eps", f"the year ending {end.isoformat()}: EPS {a:g} as first filed, "
+                               f"{b:g} as filed {filed[-1].isoformat()} "
+                               f"(×{max(a / b, b / a):.1f})"))
     shares = sorted({(p.period_end, p.value) for p in known
                      if p.concept == "shares" and p.value > 0})
     for (d0, v0), (d1, v1) in zip(shares, shares[1:], strict=False):
         if d1 >= since and max(v1 / v0, v0 / v1) >= BASIS_BREAK:
-            out.append(f"shares outstanding {v0:,.0f} on {d0.isoformat()}, {v1:,.0f} on "
-                       f"{d1.isoformat()} (×{max(v1 / v0, v0 / v1):.1f})")
+            out.append(("shares", f"shares outstanding {v0:,.0f} on {d0.isoformat()}, "
+                                  f"{v1:,.0f} on {d1.isoformat()} "
+                                  f"(×{max(v1 / v0, v0 / v1):.1f})"))
     return out
 
 
@@ -257,7 +265,7 @@ def _held(closes: Closes, as_of: date) -> Closes:
 
 
 def _not_held(why: str) -> MarketFigure:
-    return MarketFigure(value=None, basis=f"not held — {why}")
+    return MarketFigure(value=None, basis=f"not held — {why}", why=why)
 
 
 def _fresh(held: Closes, as_of: date) -> tuple[date, float] | None:
@@ -326,22 +334,30 @@ def against(name: Closes, bench: Closes, as_of: date, days: int, ticker: str) ->
 
 
 def pe_five_or_two(closes: Closes, eps: list[ConceptPoint], as_of: date, ticker: str,
-                   deep: DeepSource | None) -> tuple[MarketFigure, MarketFigure]:
+                   deep: DeepSource | None,
+                   errors: list[str] | None = None) -> tuple[MarketFigure, MarketFigure]:
     """The P/E and its percentile over FIVE years when they can be joined and the fund's rule
     accepts the range (it refuses one a share-basis change runs through); else over the two years
-    Polygon serves — and the percentile says which, and why five were not used."""
-    pe, pct = pe_against_history(closes, eps, as_of, ticker)
+    Polygon serves — and the percentile says which, and why five were not used. A failed Tiingo
+    request is said as that (and added to `errors`), never as a missing key."""
     if deep is None:
         why = "five years not held — no Tiingo key configured"
     else:
-        five, how = deep_history(ticker, closes, as_of, deep)
+        try:
+            five, how = deep_history(ticker, closes, as_of, deep)
+        except Exception as exc:  # noqa: BLE001 — a failed request is said, never filled
+            if errors is not None:
+                errors.append(f"{ticker}: Tiingo history failed — {type(exc).__name__}: "
+                              f"{str(exc)[:120]}")
+            five, how = None, f"the Tiingo request failed ({type(exc).__name__})"
         if five is not None:
             pe5, pct5 = pe_against_history(five, eps, as_of, ticker, joined=how)
             if pct5.value is not None:
                 return pe5, pct5.model_copy(update={"detail": "5y"})
-            why = f"five years not used — {pct5.basis.removeprefix('not held — ')}"
+            why = f"five years not used — {pct5.why}"
         else:
             why = f"five years not held — {how}"
+    pe, pct = pe_against_history(closes, eps, as_of, ticker)
     return pe, pct.model_copy(update={"basis": f"{pct.basis}; {why}",
                                       "detail": "2y" if pct.value is not None else ""})
 
@@ -373,14 +389,14 @@ def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
     latest = annual_eps_point_as_of(annual, as_of)
     if latest is not None and pe.value is not None:
         after = basis_breaks(eps, latest.filed + timedelta(days=1), as_of)
-        moved = [b for b in after if b.startswith("shares")]
+        moved = [words for kind, words in after if kind == "shares"]
         if moved:
             pe_f = _not_held(f"the share count moved after the EPS in use was filed "
                              f"({latest.filed.isoformat()}) — {moved[0]}: its per-share basis "
                              f"may predate the move")
     breaks = basis_breaks(eps, consumed, as_of)
     if pct.value is not None and breaks:
-        return pe_f, _not_held(f"the per-share basis changes inside the window — {breaks[0]}"
+        return pe_f, _not_held(f"the per-share basis changes inside the window — {breaks[0][1]}"
                                + (f" (and {len(breaks) - 1} more)" if len(breaks) > 1 else ""))
     first = max(held[0][0], as_of - timedelta(days=HISTORY_DAYS))
     pct_f = (MarketFigure(value=pct.value,
@@ -492,12 +508,7 @@ def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: d
                           f"{str(exc)[:120]}")
             pe = pct = _not_held("SEC companyfacts could not be read")
         else:
-            try:
-                pe, pct = pe_five_or_two(closes, points, as_of, ticker, deep)
-            except Exception as exc:  # noqa: BLE001 — a failed deep fetch is said, never filled
-                errors.append(f"{ticker}: Tiingo history failed — {type(exc).__name__}: "
-                              f"{str(exc)[:120]}")
-                pe, pct = pe_five_or_two(closes, points, as_of, ticker, None)
+            pe, pct = pe_five_or_two(closes, points, as_of, ticker, deep, errors)
     return ExposureMarket(
         name=name, ticker=ticker, kind=kind,
         last_close=last[1] if last else None, last_bar=last[0] if last else None,
