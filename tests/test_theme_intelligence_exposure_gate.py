@@ -460,9 +460,13 @@ def test_every_surface_lists_the_instruments_the_count_takes(tmp_path: Path) -> 
             assert n not in listed and f"{n} (broad market index — not counted)" in also
             assert n in _names_under(card, BROAD_INSTRUMENTS)
             assert n not in _names_under(card, INSTRUMENT_EXPOSURES)
+            assert n not in _names_under(card, NAMED_INSTRUMENTS)  # attached, never "not attached"
             assert f"- {n} — " in md_attached.split(f"**{BROAD_INSTRUMENTS}:**")[1]
             assert f"- {n} — " not in md_counted
-            assert f"{n} [broad market index — not counted]" in rows[t.thesis_id].named_instruments
+            row = rows[t.thesis_id]  # named ONCE, labelled — never "not attached" (REVIEW)
+            assert not any(x.startswith(f"{n} [") for x in row.named_instruments)
+            assert [x for x in row.other_named if x.startswith(f"{n} [")] == [
+                f"{n} [broad market index — not counted]"]
         assert loose == []  # the fixture attaches every instrument it names: see the next pin
     assert taken >= 2  # the software thesis's ETF and index, at least
     assert whole == 1  # the market-regime thesis's S&P 500
@@ -544,6 +548,9 @@ def test_a_thesis_whose_only_instrument_is_the_whole_market_counts_no_exposure(
     ("S&P 500 Low Volatility Index", ResolutionStatus.INDEX, (), False),
     ("MSCI USA Minimum Volatility Index", ResolutionStatus.INDEX, (), False),
     ("Invesco S&P 500 Low Volatility ETF", ResolutionStatus.FUND, ("SPLV",), False),
+    # REVIEW of #736: the hyphenated spellings are the same stock-holding indices
+    ("S&P 500 Low-Volatility Index", ResolutionStatus.INDEX, (), False),
+    ("MSCI USA Minimum-Volatility Index", ResolutionStatus.INDEX, (), False),
     # NEGATIVE — the sector instruments attached in the same copies
     ("S&P 500 Software Index", ResolutionStatus.INDEX, (), False),
     ("S&P 500 Utilities", ResolutionStatus.INDEX, (), False),
@@ -593,7 +600,8 @@ def test_the_calm_index_regime_names_its_index_and_its_indicator_and_counts_neit
     page = _text(out / "theses" / f"{v.thesis_id}.html")
     assert f"{cor} (market indicator — not counted)" in page
     rows = {r.thesis_id: r for rs in res["dashboard"].categories.values() for r in rs}
-    assert f"{cor} [market indicator — not counted]" in rows[v.thesis_id].named_instruments
+    assert f"{cor} [market indicator — not counted]" in rows[v.thesis_id].other_named
+    assert not any(x.startswith(cor) for x in rows[v.thesis_id].named_instruments)
     av = v.content.s05_affected.model_copy(update={"sector_exposures": ()})
     f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
                         value="0 listed · 0 sector · 0 instrument", note="")
@@ -610,6 +618,46 @@ def test_the_calm_index_regime_names_its_index_and_its_indicator_and_counts_neit
     assert f"market indicator ({cor})" in g.detail
     why = " ".join(why_reasons(alone.content, alone.priority))
     assert f"market indicator ({cor})" in why
+
+
+def test_a_version_counted_before_the_ruling_says_what_is_no_longer_counted(
+        tmp_path: Path) -> None:
+    """REVIEW of #736: a version STORED counting the S&P 500 (TH-5C3B51DF57's shape, "0 listed ·
+    0 sector · 1 instrument") keeps its action until it is re-graded — and its gate passed with
+    "not point-in-time verified" as the reason, which was false. It now says what today's rules
+    no longer count, on the gate and on the why-line, whatever the action. NEGATIVE: a version
+    whose stored count matches today's says nothing of the kind."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    current = [_current(pipe, t.thesis_id) for t in pipe.store.theses()]
+    (v,) = [v for v in current if [c.name_as_written for c in broad_market_instruments(
+        v.content.s05_affected)] == ["S&P 500"]]
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    fresh = next(x for x in gates(v, [], nt) if x.name == "An exposure the source names")
+    assert "re-grade" not in fresh.detail  # stored "0 listed · 1 sector · 0 instrument" = today
+    assert not any("re-grade" in x for x in why_reasons(v.content, v.priority))
+    av = v.content.s05_affected.model_copy(update={"sector_exposures": ()})
+    f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
+                        value="0 listed · 0 sector · 1 instrument", note="")
+    kept = tuple(x for x in v.priority.factors  # type: ignore[union-attr]
+                 if not x.factor_id.startswith("F6")) + (f6,)
+    old = v.model_copy(update={
+        "content": v.content.model_copy(update={"s05_affected": av}),
+        "priority": v.priority.model_copy(update={  # type: ignore[union-attr]
+            "factors": kept, "research_action": ResearchAction.RESEARCH_NOW})})
+    g = next(x for x in gates(old, [], nt) if x.name == "An exposure the source names")
+    assert g.ok and "not point-in-time verified" not in g.detail
+    assert g.detail == ("counted 1 exposure when the thesis was assessed; today's rules do not "
+                        "count a broad market index (S&P 500) — a re-grade ($0) applies them")
+    why = why_reasons(old.content, old.priority)
+    assert why[0].startswith("Research Now") and why[-1] == f"Exposure — {g.detail}."
+    # a stored count nothing on today's card accounts for says only that — never "not verified"
+    bare = old.model_copy(update={"content": old.content.model_copy(update={
+        "s05_affected": av.model_copy(update={"instruments": ()})})})
+    g = next(x for x in gates(bare, [], nt) if x.name == "An exposure the source names")
+    assert g.ok and g.detail == "counted when the thesis was assessed: 1 exposure"
 
 def test_an_instrument_named_only_as_a_comparator_stays_a_mention(tmp_path: Path) -> None:
     """NEGATIVE, through the store: an index the source names as a COMPARATOR is not an exposure

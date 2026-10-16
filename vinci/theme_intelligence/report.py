@@ -1278,6 +1278,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                 changed.append(f"{x.event_type.replace('_', ' ').capitalize()}: {x.detail}")
         av = cur.content.s05_affected
         inst = exposure_instruments(av)
+        broad, indic = broad_market_instruments(av), market_indicators(av)
         flags = sorted({x.event_type for x in evs} - {"CREATED", "UPDATED"})
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
@@ -1298,19 +1299,22 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             named_instruments=[c.name_as_written + (
                 f" [fund {'/'.join(x.ticker for x in c.listings)}]" if c.listings
                 else " [basket — members not named]" if c.role.value == "cited_basket"
-                else f" [{c.resolution_status.value.lower()}]") for c in inst] + [
-                c.name_as_written + " [broad market index — not counted]"
-                for c in broad_market_instruments(av)] + [
-                c.name_as_written + " [market indicator — not counted]"
-                for c in market_indicators(av)],
+                else f" [{c.resolution_status.value.lower()}]") for c in inst],
             private_named=[f"{c.name_as_written} [private company]"
                            for c in av.private_or_unlisted],
-            other_named=[f"{c.name_as_written} ["
-                         + ("basket — members not named" if c.role.value == "cited_basket"
-                            else "not a security") + "]" for c in av.not_securities
-                         if c not in inst] + [
-                f"{c.name_as_written} [{c.resolution_status.value.lower()} — named, not "
-                f"attached to the thesis]" for c in av.instruments if c not in inst],
+            # what the source names that is not an exposure — once, labelled: an attached
+            # whole-market index or market indicator says "not counted", never "not attached"
+            # (REVIEW of #736: it sat here as "not attached" AND under named_instruments)
+            other_named=[f"{c.name_as_written} [" + (
+                "broad market index — not counted" if c in broad
+                else "market indicator — not counted" if c in indic
+                else "basket — members not named" if c.role.value == "cited_basket"
+                else "not a security") + "]" for c in av.not_securities if c not in inst] + [
+                f"{c.name_as_written} [" + (
+                    "broad market index — not counted" if c in broad
+                    else "market indicator — not counted" if c in indic
+                    else f"{c.resolution_status.value.lower()} — named, not attached to the "
+                         f"thesis") + "]" for c in av.instruments if c not in inst],
             sectors=list(av.sectors), next_action=cur.content.s08_decision.next_step.text,
             last_material_update=t.last_material_update.isoformat(), status=t.status.value,
             flags=sorted(set(flags)), version=cur.version,
