@@ -257,9 +257,12 @@ def ntm_window(c: Claim, w: Window | None, published: date | None) -> Window | N
 
     The reading date: the claim's measurement date, else a period that names a single day or month
     (`READING_DATE_DAYS`), else the source's date. None — the window stands as read — when the
-    claim names no NTM measure, when its period names a longer window of its own ("2027"), or
-    when no reading date is known."""
-    if not any(NTM.search(x or "") for x in (c.period, c.metric, c.quote)):
+    claim's period or metric names no NTM measure, when its period names a longer window of its
+    own ("2027"), or when no reading date is known."""
+    # the FIGURE is NTM when its own period or metric says so — never a quote that mentions an NTM
+    # multiple beside some other figure (review: "shipments rise 5% in September 2026; the stock
+    # trades at 20x NTM P/E" is a September window)
+    if not any(NTM.search(x or "") for x in (c.period, c.metric)):
         return None
     short = w is not None and (w.end - w.start).days < READING_DATE_DAYS
     if w is not None and not short and not NTM.search(c.period or ""):
