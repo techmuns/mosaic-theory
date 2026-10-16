@@ -47,8 +47,11 @@ Tiingo key. On the "Is it priced?" panel (display only):
   - FY2023 1.74 → 0.17 is ×10.24 (cents rounding);
   - FY2024 11.93 → 1.19 is ×10.03;
   - they differ by 2.05%, so it returns None.
-- AVGO and LRCX (2024 10-for-1s) were missed the same way. So #731/#733's **two-year** percentiles
-  for NVDA, AVGO and LRCX were wrong too: older P/Es ten times too low.
+- AVGO and LRCX (2024 10-for-1s) were missed for a DIFFERENT reason (corrected before merge). Over
+  the fund's own window the rule catches them (×10.00). The panel's two-year window holds only one
+  of their restated years, below the rule's two-period minimum. So #731/#733's **two-year**
+  percentiles for NVDA, AVGO and LRCX were wrong too: older P/Es ten times too low.
+- The fund's cents miss (NVDA, and PEGA's 2025 2-for-1 on the screen) is fixed in #735.
 - `basis_breaks` refuses all three. The fund's detector is decision-path code, so it is left for
   its own PR: a task was spawned with the reproduction.
 
@@ -88,4 +91,4 @@ Tiingo key. On the "Is it priced?" panel (display only):
 - **The basis guard refuses some valid ranges.** A share count that moved ×1.5 through an
   all-stock merger rather than a split refuses the range too (e.g. LNTH's five years). The cell
   says which change it saw.
-- **Not fixed here:** the fund's `share_basis_change` (spawned as its own task).
+- **Not fixed here:** the fund's `share_basis_change` cents miss — fixed separately in #735.
