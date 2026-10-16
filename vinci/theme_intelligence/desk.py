@@ -73,7 +73,11 @@ from vinci.theme_intelligence.config import (
 )
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
-from vinci.theme_intelligence.priority import exposures_counted, watch_reasons_of
+from vinci.theme_intelligence.priority import (
+    exposures_counted,
+    unverified_words,
+    watch_reasons_of,
+)
 from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
     MANUAL_MODES,
@@ -725,10 +729,20 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
     n = f.get("F2_material_evidence", "0")
     f4 = f.get("F4_profit_transmission", "absent")
     near_ok, near_words = near_term_words(nt)
-    exposed = exposures_counted(v.priority) > 0  # what the stored RULE counted (its F6 value)
     counted = counted_exposures(av)
-    unverified = next((r for r in watch_reasons_of(v.priority, counted.unverified)
-                       if r.code == "listing_unverified"), None)
+    # what the stored RULE counted (its F6 value); a version with no readable count, its card
+    n_counted = exposures_counted(v.priority)
+    exposed = (n_counted > 0 if n_counted is not None
+               else bool(counted.listed or counted.instruments or counted.sectors))
+    unverified = any(r.code == "listing_unverified"
+                     for r in watch_reasons_of(v.priority, counted.unverified))
+    named = "; ".join(x for x in (
+        "listed companies: " + ", ".join(f"{n} ({tk})" for n, tk in counted.listed)
+        if counted.listed else "",
+        "ETFs, indices or baskets: " + ", ".join(counted.instruments)
+        if counted.instruments else "",
+        "sectors: " + ", ".join(s.name for s in distinct_sectors(av))
+        if av.sector_exposures else "") if x)
     f12 = f.get("F12_fundamental_inflection", "")
     cat = f.get("F7_dislocation_or_catalyst") == "present" or f12 == "qualifies"
     out = [
@@ -743,15 +757,13 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                  if f4.startswith("n/a") else "no earnings step (a price move is not one)")),
         Gate(near_ok, NEAR_GATE, near_words),
         Gate(exposed, "An exposure the source names",
-             "; ".join(x for x in (
-                 "listed companies: " + ", ".join(f"{n} ({tk})" for n, tk in counted.listed)
-                 if counted.listed else "",
-                 "ETFs, indices or baskets: " + ", ".join(counted.instruments)
-                 if counted.instruments else "",
-                 "sectors: " + ", ".join(s.name for s in distinct_sectors(av))
-                 if av.sector_exposures else "") if x)
-             if exposed else (unverified.text.removeprefix("no source-named exposure counted — ")
-                              if unverified is not None else
+             # counted when the thesis was assessed, but nothing on the card verifies today (an
+             # older version counted listings that are not point-in-time verified now)
+             (named or f"counted when the thesis was assessed: "
+                       f"{', '.join(counted.unverified) or _pl(n_counted or 0, 'exposure')} — "
+                       f"not point-in-time verified on the card now")
+             if exposed else (unverified_words(counted.unverified)
+                              if unverified else
                               "business groups only (" + "; ".join(groups) + ") — not companies"
                               if groups else "no company or sector named; whether the source "
                               "names business groups is not checkable on this machine (the "

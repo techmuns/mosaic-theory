@@ -1554,7 +1554,8 @@ def _event_tag(x: str) -> str:
 def _thesis_html(r: DashRow) -> str:
     """One thesis on the weekly overview: what it is, what changed, its effect on profits, why
     the action, the next question and the source — the full record is one click away."""
-    act = _ACTION_WORDS.get(ResearchAction(r.action), r.action)
+    act = (_ACTION_WORDS.get(ResearchAction(r.action), r.action)
+           + (f" · {r.watch}" if r.watch else ""))
     review = (f'<a class="flag" href="{e(r.card)}#{e(r.review_lines[0][0])}">Review required · '
               f'{len(r.review_lines)} line(s)</a>' if r.review_lines else "")
     kind = (f'<span class="pill kind">{e(KIND_LABEL[ThesisKind(r.kind)])}</span>'
@@ -2103,7 +2104,7 @@ def render_dashboard_md(d: Dashboard) -> str:
         if not rows:
             md += ["_None this run._", ""]
         for r in rows:
-            md += [f"### [{r.action}] {r.title}"
+            md += [f"### [{r.action}{f' · {r.watch}' if r.watch else ''}] {r.title}"
                    + (f" — {KIND_LABEL[ThesisKind(r.kind)]}"
                       if r.kind == ThesisKind.MARKET_REGIME.value else ""),
                    f"- {dates_line(r)}",
