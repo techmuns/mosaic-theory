@@ -286,6 +286,25 @@ def cmd_enrich(a: argparse.Namespace) -> int:
     return _EXIT[run.status]
 
 
+def cmd_market(a: argparse.Namespace) -> int:
+    """MARKET CONTEXT ("is it priced?", market.py): where each thesis's counted exposures stand as
+    of a date — display only, never read by a research-action rule. $0, no model call (Polygon
+    prices and SEC XBRL; needs POLYGON_API_KEY)."""
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=None, review=False)
+    run, done = pipe.run_market(as_of=_iso(a.as_of), thesis_ids=a.thesis or ())
+    print(f"run {run.run_id}: market {run.status.value} — "
+          f"{run.counts.get('theses_priced', 0)} thesis(es) priced")
+    for tid, what in done:
+        print(f"  {tid}: {what}")
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"outputs: {out['dir']}")
+    return _EXIT[run.status]
+
+
 def cmd_reanalyse(a: argparse.Namespace) -> int:
     """Re-analyse articles already held under the current taxonomy, retiring the theses an
     earlier one merged (Pipeline.run_reanalyse) — paid like an upload."""
@@ -773,6 +792,17 @@ def main(argv: list[str] | None = None) -> int:
     en.add_argument("--budget", type=float, help="the run's spending limit in USD")
     en.add_argument("--out", help="where the run's outputs are written")
     en.set_defaults(fn=cmd_enrich)
+
+    mk = sub.add_parser("market", help="is it priced? — where each thesis's exposures stand "
+                                       "as of a date (price vs its 200-day average and 52-week "
+                                       "high, return vs SPY, P/E vs its own history): display "
+                                       "only, never read by a research-action rule; $0")
+    mk.add_argument("--as-of", required=True, help="YYYY-MM-DD the prices and filings are read "
+                                                   "as of (nothing later is read)")
+    mk.add_argument("--thesis", action="append", help="a thesis id (repeatable; default: every "
+                                                      "active thesis)")
+    mk.add_argument("--out", help="where the run's outputs are written")
+    mk.set_defaults(fn=cmd_market)
 
     rn = sub.add_parser("reanalyse", help="analyse articles already held again under the "
                                           "current taxonomy, retiring the theses an earlier one "

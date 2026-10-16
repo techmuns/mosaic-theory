@@ -46,20 +46,24 @@ from vinci.theme_intelligence.cards import (
     _plain_text,
     basis_line,
     card_steps,
+    counted_exposures,
     distinct_sectors,
     e,
     enrichment_lines,
     enrichment_listing,
+    exposure_instruments,
     exposures_of,
     foot_html,
     groups_unchecked_note,
     ids_to_audit,
+    market_html,
     proposal_reading,
     proposal_step,
     review_not_run_words,
     set_card,
     topnav,
     unit_shown,
+    watch_of,
     why_reasons,
 )
 from vinci.theme_intelligence.config import (
@@ -70,6 +74,11 @@ from vinci.theme_intelligence.config import (
 )
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
+from vinci.theme_intelligence.priority import (
+    exposures_counted,
+    unverified_words,
+    watch_reasons_of,
+)
 from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
     MANUAL_MODES,
@@ -440,7 +449,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
     linked = {i.ref_id for i in store.issues() if i.code == "LINKED_REPORT_UPLOAD"}
     rows: dict[str, ArticleRow] = {}
     for r in week.runs:
-        if r.mode in ("reassess", "enrich"):  # a re-grade or an enrichment reads no article
+        if r.mode in ("reassess", "enrich", "market"):  # none of these reads an article
             continue
         reps: dict[str, list[CompletenessReport]] = defaultdict(list)
         for rep in reg.ledger(r.run_id):
@@ -721,7 +730,20 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
     n = f.get("F2_material_evidence", "0")
     f4 = f.get("F4_profit_transmission", "absent")
     near_ok, near_words = near_term_words(nt)
-    exposed = not f.get("F6_recognizable_exposures", "").startswith("0 listed · 0 sector")
+    counted = counted_exposures(av)
+    # what the stored RULE counted (its F6 value); a version with no readable count, its card
+    n_counted = exposures_counted(v.priority)
+    exposed = (n_counted > 0 if n_counted is not None
+               else bool(counted.listed or counted.instruments or counted.sectors))
+    unverified = any(r.code == "listing_unverified"
+                     for r in watch_reasons_of(v.priority, counted.unverified))
+    named = "; ".join(x for x in (
+        "listed companies: " + ", ".join(f"{n} ({tk})" for n, tk in counted.listed)
+        if counted.listed else "",
+        "ETFs, indices or baskets: " + ", ".join(counted.instruments)
+        if counted.instruments else "",
+        "sectors: " + ", ".join(s.name for s in distinct_sectors(av))
+        if av.sector_exposures else "") if x)
     f12 = f.get("F12_fundamental_inflection", "")
     cat = f.get("F7_dislocation_or_catalyst") == "present" or f12 == "qualifies"
     out = [
@@ -736,11 +758,14 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                  if f4.startswith("n/a") else "no earnings step (a price move is not one)")),
         Gate(near_ok, NEAR_GATE, near_words),
         Gate(exposed, "An exposure the source names",
-             ("sectors: " + ", ".join(s.name for s in distinct_sectors(av))
-              if av.sector_exposures else "listed companies: " + ", ".join(
-                  f"{c.name_as_written} ({', '.join(x.ticker for x in c.listings)})"
-                  for c in exposures_of(av)[0] if c.listings))
-             if exposed else ("business groups only (" + "; ".join(groups) + ") — not companies"
+             # counted when the thesis was assessed, but nothing on the card verifies today (an
+             # older version counted listings that are not point-in-time verified now)
+             (named or f"counted when the thesis was assessed: "
+                       f"{', '.join(counted.unverified) or _pl(n_counted or 0, 'exposure')} — "
+                       f"not point-in-time verified on the card now")
+             if exposed else (unverified_words(counted.unverified)
+                              if unverified else
+                              "business groups only (" + "; ".join(groups) + ") — not companies"
                               if groups else "no company or sector named; whether the source "
                               "names business groups is not checkable on this machine (the "
                               "article text is not held here)" if groups_unread else
@@ -1101,9 +1126,11 @@ def _doc_item(d: DocumentRecord, kind: str, why: str, command: str, *,
 
 # --- the desk ----------------------------------------------------------------------------------
 
-def _chip(action: str) -> str:
+def _chip(action: str, watch: str = "") -> str:
+    """The action pill — a WATCH with what it waits for: "Watch · needs data" when only missing
+    data holds it, "Watch · on hold" when the evidence itself falls short (priority.watch_label)."""
     w, cls = _ACTION.get(action, (action.title(), "skip"))
-    return f'<span class="pill {cls}">{e(w)}</span>'
+    return f'<span class="pill {cls}">{e(w + (f" · {watch}" if watch else ""))}</span>'
 
 
 def _state(state: str) -> str:
@@ -1183,7 +1210,9 @@ def _health_line(h: SourceHealthCheck | None) -> str:
 _ROLE_WORD = {"sector_example": "named as an example of the sector", "disruptor": "a disruptor",
               "spending_customer": "a customer / spender", "supplier": "a supplier",
               "investor": "an investor", "recommendation": "the source recommends it",
-              "potential_beneficiary": "could benefit", "potentially_harmed": "could be hurt"}
+              "potential_beneficiary": "could benefit", "potentially_harmed": "could be hurt",
+              "market_instrument": "the ETF / index the source names for it",
+              "cited_basket": "a basket the source cites"}
 
 
 def _lean(direction: Direction, role: MentionRole) -> str:
@@ -1204,6 +1233,8 @@ def _where(c: AffectedCompany) -> str:
         return "private"
     if c.resolution_status in (ResolutionStatus.FUND, ResolutionStatus.INDEX):
         return c.resolution_status.value.lower()
+    if c.resolution_status is ResolutionStatus.NOT_A_SECURITY:  # a cited basket
+        return "not a security"
     unver = [x.ticker for x in c.other_securities]
     return (f"{', '.join(unver)} — listing not verified" if unver
             else "no verified US listing")
@@ -1219,9 +1250,10 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
     `exposures_of`); the publisher, data sources and context are counted apart. A company the
     source does not name is never added."""
     exp, named = exposures_of(av)
-    others = [c for c in (*av.private_or_unlisted, *av.instruments) if c.role in EXPOSURE_ROLES]
-    rest = named + [c for c in (*av.private_or_unlisted, *av.instruments)
-                    if c.role not in EXPOSURE_ROLES] + list(av.also_named)
+    inst = exposure_instruments(av)  # the ETFs / indices / baskets the count takes
+    others = [c for c in av.private_or_unlisted if c.role in EXPOSURE_ROLES] + inst
+    rest = named + [c for c in av.private_or_unlisted if c.role not in EXPOSURE_ROLES] + [
+        c for c in av.instruments if c not in inst] + list(av.also_named)
     buckets: dict[str, list[str]] = {"up": [], "down": [], "flat": []}
     seen: dict[str, list[AffectedCompany]] = {"up": [], "down": [], "flat": []}
     for c in [*exp, *others]:
@@ -1655,7 +1687,7 @@ class Desk:
         gap = (f'<span class="bdg" title="Not yet Research Now: {e("; ".join(unmet))}">'
                f'{_pl(len(unmet), "condition")} open</span>' if unmet else "")
         return (f'<a class="trow" href="{self.thesis_link(r.thesis_id)}"><div class="ttop">'
-                f'{_chip(r.action)}{"".join(_event(x) for x in r.events)}'
+                f'{_chip(r.action, r.watch)}{"".join(_event(x) for x in r.events)}'
                 + (f'<span class="ev rv">{_pl(n_open, "finding")}</span>' if n_open else "")
                 + f'</div><div class="ttitle">{e(r.title)}</div>'
                 + ("" if same or not mech else f'<div class="tline clamp">{e(mech)}</div>')
@@ -1705,6 +1737,7 @@ class Desk:
             a = self.area[tid]
             sub = [x for x in (note, f'<span class="small">{_theses(rel[tid], "related")}</span>'
                                if rel.get(tid) else "") if x]
+            wq = watch_of(v.priority, v.content.s05_affected)
             rows.append((a, (
                 f'<tr data-area="{e(a)}" data-ord="{len(rows)}" '
                 f'data-action="{e(v.priority.research_action.value)}" '
@@ -1716,7 +1749,7 @@ class Desk:
                 f'{" " + _event("New") if tid in changed and v.version == 1 else ""}'
                 + (f'<div>{" · ".join(sub)}</div>' if sub else "")
                 + f'<span class="aud cc">{e(tid)}</span></td>'
-                  f'<td>{_chip(v.priority.research_action.value)}</td>'
+                  f'<td>{_chip(v.priority.research_action.value, wq)}</td>'
                   f'<td class="nowrap">{_ml("last evidence")}{e(_day(t.last_material_update))}'
                   f'</td><td>{_ml("sources")}{n_src}</td>'
                   f'<td>{_ml("open findings")}{len(by_t.get(tid, [])) or "—"}</td>'
@@ -2144,7 +2177,8 @@ class Desk:
         arch = t.status is ThesisStatus.ARCHIVED
         head = (f'<nav class="crumb"><a href="../themes.html">Themes</a> › {e(self.area[tid])}'
                 f'</nav><header class="th"><h1>{e(t.title)}</h1><div class="meta">'
-                f'{_chip(action)}{"".join(_event(x) for x in events)}'
+                f'{_chip(action, watch_of(v.priority, c.s05_affected))}'
+                f'{"".join(_event(x) for x in events)}'
                 + (f'<span class="ev">archived — {e(self.archived_why(t, v))}</span>'
                    if arch else "")
                 + (f'<a class="flag" href="#review">'
@@ -2300,7 +2334,9 @@ class Desk:
         # the decision and its reasons beside the thesis and its key figures on the first
         # screen; who is exposed as rows; the long lists folded to counts. Nothing is dropped —
         # every line is one click away, and the card is the complete printed record.
-        decide = (f'<aside class="decide"><h2>Why {e(_ACTION.get(action, (action,))[0])}</h2>'
+        q = watch_of(v.priority, c.s05_affected)
+        decide = (f'<aside class="decide"><h2>Why {e(_ACTION.get(action, (action,))[0])}'
+                  + (f' · {e(q)}' if q else "") + '</h2>'
                   f'{why}{timing}'
                   + (f'<h3>Next step</h3>{nxt}' if nxt else "")
                   + ('<details class="fold"><summary>When to raise or lower priority</summary>'
@@ -2330,12 +2366,19 @@ class Desk:
                   if mine else "")
         rel = (f'<section class="panel"><h2>Related theses</h2>{related}</section>'
                if related else "")
+        # IS IT PRICED? beside the verdict — display only; the research action never reads it
+        priced = market_html(rc.market, missing=(
+            '<p class="muted">Not computed for this version — prices and filings as of a date, '
+            '$0, no model call.</p>'
+            + self.command_html(f"{CLI} market --as-of {self.run.as_of.isoformat()} "
+                                f"--thesis {tid}")))
         q = (f'<section class="panel sheet q1"><div class="sheetmain"><h2>The thesis</h2>'
              f'{thesis or none}'
              + (f'<h3 class="numh">Key figures</h3><div class="nums">{fig_html}</div>'
                 if fig_html else "")
              + f'<h3 class="numh">What changed</h3>{what}'
              + f'</div>{decide}</section>'
+             + f'<section class="panel mkts"><h2>Is it priced?</h2>{priced}</section>'
              + f'<section class="panel"><h2>Who is exposed</h2>{expo}</section>'
              + f'<div class="grid2">{wrong}{chain}</div>'
              + (f'<div class="grid2">{review}{rel}</div>' if review and rel else review + rel))
@@ -2605,6 +2648,9 @@ class Desk:
 
 
 CSS = THEME_CSS + """
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt td.mkw{color:var(--warn,#8a5a00);font-size:13px}
+.mkt .mktl{margin:0 0 4px}.mkt .note{font-size:12.5px;color:var(--muted)}details.mkth{margin:6px 0}
 h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
 h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
 font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}
@@ -2847,7 +2893,7 @@ details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
 details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-size:13px}
 .ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
 .arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
-.arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:130px}
+.arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:156px}
 .arts.themes th:nth-child(3){width:140px}.arts.themes th:nth-child(4),
 .arts.themes th:nth-child(5){width:84px}.arts.themes th:nth-child(6){width:170px}
 @media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}

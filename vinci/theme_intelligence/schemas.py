@@ -21,7 +21,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 6
+DB_SCHEMA_VERSION = 7
 
 
 def _aware(d: datetime | None) -> datetime | None:
@@ -593,6 +593,72 @@ class EnrichmentSet(Frozen):
         "EXTERNAL HYPOTHESIS — not named by the source")
 
 
+# --- market context ("is it priced?") ---------------------------------------------------------
+
+#: what every market-context surface says first: evidence for the reader, outside the rules
+MARKET_LABEL = ("MARKET CONTEXT — evidence for your judgement; never read by the research "
+                "action")
+
+
+class MarketFigure(Frozen):
+    """One market figure as of a date — or None and why it is not held. `basis` says how it was
+    measured (its window and dates), or what is missing; never a guessed number."""
+
+    value: float | None
+    basis: str
+    #: a short structured suffix shown beside the value (revisions: "21↑ 2↓"), never parsed
+    detail: str = ""
+    #: when not held, why — the cause alone, for a caller that cites it (never parsed out of
+    #: `basis`)
+    why: str = ""
+
+
+class ExposureMarket(Frozen):
+    """Where one exposure's price stands, as of the context's date: price position (against its
+    200-day average and its 52-week high), its return against the benchmark, its P/E against its
+    own history, and consensus revisions. An index or basket with no traded ticker is named, not
+    priced."""
+
+    name: str
+    ticker: str | None
+    kind: Literal["listed", "fund", "index", "basket"]
+    last_close: float | None
+    last_bar: date | None
+    vs_200d: MarketFigure
+    from_52w_high: MarketFigure
+    rel_3m: MarketFigure
+    rel_12m: MarketFigure
+    pe: MarketFigure
+    pe_percentile: MarketFigure
+    revisions: MarketFigure
+    #: what the reader must check before trusting the row (a one-day move the size of a split)
+    warnings: tuple[str, ...] = ()
+
+
+class MarketContext(Frozen):
+    """"Is it priced?" for ONE thesis version, point in time as of `as_of`: a bar or a filing after
+    it is never read. DISPLAY ONLY (operator, 2026-10-16) — stored apart from the thesis, like an
+    enrichment set; no research-action rule reads it (the isolation test pins the boundary).
+    Append-only; a later pass is a new context."""
+
+    context_id: str
+    thesis_id: str
+    thesis_version: int
+    run_id: str
+    as_of: date
+    created_at: datetime
+    benchmark: str
+    rows: tuple[ExposureMarket, ...]
+    #: where the figures come from, and the price window the plan serves
+    source: str
+    #: the companies the thesis IMPLIES (the latest enrichment set's verified listings) — an
+    #: EXTERNAL HYPOTHESIS, not named by the source: priced apart, never counted
+    hypotheses: tuple[ExposureMarket, ...] = ()
+    label: Literal["MARKET CONTEXT — evidence for your judgement; never read by the research "
+                   "action"] = ("MARKET CONTEXT — evidence for your judgement; never read by the "
+                                "research action")
+
+
 # --- the nine-section card -------------------------------------------------------------------
 
 class CardSentence(Frozen):
@@ -805,6 +871,18 @@ class PriorityFactor(Frozen):
     claim_ids: tuple[str, ...] = ()
 
 
+class WatchReason(Frozen):
+    """One RESEARCH NOW condition a WATCH thesis does not meet, as a VALUE: what it is (`code`),
+    whether it is MISSING DATA (the record could not establish it — an unverified listing, part of
+    the text, no dated window found) or a SUBSTANTIVE HOLD (the evidence itself falls short — a
+    conditional premise, no catalyst, contested), and its words. So WATCH says WHY (2026-10-16:
+    three J.P. Morgan theses all read "Watch", which said nothing about what each waited for)."""
+
+    code: str
+    kind: Literal["missing_data", "held"]
+    text: str
+
+
 class ResearchPriority(Frozen):
     research_action: ResearchAction
     evidence_direction: EvidenceDirection
@@ -814,6 +892,9 @@ class ResearchPriority(Frozen):
     previous_action: ResearchAction | None
     change_reason: str
     valuation_status: str
+    #: a WATCH's unmet conditions, as values (empty for any other action, and for a version
+    #: stored before 2026-10-16)
+    watch_reasons: tuple[WatchReason, ...] = ()
 
 
 class FieldDiff(Frozen):

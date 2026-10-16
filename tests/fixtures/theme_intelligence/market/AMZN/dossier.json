@@ -1,0 +1,474 @@
+{
+ "_note": "FROZEN 2026-10-16 from data/dossiers/AMZN/dossier.json at commit 3ee93db3 — its forward_consensus (EPS lines only) and assembled_at, derived analysis of the fund's CIQ Estimates export; the live dossier is re-assembled, so value pins read this copy.",
+ "assembled_at": "2026-10-09T13:36:20.314427Z",
+ "forward_consensus": {
+  "as_of": "≥2026-10-06",
+  "periods": [
+   "FY 2026",
+   "FY 2027",
+   "FY 2028"
+  ],
+  "withheld": [],
+  "source_ref": "CIQ Estimates→Trends (paths, to 18 months) · Consensus (spreads, from the section the sheet's own Market Summary vouches for) · Revisions (counts per window, each block bounded by the next block of any kind)",
+  "source_file": "Amazoncom,IncNasdaqGSAMZNEstimatesReport.xls",
+  "source_sha256": "e10ed62223",
+  "pe_eps_basis": {
+   "fiscal_years": "gaap",
+   "ntm": "gaap",
+   "periods": [
+    "FY 2026",
+    "FY 2027",
+    "FY 2028"
+   ],
+   "ntm_quarters": [
+    "FQ3 2026",
+    "FQ4 2026",
+    "FQ1 2027",
+    "FQ2 2027"
+   ],
+   "fits": [
+    {
+     "line": "EPS (GAAP)",
+     "implied_prices": [
+      256.243483,
+      256.365473,
+      256.229348
+     ],
+     "spread": 0.00053124,
+     "ntm_implied_eps": 9.400893,
+     "ntm_quarter_sum": 9.39,
+     "ntm_gap": 0.00115876
+    },
+    {
+     "line": "EPS Normalized",
+     "implied_prices": [
+      165.196535,
+      254.904701,
+      240.975439
+     ],
+     "spread": 0.37227099,
+     "ntm_implied_eps": 9.400893,
+     "ntm_quarter_sum": 9.1,
+     "ntm_gap": 0.03200689
+    }
+   ],
+   "rule": "named when the line fits within 1% and the rival's dispersion is ≥3× it and ≥0.5% (tested first, whether or not the rival also fits); indistinguishable when both fit and neither separates; NTM tested on the next four quarters against each line's implied NTM EPS — the named FY line's price for both, or each line's own price when the FY rows are indistinguishable — its cap widened to four quarters' cent-rounding where larger",
+   "note": null
+  },
+  "paths": [
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2026",
+    "points": [
+     {
+      "months_ago": 18,
+      "value": 7.57
+     },
+     {
+      "months_ago": 12,
+      "value": 7.54
+     },
+     {
+      "months_ago": 9,
+      "value": 7.81
+     },
+     {
+      "months_ago": 6,
+      "value": 7.73
+     },
+     {
+      "months_ago": 3,
+      "value": 8.02
+     },
+     {
+      "months_ago": 2,
+      "value": 8.23
+     },
+     {
+      "months_ago": 1,
+      "value": 8.23
+     },
+     {
+      "months_ago": 0,
+      "value": 8.31
+     }
+    ]
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2027",
+    "points": [
+     {
+      "months_ago": 18,
+      "value": 9.48
+     },
+     {
+      "months_ago": 12,
+      "value": 9.14
+     },
+     {
+      "months_ago": 9,
+      "value": 9.42
+     },
+     {
+      "months_ago": 6,
+      "value": 9.37
+     },
+     {
+      "months_ago": 3,
+      "value": 9.89
+     },
+     {
+      "months_ago": 2,
+      "value": 10.39
+     },
+     {
+      "months_ago": 1,
+      "value": 10.44
+     },
+     {
+      "months_ago": 0,
+      "value": 10.47
+     }
+    ]
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2028",
+    "points": [
+     {
+      "months_ago": 18,
+      "value": 11.38
+     },
+     {
+      "months_ago": 12,
+      "value": 10.74
+     },
+     {
+      "months_ago": 9,
+      "value": 12.21
+     },
+     {
+      "months_ago": 6,
+      "value": 11.72
+     },
+     {
+      "months_ago": 3,
+      "value": 12.58
+     },
+     {
+      "months_ago": 2,
+      "value": 13.17
+     },
+     {
+      "months_ago": 1,
+      "value": 13.25
+     },
+     {
+      "months_ago": 0,
+      "value": 13.27
+     }
+    ]
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2026",
+    "points": [
+     {
+      "months_ago": 18,
+      "value": 7.58
+     },
+     {
+      "months_ago": 12,
+      "value": 7.56
+     },
+     {
+      "months_ago": 9,
+      "value": 7.82
+     },
+     {
+      "months_ago": 6,
+      "value": 7.75
+     },
+     {
+      "months_ago": 3,
+      "value": 8.69
+     },
+     {
+      "months_ago": 2,
+      "value": 12.65
+     },
+     {
+      "months_ago": 1,
+      "value": 12.89
+     },
+     {
+      "months_ago": 0,
+      "value": 12.89
+     }
+    ]
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2027",
+    "points": [
+     {
+      "months_ago": 18,
+      "value": 9.46
+     },
+     {
+      "months_ago": 12,
+      "value": 9.15
+     },
+     {
+      "months_ago": 9,
+      "value": 9.48
+     },
+     {
+      "months_ago": 6,
+      "value": 9.45
+     },
+     {
+      "months_ago": 3,
+      "value": 9.99
+     },
+     {
+      "months_ago": 2,
+      "value": 10.48
+     },
+     {
+      "months_ago": 1,
+      "value": 10.5
+     },
+     {
+      "months_ago": 0,
+      "value": 10.53
+     }
+    ]
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2028",
+    "points": [
+     {
+      "months_ago": 18,
+      "value": 11.38
+     },
+     {
+      "months_ago": 12,
+      "value": 10.74
+     },
+     {
+      "months_ago": 9,
+      "value": 11.33
+     },
+     {
+      "months_ago": 6,
+      "value": 11.73
+     },
+     {
+      "months_ago": 3,
+      "value": 13.02
+     },
+     {
+      "months_ago": 2,
+      "value": 13.75
+     },
+     {
+      "months_ago": 1,
+      "value": 13.75
+     },
+     {
+      "months_ago": 0,
+      "value": 14.11
+     }
+    ]
+   }
+  ],
+  "revisions": [
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2026",
+    "window": "1m",
+    "up": 0,
+    "down": 0,
+    "analysts": 6,
+    "analysts_in_consensus": 4,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2026",
+    "window": "2m",
+    "up": 0,
+    "down": 0,
+    "analysts": 6,
+    "analysts_in_consensus": 4,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2026",
+    "window": "3m",
+    "up": 0,
+    "down": 1,
+    "analysts": 7,
+    "analysts_in_consensus": 2,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2027",
+    "window": "1m",
+    "up": 2,
+    "down": 1,
+    "analysts": 30,
+    "analysts_in_consensus": 28,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2027",
+    "window": "2m",
+    "up": 3,
+    "down": 2,
+    "analysts": 31,
+    "analysts_in_consensus": 28,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2027",
+    "window": "3m",
+    "up": 21,
+    "down": 2,
+    "analysts": 50,
+    "analysts_in_consensus": 26,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2028",
+    "window": "1m",
+    "up": 1,
+    "down": 1,
+    "analysts": 18,
+    "analysts_in_consensus": 18,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2028",
+    "window": "2m",
+    "up": 3,
+    "down": 1,
+    "analysts": 18,
+    "analysts_in_consensus": 18,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS Normalized",
+    "period": "FY 2028",
+    "window": "3m",
+    "up": 15,
+    "down": 0,
+    "analysts": 22,
+    "analysts_in_consensus": 16,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2026",
+    "window": "1m",
+    "up": 3,
+    "down": 0,
+    "analysts": 50,
+    "analysts_in_consensus": 49,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2026",
+    "window": "2m",
+    "up": 8,
+    "down": 0,
+    "analysts": 49,
+    "analysts_in_consensus": 48,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2026",
+    "window": "3m",
+    "up": 50,
+    "down": 0,
+    "analysts": 59,
+    "analysts_in_consensus": 50,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2027",
+    "window": "1m",
+    "up": 5,
+    "down": 1,
+    "analysts": 54,
+    "analysts_in_consensus": 53,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2027",
+    "window": "2m",
+    "up": 10,
+    "down": 2,
+    "analysts": 53,
+    "analysts_in_consensus": 52,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2027",
+    "window": "3m",
+    "up": 45,
+    "down": 5,
+    "analysts": 57,
+    "analysts_in_consensus": 52,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2028",
+    "window": "1m",
+    "up": 2,
+    "down": 1,
+    "analysts": 31,
+    "analysts_in_consensus": 31,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2028",
+    "window": "2m",
+    "up": 5,
+    "down": 1,
+    "analysts": 30,
+    "analysts_in_consensus": 30,
+    "outflow_line": false
+   },
+   {
+    "metric": "EPS (GAAP)",
+    "period": "FY 2028",
+    "window": "3m",
+    "up": 24,
+    "down": 0,
+    "analysts": 26,
+    "analysts_in_consensus": 25,
+    "outflow_line": false
+   }
+  ],
+  "spreads": [],
+  "reconciliations": [],
+  "current_multiples": null
+ }
+}

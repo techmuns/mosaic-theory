@@ -126,7 +126,7 @@ def test_business_groups_the_source_names_are_listed_apart_from_listed_exposures
     pipe = _groups_case(tmp_path)
     v = _one(pipe)
     f6 = next(f.value for f in v.priority.factors if f.factor_id == "F6_recognizable_exposures")
-    assert f6 == "0 listed · 0 sector"  # the stored priority never reads a group
+    assert f6 == "0 listed · 0 sector · 0 instrument"  # the stored priority never reads a group
     run_dir, _ = _outputs(pipe, tmp_path)
     js = json.loads(next((run_dir / "cards").glob("TH-*.json")).read_text())
     groups = {g["name"]: g for g in js["named_business_groups"]}

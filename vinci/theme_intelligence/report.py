@@ -52,6 +52,7 @@ from vinci.theme_intelligence.cards import (
     cited_claim_ids,
     distinct_sectors,
     e,
+    exposure_instruments,
     exposures_of,
     finding_names,
     foot_html,
@@ -63,6 +64,7 @@ from vinci.theme_intelligence.cards import (
     render_json,
     render_markdown,
     topnav,
+    watch_of,
     why_reasons,
 )
 from vinci.theme_intelligence.cards import _anchor as _card_anchor
@@ -120,7 +122,7 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
 
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
-MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse")
+MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market")
 
 
 def _no_discovery(mode: str) -> str:
@@ -128,6 +130,8 @@ def _no_discovery(mode: str) -> str:
             "model call)" if mode == "reassess" else
             "none read — an enrichment pass over stored theses (the listed companies each one's "
             "steps imply; one model call per thesis, no article read)" if mode == "enrich" else
+            "none read — market context for stored theses (prices and filings as of the date; "
+            "display only, no model call)" if mode == "market" else
             "none discovered — articles already held, analysed again under the current taxonomy "
             "(re-analysis; their earlier theses retired)" if mode == "reanalyse" else
             "single article (manual URL) — no source discovery")
@@ -728,6 +732,8 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
             retrieval_now[s.article_id] = (f"{vs[-1].retrieval_state.value} (corrected — recorded "
                                            f"FULL at ingestion; the current reader finds only a "
                                            f"preview)")
+    # the latest market context of THIS version (display only), as the registry held it
+    market = store.market_context(t.thesis_id, v.version, until=until)
     # the latest enrichment set for this version or an earlier one, as the registry held it
     sets = [x for x in store.enrichments(t.thesis_id) if x.thesis_version <= v.version
             and (until is None or x.created_at <= until)]
@@ -737,7 +743,8 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                          priority=v.priority, resolved=resolved, claims=claims,
                          roles={lk.claim_id: lk.role.value for lk in links},
                          groups=groups, groups_unread=unread, carry=vf.carry,
-                         enrichment=sets[-1] if sets else None)
+                         enrichment=sets[-1] if sets else None,
+                         market=market)
 
 
 def thesis_groups(store: Store, links: list[ThesisClaimLink]) -> tuple[NamedGroup, ...]:
@@ -1033,6 +1040,8 @@ class DashRow:
     analysis_as_of: str | None = None
     sector_exposures: list[str] = field(default_factory=list)
     why_action: str = ""
+    #: a WATCH's "needs data" / "on hold" (priority.watch_label); "" otherwise
+    watch: str = ""
     rule_trace: list[str] = field(default_factory=list)
     what_changed_audit: list[str] = field(default_factory=list)
     #: how this report's evidence for the thesis arrived (automatic / manual upload / linked)
@@ -1266,6 +1275,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             if x.event_type in (*ARCHIVING, "REACTIVATED", "REVIEW_NEEDED"):
                 changed.append(f"{x.event_type.replace('_', ' ').capitalize()}: {x.detail}")
         av = cur.content.s05_affected
+        inst = exposure_instruments(av)
         flags = sorted({x.event_type for x in evs} - {"CREATED", "UPDATED"})
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
@@ -1281,14 +1291,20 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                                                   + ")" if c.listings else
                                                   f" ({c.resolution_status.value})")
                              for c in exposures_of(av)[0]],
+            # the instruments the source ATTACHES (its exposure, as `named_companies` holds the
+            # exposure companies); an instrument only named is another name (2026-10-16)
             named_instruments=[c.name_as_written + (
                 f" [fund {'/'.join(x.ticker for x in c.listings)}]" if c.listings
-                else f" [{c.resolution_status.value.lower()}]") for c in av.instruments],
+                else " [basket — members not named]" if c.role.value == "cited_basket"
+                else f" [{c.resolution_status.value.lower()}]") for c in inst],
             private_named=[f"{c.name_as_written} [private company]"
                            for c in av.private_or_unlisted],
             other_named=[f"{c.name_as_written} ["
                          + ("basket — members not named" if c.role.value == "cited_basket"
-                            else "not a security") + "]" for c in av.not_securities],
+                            else "not a security") + "]" for c in av.not_securities
+                         if c not in inst] + [
+                f"{c.name_as_written} [{c.resolution_status.value.lower()} — named, not "
+                f"attached to the thesis]" for c in av.instruments if c not in inst],
             sectors=list(av.sectors), next_action=cur.content.s08_decision.next_step.text,
             last_material_update=t.last_material_update.isoformat(), status=t.status.value,
             flags=sorted(set(flags)), version=cur.version,
@@ -1301,6 +1317,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             # the row's "why" list and this line can never disagree (U53: a regex over the rule
             # trace named a contested WATCH that the list beside it did not)
             why_action=" ".join(view["why"]),
+            watch=watch_of(cur.priority, cur.content.s05_affected),
             rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit, **view)
         if any(r.startswith(NO_EVIDENCE_RULE) for r in cur.priority.rules_fired):
             no_evidence.append(row)  # not an opportunity: never under NEW / UPGRADED / …
@@ -1542,7 +1559,8 @@ def _event_tag(x: str) -> str:
 def _thesis_html(r: DashRow) -> str:
     """One thesis on the weekly overview: what it is, what changed, its effect on profits, why
     the action, the next question and the source — the full record is one click away."""
-    act = _ACTION_WORDS.get(ResearchAction(r.action), r.action)
+    act = (_ACTION_WORDS.get(ResearchAction(r.action), r.action)
+           + (f" · {r.watch}" if r.watch else ""))
     review = (f'<a class="flag" href="{e(r.card)}#{e(r.review_lines[0][0])}">Review required · '
               f'{len(r.review_lines)} line(s)</a>' if r.review_lines else "")
     kind = (f'<span class="pill kind">{e(KIND_LABEL[ThesisKind(r.kind)])}</span>'
@@ -2091,7 +2109,7 @@ def render_dashboard_md(d: Dashboard) -> str:
         if not rows:
             md += ["_None this run._", ""]
         for r in rows:
-            md += [f"### [{r.action}] {r.title}"
+            md += [f"### [{r.action}{f' · {r.watch}' if r.watch else ''}] {r.title}"
                    + (f" — {KIND_LABEL[ThesisKind(r.kind)]}"
                       if r.kind == ThesisKind.MARKET_REGIME.value else ""),
                    f"- {dates_line(r)}",

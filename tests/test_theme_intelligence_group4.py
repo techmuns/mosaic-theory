@@ -69,7 +69,7 @@ def test_a_registry_at_the_current_schema_answers_its_hot_lookups_from_indexes(
     scans — the issues lookup runs behind EVERY article-version read. NEGATIVE pin: a lookup no
     index covers still scans (the plan is read, not assumed)."""
     st = Store(tmp_path / "r.db")
-    assert st.schema_version() == DB_SCHEMA_VERSION == max(v for v, _ in MIGRATIONS) == 6
+    assert st.schema_version() == DB_SCHEMA_VERSION == max(v for v, _ in MIGRATIONS) >= 6
     c = st.conn
     rel = _plan(c, "SELECT payload FROM relations WHERE from_thesis=? OR to_thesis=?", "a", "a")
     assert "ix_rel_from" in rel and "ix_rel_to" in rel
@@ -93,7 +93,7 @@ def test_a_v5_registry_migrates_to_the_indexes_without_touching_a_row_and_old_co
     assert old.schema_version() == 5
     old.close()
     new = Store(path)
-    assert new.schema_version() == 6
+    assert new.schema_version() == DB_SCHEMA_VERSION  # v6's indexes, and every later step
     assert new.conn.execute("SELECT * FROM verification_issues").fetchall() == before
     names = {r[0] for r in new.conn.execute("SELECT name FROM sqlite_master WHERE type='index'")}
     assert {"ix_rel_from", "ix_rel_to", "ix_issues_ref", "ix_issues_run"} <= names

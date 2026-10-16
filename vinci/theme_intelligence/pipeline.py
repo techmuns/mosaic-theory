@@ -28,7 +28,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from vinci.graph.llm import LlmError
 from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
@@ -79,6 +79,7 @@ from vinci.theme_intelligence.health import HealthRun, check_sources
 from vinci.theme_intelligence.parse import ParsedDocument, parse_document
 from vinci.theme_intelligence.schemas import (
     DB_SCHEMA_VERSION,
+    AffectedCompany,
     Article,
     ArticleClass,
     ArticleVersion,
@@ -89,6 +90,7 @@ from vinci.theme_intelligence.schemas import (
     FieldStatus,
     HealthStatus,
     IssueSeverity,
+    PitStatus,
     RetrievalState,
     RunStatus,
     SecurityResolution,
@@ -102,6 +104,9 @@ from vinci.theme_intelligence.schemas import (
 )
 from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
+
+if TYPE_CHECKING:  # the price module is imported only when the market step runs
+    from vinci.theme_intelligence.market import DeepSource, EpsSource, PriceSource
 from vinci.theme_intelligence.verify import (
     ReviewOutcome,
     VerifiedExtraction,
@@ -183,7 +188,8 @@ class Pipeline:
         #: the retired channels' publishers, read once (sources.toml does not change mid-run)
         self._retired_publishers = sorted({r.publisher for r in load_retired_sources()})
         self.engine = Engine(self.store, taxonomy, reviewer=self._review,
-                             reliability_of=self._configured_reliability)
+                             reliability_of=self._configured_reliability,
+                             relist=self._relist)
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
         #: replay, from the registry the pull replaced): a re-created record keeps that date
         self.first_ingested = self.engine.first_ingested
@@ -318,6 +324,33 @@ class Pipeline:
         has no current tier, so a reassess keeps the one its thesis recorded (never "medium")."""
         src = self.sources.get(source_id)
         return src.reliability if src else None
+
+    def _cik_of(self, ticker: str) -> str | None:
+        """A ticker's CIK from the SEC's ticker map (the resolver's), or None."""
+        hit = self.resolver.index().by_ticker.get(ticker.upper())
+        return hit[0] if hit else None
+
+    def _relist(self, c: AffectedCompany, as_of: date) -> AffectedCompany:
+        """A named listed company whose listing no line verifies, resolved AGAIN as of `as_of`
+        from its stored mention, as at ingest — the new resolution stored beside the old. The
+        naming (its article, quote, role) is kept; only a VERIFIED listing replaces the record.
+        A failure is said and changes nothing."""
+        m = self.store.mention(c.mention_id)
+        if m is None:
+            return c
+        try:
+            r = self.resolver.resolve(m, as_of=as_of)
+        except Exception as exc:  # noqa: BLE001 — resolution failure leaves the record, loudly
+            self._issue("mention", m.mention_id, IssueSeverity.WARN, "RESOLUTION_FAILED",
+                        f"{m.name_as_written}: re-check of an unverified listing — "
+                        f"{type(exc).__name__}: {str(exc)[:120]}")
+            return c
+        with self.store.tx():
+            self.store.add_resolution(r)
+        if not any(x.pit_status is PitStatus.VERIFIED for x in r.listings):
+            return c
+        return c.model_copy(update={"resolution_status": r.status, "listings": r.listings,
+                                    "cik": r.cik, "other_securities": r.other_securities})
 
     def finish_ingest(self, status: RunStatus) -> WeeklyRun:
         """End an ingest run as every run that changes theses ends: the archive pass (a SKIP thesis
@@ -1011,6 +1044,65 @@ class Pipeline:
                                                     f"{traceback.format_exc()[-1500:]}")
             raise
         return self.finish_run(RunStatus.PARTIAL if refused else RunStatus.SUCCEEDED), done
+
+    def run_market(self, *, as_of: date, thesis_ids: Sequence[str] = (),
+                   prices: PriceSource | None = None, eps: EpsSource | None = None,
+                   dossiers: Path | None = None, deep: DeepSource | None = None
+                   ) -> tuple[WeeklyRun, list[tuple[str, str]]]:
+        """MARKET CONTEXT ("is it priced?", market.py) for stored theses, as of `as_of`: where each
+        counted exposure's price stands — DISPLAY ONLY, stored apart from the thesis (no new
+        version, never read by a research-action rule). Default: every ACTIVE thesis's current
+        version. $0 and no model call: Polygon prices and SEC XBRL (`prices` / `eps` replace
+        them in tests), five years of P/E history from Tiingo when TIINGO_API_KEY is set
+        (`deep`), consensus revisions from the fund's committed dossiers (`dossiers`), and the
+        companies the thesis implies (its latest enrichment set) priced apart. A failed request
+        is said on its row and as a WARN issue, never filled.
+        Returns (run, [(thesis id, what happened)])."""
+        import os
+
+        from vinci.theme_intelligence.market import (
+            DOSSIERS,
+            edgar_eps,
+            market_context,
+            polygon_prices,
+            tiingo_deep,
+        )
+
+        run = self.start_run("market", as_of=as_of, window_from=as_of, window_to=as_of)
+        done: list[tuple[str, str]] = []
+        try:
+            get_prices = prices or polygon_prices()
+            get_eps = eps or edgar_eps()
+            get_deep = deep or (tiingo_deep(self.paths.http_cache)
+                                if prices is None and os.environ.get("TIINGO_API_KEY") else None)
+            for tid in list(dict.fromkeys(thesis_ids or self._active_ids())):
+                t = self.store.thesis(tid)
+                v = self.store.thesis_version(tid, t.current_version) if t else None
+                if v is None:
+                    done.append((tid, "no such thesis"))
+                    continue
+                sets = [x for x in self.store.enrichments(tid) if x.thesis_version <= v.version]
+                ctx, errors = market_context(
+                    v.content.s05_affected, thesis_id=tid, version=v.version, run_id=run.run_id,
+                    as_of=as_of, prices=get_prices, eps=get_eps,
+                    hypotheses=sets[-1].candidates if sets else (), cik_of=self._cik_of,
+                    dossiers=dossiers or DOSSIERS, deep=get_deep)
+                with self.store.tx():
+                    self.store.add_market_context(ctx)
+                for err in errors:
+                    self._issue("thesis", tid, IssueSeverity.WARN, "MARKET_DATA_FAILED", err)
+                self._count("theses_priced")
+                priced = sum(1 for r in ctx.rows if r.last_close is not None)
+                done.append((tid, f"v{v.version}: {priced} of {len(ctx.rows)} exposure(s) "
+                                  f"priced as of {as_of.isoformat()}"
+                                  + (f"; {len(ctx.hypotheses)} implied company(ies)"
+                                     if ctx.hypotheses else "")
+                                  + (f"; {len(errors)} request(s) failed" if errors else "")))
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+        return self.finish_run(RunStatus.SUCCEEDED), done
 
     def run_reanalyse(self, *, article_ids: Sequence[str], retire: Sequence[str], reason: str,
                       as_of: date, budget: float | None = None,
