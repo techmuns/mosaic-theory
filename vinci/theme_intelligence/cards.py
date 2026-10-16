@@ -31,7 +31,15 @@ from typing import Any, TypeVar
 
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
-from vinci.theme_intelligence.priority import F8_CONTESTED, F8_OUTWEIGHS, counter_verdict
+from vinci.theme_intelligence.priority import (
+    F8_CONTESTED,
+    F8_OUTWEIGHS,
+    counter_verdict,
+    exposures_counted,
+    unverified_words,
+    watch_label,
+    watch_reasons_of,
+)
 from vinci.theme_intelligence.schemas import (
     EXPOSURE_ROLES,
     SECTION_IDS,
@@ -60,6 +68,7 @@ from vinci.theme_intelligence.schemas import (
     PitStatus,
     Provenance,
     ResearchPriority,
+    ResolutionStatus,
     SectorExposure,
     SourceRef,
     Thesis,
@@ -1343,6 +1352,67 @@ def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[Affected
             [c for c in av.companies if c.role not in EXPOSURE_ROLES])
 
 
+#: roles that make a named FUND / INDEX / basket attached to the thesis its INVESTABLE FORM — the
+#: ETF or index a sector view is expressed through (a sector opportunity needs no single ticker)
+INSTRUMENT_ROLES = EXPOSURE_ROLES | {MentionRole.MARKET_INSTRUMENT, MentionRole.CITED_BASKET}
+
+
+#: the card's two instrument headings (HTML and Markdown): attached to the thesis, or only named
+INSTRUMENT_EXPOSURES = ("Instrument exposures of this thesis (ETFs, indices and baskets the "
+                        "source attaches)")
+NAMED_INSTRUMENTS = "Named instruments / indices — not attached to this thesis"
+
+
+@dataclass(frozen=True)
+class CountedExposures:
+    """What the research-action rules count as the thesis's EXPOSURE — ONE definition, read by
+    both engine paths and named on the card and the desk."""
+
+    #: (name as written, tickers) — POINT-IN-TIME-VERIFIED common equity only
+    listed: tuple[tuple[str, str], ...]
+    #: ETFs, indices and cited baskets the source attaches to the thesis
+    instruments: tuple[str, ...]
+    #: sectors / themes the source names as exposed (verified spans)
+    sectors: tuple[str, ...]
+    #: named listed companies whose listing could NOT be verified as of the date — never counted
+    unverified: tuple[str, ...]
+
+
+def _with_tickers(c: AffectedCompany) -> str:
+    """A named instrument with its listed ticker(s), unless its name already carries them
+    ("iShares Expanded Tech-Software Sector ETF (IGV)")."""
+    tickers = [x.ticker for x in c.listings if f"({x.ticker})" not in c.name_as_written]
+    return c.name_as_written + (f" ({'/'.join(tickers)})" if tickers else "")
+
+
+def exposure_instruments(av: AffectedView) -> list[AffectedCompany]:
+    """The ETFs, indices and cited baskets the source ATTACHES to the thesis — its exposure, the
+    form a sector view is expressed through. ONE definition for the count (`counted_exposures`)
+    and every surface that lists who is exposed: on 2026-10-16 the count took the software ETF
+    and index while the card and the desk still listed them as "named, not exposures"."""
+    return [c for c in av.instruments if c.role in INSTRUMENT_ROLES] + [
+        c for c in av.not_securities if c.role is MentionRole.CITED_BASKET]
+
+
+def counted_exposures(av: AffectedView,
+                      sectors: Iterable[SectorExposure] | None = None) -> CountedExposures:
+    """The thesis's counted exposures (`sectors`: the verified sector exposures still standing,
+    when the caller has re-checked them; else the card's). An ETF, index or cited basket the
+    source attaches to the thesis COUNTS (2026-10-16: "software may be oversold" named the
+    software ETF and index it would be expressed through, and read "no exposure")."""
+    exp = [c for c in av.companies
+           if c.resolution_status is ResolutionStatus.LISTED_EQUITY and c.role in EXPOSURE_ROLES]
+    verified = [c for c in exp if any(x.pit_status is PitStatus.VERIFIED for x in c.listings)]
+    inst = exposure_instruments(av)
+    return CountedExposures(
+        listed=tuple((c.name_as_written, "/".join(x.ticker for x in c.listings
+                                                  if x.pit_status is PitStatus.VERIFIED))
+                     for c in verified),
+        instruments=tuple(_with_tickers(c) for c in inst),
+        sectors=tuple(s.name for s in (av.sector_exposures if sectors is None else sectors)),
+        unverified=tuple(c.name_as_written for c in exp if c not in verified))
+
+
 def _company_rows(cs: Iterable[AffectedCompany], *, exposures: bool = False) -> str:
     rows = []
     for c in cs:
@@ -1357,7 +1427,9 @@ def _company_rows(cs: Iterable[AffectedCompany], *, exposures: bool = False) -> 
         reading = ""
         if exposures:
             label = c.exposure_provenance or Provenance.MODEL_INFERENCE
-            reading = (f"<td><span class=\"b {_BADGE[label]}\">{e(label.value)}</span>"
+            # the badge class the card styles (`lab`), and a space: "b" had no rule, and the
+            # label ran into the reading ("MODEL INFERENCEcited basket", 2026-10-16 preview)
+            reading = (f"<td><span class=\"lab {_BADGE[label]}\">{e(label.value)}</span> "
                        f"{e(c.exposure_reading or c.role.value.replace('_', ' '))}</td>")
         rows.append(f"<tr><td>{e(c.name_as_written)}</td><td>{e(lst)}"
                     + (f"<div class=note>{e(cls)}</div>" if cls else "")
@@ -1438,6 +1510,18 @@ def topnav(base: str, *, active: str = "", sections: Iterable[tuple[str, str]] =
               'codes and the decision trace">Audit view</label></div></nav>' + sub)
 
 
+def watch_of(pr: ResearchPriority, av: AffectedView) -> str:
+    """A WATCH's "needs data" / "on hold" — from the stored reasons, or derived from the stored
+    factor values for an older version (priority.watch_reasons_of). "" for any other action."""
+    return watch_label(watch_reasons_of(pr, counted_exposures(av).unverified))
+
+
+def _action_words(action: str, pr: ResearchPriority | None, av: AffectedView) -> str:
+    """The action as the card names it, a WATCH with what it waits for ("Watch · needs data")."""
+    q = watch_of(pr, av) if pr is not None and pr.research_action.value == action else ""
+    return _ACTION_WORD.get(action, action) + (f" · {q}" if q else "")
+
+
 def why_reasons(card: CardContent, pr: ResearchPriority | None,
                 groups: Iterable[str] = (), *, groups_unchecked: bool = False) -> list[str]:
     """Why the research action is what it is, in plain words — from the STORED priority's factor
@@ -1447,8 +1531,12 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
         return []
     f = {x.factor_id: x.value for x in pr.factors}
     a = pr.research_action.value
-    av = card.s05_affected
-    exposed = bool(av.sector_exposures) or any(c.listings for c in exposures_of(av)[0])
+    # the exposure the stored RULE counted — the line never contradicts the action it explains;
+    # a version that carries no readable count is read from its own card
+    counted = counted_exposures(card.s05_affected)
+    n = exposures_counted(pr)
+    exposed = n > 0 if n is not None else bool(counted.listed or counted.instruments
+                                               or counted.sectors)
     if a == "RESEARCH NOW":
         # the inflection route says WHY with its research question (composed by the priority
         # rules from the claim's structured fields)
@@ -1476,7 +1564,11 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
     elif near and near != "yes":
         out.append("Timing — no dated window inside the next 2-4 quarters in the evidence.")
     names = list(dict.fromkeys(groups))
-    if not exposed:
+    unverified = any(r.code == "listing_unverified"
+                     for r in watch_reasons_of(pr, counted.unverified))
+    if not exposed and unverified:  # missing data, not a missing exposure
+        out.append("Exposure — " + unverified_words(counted.unverified) + ".")
+    elif not exposed:
         out.append("Exposure — no listed company or verified sector exposure; the source names "
                    f"business groups only ({'; '.join(names)}), not companies"
                    + ("; other evidence paragraphs are not checkable on this machine (their "
@@ -1652,7 +1744,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     parts = [
         f'<header class="hdr"><div class="eyebrow">Living Thesis Card · {e(h.sector)} · '
         f'{e(h.region)}</div><h1>{e(h.title)}</h1><div class="hline"><span class="pill {pill}">'
-        f'{e(_ACTION_WORD.get(h.research_action.value, h.research_action.value))}</span>{kind}'
+        f'{e(_action_words(h.research_action.value, rc.priority, card.s05_affected))}</span>'
+        f'{kind}'
         f'<span class="meta">Horizon: {e(h.horizon)}</span><span class="meta">Evidence: '
         f'{e(h.evidence_direction.value.lower())}</span>'
         + (f'<span class="meta">Status: {e(h.status.value)}</span>'
@@ -1746,6 +1839,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     summaries["s04_key_evidence"] = (f"{len(card.s04_key_evidence)} evidence row(s)"
                                      + (f" · {len(others)} more cited" if others else ""))
     av = card.s05_affected
+    inst = exposure_instruments(av)
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
@@ -1765,11 +1859,14 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                         'evidence.</div>')
         + '<div class="sub">Stock exposures of this thesis (source-named companies)</div>'
         + _company_rows(exposures_of(av)[0], exposures=True)
-        + '<div class="sub">Named instruments / indices</div>' + _company_rows(av.instruments)
+        + f'<div class="sub">{INSTRUMENT_EXPOSURES}</div>'
+        + _company_rows(inst, exposures=True)
+        + f'<div class="sub">{NAMED_INSTRUMENTS}</div>'
+        + _company_rows([c for c in av.instruments if c not in inst])
         + '<div class="sub">Private or unlisted (stay private)</div>'
         + _company_rows(av.private_or_unlisted)
         + '<div class="sub">Named, not securities (products, baskets, agencies)</div>'
-        + _company_rows(av.not_securities)
+        + _company_rows([c for c in av.not_securities if c not in inst])
         + '<div class="sub">Also named in the source — mentions, NOT exposures of this thesis'
           '</div>' + _company_rows(exposures_of(av)[1] + list(av.also_named))
         + '<div class="sub">Sector labels</div><div class="s">' + e(", ".join(av.sectors) or "—")
@@ -1783,8 +1880,9 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                                     if rc.groups else "business groups not checkable here · "
                                     if rc.groups_unread else "")
                                  + f"{len(exposures_of(av)[0])} company exposure(s) · "
-                                 f"{len(exposures_of(av)[1]) + len(av.also_named)} other "
-                                 f"mention(s)")
+                                 + (f"{len(inst)} instrument exposure(s) · " if inst else "")
+                                 + f"{len(exposures_of(av)[1]) + len(av.also_named)} other "
+                                   f"mention(s)")
     wn = card.s06_why_now
     bodies["s06_why_now"] = (
         '<div class="sub">Near term (2-4 quarters)</div>'
@@ -1822,7 +1920,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     d = card.s08_decision
     bodies["s08_decision"] = (
         f'<div class="s"><span class="pill {_PILL.get(d.research_action.value, "skip")}">'
-        f'{e(_ACTION_WORD.get(d.research_action.value, d.research_action.value))}</span> '
+        f'{e(_action_words(d.research_action.value, rc.priority, card.s05_affected))}</span> '
         f'<span class="note">research attention only — this card never directs a purchase or '
         f'sale</span></div>'
         + "".join(f'<div class="s">{e(x)}</div>'
@@ -1912,8 +2010,10 @@ def _md_sents(ss: Iterable[CardSentence], prefix: str, rc: RenderContext,
 
 def render_markdown(card: CardContent, rc: RenderContext) -> str:
     h = card.header
+    q = (watch_of(rc.priority, card.s05_affected)
+         if rc.priority is not None and rc.priority.research_action is h.research_action else "")
     md = [f"# {h.title}", "",
-         f"**{h.research_action.value}** · {KIND_LABEL[h.kind]} · evidence "
+         f"**{h.research_action.value}{f' · {q}' if q else ''}** · {KIND_LABEL[h.kind]} · evidence "
          f"{h.evidence_direction.value} · {h.sector} · {h.region} · horizon {h.horizon} · status "
          f"{h.status.value}", "", first_detected_line(h), "",
          f"`{h.thesis_id}` · {' › '.join(h.ancestry)}", "", f"_{LEGEND}_", ""]
@@ -1981,11 +2081,14 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
         md.append(f"- {groups_unchecked_note(rc.groups_unread)}")
     # (label, group) PAIRS — never `grp is av.instruments`: every empty tuple is the same object,
     # so identity matched one empty group to another's heading
+    inst = exposure_instruments(av)
     for label, grp, expo in (("Stock exposures of this thesis", exposures_of(av)[0], True),
-                             ("Named instruments / indices", av.instruments, False),
+                             (INSTRUMENT_EXPOSURES, inst, True),
+                             (NAMED_INSTRUMENTS, [c for c in av.instruments if c not in inst],
+                              False),
                              ("Private or unlisted", av.private_or_unlisted, False),
                              ("Named, not securities (products, baskets, agencies)",
-                              av.not_securities, False),
+                              [c for c in av.not_securities if c not in inst], False),
                              ("Also named in the source — mentions, NOT exposures of this thesis",
                               exposures_of(av)[1] + list(av.also_named), False)):
         md.append(f"**{label}:**")
@@ -2124,8 +2227,6 @@ def affected_from(*, mention_ids: list[tuple[str, str]], mentions: dict[str, Any
                   sector_exposures: tuple[SectorExposure, ...] = ()) -> AffectedView:
     """Split source-named entities into companies / instruments / private, union with the prior
     version's lists. Only ids from verified source mentions can reach here."""
-    from vinci.theme_intelligence.schemas import ResolutionStatus
-
     # keyed by ENTITY (SEC CIK, else normalised name), not by mention: the same company named by
     # a second article is the same exposure, listed once (the first naming is kept)
     comp = {entity_key(c): c for c in prev.companies} if prev else {}
@@ -2154,7 +2255,13 @@ def affected_from(*, mention_ids: list[tuple[str, str]], mentions: dict[str, Any
         group = (inst if status in (ResolutionStatus.FUND, ResolutionStatus.INDEX)
                  else priv if status is ResolutionStatus.PRIVATE
                  else nsec if status is ResolutionStatus.NOT_A_SECURITY else comp)
-        group.setdefault(key, ac)
+        old = group.setdefault(key, ac)
+        if old is not ac and not _verified(old) and _verified(ac):
+            # the first naming is kept, with the listing a later naming VERIFIED — a stale
+            # "not verified" from an earlier article never shadows a verified one (2026-10-16)
+            group[key] = old.model_copy(update={
+                "resolution_status": ac.resolution_status, "listings": ac.listings,
+                "cik": ac.cik, "other_securities": ac.other_securities})
     linked = set(comp) | set(inst) | set(priv) | set(nsec)
     also = {entity_key(a): a for a in prev.also_named} if prev else {}
     for mid in article_mentions:
@@ -2186,6 +2293,10 @@ def affected_from(*, mention_ids: list[tuple[str, str]], mentions: dict[str, Any
                         not_securities=tuple(nsec.values()), also_named=tuple(also.values()),
                         sector_exposures=sector_exposures or (prev.sector_exposures if prev
                                                               else ()))
+
+
+def _verified(c: AffectedCompany) -> bool:
+    return any(x.pit_status is PitStatus.VERIFIED for x in c.listings)
 
 
 def entity_key(c: AffectedCompany) -> str:

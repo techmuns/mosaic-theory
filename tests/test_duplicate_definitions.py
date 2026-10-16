@@ -119,13 +119,17 @@ def test_the_committed_desk_script_and_styles_are_what_the_code_generates() -> N
 
 
 def test_a_hand_edited_or_missing_generated_file_is_drift(tmp_path: pathlib.Path) -> None:
-    """NEGATIVE: one byte added to a copy of the committed script, and a missing stylesheet,
-    are each caught."""
-    js = (GENERATED_FROM_PYTHON / "desk.js").read_text()
+    """NEGATIVE: one byte added to a copy of the generated script, and a missing stylesheet,
+    are each caught. The copies are what the code generates NOW, never the committed files: those
+    lag a code PR until its republish, and this test copying them turned the first code PR that
+    changed the desk's styles red (2026-10-16)."""
+    from vinci.theme_intelligence.publish import app_css, desk_js
+
+    js = desk_js()
     (tmp_path / "desk.js").write_text(js + " ")
     assert _generated_drift(tmp_path) == ["desk.js", "intel.css"]
     (tmp_path / "desk.js").write_text(js)
-    (tmp_path / "intel.css").write_text((GENERATED_FROM_PYTHON / "intel.css").read_text())
+    (tmp_path / "intel.css").write_text(app_css())
     assert _generated_drift(tmp_path) == []
 
 

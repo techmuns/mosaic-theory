@@ -45,8 +45,10 @@ tool holds no consensus, market-expectation or valuation data, and says so on ev
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
+from typing import Literal
 
 from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.schemas import (
@@ -65,6 +67,7 @@ from vinci.theme_intelligence.schemas import (
     StanceInSource,
     ThesisKind,
     TransmissionStep,
+    WatchReason,
 )
 from vinci.theme_intelligence.timewindow import timing_of
 from vinci.theme_intelligence.verify import EARNINGS_STEPS, claim_provenance, is_market_reaction
@@ -93,6 +96,8 @@ class ThesisState:
     catalyst: tuple[Claim, ...]
     #: (name as written, tickers) — POINT-IN-TIME-VERIFIED common equity only
     listed_exposures: tuple[tuple[str, str], ...]
+    #: ETFs, indices and cited baskets the source attaches to the thesis — they COUNT as its
+    #: exposure (cards.counted_exposures, 2026-10-16)
     instrument_exposures: tuple[str, ...]
     transmission: tuple[TransmissionStep, ...]
     horizon: Horizon
@@ -276,8 +281,10 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
         counter = None
     windows = "; ".join(f"{c.claim_id}: {timing[c.claim_id][1]}" for c in near_claims[:4])
     exposures = ([f"{n} ({t})" for n, t in st.listed_exposures]
+                 + [f"instrument: {s}" for s in st.instrument_exposures]
                  + [f"sector: {s}" for s in st.sector_exposures])
-    exposure_names = [n for n, _ in st.listed_exposures] + list(st.sector_exposures)
+    exposure_names = ([n for n, _ in st.listed_exposures] + list(st.instrument_exposures)
+                      + list(st.sector_exposures))
     inflection_ok = bool(credible) and transmission == "source-shown" and bool(
         exposure_names) and not regime
     if not candidates:
@@ -336,12 +343,10 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                        claim_ids=ids(near_claims or straddling or long_range or context_long)),
         PriorityFactor(factor_id="F6_recognizable_exposures",
                        value=f"{len(st.listed_exposures)} listed · {len(st.sector_exposures)} "
-                             f"sector",
-                       note="source-named, point-in-time-verified listed common equity, and "
-                            "sectors / themes the source names: " + (", ".join(exposures)
-                                                                     or "none")
-                            + (f"; instruments: {', '.join(st.instrument_exposures)}"
-                               if st.instrument_exposures else "")
+                             f"sector · {len(st.instrument_exposures)} instrument",
+                       note="source-named, point-in-time-verified listed common equity, the "
+                            "ETFs / indices / baskets the source attaches, and sectors / themes "
+                            "the source names: " + (", ".join(exposures) or "none")
                             + (f"; NOT counted (listing not point-in-time verified): "
                                f"{', '.join(st.unverified_listings)}"
                                if st.unverified_listings else "")),
@@ -377,6 +382,7 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
 
     fired: list[str] = []
     action: ResearchAction
+    watch: tuple[WatchReason, ...] = ()
     if not support_mat:
         action, fired = ResearchAction.SKIP, ["SKIP-1 no verified material evidence"]
     elif transmission == "absent":
@@ -390,39 +396,53 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                f"{first_of(list(ids(context_long)), 4, ', ')} — "
                f"{timing[context_long[0].claim_id][1]})")]
     else:
-        unmet: list[str] = []
+        unmet: list[WatchReason] = []
+
+        def held(code: str, text: str) -> None:  # the evidence itself falls short
+            unmet.append(WatchReason(code=code, kind="held", text=text))
+
+        def missing(code: str, text: str) -> None:  # the record could not establish it
+            unmet.append(WatchReason(code=code, kind="missing_data", text=text))
+
         if near == "runs_past":
-            unmet.append("near-term relevance not established — the dated window(s) run past the "
-                         "next 2-4 quarters (an undifferentiated full-year or multi-quarter figure "
-                         "is not a 2-4-quarter window): " + "; ".join(
-                             f"{c.claim_id}: {timing[c.claim_id][1]}" for c in straddling[:4])
-                         + (f" (showing 4 of {len(straddling)})" if len(straddling) > 4 else ""))
+            held("window_runs_past",
+                 "near-term relevance not established — the dated window(s) run past the next "
+                 "2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a "
+                 "2-4-quarter window): " + "; ".join(
+                     f"{c.claim_id}: {timing[c.claim_id][1]}" for c in straddling[:4])
+                 + (f" (showing 4 of {len(straddling)})" if len(straddling) > 4 else ""))
         elif near != "yes":
-            unmet.append("near-term relevance not shown by any dated window — timing UNKNOWN "
-                         "in the source evidence; a review should establish it")
-        if not st.listed_exposures and not st.sector_exposures:
-            unmet.append("no source-named exposure (no point-in-time-verified listed company, no "
-                         "sector the source names)")
+            missing("no_window", "near-term relevance not shown by any dated window — timing "
+                                 "UNKNOWN in the source evidence; a review should establish it")
+        if not exposure_names:
+            if st.unverified_listings:  # named, but no listing verified as of the date
+                missing("listing_unverified", "no source-named exposure counted — "
+                        + unverified_words(st.unverified_listings))
+            else:
+                held("no_exposure", "no source-named exposure (no point-in-time-verified listed "
+                                    "company, no ETF, index or basket attached, no sector the "
+                                    "source names)")
         if not disl and not inflection_ok:
-            unmet.append("no verified dislocation or catalyst" + (
+            held("no_catalyst", "no verified dislocation or catalyst" + (
                 f", and the near-term inflection does not qualify ({inflection_note})"
                 if candidates else ""))
         if st.stance is not StanceInSource.ASSERTED:
-            unmet.append(f"premise is {st.stance.value} in the source")
+            held("premise_" + st.stance.value, f"premise is {st.stance.value} in the source")
         if counter == F8_CONTESTED:
-            unmet.append(f"{_CONTESTED_TRACE}{len(external_origins)} independent source(s) "
-                         f"directly contradict it, against {len(support_origins)} supporting")
+            held("contested", f"{_CONTESTED_TRACE}{len(external_origins)} independent "
+                              f"source(s) directly contradict it, against "
+                              f"{len(support_origins)} supporting")
         elif counter == F8_OUTWEIGHS:
-            unmet.append(_OUTWEIGHS_TRACE)
+            held("outweighed", _OUTWEIGHS_TRACE)
         if st.retrieval is not RetrievalState.FULL:
-            unmet.append(f"retrieval {st.retrieval.value}")
+            missing("partial_text", f"retrieval {st.retrieval.value}")
         if st.reliability == "low":
-            unmet.append("low-reliability source only")
+            held("low_reliability", "low-reliability source only")
         if st.verification_hold:
-            unmet.append("verification hold")
+            missing("verification_hold", "verification hold")
         if unmet:
-            action = ResearchAction.WATCH
-            fired = ["WATCH (RESEARCH NOW unmet: " + "; ".join(unmet) + ")"]
+            action, watch = ResearchAction.WATCH, tuple(unmet)
+            fired = ["WATCH (RESEARCH NOW unmet: " + "; ".join(u.text for u in unmet) + ")"]
         else:
             action = ResearchAction.RESEARCH_NOW
             route = (f"verified dislocation/catalyst ({len(disl)} claim(s))" if disl else
@@ -446,7 +466,88 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
         research_action=action, evidence_direction=evidence_direction,
         investment_readiness=InvestmentReadiness.NOT_ASSESSED, factors=factors,
         rules_fired=tuple(fired), previous_action=previous, change_reason=reason,
-        valuation_status=VALUATION_STATUS)
+        valuation_status=VALUATION_STATUS, watch_reasons=watch)
+
+
+def watch_reasons_of(pr: ResearchPriority,
+                     unverified: Sequence[str] = ()) -> tuple[WatchReason, ...]:
+    """A WATCH's unmet conditions: the stored values, or — for a version stored before they were
+    values (2026-10-16) — derived from its stored factor VALUES, as `compute_priority` derives
+    them (pinned to agree). `unverified`: the card's named listed companies whose listing no line
+    verifies (`cards.counted_exposures`). () for any other action."""
+    if pr.research_action is not ResearchAction.WATCH:
+        return ()
+    if pr.watch_reasons:
+        return pr.watch_reasons
+    f = {x.factor_id: x.value for x in pr.factors}
+    out: list[WatchReason] = []
+
+    def add(code: str, kind: Literal["missing_data", "held"], text: str) -> None:
+        out.append(WatchReason(code=code, kind=kind, text=text))
+
+    near = f.get("F5_near_term_relevance", "yes")
+    if near == "runs_past":
+        add("window_runs_past", "held", "its dated windows run past the next 2-4 quarters")
+    elif near != "yes":
+        add("no_window", "missing_data", "no dated window in the source evidence")
+    if exposures_counted(pr) == 0:
+        if unverified:
+            add("listing_unverified", "missing_data", unverified_words(unverified))
+        else:
+            add("no_exposure", "held", "no source-named exposure")
+    if f.get("F7_dislocation_or_catalyst") != "present" \
+            and f.get("F12_fundamental_inflection") != "qualifies":
+        add("no_catalyst", "held", "no verified dislocation or catalyst")
+    stance = f.get("F9_premise_in_source", "asserted")
+    if stance != "asserted":
+        add("premise_" + stance, "held", f"premise is {stance} in the source")
+    verdict = counter_verdict(pr)
+    if verdict == F8_CONTESTED:
+        add("contested", "held", "contested by independent sources")
+    elif verdict == F8_OUTWEIGHS:
+        add("outweighed", "held", _OUTWEIGHS_TRACE)
+    if f.get("F11_retrieval", "FULL") != "FULL":
+        add("partial_text", "missing_data", f"retrieval {f['F11_retrieval']}")
+    if f.get("F1_source_reliability") == "low":
+        add("low_reliability", "held", "low-reliability source only")
+    if f.get("F10_verification_hold") == "HOLD":
+        add("verification_hold", "missing_data", "verification hold")
+    return tuple(out)
+
+
+def watch_label(reasons: Sequence[WatchReason]) -> str:
+    """What a WATCH waits for, in two words: "needs data" when every unmet condition is missing
+    data (the record could not establish it — fixing the data could promote it), "on hold" when
+    any is a substantive hold. "" when there are none (any other action)."""
+    if not reasons:
+        return ""
+    return "needs data" if all(r.kind == "missing_data" for r in reasons) else "on hold"
+
+
+def unverified_words(names: Sequence[str]) -> str:
+    """Why a named listed company is not counted, in words — composed from the NAMES, so a surface
+    never rebuilds it by trimming the rule's sentence."""
+    return (f"the listing of {', '.join(names)} could not be verified as of the date (re-checked "
+            f"when the thesis is next assessed)")
+
+
+#: the stored F6 value: "<n> listed · <n> sector", with " · <n> instrument" since 2026-10-16
+_F6 = re.compile(r"(\d+) listed · (\d+) sector(?: · (\d+) instrument)?")
+#: the factor's EARLIER id (ti-engine-1 records), whose value is a bare count of listed exposures
+_F6_LEGACY = "F6_recognizable_listed_exposures"
+
+
+def exposures_counted(pr: ResearchPriority) -> int | None:
+    """How many exposures the stored rule COUNTED (its F6 value) — the one reader of that value,
+    so a surface states the exposure the action was decided on. Reads the earlier id too (a bare
+    count: 8 current versions in the registry copies carried it, 2026-10-16, one of them RESEARCH
+    NOW on "4"). None when the version carries no readable count — never read as "no exposure"."""
+    f = {x.factor_id: x.value for x in pr.factors}
+    if "F6_recognizable_exposures" in f:
+        m = _F6.fullmatch(f["F6_recognizable_exposures"])
+        return sum(int(g) for g in m.groups() if g) if m else None
+    legacy = f.get(_F6_LEGACY, "")
+    return int(legacy) if legacy.isdigit() else None
 
 
 def counter_verdict(pr: ResearchPriority) -> str | None:

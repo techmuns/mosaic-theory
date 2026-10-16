@@ -79,6 +79,7 @@ from vinci.theme_intelligence.health import HealthRun, check_sources
 from vinci.theme_intelligence.parse import ParsedDocument, parse_document
 from vinci.theme_intelligence.schemas import (
     DB_SCHEMA_VERSION,
+    AffectedCompany,
     Article,
     ArticleClass,
     ArticleVersion,
@@ -89,6 +90,7 @@ from vinci.theme_intelligence.schemas import (
     FieldStatus,
     HealthStatus,
     IssueSeverity,
+    PitStatus,
     RetrievalState,
     RunStatus,
     SecurityResolution,
@@ -183,7 +185,8 @@ class Pipeline:
         #: the retired channels' publishers, read once (sources.toml does not change mid-run)
         self._retired_publishers = sorted({r.publisher for r in load_retired_sources()})
         self.engine = Engine(self.store, taxonomy, reviewer=self._review,
-                             reliability_of=self._configured_reliability)
+                             reliability_of=self._configured_reliability,
+                             relist=self._relist)
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
         #: replay, from the registry the pull replaced): a re-created record keeps that date
         self.first_ingested = self.engine.first_ingested
@@ -318,6 +321,28 @@ class Pipeline:
         has no current tier, so a reassess keeps the one its thesis recorded (never "medium")."""
         src = self.sources.get(source_id)
         return src.reliability if src else None
+
+    def _relist(self, c: AffectedCompany, as_of: date) -> AffectedCompany:
+        """A named listed company whose listing no line verifies, resolved AGAIN as of `as_of`
+        from its stored mention, as at ingest — the new resolution stored beside the old. The
+        naming (its article, quote, role) is kept; only a VERIFIED listing replaces the record.
+        A failure is said and changes nothing."""
+        m = self.store.mention(c.mention_id)
+        if m is None:
+            return c
+        try:
+            r = self.resolver.resolve(m, as_of=as_of)
+        except Exception as exc:  # noqa: BLE001 — resolution failure leaves the record, loudly
+            self._issue("mention", m.mention_id, IssueSeverity.WARN, "RESOLUTION_FAILED",
+                        f"{m.name_as_written}: re-check of an unverified listing — "
+                        f"{type(exc).__name__}: {str(exc)[:120]}")
+            return c
+        with self.store.tx():
+            self.store.add_resolution(r)
+        if not any(x.pit_status is PitStatus.VERIFIED for x in r.listings):
+            return c
+        return c.model_copy(update={"resolution_status": r.status, "listings": r.listings,
+                                    "cik": r.cik, "other_securities": r.other_securities})
 
     def finish_ingest(self, status: RunStatus) -> WeeklyRun:
         """End an ingest run as every run that changes theses ends: the archive pass (a SKIP thesis
