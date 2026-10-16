@@ -26,6 +26,9 @@ from __future__ import annotations
 import collections
 import pathlib
 import re
+import subprocess
+
+import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -87,12 +90,31 @@ def _generated_drift(folder: pathlib.Path) -> list[str]:
             if not (folder / name).is_file() or (folder / name).read_text() != text]
 
 
+def _code_moved_since_publish() -> str | None:
+    """The last commit to the published folder (a republish always rewrites its `index.json`; a
+    hand edit is itself such a commit), when the theme-intelligence code has changed since
+    (working tree included) — the desk is then republished by its own artifact PR after the code
+    merges, never in the code PR. None when the code is unchanged since then."""
+    last = subprocess.run(
+        ["git", "log", "-1", "--format=%h", "--", "frontend/theme-intelligence"], cwd=ROOT,
+        capture_output=True, text=True, check=True).stdout.strip()
+    moved = subprocess.run(["git", "diff", "--quiet", last, "--", "vinci/theme_intelligence"],
+                           cwd=ROOT).returncode != 0
+    return last if moved else None
+
+
 def test_the_committed_desk_script_and_styles_are_what_the_code_generates() -> None:
     """THE EXEMPTION'S PREMISE (U34): `GENERATED_FROM_PYTHON` is skipped by the guard below only
     because it is generated. Pinned on the COMMITTED files, byte for byte — a pin over a tmp
-    publish never sees a hand edit to the committed copy, nor code that moved on without a
-    republish. Red here: republish (`python -m vinci.theme_intelligence publish`), or write
-    `publish.desk_js()` / `publish.app_css()` to the two files."""
+    publish never sees a hand edit to the committed copy. Checked whenever the code is the code
+    that published them: in the artifact PR itself, and after a hand edit to either file (that
+    edit is then the last commit to touch them). After a code PR, until the republish, it waits —
+    the generated files are never committed with code (review of #728).
+    Red here: republish (`python -m vinci.theme_intelligence publish`)."""
+    moved = _code_moved_since_publish()
+    if moved is not None:
+        pytest.skip(f"the theme-intelligence code changed since {moved}, the last commit to the "
+                    f"published folder — checked again at the next republish")
     assert _generated_drift(GENERATED_FROM_PYTHON) == []
 
 
