@@ -48,7 +48,7 @@ from vinci.theme_intelligence.cards import (
     broad_market_instruments,
     card_steps,
     counted_exposures,
-    distinct_sectors,
+    counted_sectors,
     e,
     enrichment_lines,
     enrichment_listing,
@@ -61,6 +61,7 @@ from vinci.theme_intelligence.cards import (
     market_indicators,
     proposal_reading,
     proposal_step,
+    refused_sectors,
     review_not_run_words,
     set_card,
     topnav,
@@ -745,8 +746,8 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
         if counted.listed else "",
         "ETFs, indices or baskets: " + ", ".join(counted.instruments)
         if counted.instruments else "",
-        "sectors: " + ", ".join(s.name for s in distinct_sectors(av))
-        if av.sector_exposures else "") if x)
+        "sectors: " + ", ".join(s.name for s in counted_sectors(av))
+        if counted_sectors(av) else "") if x)
     f12 = f.get("F12_fundamental_inflection", "")
     cat = f.get("F7_dislocation_or_catalyst") == "present" or f12 == "qualifies"
     out = [
@@ -768,7 +769,7 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                        f"not point-in-time verified on the card now")
              if exposed else (unverified_words(counted.unverified)
                               if unverified else uncounted_words(counted)
-                              if counted.broad or counted.indicators else
+                              if counted.broad or counted.indicators or counted.not_sectors else
                               "business groups only (" + "; ".join(groups) + ") — not companies"
                               if groups else "no company or sector named; whether the source "
                               "names business groups is not checkable on this machine (the "
@@ -1278,7 +1279,7 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
             + (f' <span class="muted">{e(role)}</span>' if role else "")
             + (f'<div class="small">{e(c.role_detail)}</div>' if c.role_detail else "")
             + "</li>")
-    for x in distinct_sectors(av):
+    for x in counted_sectors(av):
         side = {Direction.POSITIVE: "up", Direction.NEGATIVE: "down"}.get(x.direction, "flat")
         kind = ("" if re.search(r"\b(?:sectors?|industr(?:y|ies))$", x.name, re.I)
                 else ' <span class="tk">sector</span>')
@@ -1299,13 +1300,14 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
                 + (f'{e("; ".join(groups))} — groups, not companies' if groups else "")
                 + (f' {e(groups_unchecked_note(groups_unread))}' if groups_unread else "")
                 + "</p>")
-    if rest:
-        shown = [f"{c.name_as_written} ("
-                 + ("broad market index — not counted" if c in broad
-                    else "market indicator — not counted" if c in indic
-                    else c.role.value.replace("_", " ")) + ")" for c in rest[:4]]
-        out += (f'<p class="small muted">Also named, not exposures: {e(", ".join(shown))}'
-                + (f" — showing 4 of {len(rest)}; all in the full record" if len(rest) > 4
+    also = [f"{s.name} (not a sector — not counted)" for s, _why in refused_sectors(av)] + [
+        f"{c.name_as_written} ("
+        + ("broad market index — not counted" if c in broad
+           else "market indicator — not counted" if c in indic
+           else c.role.value.replace("_", " ")) + ")" for c in rest]
+    if also:
+        out += (f'<p class="small muted">Also named, not exposures: {e(", ".join(also[:4]))}'
+                + (f" — showing 4 of {len(also)}; all in the full record" if len(also) > 4
                    else "") + "</p>")
     return f'<div class="expo">{out}</div>'
 

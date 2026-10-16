@@ -51,7 +51,7 @@ from vinci.theme_intelligence.cards import (
     _line_name,
     broad_market_instruments,
     cited_claim_ids,
-    distinct_sectors,
+    counted_sectors,
     e,
     exposure_instruments,
     exposures_of,
@@ -62,6 +62,7 @@ from vinci.theme_intelligence.cards import (
     mechanism_step,
     named_groups,
     plain_entities,
+    refused_sectors,
     render_html,
     render_json,
     render_markdown,
@@ -1318,7 +1319,9 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             article_date=hdr.latest_article_date.isoformat() if hdr.latest_article_date else None,
             first_ingested=f"{t.created_at:%Y-%m-%d %H:%M} UTC",
             analysis_as_of=cur.as_of.isoformat(),
-            sector_exposures=[f"{x.name} ({x.direction.value})" for x in distinct_sectors(av)],
+            sector_exposures=[f"{x.name} ({x.direction.value})" for x in counted_sectors(av)] + [
+                f"{x.name} ({x.direction.value}) [not a sector — not counted]"
+                for x, _why in refused_sectors(av)],
             # the action's reasons ONCE, from the stored factor values (`cards.why_reasons`) —
             # the row's "why" list and this line can never disagree (U53: a regex over the rule
             # trace named a contested WATCH that the list beside it did not)
