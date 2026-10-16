@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
+from vinci.config import load_local_env
 from vinci.theme_intelligence.config import (
     DEFAULT_DATA_DIR,
     DEFAULT_MAX_ARTICLES_PER_RUN,
@@ -58,9 +59,8 @@ _EXIT = {RunStatus.SUCCEEDED: 0, RunStatus.PARTIAL: 2, RunStatus.FAILED: 1,
 def _client(required: bool) -> ToolClient | None:
     import os
 
-    from vinci.config import load_local_env
-
-    load_local_env()
+    # the key comes from the environment `entry` loaded (`.env` locally, Actions secrets in CI);
+    # loading it here as well made a test that calls `main` read the real `.env`
     if not os.environ.get("ANTHROPIC_API_KEY"):
         if required:
             raise SystemExit("ANTHROPIC_API_KEY is not set — extraction needs the LLM (cached "
@@ -836,5 +836,16 @@ def main(argv: list[str] | None = None) -> int:
     return rc
 
 
+def entry(argv: list[str] | None = None) -> int:
+    """The CLI entry point (`python -m vinci.theme_intelligence`): the repo-root `.env` is loaded
+    ONCE, here — locally it holds POLYGON_API_KEY, TIINGO_API_KEY and ANTHROPIC_API_KEY; on
+    Actions there is none and the injected secrets win (`override=False`) — then `main` runs.
+    `main` never loads it, so a test that calls `main` stays hermetic (`load_local_env`'s own
+    rule). 2026-10-16: `market` failed locally on POLYGON_API_KEY — `.env` was loaded only inside
+    the model-client setup, which `market` never reaches."""
+    load_local_env()
+    return main(argv)
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(entry())
