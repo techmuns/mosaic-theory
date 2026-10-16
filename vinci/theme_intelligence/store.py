@@ -41,6 +41,7 @@ from vinci.theme_intelligence.schemas import (
     DocumentRecord,
     EnrichmentSet,
     EvidenceSource,
+    MarketContext,
     Mention,
     RetrievalState,
     SecurityResolution,
@@ -63,7 +64,8 @@ _V1_APPEND_ONLY = (
     "snapshots", "verification_issues", "llm_calls",
 )
 #: Every append-only history table at the current schema.
-APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health", "enrichments")
+APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health", "enrichments",
+                      "market_contexts")
 #: the verification-issue code that corrects a version's retrieval state FULL -> PARTIAL
 RETRIEVAL_CORRECTED = "RETRIEVAL_CORRECTED"
 
@@ -174,6 +176,18 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX ix_rel_to ON relations(to_thesis)",
         "CREATE INDEX ix_issues_ref ON verification_issues(ref_id)",
         "CREATE INDEX ix_issues_run ON verification_issues(run_id)",
+    ]),
+    # v7 (2026-10-16): MARKET CONTEXT — "is it priced?" for a thesis version, as of a date: price
+    # position, return against the benchmark, P/E against its own history. Display only, kept
+    # apart from the sealed thesis versions like an enrichment set: no priority rule reads it.
+    (7, [
+        "CREATE TABLE market_contexts (context_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL,"
+        " thesis_version INTEGER NOT NULL, run_id TEXT NOT NULL, payload TEXT NOT NULL)",
+        "CREATE INDEX ix_market_thesis ON market_contexts(thesis_id, thesis_version)",
+        "CREATE TRIGGER market_contexts_no_update BEFORE UPDATE ON market_contexts "
+        "BEGIN SELECT RAISE(ABORT, 'market_contexts is append-only'); END",
+        "CREATE TRIGGER market_contexts_no_delete BEFORE DELETE ON market_contexts "
+        "BEGIN SELECT RAISE(ABORT, 'market_contexts is append-only'); END",
     ]),
 ]
 
@@ -681,6 +695,21 @@ class Store:
                           EnrichmentSet)
         return sorted(sets, key=lambda x: (x.created_at, x.set_id))
 
+    def add_market_context(self, m: MarketContext) -> bool:
+        return self._append("market_contexts", {"context_id": m.context_id,
+                                                "thesis_id": m.thesis_id,
+                                                "thesis_version": m.thesis_version,
+                                                "run_id": m.run_id}, m)
+
+    def market_context(self, thesis_id: str, version: int, *,
+                       until: datetime | None = None) -> MarketContext | None:
+        """The LATEST market context computed for one thesis version — with `until`, the latest
+        the registry held at that moment — or None."""
+        got = [x for x in self._rows("SELECT payload FROM market_contexts WHERE thesis_id=? AND "
+                                     "thesis_version=?", [thesis_id, version], MarketContext)
+               if until is None or x.created_at <= until]
+        return max(got, key=lambda x: (x.created_at, x.context_id)) if got else None
+
     def add_llm_call(self, call_id: str, run_id: str, purpose: str,
                      record: dict[str, Any]) -> None:
         self.conn.execute("INSERT OR IGNORE INTO llm_calls (call_id, run_id, purpose, payload) "
@@ -736,7 +765,7 @@ class Store:
               "mentions", "security_resolutions", "theses", "thesis_versions",
               "thesis_claim_links", "contributions", "relations", "change_events", "runs",
               "snapshots", "verification_issues", "llm_calls", "candidates", "completeness",
-              "source_health", "documents", "enrichments")
+              "source_health", "documents", "enrichments", "market_contexts")
 
     def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY

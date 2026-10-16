@@ -28,7 +28,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from vinci.graph.llm import LlmError
 from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
@@ -104,6 +104,9 @@ from vinci.theme_intelligence.schemas import (
 )
 from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
+
+if TYPE_CHECKING:  # the price module is imported only when the market step runs
+    from vinci.theme_intelligence.market import EpsSource, PriceSource
 from vinci.theme_intelligence.verify import (
     ReviewOutcome,
     VerifiedExtraction,
@@ -1036,6 +1039,46 @@ class Pipeline:
                                                     f"{traceback.format_exc()[-1500:]}")
             raise
         return self.finish_run(RunStatus.PARTIAL if refused else RunStatus.SUCCEEDED), done
+
+    def run_market(self, *, as_of: date, thesis_ids: Sequence[str] = (),
+                   prices: PriceSource | None = None, eps: EpsSource | None = None
+                   ) -> tuple[WeeklyRun, list[tuple[str, str]]]:
+        """MARKET CONTEXT ("is it priced?", market.py) for stored theses, as of `as_of`: where each
+        counted exposure's price stands — DISPLAY ONLY, stored apart from the thesis (no new
+        version, never read by a research-action rule). Default: every ACTIVE thesis's current
+        version. $0 and no model call: Polygon prices and SEC XBRL (`prices` / `eps` replace
+        them in tests). A failed request is said on its row and as a WARN issue, never filled.
+        Returns (run, [(thesis id, what happened)])."""
+        from vinci.theme_intelligence.market import edgar_eps, market_context, polygon_prices
+
+        run = self.start_run("market", as_of=as_of, window_from=as_of, window_to=as_of)
+        done: list[tuple[str, str]] = []
+        try:
+            get_prices = prices or polygon_prices()
+            get_eps = eps or edgar_eps()
+            for tid in list(dict.fromkeys(thesis_ids or self._active_ids())):
+                t = self.store.thesis(tid)
+                v = self.store.thesis_version(tid, t.current_version) if t else None
+                if v is None:
+                    done.append((tid, "no such thesis"))
+                    continue
+                ctx, errors = market_context(v.content.s05_affected, thesis_id=tid,
+                                             version=v.version, run_id=run.run_id, as_of=as_of,
+                                             prices=get_prices, eps=get_eps)
+                with self.store.tx():
+                    self.store.add_market_context(ctx)
+                for err in errors:
+                    self._issue("thesis", tid, IssueSeverity.WARN, "MARKET_DATA_FAILED", err)
+                self._count("theses_priced")
+                priced = sum(1 for r in ctx.rows if r.last_close is not None)
+                done.append((tid, f"v{v.version}: {priced} of {len(ctx.rows)} exposure(s) "
+                                  f"priced as of {as_of.isoformat()}"
+                                  + (f"; {len(errors)} request(s) failed" if errors else "")))
+        except Exception as exc:
+            self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                    f"{traceback.format_exc()[-1500:]}")
+            raise
+        return self.finish_run(RunStatus.SUCCEEDED), done
 
     def run_reanalyse(self, *, article_ids: Sequence[str], retire: Sequence[str], reason: str,
                       as_of: date, budget: float | None = None,

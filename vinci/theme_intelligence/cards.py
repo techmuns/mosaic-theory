@@ -63,6 +63,8 @@ from vinci.theme_intelligence.schemas import (
     Horizon,
     LinkRole,
     Listing,
+    MarketContext,
+    MarketFigure,
     MentionRole,
     PitStatus,
     Provenance,
@@ -732,6 +734,8 @@ DESK_NAV = (("This week", "index.html"), ("Themes", "themes.html"), ("Articles",
 ROBOTS = '<meta name="robots" content="noindex, nofollow">'
 
 _CSS = THEME_CSS + """
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt .mktl{margin:6px 0 2px}details.mkth{margin:6px 0}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
 color:var(--muted)}
 h1{font-size:27px;line-height:1.22;margin:6px 0 8px;font-weight:680;letter-spacing:-.01em}
@@ -978,6 +982,8 @@ class RenderContext:
     #: the latest ENRICHMENT set of the thesis (enrich.py) — external hypotheses, stored apart
     #: from the version: shown labelled, never counted
     enrichment: EnrichmentSet | None = None
+    #: the latest MARKET CONTEXT of this version (market.py) — display only, never counted
+    market: MarketContext | None = None
 
 
 @dataclass(frozen=True)
@@ -1294,6 +1300,69 @@ def enrichment_listing(x: EnrichmentCandidate) -> str:
     return "no verified US listing"
 
 
+MARKET_REVISIONS_NOTE = ("Consensus revisions: not held — no point-in-time estimates source "
+                         "here (the fund's CIQ exports are snapshots, for its dossier names only).")
+
+
+def _ordinal(n: int) -> str:
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def market_cell(f: MarketFigure, kind: str) -> str:
+    """One market figure as the reader sees it — its basis on hover, and in the list below the
+    table; "not held" when it was not measured (never a blank that reads as zero)."""
+    if f.value is None:
+        return f'<span class="nh" title="{e(f.basis)}">not held</span>'
+    v = f.value
+    text = (f"{v * 100:+.1f}%" if kind == "pct" else f"{v * 100:+.1f} pp" if kind == "pp"
+            else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
+    return f'<span title="{e(f.basis)}">{e(text.replace("-", "−"))}</span>'
+
+
+#: (column, field, format) — the table and the measurement list read the same order
+MARKET_COLUMNS = (("vs 200-day avg", "vs_200d", "pct"), ("From 52-wk high", "from_52w_high", "pct"),
+                  ("3m vs SPY", "rel_3m", "pp"), ("12m vs SPY", "rel_12m", "pp"),
+                  ("P/E", "pe", "x"), ("P/E vs own history", "pe_percentile", "rank"))
+
+
+def market_html(m: MarketContext | None, *, missing: str) -> str:
+    """IS IT PRICED? — one renderer for the card and the desk: the label first (evidence for the
+    reader, never read by the research action), then where each counted exposure's price stands
+    as of the context's date, then how each figure was measured (on demand; open in print).
+    `missing`: what to say when no context was computed for this version."""
+    if m is None:
+        return missing
+    rows = []
+    for r in m.rows:
+        name = (f'<b>{e(r.name)}</b>' + (f' <span class="tk">{e(r.ticker)}</span>'
+                                         if r.ticker and f"({r.ticker})" not in r.name else ""))
+        if r.ticker is None:  # an index or basket the source names with no traded ticker
+            rows.append(f'<tr><td>{name}</td><td colspan="{len(MARKET_COLUMNS) + 1}" class="nh">'
+                        f'{e(r.vs_200d.basis)}</td></tr>')
+            continue
+        close = (f'{r.last_close:,.2f}<div class="note">{e(r.last_bar.isoformat())}</div>'
+                 if r.last_close is not None and r.last_bar else '<span class="nh">not held</span>')
+        rows.append(f'<tr><td>{name}</td><td class="n">{close}</td>' + "".join(
+            f'<td class="n">{market_cell(getattr(r, fld), kind)}</td>'
+            for _c, fld, kind in MARKET_COLUMNS) + "</tr>")
+    head = ("<tr><th>Exposure</th><th>Close</th>"
+            + "".join(f"<th>{e(c)}</th>" for c, _f, _k in MARKET_COLUMNS) + "</tr>")
+    how = "".join(
+        f"<li><b>{e(r.name)}</b><ul>" + "".join(
+            f"<li>{e(c)}: {e(getattr(r, fld).basis)}</li>" for c, fld, _k in MARKET_COLUMNS)
+        + "</ul></li>" for r in m.rows if r.ticker is not None)
+    return (f'<div class="mkt"><p class="mktl"><span class="lab unk">{e(m.label)}</span></p>'
+            f'<p class="note">As of {e(m.as_of.isoformat())} · against {e(m.benchmark)} · '
+            f'{e(m.source)}.</p>'
+            + (f'<div class="hscroll"><table class="mktt">{head}{"".join(rows)}</table></div>'
+               if rows else '<p class="note">No exposure the count takes, so nothing to price.'
+                            '</p>')
+            + f'<p class="note">{e(MARKET_REVISIONS_NOTE)}</p>'
+            + (f'<details class="mkth"><summary>How each figure is measured</summary><ul>{how}'
+               f'</ul></details>' if how else "")
+            + "</div>")
+
+
 def enrichment_html(es: EnrichmentSet | None, card: CardContent, rc: RenderContext) -> str:
     if es is None:
         return ('<div class="note">Not proposed yet. Unnamed companies are never added to the '
@@ -1393,6 +1462,14 @@ def exposure_instruments(av: AffectedView) -> list[AffectedCompany]:
         c for c in av.not_securities if c.role is MentionRole.CITED_BASKET]
 
 
+def listed_exposures(av: AffectedView) -> list[AffectedCompany]:
+    """The named listed companies the count takes: an exposure role, and a listing verified as of
+    the date — the same names the market context prices."""
+    return [c for c in av.companies
+            if c.resolution_status is ResolutionStatus.LISTED_EQUITY and c.role in EXPOSURE_ROLES
+            and any(x.pit_status is PitStatus.VERIFIED for x in c.listings)]
+
+
 def counted_exposures(av: AffectedView,
                       sectors: Iterable[SectorExposure] | None = None) -> CountedExposures:
     """The thesis's counted exposures (`sectors`: the verified sector exposures still standing,
@@ -1401,7 +1478,7 @@ def counted_exposures(av: AffectedView,
     software ETF and index it would be expressed through, and read "no exposure")."""
     exp = [c for c in av.companies
            if c.resolution_status is ResolutionStatus.LISTED_EQUITY and c.role in EXPOSURE_ROLES]
-    verified = [c for c in exp if any(x.pit_status is PitStatus.VERIFIED for x in c.listings)]
+    verified = listed_exposures(av)
     inst = exposure_instruments(av)
     return CountedExposures(
         listed=tuple((c.name_as_written, "/".join(x.ticker for x in c.listings
@@ -1891,7 +1968,9 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + f'<div class="sub">Catalyst / repricing window</div><div class="s">'
           f'{e(wn.catalyst_window)}</div><div class="sub">Consensus / valuation</div>'
           f'<div class="s"><span class="lab unk">NOT ASSESSED</span> '
-          f'{e(_once("NOT_ASSESSED", wn.valuation_status)[len("NOT_ASSESSED — "):])}</div>')
+          f'{e(_once("NOT_ASSESSED", wn.valuation_status)[len("NOT_ASSESSED — "):])}</div>'
+        + '<div class="sub">Is it priced? — market context</div>'
+        + market_html(rc.market, missing='<div class="note">Not computed for this version.</div>'))
     w = card.s07_what_could_go_wrong
     n0, n1, n2 = len(w.counter_evidence), len(w.alternative_mechanisms), len(w.market_risks)
     bodies["s07_what_could_go_wrong"] = (
@@ -2005,6 +2084,25 @@ def _md_sents(ss: Iterable[CardSentence], prefix: str, rc: RenderContext,
     return out
 
 
+def _md_market(m: MarketContext | None) -> list[str]:
+    """Is it priced? in the Markdown record — every figure with its basis."""
+    if m is None:
+        return ["**Is it priced? — market context:** not computed for this version"]
+    out = [f"**Is it priced? — {m.label}** — as of {m.as_of.isoformat()}, against {m.benchmark}; "
+           f"{m.source}."]
+    for r in m.rows:
+        if r.ticker is None:
+            out.append(f"- {r.name}: {r.vs_200d.basis}")
+            continue
+        close = (f"{r.last_close:,.2f} ({r.last_bar.isoformat()})"
+                 if r.last_close is not None and r.last_bar else "not held")
+        out.append(f"- {r.name} [{r.ticker}] — close {close}")
+        out += [f"  - {c}: " + (f"{getattr(r, fld).value:.4g} — " if getattr(r, fld).value
+                                is not None else "") + getattr(r, fld).basis
+                for c, fld, _k in MARKET_COLUMNS]
+    return out + [f"- {MARKET_REVISIONS_NOTE}"]
+
+
 def render_markdown(card: CardContent, rc: RenderContext) -> str:
     h = card.header
     md = [f"# {h.title}", "",
@@ -2114,6 +2212,7 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
                                                         len(wn.near_term))
     md += [f"**Catalyst window:** {wn.catalyst_window}",
           f"**Consensus / valuation:** NOT ASSESSED — {wn.valuation_status}"]
+    md += _md_market(rc.market)
     w = card.s07_what_could_go_wrong
     md += ["", f"## {titles['s07_what_could_go_wrong']}", "**Counter-evidence:**"]
     md += _md_sents(w.counter_evidence, "s07", rc) or ["- none in the sources so far"]
