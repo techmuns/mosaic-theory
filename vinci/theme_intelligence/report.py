@@ -52,6 +52,7 @@ from vinci.theme_intelligence.cards import (
     cited_claim_ids,
     distinct_sectors,
     e,
+    exposure_instruments,
     exposures_of,
     finding_names,
     foot_html,
@@ -63,6 +64,7 @@ from vinci.theme_intelligence.cards import (
     render_json,
     render_markdown,
     topnav,
+    watch_of,
     why_reasons,
 )
 from vinci.theme_intelligence.cards import _anchor as _card_anchor
@@ -1033,6 +1035,8 @@ class DashRow:
     analysis_as_of: str | None = None
     sector_exposures: list[str] = field(default_factory=list)
     why_action: str = ""
+    #: a WATCH's "needs data" / "on hold" (priority.watch_label); "" otherwise
+    watch: str = ""
     rule_trace: list[str] = field(default_factory=list)
     what_changed_audit: list[str] = field(default_factory=list)
     #: how this report's evidence for the thesis arrived (automatic / manual upload / linked)
@@ -1266,6 +1270,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             if x.event_type in (*ARCHIVING, "REACTIVATED", "REVIEW_NEEDED"):
                 changed.append(f"{x.event_type.replace('_', ' ').capitalize()}: {x.detail}")
         av = cur.content.s05_affected
+        inst = exposure_instruments(av)
         flags = sorted({x.event_type for x in evs} - {"CREATED", "UPDATED"})
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
@@ -1281,14 +1286,20 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                                                   + ")" if c.listings else
                                                   f" ({c.resolution_status.value})")
                              for c in exposures_of(av)[0]],
+            # the instruments the source ATTACHES (its exposure, as `named_companies` holds the
+            # exposure companies); an instrument only named is another name (2026-10-16)
             named_instruments=[c.name_as_written + (
                 f" [fund {'/'.join(x.ticker for x in c.listings)}]" if c.listings
-                else f" [{c.resolution_status.value.lower()}]") for c in av.instruments],
+                else " [basket — members not named]" if c.role.value == "cited_basket"
+                else f" [{c.resolution_status.value.lower()}]") for c in inst],
             private_named=[f"{c.name_as_written} [private company]"
                            for c in av.private_or_unlisted],
             other_named=[f"{c.name_as_written} ["
                          + ("basket — members not named" if c.role.value == "cited_basket"
-                            else "not a security") + "]" for c in av.not_securities],
+                            else "not a security") + "]" for c in av.not_securities
+                         if c not in inst] + [
+                f"{c.name_as_written} [{c.resolution_status.value.lower()} — named, not "
+                f"attached to the thesis]" for c in av.instruments if c not in inst],
             sectors=list(av.sectors), next_action=cur.content.s08_decision.next_step.text,
             last_material_update=t.last_material_update.isoformat(), status=t.status.value,
             flags=sorted(set(flags)), version=cur.version,
@@ -1301,6 +1312,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             # the row's "why" list and this line can never disagree (U53: a regex over the rule
             # trace named a contested WATCH that the list beside it did not)
             why_action=" ".join(view["why"]),
+            watch=watch_of(cur.priority, cur.content.s05_affected),
             rule_trace=list(cur.priority.rules_fired), what_changed_audit=audit, **view)
         if any(r.startswith(NO_EVIDENCE_RULE) for r in cur.priority.rules_fired):
             no_evidence.append(row)  # not an opportunity: never under NEW / UPGRADED / …

@@ -805,6 +805,18 @@ class PriorityFactor(Frozen):
     claim_ids: tuple[str, ...] = ()
 
 
+class WatchReason(Frozen):
+    """One RESEARCH NOW condition a WATCH thesis does not meet, as a VALUE: what it is (`code`),
+    whether it is MISSING DATA (the record could not establish it — an unverified listing, part of
+    the text, no dated window found) or a SUBSTANTIVE HOLD (the evidence itself falls short — a
+    conditional premise, no catalyst, contested), and its words. So WATCH says WHY (2026-10-16:
+    three J.P. Morgan theses all read "Watch", which said nothing about what each waited for)."""
+
+    code: str
+    kind: Literal["missing_data", "held"]
+    text: str
+
+
 class ResearchPriority(Frozen):
     research_action: ResearchAction
     evidence_direction: EvidenceDirection
@@ -814,6 +826,9 @@ class ResearchPriority(Frozen):
     previous_action: ResearchAction | None
     change_reason: str
     valuation_status: str
+    #: a WATCH's unmet conditions, as values (empty for any other action, and for a version
+    #: stored before 2026-10-16)
+    watch_reasons: tuple[WatchReason, ...] = ()
 
 
 class FieldDiff(Frozen):

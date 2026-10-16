@@ -50,6 +50,7 @@ from vinci.theme_intelligence.cards import (
     capped_label,
     card_sha,
     compose_card,
+    counted_exposures,
     diff_cards,
     labelled,
     origin_label,
@@ -71,6 +72,8 @@ from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
     EXPOSURE_ROLES,
     MATERIAL_CLASSES,
+    AffectedCompany,
+    AffectedView,
     Article,
     ArticleClass,
     ArticleThesisContribution,
@@ -434,13 +437,19 @@ _REANCHORABLE = frozenset({"NUMBER_NOT_IN_CITED_CLAIMS", "FACT_WITHOUT_CLAIM"})
 class Engine:
     def __init__(self, store: Store, taxonomy: Taxonomy, *,
                  reviewer: Reviewer | None = None,
-                 reliability_of: Callable[[str], str | None] | None = None) -> None:
+                 reliability_of: Callable[[str], str | None] | None = None,
+                 relist: Callable[[AffectedCompany, date], AffectedCompany] | None = None
+                 ) -> None:
         self.store = store
         self.taxonomy = taxonomy
         self.reviewer = reviewer
         #: a channel's CURRENT reliability tier (sources.toml), for `reassess` — None (no lookup,
         #: or a channel no longer configured): the tier the previous version recorded
         self.reliability_of = reliability_of
+        #: a named listed company resolved AGAIN, as of a date — for one whose listing no line
+        #: verifies (resolved before point-in-time verification, or with the SEC unreachable);
+        #: None (an engine without the pipeline's resolver): the stored listing stands
+        self.relist = relist
         self.node_label = {n.id: n.label for n in taxonomy.nodes}
         #: thesis id -> when this registry FIRST ingested it, for a `state pull` replay: a thesis
         #: it re-creates keeps its original date, never the replay's clock
@@ -1382,29 +1391,19 @@ class Engine:
         art = self.store.article(aid)
         reliability = ((self.reliability_of(art.source_id) if self.reliability_of and art
                         else None) or factor["F1_source_reliability"].value)
-        aff = card.s05_affected
+        aff = self._relisted(card.s05_affected, as_of)
+        counted = counted_exposures(aff, kept)
         state = ThesisState(
             reliability=reliability,
             supporting=tuple(by_role.get(LinkRole.SUPPORTS, [])),
             counter=tuple(by_role.get(LinkRole.CONTRADICTS, [])),
             dislocation=tuple(by_role.get(LinkRole.DISLOCATION, [])),
             catalyst=tuple(by_role.get(LinkRole.CATALYST, [])),
-            listed_exposures=tuple((c.name_as_written, "/".join(
-                x.ticker for x in c.listings if x.pit_status is PitStatus.VERIFIED))
-                for c in aff.companies
-                if c.resolution_status is ResolutionStatus.LISTED_EQUITY
-                and c.role in EXPOSURE_ROLES
-                and any(x.pit_status is PitStatus.VERIFIED for x in c.listings)),
-            instrument_exposures=tuple(c.name_as_written for c in aff.instruments),
+            listed_exposures=counted.listed, instrument_exposures=counted.instruments,
             transmission=card.s03_transmission, horizon=t.horizon, stance=t.stance,
             verification_hold=bool(holds), hold_reasons=tuple(holds), retrieval=retrieval,
             retrieval_note=retrieval_note, kind=t.kind,
-            sector_exposures=tuple(se.name for se in kept),
-            unverified_listings=tuple(
-                c.name_as_written for c in aff.companies
-                if c.resolution_status is ResolutionStatus.LISTED_EQUITY
-                and c.role in EXPOSURE_ROLES
-                and not any(x.pit_status is PitStatus.VERIFIED for x in c.listings)),
+            sector_exposures=counted.sectors, unverified_listings=counted.unverified,
             as_of=as_of,
             published=tuple((s.article_id, s.published_at.date()) for s in card.s09_sources
                             if s.published_at is not None),
@@ -1648,6 +1647,7 @@ class Engine:
             sector_exposures=sector_exposures_from(
                 h.sectors if h else [], all_claims, ctx.article.article_id,
                 prev.s05_affected if prev else None))
+        affected = self._relisted(affected, ctx.as_of)
         sources = self._sources(thesis.thesis_id, ctx, links, all_claims, contribution)
         hold_reasons = self._hold_reasons(links, all_claims)
         if not thesis.key_review and self._under_review(thesis):
@@ -1662,21 +1662,10 @@ class Engine:
 
         def make(hold_extra: list[str]) -> tuple[CardContent, ResearchPriority]:
             holds = hold_reasons + hold_extra
-            # an EXPOSURE is a point-in-time-verified common-equity line — a current-day ticker
-            # map never counts (the listings carry only VERIFIED common equity by construction;
-            # the filter restates it so a future resolver change cannot widen it silently)
-            listed = tuple((c.name_as_written, "/".join(
-                x.ticker for x in c.listings if x.pit_status is PitStatus.VERIFIED))
-                for c in affected.companies
-                if c.resolution_status is ResolutionStatus.LISTED_EQUITY
-                and c.role in EXPOSURE_ROLES
-                and any(x.pit_status is PitStatus.VERIFIED for x in c.listings))
-            unverified = tuple(c.name_as_written for c in affected.companies
-                               if c.resolution_status is ResolutionStatus.LISTED_EQUITY
-                               and c.role in EXPOSURE_ROLES
-                               and not any(x.pit_status is PitStatus.VERIFIED
-                                           for x in c.listings))
-            instruments = tuple(c.name_as_written for c in affected.instruments)
+            # an EXPOSURE is a point-in-time-verified common-equity line (a current-day ticker
+            # map never counts), an ETF / index / basket the source attaches, or a sector it
+            # names — ONE definition for both paths (cards.counted_exposures)
+            counted = counted_exposures(affected)
             stub = CardInputs(thesis=thesis, version=version, as_of=ctx.as_of, hyp=h,
                               article=ctx.article, prev=prev, claims=all_claims, links=links,
                               affected=affected, change_items=items, vs_prior=vs_prior,
@@ -1714,13 +1703,13 @@ class Engine:
                 counter=tuple(by_role.get(LinkRole.CONTRADICTS, [])),
                 dislocation=tuple(by_role.get(LinkRole.DISLOCATION, [])),
                 catalyst=tuple(by_role.get(LinkRole.CATALYST, [])),
-                listed_exposures=listed, instrument_exposures=instruments,
+                listed_exposures=counted.listed, instrument_exposures=counted.instruments,
                 transmission=draft.s03_transmission, horizon=thesis.horizon,
                 stance=thesis.stance, verification_hold=bool(holds),
                 hold_reasons=tuple(holds), retrieval=retrieval, retrieval_note=retrieval_note,
                 kind=thesis.kind,
-                sector_exposures=tuple(s.name for s in affected.sector_exposures),
-                unverified_listings=unverified, as_of=ctx.as_of, published=published,
+                sector_exposures=counted.sectors,
+                unverified_listings=counted.unverified, as_of=ctx.as_of, published=published,
                 data_report_articles=data_reports, timing_context=timing_context)
             pr = compute_priority(state, previous=previous, evidence_direction=direction,
                                   previous_factors=prev_factors)  # type: ignore[arg-type]
@@ -1768,6 +1757,21 @@ class Engine:
             content=card, priority=pr, evidence_direction=direction,
             change_summary=change_summary, diffs=tuple(diffs), prior_content_sha=prev_sha,
             content_sha=card_sha(card))
+
+    def _relisted(self, av: AffectedView, as_of: date) -> AffectedView:
+        """The card's exposures with every named listed company whose listing no line verifies
+        resolved AGAIN, as of `as_of` (`relist`). 2026-10-16: four hyperscalers resolved before
+        point-in-time verification existed stayed "not verified" for good, and their thesis read
+        "no exposure"; resolved again as of its date, each verifies from its own 10-K / 10-Q."""
+        if self.relist is None:
+            return av
+        stale = [c for c in av.companies if c.resolution_status is ResolutionStatus.LISTED_EQUITY
+                 and c.role in EXPOSURE_ROLES
+                 and not any(x.pit_status is PitStatus.VERIFIED for x in c.listings)]
+        if not stale:
+            return av
+        return av.model_copy(update={"companies": tuple(
+            self.relist(c, as_of) if c in stale else c for c in av.companies)})
 
     def _context_links(self, ctx: ArticleContext, tid: str, version: int, card: CardContent,
                        links: list[ThesisClaimLink], claims: dict[str, Claim]
