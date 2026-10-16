@@ -26,6 +26,8 @@ import pytest
 from bs4 import BeautifulSoup
 
 from tests.theme_intelligence_support import (
+    CALM_AS_OF,
+    CALM_DIR,
     JPM_AS_OF,
     JPM_DIR,
     FrozenSecHttp,
@@ -34,6 +36,7 @@ from tests.theme_intelligence_support import (
     extraction,
     hyp,
     ingest,
+    ingest_calm,
     ingest_jpm,
     make_pipeline,
     mention,
@@ -41,6 +44,7 @@ from tests.theme_intelligence_support import (
 from vinci.netcache import HttpError
 from vinci.theme_intelligence.cards import (
     BROAD_INSTRUMENTS,
+    INDICATOR_INSTRUMENTS,
     INSTRUMENT_EXPOSURES,
     NAMED_INSTRUMENTS,
     affected_from,
@@ -48,6 +52,8 @@ from vinci.theme_intelligence.cards import (
     counted_exposures,
     exposure_instruments,
     is_broad_market,
+    is_market_indicator,
+    market_indicators,
     watch_of,
     why_reasons,
 )
@@ -525,6 +531,85 @@ def test_a_thesis_whose_only_instrument_is_the_whole_market_counts_no_exposure(
     assert not g.ok and "S&P 500" in g.detail and "whole market" in g.detail
     why = " ".join(why_reasons(alone.content, alone.priority))
     assert "Exposure — only a broad market index (S&P 500)" in why
+
+
+@pytest.mark.parametrize(("name", "status", "tickers", "indicator"), [
+    # attached in 33 current versions of the local registry copies (2026-10-16): Cboe's estimate,
+    # from option prices, of how closely the largest S&P 500 stocks will move together
+    ("Cboe 3-month implied correlation index", ResolutionStatus.INDEX, (), True),
+    # constructed: the volatility family, as an index and as a fund of its futures
+    ("Cboe Volatility Index (VIX)", ResolutionStatus.INDEX, (), True),
+    ("ProShares VIX Short-Term Futures ETF", ResolutionStatus.FUND, ("VIXY",), True),
+    # NEGATIVE — an index or fund that SELECTS stocks by volatility holds stocks
+    ("S&P 500 Low Volatility Index", ResolutionStatus.INDEX, (), False),
+    ("MSCI USA Minimum Volatility Index", ResolutionStatus.INDEX, (), False),
+    ("Invesco S&P 500 Low Volatility ETF", ResolutionStatus.FUND, ("SPLV",), False),
+    # NEGATIVE — the sector instruments attached in the same copies
+    ("S&P 500 Software Index", ResolutionStatus.INDEX, (), False),
+    ("S&P 500 Utilities", ResolutionStatus.INDEX, (), False),
+    ("iShares Expanded Tech-Software Sector ETF (IGV)", ResolutionStatus.FUND, ("IGV",), False),
+])
+def test_a_market_indicator_is_told_from_a_holding(
+        name: str, status: ResolutionStatus, tickers: tuple[str, ...], indicator: bool) -> None:
+    c = _co(name, MentionRole.MARKET_INSTRUMENT, status, *tickers)
+    assert is_market_indicator(c) is indicator
+
+
+def test_a_market_indicator_is_named_and_never_counted() -> None:
+    cor = _co("Cboe 3-month implied correlation index", MentionRole.MARKET_INSTRUMENT,
+              ResolutionStatus.INDEX)
+    util = _co("S&P 500 Utilities", MentionRole.SECTOR_EXAMPLE, ResolutionStatus.INDEX)
+    ce = counted_exposures(_view(instruments=(cor, util)))
+    assert ce.instruments == ("S&P 500 Utilities",) and ce.broad == ()
+    assert ce.indicators == ("Cboe 3-month implied correlation index",)
+
+
+def test_the_calm_index_regime_names_its_index_and_its_indicator_and_counts_neither(
+        tmp_path: Path) -> None:
+    """End to end on the committed J.P. Morgan "calm index" fixture: the dispersion regime
+    attaches the S&P 500 and the Cboe 3-month implied correlation index. Neither is counted — its
+    exposure is the sector it names, and its action stands — and every surface names both. With
+    the sector gone, the gate gives both reasons in one line."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe = make_pipeline(tmp_path / "p", sec_dirs=(CALM_DIR,))
+    pipe.start_run("article", as_of=CALM_AS_OF, window_from=CALM_AS_OF, window_to=CALM_AS_OF)
+    ingest_calm(pipe)
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    res = write_run_outputs(pipe.store, run.run_id, tmp_path / "out")
+    out = Path(res["dir"])
+    current = [_current(pipe, t.thesis_id) for t in pipe.store.theses()]
+    (v,) = [v for v in current if market_indicators(v.content.s05_affected)]
+    cor, spx = "Cboe 3-month implied correlation index", "S&P 500"
+    f = {x.factor_id: x.value for x in v.priority.factors}  # type: ignore[union-attr]
+    assert f["F6_recognizable_exposures"] == "0 listed · 1 sector · 0 instrument"
+    assert v.priority.research_action is ResearchAction.RESEARCH_NOW  # type: ignore[union-attr]
+    card = BeautifulSoup((out / "cards" / f"{v.thesis_id}.html").read_text(), "html.parser")
+    assert _names_under(card, INDICATOR_INSTRUMENTS) == [cor]
+    assert _names_under(card, BROAD_INSTRUMENTS) == [spx]
+    assert cor not in _names_under(card, INSTRUMENT_EXPOSURES)
+    md = (out / "cards" / f"{v.thesis_id}.md").read_text()
+    assert f"- {cor} — " in md.split(f"**{INDICATOR_INSTRUMENTS}:**")[1].split("**")[0]
+    page = _text(out / "theses" / f"{v.thesis_id}.html")
+    assert f"{cor} (market indicator — not counted)" in page
+    rows = {r.thesis_id: r for rs in res["dashboard"].categories.values() for r in rs}
+    assert f"{cor} [market indicator — not counted]" in rows[v.thesis_id].named_instruments
+    av = v.content.s05_affected.model_copy(update={"sector_exposures": ()})
+    f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
+                        value="0 listed · 0 sector · 0 instrument", note="")
+    kept = tuple(x for x in v.priority.factors  # type: ignore[union-attr]
+                 if not x.factor_id.startswith("F6")) + (f6,)
+    # with no exposure the rules hold it at WATCH (the why-line explains a WATCH's conditions)
+    alone = v.model_copy(update={
+        "content": v.content.model_copy(update={"s05_affected": av}),
+        "priority": v.priority.model_copy(update={  # type: ignore[union-attr]
+            "factors": kept, "research_action": ResearchAction.WATCH, "watch_reasons": ()})})
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    g = next(x for x in gates(alone, [], nt) if x.name == "An exposure the source names")
+    assert not g.ok and f"broad market index ({spx})" in g.detail
+    assert f"market indicator ({cor})" in g.detail
+    why = " ".join(why_reasons(alone.content, alone.priority))
+    assert f"market indicator ({cor})" in why
 
 def test_an_instrument_named_only_as_a_comparator_stays_a_mention(tmp_path: Path) -> None:
     """NEGATIVE, through the store: an index the source names as a COMPARATOR is not an exposure

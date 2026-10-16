@@ -58,6 +58,7 @@ from vinci.theme_intelligence.cards import (
     finding_names,
     foot_html,
     ids_to_audit,
+    market_indicators,
     mechanism_step,
     named_groups,
     plain_entities,
@@ -1299,7 +1300,9 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                 else " [basket — members not named]" if c.role.value == "cited_basket"
                 else f" [{c.resolution_status.value.lower()}]") for c in inst] + [
                 c.name_as_written + " [broad market index — not counted]"
-                for c in broad_market_instruments(av)],
+                for c in broad_market_instruments(av)] + [
+                c.name_as_written + " [market indicator — not counted]"
+                for c in market_indicators(av)],
             private_named=[f"{c.name_as_written} [private company]"
                            for c in av.private_or_unlisted],
             other_named=[f"{c.name_as_written} ["

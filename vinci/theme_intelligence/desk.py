@@ -46,7 +46,6 @@ from vinci.theme_intelligence.cards import (
     _plain_text,
     basis_line,
     broad_market_instruments,
-    broad_words,
     card_steps,
     counted_exposures,
     distinct_sectors,
@@ -59,11 +58,13 @@ from vinci.theme_intelligence.cards import (
     groups_unchecked_note,
     ids_to_audit,
     market_html,
+    market_indicators,
     proposal_reading,
     proposal_step,
     review_not_run_words,
     set_card,
     topnav,
+    uncounted_words,
     unit_shown,
     watch_of,
     why_reasons,
@@ -766,8 +767,8 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                        f"{', '.join(counted.unverified) or _pl(n_counted or 0, 'exposure')} — "
                        f"not point-in-time verified on the card now")
              if exposed else (unverified_words(counted.unverified)
-                              if unverified else broad_words(counted.broad)
-                              if counted.broad else
+                              if unverified else uncounted_words(counted)
+                              if counted.broad or counted.indicators else
                               "business groups only (" + "; ".join(groups) + ") — not companies"
                               if groups else "no company or sector named; whether the source "
                               "names business groups is not checkable on this machine (the "
@@ -1255,10 +1256,11 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
     exp, named = exposures_of(av)
     inst = exposure_instruments(av)  # the ETFs / indices / baskets the count takes
     others = [c for c in av.private_or_unlisted if c.role in EXPOSURE_ROLES] + inst
-    broad = broad_market_instruments(av)  # attached, the whole market: named, never counted
+    # attached, but the whole market or a market indicator: named, never counted
+    broad, indic = broad_market_instruments(av), market_indicators(av)
     rest = named + [c for c in av.private_or_unlisted if c.role not in EXPOSURE_ROLES] + [
         c for c in av.instruments if c not in inst] + [
-        c for c in broad if c not in av.instruments] + list(av.also_named)
+        c for c in broad + indic if c not in av.instruments] + list(av.also_named)
     buckets: dict[str, list[str]] = {"up": [], "down": [], "flat": []}
     seen: dict[str, list[AffectedCompany]] = {"up": [], "down": [], "flat": []}
     for c in [*exp, *others]:
@@ -1300,6 +1302,7 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
     if rest:
         shown = [f"{c.name_as_written} ("
                  + ("broad market index — not counted" if c in broad
+                    else "market indicator — not counted" if c in indic
                     else c.role.value.replace("_", " ")) + ")" for c in rest[:4]]
         out += (f'<p class="small muted">Also named, not exposures: {e(", ".join(shown))}'
                 + (f" — showing 4 of {len(rest)}; all in the full record" if len(rest) > 4
