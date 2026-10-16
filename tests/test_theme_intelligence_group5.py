@@ -285,6 +285,39 @@ def test_an_ingest_run_ends_with_the_archive_pass(tmp_path: Path) -> None:
     assert pipe.store.thesis(watch).status is ThesisStatus.ACTIVE  # type: ignore[union-attr]
 
 
+
+def test_a_state_pull_replay_ends_with_the_archive_pass(tmp_path: Path) -> None:
+    """The replay of an upload ends as the upload did: a SKIP thesis it re-creates is archived,
+    never left ACTIVE on the pulled registry for the next enrichment to pay for."""
+    from vinci.theme_intelligence import state
+    from vinci.theme_intelligence.documents import Declared
+    from vinci.theme_intelligence.ingest import ingest_file
+
+    note = tmp_path / "skip-note.txt"
+    filler = ("[HYPOTHETICAL] An invented paragraph that stands in for the body of an uploaded "
+              "note, long enough to be read as text by the document reader. ") * 3
+    note.write_text(f"{SKIP_LINE}\n\n{filler}\n\n{filler}\n")
+    laptop = make_pipeline(tmp_path / "laptop")
+    laptop.start_run("ingest", as_of=AS_OF)
+    res = ingest_file(laptop, note, Declared(source_id="ms_research", llm_permitted=True),
+                      as_of=AS_OF, fixture=_skip_x())
+    assert res.status == "INGESTED", res.note
+    laptop.finish_ingest(RunStatus.SUCCEEDED)
+    [(t0, _)] = [(x, 0) for x in laptop.store.theses()]
+    assert t0.status is ThesisStatus.ARCHIVED
+    docs = laptop.store.documents()
+    runs = {r.run_id: r for r in laptop.store.runs()}
+    pulled: list[Pipeline] = []
+
+    def fresh() -> Pipeline:
+        pulled.append(make_pipeline(tmp_path / "pulled"))
+        return pulled[-1]
+
+    state._replay(laptop.paths, docs, runs, fresh, {d.sha256: _skip_x() for d in docs})
+    [t1] = pulled[-1].store.theses()
+    assert _action(pulled[-1], t1.thesis_id) is ResearchAction.SKIP
+    assert t1.status is ThesisStatus.ARCHIVED  # before the fix: ACTIVE
+
 def test_a_reanalysis_archives_skip_theses_before_it_enriches(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     pipe = make_pipeline(tmp_path)
@@ -456,3 +489,7 @@ def test_a_reassess_reads_the_source_tier_the_sources_now_give(tmp_path: Path) -
     pipe.sources[src.id] = src
     pipe.run_reassess(as_of=date(2026, 10, 16), thesis_ids=[t.thesis_id])
     assert tier() == "low"  # NEGATIVE: no lookup, the recorded tier stands
+    del pipe.sources[src.id]  # the channel retired: it has no current tier
+    pipe.engine.reliability_of = pipe._configured_reliability
+    pipe.run_reassess(as_of=date(2026, 10, 17), thesis_ids=[t.thesis_id])
+    assert tier() == "low"  # NEGATIVE: the recorded tier stands — never the "medium" default

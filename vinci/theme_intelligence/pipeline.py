@@ -178,7 +178,7 @@ class Pipeline:
         # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
         # review, and says so in the validation log rather than passing silently
         self.engine = Engine(self.store, taxonomy, reviewer=self._review,
-                             reliability_of=self._reliability)
+                             reliability_of=self._configured_reliability)
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
         #: replay, from the registry the pull replaced): a re-created record keeps that date
         self.first_ingested = self.engine.first_ingested
@@ -295,6 +295,12 @@ class Pipeline:
         sources.toml (U55: a reassess kept the tier its previous version recorded)."""
         src = self.sources.get(source_id)
         return src.reliability if src else "medium"
+
+    def _configured_reliability(self, source_id: str) -> str | None:
+        """The tier sources.toml gives a CONFIGURED channel, or None — a retired or unknown channel
+        has no current tier, so a reassess keeps the one its thesis recorded (never "medium")."""
+        src = self.sources.get(source_id)
+        return src.reliability if src else None
 
     def finish_ingest(self, status: RunStatus) -> WeeklyRun:
         """End an ingest run as every run that changes theses ends: the archive pass (a SKIP thesis

@@ -389,12 +389,12 @@ _REANCHORABLE = frozenset({"NUMBER_NOT_IN_CITED_CLAIMS", "FACT_WITHOUT_CLAIM"})
 class Engine:
     def __init__(self, store: Store, taxonomy: Taxonomy, *,
                  reviewer: Reviewer | None = None,
-                 reliability_of: Callable[[str], str] | None = None) -> None:
+                 reliability_of: Callable[[str], str | None] | None = None) -> None:
         self.store = store
         self.taxonomy = taxonomy
         self.reviewer = reviewer
-        #: a channel's CURRENT reliability tier (sources.toml), for `reassess` — None: the tier
-        #: the previous version recorded (an engine built without the pipeline's sources)
+        #: a channel's CURRENT reliability tier (sources.toml), for `reassess` — None (no lookup,
+        #: or a channel no longer configured): the tier the previous version recorded
         self.reliability_of = reliability_of
         self.node_label = {n.id: n.label for n in taxonomy.nodes}
         #: thesis id -> when this registry FIRST ingested it, for a `state pull` replay: a thesis
@@ -1335,8 +1335,8 @@ class Engine:
         if hold is not None and hold.value == "HOLD":
             holds += review_holds(hold.note)
         art = self.store.article(aid)
-        reliability = (self.reliability_of(art.source_id) if self.reliability_of and art
-                       else factor["F1_source_reliability"].value)
+        reliability = ((self.reliability_of(art.source_id) if self.reliability_of and art
+                        else None) or factor["F1_source_reliability"].value)
         aff = card.s05_affected
         state = ThesisState(
             reliability=reliability,
