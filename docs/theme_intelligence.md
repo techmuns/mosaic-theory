@@ -32,7 +32,7 @@ no prices, returns or outcomes (including the unmerged #695 audit's).
 | `ingest-file --path F --source S [--url U] [--llm-permitted]` | import one supplied document (PDF / HTML / Markdown / text) through the SAME pipeline — see *Manual documents* below |
 | `ingest-inbox [--inbox D] [--source S]` | import every document in the private inbox; each file is filed under `processed/`, `held/`, `review/` or `rejected/` |
 | `documents [--status HELD]` | list the supplied documents and their status |
-| `state pull\|push\|status --remote R` | carry the ONE registry between this machine and the state branch the scheduled run uses |
+| `state pull\|push\|status --remote R` | carry the ONE registry between this machine and the state branch the Actions run uses |
 
 Common flags: `--data-dir` (default `data/theme_intelligence`), `--cache-only` (never call the
 LLM: replay cached extractions only), `--no-review` (skip the pass-2 LLM review — the card then
@@ -293,7 +293,7 @@ python -m vinci.theme_intelligence sources --check-health --sources gs_research 
 python -m vinci.theme_intelligence sources                           # last-known status only
 ```
 
-It also runs at the start of EVERY scan (scheduled or manual), and the weekly dashboard shows it
+It also runs at the start of EVERY scan (on Actions or on this machine), and the weekly dashboard shows it
 apart from the scan's execution status and the research-verification status.
 
 - **The seven tests.** (1) *access* — the endpoint discovery starts from, under robots.txt and the
@@ -316,7 +316,7 @@ apart from the scan's execution status and the research-verification status.
   discovery that follows, so a scan does not ask twice. The channel's crawl-delay floor and the
   site's robots Crawl-delay apply to every request.
 - **History and changes.** Every check is an immutable row (`source_health`, schema v3), exported
-  with the registry, so status and failure streaks survive the scheduled run's restart. Each row
+  with the registry, so status and failure streaks survive the Actions run's restart. Each row
   carries: last checked, last successful discovery, last successful full-text extraction, last
   verified publication date, articles discovered / in the window, the latest scan's full / preview
   / undated / unreadable counts, consecutive failed checks, status since, and what changed —
@@ -570,7 +570,7 @@ month and uploaded today shows *Published* last month — never as new this week
 The pilot is ONE run a person starts, watches and reads — never the weekly schedule.
 
 **Before**
-1. Keep the cron OFF (`THEME_INTELLIGENCE_SCHEDULE_ENABLED` unset). Never print a key; the run
+1. There is no cron: the weekly run is MANUAL (operator, 2026-10-16). Never print a key; the run
    reads `ANTHROPIC_API_KEY` and `SEC_USER_AGENT` from the environment.
 2. `sources --check-health` — read the table. Morgan Stanley and Goldman Sachs are manual-first:
    their week arrives only as uploads (`ingest-file` / `ingest-inbox`), into the SAME registry.
@@ -772,9 +772,8 @@ repo (the `gate` workflow ran green on main and on PRs through 2026-10-09). The 
 - `workflow_dispatch` — Actions → *theme-intelligence-weekly* → *Run workflow* (inputs: `days`,
   `max_articles`). A workflow must exist on the default branch before it can be dispatched, so the
   first manual run is possible only after merge.
-- a Monday **03:00 UTC (08:30 Asia/Kolkata)** cron that is **opt-in**: the job runs on it only when
-  the repository variable `THEME_INTELLIGENCE_SCHEDULE_ENABLED` is `true` (Settings → Secrets and
-  variables → Actions → Variables). Merging the file starts nothing unasked.
+- **no schedule**: the weekly run is MANUAL by the operator's ruling (2026-10-16), as the weekly
+  screen's workflow is (the 2026-08-24 ruling against timers). It runs when someone starts it.
 - secrets: `ANTHROPIC_API_KEY` (extraction + review) and `SEC_USER_AGENT` (SEC fair-access contact),
   both already used by the repo's other workflows.
 
@@ -787,7 +786,7 @@ and readout too. Article full text is never committed (the export blanks it; blo
 short verbatim claim quotes stay as provenance), and the raw-page cache is not carried between
 runs.
 
-**Manual documents and the scheduled run — ONE registry (`state.py`).** Actions cannot reach the
+**Manual documents and the Actions run — ONE registry (`state.py`).** Actions cannot reach the
 operator's machine, and the operator's documents must never be committed. So the state branch stays
 the only registry of record, and the operator carries it:
 
@@ -816,9 +815,9 @@ python -m vinci.theme_intelligence state push
   without carrying it, says so with its cost, and leaves its record in the backup.
 - `state push` exports the registry WITHOUT article text, refuses a tree holding anything but
   derived JSONL (no PDF, page, database or article text), and is FAST-FORWARD ONLY: if the
-  scheduled run committed since your pull, it refuses — pull again (the replay is safe), then
+  Actions run committed since your pull, it refuses — pull again (the replay is safe), then
   push. Credentials are git's own; a printed URL is masked.
-- The next scheduled scan restores that registry and its weekly report includes the uploads. On
+- The next Actions scan restores that registry and its weekly report includes the uploads. On
   the runner the original documents are absent, and every surface says so: the intake list marks
   the original as not on that machine, and QA counts a claim whose text is not held as "not
   re-checkable here" — never re-verified.
@@ -827,25 +826,16 @@ python -m vinci.theme_intelligence state push
 |---|---|
 | this machine | `ingest-file`, `ingest-inbox`, `documents`, `state pull/push/status`, `article`, `scan`, `report`, `qa` |
 | GitHub Actions | the weekly `scan` (restore → gate → scan → QA → export → commit to the state branch); manual documents arrive only through a `state push` |
-| needs configuration | the `theme-intelligence-state` branch exists only after the first workflow run or the first `state push` (none yet); the cron needs `THEME_INTELLIGENCE_SCHEDULE_ENABLED=true`; a push needs the operator's git credentials for the repository; secure cloud document storage is NOT configured — originals stay on the operator's machine |
+| needs configuration | the `theme-intelligence-state` branch exists only after the first workflow run or the first `state push` (none yet); a push needs the operator's git credentials for the repository; secure cloud document storage is NOT configured — originals stay on the operator's machine |
 
 **Local / server — `bin/theme-intelligence-weekly`.** Runs the same pipeline against
 `data/theme_intelligence/registry.db`, takes a dated backup first, appends to
-`data/theme_intelligence/weekly.log`, and exits 0 / 2 / 1 as above. It installs nothing. To schedule
-it (Monday 08:30 in Asia/Kolkata):
+`data/theme_intelligence/weekly.log`, and exits 0 / 2 / 1 as above. It installs nothing, and it is
+run by hand — the weekly run is MANUAL by the operator's ruling (2026-10-16), never on a timer:
 
 ```bash
-crontab -e
+bin/theme-intelligence-weekly
 ```
-
-```text
-CRON_TZ=Asia/Kolkata
-30 8 * * 1 cd /path/to/mosaic-theory && bin/theme-intelligence-weekly
-```
-
-or a launchd agent (`~/Library/LaunchAgents/com.mosaic.theme-intelligence.plist`) whose
-`ProgramArguments` is `bin/theme-intelligence-weekly`, `WorkingDirectory` the repo root, and
-`StartCalendarInterval` `{Weekday 1, Hour 8, Minute 30}` in the machine's local time.
 
 ## Persistence, migrations, backups
 
@@ -920,7 +910,7 @@ measured for three Citi reports).
   REVIEW, which a human resolves; nothing merges on a guess.
 - State sync was demonstrated against the real private repository on a TEMPORARY branch
   (`theme-intelligence-state-test-20261011`, synthetic registry); the PRODUCTION state branch
-  does not exist yet — the first scheduled run (after merge, once enabled) creates it.
+  does not exist yet — the first Actions run (started by hand) creates it.
 - Point-in-time listings rest on the issuer's cover-page tagging (required since 2019); a filing
   without tagged cover facts leaves the listing UNVERIFIED, so it never counts as an exposure.
   Fiscal-year windows ("FY27") are read as the calendar year — approximate, and said so.
