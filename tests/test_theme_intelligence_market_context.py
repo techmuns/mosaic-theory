@@ -14,9 +14,10 @@ are the committed J.P. Morgan fixture's. The real runs (live Polygon and SEC) ar
 
 from __future__ import annotations
 
+import json
 import re
 import sqlite3
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -24,22 +25,34 @@ from bs4 import BeautifulSoup
 
 from tests.theme_intelligence_support import JPM_AS_OF, ingest_jpm, make_pipeline
 from vinci.edgar.concepts import ConceptPoint
-from vinci.theme_intelligence.cards import exposure_instruments
+from vinci.theme_intelligence.cards import (
+    MARKET_HYPOTHESES,
+    exposure_instruments,
+    market_cell,
+    market_html,
+)
 from vinci.theme_intelligence.market import (
     BENCHMARK,
-    NOT_HELD_REVISIONS,
     Closes,
     against,
+    consensus_revisions,
     from_high,
     market_context,
     pe_against_history,
+    split_sized_moves,
     vs_average,
 )
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.report import write_run_outputs
 from vinci.theme_intelligence.schemas import (
     MARKET_LABEL,
+    EnrichmentCandidate,
+    EnrichmentSet,
+    Listing,
+    MarketFigure,
+    PitStatus,
     ResearchAction,
+    ResolutionStatus,
     RunStatus,
     ThesisVersion,
 )
@@ -207,7 +220,7 @@ def test_the_context_prices_what_the_count_takes_and_names_what_it_cannot(
     assert igv.pe.value is None and "a fund" in igv.pe.basis
     index = next(r for r in ctx.rows if r.ticker is None)
     assert "no traded ticker" in index.vs_200d.basis and index.last_close is None
-    assert all(r.revisions.basis == NOT_HELD_REVISIONS for r in ctx.rows)
+    assert "a fund" in igv.revisions.basis and index.revisions.value is None
 
 
 def test_a_failed_request_is_said_on_its_row_never_filled(tmp_path: Path) -> None:
@@ -250,7 +263,7 @@ def test_the_step_stores_it_and_every_surface_shows_it_labelled(tmp_path: Path) 
                      if s.h2 is not None and s.h2.get_text() == "Is it priced?")
         text = panel.get_text(" ")
         assert MARKET_LABEL in text and JPM_AS_OF.isoformat() in text
-        assert "Consensus revisions: not held" in text
+        assert "Revisions: the next fiscal year's EPS consensus" in text
         # beside the verdict: right after the thesis and its Why box, before Who is exposed
         heads = [s.h2.get_text() for s in page.select("section.panel") if s.h2 is not None]
         assert heads.index("Is it priced?") + 1 == heads.index("Who is exposed")
@@ -333,6 +346,161 @@ def test_the_research_action_is_the_same_whatever_the_market_says(tmp_path: Path
     assert actions[0] == actions[1] == actions[2]
     assert set(actions[0]) <= {a.value for a in ResearchAction}
 
+
+# --- consensus revisions: the fund's dossiers, point in time ------------------------------------
+
+FIXTURES = Path(__file__).parent / "fixtures" / "theme_intelligence" / "market"
+
+
+def test_revisions_are_the_next_years_eps_over_three_months_with_who_revised() -> None:
+    """The frozen copy of AMZN's dossier consensus (export on or after 2026-10-06, assembled
+    2026-10-09): FY 2027 normalized EPS 9.89 → 10.47 over the 3 months, 21 analysts up, 2 down."""
+    f = consensus_revisions("AMZN", date(2026, 10, 14), FIXTURES)
+    assert f.value == pytest.approx(10.47 / 9.89 - 1) and f.detail == "21↑ 2↓"
+    assert "FY 2027 EPS Normalized" in f.basis and "2026-10-06" in f.basis
+
+
+@pytest.mark.parametrize(("as_of", "why"), [
+    (date(2026, 10, 8), "look ahead"),    # after the floor, before the dossier was assembled
+    (date(2026, 10, 1), "look ahead"),    # before the export's own floor
+    (date(2026, 11, 20), "days older"),   # 45 days after the export: stale
+])
+def test_revisions_are_never_read_ahead_or_stale(as_of: date, why: str) -> None:
+    f = consensus_revisions("AMZN", as_of, FIXTURES)
+    assert f.value is None and why in f.basis
+
+
+def test_revisions_not_held_are_said(tmp_path: Path) -> None:
+    """NEGATIVE: a ticker with no dossier; a next-year line with no positive base."""
+    assert "no CIQ consensus held for META" in consensus_revisions(
+        "META", date(2026, 10, 14), FIXTURES).basis
+    doc = json.loads((FIXTURES / "AMZN" / "dossier.json").read_text())
+    for p in doc["forward_consensus"]["paths"]:
+        for pt in p["points"]:
+            if pt["months_ago"] == 3:
+                pt["value"] = -1.0
+    (tmp_path / "AMZN").mkdir()
+    (tmp_path / "AMZN" / "dossier.json").write_text(json.dumps(doc))
+    f = consensus_revisions("AMZN", date(2026, 10, 14), tmp_path)
+    assert f.value is None and "no positive" in f.basis
+
+
+
+def test_a_dossier_filed_under_the_other_share_class_is_read_and_named(tmp_path: Path) -> None:
+    """REVIEW of #733: Alphabet's listings lead with GOOG (the live registry: GOOG, GOOGL, GOOGM,
+    GOOGN) while the fund's dossier is filed under GOOGL — so the priced line found no dossier and
+    the row read "not held". One company has one consensus: the other line is read, and said.
+    NEGATIVE: a company whose lines hold no dossier stays not held, under the priced line's name."""
+    (tmp_path / "GOOGL").mkdir()
+    (tmp_path / "GOOGL" / "dossier.json").write_text(
+        (FIXTURES / "AMZN" / "dossier.json").read_text())
+    pipe = _jpm(tmp_path / "p")
+    v = _software(pipe)
+    two = Listing(ticker="GOOG", exchange="NASDAQ", pit_status=PitStatus.VERIFIED)
+    alphabet = _candidate("Alphabet", "GOOGL").model_copy(update={"listings": (
+        two, Listing(ticker="GOOGL", exchange="NASDAQ", pit_status=PitStatus.VERIFIED))})
+    other = _candidate("Other", "OTHR").model_copy(update={"listings": (
+        Listing(ticker="OTHR", exchange="NASDAQ", pit_status=PitStatus.VERIFIED),
+        Listing(ticker="OTHRB", exchange="NASDAQ", pit_status=PitStatus.VERIFIED))})
+    ctx, _errors = market_context(v.content.s05_affected, thesis_id=v.thesis_id,
+                                  version=v.version, run_id="R-x", as_of=date(2026, 10, 14),
+                                  prices=_prices(), eps=_no_eps,  # type: ignore[arg-type]
+                                  hypotheses=(alphabet, other), dossiers=tmp_path)
+    goog, othr = ctx.hypotheses
+    assert goog.ticker == "GOOG" and goog.revisions.value is not None
+    assert "the fund's GOOGL dossier" in goog.revisions.basis
+    assert othr.ticker == "OTHR" and othr.revisions.value is None
+    assert "no CIQ consensus held for OTHR" in othr.revisions.basis
+
+# --- a split-sized move is said on its row --------------------------------------------------------
+
+def test_a_one_day_move_the_size_of_a_split_is_flagged() -> None:
+    """Moderna, 2026-08-19: 62.96 → 174.38 in a day — real news or an unadjusted split, and the
+    row says to check. NEGATIVE: a 40% day is not split-sized; a jump AFTER the date is not read."""
+    days = _days(AS_OF, 60)
+    closes = [(d, 63.0 if i < 30 else 174.0) for i, d in enumerate(days)]
+    (w,) = split_sized_moves(closes, AS_OF)
+    assert "+176%" in w and days[30].isoformat() in w
+    assert split_sized_moves([(d, 100.0 if i < 30 else 140.0) for i, d in enumerate(days)],
+                             AS_OF) == []
+    later = [(d, 100.0) for d in days] + [(AS_OF + timedelta(days=1), 300.0)]
+    assert split_sized_moves(later, AS_OF) == []
+
+
+# --- the companies the thesis implies -------------------------------------------------------------
+
+def _candidate(name: str, ticker: str, *, verified: bool = True,
+               foreign: bool = False) -> EnrichmentCandidate:
+    pit = PitStatus.VERIFIED if verified else PitStatus.UNVERIFIED
+    return EnrichmentCandidate(
+        enrichment_id=f"E-{ticker}", thesis_id="TH-x", name=name,
+        rationale="[HYPOTHETICAL] the thesis's step reaches its earnings", evidence="s03.1: x",
+        resolution_status=ResolutionStatus.LISTED_EQUITY, foreign_filer=foreign,
+        listings=(Listing(ticker=ticker, exchange="NASDAQ", pit_status=pit),))
+
+
+def test_the_companies_the_thesis_implies_are_priced_apart_and_never_counted(
+        tmp_path: Path) -> None:
+    """End to end: an enrichment set beside the software thesis. Its SEC-verified US company is
+    priced in its OWN labelled table on the desk, the card and the Markdown record; an unverified
+    listing and a foreign filer are not priced; the count and the action are unchanged."""
+    pipe = _jpm(tmp_path)
+    v = _software(pipe)
+    before = (v.priority.research_action, v.priority.factors)
+    with pipe.store.tx():
+        pipe.store.add_enrichment(EnrichmentSet(
+            set_id="ES-1", thesis_id=v.thesis_id, thesis_version=v.version, run_id="R-x",
+            as_of=JPM_AS_OF, created_at=datetime(2026, 2, 9, tzinfo=UTC), model="m",
+            prompt_version="p", candidates=(_candidate("Adobe", "ADBE"),
+                                            _candidate("Unverified Co", "UNVC", verified=False),
+                                            _candidate("Foreign Co", "FRGN", foreign=True))))
+    run, _done = pipe.run_market(as_of=JPM_AS_OF, prices=_prices(),  # type: ignore[arg-type]
+                                 eps=_no_eps, dossiers=FIXTURES)
+    m = pipe.store.market_context(v.thesis_id, v.version)
+    assert m is not None and [r.ticker for r in m.hypotheses] == ["ADBE"]
+    assert "ADBE" not in [r.ticker for r in m.rows]
+    after = pipe.store.thesis_version(v.thesis_id, pipe.store.thesis(v.thesis_id).current_version)  # type: ignore[union-attr]
+    assert after is not None and (after.priority.research_action, after.priority.factors) == before
+    out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
+    page = BeautifulSoup((out / "theses" / f"{v.thesis_id}.html").read_text(), "html.parser")
+    implied = page.select_one("table.mkth2")
+    assert implied is not None and "Adobe" in implied.get_text(" ")
+    assert MARKET_HYPOTHESES in page.get_text(" ")
+    assert MARKET_HYPOTHESES in (out / "cards" / f"{v.thesis_id}.md").read_text()
+
+
+def test_the_market_contexts_survive_the_state_branch_export(tmp_path: Path) -> None:
+    """The Actions run keeps the registry as a JSONL export: the contexts travel with it."""
+    pipe = _jpm(tmp_path / "p")
+    pipe.run_market(as_of=JPM_AS_OF, prices=_prices(), eps=_no_eps,  # type: ignore[arg-type]
+                    dossiers=FIXTURES)
+    pipe.store.export_jsonl(tmp_path / "x")
+    back = Store.import_jsonl(tmp_path / "x", tmp_path / "back.db")
+    for t in back.theses():
+        assert back.market_context(t.thesis_id, t.current_version) == \
+            pipe.store.market_context(t.thesis_id, t.current_version)
+
+
+def test_the_row_carries_and_shows_its_warning_and_the_revision_counts(tmp_path: Path) -> None:
+    """The split-sized move reaches the row and the rendered table; the revision counts print
+    beside the value (structured, never parsed back from the basis)."""
+    pipe = _jpm(tmp_path)
+    v = _software(pipe)
+
+    def jumpy(symbol: str, start: date, end: date) -> Closes:
+        days = _days(end, 400)
+        return [(d, 50.0 if i < 380 or symbol == BENCHMARK else 120.0)
+                for i, d in enumerate(days) if start <= d <= end]
+
+    ctx, _errors = market_context(v.content.s05_affected, thesis_id=v.thesis_id,
+                                  version=v.version, run_id="R-x", as_of=JPM_AS_OF,
+                                  prices=jumpy, eps=_no_eps)
+    igv = next(r for r in ctx.rows if r.ticker == "IGV")
+    assert len(igv.warnings) == 1 and "+140%" in igv.warnings[0]
+    html = market_html(ctx, missing="")
+    assert "⚠" in html and "+140%" in html
+    cell = market_cell(MarketFigure(value=0.0587, basis="b", detail="21↑ 2↓"), "rev")
+    assert "+5.9% · 21↑ 2↓" in cell
 
 
 def test_the_markdown_record_states_figures_in_the_readers_units(tmp_path: Path) -> None:

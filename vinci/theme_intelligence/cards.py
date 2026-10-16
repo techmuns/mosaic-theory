@@ -24,7 +24,7 @@ from __future__ import annotations
 import html
 import json
 import re
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field, replace
 from datetime import date
 from typing import Any, TypeVar
@@ -61,6 +61,7 @@ from vinci.theme_intelligence.schemas import (
     Epistemic,
     EvidenceDirection,
     EvidenceRow,
+    ExposureMarket,
     Horizon,
     LinkRole,
     Listing,
@@ -736,7 +737,7 @@ ROBOTS = '<meta name="robots" content="noindex, nofollow">'
 
 _CSS = THEME_CSS + """
 table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
-.mkt .mktl{margin:6px 0 2px}details.mkth{margin:6px 0}
+.mkt .mktl{margin:6px 0 2px}details.mkth{margin:6px 0}.mkt td.mkw{color:var(--warn,#8a5a00)}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
 color:var(--muted)}
 h1{font-size:27px;line-height:1.22;margin:6px 0 8px;font-weight:680;letter-spacing:-.01em}
@@ -1301,8 +1302,12 @@ def enrichment_listing(x: EnrichmentCandidate) -> str:
     return "no verified US listing"
 
 
-MARKET_REVISIONS_NOTE = ("Consensus revisions: not held — no point-in-time estimates source "
-                         "here (the fund's CIQ exports are snapshots, for its dossier names only).")
+MARKET_REVISIONS_NOTE = ("Revisions: the next fiscal year's EPS consensus over 3 months, and the "
+                         "analysts who revised it up and down — from the fund's CIQ dossiers (its "
+                         "dossier names only), when the export is on or before the date and at "
+                         "most a month old.")
+MARKET_HYPOTHESES = ("Companies the thesis implies — EXTERNAL HYPOTHESIS, not named by the source; "
+                     "never counted")
 
 
 def _ordinal(n: int) -> str:
@@ -1315,9 +1320,9 @@ def market_text(f: MarketFigure, kind: str) -> str:
     if f.value is None:
         return "not held"
     v = f.value
-    text = (f"{v * 100:+.1f}%" if kind == "pct" else f"{v * 100:+.1f} pp" if kind == "pp"
+    text = (f"{v * 100:+.1f}%" if kind in ("pct", "rev") else f"{v * 100:+.1f} pp" if kind == "pp"
             else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
-    return text.replace("-", "−")
+    return text.replace("-", "−") + (f" · {f.detail}" if f.detail else "")
 
 
 def market_cell(f: MarketFigure, kind: str) -> str:
@@ -1331,7 +1336,8 @@ def market_cell(f: MarketFigure, kind: str) -> str:
 #: (column, field, format) — the table and the measurement list read the same order
 MARKET_COLUMNS = (("vs 200-day avg", "vs_200d", "pct"), ("From 52-wk high", "from_52w_high", "pct"),
                   ("3m vs SPY", "rel_3m", "pp"), ("12m vs SPY", "rel_12m", "pp"),
-                  ("P/E", "pe", "x"), ("P/E vs own history", "pe_percentile", "rank"))
+                  ("P/E", "pe", "x"), ("P/E vs own history", "pe_percentile", "rank"),
+                  ("Revisions (3m)", "revisions", "rev"))
 
 
 def market_html(m: MarketContext | None, *, missing: str) -> str:
@@ -1341,8 +1347,32 @@ def market_html(m: MarketContext | None, *, missing: str) -> str:
     `missing`: what to say when no context was computed for this version."""
     if m is None:
         return missing
+    rows = _market_rows(m.rows)
+    implied = _market_rows(m.hypotheses)
+    head = ("<tr><th>Exposure</th><th>Close</th>"
+            + "".join(f"<th>{e(c)}</th>" for c, _f, _k in MARKET_COLUMNS) + "</tr>")
+    how = "".join(
+        f"<li><b>{e(r.name)}</b><ul>" + "".join(
+            f"<li>{e(c)}: {e(getattr(r, fld).basis)}</li>" for c, fld, _k in MARKET_COLUMNS)
+        + "</ul></li>" for r in (*m.rows, *m.hypotheses) if r.ticker is not None)
+    return (f'<div class="mkt"><p class="mktl"><b>{e(m.label)}</b></p>'
+            f'<p class="note">As of {e(m.as_of.isoformat())} · against {e(m.benchmark)} · '
+            f'{e(m.source)}.</p>'
+            + (f'<div class="hscroll"><table class="mktt">{head}{"".join(rows)}</table></div>'
+               if rows else '<p class="note">No exposure the count takes, so nothing to price.'
+                            '</p>')
+            + (f'<p class="mktl"><span class="lab inf">{e(MARKET_HYPOTHESES)}</span></p>'
+               f'<div class="hscroll"><table class="mktt mkth2">{head}{"".join(implied)}</table>'
+               f'</div>' if implied else "")
+            + f'<p class="note">{e(MARKET_REVISIONS_NOTE)}</p>'
+            + (f'<details class="mkth"><summary>How each figure is measured</summary><ul>{how}'
+               f'</ul></details>' if how else "")
+            + "</div>")
+
+
+def _market_rows(rs: Sequence[ExposureMarket]) -> list[str]:
     rows = []
-    for r in m.rows:
+    for r in rs:
         name = (f'<b>{e(r.name)}</b>' + (f' <span class="tk">{e(r.ticker)}</span>'
                                          if r.ticker and f"({r.ticker})" not in r.name else ""))
         if r.ticker is None:  # an index or basket the source names with no traded ticker
@@ -1354,22 +1384,9 @@ def market_html(m: MarketContext | None, *, missing: str) -> str:
         rows.append(f'<tr><td>{name}</td><td class="n">{close}</td>' + "".join(
             f'<td class="n">{market_cell(getattr(r, fld), kind)}</td>'
             for _c, fld, kind in MARKET_COLUMNS) + "</tr>")
-    head = ("<tr><th>Exposure</th><th>Close</th>"
-            + "".join(f"<th>{e(c)}</th>" for c, _f, _k in MARKET_COLUMNS) + "</tr>")
-    how = "".join(
-        f"<li><b>{e(r.name)}</b><ul>" + "".join(
-            f"<li>{e(c)}: {e(getattr(r, fld).basis)}</li>" for c, fld, _k in MARKET_COLUMNS)
-        + "</ul></li>" for r in m.rows if r.ticker is not None)
-    return (f'<div class="mkt"><p class="mktl"><b>{e(m.label)}</b></p>'
-            f'<p class="note">As of {e(m.as_of.isoformat())} · against {e(m.benchmark)} · '
-            f'{e(m.source)}.</p>'
-            + (f'<div class="hscroll"><table class="mktt">{head}{"".join(rows)}</table></div>'
-               if rows else '<p class="note">No exposure the count takes, so nothing to price.'
-                            '</p>')
-            + f'<p class="note">{e(MARKET_REVISIONS_NOTE)}</p>'
-            + (f'<details class="mkth"><summary>How each figure is measured</summary><ul>{how}'
-               f'</ul></details>' if how else "")
-            + "</div>")
+        rows += [f'<tr><td colspan="{len(MARKET_COLUMNS) + 2}" class="mkw">⚠ {e(r.name)}: '
+                 f'{e(w)}</td></tr>' for w in r.warnings]
+    return rows
 
 
 def enrichment_html(es: EnrichmentSet | None, card: CardContent, rc: RenderContext) -> str:
@@ -2101,13 +2118,17 @@ def _md_market(m: MarketContext | None) -> list[str]:
         return ["**Is it priced? — market context:** not computed for this version"]
     out = [f"**Is it priced? — {m.label}** — as of {m.as_of.isoformat()}, against {m.benchmark}; "
            f"{m.source}."]
-    for r in m.rows:
+    for r in (*m.rows, *([None] if m.hypotheses else []), *m.hypotheses):
+        if r is None:
+            out.append(f"- **{MARKET_HYPOTHESES}:**")
+            continue
         if r.ticker is None:
             out.append(f"- {r.name}: {r.vs_200d.basis}")
             continue
         close = (f"{r.last_close:,.2f} ({r.last_bar.isoformat()})"
                  if r.last_close is not None and r.last_bar else "not held")
         out.append(f"- {r.name} [{r.ticker}] — close {close}")
+        out += [f"  - ⚠ {w}" for w in r.warnings]
         out += [f"  - {c}: " + (f"{market_text(getattr(r, fld), k)} — "
                                 if getattr(r, fld).value is not None else "")
                 + getattr(r, fld).basis for c, fld, k in MARKET_COLUMNS]

@@ -606,6 +606,8 @@ class MarketFigure(Frozen):
 
     value: float | None
     basis: str
+    #: a short structured suffix shown beside the value (revisions: "21↑ 2↓"), never parsed
+    detail: str = ""
 
 
 class ExposureMarket(Frozen):
@@ -626,6 +628,8 @@ class ExposureMarket(Frozen):
     pe: MarketFigure
     pe_percentile: MarketFigure
     revisions: MarketFigure
+    #: what the reader must check before trusting the row (a one-day move the size of a split)
+    warnings: tuple[str, ...] = ()
 
 
 class MarketContext(Frozen):
@@ -644,6 +648,9 @@ class MarketContext(Frozen):
     rows: tuple[ExposureMarket, ...]
     #: where the figures come from, and the price window the plan serves
     source: str
+    #: the companies the thesis IMPLIES (the latest enrichment set's verified listings) — an
+    #: EXTERNAL HYPOTHESIS, not named by the source: priced apart, never counted
+    hypotheses: tuple[ExposureMarket, ...] = ()
     label: Literal["MARKET CONTEXT — evidence for your judgement; never read by the research "
                    "action"] = ("MARKET CONTEXT — evidence for your judgement; never read by the "
                                 "research action")

@@ -2649,6 +2649,7 @@ class Desk:
 
 CSS = THEME_CSS + """
 table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt td.mkw{color:var(--warn,#8a5a00);font-size:13px}
 .mkt .mktl{margin:0 0 4px}.mkt .note{font-size:12.5px;color:var(--muted)}details.mkth{margin:6px 0}
 h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
 h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);

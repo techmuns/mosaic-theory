@@ -32,10 +32,15 @@ set +e
 code=${PIPESTATUS[0]}
 "$PY" -m vinci.theme_intelligence qa --run latest 2>&1 | tee -a "$LOG"
 qa=${PIPESTATUS[0]}
+# IS IT PRICED? — market context as of today (display only, $0; needs POLYGON_API_KEY). A failure
+# is said loudly and never changes the scan's exit status.
+"$PY" -m vinci.theme_intelligence market --as-of "$(date -u +%F)" 2>&1 | tee -a "$LOG"
+market=${PIPESTATUS[0]}
+[ "$market" -eq 0 ] || echo "$(stamp) WARNING market context FAILED (exit $market) — the desk shows the last one computed" | tee -a "$LOG"
 set -e
 
 if [ "$qa" -ne 0 ]; then
   code=1  # QA did not pass: FAILED, whatever the scan said (a PARTIAL scan exited 2 — U31c)
 fi
-echo "$(stamp) end scan_exit=$code qa_exit=$qa" >> "$LOG"
+echo "$(stamp) end scan_exit=$code qa_exit=$qa market_exit=$market" >> "$LOG"
 exit "$code"

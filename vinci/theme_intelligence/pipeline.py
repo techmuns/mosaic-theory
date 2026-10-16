@@ -325,6 +325,11 @@ class Pipeline:
         src = self.sources.get(source_id)
         return src.reliability if src else None
 
+    def _cik_of(self, ticker: str) -> str | None:
+        """A ticker's CIK from the SEC's ticker map (the resolver's), or None."""
+        hit = self.resolver.index().by_ticker.get(ticker.upper())
+        return hit[0] if hit else None
+
     def _relist(self, c: AffectedCompany, as_of: date) -> AffectedCompany:
         """A named listed company whose listing no line verifies, resolved AGAIN as of `as_of`
         from its stored mention, as at ingest — the new resolution stored beside the old. The
@@ -1041,15 +1046,22 @@ class Pipeline:
         return self.finish_run(RunStatus.PARTIAL if refused else RunStatus.SUCCEEDED), done
 
     def run_market(self, *, as_of: date, thesis_ids: Sequence[str] = (),
-                   prices: PriceSource | None = None, eps: EpsSource | None = None
-                   ) -> tuple[WeeklyRun, list[tuple[str, str]]]:
+                   prices: PriceSource | None = None, eps: EpsSource | None = None,
+                   dossiers: Path | None = None) -> tuple[WeeklyRun, list[tuple[str, str]]]:
         """MARKET CONTEXT ("is it priced?", market.py) for stored theses, as of `as_of`: where each
         counted exposure's price stands — DISPLAY ONLY, stored apart from the thesis (no new
         version, never read by a research-action rule). Default: every ACTIVE thesis's current
         version. $0 and no model call: Polygon prices and SEC XBRL (`prices` / `eps` replace
-        them in tests). A failed request is said on its row and as a WARN issue, never filled.
+        them in tests), consensus revisions from the fund's committed dossiers (`dossiers`), and
+        the companies the thesis implies (its latest enrichment set) priced apart. A failed
+        request is said on its row and as a WARN issue, never filled.
         Returns (run, [(thesis id, what happened)])."""
-        from vinci.theme_intelligence.market import edgar_eps, market_context, polygon_prices
+        from vinci.theme_intelligence.market import (
+            DOSSIERS,
+            edgar_eps,
+            market_context,
+            polygon_prices,
+        )
 
         run = self.start_run("market", as_of=as_of, window_from=as_of, window_to=as_of)
         done: list[tuple[str, str]] = []
@@ -1062,9 +1074,12 @@ class Pipeline:
                 if v is None:
                     done.append((tid, "no such thesis"))
                     continue
-                ctx, errors = market_context(v.content.s05_affected, thesis_id=tid,
-                                             version=v.version, run_id=run.run_id, as_of=as_of,
-                                             prices=get_prices, eps=get_eps)
+                sets = [x for x in self.store.enrichments(tid) if x.thesis_version <= v.version]
+                ctx, errors = market_context(
+                    v.content.s05_affected, thesis_id=tid, version=v.version, run_id=run.run_id,
+                    as_of=as_of, prices=get_prices, eps=get_eps,
+                    hypotheses=sets[-1].candidates if sets else (), cik_of=self._cik_of,
+                    dossiers=dossiers or DOSSIERS)
                 with self.store.tx():
                     self.store.add_market_context(ctx)
                 for err in errors:
@@ -1073,6 +1088,8 @@ class Pipeline:
                 priced = sum(1 for r in ctx.rows if r.last_close is not None)
                 done.append((tid, f"v{v.version}: {priced} of {len(ctx.rows)} exposure(s) "
                                   f"priced as of {as_of.isoformat()}"
+                                  + (f"; {len(ctx.hypotheses)} implied company(ies)"
+                                     if ctx.hypotheses else "")
                                   + (f"; {len(errors)} request(s) failed" if errors else "")))
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
