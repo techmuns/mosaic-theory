@@ -14,8 +14,9 @@ LIMITS (config; the CLI raises them per run or document):
   always keep a share.
 
 BEFORE A CALL. Its cost is BOUNDED: input tokens at most (characters of the system prompt, the
-message and the tool schema) / `CHARS_PER_TOKEN_BOUND`, all priced as cache WRITES (the dearest
-input rate), plus the call's full output cap. A call whose bound does not fit the smallest
+message and the tool schema) / `CHARS_PER_TOKEN_BOUND` — below every ratio measured on real calls
+(config) — each priced at the rate it is billed at, a call that writes the prompt cache at the
+cache-write rate, plus the call's full output cap. A call whose bound does not fit the smallest
 remaining limit is REFUSED (`BudgetExceeded`) — it is never sent. This is a conservative bound
 from the request's size, NOT a provider-side billing cap: a pathological text that tokenises
 finer than the ratio could cost more than bounded. Every call records its bound and its actual
@@ -67,8 +68,11 @@ class BudgetExceeded(Exception):  # noqa: N818 — the operator-facing name
 
 
 def call_bound(model: str, system: str, user: str, tool: dict[str, Any],
-               max_tokens: int = LLM_MAX_TOKENS) -> float:
-    """The conservative cost bound of one call (USD), from its size and output cap."""
+               max_tokens: int = LLM_MAX_TOKENS, *, cache_write: bool = False) -> float:
+    """The conservative cost bound of one call (USD), from its size and output cap. `cache_write`:
+    the call writes the prompt cache (a completeness part under `PROMPT_CACHE_PARTS`), so its input
+    is billed at 1.25x — before U28 every call was priced so, which left a cache write no margin
+    for a request that tokenises finer than the ratio."""
     if model not in PRICE_PER_MTOK:
         raise BudgetExceeded(f"no price is configured for {model!r} — a call cannot be bounded, "
                              f"so it is not made (add it to config.PRICE_PER_MTOK)",
@@ -76,7 +80,7 @@ def call_bound(model: str, system: str, user: str, tool: dict[str, Any],
     pin, pout = PRICE_PER_MTOK[model]
     chars = len(system) + len(user) + len(json.dumps(tool))
     in_tok = chars / CHARS_PER_TOKEN_BOUND
-    return (in_tok * pin * 1.25 + max_tokens * pout) / 1_000_000
+    return (in_tok * pin * (1.25 if cache_write else 1.0) + max_tokens * pout) / 1_000_000
 
 
 def default_run_limit(mode: str) -> float:
@@ -233,7 +237,7 @@ class GuardedClient:
 
         kind = self._guard.classify(tool)
         name = str(tool.get("name", "")).removeprefix("record_")
-        bound = call_bound(self.model, system, user, tool)
+        bound = call_bound(self.model, system, user, tool, cache_write=bool(kw.get("cache")))
         self._guard.check(bound, kind)
         before = self.last_usage
         try:

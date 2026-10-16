@@ -31,6 +31,7 @@ from typing import Any, TypeVar
 
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
+from vinci.theme_intelligence.priority import F8_CONTESTED, F8_OUTWEIGHS, counter_verdict
 from vinci.theme_intelligence.schemas import (
     EXPOSURE_ROLES,
     SECTION_IDS,
@@ -1450,7 +1451,7 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
     exposed = bool(av.sector_exposures) or any(c.listings for c in exposures_of(av)[0])
     if a == "RESEARCH NOW":
         # the inflection route says WHY with its research question (composed by the priority
-        # rules from the claim's structured fields — the same words `report.why_action` shows)
+        # rules from the claim's structured fields)
         f12 = next((x.note for x in pr.factors if x.factor_id == "F12_fundamental_inflection"), "")
         q = re.search(r"research question: (.*?\?)", f12)
         if f.get("F7_dislocation_or_catalyst") != "present" and q:
@@ -1495,6 +1496,13 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
                                           "near-term change in a fundamental."))
     if f.get("F9_premise_in_source", "asserted") != "asserted":
         out.append(f"Premise — {f['F9_premise_in_source'].replace('_', ' ')} in the source.")
+    held = counter_verdict(pr)  # U53: the F8 VALUE the rule applied — never the trace's words
+    if held == F8_CONTESTED:
+        out.append("Counter-evidence — independent sources directly contradict it, at least as "
+                   "many as support it.")
+    elif held == F8_OUTWEIGHS:
+        out.append("Counter-evidence — its own sources' counter-observations outweigh its "
+                   "support.")
     if f.get("F11_retrieval", "FULL") != "FULL":
         out.append("Source — only part of the text was read.")
     if f.get("F10_verification_hold") == "HOLD":

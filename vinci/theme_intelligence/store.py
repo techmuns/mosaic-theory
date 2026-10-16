@@ -213,6 +213,8 @@ class Store:
         #: outside one
         self._memo: dict[str, ArticleVersion | None] | None = None
         self._memo_by_article: dict[str, list[ArticleVersion]] = {}
+        #: views DERIVED from append-only rows inside `reading()` (`derived`, U41)
+        self._derived: dict[Any, Any] = {}
         self.migrate(migrations)
 
     # -- schema ----------------------------------------------------------------------------------
@@ -287,6 +289,15 @@ class Store:
             if not outer:
                 self._memo = None
                 self._memo_by_article.clear()
+                self._derived.clear()
+
+    def derived(self) -> dict[Any, Any] | None:
+        """Inside `reading()`: a memo for a view DERIVED from append-only rows only — written
+        through `_append`, which drops it, as it drops the article versions read (U41: one
+        52-week render derived a version's review findings 1,726 times for 913 versions). It ends
+        with the pass; None outside one. Never for a view over an upserted table (theses, runs,
+        articles, documents, candidates): their writes do not pass through `_append`."""
+        return self._derived if self._memo is not None else None
 
     # -- generic append / upsert -------------------------------------------------------------------
     def _append(self, table: str, cols: dict[str, Any], model: BaseModel) -> bool:
@@ -295,6 +306,7 @@ class Store:
         if self._memo is not None:  # a write inside a read pass: nothing read stays served
             self._memo.clear()
             self._memo_by_article.clear()
+            self._derived.clear()
         payload = _dump(model)
         names = [*cols, "payload"]
         sql = (f"INSERT OR IGNORE INTO {table} ({', '.join(names)}) "
@@ -441,10 +453,6 @@ class Store:
         return self._rows("SELECT payload FROM claims WHERE article_id=? ORDER BY claim_id",
                           [article_id], Claim)
 
-    def claims_by_fingerprint(self, fingerprint: str) -> list[Claim]:
-        return self._rows("SELECT payload FROM claims WHERE fingerprint=? ORDER BY claim_id",
-                          [fingerprint], Claim)
-
     def add_mention(self, m: Mention) -> bool:
         return self._append("mentions", {"mention_id": m.mention_id, "article_id": m.article_id,
                                          "normalized_name": m.normalized_name}, m)
@@ -460,11 +468,6 @@ class Store:
     def add_resolution(self, r: SecurityResolution) -> bool:
         return self._append("security_resolutions", {
             "resolution_id": r.resolution_id, "normalized_name": r.normalized_name}, r)
-
-    def latest_resolution(self, normalized_name: str) -> SecurityResolution | None:
-        rows = self._rows("SELECT payload FROM security_resolutions WHERE normalized_name=?",
-                          [normalized_name], SecurityResolution)
-        return max(rows, key=lambda x: x.resolved_at) if rows else None
 
     # -- theses -----------------------------------------------------------------------------------
     def thesis_key(self, t: Thesis) -> str:

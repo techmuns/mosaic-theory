@@ -72,8 +72,39 @@ BASELINE: frozenset[tuple[str, ...]] = frozenset({
 
 #: JS GENERATED from the python source, not a hand-copied twin: `publish` writes the research
 #: desk's script (vinci/theme_intelligence/desk.py `JS`) into the published folder byte for byte on
-#: every publish, so it cannot drift (pinned equal by tests/test_theme_intelligence_publish.py).
+#: every publish, so it cannot drift — the COMMITTED copy is pinned equal to what the code
+#: generates now (`test_the_committed_desk_script_and_styles_are_what_the_code_generates`, U34);
+#: a tmp publish's copy by tests/test_theme_intelligence_publish.py.
 GENERATED_FROM_PYTHON = ROOT / "frontend" / "theme-intelligence"
+
+
+def _generated_drift(folder: pathlib.Path) -> list[str]:
+    """The generated files under `folder` that differ from what the code generates now."""
+    from vinci.theme_intelligence.publish import app_css, desk_js
+
+    want = {"desk.js": desk_js(), "intel.css": app_css()}
+    return [name for name, text in want.items()
+            if not (folder / name).is_file() or (folder / name).read_text() != text]
+
+
+def test_the_committed_desk_script_and_styles_are_what_the_code_generates() -> None:
+    """THE EXEMPTION'S PREMISE (U34): `GENERATED_FROM_PYTHON` is skipped by the guard below only
+    because it is generated. Pinned on the COMMITTED files, byte for byte — a pin over a tmp
+    publish never sees a hand edit to the committed copy, nor code that moved on without a
+    republish. Red here: republish (`python -m vinci.theme_intelligence publish`), or write
+    `publish.desk_js()` / `publish.app_css()` to the two files."""
+    assert _generated_drift(GENERATED_FROM_PYTHON) == []
+
+
+def test_a_hand_edited_or_missing_generated_file_is_drift(tmp_path: pathlib.Path) -> None:
+    """NEGATIVE: one byte added to a copy of the committed script, and a missing stylesheet,
+    are each caught."""
+    js = (GENERATED_FROM_PYTHON / "desk.js").read_text()
+    (tmp_path / "desk.js").write_text(js + " ")
+    assert _generated_drift(tmp_path) == ["desk.js", "intel.css"]
+    (tmp_path / "desk.js").write_text(js)
+    (tmp_path / "intel.css").write_text((GENERATED_FROM_PYTHON / "intel.css").read_text())
+    assert _generated_drift(tmp_path) == []
 
 
 def _literal_sets(path: pathlib.Path) -> set[frozenset[str]]:
