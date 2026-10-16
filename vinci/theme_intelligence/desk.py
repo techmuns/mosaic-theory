@@ -56,6 +56,7 @@ from vinci.theme_intelligence.cards import (
     foot_html,
     groups_unchecked_note,
     ids_to_audit,
+    market_html,
     proposal_reading,
     proposal_step,
     review_not_run_words,
@@ -448,7 +449,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
     linked = {i.ref_id for i in store.issues() if i.code == "LINKED_REPORT_UPLOAD"}
     rows: dict[str, ArticleRow] = {}
     for r in week.runs:
-        if r.mode in ("reassess", "enrich"):  # a re-grade or an enrichment reads no article
+        if r.mode in ("reassess", "enrich", "market"):  # none of these reads an article
             continue
         reps: dict[str, list[CompletenessReport]] = defaultdict(list)
         for rep in reg.ledger(r.run_id):
@@ -2365,12 +2366,19 @@ class Desk:
                   if mine else "")
         rel = (f'<section class="panel"><h2>Related theses</h2>{related}</section>'
                if related else "")
+        # IS IT PRICED? beside the verdict — display only; the research action never reads it
+        priced = market_html(rc.market, missing=(
+            '<p class="muted">Not computed for this version — prices and filings as of a date, '
+            '$0, no model call.</p>'
+            + self.command_html(f"{CLI} market --as-of {self.run.as_of.isoformat()} "
+                                f"--thesis {tid}")))
         q = (f'<section class="panel sheet q1"><div class="sheetmain"><h2>The thesis</h2>'
              f'{thesis or none}'
              + (f'<h3 class="numh">Key figures</h3><div class="nums">{fig_html}</div>'
                 if fig_html else "")
              + f'<h3 class="numh">What changed</h3>{what}'
              + f'</div>{decide}</section>'
+             + f'<section class="panel mkts"><h2>Is it priced?</h2>{priced}</section>'
              + f'<section class="panel"><h2>Who is exposed</h2>{expo}</section>'
              + f'<div class="grid2">{wrong}{chain}</div>'
              + (f'<div class="grid2">{review}{rel}</div>' if review and rel else review + rel))
@@ -2640,6 +2648,8 @@ class Desk:
 
 
 CSS = THEME_CSS + """
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt .mktl{margin:0 0 4px}.mkt .note{font-size:12.5px;color:var(--muted)}details.mkth{margin:6px 0}
 h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
 h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
 font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}

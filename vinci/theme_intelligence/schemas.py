@@ -21,7 +21,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 6
+DB_SCHEMA_VERSION = 7
 
 
 def _aware(d: datetime | None) -> datetime | None:
@@ -591,6 +591,62 @@ class EnrichmentSet(Frozen):
     refused: tuple[str, ...] = ()  # proposals validation set aside, each with why
     label: Literal["EXTERNAL HYPOTHESIS — not named by the source"] = (
         "EXTERNAL HYPOTHESIS — not named by the source")
+
+
+# --- market context ("is it priced?") ---------------------------------------------------------
+
+#: what every market-context surface says first: evidence for the reader, outside the rules
+MARKET_LABEL = ("MARKET CONTEXT — evidence for your judgement; never read by the research "
+                "action")
+
+
+class MarketFigure(Frozen):
+    """One market figure as of a date — or None and why it is not held. `basis` says how it was
+    measured (its window and dates), or what is missing; never a guessed number."""
+
+    value: float | None
+    basis: str
+
+
+class ExposureMarket(Frozen):
+    """Where one exposure's price stands, as of the context's date: price position (against its
+    200-day average and its 52-week high), its return against the benchmark, its P/E against its
+    own history, and consensus revisions. An index or basket with no traded ticker is named, not
+    priced."""
+
+    name: str
+    ticker: str | None
+    kind: Literal["listed", "fund", "index", "basket"]
+    last_close: float | None
+    last_bar: date | None
+    vs_200d: MarketFigure
+    from_52w_high: MarketFigure
+    rel_3m: MarketFigure
+    rel_12m: MarketFigure
+    pe: MarketFigure
+    pe_percentile: MarketFigure
+    revisions: MarketFigure
+
+
+class MarketContext(Frozen):
+    """"Is it priced?" for ONE thesis version, point in time as of `as_of`: a bar or a filing after
+    it is never read. DISPLAY ONLY (operator, 2026-10-16) — stored apart from the thesis, like an
+    enrichment set; no research-action rule reads it (the isolation test pins the boundary).
+    Append-only; a later pass is a new context."""
+
+    context_id: str
+    thesis_id: str
+    thesis_version: int
+    run_id: str
+    as_of: date
+    created_at: datetime
+    benchmark: str
+    rows: tuple[ExposureMarket, ...]
+    #: where the figures come from, and the price window the plan serves
+    source: str
+    label: Literal["MARKET CONTEXT — evidence for your judgement; never read by the research "
+                   "action"] = ("MARKET CONTEXT — evidence for your judgement; never read by the "
+                                "research action")
 
 
 # --- the nine-section card -------------------------------------------------------------------

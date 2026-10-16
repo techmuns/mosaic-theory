@@ -122,7 +122,7 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
 
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
-MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse")
+MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market")
 
 
 def _no_discovery(mode: str) -> str:
@@ -130,6 +130,8 @@ def _no_discovery(mode: str) -> str:
             "model call)" if mode == "reassess" else
             "none read — an enrichment pass over stored theses (the listed companies each one's "
             "steps imply; one model call per thesis, no article read)" if mode == "enrich" else
+            "none read — market context for stored theses (prices and filings as of the date; "
+            "display only, no model call)" if mode == "market" else
             "none discovered — articles already held, analysed again under the current taxonomy "
             "(re-analysis; their earlier theses retired)" if mode == "reanalyse" else
             "single article (manual URL) — no source discovery")
@@ -730,6 +732,8 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
             retrieval_now[s.article_id] = (f"{vs[-1].retrieval_state.value} (corrected — recorded "
                                            f"FULL at ingestion; the current reader finds only a "
                                            f"preview)")
+    # the latest market context of THIS version (display only), as the registry held it
+    market = store.market_context(t.thesis_id, v.version, until=until)
     # the latest enrichment set for this version or an earlier one, as the registry held it
     sets = [x for x in store.enrichments(t.thesis_id) if x.thesis_version <= v.version
             and (until is None or x.created_at <= until)]
@@ -739,7 +743,8 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
                          priority=v.priority, resolved=resolved, claims=claims,
                          roles={lk.claim_id: lk.role.value for lk in links},
                          groups=groups, groups_unread=unread, carry=vf.carry,
-                         enrichment=sets[-1] if sets else None)
+                         enrichment=sets[-1] if sets else None,
+                         market=market)
 
 
 def thesis_groups(store: Store, links: list[ThesisClaimLink]) -> tuple[NamedGroup, ...]:
