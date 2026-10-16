@@ -148,3 +148,15 @@ def test_two_factors_whose_ranges_only_come_near_are_not_one_split() -> None:
            _pt(date(2019, 8, 31), date(2019, 10, 30), 0.56),
            _pt(date(2019, 8, 31), date(2021, 10, 26), 0.31)]
     assert share_basis_change(pts) is None
+
+
+def test_a_coarse_factor_still_agrees_within_the_old_tolerance() -> None:
+    """REGRESSION (review of #735): the precision gate guards only the range path. A 2-for-1 on
+    small EPS — 0.10 → 0.05 (a range too coarse to state) and 0.20 → 0.10 — is two exact ×2.0
+    factors, and the old 2% rule read it; it must still."""
+    pts = [_pt(date(2022, 12, 31), date(2023, 2, 1), 0.10),
+           _pt(date(2022, 12, 31), date(2024, 2, 1), 0.05),
+           _pt(date(2023, 12, 31), date(2024, 2, 1), 0.20),
+           _pt(date(2023, 12, 31), date(2025, 2, 1), 0.10)]
+    assert _factor_range(0.10, 0.05) is None
+    assert share_basis_change(pts) == pytest.approx(2.0)

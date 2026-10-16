@@ -156,8 +156,8 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
             continue
         by_period.setdefault(p.period_end, []).append(p)
 
-    #: (period end, factor, the factor range its figures allow)
-    factors: list[tuple[date, float, float, float]] = []
+    #: (period end, factor, the factor range its figures allow — None when too coarse to state)
+    factors: list[tuple[date, float, tuple[float, float] | None]] = []
     for end, ps in by_period.items():
         filings = {p.filed for p in ps}
         if len(filings) < 2:
@@ -181,12 +181,18 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
         # own population.
         a, b = max(old), max(new)          # the LARGEST per filing: a multi-concept day cannot
         ratio = max(a / b, b / a)          # pair the wrong two
-        span = _factor_range(a, b)
-        if ratio >= _SPLIT_MIN_FACTOR and span is not None:
-            factors.append((end, ratio, *span))
+        if ratio >= _SPLIT_MIN_FACTOR:
+            factors.append((end, ratio, _factor_range(a, b)))
 
-    def agree(f: tuple[date, float, float, float], g: tuple[date, float, float, float]) -> bool:
-        return abs(g[1] - f[1]) / f[1] <= _SPLIT_TOL or (f[2] <= g[3] and g[2] <= f[3])
+    # THE PRECISION GATE GUARDS ONLY THE NEW PATH: a factor too coarse to state a range never
+    # widens agreement, but it still agrees within `_SPLIT_TOL` as it always did (review: gating
+    # both dropped an exact ×2.0 restated from 0.10 to 0.05 and missed a split the old rule read)
+    def agree(f: tuple[date, float, tuple[float, float] | None],
+              g: tuple[date, float, tuple[float, float] | None]) -> bool:
+        if abs(g[1] - f[1]) / f[1] <= _SPLIT_TOL:
+            return True
+        return f[2] is not None and g[2] is not None and (f[2][0] <= g[2][1]
+                                                          and g[2][0] <= f[2][1])
 
     # THE LATEST BASIS CHANGE FIRST: a series can carry two splits (NFLX's 2015 7-for-1 and its
     # 2025 10-for-1), and the current figures sit on the latest one — the factor a caller locating
