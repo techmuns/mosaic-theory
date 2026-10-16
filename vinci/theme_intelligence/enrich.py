@@ -68,7 +68,7 @@ from vinci.theme_intelligence.schemas import (
     ResolutionStatus,
 )
 from vinci.theme_intelligence.securities import AnnualReport, SecResolver
-from vinci.theme_intelligence.verify import norm_name
+from vinci.theme_intelligence.verify import distinct_listings, norm_name, same_company
 
 PER_SIDE = 4  # at most this many that could benefit, and as many that could be hurt
 
@@ -290,14 +290,6 @@ class EnrichmentResult:
     notes: list[str] = field(default_factory=list)
 
 
-def _same_name(a: str, b: str) -> bool:
-    """One company spelt two ways ("Micron" / "Micron Technology"): one token list leads the
-    other."""
-    x, y = norm_name(a).split(), norm_name(b).split()
-    n = min(len(x), len(y))
-    return n > 0 and x[:n] == y[:n]
-
-
 def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[str],
                   client: ToolClient | None, cache_dir: Path, resolver: SecResolver,
                   as_of: date, run_id: str) -> EnrichmentResult:
@@ -328,7 +320,10 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
         usage = getattr(client, "last_usage", None)
         write_json(path, {"model": model, "prompt_version": ENRICH_PROMPT_VERSION,  # kept FIRST
                           "usage": usage, "output": out}, sort_keys=True, indent=1)
-    named = named_by_source(card)
+    av = card.s05_affected  # every organisation the source names (`named_by_source`), listings too
+    named_l = [(c.name_as_written, c.listings) for grp in (
+        av.companies, av.instruments, av.private_or_unlisted, av.not_securities, av.also_named)
+        for c in grp]
     labels = step_labels(card)
     refused: list[str] = []
     kept: list[EnrichmentCandidate] = []
@@ -342,22 +337,29 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
         sid = str(row.get("step_id") or "").strip()
         direction = {"benefit": Direction.POSITIVE, "hurt": Direction.NEGATIVE}.get(
             str(row.get("direction") or ""))
+        ticker = str(row.get("ticker") or "").strip().upper() or None
+        # a company named like one the source names, or one already proposed: (why, its
+        # listings, its name). With no ticker the names decide; with one, the SEC's verification
+        # does, below — "Meta Materials" is not Meta Platforms (U11), while the pilot's second
+        # "Rockwell" (a wrong ticker, DDAIF) stays a duplicate of Rockwell Automation (ROK)
+        twins = [(w, ls, n) for w, pool in (
+            ("the source already names it", named_l),
+            ("proposed twice", [(k.name, k.listings) for k in kept]))
+            for n, ls in pool if name and same_company(name, n)]
+
         why = ("no name" if not name else
                f"cites {sid or 'no step'}, not one of the card's steps to earnings "
                f"({', '.join(steps)})" if sid not in steps else
                "no direction (benefit or hurt)" if direction is None else
-               "the source already names it" if any(_same_name(name, n) for n in named) else
-               "proposed twice" if any(_same_name(name, k.name) for k in kept) else "")
-        if not why and direction is not None and side_n[direction] >= PER_SIDE:
+               twins[0][0] if twins and ticker is None else "")
+        if not why and direction is not None and not twins and side_n[direction] >= PER_SIDE:
             why = f"more than {PER_SIDE} on one side"
         if why or direction is None:
             # numbered among the objects READ: an item set aside above is not counted
             refused.append(f"{name or f'object {i + 1} of {len(rows)} read'}: {why} — set aside")
             continue
-        side_n[direction] += 1
         business = str(row.get("business") or "").strip()
         exposure = str(row.get("exposure") or "").strip()
-        ticker = str(row.get("ticker") or "").strip().upper() or None
         # the SAME resolution as a source-named company — identity before ticker, point in time.
         # A transient lookup object only: it is never stored as a mention (nothing the source
         # did not name is ever a mention). The identity check reads WHAT THE COMPANY DOES only —
@@ -386,12 +388,26 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
                            and resolver.is_foreign_private_issuer(r.cik, as_of=as_of))
             # the basis is read in the filing of the company the SEC verified — never of a
             # registrant the identity check refused
-            if r.cik and (listings or foreign) and basis_model in BASIS_MODELS:
+            # … and never for a duplicate about to be set aside (verified apart from EVERY
+            # same-named company, or not at all)
+            if r.cik and (listings or foreign) and basis_model in BASIS_MODELS and all(
+                    distinct_listings(listings, tw[1]) for tw in twins):
                 report, rwhy = resolver.annual_report(r.cik, as_of)
         except HttpError as exc:  # the SEC could not be read: the name stays, unverified
             status, listings, registrant = ResolutionStatus.UNRESOLVED, (), None
             rnote = f"the SEC could not be read ({exc}) — not verified"
             rwhy = rnote
+        if twins:
+            same = next((tw for tw in twins if not distinct_listings(listings, tw[1])), None)
+            if same is not None:  # not verified apart: one company
+                refused.append(f"{name}: {same[0]} — set aside")
+                continue
+            rnote = (f"{rnote} — named like {', '.join(tw[2] for tw in twins)}, but the SEC "
+                     f"verifies a different listing ({', '.join(x.ticker for x in listings)})")
+            if side_n[direction] >= PER_SIDE:
+                refused.append(f"{name}: more than {PER_SIDE} on one side — set aside")
+                continue
+        side_n[direction] += 1
         bcheck, bquote, bsource, bnote = check_basis(report, rwhy, basis_model)
         kept.append(EnrichmentCandidate(
             enrichment_id="EC-" + hashlib.sha256(f"{tid}|{version}|{name}".encode())

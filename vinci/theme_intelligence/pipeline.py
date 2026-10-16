@@ -53,6 +53,7 @@ from vinci.theme_intelligence.config import (
     Paths,
     SourceConfig,
     Taxonomy,
+    load_retired_sources,
     retired_for,
 )
 from vinci.theme_intelligence.coverage import SourceRisk, coverage_of, scan_source_risks
@@ -179,6 +180,8 @@ class Pipeline:
         self._calls = 0
         # the deterministic card checks ALWAYS run; `review=False` skips only the pass-2 LLM
         # review, and says so in the validation log rather than passing silently
+        #: the retired channels' publishers, read once (sources.toml does not change mid-run)
+        self._retired_publishers = sorted({r.publisher for r in load_retired_sources()})
         self.engine = Engine(self.store, taxonomy, reviewer=self._review,
                              reliability_of=self._configured_reliability)
         #: article / thesis id -> when this registry FIRST ingested it (state.py fills it for a
@@ -191,7 +194,10 @@ class Pipeline:
 
     # -- runs -----------------------------------------------------------------------------------
     def start_run(self, mode: str, *, as_of: date, window_from: date | None = None,
-                  window_to: date | None = None, run_id: str | None = None) -> WeeklyRun:
+                  window_to: date | None = None, run_id: str | None = None,
+                  budget: float | None = None) -> WeeklyRun:
+        """`budget`: the run's spend limit, set as the run starts (None: the mode's default) — six
+        callers had set it afterwards on the guard's attribute (U57)."""
         now = datetime.now(tz=UTC)
         take_set_aside()  # set aside before this run (a render's read): already warned, not ours
         rid = run_id or f"R-{now.strftime('%Y%m%dT%H%M%SZ')}-{mode}"
@@ -212,7 +218,7 @@ class Pipeline:
             output_dir=str(self.paths.runs / rid))
         self.store.upsert_run(run)
         self.run = run
-        self.guard.start_run(mode)
+        self.guard.start_run(mode, limit=budget)
         return run
 
     def finish_run(self, status: RunStatus, *, error: str | None = None) -> WeeklyRun:
@@ -678,7 +684,10 @@ class Pipeline:
                           destinations=self.engine.destinations,
                           lost=[("pass 1", li) for li in xres.lost]
                           + (comp.lost if comp else []), store=self.store,
-                          risks_found=risks_found, reverified=self.engine.reverified)
+                          risks_found=risks_found, reverified=self.engine.reverified,
+                          publishers=[*{s.publisher for s in self.sources.values()},
+                                      *self._retired_publishers],
+                          own=ctx.article.publisher)
         report = report.model_copy(update={"coverage": cov})
         for alert in cov.alerts:
             self._issue("article", aid, IssueSeverity.WARN, "MECHANISM_COVERAGE", alert)
@@ -939,9 +948,8 @@ class Pipeline:
         """One article — fetched, or an operator-supplied copy (`html`): the manual-upload route
         for a BLOCKED or DEGRADED channel, through the SAME pipeline. An upload never changes the
         channel's health record: one document is not proof the channel's coverage is complete."""
-        self.start_run("article", as_of=as_of, window_from=as_of, window_to=as_of)
-        if budget is not None:
-            self.guard.run_limit = budget
+        self.start_run("article", as_of=as_of, window_from=as_of, window_to=as_of,
+                       budget=budget)
         try:
             res = self.process_url(url, source_id=source_id, as_of=as_of, html=html,
                                    fixture=fixture, publisher_override=publisher,
@@ -993,9 +1001,8 @@ class Pipeline:
         every name checked against the SEC again). One paid call per thesis, through the
         spend guard; a refusal by the run's budget stops the pass, one by a thesis's own limit
         holds that thesis — each said. Returns (run, [(thesis id, what happened)])."""
-        self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of)
-        if budget is not None:
-            self.guard.run_limit = budget
+        self.start_run("enrich", as_of=as_of, window_from=as_of, window_to=as_of,
+                       budget=budget)
         try:
             done, refused = self._enrich_theses(list(thesis_ids or self._active_ids()),
                                                 as_of=as_of, refresh=refresh)
@@ -1026,9 +1033,8 @@ class Pipeline:
 
         Paid like an upload (one extraction, completeness and card reviews per article).
         `fixtures`: extractions by article id, for tests and replays (as `process_document`)."""
-        run = self.start_run("reanalyse", as_of=as_of, window_from=as_of, window_to=as_of)
-        if budget is not None:
-            self.guard.run_limit = budget
+        run = self.start_run("reanalyse", as_of=as_of, window_from=as_of, window_to=as_of,
+                       budget=budget)
         results: list[ArticleResult] = []
         retire = list(dict.fromkeys(retire))  # a thesis named twice is retired once (U10)
         try:
@@ -1252,11 +1258,10 @@ class Pipeline:
                 float(spent_before.get("spent_usd") or 0.0),
                 sum(float(c.get("cost_usd") or 0.0) for c in self.store.llm_calls(prior.run_id)
                     if not c.get("cached")))
-            self.guard.start_run("scan", carried=spent_before)
+            self.guard.start_run("scan", limit=budget, carried=spent_before)
         else:
-            self.start_run("scan", as_of=as_of, window_from=window_from, window_to=window_to)
-        if budget is not None:
-            self.guard.run_limit = budget
+            self.start_run("scan", as_of=as_of, window_from=window_from, window_to=window_to,
+                           budget=budget)
         if resume_run_id and self.run is not None:
             limit = (f"${self.guard.run_limit:,.2f}" if self.guard.run_limit is not None
                      else "no limit set")

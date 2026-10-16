@@ -295,6 +295,27 @@ def _articles(pipe: Pipeline) -> list[Article]:
             pipe.store.conn.execute("SELECT payload FROM articles ORDER BY article_id")]
 
 
+#: the sentences an operator's identity statement is recorded in (`match_basis`): written here,
+#: and read back — for a record from before `DocumentRecord.decision` — by `operator_decision`
+SAID_DUPLICATE = "the operator states it duplicates article "
+SAID_SAME_AS = "the operator states it is article "
+SAID_NEW = "the operator states it is a new article"
+
+
+def operator_decision(d: DocumentRecord) -> tuple[str | None, str | None]:
+    """(the operator's decision, the article it names) for a stored document: its field, or for a
+    record written before the field existed, the one sentence `ingest_file` recorded it in."""
+    if d.decision is not None:
+        return d.decision, d.decision_article
+    basis = d.match_basis or ""
+    if basis == SAID_NEW:
+        return "new", None
+    for kind, said in (("duplicate_of", SAID_DUPLICATE), ("same_as", SAID_SAME_AS)):
+        if basis.startswith(said) and re.fullmatch(r"\S+", basis[len(said):]):
+            return kind, basis[len(said):]
+    return None, None
+
+
 class InactiveSourceError(DocumentError):
     """The named channel is retired or not configured: nothing from it is imported."""
 
@@ -435,9 +456,9 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         held = pipe.store.article(duplicate_of)
         if held is None:
             return finish("REVIEW", f"--duplicate-of {duplicate_of}: no such article")
-        return finish("DUPLICATE", f"the operator states it duplicates article {duplicate_of} "
-                                   f"— no new contribution", duplicate_of,
-                      basis=f"the operator states it duplicates article {duplicate_of}")
+        rec.decision, rec.decision_article = "duplicate_of", duplicate_of
+        return finish("DUPLICATE", f"{SAID_DUPLICATE}{duplicate_of} — no new contribution",
+                      duplicate_of, basis=f"{SAID_DUPLICATE}{duplicate_of}")
     if rereading:
         assert held_art is not None and held_v is not None and prior is not None
         match = Match(RETRY, held_art, (
@@ -449,11 +470,13 @@ def ingest_file(pipe: Pipeline, path: Path, declared: Declared, *, as_of: date |
         held = pipe.store.article(same_as)
         if held is None:
             return finish("REVIEW", f"--same-as {same_as}: no such article")
+        if not declared.via:  # a linked report's same-as is the page's link, not the operator's
+            rec.decision, rec.decision_article = "same_as", same_as
         match = Match(UPGRADE, held, (f"the fuller report article {same_as}'s own page links to"
-                                      if declared.via else
-                                      f"the operator states it is article {same_as}"))
+                                      if declared.via else f"{SAID_SAME_AS}{same_as}"))
     elif force_new:
-        match = Match(NEW, None, "the operator states it is a new article")
+        rec.decision = "new"
+        match = Match(NEW, None, SAID_NEW)
     else:
         match = identify(pipe, read, declared)
     if match.kind == DUPLICATE:

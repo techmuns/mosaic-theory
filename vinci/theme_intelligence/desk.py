@@ -112,7 +112,13 @@ from vinci.theme_intelligence.schemas import (
 )
 from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.timewindow import timing_of, window_of
-from vinci.theme_intelligence.verify import card_sentences, content_words, overlap
+from vinci.theme_intelligence.verify import (
+    card_sentences,
+    content_words,
+    distinct_listings,
+    overlap,
+    same_company,
+)
 
 #: a short DISPLAY name per taxonomy node — the node KEY stays what it is in every record; only
 #: the label a reader sees is short (the long label remains the node's definition)
@@ -1221,14 +1227,15 @@ def exposure_html(av: AffectedView, groups: list[str], groups_unread: int,
     rest = named + [c for c in (*av.private_or_unlisted, *av.instruments)
                     if c.role not in EXPOSURE_ROLES] + list(av.also_named)
     buckets: dict[str, list[str]] = {"up": [], "down": [], "flat": []}
-    seen: dict[str, list[list[str]]] = {"up": [], "down": [], "flat": []}
+    seen: dict[str, list[AffectedCompany]] = {"up": [], "down": [], "flat": []}
     for c in [*exp, *others]:
         side = _lean(c.direction, c.role)
-        # one name spelt two ways in one article ("Zhipu Z.ai", "Zhipu (Z.ai)") is listed once
-        toks = re.findall(r"[a-z0-9]+", c.name_as_written.lower())
-        if any(t[:len(toks)] == toks or toks[:len(t)] == t for t in seen[side]):
+        # one name spelt two ways in one article ("Zhipu Z.ai", "Zhipu (Z.ai)") is listed once —
+        # by the enrichment's own rule (U60a), never two companies the SEC verified apart
+        if any(same_company(c.name_as_written, s.name_as_written)
+               and not distinct_listings(c.listings, s.listings) for s in seen[side]):
             continue
-        seen[side].append(toks)
+        seen[side].append(c)
         role = ("" if side != "flat"
                 else _ROLE_WORD.get(c.role.value, c.role.value.replace("_", " ")))
         buckets[side].append(

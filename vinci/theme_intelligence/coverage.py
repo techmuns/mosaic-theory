@@ -44,6 +44,7 @@ from vinci.theme_intelligence.verify import (
     content_words,
     norm_name,
     overlap,
+    same_company,
     same_sentence_reread,
     sentences,
 )
@@ -73,8 +74,8 @@ _NOT_ORG = frozenset(n.lower() for n in (
     "North Carolina", "South Carolina", "Florida", "Utah", "Oregon", "Washington", "Iowa",
     "Wisconsin", "Michigan", "Tennessee", "Alabama", "Mississippi", "Colorado", "New Mexico",
     "Global", "AI", "EV", "EVs", "ESS",
-    "GW", "MW", "LNG", "The", "This", "These", "That", "Those", "Figure", "Source", "Citi",
-    "Citi Research", *(_MONTHS.split("|"))))
+    "GW", "MW", "LNG", "The", "This", "These", "That", "Those", "Figure", "Source",
+    *(_MONTHS.split("|"))))
 
 
 #: How a SOURCE states a DOWNSIDE to its own argument — read from the verbatim text, never from the
@@ -224,14 +225,20 @@ def coverage_of(*, doc: ParsedDocument, merged: Merged, ve: VerifiedExtraction,
                 report: CompletenessReport, destinations: dict[str, tuple[str, str]],
                 lost: Sequence[tuple[str, LostItem]], store: Store,
                 risks_found: Sequence[SourceRisk] = (),
-                reverified: Sequence[str] = ()) -> MechanismCoverage:
+                reverified: Sequence[str] = (),
+                publishers: Sequence[str] = (), own: str = "") -> MechanismCoverage:
+    """`publishers`: every channel's publisher, active or retired — one CITED as a dated source
+    ("(J.P. Morgan, Oct 2)") is a source, not an unrecorded organisation; `own`: the article's
+    publisher, whose house names ("Citi Research") are never one, in any form (U51: only Citi's
+    names were excused, hard-coded). A publisher named in a LIST ("banks such as Goldman
+    Sachs") may be an exposure, and is still said."""
     page = {b.block_id: b.page for b in doc.blocks}
     text = {b.block_id: b.text for b in doc.blocks}
     return MechanismCoverage(
         propositions=tuple(_propositions(merged, ve, destinations, lost)),
         uncarried=tuple(_uncarried(ve, report, destinations, page, store)),
         risks=tuple(_risks(merged, ve, destinations)),
-        unrecorded_names=tuple(_names(ve, text, store)),
+        unrecorded_names=tuple(_names(ve, text, store, publishers, own)),
         source_risks=tuple(_risk_flags(risks_found, destinations, store)),
         reverified=tuple(reverified))
 
@@ -339,7 +346,8 @@ def _risks(merged: Merged, ve: VerifiedExtraction,
     return out
 
 
-def _names(ve: VerifiedExtraction, text: dict[str, str], store: Store) -> list[str]:
+def _names(ve: VerifiedExtraction, text: dict[str, str], store: Store,
+           publishers: Sequence[str] = (), own: str = "") -> list[str]:
     """Organisations a CITED paragraph names that no mention records."""
     verified = list(ve.verified_claims)
     linked = store.linked_claim_ids([c.claim_id for c in verified])
@@ -358,7 +366,10 @@ def _names(ve: VerifiedExtraction, text: dict[str, str], store: Store) -> list[s
             name = re.split(r"[’']s\b", name)[0].strip(" .")  # "Siemens AG’s US" → "Siemens AG"
             key = norm_name(name)
             if (not name or name.lower() in _NOT_ORG or key in seen or key in recorded
-                    or (len(key) > 3 and key in recorded_words)):
+                    or (len(key) > 3 and key in recorded_words)
+                    or (own and same_company(name, own))
+                    or (how == "a dated source"
+                        and any(same_company(name, p) for p in publishers))):
                 continue
             seen.add(key)
             out.append(f"{name} ({how}, {bid})")

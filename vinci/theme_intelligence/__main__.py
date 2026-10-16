@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import traceback
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -454,9 +455,7 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
                             published=_iso(a.published) if a.published else None,
                             llm_permitted=permitted)
     as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
-    run = pipe.start_run("ingest", as_of=as_of)
-    if a.budget is not None:
-        pipe.guard.run_limit = a.budget
+    run = pipe.start_run("ingest", as_of=as_of, budget=a.budget)
     try:
         res = ingest_file(pipe, path, declared, as_of=as_of, force_new=a.as_new,
                           same_as=a.same_as, duplicate_of=a.duplicate_of,
@@ -466,7 +465,8 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
         print(f"refused: {exc}")
         return 1
     except Exception as exc:  # noqa: BLE001 — recorded FAILED, said plainly, never left RUNNING
-        pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}")
+        pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                f"{traceback.format_exc()[-1500:]}")
         print(f"failed: {type(exc).__name__}: {exc}")
         return 1
     run = pipe.finish_ingest(RunStatus.SUCCEEDED if res.status in (
@@ -499,7 +499,8 @@ def cmd_reask_part(a: argparse.Namespace) -> int:
         print(f"refused — nothing sent: {exc}")
         return 1
     except Exception as exc:  # noqa: BLE001 — recorded FAILED, said plainly
-        pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}")
+        pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
+                                                f"{traceback.format_exc()[-1500:]}")
         print(f"failed: {type(exc).__name__}: {exc}")
         return 1
     run = pipe.finish_ingest(RunStatus.SUCCEEDED)
@@ -531,9 +532,7 @@ def cmd_ingest_inbox(a: argparse.Namespace) -> int:
         return 0
     pipe = _ingest_pipeline(a)
     as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
-    run = pipe.start_run("ingest", as_of=as_of)
-    if a.budget is not None:
-        pipe.guard.run_limit = a.budget
+    run = pipe.start_run("ingest", as_of=as_of, budget=a.budget)
     failed = 0
     for f in files:
         try:

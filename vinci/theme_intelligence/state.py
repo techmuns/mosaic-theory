@@ -356,8 +356,11 @@ def _carry(new: Store, carried: list[tuple[WeeklyRun, list[_CallRow]]],
             for cid, purpose, rec in rows:
                 new.add_llm_call(cid, r.run_id, purpose, rec)
             paid = [rec for _c, _p, rec in rows if not rec.get("cached")]
-            cost = sum(float(rec.get("cost_usd") or 0.0) for rec in paid)
-            out.append(f"  {r.run_id} [{r.mode}]: {len(paid)} paid call(s), ${cost:.4f}")
+            cost = sum(float(rec["cost_usd"]) for rec in paid if rec.get("cost_usd") is not None)
+            # an unpriced paid call is UNKNOWN, never $0 (U37)
+            unpriced = sum(1 for rec in paid if rec.get("cost_usd") is None)
+            out.append(f"  {r.run_id} [{r.mode}]: {len(paid)} paid call(s), ${cost:.4f}"
+                       + (f" + {unpriced} UNPRICED (cost UNKNOWN)" if unpriced else ""))
     return [f"carried {len(carried)} run(s) the branch lacks — run id, times, cost and every "
             f"call record unchanged:", *out]
 
@@ -394,7 +397,7 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
             ) -> tuple[list[str], list[DocumentRecord]]:
     """The replay's lines, and the documents it could NOT replay (kept for the next pull)."""
     from vinci.theme_intelligence.documents import Declared
-    from vinci.theme_intelligence.ingest import ingest_file
+    from vinci.theme_intelligence.ingest import ingest_file, operator_decision
 
     lines: list[str] = []
     not_replayed: list[DocumentRecord] = []
@@ -425,14 +428,15 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                 continue
             dec = d.declared
             declared = Declared.recorded(d.source_id, dec)
-            basis = d.match_basis or ""
-            m = re.match(r"the operator states it is article (\S+)$", basis)
-            same_as = m.group(1) if m else (d.article_id if dec.get("via") else None)
-            dup = re.match(r"the operator states it duplicates article (\S+)$", basis)
+            # the operator's decision as a stored VALUE (U33: a reword of its sentence made the
+            # replay re-identify the document, silently)
+            kind, named = operator_decision(d)
+            same_as = (named if kind == "same_as"
+                       else d.article_id if dec.get("via") else None)
             try:
                 out = ingest_file(pipe, src, declared, as_of=as_of, same_as=same_as,
-                                  duplicate_of=dup.group(1) if dup else None,
-                                  force_new=basis == "the operator states it is a new article",
+                                  duplicate_of=named if kind == "duplicate_of" else None,
+                                  force_new=kind == "new",
                                   # a cost the operator already accepted is not asked again
                                   max_cost=float("inf") if d.status in ("INGESTED", "UPGRADED")
                                   else None,
@@ -447,7 +451,8 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                          + (f" (was {d.status})" if out.status != d.status else ""))
         # ended as the uploads it replays were: a SKIP thesis it re-creates leaves the active list
         run = pipe.finish_ingest(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
-        paid = (f"; it paid ${run.cost_usd:.4f} anew (answers not in this machine's cache)"
+        paid = ("; its cost is UNKNOWN — a paid call carries no price" if run.cost_usd is None
+                else f"; it paid ${run.cost_usd:.4f} anew (answers not in this machine's cache)"
                 if run.cost_usd else "; every model answer from the cache, $0")
         lines += [f"replay run {run.run_id} (as of {as_of}) of "
                   f"{', '.join(run.replay_of) or 'no recorded run'}{paid}:", *group]

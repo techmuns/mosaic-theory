@@ -34,8 +34,8 @@ code=${PIPESTATUS[0]}
 qa=${PIPESTATUS[0]}
 set -e
 
-if [ "$qa" -ne 0 ] && [ "$code" -eq 0 ]; then
-  code=1
+if [ "$qa" -ne 0 ]; then
+  code=1  # QA did not pass: FAILED, whatever the scan said (a PARTIAL scan exited 2 — U31c)
 fi
 echo "$(stamp) end scan_exit=$code qa_exit=$qa" >> "$LOG"
 exit "$code"
