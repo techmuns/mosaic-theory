@@ -608,6 +608,9 @@ class MarketFigure(Frozen):
     basis: str
     #: a short structured suffix shown beside the value (revisions: "21↑ 2↓"), never parsed
     detail: str = ""
+    #: when not held, why — the cause alone, for a caller that cites it (never parsed out of
+    #: `basis`)
+    why: str = ""
 
 
 class ExposureMarket(Frozen):

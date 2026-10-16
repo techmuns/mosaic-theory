@@ -9,8 +9,10 @@ the names the count takes) — where each price stands AS OF a date:
 - RETURN AGAINST THE BENCHMARK (SPY) over 3 and 12 months — the fund's
   `vinci.eod.features.relative_return`: both legs end on their common last bar;
 - P/E AGAINST ITS OWN HISTORY — the fund's `vinci.screens.assemble.pe_current_and_percentile`: only
-  annual diluted EPS filed on or before each day. Over the price history the plan serves (two
-  years: Polygon, 2026-10-16), whose dates are stated beside every value;
+  annual diluted EPS filed on or before each day. FIVE YEARS where it can be built: Tiingo's raw
+  closes and split factors before Polygon's two years (`deep_history`), rebased onto Polygon's
+  prices over their overlap and refused when the two disagree; else the two years Polygon serves.
+  The window is stated beside every value;
 - CONSENSUS REVISIONS — the next fiscal year's EPS consensus over 3 months, and how many analysts
   revised up and down, from the fund's committed dossiers (`data/dossiers/<TICKER>/dossier.json`,
   its CIQ Estimates export: the fund's dossier names only). Point in time: only when the export
@@ -38,7 +40,11 @@ from vinci.dossier.schemas import ForwardConsensus
 from vinci.edgar.concepts import ConceptPoint
 from vinci.eod.features import relative_return
 from vinci.schemas.market import PriceBar
-from vinci.screens.assemble import MAX_EPS_AGE_DAYS, pe_current_and_percentile
+from vinci.screens.assemble import (
+    MAX_EPS_AGE_DAYS,
+    annual_eps_point_as_of,
+    pe_current_and_percentile,
+)
 from vinci.theme_intelligence.cards import exposure_instruments, listed_exposures
 from vinci.theme_intelligence.schemas import (
     AffectedView,
@@ -77,6 +83,19 @@ REVISIONS_STALE_DAYS = 31
 REVISION_METRICS = ("EPS Normalized", "EPS (GAAP)")
 #: a cik for a ticker (the SEC's ticker map), for the companies the thesis implies
 CikOf = Callable[[str], str | None]
+#: (date, RAW close, split factor) of one ticker — Tiingo's daily rows; None: not fetched this run
+DeepRow = tuple[date, float, float]
+DeepSource = Callable[[str, date, date], list[DeepRow] | None]
+#: Tiingo's free plan allows 50 requests an hour (tiingo.com/about/pricing, 2026-10-16): a run
+#: fetches at most this many histories it does not already hold; the rest wait for a later run
+TIINGO_PER_RUN = 45
+#: before Tiingo's history is joined to Polygon's, the two must agree over an overlap of at least
+#: OVERLAP_MIN_DAYS trading days, every day's price ratio within OVERLAP_TOLERANCE of the median —
+#: the join is a check, not a splice
+OVERLAP_MIN_DAYS = 20
+OVERLAP_TOLERANCE = 0.005
+#: the overlap requested: the Tiingo span runs this far past Polygon's first close
+OVERLAP_CALENDAR_DAYS = 60
 #: a one-day close-to-close move at least this size (up) or this size (down) is the size of a
 #: share split — a 3-for-2 either way. The prices are split-ADJUSTED, so a real split never shows;
 #: a move this size is either real news or an adjustment the source missed, and the row says so
@@ -96,16 +115,148 @@ def polygon_prices() -> PriceSource:
     return get
 
 
+def tiingo_deep(cache_dir: Path, *, budget: int = TIINGO_PER_RUN) -> DeepSource:
+    """Tiingo daily rows — RAW closes and split factors, never its dividend-adjusted close (a P/E
+    divides a price by an as-filed EPS; a dividend adjustment would lower every older price). The
+    key travels in a header (never in a URL, the cache or a log). A span is quarter-aligned and in
+    the past, so it is cached for good; at most `budget` spans not already held are requested."""
+    from vinci.config import require_env, sec_user_agent
+    from vinci.netcache import CachedHttp
+
+    http = CachedHttp(cache_dir=cache_dir, user_agent=sec_user_agent(), min_interval_sec=1.0,
+                      namespace="tiingo",
+                      extra_headers={"Authorization": f"Token {require_env('TIINGO_API_KEY')}"})
+    spent = [0]
+
+    def get(symbol: str, start: date, end: date) -> list[DeepRow] | None:
+        # Tiingo spells a share class with a hyphen (brk-b), where Polygon and the SEC use a dot
+        url = f"https://api.tiingo.com/tiingo/daily/{symbol.lower().replace('.', '-')}/prices"
+        params = {"startDate": start.isoformat(), "endDate": end.isoformat(), "format": "json"}
+        if http.fetched_at(url, params=params) is None:
+            if spent[0] >= budget:
+                return None
+            spent[0] += 1
+        rows = http.get_json(url, ttl_seconds=None, params=params)
+        return [(date.fromisoformat(str(r["date"])[:10]), float(r["close"]),
+                 float(r.get("splitFactor") or 1.0)) for r in rows]
+    return get
+
+
+def _quarter_start(d: date) -> date:
+    return date(d.year, 3 * ((d.month - 1) // 3) + 1, 1)
+
+
+def _quarter_end(d: date) -> date:
+    q = _quarter_start(d)
+    nxt = date(q.year + (q.month == 10), 1 if q.month == 10 else q.month + 3, 1)
+    return nxt - timedelta(days=1)
+
+
+def split_adjusted(rows: Sequence[DeepRow]) -> Closes:
+    """Raw closes on the share basis of the LAST row: a close before a split is divided by every
+    split factor after it (a split's own day already trades on the new basis)."""
+    out: Closes = []
+    factor = 1.0
+    for d, close, split in sorted(rows, reverse=True):
+        out.append((d, close / factor))
+        factor *= split if split > 0 else 1.0
+    return out[::-1]
+
+
+def deep_history(ticker: str, recent: Closes, as_of: date,
+                 deep: DeepSource) -> tuple[Closes | None, str]:
+    """(five years of closes to the date, on Polygon's basis, and how they were joined) — or
+    (None, why). Tiingo's split-adjusted closes before Polygon's first are rebased by the median
+    price ratio over the overlap, and REFUSED unless every overlapping day agrees within
+    `OVERLAP_TOLERANCE` (a split inside the overlap, or two sources that disagree)."""
+    held = _held(recent, as_of)
+    if not held:
+        return None, "no recent closes to join"
+    need = as_of - timedelta(days=HISTORY_DAYS)
+    if (held[0][0] - need).days <= WINDOW_SLACK_DAYS:
+        return held, "the recent prices already cover five years"
+    end = min(_quarter_end(held[0][0] + timedelta(days=OVERLAP_CALENDAR_DAYS)), as_of)
+    rows = deep(ticker, _quarter_start(need), end)
+    if rows is None:
+        return None, ("not fetched this run — Tiingo's free plan allows 50 requests an hour; a "
+                      "later run fetches it")
+    adj = split_adjusted([r for r in rows if r[0] <= end and r[1] > 0])
+    poly = dict(held)
+    ratios = sorted(poly[d] / c for d, c in adj if d in poly)
+    if len(ratios) < OVERLAP_MIN_DAYS:
+        return None, (f"Tiingo and Polygon overlap on {len(ratios)} day(s) — {OVERLAP_MIN_DAYS} "
+                      f"are needed to check the join")
+    med = ratios[len(ratios) // 2]
+    if max(abs(r / med - 1) for r in ratios) > OVERLAP_TOLERANCE:
+        return None, (f"Tiingo and Polygon disagree over their {len(ratios)}-day overlap "
+                      f"(price ratios {ratios[0]:.4f} to {ratios[-1]:.4f}) — not joined")
+    early = [(d, c * med) for d, c in adj if need - timedelta(days=WINDOW_SLACK_DAYS) <= d
+             < held[0][0]]
+    if not early or (early[0][0] - need).days > WINDOW_SLACK_DAYS:
+        return None, f"Tiingo holds no closes for {ticker} from {need.isoformat()}"
+    return early + held, (f"Tiingo split-adjusted closes {early[0][0].isoformat()} to "
+                          f"{early[-1][0].isoformat()}, rebased onto Polygon's over "
+                          f"{len(ratios)} overlapping days (ratio {med:.4f}); Polygon from "
+                          f"{held[0][0].isoformat()}")
+
+
 def edgar_eps() -> EpsSource:
-    """Annual diluted EPS from SEC XBRL companyfacts (the fund's client and concept reader)."""
+    """Annual diluted EPS from SEC XBRL companyfacts (the fund's client and concept reader), with
+    the cover-page share counts from the same response (concept "shares") — the per-share basis
+    check reads them."""
     from vinci.edgar.client import EdgarClient
     from vinci.edgar.concepts import extract_points
 
     edgar = EdgarClient.from_config()
 
     def get(cik: str) -> list[ConceptPoint]:
-        return [p for p in extract_points(edgar.companyfacts(cik), "eps_diluted") if p.is_annual]
+        facts = edgar.companyfacts(cik)
+        return ([p for p in extract_points(facts, "eps_diluted") if p.is_annual]
+                + extract_points(facts, "shares"))
     return get
+
+
+#: a per-share figure restated by this factor or more (either way), or a share count that moves by
+#: it between two cover pages, is a change of per-share BASIS — a split, or an issuance or
+#: correction that size. Far above cents rounding: the fund's split test needs two restated
+#: periods to agree within 2%, and NVDA's 10-for-1 (FY2023 1.74 → 0.17 is ×10.24, FY2024 11.93 →
+#: 1.19 is ×10.03) missed it by 0.05% (2026-10-16)
+BASIS_BREAK = 1.5
+
+
+BreakKind = Literal["eps", "shares"]
+
+
+def basis_breaks(points: Sequence[ConceptPoint], since: date,
+                 as_of: date) -> list[tuple[BreakKind, str]]:
+    """Every change of per-share basis the filings known by `as_of` show after `since`, as (kind,
+    words): an annual EPS period a later filing restated by `BASIS_BREAK` or more ("eps"), and a
+    share count that moved by it between consecutive cover pages ("shares"). Callers branch on the
+    KIND, never on the words."""
+    known = [p for p in points if p.filed <= as_of]
+    out: list[tuple[BreakKind, str]] = []
+    by: dict[date, list[ConceptPoint]] = {}
+    for p in known:
+        if p.concept != "shares" and p.is_annual and p.period_end >= since:
+            by.setdefault(p.period_end, []).append(p)
+    for end, ps in sorted(by.items()):
+        filed = sorted({p.filed for p in ps})
+        if len(filed) < 2:
+            continue
+        a = max(abs(p.value) for p in ps if p.filed == filed[0])
+        b = max(abs(p.value) for p in ps if p.filed == filed[-1])
+        if a and b and max(a / b, b / a) >= BASIS_BREAK:
+            out.append(("eps", f"the year ending {end.isoformat()}: EPS {a:g} as first filed, "
+                               f"{b:g} as filed {filed[-1].isoformat()} "
+                               f"(×{max(a / b, b / a):.1f})"))
+    shares = sorted({(p.period_end, p.value) for p in known
+                     if p.concept == "shares" and p.value > 0})
+    for (d0, v0), (d1, v1) in zip(shares, shares[1:], strict=False):
+        if d1 >= since and max(v1 / v0, v0 / v1) >= BASIS_BREAK:
+            out.append(("shares", f"shares outstanding {v0:,.0f} on {d0.isoformat()}, "
+                                  f"{v1:,.0f} on {d1.isoformat()} "
+                                  f"(×{max(v1 / v0, v0 / v1):.1f})"))
+    return out
 
 
 def _held(closes: Closes, as_of: date) -> Closes:
@@ -114,7 +265,7 @@ def _held(closes: Closes, as_of: date) -> Closes:
 
 
 def _not_held(why: str) -> MarketFigure:
-    return MarketFigure(value=None, basis=f"not held — {why}")
+    return MarketFigure(value=None, basis=f"not held — {why}", why=why)
 
 
 def _fresh(held: Closes, as_of: date) -> tuple[date, float] | None:
@@ -182,8 +333,37 @@ def against(name: Closes, bench: Closes, as_of: date, days: int, ticker: str) ->
     return MarketFigure(value=df.value, basis=df.note or "")
 
 
+def pe_five_or_two(closes: Closes, eps: list[ConceptPoint], as_of: date, ticker: str,
+                   deep: DeepSource | None,
+                   errors: list[str] | None = None) -> tuple[MarketFigure, MarketFigure]:
+    """The P/E and its percentile over FIVE years when they can be joined and the fund's rule
+    accepts the range (it refuses one a share-basis change runs through); else over the two years
+    Polygon serves — and the percentile says which, and why five were not used. A failed Tiingo
+    request is said as that (and added to `errors`), never as a missing key."""
+    if deep is None:
+        why = "five years not held — no Tiingo key configured"
+    else:
+        try:
+            five, how = deep_history(ticker, closes, as_of, deep)
+        except Exception as exc:  # noqa: BLE001 — a failed request is said, never filled
+            if errors is not None:
+                errors.append(f"{ticker}: Tiingo history failed — {type(exc).__name__}: "
+                              f"{str(exc)[:120]}")
+            five, how = None, f"the Tiingo request failed ({type(exc).__name__})"
+        if five is not None:
+            pe5, pct5 = pe_against_history(five, eps, as_of, ticker, joined=how)
+            if pct5.value is not None:
+                return pe5, pct5.model_copy(update={"detail": "5y"})
+            why = f"five years not used — {pct5.why}"
+        else:
+            why = f"five years not held — {how}"
+    pe, pct = pe_against_history(closes, eps, as_of, ticker)
+    return pe, pct.model_copy(update={"basis": f"{pct.basis}; {why}",
+                                      "detail": "2y" if pct.value is not None else ""})
+
+
 def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
-                       ticker: str) -> tuple[MarketFigure, MarketFigure]:
+                       ticker: str, *, joined: str = "") -> tuple[MarketFigure, MarketFigure]:
     """(P/E, its percentile among its own daily P/Es over the prices held) — the fund's
     `pe_current_and_percentile`, which reads only EPS filed by each day. The window stated is the
     one the prices cover, never the helper's nominal five years."""
@@ -197,15 +377,32 @@ def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
     # close less the reach-back — a 2022 split refused AMZN's and GOOGL's two-year range
     # (2026-10-16) though no observation in it divides across the split.
     consumed = held[0][0] - timedelta(days=MAX_EPS_AGE_DAYS)
+    annual = [p for p in eps if p.concept != "shares"]
     pe, pct = pe_current_and_percentile(_bars(ticker, held),
-                                        [p for p in eps if p.period_end >= consumed],
+                                        [p for p in annual if p.period_end >= consumed],
                                         reference_date=as_of)
     pe_f = (MarketFigure(value=pe.value, basis=pe.note or "") if pe.value is not None
             else _not_held(pe.note or "no P/E"))
+    # THE PER-SHARE BASIS, checked here as well as by the fund's rule (which missed NVDA): a range
+    # through a basis change divides adjusted prices by as-filed EPS on the old basis; and a share
+    # count that moved after the EPS in use was filed leaves even today's P/E on a stale basis
+    latest = annual_eps_point_as_of(annual, as_of)
+    if latest is not None and pe.value is not None:
+        after = basis_breaks(eps, latest.filed + timedelta(days=1), as_of)
+        moved = [words for kind, words in after if kind == "shares"]
+        if moved:
+            pe_f = _not_held(f"the share count moved after the EPS in use was filed "
+                             f"({latest.filed.isoformat()}) — {moved[0]}: its per-share basis "
+                             f"may predate the move")
+    breaks = basis_breaks(eps, consumed, as_of)
+    if pct.value is not None and breaks:
+        return pe_f, _not_held(f"the per-share basis changes inside the window — {breaks[0][1]}"
+                               + (f" (and {len(breaks) - 1} more)" if len(breaks) > 1 else ""))
     first = max(held[0][0], as_of - timedelta(days=HISTORY_DAYS))
     pct_f = (MarketFigure(value=pct.value,
                           basis=f"share of its daily P/Es from {first.isoformat()} to "
-                                f"{as_of.isoformat()} (the prices held) at or below today's")
+                                f"{as_of.isoformat()} at or below today's ("
+                                + (joined or "the prices held") + ")")
              if pct.value is not None else _not_held(pct.note or "no P/E history"))
     return pe_f, pct_f
 
@@ -289,7 +486,8 @@ def _revisions(ticker: str, lines: Sequence[str], as_of: date, dossiers: Path) -
 
 def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: date,
          bench: Closes | None, prices: PriceSource, eps: EpsSource, dossiers: Path,
-         errors: list[str], lines: Sequence[str] = ()) -> ExposureMarket:
+         deep: DeepSource | None, errors: list[str],
+         lines: Sequence[str] = ()) -> ExposureMarket:
     if ticker is None:
         why = _not_held(f"{'an index' if kind == 'index' else 'a basket'} with no traded ticker "
                         f"named by the source — not priced")
@@ -328,7 +526,7 @@ def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: d
                           f"{str(exc)[:120]}")
             pe = pct = _not_held("SEC companyfacts could not be read")
         else:
-            pe, pct = pe_against_history(closes, points, as_of, ticker)
+            pe, pct = pe_five_or_two(closes, points, as_of, ticker, deep, errors)
     return ExposureMarket(
         name=name, ticker=ticker, kind=kind,
         last_close=last[1] if last else None, last_bar=last[0] if last else None,
@@ -340,7 +538,8 @@ def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: d
 def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: str, as_of: date,
                    prices: PriceSource, eps: EpsSource,
                    hypotheses: Sequence[EnrichmentCandidate] = (), cik_of: CikOf | None = None,
-                   dossiers: Path = DOSSIERS) -> tuple[MarketContext, list[str]]:
+                   dossiers: Path = DOSSIERS, deep: DeepSource | None = None
+                   ) -> tuple[MarketContext, list[str]]:
     """The market context of one thesis version as of `as_of`, and the requests that failed
     (each said on its row as well). Every exposure the count takes is a row, in the card's order:
     listed companies, then the instruments. `hypotheses`: the companies the thesis implies (the
@@ -356,7 +555,7 @@ def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: st
     def row(name: str, ticker: str | None, kind: Kind, cik: str | None,
             lines: Sequence[str] = ()) -> ExposureMarket:
         return _row(name, ticker, kind, cik, as_of=as_of, bench=bench, prices=prices, eps=eps,
-                    dossiers=dossiers, errors=errors, lines=lines)
+                    dossiers=dossiers, deep=deep, errors=errors, lines=lines)
 
     rows = [row(c.name_as_written, _ticker(c.listings), "listed", c.cik, _lines(c.listings))
             for c in listed_exposures(av)]
@@ -382,6 +581,8 @@ def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: st
     return MarketContext(
         context_id=cid, thesis_id=thesis_id, thesis_version=version, run_id=run_id, as_of=as_of,
         created_at=now, benchmark=BENCHMARK, rows=tuple(rows), hypotheses=tuple(implied),
-        source=(f"Polygon daily bars, split-adjusted closes ({window}); SEC XBRL annual diluted "
-                f"EPS filed on or before each day; consensus revisions from the fund's CIQ "
-                f"dossiers")), errors
+        source=(f"Polygon daily bars, split-adjusted closes ({window})"
+                + ("; Tiingo raw closes and split factors before them, for five years of P/E"
+                   if deep is not None else "")
+                + "; SEC XBRL annual diluted EPS filed on or before each day; consensus "
+                  "revisions from the fund's CIQ dossiers")), errors
