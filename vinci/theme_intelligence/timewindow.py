@@ -79,6 +79,13 @@ _YY = r"'?(\d{4}|\d{2})"
 def _years(tok: str) -> int:
     return _YEARS[tok] if tok in _YEARS else int(tok)
 _MONTH_RE = "|".join(sorted(_MONTHS, key=len, reverse=True))
+#: a NEXT-TWELVE-MONTHS figure (an NTM margin, a forward-12-month estimate) — one definition for
+#: `window_of` and `timing_of`
+_NTM_WORDS = (r"ntm|next\s+(?:twelve|12)\s+months|(?:twelve|12)[- ]months?\s+(?:forward|ahead)|"
+              r"forward\s+(?:twelve|12)[- ]months?")
+NTM = re.compile(rf"\b(?:{_NTM_WORDS})\b", re.I)
+#: a period this short names WHEN a figure was read ("At Feb '26"), not the window it covers
+READING_DATE_DAYS = 31
 
 
 def _norm(s: str) -> str:
@@ -148,8 +155,7 @@ def window_of(text: str | None, ref: date, *, source_date: date | None = None) -
     take(rf"\bsince\s+((?:the\s+)?(?:start|beginning)\s+of\s+|(?:early|mid|late)[- ]?)?"
          rf"(?:({_MONTH_RE})\.?\s+)?((?:19|20)\d{{2}})\b"
          rf"(?!\s*(?:-|to|through|thru|until)\b)", _since)
-    take(r"\b(ntm|next\s+(?:twelve|12)\s+months|(?:twelve|12)[- ]months?\s+(?:forward|ahead)|"
-         r"forward\s+(?:twelve|12)[- ]months?|coming\s+year|year\s+ahead)\b",
+    take(rf"\b({_NTM_WORDS}|coming\s+year|year\s+ahead)\b",
          lambda m: (ref, ref + timedelta(days=365)))
     # N quarters are N fourths of a year: "next four quarters" is the next 12 months (92 days a
     # quarter made it 368, past the 366-day near-term bound)
@@ -242,6 +248,29 @@ def straddles(w: Window, ref: date) -> bool:
     return w.end > horizon and 2 * inside > (w.end - w.start).days + 1
 
 
+def ntm_window(c: Claim, w: Window | None, published: date | None) -> Window | None:
+    """The window of a NEXT-TWELVE-MONTHS forecast: the twelve months after the figure was READ —
+    never the run's as-of, and never the reading date's own month. 2026-10-16: "NTM net margin …
+    At Feb '26" was dated as a one-month forecast window, February 2026 (the period held the
+    reading date); and a period of bare "NTM" was anchored to the run's date, so the same stored
+    figure moved forward on every later reassessment.
+
+    The reading date: the claim's measurement date, else a period that names a single day or month
+    (`READING_DATE_DAYS`), else the source's date. None — the window stands as read — when the
+    claim names no NTM measure, when its period names a longer window of its own ("2027"), or
+    when no reading date is known."""
+    if not any(NTM.search(x or "") for x in (c.period, c.metric, c.quote)):
+        return None
+    short = w is not None and (w.end - w.start).days < READING_DATE_DAYS
+    if w is not None and not short and not NTM.search(c.period or ""):
+        return None  # the period names the figure's own window
+    read = c.measured_as_of or (w.start if short and w is not None else None) or published
+    if read is None:
+        return None
+    return Window(read, read + timedelta(days=365),
+                  f"NTM from {read.isoformat()} — the twelve months after the figure was read")
+
+
 def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     """(near_term | straddling | long_range | current | historical | undated, a note naming the
     window)."""
@@ -249,6 +278,8 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     w = window_of(c.period, ref, source_date=published)
     if w is None and (forward or c.kind is ClaimKind.EVENT):
         w = window_of(c.quote, ref, source_date=published)
+    if forward and (n := ntm_window(c, w, published)) is not None:
+        w = n
     if forward:
         if w is None:
             fq = FISCAL_QUARTER.search(c.period or "") or FISCAL_QUARTER.search(c.quote or "")
