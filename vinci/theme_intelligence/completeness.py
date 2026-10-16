@@ -140,6 +140,28 @@ def _sentence_at(text: str, pos: int) -> str:
     return text[start:].strip()
 
 
+#: Capitalised words that are never part of a NAME — a sentence-initial quantifier or function
+#: word: "Just 9 of those", "Another 16 were", "These 9 companies", "The 25–44 age cohort" (U19:
+#: the pilot's text hid such figures as names; "Nearly 300 companies" in the lead)
+_NOT_A_NAME = frozenset({
+    "a", "about", "across", "after", "all", "almost", "also", "among", "an", "and", "another",
+    "approximately", "around", "at", "before", "between", "both", "but", "by", "each", "every",
+    "fewer", "for", "from", "in", "just", "least", "less", "many", "more", "most", "nearly",
+    "of", "on", "only", "or", "over", "roughly", "several", "since", "some", "than", "the",
+    "these", "those", "through", "to", "under", "until", "up", "with"})
+
+
+_MONTH_NAMES = ("january", "february", "march", "april", "june", "july", "august", "september",
+                "october", "november", "december")
+
+
+def _cut_month(after: str) -> bool:
+    """A month name a PDF cut short, then a year ("Septemb 2026"): the word must BEGIN a month's
+    name — "marketing 2026" and "decades 2026" are no dates."""
+    m = re.match(r"^\s*([a-z]{3,9})\.?\s+(?:19|20)\d{2}\b", after, re.I)
+    return m is not None and any(n.startswith(m.group(1).lower()) for n in _MONTH_NAMES)
+
+
 def _skip_number(text: str, m: re.Match[str]) -> bool:
     num, unit, cur = m.group("num"), m.group("unit"), m.group("cur")
     if text[max(0, m.start("num") - 5):m.start("num")].lower() == "(cid:":
@@ -158,10 +180,12 @@ def _skip_number(text: str, m: re.Match[str]) -> bool:
     if _TENOR.match(after) or re.match(r"^:\d", after):
         return True  # "200-day", "10-year", a clock time
     if re.search(rf"\b(?:{_MONTHS})\.?$", before, re.I) or \
-            re.match(rf"^\s*(?:{_MONTHS})\b", after, re.I):
-        return True  # a day of a month
+            re.match(rf"^\s*(?:{_MONTHS})\b", after, re.I) or \
+            _cut_month(after):
+        return True  # a day of a month — a month word a PDF cut short too ("14 Septemb 2026")
     prev = re.search(r"([A-Za-z&][\w&.'-]*)[\s-]?$", before)
-    if prev and (prev.group(1)[0].isupper() or "&" in prev.group(1)) and "." not in num:
+    if prev and (prev.group(1)[0].isupper() or "&" in prev.group(1)) and "." not in num \
+            and prev.group(1).lower() not in _NOT_A_NAME:
         return True  # part of a name: "S&P 500", "Mag 7", "Russell 2000", "GPT-5"
     if before.endswith("(") and after.startswith(")") and len(num) <= 2:
         return True  # an inline enumeration marker: "demand (1) registration …, (2) …"
@@ -224,8 +248,10 @@ def _figure_re(core: str) -> re.Pattern[str]:
 
 def quote_covers(quote: str, core: str) -> bool:
     q = norm_text(quote).lower()
-    if not re.search(r"\d", core):  # a counted period in words: every word must be there
-        return all(w in q for w in core.split() if w not in ("more", "straight", "consecutive"))
+    if not re.search(r"\d", core):  # a counted period in words: every WORD must be there —
+        # "ten" is never found inside "content" (U19)
+        return all(re.search(rf"\b{re.escape(w)}\b", q) for w in core.split()
+                   if w not in ("more", "straight", "consecutive"))
     return _figure_re(core).search(q) is not None
 
 

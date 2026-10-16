@@ -133,11 +133,22 @@ from vinci.theme_intelligence.verify import (
     same_sentence_reread,
 )
 
-_GEO = {"us": "US", "u.s.": "US", "united states": "US", "usa": "US", "america": "US",
-        "global": "Global", "worldwide": "Global", "world": "Global", "china": "China",
-        "europe": "Europe", "eu": "Europe", "japan": "Japan", "asia": "APAC", "apac": "APAC",
-        "asia pacific": "APAC", "taiwan": "Taiwan", "korea": "Korea", "south korea": "Korea",
-        "india": "India", "uk": "UK", "united kingdom": "UK"}
+#: ONE vocabulary of place names (U48: the identity key and the overlap test had two, and
+#: disagreed) — `norm_geo` keys a thesis by it, `geographies_overlap` reads it
+_GEO = {"us": "US", "u.s.": "US", "u.s": "US", "united states": "US", "usa": "US",
+        "america": "US", "global": "Global", "worldwide": "Global", "world": "Global",
+        "china": "China", "europe": "Europe", "eu": "Europe", "japan": "Japan", "asia": "APAC",
+        "apac": "APAC", "asia pacific": "APAC", "taiwan": "Taiwan", "korea": "Korea",
+        "south korea": "Korea", "india": "India", "uk": "UK", "united kingdom": "UK",
+        "latin america": "Latin America", "south america": "Latin America",
+        "central america": "Latin America"}
+#: names inside a region: they overlap it, but a thesis about them keeps its own key
+_PART_OF = {"north america": "US", "texas": "US"}
+#: "Global ex-US", "Asia excluding Japan": what follows is LEFT OUT of the place
+_EXCLUDING = re.compile(r"\s*(?:\bex\b[-\s.]*|\bexcluding\b|\bexcept\b)\s*", re.I)
+#: "(esp. Texas)", "(led by …)": an emphasis inside the place, never another place
+_EMPHASIS = re.compile(r"\s*\((?:esp\.?|especially|notably|mainly|primarily|led by|"
+                       r"incl\.?|including)\b[^)]*\)", re.I)
 _STANCE_RANK = {StanceInSource.ASSERTED: 3, StanceInSource.REPORTED_VIEW: 2,
                 StanceInSource.CONDITIONAL: 1, StanceInSource.SPECULATIVE: 0}
 _ROLE_FOR = (("dislocation", LinkRole.DISLOCATION), ("catalyst", LinkRole.CATALYST),
@@ -146,7 +157,15 @@ _ROLE_FOR = (("dislocation", LinkRole.DISLOCATION), ("catalyst", LinkRole.CATALY
 
 
 def norm_geo(g: str) -> str:
-    k = re.sub(r"\s+", " ", g.strip().lower())
+    """The geography a thesis is KEYED by. A known name is its region; an exclusion of known
+    names is one key however it is spelt ("Global ex-U.S." and "Global ex-US" were two); an
+    emphasis inside a place is the place ("United States (esp. Texas)" was its own key). Any
+    other text — a list, an unknown place — is kept as written."""
+    k = re.sub(r"\s+", " ", _EMPHASIS.sub("", g).strip().lower())
+    m = _EXCLUDING.search(k)
+    if m and m.start() > 0:
+        head, tail = _GEO.get(k[:m.start()].strip()), _GEO.get(k[m.end():].strip(" ."))
+        return f"{head} ex-{tail}" if head and tail else g.strip()
     return _GEO.get(k, g.strip() or "Unspecified")
 
 
@@ -254,31 +273,57 @@ def thesis_key(h: VerifiedHypothesis, segment: str = "", product: str = "") -> s
 
 
 #: Regions a geography string names. "Global" overlaps every region; APAC contains its members.
-_REGION_WORDS = {"us": "US", "u.s.": "US", "u.s": "US", "united states": "US", "usa": "US",
-                 "america": "US", "north america": "US", "texas": "US", "china": "China",
-                 "europe": "Europe", "eu": "Europe", "japan": "Japan", "asia": "APAC",
-                 "apac": "APAC", "asia pacific": "APAC", "taiwan": "Taiwan", "korea": "Korea",
-                 "south korea": "Korea", "india": "India", "uk": "UK",
-                 "united kingdom": "UK"}
+#: Regions a geography string names: the one vocabulary, without its "Global" names (Global
+#: overlaps every region), with the names inside a region. APAC contains its members.
+_REGION_WORDS = {**{k: v for k, v in _GEO.items() if v != "Global"}, **_PART_OF}
 _REGION_CONTAINS = {"APAC": {"China", "Japan", "Taiwan", "Korea", "India"}}
 
 
-def _regions(g: str) -> set[str]:
-    low = g.lower()
-    if re.search(r"\b(global|world|worldwide)\b", low):
+def _region_set(part: str) -> set[str]:
+    """The regions one part of a geography names — the LONGEST name first, so "Latin America"
+    is never read as "America" (the US)."""
+    if re.search(r"\b(global|world|worldwide)\b", part):
         return {"*"}
-    found = {v for k, v in _REGION_WORDS.items()
-             if re.search(rf"(?<![a-z]){re.escape(k)}(?![a-z])", low)}
-    return found or {low.strip() or "unspecified"}
+    found: set[str] = set()
+    rest = part
+    for k in sorted(_REGION_WORDS, key=len, reverse=True):
+        pat = rf"(?<![a-z]){re.escape(k)}(?![a-z])"
+        if re.search(pat, rest):
+            found.add(_REGION_WORDS[k])
+            rest = re.sub(pat, " ", rest)
+    return found or {part.strip(" .") or "unspecified"}
+
+
+def _regions(g: str) -> tuple[set[str], set[str]]:
+    """(the regions a geography names, the regions it LEAVES OUT): "Global ex-US" is everywhere
+    but the US; "Asia ex-Japan" is APAC without Japan (U48: both overlapped what they exclude)."""
+    low = _EMPHASIS.sub("", g).lower()
+    m = _EXCLUDING.search(low)
+    if m and m.start() > 0:
+        return _region_set(low[:m.start()]), _region_set(low[m.end():])
+    return _region_set(low), set()
+
+
+def _within(r: str, regions: set[str]) -> bool:
+    return r in regions or any(r in _REGION_CONTAINS.get(x, ()) for x in regions)
+
+
+def _places(inc: set[str], exc: set[str]) -> set[str]:
+    """The named regions and their members, less what is left out."""
+    every = inc | {m for x in inc for m in _REGION_CONTAINS.get(x, ())}
+    return {r for r in every if not _within(r, exc)}
 
 
 def geographies_overlap(a: str, b: str) -> bool:
-    """Whether two theses can be about the same place: equal or containing regions, or Global."""
-    ra, rb = _regions(a), _regions(b)
-    if "*" in ra or "*" in rb or ra & rb:
+    """Whether two theses can be about the same place: equal or containing regions, or a Global
+    one that does not leave the other's places out."""
+    (ia, ea), (ib, eb) = _regions(a), _regions(b)
+    if "*" in ia and "*" in ib:
         return True
-    return any(x in _REGION_CONTAINS.get(y, set()) for x in ra for y in rb) or any(
-        y in _REGION_CONTAINS.get(x, set()) for x in ra for y in rb)
+    if "*" in ia or "*" in ib:
+        (_ig, eg), (io, eo) = ((ia, ea), (ib, eb)) if "*" in ia else ((ib, eb), (ia, ea))
+        return any(not _within(r, eg) for r in _places(io, eo))
+    return bool(_places(ia, ea) & _places(ib, eb))
 
 
 def evidence_windows(claims: list[Claim], ref: date,

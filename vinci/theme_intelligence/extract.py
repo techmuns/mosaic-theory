@@ -793,6 +793,34 @@ def repair_list_text(text: str) -> tuple[list[Any] | None, list[str]]:
     return None, edits
 
 
+def answer_list(out: Any, name: str) -> tuple[list[dict[str, Any]], list[str]]:
+    """The `name` list of a tool answer read as plain objects (a review's verdicts, an
+    enrichment's companies), and what was set aside, said. A list sent as JSON TEXT is decoded —
+    the model's own value, as `salvage_fields` decodes one (observed 2026-10-12); a field that is
+    neither a list nor such text, and an item that is not an object, are set aside — never read
+    as an empty answer, never an AttributeError on every cached replay (U17d, U20)."""
+    v = out.get(name) if isinstance(out, dict) else None
+    notes: list[str] = []
+    if isinstance(v, str):
+        try:
+            decoded = json.loads(v)
+        except json.JSONDecodeError as exc:
+            return [], [f"{name}: {len(v):,} characters of text where a list belongs, not valid "
+                        f"JSON ({exc.msg}) — none read"]
+        if isinstance(decoded, list):
+            notes.append(f"{name}: the list arrived as JSON text ({len(v):,} characters) — "
+                         f"decoded")
+            v = decoded
+    if not isinstance(v, list):
+        return [], [*notes, f"{name}: a list belongs here, the answer gave "
+                            f"{type(v).__name__ if v is not None else 'nothing'} — none read"]
+    items = [x for x in v if isinstance(x, dict)]
+    if len(items) < len(v):
+        notes.append(f"{name}: {len(v) - len(items)} of {len(v)} item(s) not an object — set "
+                     f"aside")
+    return items, notes
+
+
 def salvage_fields(cls: type[BaseModel], out: Any, *,
                    repair: bool = False) -> tuple[Any, list[str], list[LostItem]]:
     """Validate an answer whose TOP level failed FIELD BY FIELD, then item by item. Observed
