@@ -23,11 +23,13 @@ ROOT = Path(__file__).resolve().parents[1]
 PKG = ROOT / "vinci" / "theme_intelligence"
 ALLOWED_VINCI_IMPORTS = {"vinci.config", "vinci.graph.llm", "vinci.netcache"}
 #: THE PRICE WALL, opened for ONE module (operator, 2026-10-16: "is it priced?"). market.py may read
-#: the fund's price bars, relative return, SEC EPS and P/E history — display only. Nothing else in
-#: the package may, and nothing on the research-action path may import market.py.
+#: the fund's price bars, relative return, SEC EPS and P/E history, and its dossiers' consensus
+#: layer — display only. Nothing else in the package may, and nothing on the research-action path
+#: may import market.py.
 MARKET = PKG / "market.py"
 MARKET_IMPORTS = {"vinci.eod.client", "vinci.eod.features", "vinci.edgar.client",
-                  "vinci.edgar.concepts", "vinci.schemas.market", "vinci.screens.assemble"}
+                  "vinci.edgar.concepts", "vinci.schemas.market", "vinci.screens.assemble",
+                  "vinci.dossier.schemas"}
 
 
 def _imports(path: Path) -> set[str]:

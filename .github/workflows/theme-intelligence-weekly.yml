@@ -114,6 +114,18 @@ jobs:
         continue-on-error: true
         run: python -m vinci.theme_intelligence qa --run latest
 
+      # IS IT PRICED? — market context for every active thesis, as of today: its exposures and the
+      # companies it implies, against SPY, P/E against its own history, consensus revisions from
+      # the fund's committed dossiers. DISPLAY ONLY ($0, no model call; never read by a research
+      # action). A failure is said and leaves the scan's records to be committed as they are.
+      - name: Market context
+        id: market
+        continue-on-error: true
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m vinci.theme_intelligence market --as-of "$(date -u +%F)"
+
       # Committed even when the scan failed (its run record is the evidence), but NEVER when the
       # restore did not succeed: the registry here would then be empty or partial, and pushing it
       # would make an empty registry the head of the registry of record.
@@ -126,7 +138,7 @@ jobs:
           cp -R data/theme_intelligence/runs/. "$RUNNER_TEMP/state/readouts/"
           cd "$RUNNER_TEMP/state"
           git add -A registry readouts
-          git diff --staged --quiet || git commit -m "theme intelligence: Actions run ${{ github.run_id }} (scan exit ${{ steps.scan.outputs.code }}, qa ${{ steps.qa.outcome }})"
+          git diff --staged --quiet || git commit -m "theme intelligence: Actions run ${{ github.run_id }} (scan exit ${{ steps.scan.outputs.code }}, qa ${{ steps.qa.outcome }}, market ${{ steps.market.outcome }})"
           git push origin HEAD:theme-intelligence-state
 
       - name: Fail the job when the scan failed or QA did not pass

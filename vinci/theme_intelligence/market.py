@@ -11,8 +11,12 @@ the names the count takes) — where each price stands AS OF a date:
 - P/E AGAINST ITS OWN HISTORY — the fund's `vinci.screens.assemble.pe_current_and_percentile`: only
   annual diluted EPS filed on or before each day. Over the price history the plan serves (two
   years: Polygon, 2026-10-16), whose dates are stated beside every value;
-- CONSENSUS REVISIONS: NOT HELD — no point-in-time estimates source exists here (the fund's CIQ
-  exports are snapshots, for its dossier names only).
+- CONSENSUS REVISIONS — the next fiscal year's EPS consensus over 3 months, and how many analysts
+  revised up and down, from the fund's committed dossiers (`data/dossiers/<TICKER>/dossier.json`,
+  its CIQ Estimates export: the fund's dossier names only). Point in time: only when the export
+  certainly existed by the date (the dossier was assembled by then) and is at most a month old;
+- THE COMPANIES THE THESIS IMPLIES (the enrichment step's SEC-verified listings) — priced apart,
+  labelled an EXTERNAL HYPOTHESIS, never counted.
 
 DISPLAY ONLY. This is the ONE module of the package that reads prices or returns — the isolation
 test pins that, and that nothing on the research-action path imports it. No rule reads a market
@@ -24,19 +28,23 @@ never a guess.
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Callable
+import json
+from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime, timedelta
+from pathlib import Path
 from typing import Literal
 
+from vinci.dossier.schemas import ForwardConsensus
 from vinci.edgar.concepts import ConceptPoint
 from vinci.eod.features import relative_return
 from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import MAX_EPS_AGE_DAYS, pe_current_and_percentile
 from vinci.theme_intelligence.cards import exposure_instruments, listed_exposures
 from vinci.theme_intelligence.schemas import (
-    AffectedCompany,
     AffectedView,
+    EnrichmentCandidate,
     ExposureMarket,
+    Listing,
     MarketContext,
     MarketFigure,
     PitStatus,
@@ -61,8 +69,20 @@ STALE_DAYS = 7
 #: the price history requested: the fund's P/E range (`pe_current_and_percentile`, five years)
 HISTORY_DAYS = 1825
 RETURN_WINDOWS = {"3m": 91, "12m": 365}
-NOT_HELD_REVISIONS = ("not held — no point-in-time consensus source here (the fund's CIQ exports "
-                      "are snapshots, for its dossier names only)")
+#: the fund's committed dossiers, whose CIQ Estimates layer carries the consensus path
+DOSSIERS = Path("data/dossiers")
+#: a consensus export older than this before the date is not "as of" it
+REVISIONS_STALE_DAYS = 31
+#: the EPS line read, in order of preference (the street's usual figure first)
+REVISION_METRICS = ("EPS Normalized", "EPS (GAAP)")
+#: a cik for a ticker (the SEC's ticker map), for the companies the thesis implies
+CikOf = Callable[[str], str | None]
+#: a one-day close-to-close move at least this size (up) or this size (down) is the size of a
+#: share split — a 3-for-2 either way. The prices are split-ADJUSTED, so a real split never shows;
+#: a move this size is either real news or an adjustment the source missed, and the row says so
+#: (2026-10-16: Moderna +177% in one day, 2026-08-19 — unconfirmable from the SEC until its next
+#: share count is filed)
+SPLIT_SIZE_UP, SPLIT_SIZE_DOWN = 1.5, 2 / 3
 
 
 def polygon_prices() -> PriceSource:
@@ -136,6 +156,16 @@ def from_high(closes: Closes, as_of: date) -> MarketFigure:
                               f"weeks to {as_of.isoformat()} ({hc:,.2f} on {hd.isoformat()})")
 
 
+def split_sized_moves(closes: Closes, as_of: date) -> list[str]:
+    """Every one-day move in the closes held to the date the size of a share split — a value check
+    beside the count checks: a series can be long enough and still be wrong."""
+    held = _held(closes, as_of)
+    return [f"a one-day move of {b[1] / a[1] - 1:+.0%} on {b[0].isoformat()} ({a[1]:,.2f} → "
+            f"{b[1]:,.2f}) — real news, or a split the price source did not adjust: check before "
+            f"reading this row" for a, b in zip(held, held[1:], strict=False)
+            if b[1] / a[1] >= SPLIT_SIZE_UP or b[1] / a[1] <= SPLIT_SIZE_DOWN]
+
+
 def _bars(ticker: str, closes: Closes) -> list[PriceBar]:
     return [PriceBar(internal_id=ticker, bar_date=d, open=c, high=c, low=c, close=c, volume=0.0,
                      source="polygon-aggregates") for d, c in closes if c > 0]
@@ -180,24 +210,84 @@ def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
     return pe_f, pct_f
 
 
-def _ticker(c: AffectedCompany) -> str | None:
+def consensus_revisions(ticker: str, as_of: date, dossiers: Path) -> MarketFigure:
+    """How the street's EPS for the NEXT fiscal year moved over the 3 months to the CIQ export in
+    the fund's dossier, with how many analysts revised it up and down — or None and why.
+
+    POINT IN TIME, from what the dossier states: the export is dated (exactly, or a floor "≥" the
+    true export is on or after) and the dossier was assembled at a known moment, so the export
+    existed by then. It is read as of `as_of` only when it certainly existed by that date and is
+    at most `REVISIONS_STALE_DAYS` old — never a later export read back, never a stale one."""
+    path = dossiers / ticker / "dossier.json"
+    if not path.is_file():
+        return _not_held(f"no CIQ consensus held for {ticker} (the fund holds CIQ exports for its "
+                         f"dossier names only)")
+    doc = json.loads(path.read_text())
+    if not doc.get("forward_consensus"):
+        return _not_held(f"the fund's {ticker} dossier carries no consensus layer")
+    fc = ForwardConsensus.model_validate(doc["forward_consensus"])
+    raw = fc.as_of or ""
+    floor = raw.startswith("≥")
+    try:
+        export = date.fromisoformat(raw.lstrip("≥"))
+        assembled = datetime.fromisoformat(str(doc["assembled_at"])).date()
+    except (KeyError, ValueError):
+        return _not_held(f"the {ticker} dossier states no readable export date ({raw!r})")
+    when = f"{'on or after ' if floor else ''}{export.isoformat()}"
+    known_by = assembled if floor else export
+    if as_of < known_by:
+        return _not_held(f"the CIQ export ({when}; the fund's dossier assembled "
+                         f"{assembled.isoformat()}) postdates {as_of.isoformat()} — reading it "
+                         f"would look ahead")
+    if (as_of - export).days > REVISIONS_STALE_DAYS:
+        return _not_held(f"the CIQ export ({when}) is {(as_of - export).days} days older than "
+                         f"{as_of.isoformat()}")
+    metric = next((m for m in REVISION_METRICS if any(p.metric == m for p in fc.paths)), None)
+    if metric is None or len(fc.periods) < 2:
+        return _not_held(f"the {ticker} consensus carries no next-year EPS line")
+    period = fc.periods[1]  # CIQ's forward years in order: FY+0, FY+1, FY+2
+    line = next((p for p in fc.paths if p.metric == metric and p.period == period), None)
+    v = {pt.months_ago: pt.value for pt in line.points} if line is not None else {}
+    if 0 not in v or 3 not in v or v[3] <= 0:
+        return _not_held(f"the {period} {metric} consensus has no positive 3-month-earlier "
+                         f"figure to compare")
+    rc = next((r for r in fc.revisions if r.metric == metric and r.period == period
+               and r.window == "3m"), None)
+    counts = (f"; {rc.up} analyst(s) revised up and {rc.down} down"
+              + (f", of {rc.analysts}" if rc.analysts else "") if rc is not None
+              else "; revision counts not held")
+    return MarketFigure(
+        value=v[0] / v[3] - 1.0, detail=f"{rc.up}↑ {rc.down}↓" if rc is not None else "",
+        basis=(f"{period} {metric} consensus over the 3 months to the CIQ export ({when}; the "
+               f"fund's dossier assembled {assembled.isoformat()}): {v[3]:g} → {v[0]:g}"
+               + counts))
+
+
+def _ticker(listings: Sequence[Listing]) -> str | None:
     """The line priced: the first verified common-equity line of a company, a fund's first."""
-    verified = [x.ticker for x in c.listings if x.pit_status is PitStatus.VERIFIED]
-    lines = verified or [x.ticker for x in c.listings]
+    verified = [x.ticker for x in listings if x.pit_status is PitStatus.VERIFIED]
+    lines = verified or [x.ticker for x in listings]
     return lines[0] if lines else None
 
 
-def _row(c: AffectedCompany, kind: Kind, *, as_of: date, bench: Closes | None,
-         prices: PriceSource, eps: EpsSource, errors: list[str]) -> ExposureMarket:
-    ticker = _ticker(c)
-    revisions = MarketFigure(value=None, basis=NOT_HELD_REVISIONS)
+def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: date,
+         bench: Closes | None, prices: PriceSource, eps: EpsSource, dossiers: Path,
+         errors: list[str]) -> ExposureMarket:
     if ticker is None:
         why = _not_held(f"{'an index' if kind == 'index' else 'a basket'} with no traded ticker "
                         f"named by the source — not priced")
-        return ExposureMarket(name=c.name_as_written, ticker=None, kind=kind,
+        return ExposureMarket(name=name, ticker=None, kind=kind,
                               last_close=None, last_bar=None, vs_200d=why, from_52w_high=why,
-                              rel_3m=why, rel_12m=why, pe=why, pe_percentile=why,
-                              revisions=revisions)
+                              rel_3m=why, rel_12m=why, pe=why, pe_percentile=why, revisions=why)
+    if kind != "listed":
+        revisions = _not_held("not applicable — a fund, not a company")
+    else:
+        try:
+            revisions = consensus_revisions(ticker, as_of, dossiers)
+        except Exception as exc:  # noqa: BLE001 — an unreadable dossier is said, never filled
+            errors.append(f"{ticker}: the fund's dossier consensus could not be read — "
+                          f"{type(exc).__name__}: {str(exc)[:120]}")
+            revisions = _not_held("the fund's dossier consensus could not be read")
     try:
         closes = prices(ticker, as_of - timedelta(days=HISTORY_DAYS), as_of)
     except Exception as exc:  # noqa: BLE001 — a failed request is said, never filled
@@ -211,11 +301,11 @@ def _row(c: AffectedCompany, kind: Kind, *, as_of: date, bench: Closes | None,
         rel = {k: against(closes, bench, as_of, d, ticker) for k, d in RETURN_WINDOWS.items()}
     if kind != "listed":
         pe = pct = _not_held("not applicable — a fund, not a company")
-    elif c.cik is None:
+    elif cik is None:
         pe = pct = _not_held("no SEC CIK for this listing")
     else:
         try:
-            points = eps(c.cik)
+            points = eps(cik)
         except Exception as exc:  # noqa: BLE001 — absent XBRL is said, never substituted
             errors.append(f"{ticker}: SEC companyfacts failed — {type(exc).__name__}: "
                           f"{str(exc)[:120]}")
@@ -223,18 +313,22 @@ def _row(c: AffectedCompany, kind: Kind, *, as_of: date, bench: Closes | None,
         else:
             pe, pct = pe_against_history(closes, points, as_of, ticker)
     return ExposureMarket(
-        name=c.name_as_written, ticker=ticker, kind=kind,
+        name=name, ticker=ticker, kind=kind,
         last_close=last[1] if last else None, last_bar=last[0] if last else None,
         vs_200d=vs_average(closes, as_of), from_52w_high=from_high(closes, as_of),
-        rel_3m=rel["3m"], rel_12m=rel["12m"], pe=pe, pe_percentile=pct, revisions=revisions)
+        rel_3m=rel["3m"], rel_12m=rel["12m"], pe=pe, pe_percentile=pct, revisions=revisions,
+        warnings=tuple(split_sized_moves(closes, as_of)))
 
 
 def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: str, as_of: date,
-                   prices: PriceSource, eps: EpsSource
-                   ) -> tuple[MarketContext, list[str]]:
+                   prices: PriceSource, eps: EpsSource,
+                   hypotheses: Sequence[EnrichmentCandidate] = (), cik_of: CikOf | None = None,
+                   dossiers: Path = DOSSIERS) -> tuple[MarketContext, list[str]]:
     """The market context of one thesis version as of `as_of`, and the requests that failed
     (each said on its row as well). Every exposure the count takes is a row, in the card's order:
-    listed companies, then the instruments."""
+    listed companies, then the instruments. `hypotheses`: the companies the thesis implies (the
+    latest enrichment set) — priced apart, only those whose listing the SEC verified and that
+    file as US issuers; `cik_of` gives their CIK for the P/E."""
     errors: list[str] = []
     try:
         bench: Closes | None = prices(BENCHMARK, as_of - timedelta(days=HISTORY_DAYS), as_of)
@@ -242,14 +336,23 @@ def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: st
         errors.append(f"{BENCHMARK}: price request failed — {type(exc).__name__}: "
                       f"{str(exc)[:120]}")
         bench = None
-    rows = [_row(c, "listed", as_of=as_of, bench=bench, prices=prices, eps=eps, errors=errors)
+    def row(name: str, ticker: str | None, kind: Kind, cik: str | None) -> ExposureMarket:
+        return _row(name, ticker, kind, cik, as_of=as_of, bench=bench, prices=prices, eps=eps,
+                    dossiers=dossiers, errors=errors)
+
+    rows = [row(c.name_as_written, _ticker(c.listings), "listed", c.cik)
             for c in listed_exposures(av)]
     for c in exposure_instruments(av):
         kind: Kind = ("fund" if c.resolution_status is ResolutionStatus.FUND
                       else "index" if c.resolution_status is ResolutionStatus.INDEX
                       else "basket")
-        rows.append(_row(c, kind, as_of=as_of, bench=bench, prices=prices, eps=eps,
-                         errors=errors))
+        rows.append(row(c.name_as_written, _ticker(c.listings), kind, c.cik))
+    implied = []
+    for h in hypotheses:
+        ticker = _ticker([x for x in h.listings if x.pit_status is PitStatus.VERIFIED])
+        if ticker is None or h.foreign_filer:
+            continue
+        implied.append(row(h.name, ticker, "listed", cik_of(ticker) if cik_of else None))
     held = _held(bench or [], as_of)
     window = (f"prices held {held[0][0].isoformat()} to {held[-1][0].isoformat()}" if held
               else f"no {BENCHMARK} prices held")
@@ -258,6 +361,7 @@ def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: st
     cid = "MC-" + hashlib.sha256(key.encode()).hexdigest()[:14]
     return MarketContext(
         context_id=cid, thesis_id=thesis_id, thesis_version=version, run_id=run_id, as_of=as_of,
-        created_at=now, benchmark=BENCHMARK, rows=tuple(rows),
+        created_at=now, benchmark=BENCHMARK, rows=tuple(rows), hypotheses=tuple(implied),
         source=(f"Polygon daily bars, split-adjusted closes ({window}); SEC XBRL annual diluted "
-                f"EPS filed on or before each day; consensus revisions not held")), errors
+                f"EPS filed on or before each day; consensus revisions from the fund's CIQ "
+                f"dossiers")), errors
