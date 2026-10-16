@@ -214,3 +214,18 @@ check, rules held twice, dead code, and three conventions.
   - `report.card_context` re-reads `store.runs()` for every card (U45's note). A probe put it at
     about 7% of a 52-week render.
   - `cards.affected_from(enrichment=)` is never passed. It stays with the field.
+
+**REVIEW FIX (2026-10-16, `/code-review high` of #728).** U34's pin first compared the committed
+`desk.js` / `intel.css` with what the CURRENT code generates. That turned every code PR that
+touches the desk's script or styles red until a republish. The republish is its own artifact PR
+after the code merges, and generated files are never committed with code.
+
+The pin now applies whenever the code is the code that published the files: the last commit to
+`frontend/theme-intelligence/` (a republish always rewrites `index.json`, and a hand edit is
+itself such a commit) with no change to `vinci/theme_intelligence/` since. After a code change it
+skips, naming that commit, until the next republish.
+
+Shown in a throwaway worktree:
+- after an artifact-style commit, the pin runs and passes;
+- after a one-byte hand edit committed to `desk.js`, it fails;
+- on this branch (code changed since 64dfa5f4) it skips.
