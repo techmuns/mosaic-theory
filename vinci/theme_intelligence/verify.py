@@ -55,6 +55,7 @@ from vinci.theme_intelligence.extract import (
     XHypothesis,
     XRisk,
     XText,
+    answer_list,
     cache_key,
     cost_of,
 )
@@ -86,8 +87,21 @@ STALE_SERIES_DAYS = 365
 _HEDGE = re.compile(r"approximate|~|\babout\b|\baround\b|\broughly\b|\bnear\b|\bnearly\b", re.I)
 _FORWARD = re.compile(r"\bNTM\b|next twelve months|next 12 months|forecast|estimate|expected|"
                       r"projected|projection|outlook|forward", re.I)
-_RECO = re.compile(r"recommend|\bbuy\b|overweight|outperform|top pick|rating|upgrade|"
-                   r"\bfavou?r\b|accumulate|add to", re.I)
+#: Recommendation language, as WORDS (U17b: "rating" inside "operating", "upgrades" in "grid
+#: upgrades" and "add to" in "add to revenue" vouched for a recommendation label): an upgrade or
+#: downgrade counts when it is TO a rating, "add to" when it is to a position. The rating word
+#: must END the phrase (punctuation, the line's end, or "rating" / "from" / "on" / "as" …):
+#: "grid upgrades to add 20 GW" and "upgrades to hold down losses" name no rating.
+_RATING = (r"buy|overweight|outperform|accumulate|add|neutral|hold|sell|underweight|"
+           r"equal[- ]weight|market perform|positive|negative")
+_RATING_END = (r"(?=\s*(?:$|[.,;:!?)]|(?:rating|from|on|with|and|in|after|as|at|following|"
+               r"citing|given|ahead)\b))")
+_RECO = re.compile(
+    r"recommend|\bbuy\b|\boverweight\b|\boutperform|\btop pick|\bratings?\b|\brated\b|"
+    rf"\b(?:up|down)grade[sd]?\b(?:\s+[\w.&'-]+){{0,3}}\s+to\s+(?:an?\s+)?(?:{_RATING})\b"
+    rf"{_RATING_END}|"
+    r"\bfavou?r\b|\baccumulate\b|\badd to (?:positions?|holdings?|exposure|the stock|shares)\b",
+    re.I)
 #: A number as written. The minus sign counts only where it cannot be a range dash or a hyphen
 #: ("2027-2028" is 2027 and 2028, never -2028); thousands groups are kept whole ("2,600").
 _NUM = re.compile(r"(?<![\w.])-?\d+(?:[.,]\d+)*")
@@ -673,7 +687,9 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
                 if not cand and b is not None:
                     cand = [bb for bb in doc.blocks if bb.kind == "chart_source"
                             and bb.section == b.section]
-                if not any(v in bb.text for bb in cand for v in _date_variants(as_of_d)):
+                if not any(re.search(rf"(?<!\d){re.escape(v)}(?!\d)", bb.text)
+                           for bb in cand for v in _date_variants(as_of_d)):
+                    # a whole date — "5 February" is never found inside "15 February" (U17a)
                     notes.append(f"as-of {as_of_d} not found in the cited source note — dropped")
                     as_of_d = None
             lookahead = as_of_d is not None and as_of_d > as_of
@@ -1047,7 +1063,10 @@ def number_passes(c: Claim) -> bool:
 #: every other number on the line is still checked against its cited claims.
 _NAMED_INDEX = re.compile(
     r"\b(?:S&P|Russell|Nasdaq|NASDAQ|FTSE|Nikkei|STOXX|Stoxx|CAC|DAX|ASX|KOSPI|Hang Seng)"
-    r"(?:[ -]?(?:MidCap|SmallCap|Composite))?[ -]?\d{2,4}\b|\bMag(?:nificent)?[ -]?7\b"
+    r"(?:[ -]?(?:MidCap|SmallCap|Composite))?[ -]?\d{2,4}\b"
+    # a unit after the number makes it a FIGURE: "DAX 30%" is never the DAX 30 (U17c)
+    r"(?![.,]?\d)(?!\s?(?:%|percent|per cent|pp\b|bps?\b|x\b|bn\b|billion|million|mn\b))"
+    r"|\bMag(?:nificent)?[ -]?7\b"
     r"|\b(?:Q[1-4]|[1-4]Q|H[12]|[12]H)(?:'?\d{2}(?!\d)|\s?(?:19|20)\d{2})?\b")
 
 #: A quarter / half-year LABEL with its year when one is attached: "3Q26", "Q3'26", "Q1 2027",
@@ -1268,7 +1287,10 @@ def review_card(card: CardContent, claims: dict[str, Claim], *, client: ToolClie
     verdicts: dict[str, tuple[str, str]] = {}
     anchors: dict[str, list[str]] = {}
     pool_ids = {c.claim_id for c in shown}
-    for v in out.get("verdicts", []):
+    # a verdict list sent as JSON text is decoded; an item that is not an object is set aside
+    # and recorded — never an AttributeError on this answer, and on every cached replay (U17d)
+    items, unread = answer_list(out, "verdicts")
+    for v in items:
         sid = str(v.get("sentence_id"))
         verdicts[sid] = (str(v.get("verdict")), str(v.get("problem", "")))
         own = set(sents[sid][2]) if sid in sents else set()
@@ -1292,6 +1314,9 @@ def review_card(card: CardContent, claims: dict[str, Claim], *, client: ToolClie
             issues.append(_issue(run_id, "card_sentence", f"{tid}:{sid}", IssueSeverity.WARN,
                                  "REVIEW_INFERENCE_UNSUPPORTED",
                                  f"{sid} ({prov}): {problem} | {text[:100]!r}"))
+    if unread:  # what the answer held that was not a verdict, said — its lines read MISSING
+        issues.append(_issue(run_id, "card", tid, IssueSeverity.WARN, "REVIEW_ANSWER_UNREADABLE",
+                             "; ".join(unread)))
     return ReviewResult(verdicts=verdicts, issues=issues, cached=cached, usage=usage,
                         cost_usd=0.0 if cached else cost_of(model, usage), seconds=seconds,
                         sentences=sents, anchors=anchors)

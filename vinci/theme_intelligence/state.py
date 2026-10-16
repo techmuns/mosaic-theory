@@ -445,7 +445,8 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                 continue
             group.append(f"  {d.doc_id} ({d.filename}): replayed — {out.status}"
                          + (f" (was {d.status})" if out.status != d.status else ""))
-        run = pipe.finish_run(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
+        # ended as the uploads it replays were: a SKIP thesis it re-creates leaves the active list
+        run = pipe.finish_ingest(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
         paid = (f"; it paid ${run.cost_usd:.4f} anew (answers not in this machine's cache)"
                 if run.cost_usd else "; every model answer from the cache, $0")
         lines += [f"replay run {run.run_id} (as of {as_of}) of "
