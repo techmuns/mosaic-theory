@@ -118,3 +118,21 @@ U15 broke the retired-channel rule in both directions: it fetched what is refuse
 - Noticed and NOT changed: the synthetic fixtures' README says every page carries the banner,
   but multi-page fixtures carry it on page 1 only. This was already true of
   `ms_report_synthetic.pdf`.
+
+**REVIEW FIXES (2026-10-16, `/code-review high` of #723–#725).** Four findings on this PR, all
+fixed before merge:
+- **A byline name had to begin with an ASCII capital,** so "By Émile Durand and Jane Doe" gave no
+  author at all. A name word may now begin with a capital in any script; particles ("von der")
+  stay allowed and numbers stay refused.
+- **A torn file was said only on stderr,** so a re-paid answer never reached the run record. Each
+  file set aside during a run is now a WARN issue `CACHE_FILE_TORN` on that run, plus a run
+  warning. A file set aside outside any run is not attributed to the next one.
+- **With no `og:site_name`, an og:title kept the " | Site" suffix** the old split removed. A
+  trailing part that names the page's own host ("| Morgan Stanley" on morganstanley.com) is now
+  dropped too.
+- **Every full page was parsed twice.** The footer-free copy is now parsed only when the page's
+  text holds a subscriber marker at all.
+- **Corpus re-run on the fixed code:** 275 HTML pages, 0 titles, states, blocks or notes change
+  against the pre-fix branch; 21 PDFs (16 real and the synthetic fixtures), 0 author or block
+  changes.
+- **Mutants:** 5 of 5 killed. 36 tests.
