@@ -460,16 +460,34 @@ def consensus_revisions(ticker: str, as_of: date, dossiers: Path) -> MarketFigur
                + counts))
 
 
+def _lines(listings: Sequence[Listing]) -> list[str]:
+    """A company's lines in the card's order: its verified ones, or every one when none is."""
+    verified = [x.ticker for x in listings if x.pit_status is PitStatus.VERIFIED]
+    return verified or [x.ticker for x in listings]
+
+
 def _ticker(listings: Sequence[Listing]) -> str | None:
     """The line priced: the first verified common-equity line of a company, a fund's first."""
-    verified = [x.ticker for x in listings if x.pit_status is PitStatus.VERIFIED]
-    lines = verified or [x.ticker for x in listings]
+    lines = _lines(listings)
     return lines[0] if lines else None
+
+
+def _revisions(ticker: str, lines: Sequence[str], as_of: date, dossiers: Path) -> MarketFigure:
+    """The consensus revisions of the company priced on `ticker`. The fund files a dossier under
+    ONE of a company's share classes (Alphabet's under GOOGL, while GOOG leads its listings), and
+    one company has one EPS consensus — so its other lines are tried, and the line read is said."""
+    held = next((t for t in (ticker, *lines) if (dossiers / t / "dossier.json").is_file()), ticker)
+    f = consensus_revisions(held, as_of, dossiers)
+    if held == ticker:
+        return f
+    return f.model_copy(update={"basis": f"{f.basis} — read from the fund's {held} dossier, the "
+                                         f"same company's other share class"})
 
 
 def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: date,
          bench: Closes | None, prices: PriceSource, eps: EpsSource, dossiers: Path,
-         deep: DeepSource | None, errors: list[str]) -> ExposureMarket:
+         deep: DeepSource | None, errors: list[str],
+         lines: Sequence[str] = ()) -> ExposureMarket:
     if ticker is None:
         why = _not_held(f"{'an index' if kind == 'index' else 'a basket'} with no traded ticker "
                         f"named by the source — not priced")
@@ -480,7 +498,7 @@ def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: d
         revisions = _not_held("not applicable — a fund, not a company")
     else:
         try:
-            revisions = consensus_revisions(ticker, as_of, dossiers)
+            revisions = _revisions(ticker, lines, as_of, dossiers)
         except Exception as exc:  # noqa: BLE001 — an unreadable dossier is said, never filled
             errors.append(f"{ticker}: the fund's dossier consensus could not be read — "
                           f"{type(exc).__name__}: {str(exc)[:120]}")
@@ -534,11 +552,12 @@ def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: st
         errors.append(f"{BENCHMARK}: price request failed — {type(exc).__name__}: "
                       f"{str(exc)[:120]}")
         bench = None
-    def row(name: str, ticker: str | None, kind: Kind, cik: str | None) -> ExposureMarket:
+    def row(name: str, ticker: str | None, kind: Kind, cik: str | None,
+            lines: Sequence[str] = ()) -> ExposureMarket:
         return _row(name, ticker, kind, cik, as_of=as_of, bench=bench, prices=prices, eps=eps,
-                    dossiers=dossiers, deep=deep, errors=errors)
+                    dossiers=dossiers, deep=deep, errors=errors, lines=lines)
 
-    rows = [row(c.name_as_written, _ticker(c.listings), "listed", c.cik)
+    rows = [row(c.name_as_written, _ticker(c.listings), "listed", c.cik, _lines(c.listings))
             for c in listed_exposures(av)]
     for c in exposure_instruments(av):
         kind: Kind = ("fund" if c.resolution_status is ResolutionStatus.FUND
@@ -547,10 +566,12 @@ def market_context(av: AffectedView, *, thesis_id: str, version: int, run_id: st
         rows.append(row(c.name_as_written, _ticker(c.listings), kind, c.cik))
     implied = []
     for h in hypotheses:
-        ticker = _ticker([x for x in h.listings if x.pit_status is PitStatus.VERIFIED])
+        verified = [x for x in h.listings if x.pit_status is PitStatus.VERIFIED]
+        ticker = _ticker(verified)
         if ticker is None or h.foreign_filer:
             continue
-        implied.append(row(h.name, ticker, "listed", cik_of(ticker) if cik_of else None))
+        implied.append(row(h.name, ticker, "listed", cik_of(ticker) if cik_of else None,
+                           _lines(verified)))
     held = _held(bench or [], as_of)
     window = (f"prices held {held[0][0].isoformat()} to {held[-1][0].isoformat()}" if held
               else f"no {BENCHMARK} prices held")

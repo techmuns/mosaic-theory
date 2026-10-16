@@ -505,3 +505,55 @@ def test_an_instrument_named_only_as_a_comparator_stays_a_mention(tmp_path: Path
     (row,) = [r for rs in res["dashboard"].categories.values() for r in rs]
     assert [n.split(" [")[0] for n in row.named_instruments] == [igv, basket]
     assert any(n.startswith(f"{spx} [") for n in row.other_named)
+
+
+# --- review of #730: versions stored with the factor's earlier id -------------------------------
+
+def _legacy(pr: Any, value: str | None) -> Any:
+    """The priority with its F6 factor as an earlier version stored it: the id
+    "F6_recognizable_listed_exposures" with a bare count — or no F6 at all (value None)."""
+    kept = tuple(f for f in pr.factors if not f.factor_id.startswith("F6"))
+    if value is not None:
+        kept += (PriorityFactor(factor_id="F6_recognizable_listed_exposures", value=value,
+                                note="source-named, SEC-resolved listed companies"),)
+    return pr.model_copy(update={"factors": kept, "watch_reasons": ()})
+
+
+def test_the_earlier_factor_id_is_read_as_its_count_and_none_is_never_zero() -> None:
+    """8 current versions in the registry copies carried the earlier id (2026-10-16), one of them
+    RESEARCH NOW on "4": read as 0, its desk gate said "no exposure". An unreadable count is
+    None — unknown, never "no exposure"."""
+    pr = compute_priority(_state(sector_exposures=("Memory",)), previous=None,
+                          evidence_direction=EvidenceDirection.NEW)
+    assert exposures_counted(_legacy(pr, "4")) == 4
+    assert exposures_counted(_legacy(pr, "0")) == 0
+    assert exposures_counted(_legacy(pr, None)) is None
+    watch = _legacy(pr, None).model_copy(update={"research_action": ResearchAction.WATCH})
+    assert "no_exposure" not in [r.code for r in watch_reasons_of(watch)]
+
+
+def test_the_gate_names_what_was_counted_when_the_card_cannot_list_it(tmp_path: Path) -> None:
+    """A RESEARCH NOW version stored before point-in-time verification: its rule counted 4 listed
+    companies whose listings the card does not verify today. The gate passes — the action stands —
+    and says what was counted, never an empty line."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe, hyper = _stale_registry(tmp_path)
+    v = _current(pipe, hyper)
+    av = v.content.s05_affected.model_copy(update={"sector_exposures": ()})
+    old = v.model_copy(update={
+        "content": v.content.model_copy(update={"s05_affected": av}),
+        "priority": _legacy(v.priority, "4").model_copy(
+            update={"research_action": ResearchAction.RESEARCH_NOW})})
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    g = next(x for x in gates(old, [], nt) if x.name == "An exposure the source names")
+    assert g.ok and "counted when the thesis was assessed: Meta" in g.detail
+
+
+def test_the_markdown_record_says_what_a_watch_waits_for(tmp_path: Path) -> None:
+    pipe = _jpm(tmp_path)
+    run = pipe.finish_run(RunStatus.SUCCEEDED)
+    out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
+    for p in (out / "cards").glob("TH-*.md"):
+        assert p.read_text().splitlines()[2].startswith("**WATCH · on hold**")
+    assert (out / "dashboard.md").read_text().count("[WATCH · on hold]") == 3

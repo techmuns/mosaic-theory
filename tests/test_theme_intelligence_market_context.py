@@ -385,6 +385,33 @@ def test_revisions_not_held_are_said(tmp_path: Path) -> None:
     assert f.value is None and "no positive" in f.basis
 
 
+
+def test_a_dossier_filed_under_the_other_share_class_is_read_and_named(tmp_path: Path) -> None:
+    """REVIEW of #733: Alphabet's listings lead with GOOG (the live registry: GOOG, GOOGL, GOOGM,
+    GOOGN) while the fund's dossier is filed under GOOGL — so the priced line found no dossier and
+    the row read "not held". One company has one consensus: the other line is read, and said.
+    NEGATIVE: a company whose lines hold no dossier stays not held, under the priced line's name."""
+    (tmp_path / "GOOGL").mkdir()
+    (tmp_path / "GOOGL" / "dossier.json").write_text(
+        (FIXTURES / "AMZN" / "dossier.json").read_text())
+    pipe = _jpm(tmp_path / "p")
+    v = _software(pipe)
+    two = Listing(ticker="GOOG", exchange="NASDAQ", pit_status=PitStatus.VERIFIED)
+    alphabet = _candidate("Alphabet", "GOOGL").model_copy(update={"listings": (
+        two, Listing(ticker="GOOGL", exchange="NASDAQ", pit_status=PitStatus.VERIFIED))})
+    other = _candidate("Other", "OTHR").model_copy(update={"listings": (
+        Listing(ticker="OTHR", exchange="NASDAQ", pit_status=PitStatus.VERIFIED),
+        Listing(ticker="OTHRB", exchange="NASDAQ", pit_status=PitStatus.VERIFIED))})
+    ctx, _errors = market_context(v.content.s05_affected, thesis_id=v.thesis_id,
+                                  version=v.version, run_id="R-x", as_of=date(2026, 10, 14),
+                                  prices=_prices(), eps=_no_eps,  # type: ignore[arg-type]
+                                  hypotheses=(alphabet, other), dossiers=tmp_path)
+    goog, othr = ctx.hypotheses
+    assert goog.ticker == "GOOG" and goog.revisions.value is not None
+    assert "the fund's GOOGL dossier" in goog.revisions.basis
+    assert othr.ticker == "OTHR" and othr.revisions.value is None
+    assert "no CIQ consensus held for OTHR" in othr.revisions.basis
+
 # --- a split-sized move is said on its row --------------------------------------------------------
 
 def test_a_one_day_move_the_size_of_a_split_is_flagged() -> None:
@@ -474,3 +501,17 @@ def test_the_row_carries_and_shows_its_warning_and_the_revision_counts(tmp_path:
     assert "⚠" in html and "+140%" in html
     cell = market_cell(MarketFigure(value=0.0587, basis="b", detail="21↑ 2↓"), "rev")
     assert "+5.9% · 21↑ 2↓" in cell
+
+
+def test_the_markdown_record_states_figures_in_the_readers_units(tmp_path: Path) -> None:
+    """REVIEW of #731: the record printed "-0.0137" for a 1.4% gap; it reads as the HTML does.
+    And the label leads in plain bold, never the card's grey "unknown" badge."""
+    pipe = _jpm(tmp_path)
+    run, _ = pipe.run_market(as_of=JPM_AS_OF, prices=_prices(), eps=_no_eps)  # type: ignore[arg-type]
+    out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
+    md = "\n".join(p.read_text() for p in (out / "cards").glob("TH-*.md"))
+    lines = [x for x in md.splitlines() if x.startswith("  - vs 200-day avg: ")]
+    assert lines and all(re.match(r"  - vs 200-day avg: ([+−]\d+\.\d%|not held)", x)
+                         for x in lines), lines[:2]
+    card = next((out / "cards").glob("TH-*.html")).read_text()
+    assert f"<b>{MARKET_LABEL}</b>" in card and 'class="lab unk">MARKET CONTEXT' not in card
