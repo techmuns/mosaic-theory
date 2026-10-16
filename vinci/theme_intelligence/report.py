@@ -51,7 +51,6 @@ from vinci.theme_intelligence.cards import (
     _line_name,
     broad_market_instruments,
     cited_claim_ids,
-    counted_sectors,
     e,
     exposure_instruments,
     exposures_of,
@@ -62,10 +61,10 @@ from vinci.theme_intelligence.cards import (
     mechanism_step,
     named_groups,
     plain_entities,
-    refused_sectors,
     render_html,
     render_json,
     render_markdown,
+    split_sectors,
     topnav,
     watch_of,
     why_reasons,
@@ -1280,6 +1279,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         av = cur.content.s05_affected
         inst = exposure_instruments(av)
         broad, indic = broad_market_instruments(av), market_indicators(av)
+        kept_sectors, junk_sectors = split_sectors(av)
         flags = sorted({x.event_type for x in evs} - {"CREATED", "UPDATED"})
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
@@ -1315,7 +1315,8 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
                     "broad market index — not counted" if c in broad
                     else "market indicator — not counted" if c in indic
                     else f"{c.resolution_status.value.lower()} — named, not attached to the "
-                         f"thesis") + "]" for c in av.instruments if c not in inst],
+                         f"thesis") + "]" for c in av.instruments if c not in inst] + [
+                f"{s.name} [not a sector — not counted]" for s, _why in junk_sectors],
             sectors=list(av.sectors), next_action=cur.content.s08_decision.next_step.text,
             last_material_update=t.last_material_update.isoformat(), status=t.status.value,
             flags=sorted(set(flags)), version=cur.version,
@@ -1323,9 +1324,7 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             article_date=hdr.latest_article_date.isoformat() if hdr.latest_article_date else None,
             first_ingested=f"{t.created_at:%Y-%m-%d %H:%M} UTC",
             analysis_as_of=cur.as_of.isoformat(),
-            sector_exposures=[f"{x.name} ({x.direction.value})" for x in counted_sectors(av)] + [
-                f"{x.name} ({x.direction.value}) [not a sector — not counted]"
-                for x, _why in refused_sectors(av)],
+            sector_exposures=[f"{x.name} ({x.direction.value})" for x in kept_sectors],
             # the action's reasons ONCE, from the stored factor values (`cards.why_reasons`) —
             # the row's "why" list and this line can never disagree (U53: a regex over the rule
             # trace named a contested WATCH that the list beside it did not)

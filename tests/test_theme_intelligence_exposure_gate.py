@@ -621,8 +621,8 @@ def test_the_calm_index_regime_names_its_index_its_indicator_and_its_non_sector_
     row = rows[v.thesis_id]  # named ONCE each, labelled — never among the exposures (REVIEW)
     assert f"{cor} [market indicator — not counted]" in row.other_named
     assert not any(x.startswith(cor) for x in row.named_instruments)
-    assert any(x.startswith(phrase) and x.endswith("[not a sector — not counted]")
-               for x in row.sector_exposures)
+    assert f"{phrase} [not a sector — not counted]" in row.other_named
+    assert not any(x.startswith(phrase) for x in row.sector_exposures)
     nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
     g = next(x for x in gates(v, [], nt) if x.name == "An exposure the source names")
     assert not g.ok and f"broad market index ({spx})" in g.detail
@@ -671,6 +671,53 @@ def test_a_thesis_whose_only_sectors_are_not_sectors_counts_no_exposure_and_says
     assert "Treasurys — an asset class outside equities" in why
 
 
+def test_a_version_that_counted_a_non_sector_says_it_is_no_longer_counted(
+        tmp_path: Path) -> None:
+    """REVIEW of #737: a version STORED counting "US equity" as a sector keeps its action until it
+    is re-graded; its gate says the name is no longer counted and that a re-grade applies it."""
+    from vinci.theme_intelligence.desk import NearTerm, gates
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    v = next(v for v in (_current(pipe, t.thesis_id) for t in pipe.store.theses())
+             if v.content.s05_affected.sector_exposures)
+    se = v.content.s05_affected.sector_exposures[0]
+    av = v.content.s05_affected.model_copy(update={
+        "instruments": (), "not_securities": (), "companies": (),
+        "sector_exposures": (se.model_copy(update={"name": "US equity"}),)})
+    f6 = PriorityFactor(factor_id="F6_recognizable_exposures",
+                        value="0 listed · 1 sector · 0 instrument", note="")
+    kept = tuple(x for x in v.priority.factors  # type: ignore[union-attr]
+                 if not x.factor_id.startswith("F6")) + (f6,)
+    old = v.model_copy(update={
+        "content": v.content.model_copy(update={"s05_affected": av}),
+        "priority": v.priority.model_copy(update={"factors": kept})})  # type: ignore[union-attr]
+    nt = NearTerm(stored="yes", framing="", claims=(), recomputed="yes", note="")
+    g = next(x for x in gates(old, [], nt) if x.name == "An exposure the source names")
+    assert g.ok and g.detail == (
+        "counted 1 exposure when the thesis was assessed; today's rules do not count a name read "
+        "as a sector that is not one (US equity — the whole market, not a sector) — a re-grade "
+        "($0) applies them")
+
+
+def test_the_enrichment_prompt_names_only_the_sectors_that_are_sectors(tmp_path: Path) -> None:
+    """REVIEW of #737: the paid enrichment call was told "Treasurys; US equity; USD assets" were
+    the sectors the source names as exposed. On the real J.P. Morgan card, a name that is not a
+    sector stays out of that line and a real one stays in."""
+    from vinci.theme_intelligence.enrich import user_message
+
+    pipe = _jpm(tmp_path)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    v = next(v for v in (_current(pipe, t.thesis_id) for t in pipe.store.theses())
+             if v.content.s05_affected.sector_exposures)
+    se = v.content.s05_affected.sector_exposures[0]
+    card = v.content.model_copy(update={"s05_affected": v.content.s05_affected.model_copy(
+        update={"sector_exposures": (se.model_copy(update={"name": "Treasurys"}),
+                                     se.model_copy(update={"name": "utilities"}))})})
+    line = next(x for x in user_message(card, version=v.version, area="x", groups=[]).splitlines()
+                if x.startswith("Sectors the source names as exposed:"))
+    assert "utilities" in line and "Treasurys" not in line
+
 @pytest.mark.parametrize(("name", "refused"), [
     # read as sector exposures in the local registry copies (2026-10-16), and not sectors
     ("at both a sector and thematic level", True),
@@ -690,6 +737,10 @@ def test_a_thesis_whose_only_sectors_are_not_sectors_counts_no_exposure_and_says
     ("LA5 general government debt", True),
     # constructed: the whole market and an asset class together
     ("US equity and credit markets", True),
+    # REVIEW of #737: a sentence-final full stop is punctuation, and "U.S." is still a region
+    ("US equities.", True),
+    ("U.S. equity", True),
+    ("Treasurys.", True),
     # NEGATIVE — sectors read in the same copies: a population is named beside the generic word
     ("information technology sector", False),
     ("midstream sector", False),

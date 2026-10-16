@@ -1447,7 +1447,7 @@ _STOP = frozenset({"a", "an", "the", "of", "and", "or", "at", "in", "on", "for",
                    "as", "by", "its", "their", "itself", "well", "within"})
 #: geography — a name made only of a region and an equity word is the whole market of it
 _REGION = frozenset({
-    "us", "u.s.", "usa", "american", "america", "north", "latin", "latam", "andean", "andeans",
+    "us", "u.s", "usa", "american", "america", "north", "latin", "latam", "andean", "andeans",
     "european", "europe", "eurozone", "uk", "british", "asian", "asia", "chinese", "china",
     "japanese", "japan", "korean", "korea", "indian", "india", "brazilian", "mexican", "global",
     "world", "domestic", "international", "emerging", "developed", "em", "dm", "g7", "g10", "g20",
@@ -1477,8 +1477,10 @@ def not_a_sector(name: str) -> str | None:
       both: "US equity and credit").
     A name that also names a population ("information technology sector", "U.S. natural gas",
     "consumer credit") is a sector."""
-    words = [w for w in re.findall(r"[a-z0-9][a-z0-9&.\-]*", name.lower().replace("’", "'"))
-             if w not in _STOP]
+    # a word's trailing full stop is punctuation ("US equities." is "US equities"), so "u.s." is
+    # held as "u.s" (REVIEW of #737)
+    words = [w for t in re.findall(r"[a-z0-9][a-z0-9&.\-]*", name.lower().replace("’", "'"))
+             if (w := t.rstrip(".-")) not in _STOP]
     if not words:
         return None
     rest = set(words)
@@ -1492,15 +1494,19 @@ def not_a_sector(name: str) -> str | None:
     return None
 
 
-def counted_sectors(av: AffectedView) -> list[SectorExposure]:
-    """The card's distinct sector exposures that name a sector — the ones the count takes."""
-    return [s for s in distinct_sectors(av) if not_a_sector(s.name) is None]
-
-
-def refused_sectors(av: AffectedView) -> list[tuple[SectorExposure, str]]:
-    """The card's distinct sector exposures that name no sector, each with why — named on every
-    surface beside the sectors, never counted."""
-    return [(s, why) for s in distinct_sectors(av) if (why := not_a_sector(s.name)) is not None]
+def split_sectors(
+        av: AffectedView) -> tuple[list[SectorExposure], list[tuple[SectorExposure, str]]]:
+    """The card's distinct sector exposures in ONE pass: those that name a sector (the count takes
+    them) and those that name none, each with why (named on every surface, never counted)."""
+    kept: list[SectorExposure] = []
+    refused: list[tuple[SectorExposure, str]] = []
+    for s in distinct_sectors(av):
+        why = not_a_sector(s.name)
+        if why is None:
+            kept.append(s)
+        else:
+            refused.append((s, why))
+    return kept, refused
 
 
 def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[AffectedCompany]]:
@@ -1602,7 +1608,11 @@ def indicator_words(names: Sequence[str]) -> str:
 def _uncounted_parts(counted: CountedExposures) -> list[str]:
     """What a thesis names that is not counted, one phrase per class."""
     return ([f"a broad market index ({', '.join(counted.broad)})"] if counted.broad else []) + (
-        [f"a market indicator ({', '.join(counted.indicators)})"] if counted.indicators else [])
+        [f"a market indicator ({', '.join(counted.indicators)})"] if counted.indicators else []) + (
+        [("a name read as a sector that is not one (" if len(counted.not_sectors) == 1
+          else "names read as sectors that are not sectors (")
+         + "; ".join(f"{n} — {why}" for n, why in counted.not_sectors) + ")"]
+        if counted.not_sectors else [])
 
 
 def stale_count_words(pr: ResearchPriority | None, counted: CountedExposures) -> str:
@@ -1623,13 +1633,8 @@ def uncounted_words(counted: CountedExposures) -> str:
     """Why what a thesis names counts no exposure: the whole market, a market indicator, a name
     that is not a sector, or several — ONE phrasing for the card's why-line and the desk's gate."""
     if counted.not_sectors:
-        parts = ([f"a broad market index ({', '.join(counted.broad)})"] if counted.broad else [])
-        parts += ([f"a market indicator ({', '.join(counted.indicators)})"]
-                  if counted.indicators else [])
-        parts.append(("a name read as a sector that is not one (" if len(counted.not_sectors) == 1
-                      else "names read as sectors that are not sectors (")
-                     + "; ".join(f"{n} — {why}" for n, why in counted.not_sectors) + ")")
-        return "only " + " and ".join(parts) + " — none is counted as an exposure"
+        return ("only " + " and ".join(_uncounted_parts(counted))
+                + " — none is counted as an exposure")
     if counted.broad and counted.indicators:
         return (f"only a broad market index ({', '.join(counted.broad)}) and a market indicator "
                 f"({', '.join(counted.indicators)}) — neither the whole market nor a measure is "
@@ -2182,11 +2187,11 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     broad = broad_market_instruments(av)
     indic = market_indicators(av)
     attached = _attached(av)
+    kept_sectors, junk = split_sectors(av)
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
-        f'{_refs(s.claim_ids, rc)}</div>' for s in counted_sectors(av))
-    junk = refused_sectors(av)
+        f'{_refs(s.claim_ids, rc)}</div>' for s in kept_sectors)
     junk_rows = "".join(
         f'<div class="s"><b>{e(s.name)}</b> — {e(why)} <span class="q">“{e(s.quote)}”</span>'
         f'{_refs(s.claim_ids, rc)}</div>' for s, why in junk)
@@ -2226,7 +2231,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
            '<div class="note">None.</div>')
         + '<div class="sub">Enrichment — EXTERNAL HYPOTHESES, not named by the source</div>'
         + enrichment_html(rc.enrichment, card, rc))
-    summaries["s05_affected"] = (f"{len(counted_sectors(av))} sector(s) · "
+    summaries["s05_affected"] = (f"{len(kept_sectors)} sector(s) · "
                                  + (f"{len(rc.groups)} business group(s) named · "
                                     if rc.groups else "business groups not checkable here · "
                                     if rc.groups_unread else "")
@@ -2445,14 +2450,14 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
             f"{_ROLE_WORD.get(rc.roles.get(c.claim_id, ''), rc.roles.get(c.claim_id, '—'))} — "
             f"“{c.quote}” ({c.article_id} {c.block_id}; {c.claim_id})" for c in others]
     av = card.s05_affected
+    kept_sectors, junk = split_sectors(av)
     md += ["", f"## {titles['s05_affected']}", "**Sectors / themes the source names as exposed:**"]
     md += [f"- **{s.provenance.value}:** {s.name} — {s.direction.value} — “{s.quote}”"
            + (" [" + ", ".join(s.claim_ids) + "]" if s.claim_ids else "")
-           for s in counted_sectors(av)] or ["- none counted" if refused_sectors(av)
-                                             else "- none named by the source"]
-    if refused_sectors(av):
+           for s in kept_sectors] or ["- none counted" if junk else "- none named by the source"]
+    if junk:
         md.append(f"**{NOT_SECTORS}:**")
-        md += [f"- {s.name} — {why} — “{s.quote}”" for s, why in refused_sectors(av)]
+        md += [f"- {s.name} — {why} — “{s.quote}”" for s, why in junk]
     md.append("**Business groups the source names — not companies; no ticker implied:**")
     md += [f"- {g.name} — {g.excerpt} (paragraph {', '.join(_para(b) for b in g.block_ids)})"
            + (" [" + ", ".join(g.claim_ids) + "]" if g.claim_ids else "")
