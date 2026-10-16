@@ -1,4 +1,4 @@
-"""The weekly theme-intelligence workflow: opt-in schedule, manual trigger, state never on main.
+"""The weekly theme-intelligence workflow: manual trigger only, state never on main.
 
 A text lint, like `test_scheduled_workflows.py` (no YAML parser for a file we author ourselves).
 """
@@ -16,14 +16,22 @@ def _code_lines(text: str) -> list[str]:
     return [ln.strip() for ln in text.splitlines() if ln.strip() and not ln.strip().startswith("#")]
 
 
-def test_schedule_is_monday_0300_utc_and_opt_in() -> None:
+def _timers(text: str) -> list[str]:
+    """Every line of `text` that would start the job without a person: a schedule or a cron."""
+    return [ln for ln in _code_lines(text) if ln.startswith(("schedule:", "- cron:"))
+            or "vars.THEME_INTELLIGENCE_SCHEDULE_ENABLED" in ln]
+
+
+def test_the_weekly_run_is_started_by_hand_only() -> None:
+    """The operator's ruling (2026-10-16): the weekly run is MANUAL, as weekly-screen.yml is — it
+    had a Monday cron gated by a repository variable. NEGATIVE pin: the check finds the old one."""
     text = WF.read_text()
-    lines = _code_lines(text)
-    assert any(ln.startswith('- cron: "0 3 * * 1"') for ln in lines)  # 08:30 Asia/Kolkata
-    assert "workflow_dispatch:" in lines
-    gate = next(ln for ln in lines if ln.startswith("if: github.event_name"))
-    assert "vars.THEME_INTELLIGENCE_SCHEDULE_ENABLED == 'true'" in gate  # merging starts nothing
-    assert "github.event_name == 'workflow_dispatch'" in gate
+    assert _timers(text) == []
+    assert any(ln.startswith("workflow_dispatch:") for ln in _code_lines(text))
+    old = ('on:\n  schedule:\n    - cron: "0 3 * * 1"\n  workflow_dispatch:\njobs:\n  scan:\n'
+           "    if: github.event_name == 'workflow_dispatch' || "
+           "vars.THEME_INTELLIGENCE_SCHEDULE_ENABLED == 'true'\n")
+    assert len(_timers(old)) == 3
 
 
 def test_it_pushes_only_to_the_state_branch_after_the_gate() -> None:

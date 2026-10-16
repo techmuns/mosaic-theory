@@ -11,8 +11,8 @@
 #
 # Exit status: 0 SUCCEEDED · 2 PARTIAL (the readout names the source / article that failed) ·
 # 1 FAILED or QA did not pass. A failed run still writes its run record and readout — it is never
-# reported as a quiet week. This script installs nothing: schedule it yourself with cron or
-# launchd (templates in docs/theme_intelligence.md).
+# reported as a quiet week. Run it by hand: the weekly run is MANUAL by the operator's ruling
+# (2026-10-16), as the weekly screen is — it is never put on a timer.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 PY="${PY:-.venv/bin/python}"

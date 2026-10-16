@@ -5,11 +5,9 @@ name: theme-intelligence-weekly
 # touches the fund's screen, ranker, dossier, verdict, scoring, freeze, ledger or portfolio, and it
 # commits NOTHING to main.
 #
-# THE SCHEDULE IS OPT-IN. The cron fires on Mondays at 03:00 UTC (08:30 Asia/Kolkata), but the job
-# runs on it ONLY when the repository variable THEME_INTELLIGENCE_SCHEDULE_ENABLED is 'true'
-# (Settings → Secrets and variables → Actions → Variables). Merging this file starts nothing
-# unasked — the operator's 2026-08-24 ruling against unsanctioned crons applies to every timer.
-# `workflow_dispatch` (Actions → theme-intelligence-weekly → Run workflow) runs it by hand.
+# MANUAL TRIGGER ONLY — the operator's ruling, 2026-10-16: the weekly run is started by hand, as
+# weekly-screen.yml is (the 2026-08-24 ruling against timers). There is no schedule, deliberately:
+# Actions → theme-intelligence-weekly → Run workflow, or `bin/theme-intelligence-weekly` locally.
 #
 # DURABLE STATE. A runner's SQLite file dies with the runner, so the registry OF RECORD is the
 # append-only JSONL export on the `theme-intelligence-state` branch — derived analysis, provenance
@@ -18,9 +16,7 @@ name: theme-intelligence-weekly
 # is both the backup and the audit trail. A FAILED or PARTIAL run commits its run record and
 # readout too: a broken week can never look like a quiet one.
 on:
-  schedule:
-    - cron: "0 3 * * 1" # Monday 08:30 Asia/Kolkata — runs only if the variable above is 'true'
-  workflow_dispatch:
+  workflow_dispatch: # OPERATOR-TRIGGERED ONLY — see the note above; no schedule, deliberately
     inputs:
       days:
         description: "scan window in days, ending today"
@@ -38,7 +34,6 @@ concurrency:
 
 jobs:
   scan:
-    if: github.event_name == 'workflow_dispatch' || vars.THEME_INTELLIGENCE_SCHEDULE_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
