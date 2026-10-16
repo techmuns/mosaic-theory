@@ -91,3 +91,15 @@ paid for enrichment of theses that were already Skip.
 - **The U6 and U55 doubling pins construct their trigger** (a stub review that re-anchors; a
   failed-span claim written through the store). The create path never links a claim that fails
   its span check, and no live registry was found in that state.
+
+**REVIEW FIXES (2026-10-16, `/code-review high` of #723–#725).** Two findings on this PR, both
+fixed before merge:
+- **A `state pull` replay ended with `finish_run`,** so a SKIP thesis it re-created stayed ACTIVE
+  on the pulled registry: the U12 cost on the replay path. The replay now ends with
+  `finish_ingest`, as the uploads it replays did. Pinned end to end: an upload, then
+  `state._replay` into a fresh registry.
+- **A reassess read "medium" for a channel no longer configured** (a retired one), because the
+  processing default leaked into the lookup. `Pipeline._configured_reliability` gives None for a
+  channel not in sources.toml, and the reassess then keeps the recorded tier. Pinned on the
+  existing tier test.
+- Both mutants are killed.
