@@ -1451,9 +1451,125 @@ def exposures_of(av: AffectedView) -> tuple[list[AffectedCompany], list[Affected
 INSTRUMENT_ROLES = EXPOSURE_ROLES | {MentionRole.MARKET_INSTRUMENT, MentionRole.CITED_BASKET}
 
 
-#: the card's two instrument headings (HTML and Markdown): attached to the thesis, or only named
+#: WHOLE-MARKET indices — membership set by geography and size alone, never by sector or theme.
+#: The whole market is no thesis's exposure (operator ruling 2026-10-16): "S&P 500" was the only
+#: counted exposure of a J.P. Morgan thesis, and Ibovespa, IPC, Colcap and BVL of a Latin America
+#: one. Matched on the WHOLE name, never a prefix: "S&P 500 Software Index" and "S&P 500
+#: Utilities" are sector indices and count. A list — a whole-market index written another way
+#: still counts, so a new spelling is added here, never inferred.
+BROAD_MARKET_INDICES = frozenset({
+    # United States
+    "s&p 500", "s&p500", "spx", "s&p composite 1500", "s&p 1500", "s&p midcap 400", "s&p 400",
+    "s&p smallcap 600", "s&p 600", "dow jones industrial average", "dow jones", "djia", "dow",
+    "nasdaq composite", "nasdaq", "nasdaq-100", "nasdaq 100", "ndx", "russell 1000",
+    "russell 2000", "russell 3000", "russell midcap", "wilshire 5000", "crsp us total market",
+    "msci usa",
+    # world and regions
+    "msci world", "msci acwi", "msci all country world", "msci eafe", "msci emerging markets",
+    "msci em", "msci latam", "msci emerging markets latin america", "msci europe",
+    "ftse all-world", "stoxx europe 600", "stoxx 600", "euro stoxx 50",
+    # single countries (the whole market of one)
+    "ftse 100", "ftse 250", "dax", "cac 40", "nikkei 225", "nikkei", "topix", "hang seng",
+    "csi 300", "kospi", "sensex", "nifty 50", "s&p/asx 200", "s&p/tsx composite", "ibovespa",
+    "bovespa", "ipc", "s&p/bmv ipc", "colcap", "msci colcap", "bvl", "s&p/bvl peru general",
+    "ipsa", "s&p/clx ipsa", "merval",
+})
+#: the funds that track a whole market, by listed ticker — the same exposure in a fund's wrapper,
+#: so the index and its ETF are never treated apart
+BROAD_MARKET_FUNDS = frozenset({
+    "SPY", "VOO", "IVV", "SPLG", "VTI", "ITOT", "SCHB", "QQQ", "QQQM", "DIA", "IWM", "IWB", "IWV",
+    "IJH", "IJR", "MDY", "VT", "ACWI", "URTH", "EFA", "IEFA", "VEA", "EEM", "IEMG", "VWO", "ILF",
+    "EWZ", "EWW", "GXG", "EPU", "ECH",
+})
+
+
+#: MARKET INDICATORS — a measure computed from prices or options (volatility, correlation,
+#: dispersion, skew), never a basket anyone holds. Operator ruling 2026-10-16: the Cboe 3-month
+#: implied correlation index — Cboe's estimate, from option prices, of how closely the 50 largest
+#: S&P 500 stocks will move together — counted as an exposure on 33 current versions of the local
+#: registry copies. Matched on whole words of the name; an equity index or fund that SELECTS stocks
+#: by volatility ("S&P 500 Low Volatility Index", "MSCI USA Minimum-Volatility Index") holds stocks
+#: and is not one, spaced or hyphenated.
+MARKET_INDICATOR = re.compile(
+    r"\b(?:implied (?:correlation|volatility)"
+    r"|(?<!low )(?<!low-)(?<!minimum )(?<!minimum-)(?<!min )(?<!min-)volatility index"
+    r"|dispersion index|skew index|move index|vix|vvix|vxn|vxd|rvx|vstoxx|v2x|dspx"
+    r"|cor(?:1m|3m|6m|9m|1y))\b", re.IGNORECASE)
+
+
+def _index_name(name: str) -> str:
+    """A name as `BROAD_MARKET_INDICES` holds it: lower case, single spaces, without a leading
+    "the", a trademark sign, a trailing "index" or a trailing parenthesis ("S&P 500 (SPX)")."""
+    s = re.sub(r"\s+", " ", re.sub(r"[®™]", "", name).replace("’", "'")).strip().lower()
+    s = re.sub(r"\s*\([^()]*\)$", "", s)
+    s = re.sub(r"^the ", "", s)
+    return re.sub(r" ind(?:ex|ices)$", "", s)
+
+
+def is_broad_market(c: AffectedCompany) -> bool:
+    """A whole-market index, or a fund that tracks one (by a listed ticker) — attached to a thesis
+    it is named on every surface, and never counted as its exposure."""
+    return (_index_name(c.name_as_written) in BROAD_MARKET_INDICES
+            or any(x.ticker in BROAD_MARKET_FUNDS for x in c.listings))
+
+
+def is_market_indicator(c: AffectedCompany) -> bool:
+    """A measure computed from prices or options — volatility, correlation, dispersion — never a
+    basket anyone holds: attached to a thesis it is named on every surface, never counted."""
+    return MARKET_INDICATOR.search(c.name_as_written) is not None
+
+
+def broad_words(names: Sequence[str]) -> str:
+    """Why a thesis whose only attached instrument is the whole market counts no exposure — ONE
+    phrasing for the card, the desk's gate and the record."""
+    return (f"only a broad market index ({', '.join(names)}) — the whole market is not counted as "
+            f"an exposure")
+
+
+def indicator_words(names: Sequence[str]) -> str:
+    """Why a thesis whose only attached instrument is a market indicator counts no exposure."""
+    return (f"only a market indicator ({', '.join(names)}) — a measure, not a holding, is not "
+            f"counted as an exposure")
+
+
+def _uncounted_parts(counted: CountedExposures) -> list[str]:
+    """What a thesis names that is not counted, one phrase per class."""
+    return ([f"a broad market index ({', '.join(counted.broad)})"] if counted.broad else []) + (
+        [f"a market indicator ({', '.join(counted.indicators)})"] if counted.indicators else [])
+
+
+def stale_count_words(pr: ResearchPriority | None, counted: CountedExposures) -> str:
+    """When the STORED rule counted more exposures than today's rules do — a version assessed
+    before a counting ruling, whose action stands until it is re-graded — what is no longer
+    counted, and that a re-grade applies it; else "". REVIEW of #736: a version stored counting
+    the S&P 500 passed its gate with "not point-in-time verified" as the reason, which was false."""
+    n = exposures_counted(pr) if pr is not None else None
+    now = len(counted.listed) + len(counted.instruments) + len(counted.sectors)
+    parts = _uncounted_parts(counted)
+    if n is None or n <= now or not parts:
+        return ""
+    return (f"counted {n} exposure{'s' if n != 1 else ''} when the thesis was assessed; today's "
+            f"rules do not count " + " and ".join(parts) + " — a re-grade ($0) applies them")
+
+
+def uncounted_words(counted: CountedExposures) -> str:
+    """Why the instruments a thesis attaches count no exposure: the whole market, a market
+    indicator, or both — ONE phrasing for the card's why-line and the desk's gate."""
+    if counted.broad and counted.indicators:
+        return (f"only a broad market index ({', '.join(counted.broad)}) and a market indicator "
+                f"({', '.join(counted.indicators)}) — neither the whole market nor a measure is "
+                f"counted as an exposure")
+    return broad_words(counted.broad) if counted.broad else indicator_words(counted.indicators)
+
+
+#: the card's instrument headings (HTML and Markdown): attached to the thesis and counted,
+#: attached but the whole market or a market indicator, or only named
 INSTRUMENT_EXPOSURES = ("Instrument exposures of this thesis (ETFs, indices and baskets the "
                         "source attaches)")
+BROAD_INSTRUMENTS = ("Broad market indices the source attaches — the whole market, not counted "
+                     "as this thesis's exposure")
+INDICATOR_INSTRUMENTS = ("Market indicators the source attaches — a measure (volatility, "
+                         "correlation), not a holding; not counted as this thesis's exposure")
 NAMED_INSTRUMENTS = "Named instruments / indices — not attached to this thesis"
 
 
@@ -1470,6 +1586,10 @@ class CountedExposures:
     sectors: tuple[str, ...]
     #: named listed companies whose listing could NOT be verified as of the date — never counted
     unverified: tuple[str, ...]
+    #: whole-market indices (or funds tracking one) the source attaches — named, never counted
+    broad: tuple[str, ...] = ()
+    #: market indicators (volatility, correlation …) the source attaches — named, never counted
+    indicators: tuple[str, ...] = ()
 
 
 def _with_tickers(c: AffectedCompany) -> str:
@@ -1483,7 +1603,26 @@ def exposure_instruments(av: AffectedView) -> list[AffectedCompany]:
     """The ETFs, indices and cited baskets the source ATTACHES to the thesis — its exposure, the
     form a sector view is expressed through. ONE definition for the count (`counted_exposures`)
     and every surface that lists who is exposed: on 2026-10-16 the count took the software ETF
-    and index while the card and the desk still listed them as "named, not exposures"."""
+    and index while the card and the desk still listed them as "named, not exposures". A
+    whole-market index is not one (`broad_market_instruments`), nor is a market indicator
+    (`market_indicators`)."""
+    return [c for c in _attached(av) if not is_broad_market(c) and not is_market_indicator(c)]
+
+
+def broad_market_instruments(av: AffectedView) -> list[AffectedCompany]:
+    """The whole-market indices (and funds tracking one) the source attaches to the thesis —
+    named on every surface beside the exposures, never counted as one."""
+    return [c for c in _attached(av) if is_broad_market(c) and not is_market_indicator(c)]
+
+
+def market_indicators(av: AffectedView) -> list[AffectedCompany]:
+    """The market indicators (volatility, correlation, dispersion) the source attaches to the
+    thesis — named on every surface beside the exposures, never counted as one."""
+    return [c for c in _attached(av) if is_market_indicator(c)]
+
+
+def _attached(av: AffectedView) -> list[AffectedCompany]:
+    """Every fund, index or cited basket the source attaches to the thesis."""
     return [c for c in av.instruments if c.role in INSTRUMENT_ROLES] + [
         c for c in av.not_securities if c.role is MentionRole.CITED_BASKET]
 
@@ -1501,7 +1640,9 @@ def counted_exposures(av: AffectedView,
     """The thesis's counted exposures (`sectors`: the verified sector exposures still standing,
     when the caller has re-checked them; else the card's). An ETF, index or cited basket the
     source attaches to the thesis COUNTS (2026-10-16: "software may be oversold" named the
-    software ETF and index it would be expressed through, and read "no exposure")."""
+    software ETF and index it would be expressed through, and read "no exposure") — unless it is
+    the whole market (`is_broad_market`) or a market indicator (`is_market_indicator`), which are
+    named and never counted."""
     exp = [c for c in av.companies
            if c.resolution_status is ResolutionStatus.LISTED_EQUITY and c.role in EXPOSURE_ROLES]
     verified = listed_exposures(av)
@@ -1512,7 +1653,9 @@ def counted_exposures(av: AffectedView,
                      for c in verified),
         instruments=tuple(_with_tickers(c) for c in inst),
         sectors=tuple(s.name for s in (av.sector_exposures if sectors is None else sectors)),
-        unverified=tuple(c.name_as_written for c in exp if c not in verified))
+        unverified=tuple(c.name_as_written for c in exp if c not in verified),
+        broad=tuple(_with_tickers(c) for c in broad_market_instruments(av)),
+        indicators=tuple(_with_tickers(c) for c in market_indicators(av)))
 
 
 def _company_rows(cs: Iterable[AffectedCompany], *, exposures: bool = False) -> str:
@@ -1628,7 +1771,15 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
                 groups: Iterable[str] = (), *, groups_unchecked: bool = False) -> list[str]:
     """Why the research action is what it is, in plain words — from the STORED priority's factor
     VALUES and the card's own exposures, never from the rule trace's text (which stays in the
-    audit view)."""
+    audit view). A version whose stored count took what today's rules do not count says so,
+    whatever its action (`stale_count_words`)."""
+    stale = stale_count_words(pr, counted_exposures(card.s05_affected))
+    return _why_reasons(card, pr, groups, groups_unchecked=groups_unchecked) + (
+        [f"Exposure — {stale}."] if stale else [])
+
+
+def _why_reasons(card: CardContent, pr: ResearchPriority | None,
+                 groups: Iterable[str] = (), *, groups_unchecked: bool = False) -> list[str]:
     if pr is None:
         return []
     f = {x.factor_id: x.value for x in pr.factors}
@@ -1670,6 +1821,8 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
                      for r in watch_reasons_of(pr, counted.unverified))
     if not exposed and unverified:  # missing data, not a missing exposure
         out.append("Exposure — " + unverified_words(counted.unverified) + ".")
+    elif not exposed and (counted.broad or counted.indicators):
+        out.append("Exposure — " + uncounted_words(counted) + ".")
     elif not exposed:
         out.append("Exposure — no listed company or verified sector exposure; the source names "
                    f"business groups only ({'; '.join(names)}), not companies"
@@ -1942,6 +2095,9 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                                      + (f" · {len(others)} more cited" if others else ""))
     av = card.s05_affected
     inst = exposure_instruments(av)
+    broad = broad_market_instruments(av)
+    indic = market_indicators(av)
+    attached = _attached(av)
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
         f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
@@ -1963,12 +2119,15 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         + _company_rows(exposures_of(av)[0], exposures=True)
         + f'<div class="sub">{INSTRUMENT_EXPOSURES}</div>'
         + _company_rows(inst, exposures=True)
+        + (f'<div class="sub">{BROAD_INSTRUMENTS}</div>' + _company_rows(broad) if broad else "")
+        + (f'<div class="sub">{INDICATOR_INSTRUMENTS}</div>' + _company_rows(indic)
+           if indic else "")
         + f'<div class="sub">{NAMED_INSTRUMENTS}</div>'
-        + _company_rows([c for c in av.instruments if c not in inst])
+        + _company_rows([c for c in av.instruments if c not in attached])
         + '<div class="sub">Private or unlisted (stay private)</div>'
         + _company_rows(av.private_or_unlisted)
         + '<div class="sub">Named, not securities (products, baskets, agencies)</div>'
-        + _company_rows([c for c in av.not_securities if c not in inst])
+        + _company_rows([c for c in av.not_securities if c not in attached])
         + '<div class="sub">Also named in the source — mentions, NOT exposures of this thesis'
           '</div>' + _company_rows(exposures_of(av)[1] + list(av.also_named))
         + '<div class="sub">Sector labels</div><div class="s">' + e(", ".join(av.sectors) or "—")
@@ -2209,13 +2368,18 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     # (label, group) PAIRS — never `grp is av.instruments`: every empty tuple is the same object,
     # so identity matched one empty group to another's heading
     inst = exposure_instruments(av)
+    broad = broad_market_instruments(av)
+    indic = market_indicators(av)
+    attached = _attached(av)
     for label, grp, expo in (("Stock exposures of this thesis", exposures_of(av)[0], True),
                              (INSTRUMENT_EXPOSURES, inst, True),
-                             (NAMED_INSTRUMENTS, [c for c in av.instruments if c not in inst],
-                              False),
+                             *(((BROAD_INSTRUMENTS, broad, False),) if broad else ()),
+                             *(((INDICATOR_INSTRUMENTS, indic, False),) if indic else ()),
+                             (NAMED_INSTRUMENTS,
+                              [c for c in av.instruments if c not in attached], False),
                              ("Private or unlisted", av.private_or_unlisted, False),
                              ("Named, not securities (products, baskets, agencies)",
-                              [c for c in av.not_securities if c not in inst], False),
+                              [c for c in av.not_securities if c not in attached], False),
                              ("Also named in the source — mentions, NOT exposures of this thesis",
                               exposures_of(av)[1] + list(av.also_named), False)):
         md.append(f"**{label}:**")
