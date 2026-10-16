@@ -37,7 +37,8 @@ away from contradicting that.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $0.
-- **A week passes unscanned unless someone starts the run.** The desk's This week shows the last
-  run's date, so a missed week is visible, never a silent gap.
-- **U31f (the Actions cache keeping a failed run's paid answers) is still proven only by an
-  Actions run.** It waits for the first one started by hand.
+- **A week passes unscanned unless someone starts the run.** Nothing alerts on it. The run list
+  (`report`) shows when the last run was, and the published desk shows its own run's dates only
+  after a republish. *Falsifier: a week found missing from the record that no one noticed.*
+- **U31f (the Actions cache keeping a failed run's paid answers) is not written yet.** Its fix
+  can be proven only on an Actions run, so it waits for the first one started by hand.
