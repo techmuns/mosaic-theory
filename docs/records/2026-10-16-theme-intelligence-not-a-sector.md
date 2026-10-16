@@ -96,6 +96,33 @@ gas", "consumer credit", "US regional banks".
   - the calm regime's page, collapsed and opened, and its card's section 05;
   - the pilot thesis's page, collapsed and opened.
 
+**REVIEW FIXES (code review of #736/#737, 2026-10-16).**
+- **A stale count is said.** A version stored counting a name today's rules refuse keeps its
+  action until it is re-graded. #736's `stale_count_words` now names the non-sector too.
+  - Real case: the calm-index fixture graded on main 11e77e49 (stored Research Now, "0 listed ·
+    1 sector · 2 instrument") and rendered with this branch. Its gate reads "counted 3 exposures
+    when the thesis was assessed; today's rules do not count a broad market index (S&P 500) and a
+    market indicator (…) and a name read as a sector that is not one (at both a sector and
+    thematic level — …) — a re-grade ($0) applies them".
+  - Before the fix it had nothing to name, so it fell through to the false "not point-in-time
+    verified".
+- **The paid enrichment prompt names only sectors.**
+  - On a copy of the live pilot, TH-2FFD9B58A8's line went from "Sectors the source names as
+    exposed: USD assets (negative); US equity (negative); Treasurys (unclear)" to "none".
+  - The prompt text is the enrichment cache key, so a thesis with refused sectors no longer
+    matches its cached proposals. Its next enrichment is a fresh paid call: an operator decision,
+    as every paid call is. Those proposals were built on non-sectors.
+- **The dashboard row names a refused sector once, labelled.** It moved out of `sector_exposures`
+  (printed as "Exposure the source names") into `other_named`, as "[not a sector — not counted]".
+- **A sentence-final full stop is punctuation.** "US equities." is refused like "US equities".
+  "U.S." is held as "u.s". The corpus still gives 15 refused of 164.
+- **One pass per page.** `split_sectors` replaces `counted_sectors` / `refused_sectors`, which
+  re-ran the O(n²) de-duplication up to six times per page.
+- Pins: trailing stops; the stale gate for a non-sector; the enrichment prompt on the real
+  J.P. Morgan card; the dashboard's other_named. 6 mutants on the fixes, all killed. The earlier
+  17 re-run (one replaced by its dashboard successor) and #736's 26 re-run on this branch: all
+  killed.
+
 **BOUNDARY.**
 - Measured 2026-10-16 on this branch over #736's head cf8ae25a (itself over main 11e77e49).
 - Population: the 152 `registry.db` files under the theme-intelligence data folder of the pilot
