@@ -36,6 +36,7 @@ from vinci.theme_intelligence.priority import (
     F8_OUTWEIGHS,
     counter_verdict,
     exposures_counted,
+    unverified_words,
     watch_label,
     watch_reasons_of,
 )
@@ -1308,15 +1309,23 @@ def _ordinal(n: int) -> str:
     return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
+def market_text(f: MarketFigure, kind: str) -> str:
+    """A market figure in the reader's units — one formatter for the HTML and the Markdown record
+    (review of #731: the record printed raw fractions, "-0.0137" for a 1.4% gap)."""
+    if f.value is None:
+        return "not held"
+    v = f.value
+    text = (f"{v * 100:+.1f}%" if kind == "pct" else f"{v * 100:+.1f} pp" if kind == "pp"
+            else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
+    return text.replace("-", "−")
+
+
 def market_cell(f: MarketFigure, kind: str) -> str:
     """One market figure as the reader sees it — its basis on hover, and in the list below the
     table; "not held" when it was not measured (never a blank that reads as zero)."""
     if f.value is None:
         return f'<span class="nh" title="{e(f.basis)}">not held</span>'
-    v = f.value
-    text = (f"{v * 100:+.1f}%" if kind == "pct" else f"{v * 100:+.1f} pp" if kind == "pp"
-            else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
-    return f'<span title="{e(f.basis)}">{e(text.replace("-", "−"))}</span>'
+    return f'<span title="{e(f.basis)}">{e(market_text(f, kind))}</span>'
 
 
 #: (column, field, format) — the table and the measurement list read the same order
@@ -1351,7 +1360,7 @@ def market_html(m: MarketContext | None, *, missing: str) -> str:
         f"<li><b>{e(r.name)}</b><ul>" + "".join(
             f"<li>{e(c)}: {e(getattr(r, fld).basis)}</li>" for c, fld, _k in MARKET_COLUMNS)
         + "</ul></li>" for r in m.rows if r.ticker is not None)
-    return (f'<div class="mkt"><p class="mktl"><span class="lab unk">{e(m.label)}</span></p>'
+    return (f'<div class="mkt"><p class="mktl"><b>{e(m.label)}</b></p>'
             f'<p class="note">As of {e(m.as_of.isoformat())} · against {e(m.benchmark)} · '
             f'{e(m.source)}.</p>'
             + (f'<div class="hscroll"><table class="mktt">{head}{"".join(rows)}</table></div>'
@@ -1607,8 +1616,12 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
         return []
     f = {x.factor_id: x.value for x in pr.factors}
     a = pr.research_action.value
-    # the exposure the stored RULE counted — the line never contradicts the action it explains
-    exposed = exposures_counted(pr) > 0
+    # the exposure the stored RULE counted — the line never contradicts the action it explains;
+    # a version that carries no readable count is read from its own card
+    counted = counted_exposures(card.s05_affected)
+    n = exposures_counted(pr)
+    exposed = n > 0 if n is not None else bool(counted.listed or counted.instruments
+                                               or counted.sectors)
     if a == "RESEARCH NOW":
         # the inflection route says WHY with its research question (composed by the priority
         # rules from the claim's structured fields)
@@ -1636,12 +1649,10 @@ def why_reasons(card: CardContent, pr: ResearchPriority | None,
     elif near and near != "yes":
         out.append("Timing — no dated window inside the next 2-4 quarters in the evidence.")
     names = list(dict.fromkeys(groups))
-    unverified = next((r for r in watch_reasons_of(
-        pr, counted_exposures(card.s05_affected).unverified)
-        if r.code == "listing_unverified"), None)
-    if not exposed and unverified is not None:  # missing data, not a missing exposure
-        out.append("Exposure — " + unverified.text.removeprefix(
-            "no source-named exposure counted — ") + ".")
+    unverified = any(r.code == "listing_unverified"
+                     for r in watch_reasons_of(pr, counted.unverified))
+    if not exposed and unverified:  # missing data, not a missing exposure
+        out.append("Exposure — " + unverified_words(counted.unverified) + ".")
     elif not exposed:
         out.append("Exposure — no listed company or verified sector exposure; the source names "
                    f"business groups only ({'; '.join(names)}), not companies"
@@ -2097,16 +2108,18 @@ def _md_market(m: MarketContext | None) -> list[str]:
         close = (f"{r.last_close:,.2f} ({r.last_bar.isoformat()})"
                  if r.last_close is not None and r.last_bar else "not held")
         out.append(f"- {r.name} [{r.ticker}] — close {close}")
-        out += [f"  - {c}: " + (f"{getattr(r, fld).value:.4g} — " if getattr(r, fld).value
-                                is not None else "") + getattr(r, fld).basis
-                for c, fld, _k in MARKET_COLUMNS]
+        out += [f"  - {c}: " + (f"{market_text(getattr(r, fld), k)} — "
+                                if getattr(r, fld).value is not None else "")
+                + getattr(r, fld).basis for c, fld, k in MARKET_COLUMNS]
     return out + [f"- {MARKET_REVISIONS_NOTE}"]
 
 
 def render_markdown(card: CardContent, rc: RenderContext) -> str:
     h = card.header
+    q = (watch_of(rc.priority, card.s05_affected)
+         if rc.priority is not None and rc.priority.research_action is h.research_action else "")
     md = [f"# {h.title}", "",
-         f"**{h.research_action.value}** · {KIND_LABEL[h.kind]} · evidence "
+         f"**{h.research_action.value}{f' · {q}' if q else ''}** · {KIND_LABEL[h.kind]} · evidence "
          f"{h.evidence_direction.value} · {h.sector} · {h.region} · horizon {h.horizon} · status "
          f"{h.status.value}", "", first_detected_line(h), "",
          f"`{h.thesis_id}` · {' › '.join(h.ancestry)}", "", f"_{LEGEND}_", ""]

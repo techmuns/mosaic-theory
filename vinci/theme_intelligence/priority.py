@@ -416,10 +416,8 @@ def compute_priority(st: ThesisState, *, previous: ResearchAction | None,
                                  "UNKNOWN in the source evidence; a review should establish it")
         if not exposure_names:
             if st.unverified_listings:  # named, but no listing verified as of the date
-                missing("listing_unverified",
-                        "no source-named exposure counted — the listing of "
-                        + ", ".join(st.unverified_listings) + " could not be verified as of "
-                        "the date (re-checked when the thesis is next assessed)")
+                missing("listing_unverified", "no source-named exposure counted — "
+                        + unverified_words(st.unverified_listings))
             else:
                 held("no_exposure", "no source-named exposure (no point-in-time-verified listed "
                                     "company, no ETF, index or basket attached, no sector the "
@@ -494,9 +492,7 @@ def watch_reasons_of(pr: ResearchPriority,
         add("no_window", "missing_data", "no dated window in the source evidence")
     if exposures_counted(pr) == 0:
         if unverified:
-            add("listing_unverified", "missing_data",
-                "the listing of " + ", ".join(unverified) + " could not be verified as of the "
-                "date (re-checked when the thesis is next assessed)")
+            add("listing_unverified", "missing_data", unverified_words(unverified))
         else:
             add("no_exposure", "held", "no source-named exposure")
     if f.get("F7_dislocation_or_catalyst") != "present" \
@@ -528,16 +524,30 @@ def watch_label(reasons: Sequence[WatchReason]) -> str:
     return "needs data" if all(r.kind == "missing_data" for r in reasons) else "on hold"
 
 
+def unverified_words(names: Sequence[str]) -> str:
+    """Why a named listed company is not counted, in words — composed from the NAMES, so a surface
+    never rebuilds it by trimming the rule's sentence."""
+    return (f"the listing of {', '.join(names)} could not be verified as of the date (re-checked "
+            f"when the thesis is next assessed)")
+
+
 #: the stored F6 value: "<n> listed · <n> sector", with " · <n> instrument" since 2026-10-16
 _F6 = re.compile(r"(\d+) listed · (\d+) sector(?: · (\d+) instrument)?")
+#: the factor's EARLIER id (ti-engine-1 records), whose value is a bare count of listed exposures
+_F6_LEGACY = "F6_recognizable_listed_exposures"
 
 
-def exposures_counted(pr: ResearchPriority) -> int:
+def exposures_counted(pr: ResearchPriority) -> int | None:
     """How many exposures the stored rule COUNTED (its F6 value) — the one reader of that value,
-    so a surface states the exposure the action was decided on. 0 when the factor is absent."""
-    f6 = next((f.value for f in pr.factors if f.factor_id == "F6_recognizable_exposures"), "")
-    m = _F6.fullmatch(f6)
-    return sum(int(g) for g in m.groups() if g) if m else 0
+    so a surface states the exposure the action was decided on. Reads the earlier id too (a bare
+    count: 8 current versions in the registry copies carried it, 2026-10-16, one of them RESEARCH
+    NOW on "4"). None when the version carries no readable count — never read as "no exposure"."""
+    f = {x.factor_id: x.value for x in pr.factors}
+    if "F6_recognizable_exposures" in f:
+        m = _F6.fullmatch(f["F6_recognizable_exposures"])
+        return sum(int(g) for g in m.groups() if g) if m else None
+    legacy = f.get(_F6_LEGACY, "")
+    return int(legacy) if legacy.isdigit() else None
 
 
 def counter_verdict(pr: ResearchPriority) -> str | None:
