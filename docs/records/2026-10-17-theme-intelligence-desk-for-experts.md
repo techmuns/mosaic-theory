@@ -30,8 +30,10 @@ The rule applied on every page:
 2. **What's missing.** Every unmet condition, timing included.
    - Under an unmet catalyst condition, **the evidence behind it** (`evidence_gap`) replaces the
      rule's generic detail ("none verified", "a forecast without a corroborating measurement").
-     It gives the forecasts, counted (they are named under Key figures beside it), and the
-     latest measured figure with its age against the rule's own window.
+     It gives:
+     - the forecasts, counted (they are named under Key figures beside it);
+     - why the measured observations Timing counts in the last quarter do not carry it (below);
+     - the latest measured figure, with its age against the rule's own window.
    - That figure is dated by `timewindow.observation_date`, extracted from `timing_of`, so the
      rule and the page share ONE reading.
    - Pilot, TH-FBDC863613: "Its latest measured figure, earnings growth 31% (2Q26), dates from
@@ -48,11 +50,36 @@ The rule applied on every page:
 would change the call", in two columns. In the panel it had doubled the panel's height beside a
 short main column. On a phone the panel comes first.
 
+**The catalyst condition contradicted Timing on 7 of 23 pilot pages** (operator question on
+#740, 2026-10-17). TH-2FFD9B58A8's Timing counted "6 measured observations dated within the last
+quarter" while the catalyst condition read only "none verified". The rule was right; the page
+did not say why.
+- A last-quarter measured observation counts toward the catalyst only if its quote states a
+  verified change in a fundamental (`priority._fundamental_change`: earnings, revenue, prices,
+  demand, margins …). None of the six passes that test.
+- The panel now says so, with Timing's own count and the rule's own test: "None of its 6
+  measured observations from the last quarter (under Timing) states a verified change in a
+  fundamental — earnings, revenue, prices, demand, margins and the like".
+- On the pilot that is 6 pages: TH-2651327A9B, TH-2FFD9B58A8, TH-41B1AB7F8C, TH-DEB6560D7F, and
+  TH-1D5A6AD90E and TH-8DDD7B2868 in the singular. Each count equals its page's Timing count.
+- The forecasts line now says "no measured change **in a fundamental** from the last quarter".
+  Read beside "15 measured observations", the old wording contradicted itself.
+
+**The seventh page called a measured change a forecast.** On TH-16225B12C4 the one change the
+inflection reading counted is MEASURED ("spending on caffeinated beverages has grown at 6%
+annually"), and nothing corroborates it. The panel said "a forecast without a corroborating
+measurement", the desk's wording for every "not credible" reading. It now says: "Its measured
+change in a fundamental — caffeinated beverage spending growth 6% (since 2019) — is not
+corroborated: neither a second measured change in a fundamental nor the publisher's own data in
+an industry data report vouches for it." TH-FBDC863613, the other "not credible" thesis, counts a
+forecast and keeps the forecasts line.
+
 **A fault found while checking the panel.** When the inflection reading is "incomplete" (a
 measured change from the last quarter IS there; only its step to profits is missing), the
 forecasts line would have said "no measured change … corroborates them", which is false.
 - `evidence_gap` now says nothing in that case, and the condition keeps the rule's reason ("no
-  stated step from the change to profits").
+  stated step from the change to profits"). The same holds whenever a cited measured
+  observation IS a change in a fundamental (other than the uncorroborated case above).
 - No pilot thesis reads "incomplete" today: as of the published run, F12 reads "absent" on 21
   of the 23 and "not credible" on 2. So nothing published was wrong. The pin uses a real fixture
   version with its F12 reading changed.
@@ -127,10 +154,18 @@ theses, most of them retired.
 | Themes | 1 table, 23 rows | 13 "Missing:" lines; 0 related counts |
 | Articles | 6 folds | — |
 
-- The forecasts and measured-age lines are as in the first pass: 11 pages and 1 page.
-- Placeholder scan over every published page (every fold open, audit layer hidden): 30 hits on
-  this branch and 30 on main's published desk. All are ordinary English ("None of the 13 texts…")
-  or an existing audit message on the full report, so the redesign adds none.
+- Catalyst conditions, all 21 unmet ones on the pilot read in full:
+  - 10 carry the forecasts line;
+  - 6 the "measured observations … no change" line;
+  - 1 the uncorroborated measured change;
+  - 1 the measured-age line;
+  - 7 still show only "none verified". All 7 have no dated evidence at all ("timing unknown");
+    one is active (TH-F6906B89B0).
+- Placeholder scan over every published page (every fold open, audit layer hidden): 34 hits on
+  this branch and 30 on main's published desk.
+  - The 4 extra are the new sentence itself ("None of its 4 measured observations…").
+  - The other 30 are ordinary English ("None of the 13 texts…") or an existing audit message on
+    the full report.
 
 **Words on screen** (default view, folds closed; main's published desk → this branch):
 
@@ -146,6 +181,7 @@ theses, most of them retired.
   pages TH-FBDC863613 and TH-2FFD9B58A8;
 - the after pages again with every `<details>` opened (This week, the thesis page) and at 500px
   (This week, Themes, the thesis page);
+- TH-16225B12C4, the uncorroborated measured change;
 - Uploads.
 
 **Pins, end to end on committed fixtures:**
@@ -153,7 +189,13 @@ theses, most of them retired.
   - the panel's order;
   - raise/lower in the main column and never in the panel;
   - "Clears when" against the stored codes;
-  - the evidence line replacing the generic detail;
+  - the evidence lines replacing the generic detail;
+  - the "measured observations … no change" line, with Timing's own count (one observation and
+    two) and the rule's own test;
+  - NEGATIVE: once one observation IS a change in a fundamental, neither line is said;
+  - the uncorroborated measured change named as such;
+  - NEGATIVE: a counted forecast keeps the forecasts line, and a credited change is never called
+    uncorroborated;
   - NEGATIVE: an "incomplete" inflection keeps the rule's reason;
   - the measured figure's age;
   - directions, periods and the named note;
@@ -173,13 +215,17 @@ theses, most of them retired.
   - NEGATIVE: before its retirement it is listed live;
   - the related-thesis pins now read the thesis pages.
 
-**Mutation.** 19 mutants on the final code, all killed:
+**Mutation.** 27 mutants on the final code, all killed:
 - This week: the Research Now group, the move group, new-before-moved, the group order, the
   area, the long names, the retired fold, an archived row naming what is missing;
 - Themes: no "Missing:", no area, headers breaking;
 - Articles: no fold, a wrong count, live theses folded;
 - the panel: the generic detail kept, the evidence lines dropped, the "incomplete" guard, raise
-  and lower back in the panel, raise and lower not rendered.
+  and lower back in the panel, raise and lower not rendered;
+- the catalyst lines: the observations line dropped, a count not Timing's own, singular for
+  plural, the change guard removed, the uncorroborated line dropped, forecasts counted as
+  measured, the uncorroborated line on any reading (killed once a credited change was pinned
+  directly), the old forecasts wording.
 
 Four first-round survivors were equivalent mutants, i.e. conditions that can never fire:
 - a retired thesis is always archived as of its run (`ARCHIVING` holds "RETIRED");
@@ -191,7 +237,7 @@ The first pass's 11 mutants (the key line, "Clears when", the evidence line, the
 directions, periods, the note's name and count, the Monday wording, a wrong clearing text) were
 all killed on the first-pass code, before raise and lower moved out of the panel.
 
-**Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"`: 5856 passed, 513 skipped.
+**Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"`: 5858 passed, 513 skipped.
 
 ## BOUNDARY
 
@@ -209,8 +255,10 @@ all killed on the first-pass code, before raise and lower moved out of the panel
   its full name in lower case, and no clearing line, until one is added.
 - The 2Q26 example shows the rule's own boundary (92 days). Whether that window is right is a
   rule question, not changed here.
-- **Seen, not changed** (rule-level, so reported here and not fixed in a render PR): on
-  TH-2FFD9B58A8 the timing section counts "6 measured observations dated within the last
-  quarter" while the catalyst condition reads "none verified". The six are dated only by the
-  article's publication date and are levels, not changes, so the rule is consistent; the page
-  does not yet say why they do not count.
+- **Seen, not changed** (rule-level, so reported here and not fixed in a render PR):
+  - The rule's own F12 note for a "not credible" reading says "a forecast alone" even when the
+    counted change is measured (TH-16225B12C4). It is now corrected on the page, not in the
+    stored note.
+  - That change, "6% annually since 2019", counts as a last-quarter observation because a
+    change since a date is dated by the article's publication date. Whether a multi-year rate is
+    a near-term change is a rule question.
