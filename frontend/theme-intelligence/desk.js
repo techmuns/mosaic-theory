@@ -14,10 +14,7 @@ ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
 if(q||a||ar)openAll('#tt');
 all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
 (!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
-r.style.display=ok?'':'none';n+=ok?1:0});
-rowsOf('#tt details[data-grp]').forEach(function(g){var v=Array.prototype.slice.call(
-g.querySelectorAll('tr[data-area]')).some(function(r){return r.style.display!=='none'});
-g.style.display=v?'':'none';if(q||a||ar)g.open=v});recap('#tt');
+r.style.display=ok?'':'none';n+=ok?1:0});recap('#tt');
 document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
 function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
 -r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:
