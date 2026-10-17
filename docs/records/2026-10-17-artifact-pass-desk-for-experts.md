@@ -46,8 +46,10 @@ section frames these pages, so this is the step that puts #740's redesign in fro
 - **Leak scan** of every published file: 0 files match local paths (`/Users/`, `/private/tmp`,
   `/home/`), key prefixes (`sk-ant-`, `ghp_`, `gho_`, `github_pat_`, `AKIA…`) or key or token
   assignments.
-- **Suite.** ruff and `mypy --strict` clean. `pytest -m "not network"` ran green on these files
-  before the commit: 5858 passed, 513 skipped.
+- **Suite.** ruff and `mypy --strict` clean. `pytest -m "not network"` on these published files:
+  5858 passed, 513 skipped, 1 failed. The failure was this record's own empty `prs:` field
+  (`test_a_shipped_record_names_the_pr_that_carried_it`). With #741 written in, the record and
+  STATE lints plus the generated-file pin pass: 754 passed, 1 skipped.
 
 **BOUNDARY.** 2026-10-17. Pilot registry `pilot-2026-10-12` (v7, 23 theses: 13 active, 10
 archived), run `R-20261016T163302Z-market`, code at main 375d1dc5.
