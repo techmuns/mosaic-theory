@@ -263,15 +263,18 @@ def test_a_retired_thesis_is_never_re_graded_and_never_counted_as_a_live_action(
     assert d.kpi["research_now"] + d.kpi["watch"] + d.kpi["skip"] == len(live)
     ranked = [r.thesis_id for r in _active_rows(d)]
     assert old not in ranked and set(ranked) == {r.thesis_id for r in live}
-    # the desk's This week lists it after every live thesis of its area, with no open-conditions
-    # badge (it read first, at Research Now, under a header saying "0 at Research Now")
+    # the desk's This week folds it with the week's retired and archived theses, after every
+    # live one and naming nothing missing (it read first, at Research Now, under a header saying
+    # "0 at Research Now"; desk review 2026-10-17: history is folded, never grouped with the live)
     from bs4 import BeautifulSoup
 
     from vinci.theme_intelligence.report import write_run_outputs
 
     out = Path(write_run_outputs(pipe.store, run.run_id, tmp_path / "out")["dir"])
     page = BeautifulSoup((out / "index.html").read_text(), "html.parser")
-    area = next(a for a in page.select("div.area")
-                if a.find("a", href=f"theses/{old}.html") is not None)
-    order = [x["href"] for x in area.select('a[href^="theses/"]')]
-    assert order[-1] == f"theses/{old}.html" and len(order) > 1
+    row = page.find("a", href=f"theses/{old}.html", class_="trow")
+    fold = row.find_parent("details")
+    assert fold is not None and fold.summary.get_text().startswith("Retired or archived")
+    assert row.select_one(".miss") is None
+    flat = [str(a["href"]) for a in page.select("a.trow")]
+    assert flat[-1] == f"theses/{old}.html" and len(flat) > 1
