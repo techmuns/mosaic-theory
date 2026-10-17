@@ -35,6 +35,7 @@ from tests.theme_intelligence_support import (
 from vinci.theme_intelligence import desk
 from vinci.theme_intelligence.config import CURRENT_OBSERVATION_DAYS
 from vinci.theme_intelligence.pipeline import Pipeline
+from vinci.theme_intelligence.priority import _fundamental_change
 from vinci.theme_intelligence.report import write_run_outputs
 from vinci.theme_intelligence.schemas import RunStatus, ThesisVersion
 from vinci.theme_intelligence.timewindow import observation_date
@@ -136,15 +137,98 @@ def test_clears_when_names_what_would_clear_each_open_condition(
 
 def test_the_missing_catalyst_says_what_the_evidence_is(
         built: dict[str, tuple[Pipeline, Path]]) -> None:
-    """The panel's evidence line, under the unmet catalyst condition: J.P. Morgan's AI-adopters
-    thesis holds forecasts only, and says how many (they are named under Key figures beside it)
-    — in place of the rule's generic detail, which said the same thing less precisely."""
+    """The panel's evidence lines, under the unmet catalyst condition: J.P. Morgan's AI-adopters
+    thesis holds forecasts and two measured observations that are not changes; it says how many
+    of each (the forecasts are named under Key figures beside it) — in place of the rule's generic
+    detail, which said less."""
     pipe, out = built["jpm"]
     li = next(x for x in _page(out, "TH-A56902FFB6").select("aside.decide li.unmet")
               if x.b.get_text() == desk.CATALYST_GATE)
     assert [(x.get("class"), x.get_text()) for x in li.div.find_all("span")] == [
-        (["gap"], "The evidence is 3 forecasts; no measured change from the last quarter "
-                  "corroborates them.")]
+        (["gap"], "The evidence is 3 forecasts; no measured change in a fundamental from the last "
+                  "quarter corroborates them."),
+        (["gap"], "None of its 2 measured observations from the last quarter (under Timing) states "
+                  "a verified change in a fundamental — earnings, revenue, prices, demand, "
+                  "margins and the like.")]
+
+
+class _Swap:
+    """The real store, one claim read back with fields changed (the real type, `model_copy`)."""
+
+    def __init__(self, store: Any, cid: str, **update: Any) -> None:
+        self._store, self._cid, self._update = store, cid, update
+
+    def claim(self, cid: str) -> Any:
+        c = self._store.claim(cid)
+        return c.model_copy(update=self._update) if c is not None and cid == self._cid else c
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._store, name)
+
+
+_A_CHANGE = {"quote": "Revenue rose 9% year over year in the quarter.", "value": 9.0,
+             "value_text": "9%", "number_verified": True, "metric": "revenue growth",
+             "period": "3Q26"}
+
+
+def test_the_measured_observations_timing_counts_are_said_to_be_no_change(
+        built: dict[str, tuple[Pipeline, Path]]) -> None:
+    """TH-2FFD9B58A8 on the pilot: Timing counted "6 measured observations dated within the last
+    quarter" beside a catalyst condition reading only "none verified" (7 of 23 pilot pages). The
+    panel now says why they do not carry it, in the rule's own test (`_fundamental_change`) and
+    with Timing's own count — on both J.P. Morgan theses of that shape (one observation, two).
+    NEGATIVE: once one of them IS a measured change in a fundamental, neither line is said."""
+    pipe, out = built["jpm"]
+    for tid, n in (("TH-04140F1CA8", 1), ("TH-A56902FFB6", 2)):
+        page = _page(out, tid)
+        timing = page.select_one("aside.decide .timing").get_text(" ", strip=True)
+        m = re.search(r"(\d+) measured observations? dated within the last quarter", timing)
+        assert m and int(m[1]) == n, tid
+        said = [x.get_text() for x in page.select("aside.decide li.unmet .gap")]
+        assert said[-1] == (
+            ("Its 1 measured observation from the last quarter (under Timing) states no"
+             if n == 1 else f"None of its {n} measured observations from the last quarter "
+                            f"(under Timing) states a")
+            + " verified change in a fundamental — earnings, revenue, prices, demand, margins "
+              "and the like."), tid
+        v = _current(pipe, tid)
+        current = [x.claim for x in desk.near_term_reading(pipe.store, v).claims
+                   if x.timing == "current"]
+        assert len(current) == n and not any(_fundamental_change(c) for c in current)
+        view: Any = type("V", (), {"store": _Swap(pipe.store, current[0].claim_id, **_A_CHANGE)})()
+        assert desk.Desk.evidence_gap(view, v) == [], tid
+
+
+def test_a_measured_change_nothing_corroborates_is_never_called_a_forecast(
+        built: dict[str, tuple[Pipeline, Path]]) -> None:
+    """TH-16225B12C4 on the pilot: the one change the inflection reading counted is MEASURED
+    ("spending on caffeinated beverages has grown at 6% annually") and uncorroborated, and the
+    panel called it "a forecast without a corroborating measurement". It is now named as what it
+    is. The same real version, its F12 reading set to that shape. NEGATIVE: when the counted
+    change is a forecast (TH-FBDC863613's shape), no such line — the forecasts are counted; and a
+    change the reading CREDITS ("qualifies") is never called uncorroborated."""
+    pipe, _out = built["jpm"]
+    v = _current(pipe, "TH-A56902FFB6")
+    cid = next(x.claim.claim_id for x in desk.near_term_reading(pipe.store, v).claims
+               if x.timing == "current")
+    fc = next(r.claim_id for r in v.content.s04_key_evidence if r.epistemic.value == "forecast")
+
+    def reading(claim: str, value: str = "not credible") -> ThesisVersion:
+        pr = v.priority.model_copy(update={"factors": [
+            x.model_copy(update={"value": value, "claim_ids": (claim,)})
+            if x.factor_id == "F12_fundamental_inflection" else x for x in v.priority.factors]})
+        return v.model_copy(update={"priority": pr})
+
+    view: Any = type("V", (), {"store": _Swap(pipe.store, cid, **_A_CHANGE)})()
+    assert desk.Desk.evidence_gap(view, reading(cid)) == [
+        "Its measured change in a fundamental — revenue growth 9% (3Q26) — is not corroborated: "
+        "neither a second measured change in a fundamental nor the publisher's own data in an "
+        "industry data report vouches for it."]
+    assert desk.Desk.evidence_gap(view, reading(cid, "qualifies")) == []
+    plain: Any = type("V", (), {"store": pipe.store})()
+    said = desk.Desk.evidence_gap(plain, reading(fc))
+    assert said and said[0].startswith("The evidence is 3 forecasts; ")
+    assert not any("is not corroborated" in x for x in said)
 
 
 def test_an_incomplete_inflection_keeps_the_rules_own_reason(

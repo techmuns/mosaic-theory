@@ -82,6 +82,7 @@ from vinci.theme_intelligence.config import (
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.priority import (
+    _fundamental_change,
     exposures_counted,
     unverified_words,
     watch_reasons_of,
@@ -132,6 +133,7 @@ from vinci.theme_intelligence.store import Store
 from vinci.theme_intelligence.timewindow import observation_date, timing_of, window_of
 from vinci.theme_intelligence.verify import (
     card_sentences,
+    claim_provenance,
     content_words,
     distinct_listings,
     overlap,
@@ -2531,12 +2533,42 @@ class Desk:
         measurement" beside a 2Q26 EPS figure on the same page — measured 104 days before the
         as-of, just outside the window — and never said why it did not count.
 
-        Nothing when the inflection reading is "incomplete": a measured change from the last
-        quarter IS there and only its step to profits is missing (the rule's own detail says so),
-        so "no measured change corroborates them" would be false."""
-        if next((x.value for x in v.priority.factors
-                 if x.factor_id == "F12_fundamental_inflection"), "") == "incomplete":
+        And why the measured observations its Timing counts in the last quarter do not carry it:
+        none states a verified change in a fundamental (`priority._fundamental_change`, the rule's
+        own test). 2026-10-17: TH-2FFD9B58A8's Timing counted "6 measured observations dated
+        within the last quarter" beside a catalyst condition reading only "none verified" — 7 of
+        the pilot's 23 pages read that way.
+
+        When the change the inflection reading counted is itself MEASURED and uncorroborated
+        ("not credible"), it is named as such — the generic detail calls it a forecast
+        (TH-16225B12C4: "spending on caffeinated beverages has grown at 6% annually").
+
+        Nothing when the inflection reading is "incomplete", or when a cited measured observation
+        is otherwise a change in a fundamental: the rule then fell short for another reason (no
+        step to profits), its own detail says which, and "no measured change corroborates them"
+        would be false."""
+        f12 = next((x for x in v.priority.factors
+                    if x.factor_id == "F12_fundamental_inflection"), None)
+        if f12 is not None and f12.value == "incomplete":
             return []
+        alone = [c for cid in (f12.claim_ids if f12 is not None and f12.value == "not credible"
+                               else ())
+                 if (c := self.store.claim(cid)) is not None
+                 and claim_provenance(c) is Provenance.MEASURED_OBSERVATION
+                 and _fundamental_change(c)]
+        if alone:
+            what = "; ".join(f"{c.metric or 'a change'} {c.value_text or ''}".strip()
+                             + (f" ({c.period})" if c.period else "") for c in alone)
+            one = len(alone) == 1
+            return [f"Its measured change{'' if one else 's'} in a fundamental — {what} — "
+                    f"{'is' if one else 'are'} not corroborated: neither a second measured change "
+                    f"in a fundamental nor the publisher's own data in an industry data report "
+                    f"vouches for {'it' if one else 'them'}."]
+        cited = [x for x in near_term_reading(self.store, v).claims
+                 if claim_provenance(x.claim) is Provenance.MEASURED_OBSERVATION]
+        if any(_fundamental_change(x.claim) for x in cited):
+            return []
+        current = [x for x in cited if x.timing == "current"]
         rows = [r for r in v.content.s04_key_evidence if r.value_text]
         forecasts = [r for r in rows if r.epistemic.value == "forecast"]
         published = {s.article_id: s.published_at.date() if s.published_at else None
@@ -2556,7 +2588,14 @@ class Desk:
         out: list[str] = []
         if forecasts:  # named under Key figures beside the panel — counted here, never repeated
             out.append(f"the evidence is {_pl(len(forecasts), 'forecast')}; no measured change "
-                       f"from the last quarter corroborates them")
+                       f"in a fundamental from the last quarter corroborates them")
+        if current:  # the same observations, and the same count, as the Timing line below
+            out.append(("its 1 measured observation from the last quarter (under Timing) states no"
+                        if len(current) == 1 else
+                        f"none of its {len(current)} measured observations from the last quarter "
+                        f"(under Timing) states a")
+                       + " verified change in a fundamental — earnings, revenue, prices, demand, "
+                         "margins and the like")
         if measured:
             when, r = max(measured, key=lambda m: m[0])
             age = (v.as_of - when).days
