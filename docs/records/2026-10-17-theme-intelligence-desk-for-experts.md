@@ -70,9 +70,10 @@ inflection reading counted is MEASURED ("spending on caffeinated beverages has g
 annually"), and nothing corroborates it. The panel said "a forecast without a corroborating
 measurement", the desk's wording for every "not credible" reading. It now says: "Its measured
 change in a fundamental — caffeinated beverage spending growth 6% (since 2019) — is not
-corroborated: neither a second measured change in a fundamental nor the publisher's own data in
-an industry data report vouches for it." TH-FBDC863613, the other "not credible" thesis, counts a
-forecast and keeps the forecasts line.
+corroborated: no other figure measured in the last quarter states a change in a fundamental in
+its own words, and the source is not the publisher's own data in an industry data report"
+(wording corrected by the code review, below). TH-FBDC863613, the other "not credible" thesis,
+counts a forecast and keeps the forecasts line.
 
 **A fault found while checking the panel.** When the inflection reading is "incomplete" (a
 measured change from the last quarter IS there; only its step to profits is missing), the
@@ -244,7 +245,49 @@ The first pass's 11 mutants (the key line, "Clears when", the evidence line, the
 directions, periods, the note's name and count, the Monday wording, a wrong clearing text) were
 all killed on the first-pass code, before raise and lower moved out of the panel.
 
-**Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"`: 5858 passed, 513 skipped.
+**Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"`: 5859 passed, 513 skipped (after the review fixes).
+
+## CODE REVIEW FIXES (code review of #740, 2026-10-17)
+
+Nine findings: seven fixed, two skipped.
+- **The uncorroborated line said more than the rule tested.** It said "neither a second measured
+  change in a fundamental", beside a visible "8% energy drinks spending growth — Observed" on
+  TH-16225B12C4. The rule rejects that figure only because its quote ("energy drinks (8%) and
+  beverage shops (7%) leading the category") does not say so in words. The line now states the
+  rule's actual test: "no other figure measured in the last quarter states a change in a
+  fundamental in its own words".
+- **A Research Now could read "Missing: …" with the tooltip "Not yet Research Now".**
+  - When a Research Now's near-term reading is in conflict, the near-term condition reads
+    unmet until the thesis is reassessed. Removing the Watch-only guard in the first pass let
+    that reach This week and Themes.
+  - The guard is restored: the "Missing:" line is a live Watch's. A Research Now's panel heads
+    such a condition "Under review", never "What's missing".
+  - The first pass called the guard an equivalent mutant; that held only on the fixtures, which
+    hold no conflict.
+- **The measured-age line read figures the rule does not date.** It now reads only measured
+  observations (`claim_provenance`) that `timing_of` classes as current or historical, and never
+  a stale series. Before, an opinion, a scheduled event or a stale series dated by its
+  publication date could silence the line or be named as the latest figure.
+- **"(under Timing)" pointed at a count Timing does not show under a conflict.** It is dropped in
+  that case.
+- **`evidence_gap` re-read the near-term reading.** It now takes the page's own `nt`.
+- **The markdown card still printed "from A-…".** `render_markdown` now uses `more_line` too.
+- **The header no-break rule was global.** It is now scoped to the Themes table
+  (`.arts.themes th`).
+- **Skipped: Themes now builds a card context for every live Watch.** That is inherent to naming
+  what each one is missing, and it is cached for This week and the thesis pages.
+- **Skipped: the "showing N of M" note can count more items than the desk lists** (after
+  de-duplication or a withheld line). Fixing it needs the shown and total counts as structured
+  fields on the change item, and parsing them back out of the text is barred by "parsers consume
+  structured values". It was not measured on the pilot.
+
+Pins for each fix, each with its mutant killed (7): the corrected wording; a Research Now under
+a forced conflict (no "Missing:", "Under review"; NEGATIVE: a Watch still names what it is
+missing); a stale series dated inside the window is never the latest figure; no "(under Timing)"
+under a conflict; the markdown card; the scoped CSS rule.
+
+Re-run on the pilot copy: every catalyst panel is unchanged except TH-16225B12C4's wording. No
+pilot page is a Research Now, so none reads "Under review".
 
 ## BOUNDARY
 
@@ -269,3 +312,6 @@ all killed on the first-pass code, before raise and lower moved out of the panel
   - That change, "6% annually since 2019", counts as a last-quarter observation because a
     change since a date is dated by the article's publication date. Whether a multi-year rate is
     a near-term change is a rule question.
+  - "8% energy drinks spending growth" does not corroborate it because the rule reads a change
+    from the quote's words, and that quote has none. A recall gap in `_fundamental_change`: the
+    label says what the quote does not.
