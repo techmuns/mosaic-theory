@@ -178,7 +178,8 @@ def test_themes_is_one_table_naming_each_theses_area_and_what_it_is_missing(
             watch += bool(miss)
         assert not re.search(r"\d+ related thes", tr.get_text(" "))
     assert watch and watch < len(rows)
-    assert "th{overflow-wrap:normal;word-break:normal}" in desk.CSS
+    assert ".arts.themes th{overflow-wrap:normal;word-break:normal}" in desk.CSS
+    assert "\nth{overflow-wrap:normal" not in desk.CSS  # the Themes table's rule, not every one
 
 
 # --- review: every active thesis, whatever week -------------------------------------------------

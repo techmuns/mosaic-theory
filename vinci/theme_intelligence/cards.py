@@ -2429,7 +2429,8 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     wc = card.s02_what_changed
     md += [f"## {titles['s02_what_changed']}", f"- {wc.vs_prior}", f"- novelty: {wc.novelty}"]
     for i, it in enumerate(wc.items):
-        txt = (f"WITHHELD — {rc.blocked[f's02.{i}']}" if f"s02.{i}" in rc.blocked else it.text)
+        txt = (f"WITHHELD — {rc.blocked[f's02.{i}']}" if f"s02.{i}" in rc.blocked
+               else more_line(card, it) or it.text)
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
         md.append("- " + (f"[{tag}] " if tag else "")
                  + f"**{shown_label(it.provenance, f's02.{i}', rc).value}:** {txt}"

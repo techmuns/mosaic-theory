@@ -1625,10 +1625,14 @@ class Desk:
                 if not g.ok]
 
     def missing(self, tid: str) -> str:
-        """What a live thesis still lacks, in a few words each (`_SHORT_GATE`; the full condition
+        """What a live WATCH still lacks, in a few words each (`_SHORT_GATE`; the full condition
         names are its tooltip) — the same line on This week and on Themes. An archived thesis
-        (a retired one too: `ARCHIVING`) is history and lacks nothing."""
-        if self.asof[tid][0].status is ThesisStatus.ARCHIVED:
+        (a retired one too: `ARCHIVING`) is history; a Research Now lacks nothing even when a
+        condition is under review (a near-term conflict reads unmet until the thesis is
+        reassessed), and is never labelled "Not yet Research Now"."""
+        t, v = self.asof[tid]
+        if (t.status is ThesisStatus.ARCHIVED
+                or v.priority.research_action is not ResearchAction.WATCH):
             return ""
         unmet = self.unmet(tid)
         return (f'<span class="miss" title="Not yet Research Now: {e("; ".join(unmet))}">'
@@ -2365,9 +2369,10 @@ class Desk:
         unmet = [g for g in gs if not g.ok]
         met = [g for g in gs if g.ok]
         route = (why_reasons(c, v.priority, groups)[0] if action == "RESEARCH NOW" else "")
-        gap = (self.evidence_gap(v) if any(g.name == CATALYST_GATE for g in unmet) else [])
+        gap = (self.evidence_gap(v, nt) if any(g.name == CATALYST_GATE for g in unmet) else [])
         why = (f'<p class="small">{e(route)}</p>' if route else "") + (
-            '<h3>What\'s missing</h3><ul class="gates">' + "".join(
+            ('<h3>Under review</h3>' if action == "RESEARCH NOW" else "<h3>What's missing</h3>")
+            + '<ul class="gates">' + "".join(
                 f'<li class="unmet"><span class="ic">✗</span><div><b>{e(g.name)}</b>'
                 # the evidence lines say specifically what the rule's detail says generically
                 + ("".join(f'<span class="gap">{e(x)}</span>' for x in gap)
@@ -2526,7 +2531,7 @@ class Desk:
         return (f'<details class="cmdd"><summary>{verb}</summary><code class="cmd">{e(cmd)}'
                 f'</code></details>')
 
-    def evidence_gap(self, v: ThesisVersion) -> list[str]:
+    def evidence_gap(self, v: ThesisVersion, nt: NearTerm | None = None) -> list[str]:
         """What the evidence is when no measured change from the last quarter carries the thesis:
         its forecasts, and how old its latest measured figure is against the rule's own window
         (`CURRENT_OBSERVATION_DAYS`). 2026-10-17: a panel read "a forecast without a corroborating
@@ -2560,11 +2565,16 @@ class Desk:
             what = "; ".join(f"{c.metric or 'a change'} {c.value_text or ''}".strip()
                              + (f" ({c.period})" if c.period else "") for c in alone)
             one = len(alone) == 1
+            # what the rule tested, exactly: another figure measured in the last quarter whose
+            # OWN WORDS state a change in a fundamental — a figure labelled "spending growth"
+            # whose quote does not say so is not one (TH-16225B12C4's "8% energy drinks spending
+            # growth" sits beside this line)
             return [f"Its measured change{'' if one else 's'} in a fundamental — {what} — "
-                    f"{'is' if one else 'are'} not corroborated: neither a second measured change "
-                    f"in a fundamental nor the publisher's own data in an industry data report "
-                    f"vouches for {'it' if one else 'them'}."]
-        cited = [x for x in near_term_reading(self.store, v).claims
+                    f"{'is' if one else 'are'} not corroborated: no other figure measured in the "
+                    f"last quarter states a change in a fundamental in its own words, and the "
+                    f"source is not the publisher's own data in an industry data report."]
+        nt = nt if nt is not None else near_term_reading(self.store, v)
+        cited = [x for x in nt.claims
                  if claim_provenance(x.claim) is Provenance.MEASURED_OBSERVATION]
         if any(_fundamental_change(x.claim) for x in cited):
             return []
@@ -2574,10 +2584,14 @@ class Desk:
         published = {s.article_id: s.published_at.date() if s.published_at else None
                      for s in v.content.s09_sources}
         measured: list[tuple[date, Any]] = []
-        for r in rows:  # dated exactly as the rule dates them (`observation_date`)
+        for r in rows:  # read and dated exactly as the rule reads them (`timing_of`)
             claim = self.store.claim(r.claim_id) if r.epistemic.value == "actual" else None
-            when = (observation_date(claim, v.as_of, published.get(r.article_id))
-                    if claim is not None else None)
+            if (claim is None or claim_provenance(claim) is not Provenance.MEASURED_OBSERVATION
+                    or timing_of(claim, v.as_of, published.get(r.article_id))[0]
+                    not in ("current", "historical")
+                    or any(q.startswith("stale series") for q in claim.qualifiers)):
+                continue  # an opinion, a scheduled event, a stale series: never a dated figure
+            when = observation_date(claim, v.as_of, published.get(r.article_id))
             if when is not None:
                 measured.append((when, r))
 
@@ -2590,10 +2604,11 @@ class Desk:
             out.append(f"the evidence is {_pl(len(forecasts), 'forecast')}; no measured change "
                        f"in a fundamental from the last quarter corroborates them")
         if current:  # the same observations, and the same count, as the Timing line below
-            out.append(("its 1 measured observation from the last quarter (under Timing) states no"
+            where = "" if nt.conflict else " (under Timing)"  # a conflict replaces that count
+            out.append((f"its 1 measured observation from the last quarter{where} states no"
                         if len(current) == 1 else
-                        f"none of its {len(current)} measured observations from the last quarter "
-                        f"(under Timing) states a")
+                        f"none of its {len(current)} measured observations from the last "
+                        f"quarter{where} states a")
                        + " verified change in a fundamental — earnings, revenue, prices, demand, "
                          "margins and the like")
         if measured:
@@ -2901,7 +2916,6 @@ padding:12px 16px;margin-bottom:8px;color:var(--ink)}
 .tmeta .miss,.tsub .miss{color:var(--ink2)}.tsub{display:flex;flex-wrap:wrap;gap:2px 10px;
 margin-top:3px;font-size:12.5px}.tsub .stale{margin-top:0}
 details.gone>summary{font-size:12.5px;color:var(--muted);cursor:pointer}
-th{overflow-wrap:normal;word-break:normal}
 .tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
 .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gapi{color:var(--ink2)}
@@ -3118,7 +3132,8 @@ details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
 details.ubk>summary .muted{margin-left:10px;font-size:13px}
 .ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
 .arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
-.arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:156px}
+.arts.themes{table-layout:fixed}.arts.themes th{overflow-wrap:normal;word-break:normal}
+.arts.themes th:nth-child(2){width:156px}
 .arts.themes th:nth-child(3){width:118px}.arts.themes th:nth-child(4),
 .arts.themes th:nth-child(5){width:100px}.arts.themes th:nth-child(6){width:170px}
 @media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}

@@ -16,6 +16,7 @@ The committed J.P. Morgan fixtures (frozen model output), rendered end to end.
 
 from __future__ import annotations
 
+import dataclasses
 import re
 from datetime import timedelta
 from pathlib import Path
@@ -197,6 +198,15 @@ def test_the_measured_observations_timing_counts_are_said_to_be_no_change(
         assert len(current) == n and not any(_fundamental_change(c) for c in current)
         view: Any = type("V", (), {"store": _Swap(pipe.store, current[0].claim_id, **_A_CHANGE)})()
         assert desk.Desk.evidence_gap(view, v) == [], tid
+        # NEGATIVE (code review of #740): under a near-term conflict Timing shows the conflict,
+        # not this count — the line no longer points there
+        nt = desk.near_term_reading(pipe.store, v)
+        conflict = dataclasses.replace(nt, recomputed="not shown" if nt.stored == "yes" else "yes")
+        plain: Any = type("V", (), {"store": pipe.store})()
+        said = desk.Desk.evidence_gap(plain, v, conflict)
+        assert conflict.conflict and said[-1].startswith(
+            ("Its 1 measured observation from the last quarter states no",
+             f"None of its {n} measured observations from the last quarter states a")), tid
 
 
 def test_a_measured_change_nothing_corroborates_is_never_called_a_forecast(
@@ -222,8 +232,8 @@ def test_a_measured_change_nothing_corroborates_is_never_called_a_forecast(
     view: Any = type("V", (), {"store": _Swap(pipe.store, cid, **_A_CHANGE)})()
     assert desk.Desk.evidence_gap(view, reading(cid)) == [
         "Its measured change in a fundamental — revenue growth 9% (3Q26) — is not corroborated: "
-        "neither a second measured change in a fundamental nor the publisher's own data in an "
-        "industry data report vouches for it."]
+        "no other figure measured in the last quarter states a change in a fundamental in its own "
+        "words, and the source is not the publisher's own data in an industry data report."]
     assert desk.Desk.evidence_gap(view, reading(cid, "qualifies")) == []
     plain: Any = type("V", (), {"store": pipe.store})()
     said = desk.Desk.evidence_gap(plain, reading(fc))
@@ -272,6 +282,18 @@ def test_a_measured_figure_outside_the_last_quarter_is_said_with_the_rules_own_a
     assert age > CURRENT_OBSERVATION_DAYS
     assert (f"{age} days before the as-of, outside the last quarter "
             f"({CURRENT_OBSERVATION_DAYS} days).") in desk.Desk.evidence_gap(view, later)[-1]
+    # NEGATIVE (code review of #740): a figure the rule reads as a STALE SERIES is never the
+    # latest measured figure, however recent its date — the rule ages it as historical; dated
+    # inside the window it would have silenced the line
+    latest = max((r for r in v.content.s04_key_evidence if r.value_text
+                  and r.epistemic.value == "actual"),
+                 key=lambda r: observation_date(pipe.store.claim(r.claim_id), later.as_of,  # type: ignore[arg-type]
+                                                pub.get(r.article_id)) or later.as_of)
+    stale: Any = type("V", (), {"store": _Swap(
+        pipe.store, latest.claim_id, measured_as_of=later.as_of - timedelta(days=10),
+        qualifiers=("stale series — the source's figure is a year old",))})()
+    said = desk.Desk.evidence_gap(stale, later)
+    assert said and "days before the as-of, outside the last quarter" in said[-1]
 
 
 def test_an_exposure_is_named_with_its_direction(built: dict[str, tuple[Pipeline, Path]]) -> None:
@@ -311,9 +333,34 @@ def test_what_changed_names_the_source_of_its_closing_note(
     text = re.sub(r"\s+", " ", card.get_text(" "))
     assert "from J.P. Morgan Private Bank, 2026-10-02 — the rest are in 04 KEY EVIDENCE" in text
     assert "from —" not in text and "from —" not in page.get_text(" ")
+    md = (out / "cards" / "TH-4BC577D53A.md").read_text()  # the markdown card too (review, #740)
+    assert "from J.P. Morgan Private Bank, 2026-10-02 — the rest are in 04 KEY EVIDENCE" in md
 
 
 def test_uploads_names_no_monday_deadline(built: dict[str, tuple[Pipeline, Path]]) -> None:
     _pipe, out = built["jpm"]
     text = (out / "uploads.html").read_text()
     assert "Monday 03:00" not in text and "Run workflow" in text
+
+
+def test_a_research_now_under_review_is_never_missing_anything(
+        built: dict[str, tuple[Pipeline, Path]]) -> None:
+    """Code review of #740: a Research Now whose near-term reading is in conflict (its stored
+    reading no longer matches its claims re-dated today) reads that condition unmet until it is
+    reassessed. It is under review — never "Missing:" on This week or Themes, never "Not yet
+    Research Now", never "What's missing" in its panel. NEGATIVE: a Watch still names what it
+    is missing."""
+    pipe, _out = built["calm"]
+    d = desk.Desk(pipe.store, pipe.store.runs()[-1], cards={}, generated="")
+    rn = next(tid for tid, (_t, v) in d.asof.items()
+              if v.priority.research_action.value == "RESEARCH NOW")
+    nt = d.near[rn]
+    d.near[rn] = dataclasses.replace(nt, recomputed="not shown" if nt.stored == "yes" else "yes")
+    assert d.unmet(rn)  # the conflict reads unmet …
+    assert d.missing(rn) == ""  # … and is never "Missing:"
+    s = BeautifulSoup(d.thesis_page(rn), "html.parser")
+    heads = [h.get_text() for h in s.select("aside.decide h3")]
+    assert "Under review" in heads and "What's missing" not in heads
+    watch = next(tid for tid, (_t, v) in d.asof.items()
+                 if v.priority.research_action.value == "WATCH" and d.unmet(tid))
+    assert d.missing(watch).startswith('<span class="miss" title="Not yet Research Now: ')
