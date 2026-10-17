@@ -304,6 +304,12 @@ def test_the_full_weekly_report_spans_every_run_of_the_week(tmp_path: Path) -> N
     assert m and int(m[2]) == 2 and last == 1
 
 
+def _links(page: Path, tid: str) -> list[Any]:
+    """An article list's links to `tid` (never a thesis card's own `a.trow`)."""
+    return [a for a in _soup(page).select("a") if (a.get("href") or "").endswith(f"{tid}.html")
+            and "trow" not in (a.get("class") or [])]
+
+
 def _article_cells(page: Path, tid: str) -> list[str]:
     """What an article list says beside each link to `tid` (a thesis card's own link — `a.trow`,
     which carries the thesis's chips — is not an article list)."""
@@ -322,11 +328,20 @@ def test_a_retired_thesis_is_marked_where_an_article_lists_it_and_only_from_its_
     for page in ("articles.html", "index.html"):
         cells = _article_cells(out / page, old)
         assert cells and all("retired — replaced on re-analysis" in c for c in cells), page
+        # and folded under a count, beside the article's live theses (desk review 2026-10-17:
+        # one pilot article listed nine theses, most of them retired)
+        for a in _links(out / page, old):
+            fold = a.find_parent("details", class_="gone")
+            assert fold is not None, page
+            n = int(re.fullmatch(r"\+(\d+) retired or archived", fold.summary.get_text())[1])  # type: ignore[index]
+            assert n == len(fold.select("a")), page
     then = theses_as_of_run(pipe.store, pipe.store.run(first))  # type: ignore[arg-type]
     assert then[old][0].retired == "" and then[old][0].status is ThesisStatus.ACTIVE
     early = _render(pipe, first, tmp_path / "early")
     cells = _article_cells(early / "articles.html", old)
     assert cells and not any("retired" in c for c in cells)
+    assert all(a.find_parent("details", class_="gone") is None
+               for a in _links(early / "articles.html", old))
 
 
 # --- U47 + U32c: one reading of the registry's links ----------------------------------------------
@@ -336,8 +351,9 @@ def test_an_area_root_link_is_filed_as_the_same_area_and_counted_nowhere_as_rela
     """The engine filed a root-to-child link as PARENT_CHILD adjacent support (card TH-A097D4722F:
     "ADJACENT SUPPORT (parent / child)"), and Themes counted it as related while the page folded
     it (TH-DEE87FCF51: "2 related theses", both area-root links). Now the engine files it as the
-    same broader area; a link STORED the old way is read the same; and Themes counts exactly what
-    the page lists. NEGATIVE pin: a direct link (a shared source) is still counted and listed."""
+    same broader area; a link STORED the old way is read the same; and Themes counts no related
+    theses at all (desk review 2026-10-17: the thesis page lists them — one reading, one place).
+    NEGATIVE pin: a direct link (a shared source) is still listed."""
     pipe = make_pipeline(tmp_path)
     pipe.start_run("ingest", as_of=AS_OF)
     for slug, node, title, line in (
@@ -367,12 +383,8 @@ def test_an_area_root_link_is_filed_as_the_same_area_and_counted_nowhere_as_rela
     folded = {a["href"] for d in page.select("details.more-rows") for a in d.select("ul.rel a")}
     assert f"{by['healthcare.medtech']}.html" in folded - direct
     themes = _soup(out / "themes.html")
-    for tr in themes.select("tr[data-area]"):
-        tid = re.search(r"TH-[0-9A-F]+", tr.get_text())[0]  # type: ignore[index]
-        m = re.search(r"(\d+) related thes[ei]s", tr.get_text())
-        listed = {a["href"] for ul in _soup(out / "theses" / f"{tid}.html").select("ul.rel")
-                  if ul.find_parent("details") is None for a in ul.select("a")}
-        assert (int(m[1]) if m else 0) == len(listed), tid
+    assert themes.select("tr[data-area]")
+    assert not re.search(r"\d+ related thes[ei]s", themes.get_text(" "))
 
 
 def test_a_shared_source_is_still_a_related_thesis_on_themes_and_the_page(tmp_path: Path) -> None:
@@ -391,8 +403,13 @@ def test_a_shared_source_is_still_a_related_thesis_on_themes_and_the_page(tmp_pa
     ingest(pipe, art.doc(), x, as_of=AS_OF, publisher=art.publisher)
     pipe.finish_run(RunStatus.SUCCEEDED)
     out = _render(pipe, pipe.store.runs()[-1].run_id, tmp_path / "out")
-    text = _text(out / "themes.html")
-    assert text.count("1 related thesis") == 2
+    ids = {t.key_node: t.thesis_id for t in pipe.store.theses()}
+    for a, b in (("healthcare.pharma_biotech", "healthcare.medtech"),
+                 ("healthcare.medtech", "healthcare.pharma_biotech")):
+        page = _soup(out / "theses" / f"{ids[a]}.html")
+        direct = {str(x["href"]) for ul in page.select("ul.rel")
+                  if ul.find_parent("details") is None for x in ul.select("a")}
+        assert direct == {f"{ids[b]}.html"}, a
 
 
 # --- U32: the desk's lists, print, printed report and publish ------------------------------------

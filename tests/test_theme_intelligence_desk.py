@@ -21,6 +21,7 @@ import re
 from collections import Counter
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
+from typing import Any
 from urllib.parse import unquote, urlparse
 
 import pytest
@@ -148,6 +149,37 @@ def test_every_long_list_says_how_much_it_holds_and_keeps_every_row(
     run = max((r for r in pipe.store.runs() if r.mode == "scan"), key=lambda r: r.started_at)
     rows = _soup(out / "themes.html").select("#tt tr[data-area]")
     assert len(rows) == len(theses_as_of_run(pipe.store, run))
+
+
+def test_themes_is_one_table_naming_each_theses_area_and_what_it_is_missing(
+        w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """Desk review, 2026-10-17: nine per-area tables, a header broken mid-word ("SOURCE S") and a
+    related-theses count under each title. Now ONE table (the area filter reaches every row);
+    under each title its area and, for a live Watch, what it is missing — the thesis page's own ✗
+    list. NEGATIVE: Research Now, Skip and archived rows name nothing missing, and no row counts
+    related theses (the thesis page lists them)."""
+    pipe, out, _ = w12
+    s = _soup(out / "themes.html")
+    run = max((r for r in pipe.store.runs() if r.mode == "scan"), key=lambda r: r.started_at)
+    asof = theses_as_of_run(pipe.store, run)
+    assert len(s.select("#tt table")) == 1 and s.select("#tt details") == []
+    rows = s.select("#tt tr[data-area]")
+    watch = 0
+    for tr in rows:
+        tid = Path(str(tr.select_one("a")["href"])).stem
+        t, v = asof[tid]
+        sub = tr.select_one(".tsub")
+        assert sub.select_one("span").get_text() == tr["data-area"] == area_name(t.key_node)
+        miss = _miss_line(tr)
+        if t.status is ThesisStatus.ARCHIVED or v.priority.research_action.value != "WATCH":
+            assert miss is None, tid
+        else:
+            assert (miss or []) == _missing(_soup(out / "theses" / f"{tid}.html"))
+            watch += bool(miss)
+        assert not re.search(r"\d+ related thes", tr.get_text(" "))
+    assert watch and watch < len(rows)
+    assert ".arts.themes th{overflow-wrap:normal;word-break:normal}" in desk.CSS
+    assert "\nth{overflow-wrap:normal" not in desk.CSS  # the Themes table's rule, not every one
 
 
 # --- review: every active thesis, whatever week -------------------------------------------------
@@ -283,19 +315,61 @@ def test_older_upload_requests_stay_listed_and_are_never_dismissed_by_age(
         assert a.title in text
 
 
-def test_this_week_groups_its_changes_by_area_and_lists_what_each_article_produced(
+def _missing(page: BeautifulSoup) -> list[str]:
+    """The thesis page's own ✗ conditions, in the few words a list row uses for them."""
+    return [desk._SHORT_GATE.get(b.get_text(), b.get_text().lower())
+            for b in page.select("aside.decide li.unmet > div > b")]
+
+
+def _miss_line(el: Any) -> list[str] | None:
+    m = el.select_one(".miss")
+    if m is None:
+        return None
+    text = m.get_text()
+    assert text.startswith("Missing: "), text
+    return text.removeprefix("Missing: ").split(", ")
+
+
+def test_this_week_groups_its_changes_by_what_happened_and_lists_what_each_article_produced(
         w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """Desk review, 2026-10-17: grouped by area, a Research Now sat fourth in its area beside
+    retired theses. The groups are now what HAPPENED, in a fixed order — the decisions first and
+    history folded — each row read here from its own chips, never from the grouping code; every
+    row names its area; a live Watch names what it is missing, exactly as its page's ✗ list
+    does. NEGATIVE: a Research Now or a retired / archived row names nothing missing."""
     pipe, out, _ = w12
     s = _soup(out / "index.html")
     run = max((r for r in pipe.store.runs() if r.mode == "scan"), key=lambda r: r.started_at)
     asof = theses_as_of_run(pipe.store, run)
-    areas = s.select("main.wrap div.area")
-    assert areas  # the week's changes, grouped (a selector that finds nothing proves nothing)
-    for area in areas:
-        name = area.select_one("h3").contents[0].strip()
-        for a in area.select("a.trow"):
-            tid = Path(str(a["href"])).stem
-            assert area_name(asof[tid][0].key_node) == name
+    order = ["Research Now", "Moved this week", "New this week", "Updated with new evidence"]
+    groups = [(g.select_one("h3").contents[0].strip(), g) for g in s.select("main.wrap div.area")]
+    names = [n for n, _g in groups]
+    assert names and names == [n for n in order if n in names]
+    fold = [d for d in s.select("details.quiet")
+            if d.select_one("summary").get_text().startswith("Retired or archived this week")]
+    assert len(fold) <= 1
+    shown, kinds = 0, Counter()
+    for name, g in groups + [("Retired", d) for d in fold]:
+        for a in g.select("a.trow"):
+            t, _v = asof[Path(str(a["href"])).stem]
+            gone = bool(t.retired) or t.status is ThesisStatus.ARCHIVED
+            ev = [x.get_text() for x in a.select(".ev")]
+            moved = any(x.startswith(("↑", "↓")) for x in ev)
+            pill = a.select_one(".pill").get_text()
+            want = ("Retired" if gone else "Research Now" if pill == "Research Now" else
+                    "Moved this week" if moved else "New this week" if "New" in ev else
+                    "Updated with new evidence")
+            assert name == want, (t.thesis_id, name, want)
+            assert a.select_one(".tmeta").get_text(" ").startswith(area_name(t.key_node))
+            miss = _miss_line(a)
+            if gone or not pill.startswith("Watch"):
+                assert miss is None, t.thesis_id
+            else:
+                assert (miss or []) == _missing(_soup(out / "theses" / f"{t.thesis_id}.html"))
+            shown += 1
+            kinds[name] += 1
+    n = int(re.search(r"(\d+) thes", s.select_one("main.wrap h2").get_text())[1])  # type: ignore[index]
+    assert shown == n and len(kinds) >= 3  # every change, once; the fixture spans the groups
     note = s.find(string=re.compile(r"Showing \d+ of \d+ articles"))
     rows = s.select("ul.alist > li")
     if note:
@@ -360,8 +434,13 @@ def test_the_near_term_reading_is_told_apart_from_the_sources_horizon_framing(
     assert timing is not None
     names = [b.get_text() for b in page.select(".gates b")]
     assert names.count(desk.NEAR_GATE) == 1  # the condition is stated ONCE …
-    assert timing.select_one("li.ok b").get_text() == desk.NEAR_GATE  # … met, in the timing block
-    assert "a description of the thesis, not a test" in timing.get_text(" ")
+    met = [b.get_text() for b in page.select("details.met li.ok b")]
+    assert desk.NEAR_GATE in met  # … met, among the conditions met (desk review, 2026-10-17) …
+    assert timing.select_one(".gates") is None  # … and the timing block never states it again:
+    # it gives the near-term detail and the source's own (longer-term) horizon, told apart
+    text = timing.get_text(" ")
+    assert "publication date" in text and "The source's own horizon:" in text
+    assert "longer" in timing.select_one("b").get_text().lower()
     assert page.select_one(".conflict") is None
 
 
@@ -1087,7 +1166,8 @@ def test_a_sector_named_twice_in_near_words_is_shown_once_on_every_surface(
     assert got == {"up": [TWICE[1][0], TWICE[3][0]], "down": [TWICE[4][0]],
                    "flat": [TWICE[2][0], TWICE[5][0]]}
     gate = page.find(string=re.compile(r"^sectors: "))
-    assert gate == "sectors: " + ", ".join(n for n, _, _ in kept)
+    lean = {"positive": " (could benefit)", "negative": " (could be hurt)"}  # each with its
+    assert gate == "sectors: " + ", ".join(f"{n}{lean.get(d, '')}" for n, d, _ in kept)  # side
 
     cards = out / "cards"
     md = (cards / f"{t.thesis_id}.md").read_text()

@@ -56,8 +56,10 @@ from vinci.theme_intelligence.cards import (
     foot_html,
     groups_unchecked_note,
     ids_to_audit,
+    listed_exposures,
     market_html,
     market_indicators,
+    more_line,
     proposal_reading,
     proposal_step,
     review_not_run_words,
@@ -71,6 +73,7 @@ from vinci.theme_intelligence.cards import (
     why_reasons,
 )
 from vinci.theme_intelligence.config import (
+    CURRENT_OBSERVATION_DAYS,
     STALE_AFTER_DAYS,
     load_retired_sources,
     load_sources,
@@ -79,6 +82,7 @@ from vinci.theme_intelligence.config import (
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.priority import (
+    _fundamental_change,
     exposures_counted,
     unverified_words,
     watch_reasons_of,
@@ -126,9 +130,10 @@ from vinci.theme_intelligence.schemas import (
     same_area,
 )
 from vinci.theme_intelligence.store import Store
-from vinci.theme_intelligence.timewindow import timing_of, window_of
+from vinci.theme_intelligence.timewindow import observation_date, timing_of, window_of
 from vinci.theme_intelligence.verify import (
     card_sentences,
+    claim_provenance,
     content_words,
     distinct_listings,
     overlap,
@@ -160,6 +165,52 @@ AREA_NAME: dict[str, str] = {
     "telecom_media": "Telecom & media", "utilities": "Utilities", "other": "Unclassified"}
 
 NEAR_GATE = "Near-term relevance (next 2–4 quarters)"
+CATALYST_GATE = "A recent mispricing, a dated catalyst or a measured change"
+
+#: what would clear each open WATCH condition, keyed by its stored code (`WatchReason.code`) —
+#: the panel's "Clears when" (desk review, 2026-10-17: the panel said what fell short, never what
+#: would change it). "premise_*" is composed from the stance the code carries.
+_CLEARS = {
+    "no_catalyst": (f"a measured change from the last quarter (at most {CURRENT_OBSERVATION_DAYS} "
+                    f"days before the as-of) or a dated catalyst inside the next 2–4 quarters — "
+                    f"for example, reported results for a period the thesis forecasts"),
+    "no_exposure": "the source names an exposure: a listed company, an ETF, index or basket, or a "
+                   "sector",
+    "listing_unverified": "the SEC confirms the listing as of the date — re-checked at every "
+                          "re-grade; nothing to supply",
+    "window_runs_past": "evidence dated inside the next 2–4 quarters (a full-year figure running "
+                        "past them does not count)",
+    "no_window": "evidence that states its date or period — a new source, or an analyst "
+                 "correction",
+    "contested": "the contradicting independent sources are answered, or outweighed by more "
+                 "independent support",
+    "outweighed": "the support outweighs the counter-evidence again",
+    "partial_text": "the full text is read — supply the document on Uploads",
+    "low_reliability": "a medium- or high-reliability source carries the evidence",
+    "verification_hold": "the open review findings are resolved — by an analyst correction or a "
+                         "re-read",
+}
+#: each condition in two or three words — a row's "Missing:" line (the full name is its tooltip)
+_SHORT_GATE = {
+    "Verified evidence": "verified evidence", "A stated route to profits": "route to profits",
+    NEAR_GATE: "near-term timing", "An exposure the source names": "named exposure",
+    CATALYST_GATE: "catalyst or measured change", "The source asserts it": "asserted premise",
+    "The whole text was read": "full text", "No verification hold": "cleared review",
+    "Source reliability": "reliable source",
+    "Not outweighed by counter-evidence": "support over counter-evidence"}
+
+#: how the source holds a premise it does not assert, in the panel's "Clears when" line
+_STANCE_WORDS = {"conditional": "it states it only as a condition",
+                 "speculative": "it states it only as a possibility",
+                 "reported_view": "it reports someone else's view, not its own"}
+
+#: what each WATCH label means, said once under the panel's heading
+_WATCH_KEY = {
+    "needs data": "Needs data — every open condition is a gap the record could not establish; "
+                  "supplying it can promote this thesis.",
+    "on hold": "On hold — the evidence itself falls short; new evidence is needed, not a data "
+               "fix.",
+}
 #: where a line the desk cuts is read in full
 _CARD = "the Full record"
 #: rows a list shows before "showing N of M — show all"
@@ -743,12 +794,22 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                      for r in watch_reasons_of(v.priority, counted.unverified))
     stale = stale_count_words(v.priority, counted)
     kept_sectors = split_sectors(av)[0]
+    def leaning(d: Direction, role: MentionRole = MentionRole.CONTEXT) -> str:
+        """An exposure's direction in words, beside its name — '' when the source states none."""
+        word = {"up": "could benefit", "down": "could be hurt"}.get(_lean(d, role), "")
+        return f" ({word})" if word else ""
+
     named = "; ".join(x for x in (
-        "listed companies: " + ", ".join(f"{n} ({tk})" for n, tk in counted.listed)
+        "listed companies: " + ", ".join(
+            f"{n} ({tk}){leaning(co.direction, co.role)}"
+            for (n, tk), co in zip(counted.listed, listed_exposures(av), strict=True))
         if counted.listed else "",
-        "ETFs, indices or baskets: " + ", ".join(counted.instruments)
+        "ETFs, indices or baskets: " + ", ".join(
+            f"{n}{leaning(i.direction, i.role)}"
+            for n, i in zip(counted.instruments, exposure_instruments(av), strict=True))
         if counted.instruments else "",
-        "sectors: " + ", ".join(s.name for s in kept_sectors) if kept_sectors else "") if x)
+        "sectors: " + ", ".join(f"{s.name}{leaning(s.direction)}" for s in kept_sectors)
+        if kept_sectors else "") if x)
     f12 = f.get("F12_fundamental_inflection", "")
     cat = f.get("F7_dislocation_or_catalyst") == "present" or f12 == "qualifies"
     out = [
@@ -777,7 +838,7 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
                               "names business groups is not checkable on this machine (the "
                               "article text is not held here)" if groups_unread else
                               "no company or sector named as exposed")),
-        Gate(cat, "A recent mispricing, a dated catalyst or a measured change",
+        Gate(cat, CATALYST_GATE,
              "present" if cat else {"not credible": "a forecast without a corroborating "
                                                      "measurement",
                                     "incomplete": "no stated step from the change to profits"}
@@ -1563,6 +1624,21 @@ class Desk:
         return [g.name for g in gates(v, groups, self.near[tid], groups_unread=unread)
                 if not g.ok]
 
+    def missing(self, tid: str) -> str:
+        """What a live WATCH still lacks, in a few words each (`_SHORT_GATE`; the full condition
+        names are its tooltip) — the same line on This week and on Themes. An archived thesis
+        (a retired one too: `ARCHIVING`) is history; a Research Now lacks nothing even when a
+        condition is under review (a near-term conflict reads unmet until the thesis is
+        reassessed), and is never labelled "Not yet Research Now"."""
+        t, v = self.asof[tid]
+        if (t.status is ThesisStatus.ARCHIVED
+                or v.priority.research_action is not ResearchAction.WATCH):
+            return ""
+        unmet = self.unmet(tid)
+        return (f'<span class="miss" title="Not yet Research Now: {e("; ".join(unmet))}">'
+                f'Missing: {e(", ".join(_SHORT_GATE.get(u, u.lower()) for u in unmet))}</span>'
+                if unmet else "")
+
     def page(self, title: str, body: str, active: str, depth: int = 0) -> str:
         up = "../" * depth
         banner = ""
@@ -1596,17 +1672,30 @@ class Desk:
         rn = sum(1 for _t, v in active if v.priority.research_action is ResearchAction.RESEARCH_NOW)
         decisive = sum(1 for f in self.open if f.decision)
         waiting = [u for u in self.uploads if u.kind not in ("done",)]
-        by_area: dict[str, list[DashRow]] = defaultdict(list)
+        def kind(r: DashRow) -> int:
+            if self.asof[r.thesis_id][0].status is ThesisStatus.ARCHIVED:  # retired ones too
+                return 4
+            if r.action == "RESEARCH NOW":
+                return 0
+            if any(x.startswith(("Upgraded", "Downgraded")) for x in r.events):
+                return 1
+            return 2 if "New" in r.events else 3
+
+        by_kind: dict[int, list[DashRow]] = defaultdict(list)
         for r in self.rows:
-            by_area[self.area.get(r.thesis_id, "Unclassified")].append(r)
-        areas = sorted(by_area.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+            by_kind[kind(r)].append(r)
         sec = []
-        for name, rs in areas:
-            # a retired thesis is history: listed after every live one, whatever its action
-            rs = sorted(rs, key=lambda r: (r.retired, _RANK.get(r.action, 3), r.title))
+        for k, name in enumerate(("Research Now", "Moved this week", "New this week",
+                                  "Updated with new evidence", "Retired or archived this week")):
+            rs = sorted(by_kind.get(k, []), key=lambda r: (
+                _RANK.get(r.action, 3), self.area.get(r.thesis_id, ""), r.title))
+            if not rs:
+                continue
             rows = [self.change_row(r) for r in rs]
-            sec.append(f'<div class="area"><h3>{e(name)} <small>{len(rs)}</small></h3>'
-                       f'{capped(rows, "theses", 6)}</div>')
+            sec.append(f'<details class="quiet"><summary>{e(name)} <span class="muted">{len(rs)}'
+                       f'</span></summary>{"".join(rows)}</details>' if k == 4 else
+                       f'<div class="area"><h3>{e(name)} <small>{len(rs)}</small></h3>'
+                       f'{capped(rows, "theses", 8)}</div>')
         if d.no_evidence:
             sec.append('<details class="quiet"><summary>' + _pl(len(d.no_evidence), "proposition")
                        + " with no verified evidence — kept for the record</summary><ul>" + "".join(
@@ -1668,8 +1757,7 @@ class Desk:
             f'<section class="hero"><h1>{e(w.label)}</h1><p class="sum">'
             f'{_pl(len(read), "article")} read · {_theses(len(self.rows), "new or changed")} · '
             f'{rn} at Research Now</p><div class="strip">{strip}</div>{heads_up}</section>'
-            f'<h2>Changes this week '
-            f'<small>{_theses(len(self.rows))} in {_pl(len(areas), "area")}</small></h2>'
+            f'<h2>Changes this week <small>{_theses(len(self.rows))}</small></h2>'
             + ("".join(sec) or '<p class="muted">No thesis was created or changed.</p>')
             + f'<h2 class="mt">Articles this week <small>{len(arts)}</small></h2>'
             + self.produced_list(arts, cap=8)
@@ -1690,17 +1778,16 @@ class Desk:
         return (s.publisher, _todate(s.published_at)) if s else ("", None)
 
     def change_row(self, r: DashRow) -> str:
-        unmet = self.unmet(r.thesis_id) if r.action == "WATCH" and not r.retired else []
         n_open = len(self.open_by_thesis().get(r.thesis_id, []))
         mech = plain(r.mechanism)
         same = re.sub(r"\W+", " ", mech).strip().lower() in re.sub(
             r"\W+", " ", r.title).strip().lower()
         pub, when = self.latest_source(r.thesis_id)
-        meta = [x for x in (pub, _day(when) if when else "") if x]
+        meta = [x for x in (self.area.get(r.thesis_id, ""), pub, _day(when) if when else "")
+                if x]
         if r.partial_source:
             meta.append("preview only")
-        gap = (f'<span class="bdg" title="Not yet Research Now: {e("; ".join(unmet))}">'
-               f'{_pl(len(unmet), "condition")} open</span>' if unmet else "")
+        gap = self.missing(r.thesis_id)
         return (f'<a class="trow" href="{self.thesis_link(r.thesis_id)}"><div class="ttop">'
                 f'{_chip(r.action, r.watch)}{"".join(_event(x) for x in r.events)}'
                 + (f'<span class="ev rv">{_pl(n_open, "finding")}</span>' if n_open else "")
@@ -1709,13 +1796,23 @@ class Desk:
                 + f'<div class="tmeta">{e(" · ".join(meta))}{gap}</div></a>')
 
     def produced_cell(self, a: ArticleRow, depth: int = 0) -> str:
-        if a.produced:
-            return "<br>".join(
-                f'<a href="{self.thesis_link(tid, depth)}">{e(self.title(tid))}</a> '
-                f'<span class="small">· {e(how)}{e(self.gone(tid))}</span>' if tid in self.asof else
-                f'<span class="small">{e(how)} (a thesis not in this run\'s record)</span>'
-                for tid, how in a.produced)
-        return f'<span class="small">{e(_no_thesis(a))}</span>'
+        """The theses an article gave evidence to — the live ones listed; a retired or archived
+        one is history, folded under a count (one pilot article listed nine, most retired)."""
+        if not a.produced:
+            return f'<span class="small">{e(_no_thesis(a))}</span>'
+
+        def one(tid: str, how: str) -> str:
+            return (f'<a href="{self.thesis_link(tid, depth)}">{e(self.title(tid))}</a> '
+                    f'<span class="small">· {e(how)}{e(self.gone(tid))}</span>' if tid in self.asof
+                    else f'<span class="small">{e(how)} (a thesis not in this run\'s record)'
+                         f'</span>')
+
+        live = [one(tid, how) for tid, how in a.produced
+                if tid not in self.asof or not self.gone(tid)]
+        past = [one(tid, how) for tid, how in a.produced if tid in self.asof and self.gone(tid)]
+        return ("<br>".join(live) + (
+            f'<details class="gone"><summary>+{len(past)} retired or archived</summary>'
+            + "<br>".join(past) + "</details>" if past else ""))
 
     def produced_list(self, arts: list[ArticleRow], cap: int) -> str:
         if not arts:
@@ -1735,8 +1832,7 @@ class Desk:
         by_t = self.open_by_thesis()
         changed = {r.thesis_id for r in self.rows}
         recent = self.weeks[-12:]
-        rel = {tid: len(self.related_of(tid)[0]) for tid in self.asof}
-        rows: list[tuple[str, str]] = []
+        rows: list[str] = []
         items = sorted(self.asof.values(), key=lambda tv: (
             tv[0].status is ThesisStatus.ARCHIVED,
             _RANK.get(tv[1].priority.research_action.value, 3),
@@ -1750,10 +1846,10 @@ class Desk:
                     f'<span class="small">archived — {e(self.archived_why(t, v))}</span>')
             n_src = len(v.content.s09_sources)
             a = self.area[tid]
-            sub = [x for x in (note, f'<span class="small">{_theses(rel[tid], "related")}</span>'
-                               if rel.get(tid) else "") if x]
+            sub = [x for x in (f'<span class="small">{e(a)}</span>', self.missing(tid), note)
+                   if x]
             wq = watch_of(v.priority, v.content.s05_affected)
-            rows.append((a, (
+            rows.append(
                 f'<tr data-area="{e(a)}" data-ord="{len(rows)}" '
                 f'data-action="{e(v.priority.research_action.value)}" '
                 f'data-status="{"archived" if arch else "active"}" '
@@ -1762,40 +1858,23 @@ class Desk:
                 f'data-rv="{len(by_t.get(tid, []))}"><td><a href="{self.thesis_link(tid)}">'
                 f'{e(t.title)}</a>'
                 f'{" " + _event("New") if tid in changed and v.version == 1 else ""}'
-                + (f'<div>{" · ".join(sub)}</div>' if sub else "")
+                + f'<div class="tsub">{" ".join(sub)}</div>'
                 + f'<span class="aud cc">{e(tid)}</span></td>'
                   f'<td>{_chip(v.priority.research_action.value, wq)}</td>'
                   f'<td class="nowrap">{_ml("last evidence")}{e(_day(t.last_material_update))}'
                   f'</td><td>{_ml("sources")}{n_src}</td>'
                   f'<td>{_ml("open findings")}{len(by_t.get(tid, [])) or "—"}</td>'
                   f'<td>{_ml("weeks with new evidence")}{_strip(recent, self.activity[tid])}'
-                  f'</td></tr>')))
-        by_area: dict[str, list[str]] = defaultdict(list)
-        for a, r in rows:
-            by_area[a].append(r)
-        groups = []
-        for a, rs in sorted(by_area.items()):
-            act = [(t, v) for t, v in self.asof.values() if self.area[t.thesis_id] == a
-                   and t.status is not ThesisStatus.ARCHIVED]
-            ch = sum(1 for t, _v in act if t.thesis_id in changed)
-            rn = sum(1 for _t, v in act
-                     if v.priority.research_action is ResearchAction.RESEARCH_NOW)
-            facts = [f"{len(act)} active"] + ([f"{rn} Research Now"] if rn else []) + (
-                [f"{ch} changed this week"] if ch else [])
-            groups.append(
-                f'<details class="agrp"{" open" if ch else ""} data-grp="{e(a)}"><summary>'
-                f'<b>{e(a)}</b><span class="muted">{" · ".join(facts)}</span></summary>'
-                + self.table("themes", '<tr><th>Thesis</th><th>Action</th><th>Last evidence'
-                                       '</th><th>Sources</th><th>Findings</th><th>Activity'
-                                       '</th></tr>', rs, "theses")
-                + '</details>')
+                  f'</td></tr>')
         n_act = len(self.active())
-        areas = sorted(by_area)
+        areas = sorted(set(self.area.values()))
         body = (f'<section class="hero"><h1 class="tabtitle">Themes</h1><p class="sum">'
                 f'{n_act} active · {len(self.asof) - n_act} archived · '
-                f'{_pl(len(areas), "area")}</p><p class="hint">Areas with a change this week '
-                f'are open. A thesis archives after {STALE_AFTER_DAYS} days without new evidence, '
-                f'or at once when Skip.</p></section>'
+                f'{_pl(len(areas), "area")}</p><p class="hint">Research Now first, then Watch, '
+                f'then Skip; within each, the latest evidence first. Under each title: its area '
+                f'and, for a Watch, what it is missing. A thesis archives after '
+                f'{STALE_AFTER_DAYS} days without new evidence, or at once when Skip.</p>'
+                f'</section>'
                 '<div class="filters"><input id="q" placeholder="Search theses and areas" '
                 'oninput="flt()" aria-label="Search"><select id="fs" onchange="flt()" '
                 'aria-label="Status"><option value="active">Active</option><option '
@@ -1811,7 +1890,10 @@ class Desk:
                   'archiving</option><option value="src">Most sources</option><option '
                   'value="rv">Most findings</option></select><span id="cnt" class="small">'
                   '</span></div>'
-                f'<div id="tt">{"".join(groups)}</div>')
+                + '<div id="tt">' + self.table(
+                    "themes", '<tr><th>Thesis</th><th>Action</th><th>Last evidence</th>'
+                              '<th>Sources</th><th>Findings</th><th>Weeks with new evidence</th>'
+                              '</tr>', rows, "theses") + '</div>')
         return self.page("Themes", body, "Themes")
 
     def gone(self, tid: str) -> str:
@@ -2065,7 +2147,8 @@ class Desk:
                 f'<code>data/theme_intelligence/inbox/</code> and run '
                 f'<code class="cmd">{cli} ingest-inbox</code></li>'
                 f'<li><b>3. Clear</b> what is held with the release command on its row</li>'
-                f'<li><b>4. Push</b> before Monday 03:00 UTC<code class="cmd">{cli} state push'
+                f'<li><b>4. Push</b> before you start the weekly run (Actions → '
+                f'theme-intelligence-weekly → Run workflow)<code class="cmd">{cli} state push'
                 f'</code></li></ol><details class="fold"><summary>Rules</summary>'
                 f'<ul class="small"><li>Add <code>--llm-permitted</code> only when the '
                 f'document\'s licence allows third-party model processing; without it the '
@@ -2217,7 +2300,12 @@ class Desk:
                       else "")
                    + f"{flag(f's02.{i}')}</li>"
                    for i, it in enumerate(c.s02_what_changed.items)
-                   if f"s02.{i}" not in rc.blocked and once(it.text)]
+                   if f"s02.{i}" not in rc.blocked and more_line(c, it) is None
+                   and once(it.text)]
+        # the card's closing "showing N of M" item, said once under the list — never counted as
+        # one more change, and naming its source (its id alone read "from —", 2026-10-17)
+        more = next((m for it in c.s02_what_changed.items
+                     if (m := more_line(c, it, "the Evidence tab below"))), "")
         last = rc.history[-1] if rc.history else v
         prev = rc.history[-2] if len(rc.history) > 1 else None
         moved = (f"Version {last.version}, {_day(last.as_of)} — "
@@ -2278,19 +2366,25 @@ class Desk:
                                  f'{_tag(st.provenance.value)}{flag(f"s03.{i}")}')
                          + "</li>")
         near = next(g for g in gs if g.name == NEAR_GATE)
-        unmet = [g for g in gs if not g.ok and g is not near]
-        met = [g for g in gs if g.ok and g is not near]
+        unmet = [g for g in gs if not g.ok]
+        met = [g for g in gs if g.ok]
         route = (why_reasons(c, v.priority, groups)[0] if action == "RESEARCH NOW" else "")
+        gap = (self.evidence_gap(v, nt) if any(g.name == CATALYST_GATE for g in unmet) else [])
         why = (f'<p class="small">{e(route)}</p>' if route else "") + (
-            '<ul class="gates">' + "".join(
+            ('<h3>Under review</h3>' if action == "RESEARCH NOW" else "<h3>What's missing</h3>")
+            + '<ul class="gates">' + "".join(
                 f'<li class="unmet"><span class="ic">✗</span><div><b>{e(g.name)}</b>'
-                f'<span>{e(g.detail)}</span></div></li>' for g in unmet) + "</ul>"
-            if unmet else "") + (
-            f'<details class="met fold"><summary>{_pl(len(met), "check")} passed</summary>'
-            '<ul class="gates">' + "".join(
-                f'<li class="ok"><span class="ic">✓</span><div><b>{e(g.name)}</b>'
-                f'<span>{e(g.detail)}</span></div></li>' for g in met) + "</ul></details>"
-            if met else "")
+                # the evidence lines say specifically what the rule's detail says generically
+                + ("".join(f'<span class="gap">{e(x)}</span>' for x in gap)
+                   if g.name == CATALYST_GATE and gap else f'<span>{e(g.detail)}</span>')
+                + '</div></li>' for g in unmet) + "</ul>"
+            if unmet else "")
+        clears = self.clears_when(v)
+        met_fold = (f'<details class="met fold"><summary>{len(met)} of {len(gs)} conditions met'
+                    f'</summary><ul class="gates">' + "".join(
+                        f'<li class="ok"><span class="ic">✓</span><div><b>{e(g.name)}</b>'
+                        f'<span>{e(g.detail)}</span></div></li>' for g in met)
+                    + "</ul></details>" if met else "")
         timing = self.timing_html(nt, near)
         w7 = c.s07_what_could_go_wrong
         n0, n1 = len(w7.counter_evidence), len(w7.alternative_mechanisms)
@@ -2349,16 +2443,18 @@ class Desk:
         # the decision and its reasons beside the thesis and its key figures on the first
         # screen; who is exposed as rows; the long lists folded to counts. Nothing is dropped —
         # every line is one click away, and the card is the complete printed record.
+        # the panel reads as an investment committee's decision box (desk review, 2026-10-17):
+        # the label and what it means, what is missing, what would clear it, what would raise
+        # or lower it, the next step — then the conditions met and the timing, folded
         q = watch_of(v.priority, c.s05_affected)
         decide = (f'<aside class="decide"><h2>Why {e(_ACTION.get(action, (action,))[0])}'
                   + (f' · {e(q)}' if q else "") + '</h2>'
-                  f'{why}{timing}'
+                  + (f'<p class="small key">{e(_WATCH_KEY[q])}</p>' if q in _WATCH_KEY else "")
+                  + why
+                  + ('<h3>Clears when</h3><ul class="clears">'
+                     + "".join(f"<li>{e(x)}</li>" for x in clears) + "</ul>" if clears else "")
                   + (f'<h3>Next step</h3>{nxt}' if nxt else "")
-                  + ('<details class="fold"><summary>When to raise or lower priority</summary>'
-                     + (f'<h3>Would raise priority</h3><ul>{"".join(raise_)}</ul>'
-                        if raise_ else "")
-                     + (f'<h3>Would lower priority</h3><ul>{"".join(lower)}</ul>'
-                        if lower else "") + "</details>" if raise_ or lower else "")
+                  + met_fold + timing
                   + f'<div class="aud">{trace}</div></aside>')
         wrong = ('<section class="panel"><h2>What could prove it wrong</h2><ul class="risk">'
                  + (folded(risks, 3, "risk", "risks") or
@@ -2374,7 +2470,8 @@ class Desk:
                  f'{"".join(steps) or no_step}</ol></section>')
         what = (f'<p class="small">{e(moved)}</p>'
                 + (f"<ul class=\"changed\">{folded(changed, 3, 'change', 'changes')}</ul>"
-                   if changed else ""))
+                   if changed else "")
+                + (f'<p class="small muted">{e(plain(more))}</p>' if more else ""))
         review = (f'<section class="panel" id="review"><h2>Open review findings '
                   f'<small>{len(mine)}</small></h2><ul class="rvitems rvcompact">'
                   + "".join(self.finding_line(f) for f in mine) + "</ul></section>"
@@ -2392,6 +2489,11 @@ class Desk:
              + (f'<h3 class="numh">Key figures</h3><div class="nums">{fig_html}</div>'
                 if fig_html else "")
              + f'<h3 class="numh">What changed</h3>{what}'
+             + ('<h3 class="numh">What would change the call</h3><div class="calls">'
+                + (f'<div><h4>Would raise priority</h4><ul>{"".join(raise_)}</ul></div>'
+                   if raise_ else "")
+                + (f'<div><h4>Would lower priority</h4><ul>{"".join(lower)}</ul></div>'
+                   if lower else "") + "</div>" if raise_ or lower else "")
              + f'</div>{decide}</section>'
              + f'<section class="panel mkts"><h2>Is it priced?</h2>{priced}</section>'
              + f'<section class="panel"><h2>Who is exposed</h2>{expo}</section>'
@@ -2429,6 +2531,121 @@ class Desk:
         return (f'<details class="cmdd"><summary>{verb}</summary><code class="cmd">{e(cmd)}'
                 f'</code></details>')
 
+    def evidence_gap(self, v: ThesisVersion, nt: NearTerm | None = None) -> list[str]:
+        """What the evidence is when no measured change from the last quarter carries the thesis:
+        its forecasts, and how old its latest measured figure is against the rule's own window
+        (`CURRENT_OBSERVATION_DAYS`). 2026-10-17: a panel read "a forecast without a corroborating
+        measurement" beside a 2Q26 EPS figure on the same page — measured 104 days before the
+        as-of, just outside the window — and never said why it did not count.
+
+        And why the measured observations its Timing counts in the last quarter do not carry it:
+        none states a verified change in a fundamental (`priority._fundamental_change`, the rule's
+        own test). 2026-10-17: TH-2FFD9B58A8's Timing counted "6 measured observations dated
+        within the last quarter" beside a catalyst condition reading only "none verified" — 7 of
+        the pilot's 23 pages read that way.
+
+        When the change the inflection reading counted is itself MEASURED and uncorroborated
+        ("not credible"), it is named as such — the generic detail calls it a forecast
+        (TH-16225B12C4: "spending on caffeinated beverages has grown at 6% annually").
+
+        Nothing when the inflection reading is "incomplete", or when a cited measured observation
+        is otherwise a change in a fundamental: the rule then fell short for another reason (no
+        step to profits), its own detail says which, and "no measured change corroborates them"
+        would be false."""
+        f12 = next((x for x in v.priority.factors
+                    if x.factor_id == "F12_fundamental_inflection"), None)
+        if f12 is not None and f12.value == "incomplete":
+            return []
+        alone = [c for cid in (f12.claim_ids if f12 is not None and f12.value == "not credible"
+                               else ())
+                 if (c := self.store.claim(cid)) is not None
+                 and claim_provenance(c) is Provenance.MEASURED_OBSERVATION
+                 and _fundamental_change(c)]
+        if alone:
+            what = "; ".join(f"{c.metric or 'a change'} {c.value_text or ''}".strip()
+                             + (f" ({c.period})" if c.period else "") for c in alone)
+            one = len(alone) == 1
+            # what the rule tested, exactly: another figure measured in the last quarter whose
+            # OWN WORDS state a change in a fundamental — a figure labelled "spending growth"
+            # whose quote does not say so is not one (TH-16225B12C4's "8% energy drinks spending
+            # growth" sits beside this line)
+            return [f"Its measured change{'' if one else 's'} in a fundamental — {what} — "
+                    f"{'is' if one else 'are'} not corroborated: no other figure measured in the "
+                    f"last quarter states a change in a fundamental in its own words, and the "
+                    f"source is not the publisher's own data in an industry data report."]
+        nt = nt if nt is not None else near_term_reading(self.store, v)
+        cited = [x for x in nt.claims
+                 if claim_provenance(x.claim) is Provenance.MEASURED_OBSERVATION]
+        if any(_fundamental_change(x.claim) for x in cited):
+            return []
+        current = [x for x in cited if x.timing == "current"]
+        rows = [r for r in v.content.s04_key_evidence if r.value_text]
+        forecasts = [r for r in rows if r.epistemic.value == "forecast"]
+        published = {s.article_id: s.published_at.date() if s.published_at else None
+                     for s in v.content.s09_sources}
+        measured: list[tuple[date, Any]] = []
+        for r in rows:  # read and dated exactly as the rule reads them (`timing_of`)
+            claim = self.store.claim(r.claim_id) if r.epistemic.value == "actual" else None
+            if (claim is None or claim_provenance(claim) is not Provenance.MEASURED_OBSERVATION
+                    or timing_of(claim, v.as_of, published.get(r.article_id))[0]
+                    not in ("current", "historical")
+                    or any(q.startswith("stale series") for q in claim.qualifiers)):
+                continue  # an opinion, a scheduled event, a stale series: never a dated figure
+            when = observation_date(claim, v.as_of, published.get(r.article_id))
+            if when is not None:
+                measured.append((when, r))
+
+        def fig(r: Any) -> str:
+            return (f"{figure_label(self.store, r.claim_id, r.label)} {r.value_text}"
+                    + (f" ({r.period})" if r.period else ""))
+
+        out: list[str] = []
+        if forecasts:  # named under Key figures beside the panel — counted here, never repeated
+            out.append(f"the evidence is {_pl(len(forecasts), 'forecast')}; no measured change "
+                       f"in a fundamental from the last quarter corroborates them")
+        if current:  # the same observations, and the same count, as the Timing line below
+            where = "" if nt.conflict else " (under Timing)"  # a conflict replaces that count
+            out.append((f"its 1 measured observation from the last quarter{where} states no"
+                        if len(current) == 1 else
+                        f"none of its {len(current)} measured observations from the last "
+                        f"quarter{where} states a")
+                       + " verified change in a fundamental — earnings, revenue, prices, demand, "
+                         "margins and the like")
+        if measured:
+            when, r = max(measured, key=lambda m: m[0])
+            age = (v.as_of - when).days
+            if age > CURRENT_OBSERVATION_DAYS:
+                out.append(f"its latest measured figure, {fig(r)}, dates from "
+                           f"{_day(when)} — {age} days before the as-of, outside "
+                           f"the last quarter ({CURRENT_OBSERVATION_DAYS} days)")
+        return [x[:1].upper() + x[1:] + "." for x in out]
+
+    def clears_when(self, v: ThesisVersion) -> list[str]:
+        """What would clear the open conditions — a WATCH by its stored codes (`_CLEARS`), a SKIP
+        by the rule it failed (`why_reasons`' own order); nothing for Research Now."""
+        pr = v.priority
+        action = pr.research_action.value
+        if action == "WATCH":
+            out: list[str] = []
+            for r in watch_reasons_of(pr, counted_exposures(v.content.s05_affected).unverified):
+                stance = r.code.removeprefix("premise_")
+                x = _CLEARS.get(r.code) or (
+                    "the source asserts the premise itself — today "
+                    + _STANCE_WORDS.get(stance, f"it is {stance.replace('_', ' ')}")
+                    if r.code.startswith("premise_") else "")
+                if x and x not in out:
+                    out.append(x)
+            return out
+        if action == "SKIP":
+            f = {x.factor_id: x.value for x in pr.factors}
+            if f.get("F2_material_evidence") == "0":
+                return ["verified material evidence — a figure or event the source states"]
+            if f.get("F4_profit_transmission") == "absent":
+                return ["a stated route from the change to company earnings (a price or "
+                        "valuation move is not one)"]
+            return ["a dated window inside the next 2–4 quarters"]
+        return []
+
     def version_how(self, h: ThesisVersion) -> str:
         """How a version came to be, in words — from its run's mode (the engine's change summary,
         with its factor codes, sits in the audit view)."""
@@ -2448,8 +2665,9 @@ class Desk:
         bases = {x.basis for x in nt.claims}
         common = next(iter(bases)) if len(bases) == 1 else ""
         rows = "".join(
-            f'<li>{e(clip(x.claim.metric or x.claim.statement, 120, "the Evidence tab"))} — '
-            f'{e(_TIMING_WORD.get(x.timing, x.timing))}'
+            f'<li>{e(clip(x.claim.metric or x.claim.statement, 120, "the Evidence tab"))}'
+            + (f' · {e(x.claim.period)}' if x.claim.period else "")
+            + f' — {e(_TIMING_WORD.get(x.timing, x.timing))}'
             + ("" if common else f'; dated by {e(x.basis)}')
             + f'<span class="aud cc"> {e(x.claim.claim_id)} · {e(x.note)}</span></li>'
             for x in nt.claims[:8])
@@ -2460,11 +2678,9 @@ class Desk:
                     f'claims re-dated today (“{e(nt.recomputed.replace("_", " "))}”). The research '
                     f'action of record stands until the thesis is reassessed.</div>' if nt.conflict
                     else "")
-        return (f'<div class="timing"><h3>Timing</h3>{conflict}<ul class="gates"><li class="'
-                f'{"ok" if near.ok else "unmet"}"><span class="ic">{"✓" if near.ok else "✗"}</span>'
-                f'<div><b>{e(near.name)}</b><span>{e(near.detail)}</span></div></li></ul>'
-                f'<p class="small">The source itself calls it <b>{e(nt.framing[:1].lower())}'
-                f'{e(nt.framing[1:])}</b> — a description of the thesis, not a test.</p>'
+        return (f'<div class="timing"><h3>Timing</h3>{conflict}'
+                f'<p class="small">{e(near.detail[:1].upper() + near.detail[1:])}. The source\'s '
+                f'own horizon: <b>{e(nt.framing[:1].lower())}{e(nt.framing[1:])}</b>.</p>'
                 + (f'<details class="fold"><summary>Dated evidence ({len(nt.claims)})</summary>'
                    f'<ul class="small">{rows}{more}</ul>'
                    + (f'<p class="small">All dated by {e(common)}.</p>' if common else "")
@@ -2697,6 +2913,9 @@ padding:12px 16px;margin-bottom:8px;color:var(--ink)}
 .trow:hover{border-color:var(--accent);text-decoration:none}
 .ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px}
 .ttitle{font-weight:650;font-size:16px;line-height:1.35;margin-bottom:2px}
+.tmeta .miss,.tsub .miss{color:var(--ink2)}.tsub{display:flex;flex-wrap:wrap;gap:2px 10px;
+margin-top:3px;font-size:12.5px}.tsub .stale{margin-top:0}
+details.gone>summary{font-size:12.5px;color:var(--muted);cursor:pointer}
 .tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
 .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gapi{color:var(--ink2)}
@@ -2735,10 +2954,10 @@ font-size:13px;background:var(--panel);color:var(--ink2)}
 font-weight:600}
 details summary{cursor:pointer;color:var(--accent);font-size:13.5px}
 details.more-rows>summary{margin:8px 14px 12px}
-details.agrp,details.ubk,details.quiet{background:var(--panel);border:1px solid var(--line);
+details.ubk,details.quiet{background:var(--panel);border:1px solid var(--line);
 border-radius:12px;padding:10px 16px;margin-bottom:10px}
-details.agrp>summary,details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
-details.agrp .hscroll,details.ubk .hscroll{margin-top:10px}
+details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
+details.ubk .hscroll{margin-top:10px}
 .act{display:inline-flex;gap:2px;vertical-align:middle}.act i{width:9px;height:14px;
 border-radius:2px;background:var(--line);display:block}.act i.on{background:var(--accent)}
 .stale{display:inline-block;font-size:12px;color:var(--bad);margin-top:3px}
@@ -2791,7 +3010,12 @@ font-weight:700;text-align:center;line-height:22px}
 border-top:1px solid var(--line)}.gates li:first-child{border-top:0}
 .gates .ic{width:20px;flex:none;font-weight:700}.gates .ok .ic{color:var(--ok)}
 .gates .unmet .ic{color:var(--bad)}.gates b{display:block;font-size:14px;font-weight:600}
-.gates span:not(.ic){font-size:13px;color:var(--muted)}
+.gates span:not(.ic){font-size:13px;color:var(--muted)}.decide ul.clears{font-size:13px;
+color:var(--ink2);padding-left:18px;margin:4px 0 0}.decide ul.clears li{margin:3px 0}
+.calls{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}.calls h4{margin:0 0 4px;
+font-size:13px;color:var(--muted);font-weight:600}.calls ul{margin:0;padding-left:18px;
+font-size:14px}.calls li{margin:3px 0}.gates span.gap{display:block;margin-top:5px;
+color:var(--ink2)}
 details.met{margin-top:8px}
 .timing{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
 .timing ul{padding-left:18px;margin:4px 0}
@@ -2905,18 +3129,20 @@ details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
 .testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
 .foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
 .hit{outline:2px solid var(--accent);outline-offset:3px}
-details.agrp>summary .muted,details.ubk>summary .muted{margin-left:10px;font-size:13px}
+details.ubk>summary .muted{margin-left:10px;font-size:13px}
 .ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
 .arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
-.arts.themes{table-layout:fixed}.arts.themes th:nth-child(2){width:156px}
-.arts.themes th:nth-child(3){width:140px}.arts.themes th:nth-child(4),
-.arts.themes th:nth-child(5){width:84px}.arts.themes th:nth-child(6){width:170px}
+.arts.themes{table-layout:fixed}.arts.themes th{overflow-wrap:normal;word-break:normal}
+.arts.themes th:nth-child(2){width:156px}
+.arts.themes th:nth-child(3){width:118px}.arts.themes th:nth-child(4),
+.arts.themes th:nth-child(5){width:100px}.arts.themes th:nth-child(6){width:170px}
 @media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
 aside{position:static;min-width:0}
 .ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
 .steps4{grid-template-columns:1fr}
 .grid2{grid-template-columns:1fr}.sheet{grid-template-columns:1fr}
-.sheet .decide{border-left:0;padding-left:0;border-top:1px solid var(--line);margin-top:16px}
+.sheet .decide{border-left:0;padding-left:0;order:-1;border-bottom:1px solid var(--line);
+padding-bottom:12px;margin-bottom:16px}.calls{grid-template-columns:1fr}
 h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
 .filters input#q{min-width:0;width:100%;flex-basis:100%}
 .arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
@@ -2947,10 +3173,7 @@ ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
 if(q||a||ar)openAll('#tt');
 all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
 (!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
-r.style.display=ok?'':'none';n+=ok?1:0});
-rowsOf('#tt details[data-grp]').forEach(function(g){var v=Array.prototype.slice.call(
-g.querySelectorAll('tr[data-area]')).some(function(r){return r.style.display!=='none'});
-g.style.display=v?'':'none';if(q||a||ar)g.open=v});recap('#tt');
+r.style.display=ok?'':'none';n+=ok?1:0});recap('#tt');
 document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
 function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
 -r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:

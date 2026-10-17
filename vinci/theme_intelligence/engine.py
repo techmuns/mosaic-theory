@@ -44,6 +44,7 @@ from datetime import UTC, date, datetime
 from vinci.theme_intelligence.cards import (
     LABEL_CLOSE,
     LABEL_OPEN,
+    MORE_POINTER,
     CardInputs,
     affected_from,
     capped_conditionals,
@@ -2124,7 +2125,7 @@ UPDATE_ITEMS = 10
 def _more_item(shown: int, total: int, article_id: str) -> ChangeItem:
     return ChangeItem(change_class=ChangeClass.NOVELTY_UNVERIFIED,
                       text=f"showing {shown} of {total} pieces of evidence from {article_id} — "
-                           f"the rest are in 04 KEY EVIDENCE and the evidence ledger",
+                           f"the rest are in {MORE_POINTER}",
                       provenance=Provenance.UNKNOWN, article_id=article_id)
 
 

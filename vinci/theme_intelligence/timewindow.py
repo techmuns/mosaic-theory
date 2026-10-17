@@ -274,6 +274,19 @@ def ntm_window(c: Claim, w: Window | None, published: date | None) -> Window | N
                   f"NTM from {read.isoformat()} — the twelve months after the figure was read")
 
 
+def observation_date(c: Claim, ref: date, published: date | None) -> date | None:
+    """The date a MEASURED observation describes — its stated measurement date, else the end of
+    its stated period once that has passed, else its publication date: the date `timing_of` ages
+    against `CURRENT_OBSERVATION_DAYS`. None for a forecast, an opinion, or a claim with none of
+    the three. ONE reading for the rule and for the desk that explains it."""
+    if c.epistemic is not Epistemic.ACTUAL or c.kind is ClaimKind.FORECAST:
+        return None
+    w = window_of(c.period, ref, source_date=published)
+    if w is None and c.kind is ClaimKind.EVENT:
+        w = window_of(c.quote, ref, source_date=published)
+    return c.measured_as_of or (w.end if w is not None and w.end <= ref else None) or published
+
+
 def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
     """(near_term | straddling | long_range | current | historical | undated, a note naming the
     window)."""
@@ -305,7 +318,7 @@ def timing_of(c: Claim, ref: date, published: date | None) -> tuple[str, str]:
             return ("near_term" if is_near_term(w, ref) else
                     "straddling" if straddles(w, ref) else "long_range",
                     f"scheduled event window {w}")
-        d = c.measured_as_of or (w.end if w is not None and w.end <= ref else None) or published
+        d = observation_date(c, ref, published)
         if d is None:
             return "undated", "observation with no data date"
         age = (ref - d).days

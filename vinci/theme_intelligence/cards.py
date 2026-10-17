@@ -1823,6 +1823,22 @@ def _source_name(card: CardContent, article_id: str) -> str:
     return s.publisher + (f", {s.published_at.date().isoformat()}" if s.published_at else "")
 
 
+#: where the closing "showing N of M" item of 02 WHAT CHANGED points (`engine._more_item` writes
+#: it); a surface without the card's numbered sections names its own evidence list instead
+MORE_POINTER = "04 KEY EVIDENCE and the evidence ledger"
+
+
+def more_line(card: CardContent, it: ChangeItem, pointer: str = MORE_POINTER) -> str | None:
+    """The closing "showing N of M pieces of evidence" item of 02 WHAT CHANGED as a reader reads
+    it — None for any other item. Its article is named by its publisher: the id alone went to the
+    audit view and the line read "from — the rest are in …" (desk review, 2026-10-17). Recognised
+    by its FIELDS — no claims, an UNKNOWN label, an article — never by its words."""
+    if it.claim_ids or it.provenance is not Provenance.UNKNOWN or not it.article_id:
+        return None
+    return it.text.replace(it.article_id, _source_name(card, it.article_id)).replace(
+        MORE_POINTER, pointer)
+
+
 def _para(block_id: str) -> str:
     """A block id as a reader says it: "b006" -> "6"."""
     return block_id[1:].lstrip("0") or "0" if re.fullmatch(r"b\d+", block_id) else block_id
@@ -2118,7 +2134,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
         body = (f'<span class="withheld">WITHHELD — failed source verification</span>'
                 f'<span class="aud"> {e(rc.blocked[sid])}</span>'
-                if sid in rc.blocked else quiet_labels(ids_to_audit(e(_clean_display(it.text)))))
+                if sid in rc.blocked else quiet_labels(ids_to_audit(e(_clean_display(
+                    more_line(card, it) or it.text)))))
         p = shown_label(it.provenance, sid, rc)
         flagged = " flagged" if sid in rc.blocked or sid in rc.flagged else ""
         return (f'<div class="s{flagged}" id="{_anchor(sid)}">'
@@ -2412,7 +2429,8 @@ def render_markdown(card: CardContent, rc: RenderContext) -> str:
     wc = card.s02_what_changed
     md += [f"## {titles['s02_what_changed']}", f"- {wc.vs_prior}", f"- novelty: {wc.novelty}"]
     for i, it in enumerate(wc.items):
-        txt = (f"WITHHELD — {rc.blocked[f's02.{i}']}" if f"s02.{i}" in rc.blocked else it.text)
+        txt = (f"WITHHELD — {rc.blocked[f's02.{i}']}" if f"s02.{i}" in rc.blocked
+               else more_line(card, it) or it.text)
         tag = _CHANGE_TAG.get(it.change_class, it.change_class.value)
         md.append("- " + (f"[{tag}] " if tag else "")
                  + f"**{shown_label(it.provenance, f's02.{i}', rc).value}:** {txt}"

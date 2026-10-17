@@ -373,6 +373,15 @@ def test_a_thesis_new_and_downgraded_in_one_week_is_one_row_showing_both(
     assert tags == ["New", "Downgraded: Research Now → Watch"]
     activity = soup.select_one("#activity")
     assert activity is not None and "1 new · 0 upgraded · 1 downgraded" in activity.get_text(" ")
+    # the desk's This week files it under the move, never under "New" (desk review 2026-10-17:
+    # three pilot theses were new AND moved; the move is the decision news)
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    out = Path(write_run_outputs(pipe.store, scan.run_id, tmp_path / "out")["dir"])
+    week = BeautifulSoup((out / "index.html").read_text(), "html.parser")
+    groups = {g.select_one("h3").contents[0].strip(): [x.get_text() for x in g.select(".ev")]
+              for g in week.select("div.area")}
+    assert groups == {"Moved this week": ["New", "↓ Research Now → Watch"]}
 
 
 def test_review_required_links_to_the_exact_line_and_the_default_view_carries_no_codes(
