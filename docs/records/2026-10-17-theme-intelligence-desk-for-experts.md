@@ -182,6 +182,13 @@ theses, most of them retired.
 - the after pages again with every `<details>` opened (This week, the thesis page) and at 500px
   (This week, Themes, the thesis page);
 - TH-16225B12C4, the uncorroborated measured change;
+- inside the main app (`#/intel`, `#/intel/themes/TH-16225B12C4`), from a scratch copy of
+  `frontend/` holding this branch's publish. The app frames the published pages
+  (`frontend/views/intel/desk.js`) and styles them with `intel.css`, generated from the desk's own
+  CSS, so there is no second renderer to change. In the app:
+  - the new classes apply (the evidence line is a block, the raise/lower columns are a grid);
+  - none of them is a name the app's stylesheet also uses;
+  - no table header breaks mid-word or overflows at the app's narrower width;
 - Uploads.
 
 **Pins, end to end on committed fixtures:**
