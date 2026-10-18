@@ -268,8 +268,16 @@ _LEAD_NOISE = re.compile(r"^(?:EXISTING\s+|THAT\s+CERTAIN\s+|THE\s+|TO\s+|A\s+)+
 #: hand-typed uppercase fixture passed while the real document still failed (#655). The DIGIT
 #: requirement is what keeps this safe: a real word carries no digit, so "AMENDED" and
 #: "amended" are both left alone, and a hyphen still protects "364-DAY" / "FIVE-YEAR".
+#: A NUMBER BEFORE A DURATION IS PART OF THE NAME TOO, hyphen or not (2026-10-18). TJX's 2020
+#: facility heads itself "364 DAY REVOLVING CREDIT AGREEMENT" — a space, no hyphen — and the bare
+#: "364" read as an amount fragment, so the page published "DAY REVOLVING CREDIT AGREEMENT". A
+#: number followed by DAY/WEEK/MONTH/YEAR(S) is kept; "000 CREDIT AGREEMENT" (from "$1,000") and
+#: EPAM's "00 REVOLVING …" are still stripped. Measured over the 114 titled exhibits in the EDGAR
+#: cache through `html_to_text`: 7 captured titles start with a bare number, and this changes
+#: exactly one of them — TJX's.
 _LEAD_CODE = re.compile(
-    r"^(?:(?!(?:19|20)\d{2}\b)(?:[\d,\.]+|(?=[A-Za-z0-9]*\d)[A-Za-z0-9]{6,})\s+)+")
+    r"^(?:(?!(?:19|20)\d{2}\b)(?![\d,\.]+\s+(?i:DAY|WEEK|MONTH|YEAR)S?\b)"
+    r"(?:[\d,\.]+|(?=[A-Za-z0-9]*\d)[A-Za-z0-9]{6,})\s+)+")
 #: An amendment whose own title does not name its contract ("AMENDMENT AND RESTATEMENT AGREEMENT")
 #: says so in the next clause — "to that certain Credit Agreement dated ...".
 _BASE_REF = re.compile(
