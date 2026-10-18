@@ -74,7 +74,33 @@ judged.
   - `frontier` taking the earliest bar;
   - the refusal note dropped.
 - **Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"` with the store moved aside,
-  as the weekly workflow runs it: 5868 passed, 512 skipped.
+  as the weekly workflow runs it: 5868 passed, 512 skipped (5871 after the review fixes below).
+
+## CODE REVIEW FIXES (code review of #743, 2026-10-17)
+
+Six findings: four fixed, two skipped.
+- **The benchmark was judged against the page's date, not the name.**
+  - When the WHOLE store trailed the page (name and benchmark both last closed a week earlier),
+    the market figure was refused while the name's still printed, and the chart on the same page
+    drew the benchmark normally.
+  - It is now judged against the name's own last close. A whole-store lag reads both legs on the
+    same older session, stamped with it; the assembly's existing price-staleness caveat speaks for
+    the store.
+  - The incident's shape (benchmark 09-16, name 09-22) is still refused.
+- **A benchmark hole at the window's START dropped the chart line silently.** There is nothing to
+  rebase on, so the line is not drawn; now the exhibit's source says so, naming the session.
+- **The cohort read compared windows ending on different dates.** The name ran to the common last
+  bar while its peers ran to the page's date. The peers now run to the same session.
+- **`_covering_close` re-implemented the screen's `_bar_on_or_before`.** It now calls it and adds
+  only the bound.
+- **Skipped: the window-START anchor of both legs is still unbounded.** Bounding it changes figures
+  wherever a series has a hole near the start, so it needs its own measurement over the corpus
+  (already listed under "seen, not changed").
+- **Skipped: the chart's per-point lookups are linear scans.** The cost is unchanged from before
+  (O(points × bars) per page, about 330k comparisons). It is not a regression.
+
+Pins for each fix, each with its mutant killed (5 in this round). The real-data run over all 26
+pages is unchanged: 22 IWM cases identical, 30 SPY/MDY cases refused.
 
 **BOUNDARY.**
 - Measured 2026-10-17 on this branch over main 987d2b4e.
