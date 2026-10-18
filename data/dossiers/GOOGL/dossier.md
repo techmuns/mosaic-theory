@@ -34,8 +34,8 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## What happened — and does it change the runway?
 - **Shape:** gradual bleed — no discrete gap-down detected [4]
 - **Price (180d):** 25.0% [5]
-- **Market (SPY) 180d:** 16.9% [6]
-- **vs market (180d):** 8.1% [7]
+- **Market (SPY) 180d:** 19.9% [6]
+- **vs market (180d):** 5.1% [7]
 - **Read:** mixed: name 25% vs cohort median 23% (cohort steady) [8]
 - **Net debt / EBITDA:** -0.7x [9]
 - **Free cash flow:** positive [10]
@@ -173,8 +173,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 _Company-specific or market-wide?_
 - **Name 180d return:** 25.0% [5]
-- **Market (SPY) 180d return:** 16.9% [6]
-- **Relative vs market:** 8.1% [7]
+- **Market (SPY) 180d return:** 19.9% [6]
+- **Relative vs market:** 5.1% [7]
 - **Cohort read:** mixed: name 25% vs cohort median 23% (cohort steady) [8]
 - **Graph cohort** (`graph_coverage.json node=US:0001652044; EOD 180d ret`):
   - [1h] EXTR: 43% · via EXTR —supplier→ Google Cloud Platform ["Our cloud networking solution is available on all major cloud providers (Amazon "]
@@ -617,6 +617,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-18 · mechanical.idiosyncratic_vs_shared, mechanical.stock_performance — refresh at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 7d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 11d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

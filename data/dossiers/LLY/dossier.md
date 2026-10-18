@@ -19,8 +19,8 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## What happened — and does it change the runway?
 - **Shape:** gradual bleed — no discrete gap-down detected [4]
 - **Price (180d):** 30.5% [5]
-- **Market (SPY) 180d:** 16.9% [6]
-- **vs market (180d):** 13.6% [7]
+- **Market (SPY) 180d:** 19.9% [6]
+- **vs market (180d):** 10.6% [7]
 - **Net debt / EBITDA:** 1.1x [8]
 - **Free cash flow:** _UNKNOWN_ — no OCF/capex
 
@@ -135,8 +135,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 _Company-specific or market-wide?_
 - **Name 180d return:** 30.5% [5]
-- **Market (SPY) 180d return:** 16.9% [6]
-- **Relative vs market:** 13.6% [7]
+- **Market (SPY) 180d return:** 19.9% [6]
+- **Relative vs market:** 10.6% [7]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 
 ## Business quality
@@ -614,6 +614,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, qa_flags, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-18 · mechanical.idiosyncratic_vs_shared, mechanical.stock_performance — refresh at 2026-10-09.3
 - **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 9d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-30 build
 - **Consensus age:** consensus 13d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

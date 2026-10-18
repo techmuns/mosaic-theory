@@ -965,13 +965,13 @@
         "note": null
       },
       "market_180d_return": {
-        "value": 0.16890666418639255,
+        "value": 0.1988714752980203,
         "source_ref": "EOD SPY 180d to 2026-09-22 (cap-band: $1038.3B @ 2026-09-22 → large (>$25B) → SPY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": 0.1355972377088137,
+        "value": 0.10563242659718597,
         "source_ref": "EOD LLY−SPY 180d to 2026-09-22 (assembly, cap-band)",
         "status": "present",
         "note": null
@@ -7977,22 +7977,22 @@
         {
           "date": "2026-09-17",
           "name": 154.28,
-          "benchmark": 113.7
+          "benchmark": 114.99
         },
         {
           "date": "2026-09-18",
           "name": 154.35,
-          "benchmark": 113.7
+          "benchmark": 114.85
         },
         {
           "date": "2026-09-21",
           "name": 155.95,
-          "benchmark": 113.7
+          "benchmark": 116.63
         },
         {
           "date": "2026-09-22",
           "name": 156.65,
-          "benchmark": 113.7
+          "benchmark": 116.61
         }
       ],
       "name_symbol": "LLY",
@@ -8000,7 +8000,7 @@
       "as_of": "2026-09-22",
       "window_days": 364,
       "name_return": 0.5664944175212188,
-      "benchmark_return": 0.13697019043741787,
+      "benchmark_return": 0.16611631308333696,
       "source_ref": "EOD LLY vs SPY rebased to 100, 2025-09-23..2026-09-22"
     },
     "operating_drivers": {
@@ -14857,6 +14857,15 @@
         "forward_multiple_history",
         "qa_flags",
         "valuation_basis"
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.idiosyncratic_vs_shared",
+        "mechanical.stock_performance"
       ]
     }
   ],
