@@ -230,6 +230,13 @@ class Store:
         ).fetchone()
         return self._row_to_identity(row) if row else None
 
+    def securities_for_ticker(self, ticker: str) -> list[Identity]:
+        """Every security row carrying ``ticker`` (indexed) — a list, because a ticker can be
+        reused; the caller decides what more than one means."""
+        rows = self._conn.execute(
+            "SELECT * FROM securities WHERE ticker = ? ORDER BY internal_id", (ticker,)).fetchall()
+        return [self._row_to_identity(r) for r in rows]
+
     def iter_securities(self) -> Iterator[Identity]:
         for row in self._conn.execute("SELECT * FROM securities ORDER BY internal_id"):
             yield self._row_to_identity(row)

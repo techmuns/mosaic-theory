@@ -31,6 +31,7 @@ it would only ever run here.
 from __future__ import annotations
 
 import json
+import math
 import re
 from collections.abc import Callable
 from datetime import date
@@ -100,7 +101,9 @@ def _prose(doc: dict[str, Any]) -> str:
     parts: list[str] = []
     for block in SYNTHESIS_CLAIM_LISTS:
         for p in syn.get(block) or []:
-            parts.append(p if isinstance(p, str) else json.dumps(p))
+            # DECODED (`ensure_ascii=False`): an escaped minus (`\u2212`) put a digit against the
+            # number after it and hid WLK's "rel −48%" from the returns check (2026-10-18)
+            parts.append(p if isinstance(p, str) else json.dumps(p, ensure_ascii=False))
     for attr in SYNTHESIS_CLAIM_SCALARS:
         v = syn.get(attr)
         if isinstance(v, str):
@@ -140,14 +143,12 @@ def moved_cited_counts(before: dict[str, Any], after: dict[str, Any],
     the count-sized companion to `moved_cited_claims`, whose floor is money and lets every count
     through.
 
-    A count still printed elsewhere on the page still traces, so only a VANISHED token refuses. The
-    prose is matched in both spellings: `_prose` serialises a dict claim with JSON's default ASCII
-    escaping, which turns '↑' into its escape sequence. LIMIT, stated: a count the prose paraphrased
+    A count still printed elsewhere on the page still traces, so only a VANISHED token refuses.
+    `_prose` is decoded, so '↑' reads as itself. LIMIT, stated: a count the prose paraphrased
     ('41 upward revisions') is not a token and is not caught here."""
     prose = _prose(doc)
     return [f"revision count {t} (no longer on the page)"
-            for t in sorted(_count_tokens(before) - _count_tokens(after))
-            if t in prose or json.dumps(t)[1:-1] in prose]
+            for t in sorted(_count_tokens(before) - _count_tokens(after)) if t in prose]
 
 
 #: the market-relative RETURNS a page states, as (block, field) — the percentage-sized companion to
@@ -167,6 +168,30 @@ _RETURN_CONTEXT = (r"\b(?:benchmark|market|relative|rel|index|outperform\w*|unde
 _RETURN_CONTEXT_CHARS = 60
 
 
+def _claim_texts(doc: dict[str, Any]) -> list[str]:
+    """Each claim's own WORDS, one string per claim — the free text a reader reads, never a
+    claim's ``source_ref`` (a pointer, which names the benchmark and would vouch for a figure
+    beside it). The block list is `_prose`'s, by the same import."""
+    syn = doc.get("synthesis") or {}
+    out: list[str] = []
+    for block in SYNTHESIS_CLAIM_LISTS:
+        for p in syn.get(block) or []:
+            text = p if isinstance(p, str) else (p.get("claim") if isinstance(p, dict) else None)
+            if isinstance(text, str):
+                out.append(text)
+    out.extend(v for attr in SYNTHESIS_CLAIM_SCALARS
+               if isinstance(v := syn.get(attr), str))
+    return out
+
+
+def _forms(a: float, places: int) -> set[str]:
+    """``a`` written to ``places`` decimals EITHER way a writer may round it: a value on a
+    half-step (16.85) is "16.8" to one writer and "16.9" to another, and Python's binary
+    half-even rounding picks only one (code review of #745)."""
+    k = 10 ** places
+    return {f"{math.floor(a * k) / k:.{places}f}", f"{math.ceil(a * k) / k:.{places}f}"}
+
+
 def _stated_return(mech: dict[str, Any], block: str, field: str) -> float | None:
     b = mech.get(block)
     v = b.get(field) if isinstance(b, dict) else None
@@ -174,8 +199,9 @@ def _stated_return(mech: dict[str, Any], block: str, field: str) -> float | None
     return float(v) if isinstance(v, (int, float)) else None
 
 
-def return_cited(prose: str, fraction: float, *, symbol: str = "") -> bool:
-    """Is a return (a FRACTION, as stored) cited in ``prose`` as a percentage?
+def return_cited(prose: str | list[str], fraction: float, *, symbol: str = "") -> bool:
+    """Is a return (a FRACTION, as stored) cited in ``prose`` — one text, or one per claim — as a
+    percentage?
 
     LEANS TO CITED, the safe direction for a REFUSAL: a false match refuses a correct refresh and
     sends the name to re-assembly; a miss leaves prose citing a number its tables no longer show.
@@ -183,15 +209,22 @@ def return_cited(prose: str, fraction: float, *, symbol: str = "") -> bool:
     counts only beside a market word or the benchmark's symbol, because a rounded percentage
     alone is anything. Measured on the nine pages the 2026-09-16 benchmark hole touched
     (2026-10-18): the seven whose prose quotes the benchmark match, GOOGL and LLY — whose 17% and
-    57% are a revenue growth rate and a P/E premium — do not."""
+    57% are a revenue growth rate and a P/E premium — do not.
+
+    Both forms accept the value rounded EITHER way (`_forms`); the context for a whole number is
+    searched within ITS OWN claim, never across into the next one (code review of #745)."""
     a = abs(fraction) * 100.0
-    if re.search(rf"(?<![\d.]){re.escape(f'{a:.1f}')}{_PCT_UNIT}", prose, re.I):
-        return True
+    texts = [prose] if isinstance(prose, str) else prose
     near = _RETURN_CONTEXT + (rf"|\b{re.escape(symbol)}\b" if symbol else "")
-    for m in re.finditer(rf"(?<![\d.]){re.escape(f'{a:.0f}')}{_PCT_UNIT}", prose, re.I):
-        lo, hi = max(0, m.start() - _RETURN_CONTEXT_CHARS), m.end() + _RETURN_CONTEXT_CHARS
-        if re.search(near, prose[lo:hi], re.I):
-            return True
+    for text in texts:
+        for form in _forms(a, 1):
+            if re.search(rf"(?<![\d.]){re.escape(form)}{_PCT_UNIT}", text, re.I):
+                return True
+        for form in _forms(a, 0):
+            for m in re.finditer(rf"(?<![\d.]){re.escape(form)}{_PCT_UNIT}", text, re.I):
+                lo, hi = max(0, m.start() - _RETURN_CONTEXT_CHARS), m.end() + _RETURN_CONTEXT_CHARS
+                if re.search(near, text[lo:hi], re.I):
+                    return True
     return False
 
 
@@ -205,10 +238,9 @@ def moved_cited_returns(before: dict[str, Any], after: dict[str, Any],
     rose ~16.9% (-47.6% relative)", NKE). The refresh would have left those pages contradicting
     their own tables, the 19c defect this module exists to refuse.
 
-    The prose is matched DECODED: `_prose` serialises a dict claim with JSON's ASCII escaping, so
-    WLK's "rel −48%" arrived as "rel \\u221248%" — the escape's last digit sat against the 48 and
-    hid it (measured on the nine pages, 2026-10-18)."""
-    prose = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), _prose(doc))
+    Each claim is read on its own words (`_claim_texts`) — never its source_ref, never across into
+    the next claim."""
+    claims = _claim_texts(doc)
     io = before.get("idiosyncratic_vs_shared")
     symbol = str(io.get("benchmark_symbol") or "") if isinstance(io, dict) else ""
     hits: list[str] = []
@@ -216,7 +248,7 @@ def moved_cited_returns(before: dict[str, Any], after: dict[str, Any],
         old, new = _stated_return(before, block, field), _stated_return(after, block, field)
         if old is None or old == new:
             continue
-        if return_cited(prose, old, symbol=symbol):
+        if return_cited(claims, old, symbol=symbol):
             hits.append(f"{block}.{field} = {old * 100:+.1f}% → "
                         + ("absent" if new is None else f"{new * 100:+.1f}%"))
     return hits
@@ -432,11 +464,14 @@ def benchmark_figures_transform(ticker: str, reference_date: date, *,
     ``idiosyncratic_vs_shared``'s market move and the difference, and ``stock_performance`` — at the
     page's own date (STATE row 32 (7): nine pages read SPY's or MDY's 2026-09-16 close as 09-22).
 
-    THE CORRECTION MOVES ONLY WHAT THE BUG TOUCHED, OR NOTHING (`horizon_read_transform`'s rule).
-    The name's side is recomputed too and must reproduce the stored page EXACTLY — its 180-day move
-    and its source, and every point, the return and the end date of its 52-week line — proof the
-    store holds the bars the page was built from. Any difference leaves the page untouched for a
-    re-assembly. The cohort and its read depend on the name and its peers only and are kept.
+    THE CORRECTION MOVES ONLY WHAT THE BUG TOUCHED, OR IT IS REFUSED (`horizon_read_transform`'s
+    rule). The name's side is recomputed too and must reproduce the stored page EXACTLY — its
+    180-day move and its source, and, when the page has a 52-week exhibit, every point, the return
+    and the end date of its line — proof the store holds the bars the page was built from. Any
+    difference RAISES `RefreshRefusedError` naming it, never a silent "nothing moved" that reads
+    like a page already correct (code review of #745). So does a missing store — opening one would
+    CREATE an empty database — and a ticker that is not exactly one security. A page with no
+    exhibit has its 180-day figures corrected alone. The cohort and its read are kept.
 
     UNDER A KEPT SYNTHESIS. A return the prose quotes refuses the refresh
     (`moved_cited_returns`): seven of the nine pages quote the stale figure and need a re-assembly.
@@ -446,32 +481,46 @@ def benchmark_figures_transform(ticker: str, reference_date: date, *,
     from vinci.store import Store
     from vinci.universe import benchmark_identity
 
+    def refuse(why: str) -> RefreshRefusedError:
+        return RefreshRefusedError(f"{ticker}: the benchmark figures cannot be re-read — {why}. "
+                                   "Re-assemble this name instead.")
+
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         out: dict[str, Any] = json.loads(json.dumps(mech))
         io, sp0 = out.get("idiosyncratic_vs_shared"), out.get("stock_performance")
-        if not (isinstance(io, dict) and isinstance(sp0, dict) and io.get("benchmark_symbol")):
-            return out
+        if not (isinstance(io, dict) and io.get("benchmark_symbol")):
+            return out  # the page states no market-relative figures: nothing to correct
+        db = store_path or get_config().db_path
+        if not db.exists():
+            raise refuse(f"no price store at {db}")
         bench = benchmark_identity(str(io["benchmark_symbol"]))
-        with Store(store_path or get_config().db_path) as store:
-            ident = next((i for i in store.iter_securities() if i.ticker == ticker), None)
-            if ident is None:
-                return out
+        with Store(db) as store:
+            idents = store.securities_for_ticker(ticker)
+            if len(idents) != 1:
+                raise refuse(f"{len(idents)} securities carry the ticker, not one")
+            ident = idents[0]
             name, market, rel, _end = _market_legs(
                 store.get_price_history(ident.internal_id),
                 store.get_price_history(bench.internal_id), reference_date,
                 sym=ident.eod_symbol, bsym=bench.eod_symbol,
                 bench_basis=str(io.get("benchmark_basis") or ""))
-            sp = _stock_performance(ident, store, reference_date, bench=bench)
+            sp = (_stock_performance(ident, store, reference_date, bench=bench)
+                  if isinstance(sp0, dict) else None)
         stored = io.get("name_180d_return") or {}
-        if (sp is None or name.value != stored.get("value")
-                or name.source_ref != stored.get("source_ref")
-                or sp.name_return != sp0.get("name_return") or str(sp.as_of) != sp0.get("as_of")
+        if name.value != stored.get("value") or name.source_ref != stored.get("source_ref"):
+            raise refuse(f"the name's 180-day move does not reproduce ({name.value} "
+                         f"'{name.source_ref}' vs stored {stored.get('value')} "
+                         f"'{stored.get('source_ref')}')")
+        if isinstance(sp0, dict) and (
+                sp is None or sp.name_return != sp0.get("name_return")
+                or str(sp.as_of) != sp0.get("as_of")
                 or [(p.date, p.name) for p in sp.points]
                 != [(p.get("date"), p.get("name")) for p in sp0.get("points") or []]):
-            return out  # the page's own data does not reproduce: a re-assembly, not a refresh
+            raise refuse("the name's 52-week line does not reproduce from this store")
         io["market_180d_return"] = market.model_dump(mode="json")
         io["rel_vs_market"] = rel.model_dump(mode="json")
-        out["stock_performance"] = sp.model_dump(mode="json")
+        if sp is not None:
+            out["stock_performance"] = sp.model_dump(mode="json")
         return out
 
     return _apply

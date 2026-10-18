@@ -183,17 +183,89 @@ def test_the_transform_is_a_no_op_on_a_correct_page(tmp_path: Path) -> None:
     assert page.read_text() == before
 
 
-def test_the_transform_leaves_a_page_whose_own_bars_do_not_reproduce(tmp_path: Path) -> None:
-    """NEGATIVE: the name's side must reproduce the stored page exactly, or nothing is written —
-    a store that is not the page's is a re-assembly, never a refresh. Here the stored name move is
-    off by a basis point."""
+def test_a_page_whose_own_bars_do_not_reproduce_is_refused_not_skipped(tmp_path: Path) -> None:
+    """NEGATIVE: the name's side must reproduce the stored page exactly. If it does not, the
+    refresh is REFUSED, naming why — never a silent "nothing moved" that reads like a page already
+    correct (code review of #745). Here the stored name move is off by a basis point."""
     page, db, _ident = _tecx(tmp_path)
     doc = json.loads(page.read_text())
     io = doc["mechanical"]["idiosyncratic_vs_shared"]
     io["name_180d_return"]["value"] += 0.0001
     io["market_180d_return"]["value"] = 0.5  # a stale benchmark the transform would otherwise fix
     page.write_text(json.dumps(doc))
-    refresh_dossier(page, transform=benchmark_figures_transform(
+    before = page.read_text()
+    with pytest.raises(RefreshRefusedError, match="180-day move does not reproduce"):
+        refresh_dossier(page, transform=benchmark_figures_transform(
+            "TECX", date(2026, 9, 22), store_path=db))
+    assert page.read_text() == before
+
+
+# --- code review of #745 ------------------------------------------------------------------------
+
+def test_a_missing_store_is_refused_and_never_created(tmp_path: Path) -> None:
+    """Opening a store that is not there would CREATE an empty one — the side effect that once
+    contaminated a gate run. The transform refuses first, and nothing is written."""
+    page, _db, _ident = _tecx(tmp_path)
+    absent = tmp_path / "nowhere" / "vinci.db"
+    with pytest.raises(RefreshRefusedError, match="no price store"):
+        refresh_dossier(page, transform=benchmark_figures_transform(
+            "TECX", date(2026, 9, 22), store_path=absent))
+    assert not absent.exists() and not absent.parent.exists()
+
+
+def test_a_ticker_that_is_not_exactly_one_security_is_refused(tmp_path: Path) -> None:
+    page, db, ident = _tecx(tmp_path)
+    for n in (0, 2):
+        with Store(db) as s:
+            s._conn.execute("DELETE FROM securities")  # noqa: SLF001 — the fixture's own table
+            s._conn.commit()  # noqa: SLF001
+            for i in range(n):
+                s.upsert_security(
+                    ident.model_copy(update={"internal_id": f"{ident.internal_id}-{i}"}))
+        with pytest.raises(RefreshRefusedError, match=f"{n} securities carry the ticker"):
+            refresh_dossier(page, transform=benchmark_figures_transform(
+                "TECX", date(2026, 9, 22), store_path=db))
+
+
+def test_a_page_without_a_52_week_exhibit_has_its_180_day_figures_corrected(
+        tmp_path: Path) -> None:
+    """A page with no exhibit still has a stale market figure to correct: the 180-day figures are
+    re-read alone, and no exhibit is invented."""
+    page, db, _ident = _tecx(tmp_path)
+    committed = json.loads(page.read_text())["mechanical"]["idiosyncratic_vs_shared"]
+    doc = json.loads(page.read_text())
+    doc["mechanical"].pop("stock_performance", None)
+    doc["mechanical"]["idiosyncratic_vs_shared"]["market_180d_return"]["value"] = 0.5
+    page.write_text(json.dumps(doc))
+    refresh_dossier(page)  # re-serialised, so the refresh below measures only itself
+    assert refresh_dossier(page, transform=benchmark_figures_transform(
         "TECX", date(2026, 9, 22), store_path=db))
-    assert json.loads(page.read_text())["mechanical"]["idiosyncratic_vs_shared"][
-        "market_180d_return"]["value"] == 0.5
+    fixed = json.loads(page.read_text())["mechanical"]
+    assert fixed["idiosyncratic_vs_shared"]["market_180d_return"] == committed[
+        "market_180d_return"]
+    assert fixed.get("stock_performance") is None
+
+
+def test_a_half_step_value_is_read_however_the_prose_rounded_it() -> None:
+    """16.85% is "16.8%" to one writer and "16.9%" to another; Python's own rounding picks one."""
+    for prose in ("SPY rose 16.8% over 180 days", "SPY rose 16.9% over 180 days"):
+        assert return_cited(prose, 0.1685, symbol="SPY"), prose
+    assert return_cited("the market gained ~17% in the window", 0.165)  # 16.5: "16" or "17"
+    assert not return_cited("SPY rose 16.7% over 180 days", 0.1685)  # NEGATIVE: a real miss
+
+
+def test_the_market_word_must_be_in_the_same_claim_and_never_its_source() -> None:
+    """A rounded figure is vouched for only by its OWN claim's words — not the next claim's, not a
+    claim's ``source_ref`` (which names the benchmark by construction)."""
+    split = _doc("Operating margins expanded to 17% on mix.",
+                 "The benchmark trailed the sector over the window.")
+    assert moved_cited_returns(_mech(market=0.1689, rel=0.1, bench_ret=0.1),
+                               _mech(market=0.1989, rel=0.1, bench_ret=0.1), split) == []
+    sourced = {"synthesis": {"bear_points": [
+        {"claim": "Operating margins expanded to 17% on mix.", "cited": True,
+         "source_ref": "EOD SPY 180d to 2026-09-22 (cap-band) — benchmark context"}]}}
+    assert moved_cited_returns(_mech(market=0.1689, rel=0.1, bench_ret=0.1),
+                               _mech(market=0.1989, rel=0.1, bench_ret=0.1), sourced) == []
+    together = _doc("Margins expanded while the benchmark rose 17% over the window.")
+    assert moved_cited_returns(_mech(market=0.1689, rel=0.1, bench_ret=0.1),
+                               _mech(market=0.1989, rel=0.1, bench_ret=0.1), together)
