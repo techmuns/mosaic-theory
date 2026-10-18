@@ -200,6 +200,35 @@ def test_a_superseded_day_cannot_be_silently_rewritten(tmp_path: pathlib.Path) -
     assert write_snapshot(snap(older), root=tmp_path, rewrite_history=True) == first
 
 
+def test_a_back_dated_day_is_refused_even_though_it_was_never_written(
+        tmp_path: pathlib.Path) -> None:
+    """REVIEW OF #708. The guard above fired only when the day's file ALREADY existed, so a day
+    that was never written slipped under it: `--ref 2026-10-01` between the committed 09-22 and
+    10-09 wrote a new file reading today's pages into an October-1 day. ⊖ that back-dated day is
+    refused, and nothing is written; ⊕ the front of the book still re-runs; ⊕ a day after the
+    newest is still written; ⊖ `rewrite_history` does NOT let it through — it names an overwrite,
+    and a back-dated day has no override (second review of #708)."""
+    from vinci.monitor import compute_spread, write_snapshot
+
+    mon_dir = tmp_path / "data" / "monitor"
+    mon_dir.mkdir(parents=True)
+
+    def snap(d: date) -> MonitorSnapshot:
+        return MonitorSnapshot(as_of=d, rows=[], spread=compute_spread([]))
+
+    write_snapshot(snap(date(2026, 9, 22)), root=tmp_path)
+    write_snapshot(snap(date(2026, 10, 9)), root=tmp_path)
+    with pytest.raises(FileExistsError, match=r"BACK-DATED day: 1 later snapshot\(s\) already "
+                                               r"exist \(next: 2026-10-09\)"):
+        write_snapshot(snap(date(2026, 10, 1)), root=tmp_path)
+    assert not (mon_dir / "2026-10-01.json").exists()
+    write_snapshot(snap(date(2026, 10, 9)), root=tmp_path)          # the front: routine
+    write_snapshot(snap(date(2026, 10, 12)), root=tmp_path)         # a NEW day after the newest
+    with pytest.raises(FileExistsError, match="BACK-DATED"):
+        write_snapshot(snap(date(2026, 10, 1)), root=tmp_path, rewrite_history=True)
+    assert not (mon_dir / "2026-10-01.json").exists()
+
+
 def test_omitting_as_of_still_returns_the_whole_book() -> None:
     """The filter is OPT-IN: existing callers that want the full realized book (and the
     unpairable/duplicate refusals it performs) keep getting it."""

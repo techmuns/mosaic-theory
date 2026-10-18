@@ -900,6 +900,21 @@ def monitor_dir(root: Path | None = None) -> Path:
     return (root or Path.cwd()) / "data" / "monitor"
 
 
+def snapshot_days(root: Path | None = None) -> list[str]:
+    """The dated day files in the monitor directory, oldest first, as ``YYYY-MM-DD`` stems.
+
+    ONE DEFINITION OF "A DAY" (review of #708). The CLI's prior-day history and
+    :func:`write_snapshot`'s later-day guard each globbed and filtered this directory on their
+    own, so a change to what counts as a day could make the guard and the history disagree about
+    which files are days. Both read this now. A day is a dated filename (`_SNAPSHOT_DAY`):
+    `benchmark_assignments.json` is not one, and neither is the next artifact that lands beside it.
+    """
+    d = monitor_dir(root)
+    if not d.is_dir():
+        return []
+    return sorted(f.stem for f in d.glob("*.json") if _SNAPSHOT_DAY.fullmatch(f.stem))
+
+
 def assignments_path(root: Path | None = None) -> Path:
     return monitor_dir(root) / "benchmark_assignments.json"
 
@@ -936,22 +951,39 @@ def write_snapshot(
     data. Rewriting a day that later snapshots already sit on top of is the destructive case, and
     that is what this refuses.
 
-    Note that a past re-run now REPRODUCES: decisions and closes are both read as of the snapshot
-    date. So this is a guard against a future divergence (a code change, a ledger correction),
-    not against a known-bad rewrite.
+    AND A PAST RE-RUN DOES NOT REPRODUCE (2026-10-11, #707). Decisions, closes, filings and
+    evidence dates are read as of the day, but the panels, measured rows and record-read fields
+    read TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple. So this
+    guards a known lookahead, and since #708 it also refuses a BACK-DATED day that was never
+    written (below). What it cannot see from the files alone — a re-cut of the NEWEST day after a
+    later close whose file does not exist yet — is refused one step earlier, by the command:
+    `vinci monitor` never writes into the book with a `--ref` before today (`_cmd_monitor`).
     """
     d = monitor_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     p = d / f"{snap.as_of.isoformat()}.json"
-    if p.exists() and not rewrite_history:
-        later = sorted(f.stem for f in d.glob("*.json")
-                       if _SNAPSHOT_DAY.fullmatch(f.stem) and f.stem > snap.as_of.isoformat())
-        if later:
-            raise FileExistsError(
-                f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
-                f"(next: {later[0]}) — rewriting a superseded day replaces what the book recorded "
-                f"then with what today's code and ledger produce. Pass rewrite_history=True if "
-                f"that is genuinely what you mean.")
+    # A BACK-DATED DAY IS REFUSED TOO, NOT ONLY A REWRITTEN ONE (operator ruling 2026-10-12, review
+    # of #708). The guard used to fire only when `p` already existed, so `--ref 2026-10-01` between
+    # the committed 09-22 and 10-09 wrote a NEW file that read today's pages, records and cards into
+    # an October-1 day — the lookahead the ruling forbids, through the door the guard left open.
+    # Any day a later day file already sits after is refused, written or not; the front of the book
+    # (no later file) is still re-run freely. Docs: RUNBOOKS §j.
+    later = [s for s in snapshot_days(root) if s > snap.as_of.isoformat()]
+    if later and not p.exists():
+        # NO OVERRIDE for a back-dated day (review of #708): the ruling is that it is never
+        # written, and `rewrite_history` names an OVERWRITE — it must not quietly authorise
+        # creating a day that never existed.
+        raise FileExistsError(
+            f"{p} would be a BACK-DATED day: {len(later)} later snapshot(s) already exist "
+            f"(next: {later[0]}), and a day written now reads today's pages, records and cards "
+            f"into an earlier date — never written (RUNBOOKS §j). An analysis re-cut goes to a "
+            f"scratch root (`vinci monitor --ref <day> --out <dir>`).")
+    if later and not rewrite_history:
+        raise FileExistsError(
+            f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
+            f"(next: {later[0]}) — rewriting a superseded day replaces what the book recorded "
+            f"then with what today's code and ledger produce. Refused; a Python caller that "
+            f"genuinely means it passes rewrite_history=True — `vinci monitor` has no such flag.")
     p.write_text(snap.model_dump_json(indent=2) + "\n")
     return p
 

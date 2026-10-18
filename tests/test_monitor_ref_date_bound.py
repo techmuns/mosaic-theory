@@ -186,14 +186,15 @@ def _tickers_needing_bars() -> set[str]:
             | {str(v["benchmark"]) for v in asg.values() if isinstance(v, dict)})
 
 
-def _run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ref: str,
-         records: list[dict[str, Any]], prior: dict[str, dict[str, Any]] | None = None,
-         extra_filings: dict[str, list[tuple[str, date, str]]] | None = None,
-         no_close: frozenset[date] = frozenset()) -> dict[str, Any]:
-    """`vinci monitor --ref <ref>` over the real committed ledger, securities and assignments, with
-    frozen records, the real filing shapes served for EDGAR, and a flat price on every weekday —
-    empty on weekends and on ``no_close`` days, so a weekend or before-the-close `ref` resolves to
-    the previous session as it does live."""
+def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[str, Any]],
+          prior: dict[str, dict[str, Any]] | None = None,
+          extra_filings: dict[str, list[tuple[str, date, str]]] | None = None,
+          no_close: frozenset[date] = frozenset()) -> dict[str, int]:
+    """Lay out the real committed ledger, securities and assignments under ``tmp_path`` with
+    frozen records, serve the real filing shapes for EDGAR and a flat price on every weekday —
+    empty on weekends and on ``no_close`` days, so a weekend or before-the-close date resolves to
+    the previous session as it does live. Returns the live count of source CALLS, so a refusal can
+    be shown to have fetched nothing."""
     from vinci import cli
     for rel in ("data/snapshots/decision_ledger.jsonl", "data/snapshots/securities.jsonl",
                 "data/monitor/benchmark_assignments.json"):
@@ -211,6 +212,7 @@ def _run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ref: str,
     by_cik = {str(r["cik"]): str(r["ticker"]) for r in sec if r.get("cik")}
     served = {t: FILINGS.get(t, []) + (extra_filings or {}).get(t, [])
               for t in set(FILINGS) | set(extra_filings or {})}
+    calls = {"prices": 0, "filings": 0}
 
     class _Eod:
         @classmethod
@@ -218,6 +220,7 @@ def _run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ref: str,
             return cls()
 
         def grouped_daily(self, d: date) -> dict[str, object]:
+            calls["prices"] += 1
             return {} if d.weekday() >= 5 or d in no_close else dict(bars)
 
     class _Edgar:
@@ -227,6 +230,7 @@ def _run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ref: str,
 
         def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ("8-K",),
                            since: date | None = None) -> list[SimpleNamespace]:
+            calls["filings"] += 1
             return [SimpleNamespace(form=f, filing_date=d, accession=a)
                     for f, d, a in served.get(by_cik.get(str(cik), ""), [])
                     if f in forms and (since is None or d >= since)]
@@ -234,13 +238,31 @@ def _run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ref: str,
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(cli, "PolygonEodClient", _Eod)
     monkeypatch.setattr(cli, "EdgarClient", _Edgar)
-    assert cli._cmd_monitor(argparse.Namespace(ref=ref)) == 0
-    # the day the command wrote — a planted prior day carries no `spread`, a written one always does
-    written = [d for p in sorted((tmp_path / "data/monitor").glob("2026-*.json"))
+    return calls
+
+
+def _written(monitor: Path) -> dict[str, Any]:
+    """The one day the command wrote under ``monitor`` — a planted prior day carries no
+    `spread`, a written one always does."""
+    written = [d for p in sorted(monitor.glob("*.json"))
                if "spread" in (d := json.loads(p.read_text()))]
     assert len(written) == 1
     out: dict[str, Any] = written[0]
     return out
+
+
+def _run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ref: str,
+         records: list[dict[str, Any]], prior: dict[str, dict[str, Any]] | None = None,
+         extra_filings: dict[str, list[tuple[str, date, str]]] | None = None,
+         no_close: frozenset[date] = frozenset()) -> dict[str, Any]:
+    """A PAST-DAY RE-CUT: `vinci monitor --ref <ref> --out <scratch>` over the wired corpus. Since
+    the review of #708 a past `--ref` is refused unless it writes to a scratch root, so the
+    re-cut lands in `<scratch>/data/monitor/` while the history is still read from the book."""
+    from vinci import cli
+    _wire(tmp_path, monkeypatch, records, prior, extra_filings, no_close)
+    scratch = tmp_path / "scratch"
+    assert cli._cmd_monitor(argparse.Namespace(ref=ref, out=str(scratch))) == 0
+    return _written(scratch / "data/monitor")
 
 
 def _rows(snap: dict[str, Any]) -> dict[str, mon.FreshnessRow]:
@@ -348,3 +370,46 @@ def test_one_unreadable_record_drops_its_row_not_the_day(
     assert set(_rows(snap)) == {"IT"}
     assert [n for n in snap["notes"]
             if n.startswith("RECORD WERN: bull reason amendment '2026-02-30'")]
+
+
+@pytest.mark.parametrize("ref", ["2026-10-14", "2026-10-01"])
+def test_a_past_ref_into_the_book_is_refused_before_anything_is_fetched(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+        ref: str) -> None:
+    """THE REVIEWS' SHAPES (#708), through the real command over the real ledger, with 2026-10-09
+    committed: ⊖ `--ref 2026-10-14` — NEWER than the newest day, older than the latest close, the
+    case no later file can reveal — and ⊖ `--ref 2026-10-01`, back-dated, are both refused with a
+    clean message and exit 1; ⊖ no price or filing is fetched and no book is printed; ⊖ nothing is
+    written."""
+    from vinci import cli
+    calls = _wire(tmp_path, monkeypatch, [IT_REC],
+                  prior={"2026-10-09": {"as_of": "2026-10-09", "freshness": []}})
+    assert cli._cmd_monitor(argparse.Namespace(ref=ref, out=None)) == 1
+    said = capsys.readouterr().out
+    assert f"--ref {ref} is before today" in said and "BOOK as of" not in said
+    assert calls == {"prices": 0, "filings": 0}
+    assert sorted(p.name for p in (tmp_path / "data/monitor").glob("*.json")) == [
+        "2026-10-09.json", "benchmark_assignments.json"]
+
+
+def test_an_out_root_that_is_the_book_is_refused(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str]) -> None:
+    """`--out .` would make the scratch root the repo itself, so the past day would land in the
+    book after all: ⊖ refused, exit 1, nothing fetched."""
+    from vinci import cli
+    calls = _wire(tmp_path, monkeypatch, [IT_REC])
+    assert cli._cmd_monitor(argparse.Namespace(ref="2026-09-22", out=str(tmp_path))) == 1
+    assert "the book, not a scratch root" in capsys.readouterr().out
+    assert calls == {"prices": 0, "filings": 0}
+
+
+def test_a_run_with_no_ref_still_writes_into_the_book(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊕ The routine run — no `--ref`, no `--out` — is untouched by the refusal: it files the
+    latest session on or before today and writes it into the book's own `data/monitor/`."""
+    from vinci import cli
+    _wire(tmp_path, monkeypatch, [IT_REC])
+    assert cli._cmd_monitor(argparse.Namespace(ref=None, out=None)) == 0
+    snap = _written(tmp_path / "data/monitor")
+    assert date.fromisoformat(snap["as_of"]) <= date.today()

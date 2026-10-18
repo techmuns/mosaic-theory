@@ -614,6 +614,67 @@ cleaner flags** — that is selecting prose on outcome; the flags stay on the pa
 
 ---
 
+## j. MONITOR DAY — run at the LATEST close; a past day is never re-cut
+
+*(Operator ruling 2026-10-12, option 1 of `docs/records/2026-10-11-monitor-reads-nothing-after-its-day.md`;
+record `docs/records/2026-10-12-monitor-runs-at-the-latest-close.md`.)*
+
+A monitor day (`data/monitor/<YYYY-MM-DD>.json`) is the book as of ONE market close: marks against
+benchmarks, the BUY−AVOID diagnostic, the freshness rows and the panel grid. Its DATED inputs are
+bounded by #707 (filings, evidence dates, ledger decisions, deadlines), but its panels, measured rows
+and record-read fields read TODAY's pages, records and cards. So a day re-run after a later close
+writes later information into an earlier date, and the only safe re-run is of the latest close
+itself.
+
+**When.** Any routine mark of the book, AND whenever `tests/test_panel_emit.py::
+test_emit_is_deterministic_over_the_committed_corpus` goes red after an artifact pass. That pin
+requires the latest day's panels to equal what today's pages emit, so a moved page turns it red.
+
+1. **Pick the date: the LATEST close** — the last session whose closing prices exist — never an
+   earlier one.
+   - **Later than the newest committed day:** the run writes a NEW day. This is #705's case: UBER's
+     page moved on 2026-10-11, and the book got `2026-10-09.json` beside an untouched `2026-09-22`.
+   - **The newest committed day itself:** the run replaces the front of the book with the same
+     session and better data, which `write_snapshot` allows.
+   - **A day with a later close after it is never re-run — refused in code since #708, twice:**
+     - **The command** refuses any `--ref` before today unless `--out` is given. It does so before
+       a single price or filing is fetched, prints why, and exits 1. That covers a back-dated
+       day, an overwrite of an older day, and the case no later file can reveal: a date newer
+       than the newest day but older than the latest close (`--ref 2026-10-14` on 10-18, with
+       10-15 and 10-16 closed).
+     - **`write_snapshot`** also refuses, for any Python caller, a day that a later day file
+       already sits after. A back-dated day has no override; an overwrite needs an explicit
+       `rewrite_history=True`, which the command never passes.
+2. **Run it with NO `--ref`** — `python -m vinci.cli monitor`. The date defaults to today: the day
+   is FILED under the last session on or before it (`session_on_or_before`) and READS filings and
+   evidence through today (`known_through = ref`). Passing `--ref <close>` on a later morning would
+   bound the read at the close and hide that morning's 8-K — the defect #707's review fixed.
+   A committed day never takes `--ref`, and the command refuses a past one. It prints the book,
+   then writes `data/monitor/<session>.json`. *(Source: `_cmd_monitor`; `monitor.write_snapshot`.)*
+3. **Mirror** — `python3 frontend/build.py` copies every day into `frontend/monitor/` and moves
+   `index.json`'s `latest`. *(Source: `frontend/build.py:emit_monitor`.)*
+4. **Check before committing:**
+   - the panel-emit pin is green;
+   - no `newer_filings` date and no `last_evidence_date` is after TODAY, the day the run was made.
+     The comparison is never against a `--ref`: a committed run takes none. A filing dated after
+     the day's `as_of` but on or before today is CORRECT on a same-session re-run — a
+     Monday-morning run filed under Friday flags Monday's 8-K;
+   - any "no freshness row" or "carries evidence dated after" note is expected. On a run with no
+     `--ref` there should be none.
+5. **Commit as an artifact** — the day file plus `frontend/monitor/*`, never bundled with code; the
+   full offline suite runs green first (CLAUDE.md §ARTIFACT-PASS RULE).
+
+**An analysis re-cut of a past day goes to a scratch root:**
+`python -m vinci.cli monitor --ref <day> --out <scratch dir>`.
+- **Where it writes:** `<scratch dir>/data/monitor/<day>.json`. It reads the book's own history,
+  and its filings and evidence stop at `<day>`.
+- **What is refused:** an `--out` that resolves to this repo's own `data/monitor/`.
+- **What it still cannot do:** like any re-cut, its panels and record-read fields are today's
+  pages, so it answers "what would today's documents say about that day", not "what did the book
+  record then". The committed day is the record.
+
+---
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut

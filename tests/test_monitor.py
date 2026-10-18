@@ -446,6 +446,12 @@ def test_the_monitor_command_writes_no_snapshot_when_the_price_source_fails(
     monkeypatch.setattr(cli, "PolygonEodClient", _Throttled)
     monitor = tmp_path / "data" / "monitor"
     before = sorted(p.name for p in monitor.iterdir())
+    # A past `--ref` into the book is refused before any fetch since #708, so the observed
+    # 2026-09-16 shape now reaches the price source as the analysis re-cut it would be today —
+    # through `--out` — and must still write nothing anywhere.
+    scratch = tmp_path / "scratch"
     with pytest.raises(RuntimeError, match="2026-09-16.*not a holiday"):
-        cli._cmd_monitor(argparse.Namespace(ref="2026-09-16"))
+        cli._cmd_monitor(argparse.Namespace(ref="2026-09-16", out=str(scratch)))
     assert sorted(p.name for p in monitor.iterdir()) == before == ["benchmark_assignments.json"]
+    assert not (scratch / "data" / "monitor").exists() or not any(
+        (scratch / "data" / "monitor").iterdir())

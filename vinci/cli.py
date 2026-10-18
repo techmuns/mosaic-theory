@@ -2032,6 +2032,24 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     cfg = get_config()
     root = Path.cwd()
     ref = date.fromisoformat(args.ref) if args.ref else date.today()
+    # A PAST DAY IS NEVER WRITTEN INTO THE BOOK — refused HERE, before any fetch or output (operator
+    # ruling 2026-10-12; review of #708). The routine run takes no `--ref`: it files the latest
+    # close and reads through today. An explicit `--ref` before today would put today's pages,
+    # records and cards into an earlier date, and bound the read at that date so a later 8-K
+    # vanishes — and refusing it only at `write_snapshot` came after every EDGAR and price fetch and
+    # after a complete-looking book had been PRINTED for the refused day. An analysis re-cut is
+    # supported through `--out`, a scratch root whose `data/monitor/` is never the book's.
+    out = Path(args.out) if getattr(args, "out", None) else None
+    if out is not None and mon.monitor_dir(out).resolve() == mon.monitor_dir(root).resolve():
+        print(f"--out {out} resolves to this repo's own data/monitor/ — the book, not a scratch "
+              f"root. Refused: nothing fetched, nothing written (RUNBOOKS §j).")
+        return 1
+    if out is None and ref < date.today():
+        print(f"--ref {ref} is before today ({date.today()}): a past day is never written into "
+              f"data/monitor/ (RUNBOOKS §j). Run with no --ref to mark the book at the latest "
+              f"close; for an analysis re-cut add --out <scratch dir>. Nothing fetched, nothing "
+              f"written.")
+        return 1
     ledger_path = cfg.data_dir / "snapshots" / "decision_ledger.jsonl"
     if not ledger_path.exists():
         print(f"no committed ledger at {ledger_path}")
@@ -2139,17 +2157,14 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # so a weekend `--ref` (Sunday → Friday's session) compared against the calendar date read
     # FRIDAY'S OWN FILE as a prior day — the self-read this rule exists to stop, through the
     # weekend door.
-    _mon_dir = root / "data" / "monitor"
-    prior_days: list[dict[str, Any]] = []
-    if _mon_dir.is_dir():
-        for _p in sorted(_mon_dir.glob("*.json"), reverse=True):
-            # A DAY IS A DATED FILENAME — the same test `mon.write_snapshot` already applies to
-            # this directory (`_SNAPSHOT_DAY`), rather than a second ad-hoc rule naming the one
-            # non-day file we happen to know about. `benchmark_assignments.json` is excluded by
-            # not being a date, and so is the next artifact that lands beside it.
-            if not mon._SNAPSHOT_DAY.fullmatch(_p.stem) or _p.stem >= now_date.isoformat():
-                continue
-            prior_days.append(json.loads(_p.read_text()))
+    # A DAY IS A DATED FILENAME, read through `snapshot_days` — the one definition the
+    # later-day guard in `write_snapshot` uses too, so the history and the guard cannot disagree
+    # about which files are days. Read from the BOOK (`root`) even on an `--out` re-cut: the
+    # history is what was recorded, and a scratch root holds none.
+    _mon_dir = mon.monitor_dir(root)
+    prior_days: list[dict[str, Any]] = [
+        json.loads((_mon_dir / f"{_s}.json").read_text())
+        for _s in reversed(mon.snapshot_days(root)) if _s < now_date.isoformat()]
     edgar = EdgarClient.from_config(cfg)
     # THE FRESHNESS SET IS THE BOOK AS OF THE DAY TOO (2026-10-11). It was drawn from the whole
     # ledger, so a re-cut of 2026-07-20 gave GOOGL — entered 2026-08-14 — a BUY freshness row in a
@@ -2289,10 +2304,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                                freshness=fresh, notes=notes, realized=realized_rows,
                                theme_falsifiers=theme_rows, panels=panel_rows)
     print(mon.render_table(snap))
-    # The CLI never rewrites a SUPERSEDED day: re-running the front of the book is routine, while
-    # replacing a day that later snapshots sit on top of would overwrite what the book recorded
-    # then. `write_snapshot` decides which case this is.
-    path = mon.write_snapshot(snap, root=root)
+    # The CLI never writes a day that a later day file sits after — neither a SUPERSEDED day nor a
+    # BACK-DATED one: re-running the front of the book is routine, while either would put today's
+    # pages into an earlier date. `write_snapshot` decides which case this is; a past `--ref` was
+    # already refused at the top. An `--out` re-cut writes under that scratch root instead.
+    path = mon.write_snapshot(snap, root=out or root)
     print(f"\nsnapshot written: {path}")
     return 0
 
@@ -4155,7 +4171,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_log.set_defaults(func=_cmd_log_verdict)
 
     p_mon = sub.add_parser("monitor", help="mark the book to market vs benchmarks (manual)")
-    p_mon.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
+    p_mon.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today). A committed day "
+                       "takes NO --ref: a date before today is refused unless --out is given "
+                       "(RUNBOOKS §j)")
+    p_mon.add_argument("--out", help="scratch root for an ANALYSIS re-cut: the day is written to "
+                       "<out>/data/monitor/, never the book's; required with a past --ref")
     p_mon.set_defaults(func=_cmd_monitor)
 
     p_sr = sub.add_parser(
