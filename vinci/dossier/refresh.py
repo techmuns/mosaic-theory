@@ -150,6 +150,78 @@ def moved_cited_counts(before: dict[str, Any], after: dict[str, Any],
             if t in prose or json.dumps(t)[1:-1] in prose]
 
 
+#: the market-relative RETURNS a page states, as (block, field) — the percentage-sized companion to
+#: the money floor of `moved_cited_claims`, which lets every return through
+_RETURN_FIELDS = (("idiosyncratic_vs_shared", "name_180d_return"),
+                  ("idiosyncratic_vs_shared", "market_180d_return"),
+                  ("idiosyncratic_vs_shared", "rel_vs_market"),
+                  ("stock_performance", "name_return"),
+                  ("stock_performance", "benchmark_return"))
+#: a percentage as prose writes one: "16.9%", "~8.4pts", "28pt", "3 pp"
+_PCT_UNIT = r"\s?(?:%|pts?\b|pp\b|percentage points?\b|points?\b)"
+#: words that put a rounded percentage in the MARKET's context — a whole-number match counts only
+#: within `_RETURN_CONTEXT_CHARS` of one, because "17%" alone is anything (GOOGL: "Search & Other
+#: grew 17%" beside a 16.9% SPY return)
+_RETURN_CONTEXT = (r"\b(?:benchmark|market|relative|rel|index|outperform\w*|underperform\w*"
+                   r"|lag\w*)\b")
+_RETURN_CONTEXT_CHARS = 60
+
+
+def _stated_return(mech: dict[str, Any], block: str, field: str) -> float | None:
+    b = mech.get(block)
+    v = b.get(field) if isinstance(b, dict) else None
+    v = v.get("value") if isinstance(v, dict) else v  # a Sourced field, or a plain float
+    return float(v) if isinstance(v, (int, float)) else None
+
+
+def return_cited(prose: str, fraction: float, *, symbol: str = "") -> bool:
+    """Is a return (a FRACTION, as stored) cited in ``prose`` as a percentage?
+
+    LEANS TO CITED, the safe direction for a REFUSAL: a false match refuses a correct refresh and
+    sends the name to re-assembly; a miss leaves prose citing a number its tables no longer show.
+    One decimal ("16.9%") stands alone — specific enough not to collide; a whole number ("11%")
+    counts only beside a market word or the benchmark's symbol, because a rounded percentage
+    alone is anything. Measured on the nine pages the 2026-09-16 benchmark hole touched
+    (2026-10-18): the seven whose prose quotes the benchmark match, GOOGL and LLY — whose 17% and
+    57% are a revenue growth rate and a P/E premium — do not."""
+    a = abs(fraction) * 100.0
+    if re.search(rf"(?<![\d.]){re.escape(f'{a:.1f}')}{_PCT_UNIT}", prose, re.I):
+        return True
+    near = _RETURN_CONTEXT + (rf"|\b{re.escape(symbol)}\b" if symbol else "")
+    for m in re.finditer(rf"(?<![\d.]){re.escape(f'{a:.0f}')}{_PCT_UNIT}", prose, re.I):
+        lo, hi = max(0, m.start() - _RETURN_CONTEXT_CHARS), m.end() + _RETURN_CONTEXT_CHARS
+        if re.search(near, prose[lo:hi], re.I):
+            return True
+    return False
+
+
+def moved_cited_returns(before: dict[str, Any], after: dict[str, Any],
+                        doc: dict[str, Any]) -> list[str]:
+    """Market-relative returns that MOVED and that the stored prose CITES — the percentage-sized
+    companion to `moved_cited_claims`, whose floor is money and lets every return through.
+
+    2026-10-18: correcting the nine pages whose benchmark read the 2026-09-16 close as 09-22 would
+    have passed both existing checks on all nine — and seven of them quote the stale figure ("SPY
+    rose ~16.9% (-47.6% relative)", NKE). The refresh would have left those pages contradicting
+    their own tables, the 19c defect this module exists to refuse.
+
+    The prose is matched DECODED: `_prose` serialises a dict claim with JSON's ASCII escaping, so
+    WLK's "rel −48%" arrived as "rel \\u221248%" — the escape's last digit sat against the 48 and
+    hid it (measured on the nine pages, 2026-10-18)."""
+    prose = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), _prose(doc))
+    io = before.get("idiosyncratic_vs_shared")
+    symbol = str(io.get("benchmark_symbol") or "") if isinstance(io, dict) else ""
+    hits: list[str] = []
+    for block, field in _RETURN_FIELDS:
+        old, new = _stated_return(before, block, field), _stated_return(after, block, field)
+        if old is None or old == new:
+            continue
+        if return_cited(prose, old, symbol=symbol):
+            hits.append(f"{block}.{field} = {old * 100:+.1f}% → "
+                        + ("absent" if new is None else f"{new * 100:+.1f}%"))
+    return hits
+
+
 def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
     """Rebuild the fields that are pure functions of stored primitives, in place on a copy.
 
@@ -305,7 +377,8 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     staged = transform(json.loads(json.dumps(before))) if transform else before
     after = recompute_derived(staged)
     if doc.get("synthesis") is not None and (bad := [*moved_cited_claims(before, after, doc),
-                                                     *moved_cited_counts(before, after, doc)]):
+                                                     *moved_cited_counts(before, after, doc),
+                                                     *moved_cited_returns(before, after, doc)]):
         raise RefreshRefusedError(
             f"{doc.get('ticker')}: this refresh moves figures the stored synthesis CITES — "
             f"{'; '.join(bad)}. Preserving the prose would leave the page citing numbers its own "
@@ -351,6 +424,57 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
         path.write_text(new_json)
         md_path.write_text(new_md)
     return changed
+
+
+def benchmark_figures_transform(ticker: str, reference_date: date, *,
+                                store_path: Path | None = None) -> Transform:
+    """A `refresh_dossier` transform re-reading the BENCHMARK side of a page's market figures —
+    ``idiosyncratic_vs_shared``'s market move and the difference, and ``stock_performance`` — at the
+    page's own date (STATE row 32 (7): nine pages read SPY's or MDY's 2026-09-16 close as 09-22).
+
+    THE CORRECTION MOVES ONLY WHAT THE BUG TOUCHED, OR NOTHING (`horizon_read_transform`'s rule).
+    The name's side is recomputed too and must reproduce the stored page EXACTLY — its 180-day move
+    and its source, and every point, the return and the end date of its 52-week line — proof the
+    store holds the bars the page was built from. Any difference leaves the page untouched for a
+    re-assembly. The cohort and its read depend on the name and its peers only and are kept.
+
+    UNDER A KEPT SYNTHESIS. A return the prose quotes refuses the refresh
+    (`moved_cited_returns`): seven of the nine pages quote the stale figure and need a re-assembly.
+    ``store_path`` defaults to the configured store; a test passes its own."""
+    from vinci.config import get_config
+    from vinci.dossier.mechanical import _market_legs, _stock_performance
+    from vinci.store import Store
+    from vinci.universe import benchmark_identity
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        io, sp0 = out.get("idiosyncratic_vs_shared"), out.get("stock_performance")
+        if not (isinstance(io, dict) and isinstance(sp0, dict) and io.get("benchmark_symbol")):
+            return out
+        bench = benchmark_identity(str(io["benchmark_symbol"]))
+        with Store(store_path or get_config().db_path) as store:
+            ident = next((i for i in store.iter_securities() if i.ticker == ticker), None)
+            if ident is None:
+                return out
+            name, market, rel, _end = _market_legs(
+                store.get_price_history(ident.internal_id),
+                store.get_price_history(bench.internal_id), reference_date,
+                sym=ident.eod_symbol, bsym=bench.eod_symbol,
+                bench_basis=str(io.get("benchmark_basis") or ""))
+            sp = _stock_performance(ident, store, reference_date, bench=bench)
+        stored = io.get("name_180d_return") or {}
+        if (sp is None or name.value != stored.get("value")
+                or name.source_ref != stored.get("source_ref")
+                or sp.name_return != sp0.get("name_return") or str(sp.as_of) != sp0.get("as_of")
+                or [(p.date, p.name) for p in sp.points]
+                != [(p.get("date"), p.get("name")) for p in sp0.get("points") or []]):
+            return out  # the page's own data does not reproduce: a re-assembly, not a refresh
+        io["market_180d_return"] = market.model_dump(mode="json")
+        io["rel_vs_market"] = rel.model_dump(mode="json")
+        out["stock_performance"] = sp.model_dump(mode="json")
+        return out
+
+    return _apply
 
 
 def ev_gap_transform(ticker: str) -> Transform:
