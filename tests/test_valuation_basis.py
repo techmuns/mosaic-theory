@@ -353,7 +353,10 @@ def test_every_dossier_writer_saves_through_the_one_write() -> None:
                 writers.add((rel, node.name))
                 assert any(w in seg for w in ("write_dossier(", "write_recorded(",
                                               "dossier_json(")), (rel, node.name)
-    assert len(writers) >= 9, f"found {len(writers)} page writers: {sorted(writers)}"
+    # 10 → 8 on 2026-10-18: `scripts/refresh_stock_performance.py` and `refresh_concentration.py`
+    # were retired (stale calls, writing outside `refresh_dossier`'s guards —
+    # docs/records/2026-10-18-stale-refresh-scripts-retired.md)
+    assert len(writers) >= 8, f"found {len(writers)} page writers: {sorted(writers)}"
 
 
 def test_a_spliced_anchor_is_written_with_blocks_that_describe_it(tmp_path: pathlib.Path) -> None:
