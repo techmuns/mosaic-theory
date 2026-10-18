@@ -900,6 +900,21 @@ def monitor_dir(root: Path | None = None) -> Path:
     return (root or Path.cwd()) / "data" / "monitor"
 
 
+def snapshot_days(root: Path | None = None) -> list[str]:
+    """The dated day files in the monitor directory, oldest first, as ``YYYY-MM-DD`` stems.
+
+    ONE DEFINITION OF "A DAY" (review of #708). The CLI's prior-day history and
+    :func:`write_snapshot`'s later-day guard each globbed and filtered this directory on their
+    own, so a change to what counts as a day could make the guard and the history disagree about
+    which files are days. Both read this now. A day is a dated filename (`_SNAPSHOT_DAY`):
+    `benchmark_assignments.json` is not one, and neither is the next artifact that lands beside it.
+    """
+    d = monitor_dir(root)
+    if not d.is_dir():
+        return []
+    return sorted(f.stem for f in d.glob("*.json") if _SNAPSHOT_DAY.fullmatch(f.stem))
+
+
 def assignments_path(root: Path | None = None) -> Path:
     return monitor_dir(root) / "benchmark_assignments.json"
 
@@ -940,9 +955,9 @@ def write_snapshot(
     evidence dates are read as of the day, but the panels, measured rows and record-read fields
     read TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple. So this
     guards a known lookahead, and since #708 it also refuses a BACK-DATED day that was never
-    written (below). What it cannot see is a re-cut of the NEWEST day after a later close whose
-    file does not exist yet — that needs the session calendar past the day, and is the operator's
-    rule (RUNBOOKS §j).
+    written (below). What it cannot see from the files alone — a re-cut of the NEWEST day after a
+    later close whose file does not exist yet — is refused one step earlier, by the command:
+    `vinci monitor` never writes into the book with a `--ref` before today (`_cmd_monitor`).
     """
     d = monitor_dir(root)
     d.mkdir(parents=True, exist_ok=True)
@@ -953,19 +968,22 @@ def write_snapshot(
     # an October-1 day — the lookahead the ruling forbids, through the door the guard left open.
     # Any day a later day file already sits after is refused, written or not; the front of the book
     # (no later file) is still re-run freely. Docs: RUNBOOKS §j.
-    if not rewrite_history:
-        later = sorted(f.stem for f in d.glob("*.json")
-                       if _SNAPSHOT_DAY.fullmatch(f.stem) and f.stem > snap.as_of.isoformat())
-        if later:
-            what = (f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
-                    f"(next: {later[0]}) — rewriting a superseded day replaces what the book "
-                    f"recorded then with what today's code and ledger produce"
-                    if p.exists() else
-                    f"{p} would be a BACK-DATED day: {len(later)} later snapshot(s) already exist "
-                    f"(next: {later[0]}), and a day written now reads today's pages, records and "
-                    f"cards into an earlier date (RUNBOOKS §j)")
-            raise FileExistsError(
-                f"{what}. Pass rewrite_history=True if that is genuinely what you mean.")
+    later = [s for s in snapshot_days(root) if s > snap.as_of.isoformat()]
+    if later and not p.exists():
+        # NO OVERRIDE for a back-dated day (review of #708): the ruling is that it is never
+        # written, and `rewrite_history` names an OVERWRITE — it must not quietly authorise
+        # creating a day that never existed.
+        raise FileExistsError(
+            f"{p} would be a BACK-DATED day: {len(later)} later snapshot(s) already exist "
+            f"(next: {later[0]}), and a day written now reads today's pages, records and cards "
+            f"into an earlier date — never written (RUNBOOKS §j). An analysis re-cut goes to a "
+            f"scratch root (`vinci monitor --ref <day> --out <dir>`).")
+    if later and not rewrite_history:
+        raise FileExistsError(
+            f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
+            f"(next: {later[0]}) — rewriting a superseded day replaces what the book recorded "
+            f"then with what today's code and ledger produce. Refused; a Python caller that "
+            f"genuinely means it passes rewrite_history=True — `vinci monitor` has no such flag.")
     p.write_text(snap.model_dump_json(indent=2) + "\n")
     return p
 
