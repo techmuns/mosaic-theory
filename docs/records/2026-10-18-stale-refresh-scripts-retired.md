@@ -2,7 +2,7 @@
 id: 2026-10-18-stale-refresh-scripts-retired
 status: recorded
 date: 2026-10-18
-prs: []
+prs: [746]
 supersedes:
 superseded-by:
 ---
