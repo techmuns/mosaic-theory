@@ -89,6 +89,7 @@ from vinci.edgar.concepts import (
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.edgar.submissions import FormerName
 from vinci.eod import compute_price_features
+from vinci.eod.features import frontier
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text, normalize_text
@@ -210,6 +211,22 @@ def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> Da
 def _close_on_or_before(bars: list[PriceBar], ref: date) -> float | None:
     elig = [b for b in bars if b.bar_date <= ref]
     return max(elig, key=lambda b: b.bar_date).close if elig else None
+
+
+def _covering_close(bars: list[PriceBar], d: date) -> PriceBar | None:
+    """The bar that may be read AS the close of ``d``: the latest at or before ``d`` — refused
+    (None) when it is dated more than ``_COVERAGE_GAP_DAYS`` before ``d``. Further back than a long
+    weekend plus a holiday, it is a fetch that did not run, not the market's last close.
+
+    2026-10-07 (STATE row 32 (7)): SPY and MDY had stopped at 2026-09-16, and every page whose
+    figures ran "to 2026-09-22" read the 09-16 close AS the 09-22 close — SPY rose 2.6% in those
+    four days, so seven SPY pages understated the market's return by that much (MDY 0.7%, four
+    pages). `_close_on_or_before` reaches back without limit; this is the bounded form."""
+    elig = [b for b in bars if b.bar_date <= d]
+    if not elig:
+        return None
+    bar = max(elig, key=lambda b: b.bar_date)
+    return bar if (d - bar.bar_date).days <= _COVERAGE_GAP_DAYS else None
 
 
 def _window_return(bars: list[PriceBar], ref: date, days: int) -> float | None:
@@ -794,44 +811,77 @@ def _resolve_benchmark(
     return benchmark_identity(sym), basis
 
 
-def _idiosyncratic_vs_shared(
-    record: DataRecord, store: Store, graph: ExposureGraph, resolver: EntityResolver, ref: date,
-    *, bench: Identity, bench_basis: str,
-) -> IdiosyncraticVsShared:
-    sym = record.identity.eod_symbol
-    bsym = bench.eod_symbol
-    bars = store.get_price_history(record.identity.internal_id)
-    name_ret = _window_return(bars, ref, _DECLINE_WINDOW_DAYS) if bars else None
+def _market_legs(
+    bars: list[PriceBar], bench_bars: list[PriceBar], ref: date, *, sym: str, bsym: str,
+    bench_basis: str,
+) -> tuple[Sourced[float], Sourced[float], Sourced[float]]:
+    """(name 180d, benchmark 180d, name − benchmark) — the page's market-relative figures.
+
+    **BOTH LEGS END ON THE COMMON LAST BAR, and each figure is stamped with it** — the screen's
+    rule (`vinci.eod.features.relative_return`, 2026-07-30), which the dossier never adopted: it
+    ran each leg to its own latest close at or before ``ref`` and stamped both "to {ref}". With
+    SPY's history stopping at 2026-09-16, the 09-16 close went out as the 09-22 close on seven
+    pages (STATE row 32 (7)).
+
+    **A BENCHMARK THAT TRAILS THE PAGE'S DATE IS REFUSED, never read.** If its latest close is more
+    than ``_COVERAGE_GAP_DAYS`` before ``ref`` — further back than a long weekend plus a holiday —
+    the comparison would be a different, older window under the page's date: the benchmark and the
+    difference are UNKNOWN, with the dates and the refresh command. Within the gap, both legs end on
+    the common last bar and say so."""
+    n_end = frontier(bars, ref)
+    b_end = frontier(bench_bars, ref)
+    stale = b_end is not None and (ref - b_end).days > _COVERAGE_GAP_DAYS
+    end = min(n_end, b_end) if (n_end is not None and b_end is not None and not stale) else n_end
+    name_ret = _window_return(bars, end, _DECLINE_WINDOW_DAYS) if end is not None else None
     name_180d = (
-        Sourced.present(
-            name_ret, source_ref=f"EOD {sym} {_DECLINE_WINDOW_DAYS}d to {ref}"
-        )
+        Sourced.present(name_ret, source_ref=f"EOD {sym} {_DECLINE_WINDOW_DAYS}d to {end}")
         if name_ret is not None
         else Sourced.unknown(note="name has no bars over the window")
     )
-    bench_bars = store.get_price_history(bench.internal_id)
-    mkt_ret = _window_return(bench_bars, ref, _DECLINE_WINDOW_DAYS) if bench_bars else None
-    market_180d = (
-        Sourced.present(
-            mkt_ret, source_ref=f"EOD {bsym} {_DECLINE_WINDOW_DAYS}d to {ref} ({bench_basis})"
-        )
-        if mkt_ret is not None
-        else Sourced.unknown(note=f"{bsym} benchmark bars unavailable — run `vinci refresh {bsym}`")
-    )
+    # a name with no bars still shows the market's move, to the benchmark's own end
+    m_end = end if end is not None else (b_end if not stale else None)
+    mkt_ret = (_window_return(bench_bars, m_end, _DECLINE_WINDOW_DAYS)
+               if (m_end is not None and b_end is not None and not stale) else None)
+    if mkt_ret is not None:
+        market_180d = Sourced.present(
+            mkt_ret, source_ref=f"EOD {bsym} {_DECLINE_WINDOW_DAYS}d to {m_end} ({bench_basis})")
+    elif stale:
+        assert b_end is not None
+        market_180d = Sourced.unknown(
+            note=f"{bsym}'s latest stored close is {b_end}, {(ref - b_end).days} days before "
+                 f"{ref} — more than the {_COVERAGE_GAP_DAYS}-day gap the market calendar allows, "
+                 f"so it is a missed fetch and is never read as the {ref} close; run "
+                 f"`vinci refresh {bsym}`")
+    else:
+        market_180d = Sourced.unknown(
+            note=f"{bsym} benchmark bars unavailable — run `vinci refresh {bsym}`")
     # rel is RECOMPUTED here on the same yardstick as market_180d. The screen record's G2 rel
     # (name−IWM, the universe-wide gate) stays in the record — mixing the two would put a
     # small-cap denominator under a mid/large-cap read.
     rel = (
         Sourced.present(
             name_ret - mkt_ret,
-            source_ref=f"EOD {sym}−{bsym} {_DECLINE_WINDOW_DAYS}d to {ref} (assembly, cap-band)",
+            source_ref=f"EOD {sym}−{bsym} {_DECLINE_WINDOW_DAYS}d to {end} (assembly, cap-band)",
         )
         if (name_ret is not None and mkt_ret is not None)
         else Sourced.unknown(
             note=f"name−{bsym} needs both legs; "
-                 f"missing {'name' if name_ret is None else bsym} bars"
-        )
+                 + ("missing name bars" if name_ret is None else
+                    f"{bsym} is stale (latest close {b_end})" if stale else
+                    f"missing {bsym} bars"))
     )
+    return name_180d, market_180d, rel
+
+
+def _idiosyncratic_vs_shared(
+    record: DataRecord, store: Store, graph: ExposureGraph, resolver: EntityResolver, ref: date,
+    *, bench: Identity, bench_basis: str,
+) -> IdiosyncraticVsShared:
+    bsym = bench.eod_symbol
+    name_180d, market_180d, rel = _market_legs(
+        store.get_price_history(record.identity.internal_id),
+        store.get_price_history(bench.internal_id), ref,
+        sym=record.identity.eod_symbol, bsym=bsym, bench_basis=bench_basis)
     cohort = _cohort(graph, resolver, store, record.identity.ticker, ref)
     return IdiosyncraticVsShared(
         name_180d_return=name_180d, market_180d_return=market_180d, rel_vs_market=rel,
@@ -857,8 +907,10 @@ def _stock_performance(
     window start. Reads the SAME EOD closes the idio comparison uses (assemble/visualize, never
     conclude). Returns None (exhibit absent) when the name has <2 window bars — fail-loud, never a
     fabricated series. The benchmark is aligned to the name's trading days via as-of closes; a
-    point's ``benchmark`` is None only when the index has no bar on/before that day (the name path
-    still renders)."""
+    point's ``benchmark`` is None when the index has no close within ``_COVERAGE_GAP_DAYS`` of that
+    day (`_covering_close`) — a stale series STOPS its line rather than carrying a weeks-old close
+    forward, and its window return is refused rather than stamped with the name's end date (STATE
+    row 32 (7)). The name path still renders."""
     sym = identity.eod_symbol
     lo = ref - timedelta(days=_PERF_WINDOW_DAYS)
     name_win = [b for b in store.get_price_history(identity.internal_id) if lo <= b.bar_date <= ref]
@@ -868,11 +920,13 @@ def _stock_performance(
     if base_name <= 0:
         return None
     bench_bars = store.get_price_history(bench.internal_id)
-    base_bench = _close_on_or_before(bench_bars, name_win[0].bar_date)
+    first = _covering_close(bench_bars, name_win[0].bar_date)
+    base_bench = first.close if first is not None else None
 
     def _rebased_bench(d: date) -> float | None:
-        c = _close_on_or_before(bench_bars, d)
-        return round(c / base_bench * 100.0, 2) if (c and base_bench) else None
+        bar = _covering_close(bench_bars, d)
+        return (round(bar.close / base_bench * 100.0, 2)
+                if (bar is not None and base_bench) else None)
 
     step = max(1, len(name_win) // _PERF_MAX_POINTS)
     idxs = list(range(0, len(name_win), step))
@@ -886,7 +940,12 @@ def _stock_performance(
         )
         for i in idxs
     ]
-    last_bench = _close_on_or_before(bench_bars, name_win[-1].bar_date)
+    last = _covering_close(bench_bars, name_win[-1].bar_date)
+    last_bench = last.close if last is not None else None
+    b_end = frontier(bench_bars, name_win[-1].bar_date)
+    refused = (f"; {bench.eod_symbol} has no close within {_COVERAGE_GAP_DAYS} days of "
+               f"{name_win[-1].bar_date} (latest {b_end}) — its line stops there and its return "
+               f"is not stated" if (last is None and b_end is not None) else "")
     return StockPerformance(
         points=points,
         name_symbol=sym,
@@ -897,7 +956,7 @@ def _stock_performance(
         benchmark_return=(last_bench / base_bench - 1.0) if (last_bench and base_bench) else None,
         source_ref=(
             f"EOD {sym} vs {bench.eod_symbol} rebased to 100, "
-            f"{name_win[0].bar_date}..{name_win[-1].bar_date}"
+            f"{name_win[0].bar_date}..{name_win[-1].bar_date}" + refused
         ),
     )
 

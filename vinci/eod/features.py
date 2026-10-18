@@ -271,6 +271,14 @@ def compute_price_features(
     )
 
 
+def frontier(bars: list[PriceBar], reference_date: date) -> date | None:
+    """A series' own end — its latest bar at or before the reference date. ONE reading for the
+    screen's G2 (`relative_return`) and the dossier's market-relative figures
+    (`vinci.dossier.mechanical._market_legs`), which both end their legs on the COMMON last bar."""
+    usable = [b.bar_date for b in bars if b.bar_date <= reference_date]
+    return max(usable) if usable else None
+
+
 def relative_return(
     name_bars: list[PriceBar],
     bench_bars: list[PriceBar],
@@ -308,12 +316,7 @@ def relative_return(
     bench_bars = sorted(bench_bars, key=lambda b: b.bar_date)
     start = reference_date - timedelta(days=lookback_days)
 
-    def frontier(bars: list[PriceBar]) -> date | None:
-        """This side's own end — its latest bar at or before the reference date."""
-        usable = [b.bar_date for b in bars if b.bar_date <= reference_date]
-        return max(usable) if usable else None
-
-    n_end, b_end = frontier(name_bars), frontier(bench_bars)
+    n_end, b_end = frontier(name_bars, reference_date), frontier(bench_bars, reference_date)
     if n_end is None or b_end is None:
         return DataField.unknown(
             source="EOD", tier=SourceTier.DERIVED, note="insufficient coverage over window"
