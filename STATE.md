@@ -710,6 +710,8 @@ Each line: *what it does* — *verified how*.
 
 - **A tenor in front of an agreement's name is part of the name** (`vinci/dossier/covenant_extract.py` `_LEAD_CODE`). TJX's "364 DAY REVOLVING CREDIT AGREEMENT" published as "DAY …": a spaced tenor read as an amount fragment. Incident→invariant (shipped Y, #748): `test_a_day_count_before_the_title_is_part_of_the_name`, `test_no_published_covenant_heading_lost_its_day_count`. `docs/records/2026-10-18-a-tenor-is-part-of-the-agreement-name.md`
 
+- **TJX joins the followed names in the OVERSHOOT book, and its first page lands** (artifacts only, #747, on #748). Operator-chosen book and approved reason (2026-10-18); every price input at the 2026-10-16 close; draws 4 strongly-bullish / 1 mixed, so the machine proposal is withheld. `docs/records/2026-10-18-tjx-followed-and-assembled.md`
+
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**
