@@ -707,6 +707,8 @@ Each line: *what it does* — *verified how*.
 
 - **A monitor day reads nothing dated after itself, and the monitor runs at the LATEST close** (`vinci/monitor.py` `freshness_row(known_through=)`, `live_verdicts`; `docs/RUNBOOKS.md` §j). A re-cut of 09-22 had written IT's and WERN's October 8-Ks into it; IT read BUY after its 07-21 close. Incident→invariant: DATED inputs shipped Y (`tests/test_monitor_ref_date_bound.py`, #707); a past day refused in code before any fetch, Y (#708: `vinci monitor` refuses a `--ref` before today unless `--out`; `write_snapshot` refuses a day a later file sits after); residuals named in the record. `docs/records/2026-10-11-monitor-reads-nothing-after-its-day.md`, `docs/records/2026-10-12-monitor-runs-at-the-latest-close.md`
 
+- **A tenor in front of an agreement's name is part of the name** (`vinci/dossier/covenant_extract.py` `_LEAD_CODE`). TJX's "364 DAY REVOLVING CREDIT AGREEMENT" published as "DAY …": a spaced tenor read as an amount fragment. Incident→invariant (shipped Y, #748): `test_a_day_count_before_the_title_is_part_of_the_name`, `test_no_published_covenant_heading_lost_its_day_count`. `docs/records/2026-10-18-a-tenor-is-part-of-the-agreement-name.md`
+
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**
