@@ -62,6 +62,22 @@ this a critical issue? diagnose properly and if yes then we should fix it".
 - **Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"` with the store moved aside:
   5877 passed, 512 skipped.
 
+## CODE REVIEW FIX (code review of #745 and #746, 2026-10-18)
+
+One finding on this PR, fixed: **the check missed the commonest way a script goes stale**, an
+import of a renamed or removed library name. It now also fails on mypy's `attr-defined`,
+`import-not-found` and `import-untyped` findings that name a `vinci` module. mypy reports a removed
+`vinci` SUBMODULE as `import-untyped`, because the package itself resolves as installed; that was
+measured, not assumed, and it is why `--ignore-missing-imports` is no longer passed (it would let a
+removed module read as an untyped one).
+- **On `scripts/` today the wider check finds nothing.** Every import resolves, and the one
+  `attr-defined` finding is a typing note in an analysis script, not a `vinci` module.
+- **Pins.** A removed function and a removed module are both named. NEGATIVE: a third-party
+  package without stubs is not.
+- **Mutation.** 4 mutants, all killed: `attr-defined` dropped, `import-untyped` dropped, the
+  `vinci` filter dropped, `--ignore-missing-imports` restored.
+- **Suite.** 5878 passed, 512 skipped.
+
 **BOUNDARY.** 2026-10-18 on main 57517b76; population: the 16 files in `scripts/` before the
 deletion, 14 after.
 
