@@ -456,3 +456,50 @@ def test_no_published_covenant_heading_is_a_filing_id() -> None:
                 bad.append(f"{page.name}: {m.group(1)[:70]}")
     assert checked, "no covenant headings found — the pin would pass vacuously"
     assert not bad, "a filing id is published as a contract name:\n" + "\n".join(bad)
+
+
+# TJX 0000109198-20-000015 — the real head through `html_to_text`, byte-for-byte from the fetched
+# exhibit (`exhibit101364dayrevolv.htm`). The facility names its tenor with a SPACE, not a hyphen.
+TJX_364_DAY_REAL = (
+    "EX-10.1 2 exhibit101364dayrevolv.htm EX-10.1 Document Exhibit 10.1 364 DAY REVOLVING CREDIT "
+    "AGREEMENT Dated as of August 10, 2020, among THE TJX COMPANIES, INC., as the Borrower, THE "
+    "FINANCIAL INSTITUTIONS NAMED HEREIN, as the Lenders, BANK OF AME")
+
+
+def test_a_day_count_before_the_title_is_part_of_the_name() -> None:
+    """(+) THE REAL DOCUMENT. TJX's facility heads itself "364 DAY REVOLVING CREDIT AGREEMENT"; the
+    bare "364" was stripped as an amount fragment and the page published "DAY REVOLVING CREDIT
+    AGREEMENT". A number before DAY/WEEK/MONTH/YEAR(S) is the tenor, hyphen or not.
+    (-) WHAT MUST STILL GO: an amount fragment ("000", EPAM's real "00") and a code in front of the
+    tenor are stripped; a hyphenated tenor is untouched."""
+    assert agreement_title(TJX_364_DAY_REAL) == "364 DAY REVOLVING CREDIT AGREEMENT"
+    assert agreement_title("Exhibit 10.1 65410VAW81 364 DAY CREDIT AGREEMENT among X") == (
+        "364 DAY CREDIT AGREEMENT")
+    assert agreement_title("Exhibit 10.1 5 YEAR CREDIT AGREEMENT among X") == (
+        "5 YEAR CREDIT AGREEMENT")
+    assert agreement_title("Exhibit 10.1 000 CREDIT AGREEMENT among X") == "CREDIT AGREEMENT"
+    assert agreement_title(
+        "Exhibit 10.1 00 REVOLVING CREDIT FACILITY CREDIT AGREEMENT among X") == (
+        "REVOLVING CREDIT FACILITY CREDIT AGREEMENT")
+    assert agreement_title("Exhibit 10.1 65410VAW81 364-DAY CREDIT AGREEMENT among X") == (
+        "364-DAY CREDIT AGREEMENT")
+    assert agreement_title(WERN_AMENDMENT_REAL) == "LOAN AND SECURITY AGREEMENT"
+
+
+def test_no_published_covenant_heading_lost_its_day_count() -> None:
+    """(-) END-TO-END, ON THE COMMITTED PAGES — where TJX's "DAY REVOLVING CREDIT AGREEMENT" was
+    seen. A heading that BEGINS with a bare duration word is a tenor whose number was stripped."""
+    import pathlib
+    import re as _re
+    root = pathlib.Path(__file__).resolve().parents[1] / "frontend" / "dossiers"
+    bad, checked = [], 0
+    for page in sorted(root.glob("*.md")):
+        for line in page.read_text().splitlines():
+            m = _re.match(r"^- \*\*Covenants — (.+?)\*\*", line)
+            if not m:
+                continue
+            checked += 1
+            if _re.match(r"(?:DAY|WEEK|MONTH|YEAR)S?\b", m.group(1)):
+                bad.append(f"{page.name}: {m.group(1)[:70]}")
+    assert checked, "no covenant headings found — the pin would pass vacuously"
+    assert not bad, "a tenor lost its number in a published heading:\n" + "\n".join(bad)
