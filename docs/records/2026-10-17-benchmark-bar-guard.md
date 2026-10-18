@@ -2,7 +2,7 @@
 id: 2026-10-17-benchmark-bar-guard
 status: recorded
 date: 2026-10-17
-prs: []
+prs: [743]
 supersedes:
 superseded-by:
 ---
