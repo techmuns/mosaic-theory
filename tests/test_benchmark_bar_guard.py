@@ -144,3 +144,59 @@ def test_the_screen_and_the_dossier_read_one_frontier() -> None:
     bars = _bars("IWM", drop=HOLE)
     assert features.frontier(bars, REF) == date(2026, 9, 16)
     assert features.frontier(bars, date(2026, 9, 16) - timedelta(days=1)) == date(2026, 9, 15)
+
+
+# --- code review of #743 -------------------------------------------------------------------------
+
+def test_a_whole_store_behind_the_page_reads_both_legs_on_the_same_older_session(
+        tmp_path: Path) -> None:
+    """The benchmark is judged against the NAME, not the page's date. When the WHOLE store trails
+    the page (name and IWM both end 09-15 under a 09-22 page), both legs end on 09-15 and say so —
+    the market figure is not refused while the name's stands. The chart reads the same session."""
+    late = (date(2026, 9, 16), date(2026, 9, 22))
+    s = Store(tmp_path / "prices.db")
+    s.write_prices(_bars("GOOGL", drop=late))
+    s.write_prices(_bars("IWM", drop=late))
+    with s:
+        idio = _idio(s)
+        sp = dm._stock_performance(GOOGL, s, REF, bench=IWM)
+    assert idio.market_180d_return.value == dm._window_return(
+        _bars("IWM", drop=late), date(2026, 9, 15), 180)
+    for f in (idio.name_180d_return, idio.market_180d_return, idio.rel_vs_market):
+        assert "to 2026-09-15" in f.source_ref, f.source_ref
+    assert sp is not None and sp.benchmark_return is not None and "latest" not in sp.source_ref
+
+
+def test_the_cohort_runs_to_the_same_session_as_the_name(tmp_path: Path) -> None:
+    """The 'moved alone / with the cohort' read compares the name's move with its peers' — both now
+    end on the common last bar, not the name on 09-21 and the peers on 09-22."""
+    one = (date(2026, 9, 22), date(2026, 9, 22))
+    amzn = _bars("AMZN")
+    peer: Any = type("P", (), {"ticker": "AMZN", "hops": 1, "path": ("supplier",)})()
+    graph: Any = type("G", (), {"resolve": lambda self, t, r: "node",
+                                "exposed_within": lambda self, n, hops: [peer]})()
+    resolver: Any = type("Rv", (), {"resolve_ticker": lambda self, t: type(
+        "I", (), {"internal_id": amzn[0].internal_id})()})()
+    record: Any = type("R", (), {"identity": GOOGL})()
+    with _store(tmp_path, drop=one) as s:
+        s.write_prices(amzn)
+        idio = dm._idiosyncratic_vs_shared(record, s, graph, resolver, REF, bench=IWM,
+                                           bench_basis="cap-band test")
+    assert idio.cohort.value is not None
+    (member,) = idio.cohort.value
+    assert member.ret_180d == dm._window_return(amzn, date(2026, 9, 21), 180)
+    assert member.ret_180d != dm._window_return(amzn, REF, 180)  # the old, misaligned peer
+
+
+def test_a_benchmark_hole_at_the_window_start_is_said_not_silent(tmp_path: Path) -> None:
+    """No IWM close within the gap of the window's FIRST session: nothing to rebase the line on, so
+    it is not drawn and its return is not stated — and the exhibit says so, naming that session."""
+    with _store(tmp_path) as s:
+        first = date.fromisoformat(dm._stock_performance(GOOGL, s, REF, bench=IWM).points[0].date)  # type: ignore[union-attr]
+    hole = (first - timedelta(days=10), first + timedelta(days=1))
+    (tmp_path / "holed").mkdir()
+    with _store(tmp_path / "holed", drop=hole) as s:
+        sp = dm._stock_performance(GOOGL, s, REF, bench=IWM)
+    assert sp is not None and sp.benchmark_return is None
+    assert all(p.benchmark is None for p in sp.points)
+    assert f"no close within {_COVERAGE_GAP_DAYS} days of {first}" in sp.source_ref

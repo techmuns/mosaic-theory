@@ -89,7 +89,7 @@ from vinci.edgar.concepts import (
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.edgar.submissions import FormerName
 from vinci.eod import compute_price_features
-from vinci.eod.features import frontier
+from vinci.eod.features import _bar_on_or_before, frontier
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text, normalize_text
@@ -221,12 +221,11 @@ def _covering_close(bars: list[PriceBar], d: date) -> PriceBar | None:
     2026-10-07 (STATE row 32 (7)): SPY and MDY had stopped at 2026-09-16, and every page whose
     figures ran "to 2026-09-22" read the 09-16 close AS the 09-22 close — SPY rose 2.6% in those
     four days, so seven SPY pages understated the market's return by that much (MDY 0.7%, four
-    pages). `_close_on_or_before` reaches back without limit; this is the bounded form."""
-    elig = [b for b in bars if b.bar_date <= d]
-    if not elig:
-        return None
-    bar = max(elig, key=lambda b: b.bar_date)
-    return bar if (d - bar.bar_date).days <= _COVERAGE_GAP_DAYS else None
+    pages). `_close_on_or_before` reaches back without limit; this is the bounded form of the
+    screen's own lookup (`_bar_on_or_before`; bars ascending, as `Store.get_price_history` returns
+    them)."""
+    bar = _bar_on_or_before(bars, d)
+    return bar if (bar is not None and (d - bar.bar_date).days <= _COVERAGE_GAP_DAYS) else None
 
 
 def _window_return(bars: list[PriceBar], ref: date, days: int) -> float | None:
@@ -814,8 +813,9 @@ def _resolve_benchmark(
 def _market_legs(
     bars: list[PriceBar], bench_bars: list[PriceBar], ref: date, *, sym: str, bsym: str,
     bench_basis: str,
-) -> tuple[Sourced[float], Sourced[float], Sourced[float]]:
-    """(name 180d, benchmark 180d, name − benchmark) — the page's market-relative figures.
+) -> tuple[Sourced[float], Sourced[float], Sourced[float], date | None]:
+    """(name 180d, benchmark 180d, name − benchmark, the date they end on) — the page's
+    market-relative figures.
 
     **BOTH LEGS END ON THE COMMON LAST BAR, and each figure is stamped with it** — the screen's
     rule (`vinci.eod.features.relative_return`, 2026-07-30), which the dossier never adopted: it
@@ -823,14 +823,18 @@ def _market_legs(
     SPY's history stopping at 2026-09-16, the 09-16 close went out as the 09-22 close on seven
     pages (STATE row 32 (7)).
 
-    **A BENCHMARK THAT TRAILS THE PAGE'S DATE IS REFUSED, never read.** If its latest close is more
-    than ``_COVERAGE_GAP_DAYS`` before ``ref`` — further back than a long weekend plus a holiday —
-    the comparison would be a different, older window under the page's date: the benchmark and the
-    difference are UNKNOWN, with the dates and the refresh command. Within the gap, both legs end on
-    the common last bar and say so."""
+    **A BENCHMARK THAT TRAILS THE NAME IS REFUSED, never read.** If its latest close is more than
+    ``_COVERAGE_GAP_DAYS`` before the NAME's — further back than a long weekend plus a holiday —
+    the comparison would end on a session the name's figure does not: the benchmark and the
+    difference are UNKNOWN, with the dates and the refresh command. It is judged against the name,
+    not the page's date (code review of #743): when the WHOLE store trails the page, both legs end
+    on the same older session and say so, and the assembly's own staleness caveat speaks for the
+    store. Within the gap, both legs end on the common last bar."""
     n_end = frontier(bars, ref)
     b_end = frontier(bench_bars, ref)
-    stale = b_end is not None and (ref - b_end).days > _COVERAGE_GAP_DAYS
+    judge = n_end if n_end is not None else ref  # the session the page's figures claim
+    lag = (judge - b_end).days if b_end is not None else None
+    stale = lag is not None and lag > _COVERAGE_GAP_DAYS
     end = min(n_end, b_end) if (n_end is not None and b_end is not None and not stale) else n_end
     name_ret = _window_return(bars, end, _DECLINE_WINDOW_DAYS) if end is not None else None
     name_180d = (
@@ -848,9 +852,9 @@ def _market_legs(
     elif stale:
         assert b_end is not None
         market_180d = Sourced.unknown(
-            note=f"{bsym}'s latest stored close is {b_end}, {(ref - b_end).days} days before "
-                 f"{ref} — more than the {_COVERAGE_GAP_DAYS}-day gap the market calendar allows, "
-                 f"so it is a missed fetch and is never read as the {ref} close; run "
+            note=f"{bsym}'s latest stored close is {b_end}, {lag} days before {judge} — more "
+                 f"than the {_COVERAGE_GAP_DAYS}-day gap the market calendar allows, so it is a "
+                 f"missed fetch and is never read as the {judge} close; run "
                  f"`vinci refresh {bsym}`")
     else:
         market_180d = Sourced.unknown(
@@ -870,7 +874,7 @@ def _market_legs(
                     f"{bsym} is stale (latest close {b_end})" if stale else
                     f"missing {bsym} bars"))
     )
-    return name_180d, market_180d, rel
+    return name_180d, market_180d, rel, end
 
 
 def _idiosyncratic_vs_shared(
@@ -878,11 +882,13 @@ def _idiosyncratic_vs_shared(
     *, bench: Identity, bench_basis: str,
 ) -> IdiosyncraticVsShared:
     bsym = bench.eod_symbol
-    name_180d, market_180d, rel = _market_legs(
+    name_180d, market_180d, rel, end = _market_legs(
         store.get_price_history(record.identity.internal_id),
         store.get_price_history(bench.internal_id), ref,
         sym=record.identity.eod_symbol, bsym=bsym, bench_basis=bench_basis)
-    cohort = _cohort(graph, resolver, store, record.identity.ticker, ref)
+    # the peers run to the SAME session as the name they are compared with (code review, #743)
+    cohort = _cohort(graph, resolver, store, record.identity.ticker,
+                     end if end is not None else ref)
     return IdiosyncraticVsShared(
         name_180d_return=name_180d, market_180d_return=market_180d, rel_vs_market=rel,
         cohort=cohort, read=_idio_read(name_180d, cohort),
@@ -943,9 +949,13 @@ def _stock_performance(
     last = _covering_close(bench_bars, name_win[-1].bar_date)
     last_bench = last.close if last is not None else None
     b_end = frontier(bench_bars, name_win[-1].bar_date)
+    # a refused START drops the whole line (nothing to rebase on), a refused END stops it: either
+    # is said, never left to read as a missing index (code review, #743)
+    missing = [str(bar_d) for bar, bar_d in ((first, name_win[0].bar_date),
+                                             (last, name_win[-1].bar_date)) if bar is None]
     refused = (f"; {bench.eod_symbol} has no close within {_COVERAGE_GAP_DAYS} days of "
-               f"{name_win[-1].bar_date} (latest {b_end}) — its line stops there and its return "
-               f"is not stated" if (last is None and b_end is not None) else "")
+               f"{' or '.join(missing)} (latest {b_end}) — its line is drawn only where it has "
+               f"one and its return is not stated" if (missing and bench_bars) else "")
     return StockPerformance(
         points=points,
         name_symbol=sym,
