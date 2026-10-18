@@ -97,6 +97,41 @@ synthesis was searched for its stored figures.
 - **Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"` with the store moved aside:
   5886 passed, 512 skipped.
 
+## CODE REVIEW FIXES (code review of #745 and #746, 2026-10-18)
+
+Seven findings on this PR, all fixed. Each fix is pinned and its mutant killed.
+- **A page whose own figures do not reproduce is REFUSED, naming why.** Before, it was skipped as
+  "nothing moved", which read like a page already correct. A missing store is refused before
+  anything is opened (opening one would CREATE an empty database), and so is a ticker that is not
+  exactly one security, found by an indexed lookup (`Store.securities_for_ticker`) rather than a
+  scan of every security.
+- **A page with no 52-week exhibit has its 180-day figures corrected alone.** Before, the whole
+  page was skipped.
+- **The citation check:**
+  - matches a value rounded EITHER way at the half-step (16.85% is "16.8%" or "16.9%"), the
+    dangerous direction to miss;
+  - reads each claim on its own words (`_claim_texts`): a market word in the next claim, or in a
+    claim's `source_ref` (which names the benchmark by construction), no longer vouches for a
+    rounded figure;
+  - reads decoded prose at its source: `_prose` serialises with `ensure_ascii=False`, so the
+    per-check decoding and `moved_cited_counts`' two-spelling match are gone.
+- **Re-verified on real data.**
+  - The check over main's nine pages is unchanged: GOOGL and LLY pass, and the seven are refused
+    on the same figures.
+  - The fixed transform on main's stale GOOGL and LLY reproduces the committed corrected pages
+    byte for byte (the refresh entry's date aside).
+  - On the committed pages GOOGL and LLY are no-ops, and the seven are refused.
+- **Mutation.** 8 mutants, all killed:
+  - the silent skip;
+  - an unchecked store;
+  - more than one security accepted;
+  - the exhibit required;
+  - one rounding only;
+  - context across claims;
+  - `source_ref` read;
+  - `_prose` escaped.
+- **Suite.** 5892 passed, 512 skipped.
+
 **BOUNDARY.**
 - 2026-10-18, branch over main 57517b76.
 - Store: this machine's `data/vinci.db`, with SPY and MDY refreshed to 2026-10-16
