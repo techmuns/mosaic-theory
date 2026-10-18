@@ -13,9 +13,15 @@ path's citation guards: TGT's 13.7% → 16.6% under prose still reading "vs SPY 
 refresh entry and the frontend left stale. Both were retired rather than repaired
 (`docs/records/2026-10-18-stale-refresh-scripts-retired.md`).
 
-THE CHECK IS NARROW ON PURPOSE: only mypy's ``call-arg`` — a call that no longer fits the callee.
+THE CHECK IS NARROW ON PURPOSE: a script's use of the library that no longer fits it.
+- ``call-arg``: a call that no longer fits the function it calls;
+- ``attr-defined`` / ``import-not-found`` / ``import-untyped`` naming a ``vinci`` module: an import
+  of a renamed or removed function or module, the commonest way a script goes stale (code review of
+  #746). mypy reports a removed ``vinci`` SUBMODULE as ``import-untyped``, because the package
+  itself resolves as installed.
 The scripts are not otherwise typed (their other findings are annotation noise in one-off analysis
-scripts), and a full type-check of them would bury this one signal.
+scripts), and a full type-check would bury this one signal. Missing imports are NOT ignored, or a
+removed ``vinci`` module would pass; a third-party module without stubs is filtered out.
 """
 
 from __future__ import annotations
@@ -27,14 +33,21 @@ from mypy import api
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _call_arg_errors(paths: list[str], cache: Path) -> list[str]:
-    out, _err, _code = api.run([*paths, "--ignore-missing-imports", "--no-error-summary",
-                                "--follow-imports=silent", f"--cache-dir={cache}"])
-    return [line for line in out.splitlines() if line.rstrip().endswith("[call-arg]")]
+def _stale_library_uses(paths: list[str], cache: Path) -> list[str]:
+    out, _err, _code = api.run([*paths, "--no-error-summary", "--follow-imports=silent",
+                                f"--cache-dir={cache}"])
+    found = []
+    for line in out.splitlines():
+        s = line.rstrip()
+        if s.endswith("[call-arg]") or (
+                s.endswith(("[attr-defined]", "[import-not-found]", "[import-untyped]"))
+                and '"vinci' in s):
+            found.append(line)
+    return found
 
 
 def test_no_script_calls_the_library_with_a_stale_signature(tmp_path: Path) -> None:
-    errors = _call_arg_errors([str(ROOT / "scripts")], tmp_path / "cache")
+    errors = _stale_library_uses([str(ROOT / "scripts")], tmp_path / "cache")
     assert errors == [], "\n".join(errors)
 
 
@@ -47,5 +60,20 @@ def test_the_check_reads_a_stale_call(tmp_path: Path) -> None:
         "from vinci.dossier.mechanical import _stock_performance\n"
         "def run(ident, store) -> None:  # type: ignore[no-untyped-def]\n"
         "    _stock_performance(ident, store, date(2026, 9, 22))\n")
-    errors = _call_arg_errors([str(script)], tmp_path / "cache")
+    errors = _stale_library_uses([str(script)], tmp_path / "cache")
     assert len(errors) == 1 and 'Missing named argument "bench"' in errors[0], errors
+
+
+def test_the_check_reads_an_import_of_a_removed_name_or_module(tmp_path: Path) -> None:
+    """POSITIVE: a renamed or removed library function, and a removed library module, are named.
+    NEGATIVE: a third-party module without stubs is not a stale use of the library."""
+    script = tmp_path / "stale_imports.py"
+    script.write_text("from vinci.dossier.mechanical import _no_such_function\n"
+                      "import vinci.no_such_module\n"
+                      "import some_absent_third_party_package\n")
+    errors = _stale_library_uses([str(script)], tmp_path / "cache")
+    assert len(errors) == 2, errors
+    assert any('Module "vinci.dossier.mechanical" has no attribute "_no_such_function"' in e
+               for e in errors), errors
+    assert any('"vinci.no_such_module"' in e for e in errors), errors
+    assert not any("some_absent_third_party_package" in e for e in errors), errors
