@@ -1,0 +1,34 @@
+# P1 — the page alerts of the final run, with the facts behind each (classification in the record)
+
+== page 7: unexplained — 6 fact(s)
+   '24%' [metric/actual] b067 account=anchored | same figure on a card elsewhere: no
+      “U.S. data center capacity exceeded 50 GW in 2025, growing at a 24% CAGR since 2020.”
+   'approximately 110 GW' [forecast/forecast] b070 account=anchored | same figure on a card elsewhere: no
+      “AI is the dominant source of tracked data center Declining PUE reflects ongoing efficiency gains that demand increasing form 4.3 GW (~12% share) in 2023 help ease power constraints while supporting to”
+   '109.5' [forecast/forecast] b058 account=not an argument block | same figure on a card elsewhere: no
+      “Tracked IT Workload for AI (GW) IT Workloads - Core, Cloud, and Other (GW) 109.5 4.3”
+   '4.3 GW' [metric/actual] b070 account=anchored | same figure on a card elsewhere: no
+      “form 4.3 GW (~12% share) in 2023”
+   '50-GW+' [metric/actual] b060 account=not an argument block | same figure on a card elsewhere: no
+      “50-GW+ of data center capacity was”
+   '43%' [metric/actual] b067 account=anchored | same figure on a card elsewhere: no
+      “Growth was led by MISO (43% CAGR)”
+   theses with evidence on page 7: none
+== page 16: unexplained — 2 fact(s)
+   '600GW' [metric/actual] b163 account=anchored | same figure on a card elsewhere: no
+      “roughly 600GW of U.S. data center projects are still searching for power, vs 183GW with construction or utility-supply agreements”
+   '1GW or more' [metric/actual] b159 account=anchored | same figure on a card elsewhere: no
+      “customer-initiated load reduction in 2024 and 2025, in which 1GW or more dropped off the bulk power system”
+   theses with evidence on page 16: ['TH-110E3113B1']
+== page 37: unexplained — 4 fact(s)
+   '$2 to $4' [metric/actual] b343 account=anchored | same figure on a card elsewhere: no
+      “U.S. natural gas prices at the benchmark Henry Hub are generally within a range of $2 to $4/MMBtu”
+   '$8' [metric/actual] b346 account=anchored | same figure on a card elsewhere: no
+      “Asian LNG and European natural gas prices did fall to around $8/MMBtu or slightly lower in recent years”
+   '~$20' [metric/actual] b346 account=anchored | same figure on a card elsewhere: no
+      “but surged to ~$20/MMBtu or higher”
+   '$5 to $8' [forecast/forecast] b346 account=anchored | same figure on a card elsewhere: no
+      “the global LNG glut expected towards the end of this decade should bring natural gas prices in Asia and Europe down to the $5 to $8/MMBtu range”
+   theses with evidence on page 37: ['TH-3EA660BB0A']
+-- risk p14 b149: carried: evidence on its card: Cancellations jumped to 25 in 2025 from six in 2024, mainly due to p :: Cancellations jumped to 25 in 2025 from six in 2024, mainly due to power access, public pushback, and new legislation in some regions (Construction Di
+-- risk p16 b166: UNPLACED :: The move reflects surging electricity demand driven by rapid data center expansion and aims to ease bottlenecks that could slow the AI sector, while a

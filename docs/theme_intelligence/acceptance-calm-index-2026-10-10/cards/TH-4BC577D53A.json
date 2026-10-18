@@ -1,0 +1,1931 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:07.913612Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "market_regime",
+   "last_material_update": "2026-10-02",
+   "latest_article_date": "2026-10-02",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-4BC577D53A",
+   "title": "Low implied correlation makes equity sector and theme selection the new diversifier"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-8722dab8cdf7c8",
+     "C-a97bbb9aa2d733",
+     "C-a8e001324178a8",
+     "C-61a7adf78143ca",
+     "C-b141683e305af8"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "With stock-bond correlation turned positive and the Cboe 3-month implied correlation at 11.2 vs a long-run average of 41, breadth has narrowed (only ~43% of S&P 500 stocks above their 200-day average, down from 75% in mid-August). \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-a4c1b09393da53",
+     "C-c9f9fcbd386c4f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article says low correlation offers an opportunity to diversify risk within equities at both a sector and thematic level, and that dispersion may become one of investors' most valuable tools."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article argues that because bonds diversify equities less, selecting among sectors and themes inside the equity market is now a more valuable diversification tool, but it does not quantify any return or earnings impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-61a7adf78143ca"
+     ],
+     "original_date": "2026-10-02",
+     "period": "currently",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The Cboe 3-month implied correlation index sits at 11.2, well below the long-run average of 41."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a97bbb9aa2d733"
+     ],
+     "original_date": "2026-10-02",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Only about 43% of S&P 500 stocks are trading above their 200-day average. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a8e001324178a8"
+     ],
+     "original_date": "2026-10-02",
+     "period": "mid-August",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b141683e305af8"
+     ],
+     "original_date": "2026-10-02",
+     "period": "long run",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The long-run average of the Cboe 3-month implied correlation index is 41."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7ac47025ec46e9"
+     ],
+     "original_date": "2026-10-02",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The S&P 500 3-month implied correlation recently remains low, in the 10-15 range. \u27e8cited figures: approximate, read from a chart\u27e9"
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-94c63496962bae"
+     ],
+     "original_date": "2026-10-02",
+     "period": "20-year",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The 20-year average of S&P 500 3-month implied correlation is about 40. \u27e8cited figures: approximate, read from a chart\u27e9"
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 10 pieces of evidence from A-46796449712e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-8722dab8cdf7c8",
+     "C-fc96b2487c411a",
+     "C-61a7adf78143ca"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Positive stock-bond correlation and low implied correlation mean stocks move more independently, so index-level calm hides underlying repricing."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+   },
+   {
+    "claim_ids": [
+     "C-a97bbb9aa2d733",
+     "C-a8e001324178a8",
+     "C-7c9440b7ee0612",
+     "C-f0d875af3b2b65"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "market_reaction",
+    "text": "Breadth narrowed sharply (43% vs 75%) while the index stayed near highs, reflecting dispersed sector/stock responses to the same macro forces. \u27e8cited figures: approximate\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-61a7adf78143ca",
+    "comparator": "well below long run average of 41",
+    "epistemic": "actual",
+    "label": "Cboe 3-month implied correlation index \u2014 Cboe 3-month implied correlation index",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "currently",
+    "qualifiers": [],
+    "quote": "The measure currently sits at 11.2, well below the long run average of 41",
+    "role": "dislocation",
+    "unit": "index level",
+    "value": 11.2,
+    "value_text": "11.2"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a8e001324178a8",
+    "comparator": "down from",
+    "epistemic": "actual",
+    "label": "S&P 500 \u2014 share of stocks above 200-day average",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "mid-August",
+    "qualifiers": [],
+    "quote": "That figure is down from 75% in mid-August",
+    "role": "dislocation",
+    "unit": "%",
+    "value": 75.0,
+    "value_text": "75%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-46796449712e",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a97bbb9aa2d733",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 \u2014 share of stocks above 200-day average",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": null,
+    "qualifiers": [],
+    "quote": "only ~43% of stocks in the benchmark are trading above their 200-day average",
+    "role": "dislocation",
+    "unit": "%",
+    "value": 43.0,
+    "value_text": "~43%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-46796449712e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-7ac47025ec46e9",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 3-month implied correlation \u2014 S&P 500 3-month implied correlation",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "2026",
+    "qualifiers": [
+     "hovering"
+    ],
+    "quote": "the correlation remains low, hovering in the 10\u201315 range",
+    "role": "supports",
+    "unit": "index level",
+    "value": null,
+    "value_text": "10\u201315 range"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-46796449712e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-94c63496962bae",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 3-month implied correlation \u2014 S&P 500 3-month implied correlation 20-year average",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "20-year",
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "the dashed line marking the 20-year average at about 40",
+    "role": "supports",
+    "unit": "index level",
+    "value": 40.0,
+    "value_text": "about 40"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b141683e305af8",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Cboe 3-month implied correlation index \u2014 Cboe 3-month implied correlation long-run average",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "long run",
+    "qualifiers": [],
+    "quote": "the long run average of 41",
+    "role": "supports",
+    "unit": "index level",
+    "value": 41.0,
+    "value_text": "41"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b003",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8722dab8cdf7c8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "stock-bond correlation",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "that relationship has turned positive. That means stocks and bonds can rise and fall together",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a4c1b09393da53",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Low implied correlation offers an opportunity to diversify within equities at a sector and thematic level.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "It offers an opportunity to diversify risk exposure within the equities market itself at both a sector and thematic level.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c9f9fcbd386c4f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Dispersion may become one of investors' most valuable tools in a world where bonds diversify less.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "that dispersion itself may become one of investors\u2019 most valuable tools",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fc96b2487c411a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Today stocks are moving more independently than normal.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "today, stocks are moving more independently than normal",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5402585b3bbe8d",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Data source for price return chart."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001652044",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-10-10",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.001 par value",
+       "ticker": "GOOGL"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-10-10",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class C Capital Stock, $0.001 par value",
+       "ticker": "GOOG"
+      }
+     ],
+     "mention_id": "M-45cd2f4205faad",
+     "name_as_written": "Alphabet",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series A Mandatory Convertible Preferred Stock, par value $0.001",
+       "ticker": "GOOGM"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series B Mandatory Convertible Preferred Stock, par value $0.001",
+       "ticker": "GOOGN"
+      }
+     ],
+     "quote": "Alphabet",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001018724",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-a78b20a264010b",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0000320193",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.00001 par value per share",
+       "ticker": "AAPL"
+      }
+     ],
+     "mention_id": "M-c7c7e31e1b68f3",
+     "name_as_written": "Apple",
+     "other_securities": [],
+     "quote": "Apple",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-bf086842a7c12f",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0000789019",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $ 0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-4f1130762913b4",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001045810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-a5ab92012149d2",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Nvidia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001318605",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001628280-26-049270) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "TSLA"
+      }
+     ],
+     "mention_id": "M-78b5a56d64c1ec",
+     "name_as_written": "Tesla",
+     "other_securities": [],
+     "quote": "Tesla",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e4f888c31390bf",
+     "name_as_written": "S&P 500 Utilities",
+     "other_securities": [],
+     "quote": "S&P 500 Utilities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "sector_example",
+     "role_detail": "Utilities sector index used as the microcosm of market forces."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4b099a490e4d8a",
+     "name_as_written": "Mag 7",
+     "other_securities": [],
+     "quote": "Mag 7 is an equally-weighted basket",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "cited_basket",
+     "role_detail": "Equally-weighted basket of seven large tech stocks defined in the note."
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-95e04cc5b53277"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Equally-weighted basket of seven large tech stocks (the Mag 7) used to show divergent performance from the index and utilities. (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "market instrument",
+     "listings": [],
+     "mention_id": "M-885c80eac86fb9",
+     "name_as_written": "S&P 500",
+     "other_securities": [],
+     "quote": "The S&P 500 sits ~6% above its 200-day moving average",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Headline benchmark discussed for breadth and index-level calm."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "market instrument",
+     "listings": [],
+     "mention_id": "M-8fddde6b9c91ee",
+     "name_as_written": "Cboe 3-month implied correlation index",
+     "other_securities": [],
+     "quote": "Cboe 3-month implied correlation index",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Measure cited to show low expected correlation among large US stocks."
+    }
+   ],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-46796449712e",
+     "claim_ids": [
+      "C-a4c1b09393da53"
+     ],
+     "direction": "positive",
+     "name": "at both a sector and thematic level",
+     "provenance": "SOURCE OPINION",
+     "quote": "within the equities market itself at both a sector and thematic level"
+    }
+   ],
+   "sectors": [
+    "equities broadly",
+    "sectors and themes within equities"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-61a7adf78143ca",
+      "C-a97bbb9aa2d733"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Currently implied correlation sits at 11.2, far below the 41 long-run average, with breadth at ~43%, supporting the dispersion opportunity now. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-61a7adf78143ca"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: The Cboe 3-month implied correlation index sits at 11.2, well below the long-run average of 41."
+    },
+    {
+     "claim_ids": [
+      "C-a97bbb9aa2d733"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: Only about 43% of S&P 500 stocks are trading above their 200-day average. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-a8e001324178a8"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-8722dab8cdf7c8",
+      "C-a4c1b09393da53"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "If the stock-bond correlation stays positive, diversification must increasingly be sought within equities rather than across stocks and bonds."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-7ac47025ec46e9",
+      "C-94c63496962bae"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Wide dispersion between stocks and sectors is not unusual historically, so the current reading may not represent a durable regime change."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Cboe 3-month implied correlation reverting toward its 41 long-run average"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Breadth broadening with share of stocks above 200-day average rising back toward 75%"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Stock-bond correlation turning negative again"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-8722dab8cdf7c8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The stock-bond correlation has turned positive, so stocks and bonds can rise and fall together, reducing the diversification bonds historically provided to equities. (scope: Applies to traditional stock-bond portfolio diversification in the current inflation/growth environment driven by the AI build-out.)"
+    },
+    {
+     "claim_ids": [
+      "C-a97bbb9aa2d733",
+      "C-a8e001324178a8"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Majority of S&P 500 gains are driven by heavyweight technology companies, so narrow breadth leaves less-resilient sectors exposed to higher rates beneath a calm index. (scope: Concentration/breadth risk at the index level; ~43% of stocks above 200-day average, down from 75% in mid-August.)"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether low implied correlation persists or mean-reverts to the ~41 average"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether sector/theme selection actually delivers diversification benefits versus simple association in current data"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus expectations for the stock-bond correlation going forward"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Implied correlation rises back toward 41"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Breadth broadens materially"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Examine historical relationship between low Cboe implied correlation readings and realized cross-sectional equity dispersion / diversification benefit."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Implied correlation stays depressed while breadth narrows further"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Stock-bond correlation remains positive over subsequent quarters"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-61a7adf78143ca: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (8 days before the as-of); C-b141683e305af8: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level; verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-46796449712e",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)",
+     "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-61a7adf78143ca",
+     "C-a97bbb9aa2d733",
+     "C-a8e001324178a8",
+     "C-8722dab8cdf7c8",
+     "C-fc96b2487c411a",
+     "C-b141683e305af8",
+     "C-a4c1b09393da53",
+     "C-7ac47025ec46e9",
+     "C-94c63496962bae",
+     "C-c9f9fcbd386c4f"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-02T10:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "A calm index, a restless market",
+    "upstream_origins": [
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191507Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-46796449712e",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:07.913612Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "market_regime",
+     "last_material_update": "2026-10-02",
+     "latest_article_date": "2026-10-02",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-4BC577D53A",
+     "title": "Low implied correlation makes equity sector and theme selection the new diversifier"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-8722dab8cdf7c8",
+       "C-a97bbb9aa2d733",
+       "C-a8e001324178a8",
+       "C-61a7adf78143ca",
+       "C-b141683e305af8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "With stock-bond correlation turned positive and the Cboe 3-month implied correlation at 11.2 vs a long-run average of 41, breadth has narrowed (only ~43% of S&P 500 stocks above their 200-day average, down from 75% in mid-August). \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-a4c1b09393da53",
+       "C-c9f9fcbd386c4f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article says low correlation offers an opportunity to diversify risk within equities at both a sector and thematic level, and that dispersion may become one of investors' most valuable tools."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article argues that because bonds diversify equities less, selecting among sectors and themes inside the equity market is now a more valuable diversification tool, but it does not quantify any return or earnings impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-61a7adf78143ca"
+       ],
+       "original_date": "2026-10-02",
+       "period": "currently",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The Cboe 3-month implied correlation index sits at 11.2, well below the long-run average of 41."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a97bbb9aa2d733"
+       ],
+       "original_date": "2026-10-02",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Only about 43% of S&P 500 stocks are trading above their 200-day average. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a8e001324178a8"
+       ],
+       "original_date": "2026-10-02",
+       "period": "mid-August",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b141683e305af8"
+       ],
+       "original_date": "2026-10-02",
+       "period": "long run",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The long-run average of the Cboe 3-month implied correlation index is 41."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7ac47025ec46e9"
+       ],
+       "original_date": "2026-10-02",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The S&P 500 3-month implied correlation recently remains low, in the 10-15 range. \u27e8cited figures: approximate, read from a chart\u27e9"
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-94c63496962bae"
+       ],
+       "original_date": "2026-10-02",
+       "period": "20-year",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The 20-year average of S&P 500 3-month implied correlation is about 40. \u27e8cited figures: approximate, read from a chart\u27e9"
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 10 pieces of evidence from A-46796449712e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-8722dab8cdf7c8",
+       "C-fc96b2487c411a",
+       "C-61a7adf78143ca"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Positive stock-bond correlation and low implied correlation mean stocks move more independently, so index-level calm hides underlying repricing."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+     },
+     {
+      "claim_ids": [
+       "C-a97bbb9aa2d733",
+       "C-a8e001324178a8",
+       "C-7c9440b7ee0612",
+       "C-f0d875af3b2b65"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "market_reaction",
+      "text": "Breadth narrowed sharply (43% vs 75%) while the index stayed near highs, reflecting dispersed sector/stock responses to the same macro forces. \u27e8cited figures: approximate\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-61a7adf78143ca",
+      "comparator": "well below long run average of 41",
+      "epistemic": "actual",
+      "label": "Cboe 3-month implied correlation index \u2014 Cboe 3-month implied correlation index",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "currently",
+      "qualifiers": [],
+      "quote": "The measure currently sits at 11.2, well below the long run average of 41",
+      "role": "dislocation",
+      "unit": "index level",
+      "value": 11.2,
+      "value_text": "11.2"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a8e001324178a8",
+      "comparator": "down from",
+      "epistemic": "actual",
+      "label": "S&P 500 \u2014 share of stocks above 200-day average",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "mid-August",
+      "qualifiers": [],
+      "quote": "That figure is down from 75% in mid-August",
+      "role": "dislocation",
+      "unit": "%",
+      "value": 75.0,
+      "value_text": "75%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-46796449712e",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a97bbb9aa2d733",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 \u2014 share of stocks above 200-day average",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": null,
+      "qualifiers": [],
+      "quote": "only ~43% of stocks in the benchmark are trading above their 200-day average",
+      "role": "dislocation",
+      "unit": "%",
+      "value": 43.0,
+      "value_text": "~43%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-46796449712e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-7ac47025ec46e9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 3-month implied correlation \u2014 S&P 500 3-month implied correlation",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "2026",
+      "qualifiers": [
+       "hovering"
+      ],
+      "quote": "the correlation remains low, hovering in the 10\u201315 range",
+      "role": "supports",
+      "unit": "index level",
+      "value": null,
+      "value_text": "10\u201315 range"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-46796449712e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-94c63496962bae",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 3-month implied correlation \u2014 S&P 500 3-month implied correlation 20-year average",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "20-year",
+      "qualifiers": [
+       "about"
+      ],
+      "quote": "the dashed line marking the 20-year average at about 40",
+      "role": "supports",
+      "unit": "index level",
+      "value": 40.0,
+      "value_text": "about 40"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b141683e305af8",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Cboe 3-month implied correlation index \u2014 Cboe 3-month implied correlation long-run average",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "long run",
+      "qualifiers": [],
+      "quote": "the long run average of 41",
+      "role": "supports",
+      "unit": "index level",
+      "value": 41.0,
+      "value_text": "41"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8722dab8cdf7c8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "stock-bond correlation",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "that relationship has turned positive. That means stocks and bonds can rise and fall together",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a4c1b09393da53",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Low implied correlation offers an opportunity to diversify within equities at a sector and thematic level.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "It offers an opportunity to diversify risk exposure within the equities market itself at both a sector and thematic level.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c9f9fcbd386c4f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Dispersion may become one of investors' most valuable tools in a world where bonds diversify less.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "that dispersion itself may become one of investors\u2019 most valuable tools",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fc96b2487c411a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Today stocks are moving more independently than normal.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "today, stocks are moving more independently than normal",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5402585b3bbe8d",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Data source for price return chart."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001652044",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-10",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.001 par value",
+         "ticker": "GOOGL"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-10",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class C Capital Stock, $0.001 par value",
+         "ticker": "GOOG"
+        }
+       ],
+       "mention_id": "M-45cd2f4205faad",
+       "name_as_written": "Alphabet",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series A Mandatory Convertible Preferred Stock, par value $0.001",
+         "ticker": "GOOGM"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series B Mandatory Convertible Preferred Stock, par value $0.001",
+         "ticker": "GOOGN"
+        }
+       ],
+       "quote": "Alphabet",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001018724",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-a78b20a264010b",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0000320193",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.00001 par value per share",
+         "ticker": "AAPL"
+        }
+       ],
+       "mention_id": "M-c7c7e31e1b68f3",
+       "name_as_written": "Apple",
+       "other_securities": [],
+       "quote": "Apple",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-bf086842a7c12f",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0000789019",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $ 0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-4f1130762913b4",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001045810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-a5ab92012149d2",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Nvidia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001318605",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001628280-26-049270) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "TSLA"
+        }
+       ],
+       "mention_id": "M-78b5a56d64c1ec",
+       "name_as_written": "Tesla",
+       "other_securities": [],
+       "quote": "Tesla",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e4f888c31390bf",
+       "name_as_written": "S&P 500 Utilities",
+       "other_securities": [],
+       "quote": "S&P 500 Utilities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "sector_example",
+       "role_detail": "Utilities sector index used as the microcosm of market forces."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4b099a490e4d8a",
+       "name_as_written": "Mag 7",
+       "other_securities": [],
+       "quote": "Mag 7 is an equally-weighted basket",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "cited_basket",
+       "role_detail": "Equally-weighted basket of seven large tech stocks defined in the note."
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-95e04cc5b53277"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Equally-weighted basket of seven large tech stocks (the Mag 7) used to show divergent performance from the index and utilities. (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "market instrument",
+       "listings": [],
+       "mention_id": "M-885c80eac86fb9",
+       "name_as_written": "S&P 500",
+       "other_securities": [],
+       "quote": "The S&P 500 sits ~6% above its 200-day moving average",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Headline benchmark discussed for breadth and index-level calm."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "market instrument",
+       "listings": [],
+       "mention_id": "M-8fddde6b9c91ee",
+       "name_as_written": "Cboe 3-month implied correlation index",
+       "other_securities": [],
+       "quote": "Cboe 3-month implied correlation index",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Measure cited to show low expected correlation among large US stocks."
+      }
+     ],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-46796449712e",
+       "claim_ids": [
+        "C-a4c1b09393da53"
+       ],
+       "direction": "positive",
+       "name": "at both a sector and thematic level",
+       "provenance": "SOURCE OPINION",
+       "quote": "within the equities market itself at both a sector and thematic level"
+      }
+     ],
+     "sectors": [
+      "equities broadly",
+      "sectors and themes within equities"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-61a7adf78143ca",
+        "C-a97bbb9aa2d733"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Currently implied correlation sits at 11.2, far below the 41 long-run average, with breadth at ~43%, supporting the dispersion opportunity now. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-61a7adf78143ca"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: The Cboe 3-month implied correlation index sits at 11.2, well below the long-run average of 41."
+      },
+      {
+       "claim_ids": [
+        "C-a97bbb9aa2d733"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: Only about 43% of S&P 500 stocks are trading above their 200-day average. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-a8e001324178a8"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-8722dab8cdf7c8",
+        "C-a4c1b09393da53"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "If the stock-bond correlation stays positive, diversification must increasingly be sought within equities rather than across stocks and bonds."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-7ac47025ec46e9",
+        "C-94c63496962bae"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Wide dispersion between stocks and sectors is not unusual historically, so the current reading may not represent a durable regime change."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Cboe 3-month implied correlation reverting toward its 41 long-run average"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Breadth broadening with share of stocks above 200-day average rising back toward 75%"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Stock-bond correlation turning negative again"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-8722dab8cdf7c8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The stock-bond correlation has turned positive, so stocks and bonds can rise and fall together, reducing the diversification bonds historically provided to equities. (scope: Applies to traditional stock-bond portfolio diversification in the current inflation/growth environment driven by the AI build-out.)"
+      },
+      {
+       "claim_ids": [
+        "C-a97bbb9aa2d733",
+        "C-a8e001324178a8"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Majority of S&P 500 gains are driven by heavyweight technology companies, so narrow breadth leaves less-resilient sectors exposed to higher rates beneath a calm index. (scope: Concentration/breadth risk at the index level; ~43% of stocks above 200-day average, down from 75% in mid-August.)"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether low implied correlation persists or mean-reverts to the ~41 average"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether sector/theme selection actually delivers diversification benefits versus simple association in current data"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations for the stock-bond correlation going forward"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Implied correlation rises back toward 41"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Breadth broadens materially"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Examine historical relationship between low Cboe implied correlation readings and realized cross-sectional equity dispersion / diversification benefit."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Implied correlation stays depressed while breadth narrows further"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Stock-bond correlation remains positive over subsequent quarters"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-61a7adf78143ca: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (8 days before the as-of); C-b141683e305af8: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level; verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-46796449712e",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)",
+       "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-61a7adf78143ca",
+       "C-a97bbb9aa2d733",
+       "C-a8e001324178a8",
+       "C-8722dab8cdf7c8",
+       "C-fc96b2487c411a",
+       "C-b141683e305af8",
+       "C-a4c1b09393da53",
+       "C-7ac47025ec46e9",
+       "C-94c63496962bae",
+       "C-c9f9fcbd386c4f"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-02T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "A calm index, a restless market",
+      "upstream_origins": [
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market"
+     }
+    ]
+   },
+   "content_sha": "a16b8430cfd25a49654e574666cb5b15bf7420c0809c0028364476de85ae7fd3",
+   "created_at": "2026-10-10T19:15:07.920338Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-61a7adf78143ca: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (8 days before the as-of); C-b141683e305af8: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level; verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-b141683e305af8",
+       "C-7ac47025ec46e9",
+       "C-94c63496962bae",
+       "C-61a7adf78143ca",
+       "C-a97bbb9aa2d733",
+       "C-a8e001324178a8"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-fc428945cc0a",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "a market-regime record argues a market structure, not an earnings mechanism",
+      "value": "n/a (market-regime record)"
+     },
+     {
+      "claim_ids": [
+       "C-61a7adf78143ca",
+       "C-a97bbb9aa2d733",
+       "C-a8e001324178a8",
+       "C-b141683e305af8",
+       "C-7ac47025ec46e9",
+       "C-94c63496962bae"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-61a7adf78143ca: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (8 days before the as-of); C-b141683e305af8: measured 2026-10-02 (8 days before the as-of); showing 4 of 6); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: at both a sector and thematic level; instruments: S&P 500, Cboe 3-month implied correlation index",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [
+       "C-61a7adf78143ca",
+       "C-a97bbb9aa2d733",
+       "C-a8e001324178a8"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "3 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-61a7adf78143ca: measured 2026-10-02 (8 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (8 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (8 days before the as-of); C-b141683e305af8: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level; verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T191507Z-article",
+   "thesis_id": "TH-4BC577D53A",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {
+  "s07.0": "REVIEW_UNSUPPORTED \u2014 s07.0: UNSUPPORTED \u2014 The cited spans only state current correlation (10-15 range) and 20-year average (~40); they do not support that wide dispersion is 'not unusual historically' nor that the reading 'may not represent a durable regime change' \u2014 that claim is not in the cited spans | 'Wide dispersion between stocks and sectors is not unusual historically, so the current reading may n'"
+ }
+}

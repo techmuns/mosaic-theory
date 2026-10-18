@@ -1,0 +1,64 @@
+== final-a A-82a8a9210bae run R-20261011T141624Z-ingest SUCCEEDED cost $0.0
+   spend guard: limit $10.0 spent $0.0 paid calls 0 bound total $0 actual $0 over-bound 0 refusals 0
+   16 theses citing it — actions {'WATCH': 5, 'SKIP': 11} — kinds {'investment_thesis': 16}
+   TH-126BEECA00 investment_thesis  SKIP         Uneven US regional power-market regulation makes regional selection drive grid/generation retur
+   TH-426034EB2D investment_thesis  SKIP         Nuclear and SMR interest rising as supportive policy and power demand grow
+   TH-5BA11D6167 investment_thesis  SKIP         Energy infrastructure is a multi-year structural growth story across four pillars
+   TH-6EFAD379CB investment_thesis  SKIP         Selective continued exposure to US, South Korea, Taiwan AI capex theme
+   TH-8178B565CB investment_thesis  SKIP         China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand
+   TH-BAA07551ED investment_thesis  SKIP         Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model
+   TH-C0F7401B12 investment_thesis  SKIP         US gas pipeline underinvestment creates attractive midstream growth capex cycle
+   TH-C840A76413 investment_thesis  SKIP         European grid expansion is primary beneficiary of electrification, even if datacenters stay mar
+   TH-CA02B7A83B investment_thesis  SKIP         Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout
+   TH-CE04BAA34C investment_thesis  SKIP         Energy security accelerates renewables, EVs and energy storage demand globally
+   TH-D803766B8B investment_thesis  SKIP         Australia develops behind-the-meter gas power market for data centers
+   TH-110E3113B1 investment_thesis  WATCH        Speed-to-power drives BYOG gas generation equipment multi-year growth cycle
+   TH-1F366737A1 investment_thesis  WATCH        AI datacenter power buildout drives multi-year transformer and grid equipment demand
+   TH-566BFB9D39 investment_thesis  WATCH        Low-cost US natural gas gives US a structural advantage in powering datacenters
+   TH-5EDF9760FB investment_thesis  WATCH        Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determi
+   TH-DDEE0B7EF0 investment_thesis  WATCH        Fuel cells gain niche data-center power share on speed and grid-constraint advantages
+   RECORD_KIND_CORRECTED: “Uneven US regional power-market regulation makes regional selection drive grid/generation returns”: extracted as a market-regime record on ai_infrastructure.power_grid, but none of its 15 evidence claim(s) measures equity-market structure 
+   RECORD_KIND_CORRECTED: “Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout”: extracted as a market-regime record on ai_infrastructure.power_grid, but none of its 2 evidence claim(s) measures equity-market structure (corr
+   companies:
+     Meta                           → META       LISTED_EQUITY Meta Platforms, Inc.
+     Renault                        → —          UNRESOLVED 
+     AWS                            → —          UNRESOLVED 
+     Start Campus                   → —          PRIVATE 
+     DTM                            → —          UNRESOLVED 
+     TBEA                           → —          UNRESOLVED 
+     Cummins (CMI)                  → CMI        LISTED_EQUITY CUMMINS INC
+     WMB                            → —          UNRESOLVED 
+     Hitachi Energy                 → —          UNRESOLVED 
+     Bloom Energy (BE)              → BE         LISTED_EQUITY Bloom Energy Corp
+     Amazon                         → AMZN       LISTED_EQUITY AMAZON COM INC
+     GE Vernova (GEV)               → GEV        LISTED_EQUITY GE Vernova Inc.
+     Siemens                        → —          UNRESOLVED 
+     AK Steel                       → —          UNRESOLVED 
+     NVIDIA                         → NVDA       LISTED_EQUITY NVIDIA CORP
+     Prolec GE                      → —          UNRESOLVED 
+     Delta                          → —          UNRESOLVED 
+     Doosan Enerbility              → —          UNRESOLVED 
+     Baker Hughes                   → BKR        LISTED_EQUITY Baker Hughes Co
+     Rolls-Royce                    → —          UNRESOLVED 
+     TRP                            → —          UNRESOLVED 
+     OLX                            → —          PRIVATE 
+     MIR                            → —          UNRESOLVED 
+     Microsoft                      → MSFT       LISTED_EQUITY MICROSOFT CORP
+     Ceres Power                    → —          UNRESOLVED 
+     HSH                            → —          UNRESOLVED 
+     Weichai                        → —          UNRESOLVED 
+     Google                         → —          UNRESOLVED 
+     KMI                            → —          UNRESOLVED 
+     Siemens Energy                 → —          UNRESOLVED Siemens Energy AG/ADR
+     Caterpillar                    → CAT        LISTED_EQUITY CATERPILLAR INC
+     Constellation                  → CEG        LISTED_EQUITY Constellation Energy Corp
+     Volvo                          → —          UNRESOLVED 
+     CBRE                           → CBRE       LISTED_EQUITY CBRE GROUP, INC.
+     Carwow                         → —          PRIVATE 
+   AV-51c14867d6652aa1: 6 of 851 figures open, 4 of 292 paragraphs open; 5 restated figures captured where stated; causes {'capture_not_verified': 3, 'verification_failed': 3, 'account_names_no_record': 4}
+     FIG b093 '~$400 billion' [capture_not_verified]
+     FIG b095 '80%' [verification_failed]
+     FIG b095 '24-48' [verification_failed]
+     FIG b095 '12 - 30' [capture_not_verified]
+     FIG b095 'five years' [verification_failed]
+     FIG b208 '10' [capture_not_verified]

@@ -1207,10 +1207,12 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
     one fiscal period reported at two values by two filings — a restatement the company itself
     performed. It is fed the ANNUAL EPS series and not the share series, and that is not an
     implementation detail: run against these very share points it returns None (a dei cover count is
-    never re-filed for a prior period, so no ratio exists to read), and against the diluted
-    weighted-average series it returns a confidently wrong 7.0x. Only EPS states 10.02x. A guard
-    keyed to either of the other two would have shipped and never fired — which is why this was
-    measured on all three before the branch was written.
+    never re-filed for a prior period, so no ratio exists to read). The diluted weighted-average
+    series returned 7.0x — NFLX's 2015 7-for-1, read first, not a wrong number — until the detector
+    read the LATEST basis change first (2026-10-16); it now states 10.0x as EPS does. EPS stays the
+    series this keys on: it is the per-share figure the filer restates, and the one the percentile
+    divides by. A guard keyed to the cover count would have shipped and never fired — which is why
+    this was measured on all three before the branch was written.
     """
     try:
         facts = edgar.companyfacts(cik)

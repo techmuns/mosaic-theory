@@ -1,0 +1,25 @@
+# P0 — the two fuel-cell readings: ONE thesis (TH-DDEE0B7EF0 kept)
+# re-read of the real PDF into a copy of the first reading's registry; BEFORE = identity-reread R-20261012T083646Z-ingest (previous code), AFTER = closeout-reread R-20261012T092257Z-ingest
+
+== BEFORE: held for review beside it
+[SAME_ARTICLE_SIBLING] TH-F14CB7F84C — TH-DDEE0B7EF0 / TH-F14CB7F84C (A-82a8a9210bae): SIBLING of “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”: 14 of its 17 sentence(s) were already on that thesis from an earlier version of this article, but it differs in economic mechanism (demand_volume_shift, volume vs competitive_share_shift, competition) — not merged, held for review (never an independent research opportunity)
+
+== AFTER: matched — the decision and its reason
+[SAME_ARTICLE_MATCH] TH-DDEE0B7EF0 — a later version of A-82a8a9210bae keyed “Fuel cells gain data center share on speed-to-power despite CCGT cost edge” as ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation|prod:fuel_cells; 14 of its 17 sentence(s) are already on this thesis and direction, geography, mechanism family, segment, product and horizon agree — updated, never a second thesis; one causal chain read at two steps — competitive_share_shift (earnings move with share taken from rivals) and demand_volume_shift (earnings move with units or capacity sold) on the same evidence (14 of this reading's 17 sentences, 14 of the thesis's 19): no second, separately falsifiable mechanism in the source; the thesis keeps competitive_share_shift
+
+== AFTER: its version history (09)
+**Version history:**
+- v1 as of 2026-10-11 — WATCH — evidence NEW — Initial record — created from A-82a8a9210bae (initial assessment — WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; verification hold))
+- v2 as of 2026-10-11 — WATCH — evidence STRONGER — A-82a8a9210bae: new ×3, repeated ×15 (no change in action (F2_material_evidence 19→21; F3_independent_origins 4→5; F6_recognizable_exposures 1 listed · 1 sector→1 listed · 2 sector; F8_counterevidence 0→1; F9_premise_in_source conditional→asserted; F10_verification_hold HOLD→clear))
+  - s04_key_evidence: new — stack replacement cost share: 30%
+  - s04_key_evidence: repeated — stack lifetime: ~5.5 year years
+  - s04_key_evidence: new — stack replacement interval: five years
+  - s04_key_evidence: new — fuel cell delivery time: ~100MW
+  - s07_what_could_go_wrong.counter_evidence: repeated — Expectations embed ~7GW of fuel cell installs by 2030, implying limited upside for individual players if competition intensifies or adoption falls short. ⟨cited… [+32 chars — full text in the JSON export]
+  - s05_affected.sector_exposures: new — solid oxide fuel cells (SOFCs) (positive)
+  - s01_bottom_line: new — ⟨update 2026-06-28 · Citi⟩ Solid oxide fuel cells, led by Bloom Energy, offer fast time-to-power (~100MW in ~120 days), compact footprints (~15 acres/GW vs ~40… [+204 chars — full text in the JSON export]
+
+_Generated 2026-10-12 09:23 UTC from the registry (ti-engine-4; run R-20261012T092257Z-ingest, extract ti-extract-6, review ti-review-4, model claude-opus-4-8)._
+
+
+== AFTER: fuel-cell theses of the article — 1

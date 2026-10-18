@@ -1,0 +1,12 @@
+$ --data-dir data/theme_intelligence/v2/final2-c ingest-file --path data/theme_intelligence/v2/public_reports/Citi LatAm Poised for Take-Off.pdf --source citi_must_c --llm-permitted --as-of 2026-10-11 --url https://www.citigroup.com/global/insights/latam-poised-for-take-off --budget 10
+run R-20261011T142310Z-ingest: ingest SUCCEEDED — Citi LatAm Poised for Take-Off.pdf
+  D-3a233ec9d60e00bb  UPGRADED   article A-446cf596aeca  the operator states its URL; a fuller document for a PARTIAL article (title overlap 100%, held text found in the new document 7%, new text found in the held 0%; held 570 words (PARTIAL), new 24960 words; dates 2026-09-14 vs 2026-09-10); pip
+      flagged: page 1: carries graphics (5 image(s), 7 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 7: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 8: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 9: carries graphics (1 image(s), 42 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 10: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 11: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      … 32 more flagged item(s) on the document record
+cost $0.2183 · outputs: data/theme_intelligence/v2/final2-c/runs/R-20261011T142310Z-ingest
+exit=0

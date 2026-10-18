@@ -1,0 +1,119 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1b completeness model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-complete-1",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 16965,
+   "output_tokens": 1087
+  },
+  "parts": 1,
+  "notes": [],
+  "registry_after_runs": 1,
+  "registry_theses": [
+   "ai_infrastructure.compute_semis|competitive_share_shift|positive|Global",
+   "ai_infrastructure.memory|demand_volume_shift|positive|Global",
+   "ai_infrastructure.compute_semis|competitive_share_shift|positive|China"
+  ]
+ },
+ "output": {
+  "figure_reviews": [
+   {
+    "figure_id": "b016#6.0",
+    "verdict": "immaterial",
+    "claim_ids": [],
+    "reason": "PCIe 6.0 is a product/interface generation reference, not a decision-relevant market figure or forecast."
+   },
+   {
+    "figure_id": "b022#650",
+    "verdict": "immaterial",
+    "claim_ids": [],
+    "reason": "Appears only in the navigation teaser for a separate (previous) VCSEL article, not part of this article's argument."
+   },
+   {
+    "figure_id": "b022#121%",
+    "verdict": "immaterial",
+    "claim_ids": [],
+    "reason": "Appears only in the navigation teaser for a separate (next) HBM article, not part of this article's argument."
+   }
+  ],
+  "block_reviews": [
+   {
+    "block_id": "b018",
+    "verdict": "added",
+    "hypothesis_ids": [],
+    "claim_ids": [
+     "k1"
+    ],
+    "reason": "States eMMC/UFS negotiations have narrowed to price confirmation on small volumes amid minimal OEM buying — consumer-side weakness detail, added as a claim supporting the first-pass consumer weakness risk."
+   },
+   {
+    "block_id": "b021",
+    "verdict": "immaterial",
+    "hypothesis_ids": [],
+    "claim_ids": [],
+    "reason": "Contact/promotional boilerplate directing readers to TrendForce report pages; not an argument or claim."
+   },
+   {
+    "block_id": "b022",
+    "verdict": "immaterial",
+    "hypothesis_ids": [],
+    "claim_ids": [],
+    "reason": "Previous/next article navigation teasers for unrelated reports; not part of this article's argument."
+   }
+  ],
+  "added_claims": [
+   {
+    "local_id": "k1",
+    "block_id": "b018",
+    "quote": "negotiations have effectively narrowed to price confirmation for relatively small order volumes",
+    "statement": "For eMMC/UFS, buyer-supplier negotiations have narrowed to confirming prices on relatively small order volumes as OEMs buy only minimum relationship-maintaining quantities",
+    "kind": "assertion",
+    "epistemic": "opinion",
+    "metric": null,
+    "value": null,
+    "value_text": null,
+    "unit": null,
+    "comparator": null,
+    "period": "4Q26",
+    "measured_as_of": null,
+    "as_of_block_id": null,
+    "geography": null,
+    "scope": null,
+    "attributed_source": "publisher_own",
+    "qualifiers": [
+     "relatively small order volumes",
+     "minimum purchase volumes needed to maintain supplier relationships"
+    ],
+    "approximate": false,
+    "chart_derived": false,
+    "confidence": "high"
+   }
+  ],
+  "added_mentions": [],
+  "hypothesis_additions": [
+   {
+    "hypothesis_id": "h1",
+    "supporting_claim_ids": [
+     "c13",
+     "c16",
+     "c18"
+    ],
+    "dislocation_claim_ids": [],
+    "counter_claim_ids": [
+     "k1",
+     "c19",
+     "c24",
+     "c26"
+    ],
+    "catalyst_claim_ids": [],
+    "affected_mentions": [],
+    "sector_exposures": []
+   }
+  ],
+  "added_hypotheses": [],
+  "added_risks": []
+ }
+}

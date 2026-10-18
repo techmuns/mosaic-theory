@@ -1,0 +1,209 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen pass-1 and pass-1b outputs cite, and within paragraphs only the sentences a cited quote touches (verbatim; bylines and data-date notes whole). Not the full article: the full text is not stored.",
+  "trimmed_blocks": [
+   "b003",
+   "b005",
+   "b012",
+   "b015",
+   "b017",
+   "b018",
+   "b019",
+   "b023",
+   "b025",
+   "b027"
+  ],
+  "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market",
+  "retrieved_at": "2026-10-10T12:07:12.200316+00:00",
+  "parser_version": "ti-parse-4",
+  "full_body_sha256": "52f13ebe8295575016133bd9c0165d8568ac00806092b46bc23cd93e7b186fdd",
+  "full_body_word_count": 1100,
+  "blocks_total": 42,
+  "blocks_in_excerpt": 20,
+  "retrieval_state": "FULL",
+  "built_at": "2026-10-10T14:29:23.674659+00:00"
+ },
+ "canonical_url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market",
+ "title": "A calm index, a restless market",
+ "title_source": "json-ld Article.headline",
+ "authors": [
+  {
+   "name": "Kriti Gupta",
+   "title": "Executive Director, Global Investment Strategist",
+   "source_field": "json-ld Article.author + microdata schema.org/Person (itemprop=author); visible byline block b038+b039"
+  },
+  {
+   "name": "Nick Roberts",
+   "title": "Portfolio Manager, Specialized Strategies",
+   "source_field": "microdata schema.org/Person (itemprop=author); visible byline block b041"
+  }
+ ],
+ "author_discrepancy": "author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also credited on the page: Nick Roberts (by schema.org/Person microdata)",
+ "published_at": "2026-10-02T10:30:00+05:30",
+ "published_raw": "2026-10-02T10:30:00+05:30",
+ "published_source": "json-ld Article.datePublished",
+ "article_class_hint": "publisher_commentary",
+ "article_class_basis": "b031: page states it 'should not be regarded as a research report'",
+ "blocks": [
+  {
+   "block_id": "b003",
+   "kind": "paragraph",
+   "text": "But in a world where uncertainty around inflation and the prospect of stronger than anticipated economic growth—today, powered by the artificial intelligence build-out—persists, that relationship has turned positive. That means stocks and bonds can rise and fall together.",
+   "sha256": "4cc8aa8425955f3917ee06b6efe772d096f79fb72f5c40537bda6235055009c5",
+   "section": "A calm index, a restless market",
+   "order": 3
+  },
+  {
+   "block_id": "b005",
+   "kind": "paragraph",
+   "text": "As 10-year Treasury yields have risen nearly 80 basis points over the course of the summer, the stock market hasn’t felt the pain at the index level. Whereas the bond market has taken its cue first from hawkish monetary policy, global fiscal debt fears, higher energy prices and now the prospect of rapid economic growth , equities have been more focused on seven straight quarters of corporate earnings growth. The S&P 500 sits ~6% above its 200-day moving average and within about 2% of its record high, yet only ~43% of stocks in the benchmark are trading above their 200-day average. That figure is down from 75% in mid-August. At the same time, 10-year Treasury yields have risen over 60 basis points.",
+   "sha256": "5cd5b0e19878868186f1a77a0dc278e726109393c7c0a54b3d8eeccd86b70ca1",
+   "section": "Underneath the hood",
+   "order": 5
+  },
+  {
+   "block_id": "b008",
+   "kind": "chart_source",
+   "text": "Source: Bloomberg Finance L.P. Data as of September 30, 2026.",
+   "sha256": "1e9b4ce44d999af46cd95ef62b03aba9a56236463d98e81f15e02c785872abdb",
+   "section": "Price return since May 2026, %",
+   "order": 8
+  },
+  {
+   "block_id": "b009",
+   "kind": "paragraph",
+   "text": "Note: Mag 7 is an equally-weighted basket of Alphabet, Amazon, Apple, Meta, Microsoft, Nvidia and Tesla.",
+   "sha256": "5eb43e1802f277122d263585316161ffcaade17e65ff628a387bcb9146d3b2df",
+   "section": "Price return since May 2026, %",
+   "order": 9
+  },
+  {
+   "block_id": "b011",
+   "kind": "chart_description",
+   "text": "The chart tracks the price returns since May for three groups: the S&P 500, S&P 500 Utilities and the “Mag 7” basket of large tech stocks. S&P 500 Utilities start out strong, climbing to a peak above 10% in July before steadily falling and ending September around –10%. The S&P 500 stays close to zero throughout, dipping slightly negative in July and August but finishing September with a modest gain of about 2%. The Mag 7 stocks drop sharply early in the summer, hitting lows near –12% in July, but then rebound steadily, ending September up about 7%.",
+   "sha256": "7230b7b19d196d139a53e19326c730d590b27f41ed1914bc433b1ed3e211bf91",
+   "section": "Price return since May 2026, %",
+   "order": 11
+  },
+  {
+   "block_id": "b012",
+   "kind": "paragraph",
+   "text": "However, today, stocks are moving more independently than normal. This is best displayed in the Cboe 3-month implied correlation index, which measures how closely options traders expect large U.S. stocks to move in sync. The measure currently sits at 11.2, well below the long run average of 41. It offers an opportunity to diversify risk exposure within the equities market itself at both a sector and thematic level.",
+   "sha256": "21663fdd655be1856b7254fa2964da7351a6428657f15ac817ee6102d46f30f1",
+   "section": "Price return since May 2026, %",
+   "order": 12
+  },
+  {
+   "block_id": "b015",
+   "kind": "chart_description",
+   "text": "The correlation started very high in 2020, peaking above 70, then quickly dropped and fluctuated between roughly 30 and 60 through 2021 and 2022. From 2023 onward, the correlation mostly stayed below the dashed line marking the 20-year average at about 40, with occasional brief spikes above that level. In the most recent period, the correlation remains low, hovering in the 10–15 range.",
+   "sha256": "71a656735a0ce3f1f74088fdb0a20030e2fad039d567194f752ccb651cb1bc99",
+   "section": "S&P 500 3-month implied correlation",
+   "order": 15
+  },
+  {
+   "block_id": "b017",
+   "kind": "paragraph",
+   "text": "Utilities have long been thought of as a defensive sector of the stock market.",
+   "sha256": "76ddc9f868138ac949db421bd3d9e14305aaf6a8f1659b1608b9b568ba4b1641",
+   "section": "A microcosm of the moment",
+   "order": 17
+  },
+  {
+   "block_id": "b018",
+   "kind": "list_item",
+   "text": "There are few power sources that can handle build-out of that size, which has made utilities providers key enablers of AI .",
+   "sha256": "1d654956fee4b0703a6bed513ad5d9ff48132c875ce00743626413666dc36287",
+   "section": "A microcosm of the moment",
+   "order": 18
+  },
+  {
+   "block_id": "b019",
+   "kind": "list_item",
+   "text": "In response, state governments have put moratoriums on that build-out—something that has weighed on the sector.",
+   "sha256": "0caaa9f88889f78080bff533742a44c79848771ccc7c6d4260f689f4a9c79e19",
+   "section": "A microcosm of the moment",
+   "order": 19
+  },
+  {
+   "block_id": "b020",
+   "kind": "list_item",
+   "text": "A higher rates environment: At the same time, rising bond yields have also weighed on the sector. Because utilities are often valued for their dividends, higher yields in the Treasury market can compete with this aspect of what the sector has to offer.",
+   "sha256": "b11f91b8257db81a55c2d332cc99ccb35b12c1989d45a0ae02464a1b9b007906",
+   "section": "A microcosm of the moment",
+   "order": 20
+  },
+  {
+   "block_id": "b023",
+   "kind": "chart_description",
+   "text": "Both lines climb steadily through June and early July, peaking just before the New York data center moratorium is signed. After that point, both the price and P/E ratio begin to decline, with a sharper drop following the Texas data center restrictions announcement in early August.",
+   "sha256": "66aa3d1f2d97d25941ef2030f61770c5ae79b4725f92c19585296a99641f02b0",
+   "section": "S&P 500 Utilities sector",
+   "order": 23
+  },
+  {
+   "block_id": "b025",
+   "kind": "paragraph",
+   "text": "In a world where bonds provide less diversification than they once did, that dispersion itself may become one of investors’ most valuable tools.",
+   "sha256": "53e74a28f7cbfe1a7a7abd14f3bf18fa56d945f7e4ad5e2d8d8a7484ae64900b",
+   "section": "S&P 500 Utilities sector",
+   "order": 25
+  },
+  {
+   "block_id": "b027",
+   "kind": "disclaimer",
+   "text": "This material is for information purposes only, and may inform you of certain products and services offered by private banking businesses, part of JPMorgan Chase & Co. (“JPM”).",
+   "sha256": "cbf172c8228528ee082f9d1d7c9d98962743c6b3683160330c0ad9598529dfc1",
+   "section": "Important Information",
+   "order": 27
+  },
+  {
+   "block_id": "b037",
+   "kind": "byline",
+   "text": "Kriti Gupta",
+   "sha256": "703683dd02476431819503af8768654575f7ff9b0bd9137327b117a640bd4ea6",
+   "section": "TAGS",
+   "order": 37
+  },
+  {
+   "block_id": "b038",
+   "kind": "byline",
+   "text": "Executive Director,",
+   "sha256": "4b27b9c116d543f16bd1469f7ef834c891b77815f2a44bfd3fad97e118bcce77",
+   "section": "TAGS",
+   "order": 38
+  },
+  {
+   "block_id": "b039",
+   "kind": "byline",
+   "text": "Global Investment Strategist",
+   "sha256": "1698e5e6d429b19d7bddb418136386492d19ba1d1e816cfcf2384085e57af666",
+   "section": "TAGS",
+   "order": 39
+  },
+  {
+   "block_id": "b040",
+   "kind": "byline",
+   "text": "Nick Roberts",
+   "sha256": "d24d86d827ab7461461b3580323304db77cb8bb5cec42e3621116273a440d224",
+   "section": "TAGS",
+   "order": 40
+  },
+  {
+   "block_id": "b041",
+   "kind": "byline",
+   "text": "Portfolio Manager, Specialized Strategies",
+   "sha256": "8841709a12dd0700a82490e05ac0203ef0a6d8d8109ed8e39471b92f386da407",
+   "section": "TAGS",
+   "order": 41
+  },
+  {
+   "block_id": "b042",
+   "kind": "byline",
+   "text": "Published Oct 2, 2026",
+   "sha256": "767f9a6613e50d9d30669c9b8149c0f90260c8a9bbe8f44f922cb3c6e3d14b8a",
+   "section": "TAGS",
+   "order": 42
+  }
+ ]
+}

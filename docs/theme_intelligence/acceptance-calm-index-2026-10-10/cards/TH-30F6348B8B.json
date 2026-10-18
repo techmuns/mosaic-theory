@@ -1,0 +1,1734 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.power_grid"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:07.920849Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-02",
+   "latest_article_date": "2026-10-02",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-30F6348B8B",
+   "title": "Rates, data-center moratoriums pressure utilities despite AI power demand"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-efa650b8693dda",
+     "C-d49cdb8f7d1f68",
+     "C-d7778c5016b19e",
+     "C-c9f9fcbd386c4f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "S&P 500 Utilities swung from a July peak above 10% to about -10% since May as state data-center moratoriums (New York, then Texas restrictions in early August) and rising bond yields weighed on the dividend-valued sector. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-d49cdb8f7d1f68",
+     "C-d7778c5016b19e",
+     "C-c9f9fcbd386c4f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames utilities as a microcosm of the AI promise, political backlash and higher-rate reality, illustrating how sectors respond differently to the same macro forces."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article presents utilities as hurt by policy moratoriums on data-center build-out and by higher yields competing with their dividends, but does not quantify the earnings impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-efa650b8693dda"
+     ],
+     "original_date": "2026-10-02",
+     "period": "since May 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "S&P 500 Utilities peaked above 10% price return in July then fell to around -10% by end September (since May). \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d7778c5016b19e"
+     ],
+     "original_date": "2026-10-02",
+     "period": "June-September",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Utilities price and P/E declined after the New York data center moratorium and dropped sharply after the Texas data center restrictions in early August."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d49cdb8f7d1f68"
+     ],
+     "original_date": "2026-10-02",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "State governments have imposed moratoriums on data center build-out, weighing on the utilities sector."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8d0daa426f8a30"
+     ],
+     "original_date": "2026-10-02",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "10-year Treasury yields have risen over 60 basis points."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0c90fdd613ed65"
+     ],
+     "original_date": "2026-10-02",
+     "period": "over the summer",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "10-year Treasury yields rose nearly 80 basis points over the summer. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8a3e9857d6a979"
+     ],
+     "original_date": "2026-10-02",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The AI data center build-out requires electricity, making utilities providers key enablers of AI."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 7 pieces of evidence from A-46796449712e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d49cdb8f7d1f68"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "AI data-center build-out made utilities key power enablers, but public backlash over electricity affordability prompted state moratoriums on build-out."
+   },
+   {
+    "claim_ids": [
+     "C-d49cdb8f7d1f68"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Moratoriums on data-center build-out constrain the demand/capacity expansion utilities would serve."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   },
+   {
+    "claim_ids": [
+     "C-efa650b8693dda",
+     "C-d7778c5016b19e"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "market_reaction",
+    "text": "Utilities price and P/E fell after the NY moratorium and sharply after Texas restrictions, ending September around -10% since May. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-46796449712e",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-efa650b8693dda",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 Utilities \u2014 price return since May",
+    "measured_as_of": "2026-09-30",
+    "origin": "Bloomberg Finance L.P.",
+    "period": "since May 2026",
+    "qualifiers": [
+     "around"
+    ],
+    "quote": "S&P 500 Utilities start out strong, climbing to a peak above 10% in July before steadily falling and ending September around \u201310%",
+    "role": "dislocation",
+    "unit": "%",
+    "value": -10.0,
+    "value_text": "around \u201310%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-46796449712e",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0c90fdd613ed65",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "10-year Treasury yield change",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "over the summer",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "10-year Treasury yields have risen nearly 80 basis points over the course of the summer",
+    "role": "supports",
+    "unit": "basis points",
+    "value": 80.0,
+    "value_text": "nearly 80 basis points"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8d0daa426f8a30",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "10-year Treasury yield change",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": null,
+    "qualifiers": [
+     "over"
+    ],
+    "quote": "10-year Treasury yields have risen over 60 basis points",
+    "role": "supports",
+    "unit": "basis points",
+    "value": 60.0,
+    "value_text": "over 60 basis points"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-048198b8a510b9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Because utilities are valued for their dividends, higher Treasury yields compete with utility dividends and weigh on the sector.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "higher yields in the Treasury market can compete with this aspect of what the sector has to offer",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8a3e9857d6a979",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The AI data center build-out requires electricity, making utilities providers key enablers of AI.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "which has made utilities providers key enablers of AI",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d49cdb8f7d1f68",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "State governments have imposed moratoriums on data center build-out, weighing on the utilities sector.",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": null,
+    "qualifiers": [],
+    "quote": "state governments have put moratoriums on that build-out\u2014something that has weighed on the sector",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-46796449712e",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-d7778c5016b19e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 Utilities",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "June-September",
+    "qualifiers": [],
+    "quote": "peaking just before the New York data center moratorium is signed. After that point, both the price and P/E ratio begin to decline, with a sharper drop following the Texas data center restrictions announcement in early August",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5402585b3bbe8d",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Data source for price return chart."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001652044",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-10-10",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.001 par value",
+       "ticker": "GOOGL"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-10-10",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class C Capital Stock, $0.001 par value",
+       "ticker": "GOOG"
+      }
+     ],
+     "mention_id": "M-45cd2f4205faad",
+     "name_as_written": "Alphabet",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series A Mandatory Convertible Preferred Stock, par value $0.001",
+       "ticker": "GOOGM"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series B Mandatory Convertible Preferred Stock, par value $0.001",
+       "ticker": "GOOGN"
+      }
+     ],
+     "quote": "Alphabet",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001018724",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-a78b20a264010b",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0000320193",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.00001 par value per share",
+       "ticker": "AAPL"
+      }
+     ],
+     "mention_id": "M-c7c7e31e1b68f3",
+     "name_as_written": "Apple",
+     "other_securities": [],
+     "quote": "Apple",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-bf086842a7c12f",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0000789019",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $ 0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-4f1130762913b4",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001045810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-a5ab92012149d2",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Nvidia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": "0001318605",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-23 (accession 0001628280-26-049270) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "TSLA"
+      }
+     ],
+     "mention_id": "M-78b5a56d64c1ec",
+     "name_as_written": "Tesla",
+     "other_securities": [],
+     "quote": "Tesla",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Constituent of the Mag 7 basket defined in the note."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-885c80eac86fb9",
+     "name_as_written": "S&P 500",
+     "other_securities": [],
+     "quote": "The S&P 500 sits ~6% above its 200-day moving average",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Headline benchmark discussed for breadth and index-level calm."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8fddde6b9c91ee",
+     "name_as_written": "Cboe 3-month implied correlation index",
+     "other_securities": [],
+     "quote": "Cboe 3-month implied correlation index",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Measure cited to show low expected correlation among large US stocks."
+    },
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4b099a490e4d8a",
+     "name_as_written": "Mag 7",
+     "other_securities": [],
+     "quote": "Mag 7 is an equally-weighted basket",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "cited_basket",
+     "role_detail": "Equally-weighted basket of seven large tech stocks defined in the note."
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-46796449712e",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-e4f888c31390bf",
+     "name_as_written": "S&P 500 Utilities",
+     "other_securities": [],
+     "quote": "S&P 500 Utilities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "sector_example",
+     "role_detail": "Utilities sector index used as the microcosm of market forces."
+    }
+   ],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-46796449712e",
+     "claim_ids": [
+      "C-efa650b8693dda",
+      "C-d49cdb8f7d1f68",
+      "C-d7778c5016b19e"
+     ],
+     "direction": "negative",
+     "name": "utilities",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "Utilities have long been thought of as a defensive sector"
+    }
+   ],
+   "sectors": [
+    "utilities"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "early August (Texas data center restrictions announcement) [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-efa650b8693dda",
+      "C-d7778c5016b19e"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Utilities underperformance intensified through September following data-center restrictions and rising yields. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-efa650b8693dda"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: S&P 500 Utilities peaked above 10% price return in July then fell to around -10% by end September (since May). \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-d49cdb8f7d1f68",
+      "C-c9f9fcbd386c4f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Utilities sit at the intersection of AI power demand, political affordability backlash and higher rates, a tension that could persist."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-d49cdb8f7d1f68"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Utilities are enablers of AI power demand, which could support the sector if build-out resumes."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reversal of state data-center moratoriums"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Falling Treasury yields easing dividend-valuation pressure"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Utilities sector price/P/E recovery"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether utilities' earnings reflect the moratorium impact"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How long state moratoriums persist"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether higher yields continue to pressure dividend valuations"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Moratoriums lifted and build-out resumes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Yields fall materially"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess which utility names have the largest data-center load exposure and sensitivity to state moratoriums and rate moves."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Additional states impose data-center moratoriums"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Treasury yields continue rising"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-d7778c5016b19e: measured 2026-10-02 (8 days before the as-of); C-d49cdb8f7d1f68: measured 2026-10-02 (8 days before the as-of); C-8d0daa426f8a30: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: utilities; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-46796449712e",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)",
+     "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-efa650b8693dda",
+     "C-d7778c5016b19e",
+     "C-d49cdb8f7d1f68",
+     "C-8d0daa426f8a30",
+     "C-0c90fdd613ed65",
+     "C-8a3e9857d6a979",
+     "C-048198b8a510b9"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-02T10:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "A calm index, a restless market",
+    "upstream_origins": [
+     "Bloomberg Finance L.P.",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191507Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-46796449712e",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.power_grid"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:07.920849Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-02",
+     "latest_article_date": "2026-10-02",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Power generation, grid and interconnection for AI datacenters",
+     "status": "ACTIVE",
+     "thesis_id": "TH-30F6348B8B",
+     "title": "Rates, data-center moratoriums pressure utilities despite AI power demand"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-efa650b8693dda",
+       "C-d49cdb8f7d1f68",
+       "C-d7778c5016b19e",
+       "C-c9f9fcbd386c4f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "S&P 500 Utilities swung from a July peak above 10% to about -10% since May as state data-center moratoriums (New York, then Texas restrictions in early August) and rising bond yields weighed on the dividend-valued sector. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-d49cdb8f7d1f68",
+       "C-d7778c5016b19e",
+       "C-c9f9fcbd386c4f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames utilities as a microcosm of the AI promise, political backlash and higher-rate reality, illustrating how sectors respond differently to the same macro forces."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article presents utilities as hurt by policy moratoriums on data-center build-out and by higher yields competing with their dividends, but does not quantify the earnings impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-efa650b8693dda"
+       ],
+       "original_date": "2026-10-02",
+       "period": "since May 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "S&P 500 Utilities peaked above 10% price return in July then fell to around -10% by end September (since May). \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d7778c5016b19e"
+       ],
+       "original_date": "2026-10-02",
+       "period": "June-September",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Utilities price and P/E declined after the New York data center moratorium and dropped sharply after the Texas data center restrictions in early August."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d49cdb8f7d1f68"
+       ],
+       "original_date": "2026-10-02",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "State governments have imposed moratoriums on data center build-out, weighing on the utilities sector."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8d0daa426f8a30"
+       ],
+       "original_date": "2026-10-02",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "10-year Treasury yields have risen over 60 basis points."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0c90fdd613ed65"
+       ],
+       "original_date": "2026-10-02",
+       "period": "over the summer",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "10-year Treasury yields rose nearly 80 basis points over the summer. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8a3e9857d6a979"
+       ],
+       "original_date": "2026-10-02",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The AI data center build-out requires electricity, making utilities providers key enablers of AI."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 7 pieces of evidence from A-46796449712e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-10-10, from a source published 2026-10-02; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d49cdb8f7d1f68"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "AI data-center build-out made utilities key power enablers, but public backlash over electricity affordability prompted state moratoriums on build-out."
+     },
+     {
+      "claim_ids": [
+       "C-d49cdb8f7d1f68"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Moratoriums on data-center build-out constrain the demand/capacity expansion utilities would serve."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     },
+     {
+      "claim_ids": [
+       "C-efa650b8693dda",
+       "C-d7778c5016b19e"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "market_reaction",
+      "text": "Utilities price and P/E fell after the NY moratorium and sharply after Texas restrictions, ending September around -10% since May. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-46796449712e",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-efa650b8693dda",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 Utilities \u2014 price return since May",
+      "measured_as_of": "2026-09-30",
+      "origin": "Bloomberg Finance L.P.",
+      "period": "since May 2026",
+      "qualifiers": [
+       "around"
+      ],
+      "quote": "S&P 500 Utilities start out strong, climbing to a peak above 10% in July before steadily falling and ending September around \u201310%",
+      "role": "dislocation",
+      "unit": "%",
+      "value": -10.0,
+      "value_text": "around \u201310%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-46796449712e",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0c90fdd613ed65",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "10-year Treasury yield change",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "over the summer",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "10-year Treasury yields have risen nearly 80 basis points over the course of the summer",
+      "role": "supports",
+      "unit": "basis points",
+      "value": 80.0,
+      "value_text": "nearly 80 basis points"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8d0daa426f8a30",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "10-year Treasury yield change",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": null,
+      "qualifiers": [
+       "over"
+      ],
+      "quote": "10-year Treasury yields have risen over 60 basis points",
+      "role": "supports",
+      "unit": "basis points",
+      "value": 60.0,
+      "value_text": "over 60 basis points"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-048198b8a510b9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Because utilities are valued for their dividends, higher Treasury yields compete with utility dividends and weigh on the sector.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "higher yields in the Treasury market can compete with this aspect of what the sector has to offer",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8a3e9857d6a979",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The AI data center build-out requires electricity, making utilities providers key enablers of AI.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "which has made utilities providers key enablers of AI",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d49cdb8f7d1f68",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "State governments have imposed moratoriums on data center build-out, weighing on the utilities sector.",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": null,
+      "qualifiers": [],
+      "quote": "state governments have put moratoriums on that build-out\u2014something that has weighed on the sector",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-46796449712e",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-d7778c5016b19e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 Utilities",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "June-September",
+      "qualifiers": [],
+      "quote": "peaking just before the New York data center moratorium is signed. After that point, both the price and P/E ratio begin to decline, with a sharper drop following the Texas data center restrictions announcement in early August",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5402585b3bbe8d",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Data source for price return chart."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001652044",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-10",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.001 par value",
+         "ticker": "GOOGL"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-10",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class C Capital Stock, $0.001 par value",
+         "ticker": "GOOG"
+        }
+       ],
+       "mention_id": "M-45cd2f4205faad",
+       "name_as_written": "Alphabet",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series A Mandatory Convertible Preferred Stock, par value $0.001",
+         "ticker": "GOOGM"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/20th interest in a share of 6.25% of Series B Mandatory Convertible Preferred Stock, par value $0.001",
+         "ticker": "GOOGN"
+        }
+       ],
+       "quote": "Alphabet",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001018724",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-a78b20a264010b",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0000320193",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.00001 par value per share",
+         "ticker": "AAPL"
+        }
+       ],
+       "mention_id": "M-c7c7e31e1b68f3",
+       "name_as_written": "Apple",
+       "other_securities": [],
+       "quote": "Apple",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-bf086842a7c12f",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0000789019",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $ 0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-4f1130762913b4",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001045810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-a5ab92012149d2",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Nvidia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": "0001318605",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-23 (accession 0001628280-26-049270) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "TSLA"
+        }
+       ],
+       "mention_id": "M-78b5a56d64c1ec",
+       "name_as_written": "Tesla",
+       "other_securities": [],
+       "quote": "Tesla",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Constituent of the Mag 7 basket defined in the note."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-885c80eac86fb9",
+       "name_as_written": "S&P 500",
+       "other_securities": [],
+       "quote": "The S&P 500 sits ~6% above its 200-day moving average",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Headline benchmark discussed for breadth and index-level calm."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8fddde6b9c91ee",
+       "name_as_written": "Cboe 3-month implied correlation index",
+       "other_securities": [],
+       "quote": "Cboe 3-month implied correlation index",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Measure cited to show low expected correlation among large US stocks."
+      },
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4b099a490e4d8a",
+       "name_as_written": "Mag 7",
+       "other_securities": [],
+       "quote": "Mag 7 is an equally-weighted basket",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "cited_basket",
+       "role_detail": "Equally-weighted basket of seven large tech stocks defined in the note."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-46796449712e",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-e4f888c31390bf",
+       "name_as_written": "S&P 500 Utilities",
+       "other_securities": [],
+       "quote": "S&P 500 Utilities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "sector_example",
+       "role_detail": "Utilities sector index used as the microcosm of market forces."
+      }
+     ],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-46796449712e",
+       "claim_ids": [
+        "C-efa650b8693dda",
+        "C-d49cdb8f7d1f68",
+        "C-d7778c5016b19e"
+       ],
+       "direction": "negative",
+       "name": "utilities",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Utilities have long been thought of as a defensive sector"
+      }
+     ],
+     "sectors": [
+      "utilities"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "early August (Texas data center restrictions announcement) [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-efa650b8693dda",
+        "C-d7778c5016b19e"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Utilities underperformance intensified through September following data-center restrictions and rising yields. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-efa650b8693dda"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: S&P 500 Utilities peaked above 10% price return in July then fell to around -10% by end September (since May). \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-d49cdb8f7d1f68",
+        "C-c9f9fcbd386c4f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Utilities sit at the intersection of AI power demand, political affordability backlash and higher rates, a tension that could persist."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-d49cdb8f7d1f68"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Utilities are enablers of AI power demand, which could support the sector if build-out resumes."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reversal of state data-center moratoriums"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Falling Treasury yields easing dividend-valuation pressure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Utilities sector price/P/E recovery"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether utilities' earnings reflect the moratorium impact"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How long state moratoriums persist"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether higher yields continue to pressure dividend valuations"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Moratoriums lifted and build-out resumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Yields fall materially"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess which utility names have the largest data-center load exposure and sensitivity to state moratoriums and rate moves."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Additional states impose data-center moratoriums"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Treasury yields continue rising"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-d7778c5016b19e: measured 2026-10-02 (8 days before the as-of); C-d49cdb8f7d1f68: measured 2026-10-02 (8 days before the as-of); C-8d0daa426f8a30: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: utilities; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-46796449712e",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)",
+       "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-efa650b8693dda",
+       "C-d7778c5016b19e",
+       "C-d49cdb8f7d1f68",
+       "C-8d0daa426f8a30",
+       "C-0c90fdd613ed65",
+       "C-8a3e9857d6a979",
+       "C-048198b8a510b9"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-02T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "A calm index, a restless market",
+      "upstream_origins": [
+       "Bloomberg Finance L.P.",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/a-calm-index-a-restless-market"
+     }
+    ]
+   },
+   "content_sha": "e1aa3f87b2734322f1c1a2c6a8d1833060c9c77aff6c5b3f13a9d58bf24b7d2a",
+   "created_at": "2026-10-10T19:15:07.923487Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-d7778c5016b19e: measured 2026-10-02 (8 days before the as-of); C-d49cdb8f7d1f68: measured 2026-10-02 (8 days before the as-of); C-8d0daa426f8a30: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: utilities; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d49cdb8f7d1f68",
+       "C-8d0daa426f8a30",
+       "C-0c90fdd613ed65",
+       "C-efa650b8693dda",
+       "C-d7778c5016b19e"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-aab273bf90d4, ES-fc428945cc0a",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-efa650b8693dda",
+       "C-d7778c5016b19e",
+       "C-d49cdb8f7d1f68",
+       "C-8d0daa426f8a30",
+       "C-0c90fdd613ed65"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "5 claim(s) inside the next 2-4 quarters (C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-d7778c5016b19e: measured 2026-10-02 (8 days before the as-of); C-d49cdb8f7d1f68: measured 2026-10-02 (8 days before the as-of); C-8d0daa426f8a30: measured 2026-10-02 (8 days before the as-of); showing 4 of 5); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: utilities; instruments: S&P 500 Utilities",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [
+       "C-efa650b8693dda",
+       "C-d7778c5016b19e"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "2 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-efa650b8693dda: measured 2026-09-30 (10 days before the as-of); C-d7778c5016b19e: measured 2026-10-02 (8 days before the as-of); C-d49cdb8f7d1f68: measured 2026-10-02 (8 days before the as-of); C-8d0daa426f8a30: measured 2026-10-02 (8 days before the as-of); source-named exposure(s): sector: utilities; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T191507Z-article",
+   "thesis_id": "TH-30F6348B8B",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

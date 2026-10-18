@@ -1,0 +1,86 @@
+===== hybrid-e-1.log
+state push — data/theme_intelligence/v2/state-remote.git theme-intelligence-state
+  pushed 751e5f26e275 onto theme-intelligence-state (fast-forward from nothing): 1 runs, 6 articles, 10 theses, 0 documents
+
+===== hybrid-e-2.log
+state pull — data/theme_intelligence/v2/state-remote.git theme-intelligence-state
+  rebuilt from theme-intelligence-state@751e5f26e275: 1 runs, 6 articles, 10 theses, 0 documents
+  no local document to replay — the branch holds every one
+
+===== hybrid-e-3.log
+state status — data/theme_intelligence/v2/state-remote.git theme-intelligence-state
+  branch theme-intelligence-state at 751e5f26e27505d2c93286d59749f39820f000b6; last pull/push based on 751e5f26e27505d2c93286d59749f39820f000b6
+  runs: 0 local only, 0 on the branch only; documents: 0 local only, 0 on the branch only
+
+===== hybrid-laptop.log
+$ --data-dir data/theme_intelligence/v2/hybrid-laptop ingest-file --path data/theme_intelligence/v2/public_reports/TrendForce 20260930-13258 AI server memory.html --source trendforce --llm-permitted --as-of 2026-10-11
+run R-20261011T103541Z-ingest: ingest SUCCEEDED — TrendForce 20260930-13258 AI server memory.html
+  D-bac61ba06ddc5cc9  REVIEW     article A-19eb305b208e  an uncertain match — a human decides (title overlap 21%, held text found in the new document 0%, new text found in the held 0%; held 664 words (FULL), new 1008 words; dates 2026-10-08 vs 2026-09-30) — import again with --same-as <article id
+cost $0.0 · outputs: data/theme_intelligence/v2/hybrid-laptop/runs/R-20261011T103541Z-ingest
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-laptop documents
+D-bac61ba06ddc5cc9  REVIEW    trendforce         html     2026-09-30 article A-19eb305b208e  TrendForce 20260930-13258 AI server memory.html
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-laptop ingest-file --path data/theme_intelligence/v2/public_reports/TrendForce 20260930-13258 AI server memory.html --source trendforce --llm-permitted --as-of 2026-10-11
+run R-20261011T103656Z-ingest: ingest SUCCEEDED — TrendForce 20260930-13258 AI server memory.html
+  D-bac61ba06ddc5cc9  INGESTED   article A-decec490fcdd  no article of this publisher resembles it; pipeline PROCESSED
+cost $0.6871 · outputs: data/theme_intelligence/v2/hybrid-laptop/runs/R-20261011T103656Z-ingest
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-laptop documents
+D-bac61ba06ddc5cc9  INGESTED  trendforce         html     2026-09-30 article A-decec490fcdd  TrendForce 20260930-13258 AI server memory.html
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-laptop state push
+state push — data/theme_intelligence/v2/state-remote.git theme-intelligence-state
+  pushed 94ceead2119f onto theme-intelligence-state (fast-forward from 751e5f26e275): 3 runs, 7 articles, 11 theses, 1 documents
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-laptop state status
+state status — data/theme_intelligence/v2/state-remote.git theme-intelligence-state
+  branch theme-intelligence-state at 94ceead2119f74736df4aacf6bf0b74ec5d2e465; last pull/push based on 94ceead2119f74736df4aacf6bf0b74ec5d2e465
+  runs: 0 local only, 0 on the branch only; documents: 0 local only, 0 on the branch only
+exit=0
+
+===== hybrid-actions-3.log
+$ --data-dir data/theme_intelligence/v2/hybrid-actions-3 import-state --src data/theme_intelligence/v2/actions-checkout/registry
+imported into data/theme_intelligence/v2/hybrid-actions-3/registry.db (schema 4)
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-actions-3 scan --days 10 --max-articles 3
+run R-20261011T110031Z-scan: scan execution SUCCEEDED · window 2026-10-02..2026-10-11 · as-of 2026-10-11
+  citi_must_c          OK       discovered  20 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window  20 · inaccessible   0 · errors  0
+  bofa_institutional   OK       discovered  16 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window  16 · inaccessible   0 · errors  0
+  jpm_tmt              OK       discovered  51 · in window   1 · undated   0 · new   0 · known   1 · processed   0 · queued   0 · out-of-window  50 · inaccessible   0 · errors  0
+  ms_research          BLOCKED  discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  1 — robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — cannot safely p
+  nomura_connects      OK       discovered  14 · in window   1 · undated   1 · new   0 · known   1 · processed   0 · queued   0 · out-of-window  12 · inaccessible   0 · errors  0
+  trendforce           OK       discovered   5 · in window   2 · undated   0 · new   0 · known   2 · processed   0 · queued   0 · out-of-window   3 · inaccessible   0 · errors  0
+  semianalysis         OK       discovered  20 · in window   2 · undated   0 · new   0 · known   2 · processed   0 · queued   0 · out-of-window  18 · inaccessible   0 · errors  0
+  gs_research          BLOCKED  discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  1 — https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403) (source-health check SH-1092aa47
+counts {'articles_queued': 0, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 30, 'http_cache_hits': 42}
+source health (checked at the start of this scan) — Sources healthy: 2/8 | Degraded: 4 | Blocked: 2 | Errors: 0
+research verification FULLY_VERIFIED — every figure and argument paragraph accounted for, full text read (over the 1 article(s) this report's 3 runs analysed: 0 of 7 stated figure(s) and 0 of 17 argument paragraph(s) open)
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/hybrid-actions-3/runs/R-20261011T110031Z-scan
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-actions-3 qa --run latest
+  [PASS] run status recorded: status SUCCEEDED; counts {'articles_queued': 0, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 30, 'http_cache_hits': 42}
+  [PASS] no unverified claim is linked to a thesis: 155 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 0 of 0 verified claim(s) in 0 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 0 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 0 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 0 article(s)
+  [PASS] every reported figure captured or judged immaterial: 0 figure(s) accounted for
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 0 article(s)
+  [PASS] source health recorded for every scanned channel: 8 channel(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] every configured source reported with consistent counts: 8 sources
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/hybrid-actions-3/runs/R-20261011T110031Z-scan
+QA R-20261011T110031Z-scan: 22/22 passed · scan execution SUCCEEDED · research verification NOTHING_ANALYSED — no article was analysed in this run
+exit=0

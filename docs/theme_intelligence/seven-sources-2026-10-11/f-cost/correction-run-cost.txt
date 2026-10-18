@@ -1,0 +1,8 @@
+R-20261011T140734Z-ingest    ingest   correction-a/registry.db                             paid calls   9 measured $ 1.0979 guard bound $ 5.5312
+R-20261011T142310Z-ingest    ingest   final2-c/registry.db                                 paid calls   2 measured $ 0.2183 guard bound $ 1.2204
+R-20261011T143440Z-article   article  cachedemo-b2/registry.db                             paid calls  11 measured $ 1.8668 guard bound $ 8.5365
+R-20261011T144200Z-article   article  cachecontrol-b2/registry.db                          paid calls  10 measured $ 2.8654 guard bound $ 7.9765
+R-20261011T145342Z-ingest    ingest   ghsync-operator/registry.db                          paid calls   4 measured $ 0.5065 guard bound $ 2.4103
+R-20261011T145550Z-ingest    ingest   ghsync-operator/backups/registry-20261011T145653Z.db paid calls   3 measured $ 0.3082 guard bound $ 1.7927
+R-20261011T150313Z-ingest    ingest   ghsync-fresh/backups/registry-20261011T150500Z.db    paid calls   5 measured $ 0.4661 guard bound $ 2.9236
+TOTAL measured $7.3291 over 7 paying run(s), each counted once (registries + pre-pull backups, runs started after 2026-10-11T13:00 UTC); guard bounds $30.3912 — an estimate checked before each call, never the bill

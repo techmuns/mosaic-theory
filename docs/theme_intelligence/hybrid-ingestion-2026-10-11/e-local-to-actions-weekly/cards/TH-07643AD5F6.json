@@ -1,0 +1,984 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-10",
+   "ancestry": [
+    "consumer_electronics"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T08:31:46.459204Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-08",
+   "latest_article_date": "2026-10-08",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-07643AD5F6",
+   "title": "Cost pressures prompt notebook production to reshore from emerging locations back to China"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-abf827b04b9897",
+     "C-292593edac0b2c",
+     "C-a34b7669f1921d",
+     "C-cdb369405a22bf"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce estimates the share of global notebook production outside China falling from ~24% in 2025 to 21% in 2026 and potentially below 20% in 2027 as cost and efficiency outweigh policy-risk diversification. \u27e8cited figures: approximate; forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-a34b7669f1921d",
+     "C-b02cc246690d1d",
+     "C-cdb369405a22bf"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "If tariffs don't intensify, brands may relocate some capacity established outside China back to the country, reassessing diversification vs manufacturing efficiency. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A reversal of production diversification back to China would favor China-based capacity over emerging-location sites, though the article names no companies for either side."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-abf827b04b9897"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2025",
+     "provenance": "SOURCE OPINION",
+     "text": "Global notebook production outside China is estimated at approximately 24% in 2025. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-292593edac0b2c"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Global notebook production outside China is estimated to decline to 21% in 2026. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a34b7669f1921d"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Global notebook production outside China could fall below 20% in 2027. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b02cc246690d1d",
+      "C-116467c3e6297e"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "SOURCE OPINION",
+     "text": "Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China"
+    },
+    {
+     "article_id": "A-19eb305b208e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cdb369405a22bf"
+     ],
+     "original_date": "2026-10-08",
+     "period": "2027",
+     "provenance": "SOURCE OPINION",
+     "text": "If tariff pressures do not intensify, notebook manufacturing location decisions shift from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-292593edac0b2c",
+     "C-a34b7669f1921d",
+     "C-b02cc246690d1d"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "Share of notebook production outside China declines toward below 20% by 2027 as capacity relocates back to China. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-abf827b04b9897",
+     "C-7073491d67e08a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "Elevated component prices raise the extra logistics, sourcing and supply-chain costs of emerging manufacturing locations. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-292593edac0b2c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "share of notebook production outside China",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "decline from approximately 24% in 2025 to 21% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 21.0,
+    "value_text": "21%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-abf827b04b9897",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "share of notebook production outside China",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [],
+    "quote": "the share of global notebook production outside China will decline from approximately 24% in 2025 to 21% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 24.0,
+    "value_text": "approximately 24%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a34b7669f1921d",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "share of notebook production outside China",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "potentially"
+    ],
+    "quote": "potentially falling below 20% in 2027",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 20.0,
+    "value_text": "below 20%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b02cc246690d1d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "could"
+    ],
+    "quote": "This could encourage brands to relocate some capacity previously established outside China for risk diversification back to the country.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-19eb305b208e",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cdb369405a22bf",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "If tariff pressures do not intensify, notebook manufacturing location decisions shift from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "if tariff pressures do not intensify"
+    ],
+    "quote": "If tariff pressures do not intensify further, the factors guiding manufacturing glocalization are likely to shift from minimizing policy risks toward production costs, supply-chain completeness, and operational efficiency.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-19eb305b208e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-83c533f1b7390f",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the notebook industry report and all forecasts."
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-19eb305b208e",
+     "claim_ids": [
+      "C-abf827b04b9897",
+      "C-292593edac0b2c",
+      "C-a34b7669f1921d"
+     ],
+     "direction": "negative",
+     "name": "Consumer Electronics",
+     "provenance": "SOURCE OPINION",
+     "quote": "Consumer Electronics"
+    }
+   ],
+   "sectors": [
+    "notebook manufacturing",
+    "emerging manufacturing locations outside China"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-abf827b04b9897",
+      "C-292593edac0b2c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Production outside China already estimated to fall to 21% in 2026 from ~24% in 2025. \u27e8cited figures: approximate; forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-a34b7669f1921d",
+      "C-cdb369405a22bf"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Glocalization drivers shifting from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-a34b7669f1921d",
+      "C-cdb369405a22bf"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "If tariff pressures intensify further, the shift away from China for risk diversification could continue instead. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-4BC0244112: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Escalation of tariffs on China-made notebooks"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Production share outside China rising instead of falling"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Tariff pressures do not intensify further, shifting glocalization drivers toward cost and efficiency"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed contract manufacturers gain or lose from reshoring"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether tariff policy remains benign in 2027"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "New tariffs on China-made notebooks"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued diversification outside China"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed ODMs/OEMs with capacity in emerging locations vs China to assess exposure to a reshoring shift."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Brands announce relocating capacity back to China"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Tariff pressures ease"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-19eb305b208e",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-a34b7669f1921d",
+     "C-abf827b04b9897",
+     "C-292593edac0b2c",
+     "C-cdb369405a22bf",
+     "C-b02cc246690d1d"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-08T16:24:43+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Rising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipment Declines and Price Increases, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261008-13264.html"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 11:03 UTC from the registry (ti-engine-2; run R-20261011T110031Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-10",
+   "change_summary": "Initial record \u2014 created from A-19eb305b208e",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-10",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T08:31:46.459204Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-08",
+     "latest_article_date": "2026-10-08",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-07643AD5F6",
+     "title": "Cost pressures prompt notebook production to reshore from emerging locations back to China"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-abf827b04b9897",
+       "C-292593edac0b2c",
+       "C-a34b7669f1921d",
+       "C-cdb369405a22bf"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce estimates the share of global notebook production outside China falling from ~24% in 2025 to 21% in 2026 and potentially below 20% in 2027 as cost and efficiency outweigh policy-risk diversification. \u27e8cited figures: approximate; forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-a34b7669f1921d",
+       "C-b02cc246690d1d",
+       "C-cdb369405a22bf"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "If tariffs don't intensify, brands may relocate some capacity established outside China back to the country, reassessing diversification vs manufacturing efficiency. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A reversal of production diversification back to China would favor China-based capacity over emerging-location sites, though the article names no companies for either side."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-abf827b04b9897"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2025",
+       "provenance": "SOURCE OPINION",
+       "text": "Global notebook production outside China is estimated at approximately 24% in 2025. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-292593edac0b2c"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Global notebook production outside China is estimated to decline to 21% in 2026. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a34b7669f1921d"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Global notebook production outside China could fall below 20% in 2027. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b02cc246690d1d",
+        "C-116467c3e6297e"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "SOURCE OPINION",
+       "text": "Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China"
+      },
+      {
+       "article_id": "A-19eb305b208e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cdb369405a22bf"
+       ],
+       "original_date": "2026-10-08",
+       "period": "2027",
+       "provenance": "SOURCE OPINION",
+       "text": "If tariff pressures do not intensify, notebook manufacturing location decisions shift from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 08:31 UTC, analysed as of 2026-10-10, from a source published 2026-10-08; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-292593edac0b2c",
+       "C-a34b7669f1921d",
+       "C-b02cc246690d1d"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "Share of notebook production outside China declines toward below 20% by 2027 as capacity relocates back to China. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-abf827b04b9897",
+       "C-7073491d67e08a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Elevated component prices raise the extra logistics, sourcing and supply-chain costs of emerging manufacturing locations. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-292593edac0b2c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "share of notebook production outside China",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "decline from approximately 24% in 2025 to 21% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 21.0,
+      "value_text": "21%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-abf827b04b9897",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "share of notebook production outside China",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "the share of global notebook production outside China will decline from approximately 24% in 2025 to 21% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 24.0,
+      "value_text": "approximately 24%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a34b7669f1921d",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "share of notebook production outside China",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "potentially"
+      ],
+      "quote": "potentially falling below 20% in 2027",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "below 20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b02cc246690d1d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Elevated component and associated costs could encourage brands to relocate some notebook capacity from outside China back to China",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "could"
+      ],
+      "quote": "This could encourage brands to relocate some capacity previously established outside China for risk diversification back to the country.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-19eb305b208e",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cdb369405a22bf",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "If tariff pressures do not intensify, notebook manufacturing location decisions shift from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "if tariff pressures do not intensify"
+      ],
+      "quote": "If tariff pressures do not intensify further, the factors guiding manufacturing glocalization are likely to shift from minimizing policy risks toward production costs, supply-chain completeness, and operational efficiency.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-19eb305b208e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-83c533f1b7390f",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the notebook industry report and all forecasts."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-19eb305b208e",
+       "claim_ids": [
+        "C-abf827b04b9897",
+        "C-292593edac0b2c",
+        "C-a34b7669f1921d"
+       ],
+       "direction": "negative",
+       "name": "Consumer Electronics",
+       "provenance": "SOURCE OPINION",
+       "quote": "Consumer Electronics"
+      }
+     ],
+     "sectors": [
+      "notebook manufacturing",
+      "emerging manufacturing locations outside China"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-abf827b04b9897",
+        "C-292593edac0b2c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Production outside China already estimated to fall to 21% in 2026 from ~24% in 2025. \u27e8cited figures: approximate; forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-a34b7669f1921d",
+        "C-cdb369405a22bf"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Glocalization drivers shifting from minimizing policy risk toward production costs, supply-chain completeness and operational efficiency. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-a34b7669f1921d",
+        "C-cdb369405a22bf"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "If tariff pressures intensify further, the shift away from China for risk diversification could continue instead. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-4BC0244112: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Escalation of tariffs on China-made notebooks"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Production share outside China rising instead of falling"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Tariff pressures do not intensify further, shifting glocalization drivers toward cost and efficiency"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed contract manufacturers gain or lose from reshoring"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether tariff policy remains benign in 2027"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "New tariffs on China-made notebooks"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued diversification outside China"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed ODMs/OEMs with capacity in emerging locations vs China to assess exposure to a reshoring shift."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Brands announce relocating capacity back to China"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Tariff pressures ease"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-19eb305b208e",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-a34b7669f1921d",
+       "C-abf827b04b9897",
+       "C-292593edac0b2c",
+       "C-cdb369405a22bf",
+       "C-b02cc246690d1d"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-08T16:24:43+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Rising Costs Threaten Notebook Demand in 2027, Raising Risks of Shipment Declines and Price Increases, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261008-13264.html"
+     }
+    ]
+   },
+   "content_sha": "8a25304172219b289c85e537e31b78829a5a6a635f3b556cacd507273a8ceb0d",
+   "created_at": "2026-10-11T08:31:46.463975Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-abf827b04b9897",
+       "C-292593edac0b2c",
+       "C-b02cc246690d1d",
+       "C-a34b7669f1921d"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-292593edac0b2c",
+       "C-b02cc246690d1d",
+       "C-a34b7669f1921d"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-292593edac0b2c: forecast window 2026-01-01..2026-12-31 (2026); C-b02cc246690d1d: forecast window 2027-01-01..2027-12-31 (2027); C-a34b7669f1921d: forecast window 2027-01-01..2027-12-31 (2027)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: Consumer Electronics",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-a34b7669f1921d",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T083033Z-scan",
+   "thesis_id": "TH-07643AD5F6",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

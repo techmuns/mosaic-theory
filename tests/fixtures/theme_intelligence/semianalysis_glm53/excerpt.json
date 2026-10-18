@@ -1,0 +1,367 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen pass-1 and pass-1b outputs cite, and within paragraphs only the sentences a cited quote touches (verbatim; bylines and data-date notes whole). Not the full article: the full text is not stored.",
+  "trimmed_blocks": [
+   "b002",
+   "b004",
+   "b007",
+   "b009",
+   "b011",
+   "b014",
+   "b015",
+   "b016",
+   "b017",
+   "b020",
+   "b021",
+   "b030",
+   "b033",
+   "b040",
+   "b044",
+   "b062",
+   "b074",
+   "b098",
+   "b099",
+   "b101"
+  ],
+  "url": "https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53",
+  "retrieved_at": "2026-10-10T13:16:19.548636+00:00",
+  "parser_version": "ti-parse-4",
+  "full_body_sha256": "0e02e6955dbd1cddcaf33263ec91ec605f61dd37a73a2f5726111854f71fe81d",
+  "full_body_word_count": 3310,
+  "blocks_total": 102,
+  "blocks_in_excerpt": 36,
+  "retrieval_state": "PARTIAL",
+  "built_at": "2026-10-10T19:06:37.396684+00:00"
+ },
+ "canonical_url": "https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53",
+ "title": "Inside GLM-5.3: How Sparse Attention Affects DRAM Memory TAM",
+ "title_source": "json-ld Article.headline",
+ "authors": [
+  {
+   "name": "Kimbo Chen",
+   "title": null,
+   "source_field": "json-ld Article.author + meta author"
+  },
+  {
+   "name": "Alec Ibarra",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  },
+  {
+   "name": "Wenyao Gao",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  },
+  {
+   "name": "Pratt Bhatt",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  },
+  {
+   "name": "Bryan Shan",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  },
+  {
+   "name": "Dylan Patel",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  }
+ ],
+ "author_discrepancy": null,
+ "published_at": "2026-09-28T19:26:41+00:00",
+ "published_raw": "2026-09-28T19:26:41+00:00",
+ "published_source": "json-ld Article.datePublished",
+ "article_class_hint": null,
+ "article_class_basis": null,
+ "blocks": [
+  {
+   "block_id": "b001",
+   "kind": "heading",
+   "text": "How Sparse Attention Affects DRAM/NAND Memory",
+   "sha256": "2a0c6a2cddd05f756c071f30701feb660b2238951a8541e3316971f9e93db49c",
+   "section": "How Sparse Attention Affects DRAM/NAND Memory",
+   "order": 1
+  },
+  {
+   "block_id": "b002",
+   "kind": "paragraph",
+   "text": "Concretely, the top-k selection operation typically requires the full context to be in HBM, so sparse attention doesn’t eliminate the memory capacity bottleneck.",
+   "sha256": "5a01d794a6833ea21565deea16d99dbce67dcba962254fc678d11c1f07437e27",
+   "section": "How Sparse Attention Affects DRAM/NAND Memory",
+   "order": 2
+  },
+  {
+   "block_id": "b004",
+   "kind": "paragraph",
+   "text": "To overcome this limitation, the SGLang team designed HiSparse, a hierarchical memory system that proactively offloads KV cache entries from device HBM to host DRAM.",
+   "sha256": "1683c587d0093360919aa6e56412918c30c19663467b19927cdcb7ea6042dd7e",
+   "section": "How Sparse Attention Affects DRAM/NAND Memory",
+   "order": 4
+  },
+  {
+   "block_id": "b007",
+   "kind": "paragraph",
+   "text": "Sparse attention reduces KV cache memory and bandwidth requirements at the SDPA operation, but it does not reduce the overall memory capacity usage. To provide a more holistic picture of serving sparse attention models, here we explain the design of Z.ai’s GLM-5 model series, and how they are served in practice.",
+   "sha256": "51baa7c9f248e02e00c70b20bcf1ce22deeae92670b24bbec210863eca06b899",
+   "section": "How Sparse Attention Affects DRAM/NAND Memory",
+   "order": 7
+  },
+  {
+   "block_id": "b009",
+   "kind": "paragraph",
+   "text": "In our realtime benchmark board InferenceX, GB300 delivers the lowest modeled serving cost in our comparison at a response speed of 150 tokens per second. GB300 handles more tokens per GPU, and its higher hourly cost still leaves it ahead of GB200 on cost efficiency.",
+   "sha256": "85b75d60b0cb403a2da20ccd47d94d5677702d3cb8a1ecb7afdacc56c81db38c",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 9
+  },
+  {
+   "block_id": "b011",
+   "kind": "paragraph",
+   "text": "At 150 tokens per second, GB200 costs approximately $0.044 per million total tokens, compared with $0.049 for MI355X running ATOM. That is about 12% lower cost at the same streaming-speed target.",
+   "sha256": "192d0602e00d73d9ac9396b8accde4221fef402e7edc032827c52fe4574e729c",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 11
+  },
+  {
+   "block_id": "b013",
+   "kind": "chart_source",
+   "text": "Source: InferenceX | SemiAnalysis",
+   "sha256": "10db0ac50f615db3fd876f6ebb120997cfe6519d268b2e291ab2260991411640",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 13
+  },
+  {
+   "block_id": "b014",
+   "kind": "paragraph",
+   "text": "Among the Dynamo-SGLang results, GB300 serves roughly 13950 total tokens per second per GPU here, a 17.5% throughput advantage versus 11873 total tokens for GB200. However, we assume $2.31 per GB300 GPU hour versus $1.86 for GB200.",
+   "sha256": "3dcd5fa962bcc16f87cee31399ab44e76d3cea170e127457ffc73c83146b6bb1",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 14
+  },
+  {
+   "block_id": "b015",
+   "kind": "paragraph",
+   "text": "In comparison with AMD, ATOM costs about 13% less than GB200 at 100 tokens per second. GB200 costs about 5% less at 125 and 12% less at 150.",
+   "sha256": "addc3641c5b7ba25ef6b3cf224d7f95b17f38f1c817c0c11e7da911c9058fe05",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 15
+  },
+  {
+   "block_id": "b016",
+   "kind": "paragraph",
+   "text": "Counting only generated output, GB200 costs $5.92 per million output tokens at a response speed of 150 tokens per second, which is about 11% less than $6.68 for MI355X ATOM.",
+   "sha256": "0bbe7a2a7078aae60ec1bd81f3c52dc634f57c711b76ed9ee1d07d7c75842f05",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 16
+  },
+  {
+   "block_id": "b017",
+   "kind": "paragraph",
+   "text": "The GB200 measurements on either side of the 150-token-per-second target have p90 TTFT (time to first token) of roughly 14–19 seconds, compared with about 1.1–1.2 seconds for MI355X ATOM.",
+   "sha256": "c4c1d3f1ab9292c9c7a90e24c8bc33c248d5128b4e13f1af1afa13ecf81be15e",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 17
+  },
+  {
+   "block_id": "b018",
+   "kind": "paragraph",
+   "text": "We therefore make a second comparison using only configurations that were actually tested and achieved at least 150 tokens per second with p90 TTFT at most two seconds. The chart below shows MI355X with ATOM at $0.0607 per million total tokens versus $0.0666 for B200 with Dynamo-SGLang. ATOM costs about 9% less with the two-second first-token limit. If the limit is relaxed to ten seconds, GB300 with Dynamo-TRT-LLM becomes eligible at $0.0451, about 26% below ATOM’s $0.0607.",
+   "sha256": "341e565b4c122d8abf6ab9ed2309bbc94642279e62cf5021caa50bddec68b81d",
+   "section": "GLM5.3 Agentic Inference Serving",
+   "order": 18
+  },
+  {
+   "block_id": "b020",
+   "kind": "paragraph",
+   "text": "GLM reduces the cost of handling this history in two ways: KV compression reduces the cached state stored per token, and sparse attention reduces how much of that state each attention operation reads.",
+   "sha256": "c747e712542ff8a8dd6ad1ba9d994427d2e1326d80ab9839c697f46cb1a0d6b6",
+   "section": "Optimizations",
+   "order": 20
+  },
+  {
+   "block_id": "b021",
+   "kind": "paragraph",
+   "text": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%. Much of that reuse shifts to host memory, which rose from 6.0% to 40.3%. Much of the decline in GPU cache is offset by reuse from host memory, keeping the overall cache hit rate above 95% at all concurrency levels.",
+   "sha256": "ed19d194b6d4fc03bf52479f798599fb44adaa3b3dbacafa2dd96f238c3e4eed",
+   "section": "Optimizations",
+   "order": 21
+  },
+  {
+   "block_id": "b022",
+   "kind": "chart_source",
+   "text": "Source: SemiAnalysis InferenceX; InferenceX B200 rows 440962 , 440961 , and 440959 ; workflow run 33683520699",
+   "sha256": "1fa4a734a336762cfae25aaa5a0eb4fc610dfea00cc486e8d80feadfc533d447",
+   "section": "Optimizations",
+   "order": 22
+  },
+  {
+   "block_id": "b024",
+   "kind": "list_item",
+   "text": "vLLM keeping the first decoding step on a consistent CUDA graph execution path reduced average TPOT (time per output token) from about 40 ms to 22 ms in an NVFP4 study .",
+   "sha256": "3d1fade31f1040527270a86372c0e1fd9d67cd4368cc19b0d24c3b5c7618982e",
+   "section": "Optimizations",
+   "order": 24
+  },
+  {
+   "block_id": "b025",
+   "kind": "list_item",
+   "text": "On a different 8 MI355X long context workload, ATOM engine processing prefill in chunks across pipeline stages delivered 98% higher total throughput and reduced median TTFT from 28.6 to 8.7 seconds .",
+   "sha256": "f9ad8ecba8aa087706ff59dc31bced6a1c1c34d8677f1f7aa095be9d2303917a",
+   "section": "Optimizations",
+   "order": 25
+  },
+  {
+   "block_id": "b027",
+   "kind": "paragraph",
+   "text": "For GLM5.3 on TileRT, AMD MI355X was supported first. TileRT is a low-latency LLM inference engine for that compiles decoding into a single persistent kernel, reducing launch overhead and overlapping computation, memory access, and communication.",
+   "sha256": "926911a394d762bf8b7629e8904cc494d4b412dead9af8bef8fbb45e41ca042e",
+   "section": "TileRT",
+   "order": 27
+  },
+  {
+   "block_id": "b029",
+   "kind": "paragraph",
+   "text": "Ultra-High Interactivity on NVIDIA GPUs? - TileRT InferenceX Bryan Shan , Daniel Nishball , and 4 others · Aug 10 Read full story",
+   "sha256": "464fa4b7230b7aab5f7fbb6ee31114ed15a6ec191427c88f532b08d2d190f9d4",
+   "section": "TileRT",
+   "order": 29
+  },
+  {
+   "block_id": "b030",
+   "kind": "paragraph",
+   "text": "On AgentX, FP8 TileRT MI355X achieves 2x the P90 interactivity than the best FP4 MI335X config. Comparing to GB300 NVL72, it brings a 40% uplift in interactivity.",
+   "sha256": "2a039a1f33ecdd3524202635504ab072b3ef038b70e95fd9c8d8319b20459edb",
+   "section": "TileRT",
+   "order": 30
+  },
+  {
+   "block_id": "b033",
+   "kind": "paragraph",
+   "text": "GLM-5 (and GLM-5.x models) is a 744B total, 40B active-parameter mixture-of-experts model. For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+   "sha256": "261dd11ba98bdeadb212c5452d343e725218a03f15dcd2ad8814348786f12101",
+   "section": "DeepSeek Sparse Attention",
+   "order": 33
+  },
+  {
+   "block_id": "b034",
+   "kind": "paragraph",
+   "text": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2 , consists of two components: A lightning indexer that selects top K tokens, and a sparse Multi-Latent Attention (MLA).",
+   "sha256": "2c41e9dab0f95fa00b7649cb63189b432ceacdbcf1f5642a38f8e8d53846aa86",
+   "section": "DeepSeek Sparse Attention",
+   "order": 34
+  },
+  {
+   "block_id": "b040",
+   "kind": "paragraph",
+   "text": "Both come with trade-offs: MHA mode has lower FLOPs but 42x higher memory cost, MQA mode has lower memory cost but up to 3.4x higher FLOPs. The intuition is that at shorter sequence length, the memory loading time isn’t as dominating, and MHA mode may have an edge for being lower FLOPs. vLLM implements this feature, and configures MHA mode for sequence length 2K to about 5K for data parallel, and 2K to about 77K for tensor parallel.",
+   "sha256": "0f61d0840711903d9ddbc50f0a843a257d683c963b3d233b45571eca0bd5c8d1",
+   "section": "Sparse MLA",
+   "order": 40
+  },
+  {
+   "block_id": "b044",
+   "kind": "paragraph",
+   "text": "This is likely referring to the fact that MLA’s SDPA arithmetic intensity during decode is roughly at the ridge point of H800 .",
+   "sha256": "b09dc538f1e2e2c812c181960bc7f43a33f8b679e18e572d9ad3bb3c200de05e",
+   "section": "MLA Modifications",
+   "order": 44
+  },
+  {
+   "block_id": "b056",
+   "kind": "paragraph",
+   "text": "If we plug in the DeepSeek V3.2 configuration d = 512, r = 64, b = 2), we get",
+   "sha256": "ca70f768c82d624c0796afe1a335f86d9b8e3357e6899e5c57d35955ae11e877",
+   "section": "MLA Modifications",
+   "order": 56
+  },
+  {
+   "block_id": "b058",
+   "kind": "paragraph",
+   "text": "H800’s practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+   "sha256": "2ddcbed3452ab652c282e275f516107eafcd7e1b056b63554c546b0af996fc6e",
+   "section": "MLA Modifications",
+   "order": 58
+  },
+  {
+   "block_id": "b059",
+   "kind": "paragraph",
+   "text": "The fact that GLM-5 has H = 64, half the number of query heads, implies that GLM-5 may be designed for different hardware. If we plug in GLM-5’s configuration (d = 512, r = 64, b = 2, H = 64), we get an arithmetic intensity of 120.8 FLOP/B. Thus, we suspect GLM-5 is optimized for Moore Threads MTT S4000, which is about 128 FLOP/B. Moore Threads’ collaboration with Z.ai, such as GLM-5.3-Flash day 0 support , corroborates our theory.",
+   "sha256": "76df1adf7b6692739d5558aaae9ae675aca5e25c0e38446b47609f525e724691",
+   "section": "MLA Modifications",
+   "order": 59
+  },
+  {
+   "block_id": "b060",
+   "kind": "paragraph",
+   "text": "Separately, GLM-5 increases the QK NoPE dimension from 128 to 192, as ablations show the configuration is superior under iso-FLOP and iso-parameter constraints. This increases the SDPA head dimension from 192 to 256, which is still a 33% FLOP reduction after considering the head number reduction.",
+   "sha256": "5a9ea2cac4a2fc45e9ba885b81843fb75ad080191f21010cdf0033ca581934ff",
+   "section": "MLA Modifications",
+   "order": 60
+  },
+  {
+   "block_id": "b062",
+   "kind": "paragraph",
+   "text": "To mitigate the cost, Z.ai proposes IndexShare (aka IndexCache) in GLM-5.2, where every 4 DSA layers share one indexer.",
+   "sha256": "c01105a1552a9e00243b14ef25f1cd8cbb0e2079fb1ffab9bc084a7446f4b116",
+   "section": "IndexShare",
+   "order": 62
+  },
+  {
+   "block_id": "b067",
+   "kind": "paragraph",
+   "text": "This design reduces indexer cache by 75%, reduces indexer FLOPs by 75%, and boosts throughput by 1.5x to 1.8x at different context lengths and prefill/decode.",
+   "sha256": "0f08cba50cf7735aaa350d5ce808bd17002a9db0c483dcb6dc81f36804ce70ba",
+   "section": "IndexShare",
+   "order": 67
+  },
+  {
+   "block_id": "b074",
+   "kind": "paragraph",
+   "text": "Z.ai touted its scale and training efficiency: they merged more than ten expert models into a final model by training for about two days.",
+   "sha256": "2fe83e53aa041e048874d43d46e022d0d269ce883afc8b940818bcb783fc46db",
+   "section": "Pipeline",
+   "order": 74
+  },
+  {
+   "block_id": "b095",
+   "kind": "chart_source",
+   "text": "Source: SemiAnalysis",
+   "sha256": "d3f9d4160b3037e09e9e4969188d5941acda9401cbfcb4a21eac917df9af99f4",
+   "section": "Single-Rollout Asynchronous Optimization",
+   "order": 95
+  },
+  {
+   "block_id": "b096",
+   "kind": "paragraph",
+   "text": "At the cost of computational overhead and doubling memory footprint, SAO replaces group-wise sampling with a value model, mitigating the latency issues of GRPO.",
+   "sha256": "59d2d261dc051492a2ec762fa7417e4dfb47d7daae722360d68fa4e23f80e9ee",
+   "section": "Single-Rollout Asynchronous Optimization",
+   "order": 96
+  },
+  {
+   "block_id": "b098",
+   "kind": "paragraph",
+   "text": "Z.ai uses slime , one of the best open-source RL training frameworks, as the post-training infrastructure throughout all GLM-5 models.",
+   "sha256": "4c16c47f828e4523517b5eb9dca1a4d7a47e1597658c125d7ec48454abb2713b",
+   "section": "Post-Training Infrastructure",
+   "order": 98
+  },
+  {
+   "block_id": "b099",
+   "kind": "paragraph",
+   "text": "Z.ai claims the orchestrator supports 1000 concurrent rollouts when training GLM-5.",
+   "sha256": "953a16c75768ef1ea88ce26484cfd3322f978faccda85126ebf4b27cba2be2f3",
+   "section": "Post-Training Infrastructure",
+   "order": 99
+  },
+  {
+   "block_id": "b101",
+   "kind": "paragraph",
+   "text": "In the GLM-5.3 announcement , Z.ai claims to use local storage as a cache layer in addition to host memory, which enables dynamic teacher model switching and prefetching for MOPD . slime PR#1538 implements teacher switching by introducing a TensorBackuper class, which stores teacher weights as PyTorch tensors pinned to CPU memory.",
+   "sha256": "677a7d0d55e7a8f1b22eab8322772a75ee349273c1271d4e760a94be214030fa",
+   "section": "Post-Training Infrastructure",
+   "order": 101
+  }
+ ]
+}

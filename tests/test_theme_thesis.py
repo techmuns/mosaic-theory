@@ -164,6 +164,8 @@ def test_card_only_fields_never_appear_in_llm_tool_schema_sources() -> None:
         root / "vinci/themes/exposure.py",
         root / "vinci/themes/drafts.py",
         root / "vinci/dossier/synthesis.py",
+        root / "vinci/theme_intelligence/extract.py",
+        root / "vinci/theme_intelligence/verify.py",
     )
     for f in llm_schema_files:
         src = f.read_text()

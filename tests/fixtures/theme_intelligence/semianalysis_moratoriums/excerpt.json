@@ -1,0 +1,356 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC EXCERPT of the publisher page — only the blocks the frozen pass-1 and pass-1b outputs cite, and within paragraphs only the sentences a cited quote touches (verbatim; bylines and data-date notes whole). Not the full article: the full text is not stored.",
+  "trimmed_blocks": [
+   "b001",
+   "b002",
+   "b004",
+   "b005",
+   "b006",
+   "b011",
+   "b012",
+   "b014",
+   "b015",
+   "b016",
+   "b023",
+   "b027",
+   "b034",
+   "b043",
+   "b053",
+   "b059",
+   "b060",
+   "b061",
+   "b062",
+   "b064",
+   "b065",
+   "b066",
+   "b068",
+   "b069",
+   "b070",
+   "b074",
+   "b076"
+  ],
+  "url": "https://newsletter.semianalysis.com/p/everyone-says-datacenter-moratoriums",
+  "retrieved_at": "2026-10-10T13:16:25.958488+00:00",
+  "parser_version": "ti-parse-4",
+  "full_body_sha256": "cfafd53bdd866f67b8cd33cc4c053e064433f88098d7e07c2e7db809a0729882",
+  "full_body_word_count": 3607,
+  "blocks_total": 76,
+  "blocks_in_excerpt": 35,
+  "retrieval_state": "PARTIAL",
+  "built_at": "2026-10-10T19:05:48.829834+00:00"
+ },
+ "canonical_url": "https://newsletter.semianalysis.com/p/everyone-says-datacenter-moratoriums",
+ "title": "Everyone Says Datacenter Moratoriums Are Killing the US Buildout. We Mapped All 300 of Them",
+ "title_source": "json-ld Article.headline",
+ "authors": [
+  {
+   "name": "Maya Barkin",
+   "title": null,
+   "source_field": "json-ld Article.author + meta author"
+  },
+  {
+   "name": "Reyk Knuhtsen",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  },
+  {
+   "name": "Jeremie Eliahou Ontiveros",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  },
+  {
+   "name": "Dylan Patel",
+   "title": null,
+   "source_field": "json-ld Article.author"
+  }
+ ],
+ "author_discrepancy": null,
+ "published_at": "2026-09-15T20:54:41+00:00",
+ "published_raw": "2026-09-15T20:54:41+00:00",
+ "published_source": "json-ld Article.datePublished",
+ "article_class_hint": null,
+ "article_class_basis": null,
+ "blocks": [
+  {
+   "block_id": "b001",
+   "kind": "paragraph",
+   "text": "Four states have acted in under two months. New York has stopped issuing environmental permits for datacenters, Texas has paused the next step in its massive ERCOT interconnection queue, Pennsylvania has pulled datacenters out of fast-track permitting and made state permits conditional on new guardrails, and Oregon has frozen datacenter deals on state-owned land.",
+   "sha256": "05ef6e3b8792242ff73f51e5f2e9f781d1e1d1aab4fe3261e75c37dd7dc46d70",
+   "section": null,
+   "order": 1
+  },
+  {
+   "block_id": "b002",
+   "kind": "paragraph",
+   "text": "Beyond the state level, more than 300 towns, cities and counties have voted to halt datacenters over the past year and a half.",
+   "sha256": "1171edc93fad88f772dc77a9f39fc1f65187f328261cda846ca6adb6d5f1fa1a",
+   "section": null,
+   "order": 2
+  },
+  {
+   "block_id": "b003",
+   "kind": "chart_source",
+   "text": "Source: SemiAnalysis Datacenter Industry Model , SemiAnalysis Moratoriums Tab",
+   "sha256": "d766e34ec3b1e078e7e30c2fc7a9b781e7cb50462ec7ebc35cef0599806d423d",
+   "section": null,
+   "order": 3
+  },
+  {
+   "block_id": "b004",
+   "kind": "paragraph",
+   "text": "In January, we debunked the “Datacenters are taking all of our water” myth (TLDR: they don’t, they’re actually remarkably water-efficient).",
+   "sha256": "8d8d689af6a1dd723fcdfaba58bbee0d1fca87e14a17eb9a3d31b3cadeddaab6",
+   "section": null,
+   "order": 4
+  },
+  {
+   "block_id": "b005",
+   "kind": "paragraph",
+   "text": "Our Datacenter Industry Model forecasts +38GW of Datacenter IT capacity delivered in the US in 2027, more than double that of 2026. Of that total, 22GW is under vertical construction , while the remaining 16GW “planned” is, in majority, already financed, doing siteworks and preparing for vertical construction.",
+   "sha256": "36057ddc090b6382695d31a4acb4b6e0f55e371b0b3d05308387dce2766005b5",
+   "section": null,
+   "order": 5
+  },
+  {
+   "block_id": "b006",
+   "kind": "paragraph",
+   "text": "Our methodology tracks real-time and historical satellite imagery of 6,000+ datacenters . Our forecast has barely moved over the last 12 months, despite bi-weekly updates delivered to clients, as construction activity keeps accelerating across the country.",
+   "sha256": "641161e6c694f2523a13afb7e22a3b836872dc0b8128b45f59600dd2e1dc200c",
+   "section": null,
+   "order": 6
+  },
+  {
+   "block_id": "b007",
+   "kind": "chart_source",
+   "text": "Source: SemiAnalysis Datacenter Industry Model",
+   "sha256": "0e4d0f288c9dbfc8b88a67542959f64ea8e2797f0ef3ec976d38c22e07992846",
+   "section": null,
+   "order": 7
+  },
+  {
+   "block_id": "b008",
+   "kind": "paragraph",
+   "text": "Today, we estimate that roughly 2.3 GW of planned capacity is genuinely delayed because of local moratoriums and New York’s executive order , the two categories of policy intervention for which we can establish a direct project-level impact.",
+   "sha256": "d9af740ce6735d5276cc69e1534548958af0f066c3f926d29f78a54eadcb51e6",
+   "section": null,
+   "order": 8
+  },
+  {
+   "block_id": "b009",
+   "kind": "list_item",
+   "text": "At the local level (i.e., cities, townships, counties), of the roughly 20 GW sitting inside a restricted boundary, only 1,525 MW is delayed . Three projects account for the delayed MW: an AWS campus in Ohio, a powered land developer campus in Pennsylvania, and a site in Colorado.",
+   "sha256": "1e784f68d927a40a55d9442223c98b3b71aec4195ea9a6e0336f90260c641e93",
+   "section": null,
+   "order": 9
+  },
+  {
+   "block_id": "b010",
+   "kind": "list_item",
+   "text": "New York’s moratorium touches roughly 1.4 GW, but we estimate only about 0.8 GW faces a meaningful delay directly attributable to the order.",
+   "sha256": "77515c2b37e901bfd0213d81f309295e95b1536569bd6120dea92bfd29d7d670",
+   "section": null,
+   "order": 10
+  },
+  {
+   "block_id": "b011",
+   "kind": "paragraph",
+   "text": "Texas adds perhaps three-four months of administrative delay for base-load projects in the ERCOT interconnection queue, but is offset by an acceleration of behind-the-meter demand. For projects that never needed the grid, it means nothing at all, making it a net positive for BtM developers and on-site generation suppliers. In June ( US Grid Constraints: Towards 40GW+ of Behind-The-Meter Datacenter by 2028? ), we showed BtM powering more than half of new US datacenter capacity from 2028. Part 1 ) we counted 75 GW of firm BtM equipment orders, more of them bound for Texas than any other state.",
+   "sha256": "b2da045dd4ee0067710f9b5c61c905e5a4c4403c29eef546e37e5caf24561f16",
+   "section": null,
+   "order": 11
+  },
+  {
+   "block_id": "b012",
+   "kind": "paragraph",
+   "text": "For example, a recent Brownsville moratorium was brewing while Elon was planning a datacenter within city limits. But just days before approval, the city and Elon sneakily “deannexed” the 444 acres in Brownsville , bringing the project out of Brownsville’s moratorium jursidiction.",
+   "sha256": "42a4c43caf4491fa43cdcd09c2a15aa2e4aa533a1effd106ef4214b1d8fbfbce",
+   "section": null,
+   "order": 12
+  },
+  {
+   "block_id": "b014",
+   "kind": "paragraph",
+   "text": "Capacity already under construction, or fully permitted and about to start, is out of reach altogether , since these instruments freeze new applications rather than revoke approvals already granted.",
+   "sha256": "49510f65285881f19425794645059499e2385e4a17b39fd05ade60ae15ad7a58",
+   "section": null,
+   "order": 14
+  },
+  {
+   "block_id": "b015",
+   "kind": "paragraph",
+   "text": "To be 100% clear, we think moratoriums COULD delay the buildout, but they just aren’t yet at scale. As AI Labs are increasingly profitable, it becomes easier for datacenters to pay more than their “fair share” and be better neighbors and support local communities, which offsets the rising pusback.",
+   "sha256": "9c518cd78ae76ae5bf131936debf630a66a60695afa9c29455ad2eb62e842699",
+   "section": null,
+   "order": 15
+  },
+  {
+   "block_id": "b016",
+   "kind": "paragraph",
+   "text": "It covers more than 400 local instruments, actions, and proposals across 17 states, tracking each status from proposal through enactment, expiration, lifting, replacement, or rejection.",
+   "sha256": "1b167051c08063ce4e4edd1b52b3cd64f4171abd9e1b52d1b1b4b7d8c753bb8f",
+   "section": null,
+   "order": 16
+  },
+  {
+   "block_id": "b023",
+   "kind": "paragraph",
+   "text": "More durable statewide restrictions remain much harder to enact: 13 bills died in 2026, with almost none reaching a floor vote, underscoring the political difficulty of turning temporary local action into lasting statewide policy.",
+   "sha256": "ef19fca26c24558c025abf8c9970bae96a72cdee9cc64b210df37e66a317bb4c",
+   "section": null,
+   "order": 23
+  },
+  {
+   "block_id": "b027",
+   "kind": "paragraph",
+   "text": "Many zoning codes were written before municipalities contemplated 100+ MW facilities with substantial power, water, noise, and land-use requirements.",
+   "sha256": "0d1ff6bce793b84c94502e0ad725ba5e8eca67fcf4daa88e4d37022f5ee3bfbc",
+   "section": "What a moratorium does",
+   "order": 27
+  },
+  {
+   "block_id": "b034",
+   "kind": "list_item",
+   "text": "AWS Atlanta, STACK Lithia Springs, T5 Fairburn, or Microsoft Tyrone all sit on land the relevant county moratorium cannot touch.",
+   "sha256": "aa9a28b42a017fbbfc673b89a81bfbbdb9d39da9414a8e7e20f1fb45c4e5ded9",
+   "section": "Why Moratoriums Rarely Move the Needle",
+   "order": 34
+  },
+  {
+   "block_id": "b043",
+   "kind": "paragraph",
+   "text": "The cumulative effect of these filters is substantial: 300+ local instruments translate into just ~1,525 MW of actual project delay in the US.",
+   "sha256": "d9f2d5e05a7c8e573ea1cd5a529c42fd7fde924a47a216dcb7d723fa7137b46e",
+   "section": "Why Moratoriums Rarely Move the Needle",
+   "order": 43
+  },
+  {
+   "block_id": "b046",
+   "kind": "paragraph",
+   "text": "NorthPoint’s campus near Scranton, Pennsylvania, illustrates one of the rare cases where a moratorium actually binds and moves the project timeline.",
+   "sha256": "1b23d4dd93870751f5cc50829f9850227d7b5e5dcee1a35ee98c6ba9a7bde465",
+   "section": "Case study: NorthPoint’s Campus near Scranton, Pennsylvania",
+   "order": 46
+  },
+  {
+   "block_id": "b053",
+   "kind": "list_item",
+   "text": "NorthPoint continues to pursue the project, including its proposed $165 million community benefits package.",
+   "sha256": "eee887b7fa83bcc8f23c3dbccb0c4cb931715993b256542385b3f665827ffc0c",
+   "section": "Case study: NorthPoint’s Campus near Scranton, Pennsylvania",
+   "order": 53
+  },
+  {
+   "block_id": "b059",
+   "kind": "paragraph",
+   "text": "As of September 2026, more than 300 local datacenter moratoriums and bans have been adopted nationwide across counties, municipalities, townships, and other local governments.",
+   "sha256": "512188913586f024ec24c9f9a6853788afd775d01d0bd06c66d74da322e9a4f1",
+   "section": "Proliferation across the US in 2026",
+   "order": 59
+  },
+  {
+   "block_id": "b060",
+   "kind": "paragraph",
+   "text": "The top four states (Michigan, Ohio, North Carolina, Georgia) account for roughly half of all local instruments nationally, which supports the thesis that moratoriums and local resistance often follow rapid datacenter growth rather than anticipate it.",
+   "sha256": "a418e34c2c1d06b8e248b672e474436aa6c21a391fd224c02e38c8f3b8260210",
+   "section": "Proliferation across the US in 2026",
+   "order": 60
+  },
+  {
+   "block_id": "b061",
+   "kind": "paragraph",
+   "text": "Michigan is currently the leading state for local datacenter moratoriums, with 45 enacted and 7 proposed, with the majority adopted in late 2025 and 2026 following a rapid influx of datacenter proposals. Much of this can be traced to the datacenter tax exemption signed by Governor Gretchen Whitmer in December 2024, which accelerated development interest across the state. In May 2026, its board voted to extend the moratorium for an additional six months.",
+   "sha256": "43ee48e2d5b9e7e339ee60d70a5fc6b242ab587d60bfce16b3f331c1d6a4ef86",
+   "section": "Proliferation across the US in 2026",
+   "order": 61
+  },
+  {
+   "block_id": "b062",
+   "kind": "paragraph",
+   "text": "Ohio ranks second with 40 enacted moratoriums, with 83% adopted in 2026 alone. Much of this can be traced to the electricity-bill shock of mid-2025 , when datacenter-driven PJM capacity costs pushed the average Ohio residential bill up 25.7% year over year, and to hyperscale proposals spreading into townships with little or no zoning.",
+   "sha256": "265434c96bed7add7d42974b8cba318dabe0fcdacef762e28d6998cddd131169",
+   "section": "Proliferation across the US in 2026",
+   "order": 62
+  },
+  {
+   "block_id": "b064",
+   "kind": "paragraph",
+   "text": "According to Gallup , datacenter opponents most frequently cite excessive energy use and higher utility bills, alongside concerns over water consumption, land use, pollution, and traffic.",
+   "sha256": "ac4150ca43af7e332a1191de4a7ddf4e7c2e7e60e4fbb96bc64e0f83d85e70eb",
+   "section": "Moratorium indicators",
+   "order": 64
+  },
+  {
+   "block_id": "b065",
+   "kind": "paragraph",
+   "text": "We found that Americans were net-positive on AI broadly, but significantly more negative on datacenters specifically: 46% of voters view datacenters unfavorably, including 24% who view them very unfavorably, versus just 29% with a favorable view. Similarly, 46% would oppose a new datacenter in their own city or town, including 30% who would strongly oppose it. By comparison, 46% have a favorable opinion of AI and 34% an unfavorable opinion.",
+   "sha256": "812c5976c0d3f32f61cf840a56350cc444a5052e8e05dc4eacc636479fd1052d",
+   "section": "Moratorium indicators",
+   "order": 65
+  },
+  {
+   "block_id": "b066",
+   "kind": "paragraph",
+   "text": "We note that this gap could narrow as increasingly prominent doomsday scenarios and concerns around AI’s broader impacts shape public opinion.",
+   "sha256": "8c115658dabe50937ea752ca8b7fdc61348ab097fa7e9c4cebfacd54ef9e88ed",
+   "section": "Moratorium indicators",
+   "order": 66
+  },
+  {
+   "block_id": "b067",
+   "kind": "chart_source",
+   "text": "Source: SemiAnalysis Tokenomics Model , Politics Tab",
+   "sha256": "6c782e9fda1241bd209df1b2783ca6c48b71d7895814a119cb5918e19da56781",
+   "section": "Moratorium indicators",
+   "order": 67
+  },
+  {
+   "block_id": "b068",
+   "kind": "paragraph",
+   "text": "Once opposition becomes organized in one jurisdiction, the arguments, advocacy groups, proposed ordinance language, and political pressure can travel quickly across a region, making local moratorium activity a potentially self-reinforcing process.",
+   "sha256": "103b9a00667670899e13c3dd480d48434c2b65d0382ef0583b6f1f049af2a3a2",
+   "section": "Moratorium indicators",
+   "order": 68
+  },
+  {
+   "block_id": "b069",
+   "kind": "paragraph",
+   "text": "The Washington Post has documented datacenter opposition becoming an issue in state and local campaigns.",
+   "sha256": "7ba45091f6b24030ae11aef8aaaea26ee2386442651574241fc53179eaf56ec3",
+   "section": "Moratorium indicators",
+   "order": 69
+  },
+  {
+   "block_id": "b070",
+   "kind": "paragraph",
+   "text": "In Ohio, Republican gubernatorial nominee Vivek Ramaswamy pledged in August that no new datacenter would be approved unless it eliminated electricity bills for nearby residents, paid full property taxes to fund homeowner relief, and met strict water and farmland protections.",
+   "sha256": "06062b5a797e8c01d1a97b9b47dfcd3c8af3fa509ef3a02fdc6afd1b31efe4ea",
+   "section": "Moratorium indicators",
+   "order": 70
+  },
+  {
+   "block_id": "b071",
+   "kind": "chart_source",
+   "text": "Source: @VivekGRamaswamy’s X Post from Aug 6, 2026",
+   "sha256": "a632e0df18ba26a16d9b280580206d166133d3cbaabf4ba829d8793f90e6177e",
+   "section": "Moratorium indicators",
+   "order": 71
+  },
+  {
+   "block_id": "b074",
+   "kind": "paragraph",
+   "text": "Although it has the highest number of restrictions, it carries effectively zero pipeline exposure, something subscribers to our Datacenter Industry Model could see directly in the Michigan project-level data, even as the state’s growing ordinance count was receiving national coverage. The Cannoli/Google campus, for example, sits on industrial land where data processing was already a permitted use, eliminating the need for rezoning, and its site plan predated any potential pause. The Related Digital project in Saline Township similarly advanced after the developer sued the community over exclusionary zoning following a local board rejection, ultimately resulting in a legal settlement. In Lyon Township, the 180-day pause cannot affect the already-approved Project Flex.",
+   "sha256": "48f535d4a2db40397160c335a3bf0308606a9f86a63b8d3a09428a1ecd8e5bc8",
+   "section": "More local moratoriums do not necessarily mean more MW at risk",
+   "order": 74
+  },
+  {
+   "block_id": "b076",
+   "kind": "paragraph",
+   "text": "Only 1,525 MW is directly delayed, which is 7.6% of the capacity sitting inside a restricted boundary .",
+   "sha256": "00af5f47beddc16cbaea308142706cd311ab5091093b5a45bc81faf04ae2162a",
+   "section": "What part of the pipeline is at risk?",
+   "order": 76
+  }
+ ]
+}

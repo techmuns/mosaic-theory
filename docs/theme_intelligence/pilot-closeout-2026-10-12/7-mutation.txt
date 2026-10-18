@@ -1,0 +1,78 @@
+# mutants of the closeout guards (18) and the two earlier passes' sets, re-run on the final code
+
+== closeout
+engine.py    KILLED   'found = set()'                                              1 failed, 40 passed in 0.71s
+engine.py    KILLED   'if False:'                                                  1 failed, 41 passed in 0.66s
+engine.py    KILLED   'if False:'                                                  1 failed, 46 passed in 0.67s
+engine.py    KILLED   'found = {s for s, n in counts.items() if n >= 1}'           1 failed, 44 passed in 0.69s
+engine.py    KILLED   'seg = segment_of(h, claims, self.taxonomy)'                 1 failed, 47 passed in 0.69s
+engine.py    KILLED   'return _nests(a, b)'                                        1 failed, 78 passed in 2.01s
+engine.py    KILLED   'if True:'                                                   1 failed, 79 passed in 2.06s
+engine.py    KILLED   'if not (_nests(segment, t.key_segment)):'                   1 failed, 75 passed in 1.82s
+engine.py    KILLED   'if not (_nests(seg, t.key_segment)):'                       1 failed, 77 passed in 1.95s
+engine.py    KILLED   'pass'                                                       1 failed, 75 passed in 1.81s
+engine.py    KILLED   'if False:'                                                  1 failed, 81 passed in 2.23s
+engine.py    KILLED   'return t'                                                   1 failed, 75 passed in 1.84s
+store.py     KILLED   'self.conn.execute("UPDATE theses SET payload=?, payload='   1 failed, 75 passed in 1.81s
+engine.py    KILLED   'if False and n and held and shared >= SAME_EVIDENCE_SHAR'   1 failed, 73 passed in 1.69s
+engine.py    KILLED   'and True:'                                                  1 failed, 80 passed in 2.17s
+report.py    KILLED   'if False:'                                                  1 failed, 106 passed in 2.80s
+report.py    KILLED   'rows = [r for rs in d.categories.values() for r in rs]'     1 failed, 106 passed in 2.81s
+schemas.py   KILLED   '+ (f" Source evidence: — verified, UNASSESSED: no thesis'   1 failed, 3 passed in 0.56s
+
+== coverage / identity pass (29)
+coverage.py      KILLED   'if (not RISK_CUE.search(s)'                             1 failed, 36 passed in 0.59s
+coverage.py      KILLED   'r"\\b(?:risks?\\s+(?:that|remains?|persists?)\\b|"'     1 failed, 36 passed in 0.60s
+coverage.py      KILLED   'rep = rep'                                              1 failed, 37 passed in 0.58s
+coverage.py      KILLED   'rep = rep or next((f"evidence on its card: {q}" for '   1 failed, 36 passed in 0.58s
+coverage.py      KILLED   'thesis_ids=tids if r.omitted else (),'                  1 failed, 36 passed in 0.58s
+coverage.py      KILLED   'fragment=False))'                                       1 failed, 36 passed in 0.58s
+pipeline.py      KILLED   'if not r.omitted or not r.related or r.block_id not '   1 failed, 38 passed in 0.61s
+pipeline.py      KILLED   'pass'                                                   1 failed, 36 passed in 0.59s
+pipeline.py      KILLED   'claim_ids=[pc.claim_id], related=[]))'                  1 failed, 36 passed in 0.59s
+pipeline.py      KILLED   'self._issue("thesis", tid, IssueSeverity.INFO, "SOUR'   1 failed, 36 passed in 0.59s
+coverage.py      KILLED   'for t in ()]'                                           1 failed, 37 passed in 0.60s
+coverage.py      KILLED   'shared / len(sentence) >= RISK_REPRESENTED)'            1 failed, 37 passed in 0.60s
+coverage.py      KILLED   'return bool(sentence and line) and ('                   1 failed, 36 passed in 0.61s
+pipeline.py      KILLED   'scope_qualification=f"(the source\'s own words, page '  1 failed, 36 passed in 0.59s
+schemas.py       KILLED   'f"“{r.sentence[:240]}” ({where})")'                     1 failed, 36 passed in 0.59s
+coverage.py      KILLED   'pass'                                                   1 failed, 111 passed in 2.49s
+engine.py        KILLED   'if shared and'                                          1 failed, 109 passed in 2.35s
+engine.py        KILLED   'if True:'                                               1 failed, 94 passed in 1.34s
+engine.py        KILLED   'moved = 0'                                              1 failed, 5 passed in 0.53s
+engine.py        KILLED   'return ""'                                              1 failed, 6 passed in 0.55s
+engine.py        KILLED   'if split_product in named:'                             1 failed, 5 passed in 0.51s
+engine.py        KILLED   'if t.key_node != raw.value_chain_node:'                 1 failed, 96 passed in 1.50s
+engine.py        KILLED   'if False:'                                              1 failed, 94 passed in 1.34s
+engine.py        KILLED   'if False:'                                              1 failed, 98 passed in 1.63s
+engine.py        KILLED   'held.append(c)'                                         1 failed, 97 passed in 1.57s
+engine.py        KILLED   'pass'                                                   1 failed, 110 passed in 2.45s
+verify.py        KILLED   'if False:'                                              1 failed, 39 passed in 0.64s
+completeness.py  KILLED   'for g in gone0]'                                        1 failed, 72 passed in 0.80s
+completeness.py  KILLED   'gone += [] and [LostItem('                              1 failed, 71 passed in 0.81s
+
+== analytical-safeguards pass (22 applicable; 2 replaced by _earlier_match — its two successors are in the set above)
+completeness.py  KILLED   'if True:'                                               1 failed, 70 passed in 0.78s
+completeness.py  KILLED   'raise exc'                                              1 failed, 67 passed in 0.79s
+completeness.py  KILLED   'if False:  # the whole chain must reproduce'            1 failed, 74 passed in 0.80s
+completeness.py  KILLED   'asked = None'                                           1 failed, 71 passed in 0.79s
+completeness.py  KILLED   'pass'                                                   1 failed, 73 passed in 0.80s
+extract.py       KILLED   'if False:'                                              1 failed, 1 passed in 0.40s
+extract.py       KILLED   'pass'                                                   1 failed in 0.41s
+coverage.py      KILLED   'if c.claim_id in as_risk:'                              1 failed, 3 passed in 0.47s
+coverage.py      KILLED   'pass'                                                   1 failed, 111 passed in 2.51s
+schemas.py       KILLED   'UNCARRIED_ALERT_MIN = 1'                                1 failed, 3 passed in 0.47s
+engine.py        KILLED   '+ "")'                                                  1 failed, 7 passed in 0.51s
+engine.py        NOT APPLICABLE (0 matches): 'if shared and shared >= SIBLING_SHARE * len(new):'
+engine.py        NOT APPLICABLE (0 matches): 'sibling = self._same_article_sibling(ctx, out.thesis_id, key'
+coverage.py      KILLED   'if (not name or key in seen or key in recorded'         1 failed, 9 passed in 0.57s
+priority.py      KILLED   'elif long_range:'                                       1 failed, 21 passed in 0.55s
+timewindow.py    KILLED   'pass'                                                   1 failed, 12 passed in 0.57s
+timewindow.py    KILLED   'if False:'                                              1 failed, 20 passed in 0.54s
+engine.py        KILLED   'if False:'                                              1 failed, 23 passed in 0.62s
+documents.py     KILLED   ')'                                                      1 failed, 122 passed in 2.58s
+documents.py     KILLED   'elif False:'                                            1 failed, 26 passed in 0.56s
+engine.py        KILLED   'if False:'                                              1 failed, 28 passed in 0.57s
+ingest.py        KILLED   '+ 1 * (chars / x_hi * pin + LLM_MAX_TOKENS * pout) +'   1 failed, 33 passed in 0.60s
+report.py        KILLED   'return bool(d.quarantined) and any(getattr(q, "kind"'   1 failed, 27 passed in 0.56s
+report.py        KILLED   '+ (f"; " if False else "") + (f"{len(cov_alerts)}"'     1 failed, 3 passed in 0.47s

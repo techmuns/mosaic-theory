@@ -1,0 +1,21 @@
+  [PASS] run status recorded: status PARTIAL; counts {'figures_in_articles': 44, 'figures_uncaptured': 0, 'claims_added_by_completeness': 7, 'theses_added_by_completeness': 0, 'articles_processed': 1, 'articles_partial': 1, 'claims_extracted': 38, 'claims_verified': 38, 'mentions': 20, 'theses_created': 2, 'theses_updated': 0, 'attributions_only': 0, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 76561, 'replayed_from_cache_output_tokens': 25022, 'llm_calls': 5, 'llm_calls_cached': 5, 'http_requests': 0, 'http_cache_hits': 1}
+  [PASS] no unverified claim is linked to a thesis: 42 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 38 verified claim(s) in 1 article(s)
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-09-15
+  [PASS] cards keep the nine sections in order: 2 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 2 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-09-15
+  [PASS] completeness ledger recorded for every analysed article: 1 article(s)
+  [PASS] every reported figure captured or judged immaterial: 44 figure(s) accounted for
+  [FAIL] every argument block accounted for: OPEN — 1 block(s): A-c59b789dbac0 b004 [no_account]
+  [PASS] every analysed article names its author(s): 1 article(s)
+  [PASS] append-only triggers present: 14 history tables
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/contradiction-16/runs/R-20261010T191511Z-article
+QA R-20261010T191511Z-article: 19/20 passed · scan execution PARTIAL · research verification INCOMPLETE — NOT fully verified — over the 1 article(s) this run analysed: 0 of 44 stated figure(s) and 1 of 61 argument paragraph(s) open; causes: no_account 1; 1 article(s) read only as a preview. Open material is never used as evidence, so it can hold a thesis back but never raise its research action

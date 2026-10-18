@@ -1,0 +1,54 @@
+RISKS, COMPANIES AND A NUMBER WRITTEN IN WORDS — the baseline vs the cleaned Gridlock analysis
+==============================================================================================
+2026-10-12, $0. Baseline = `final-a` (the $46.67 run's answers); cleaned = `glyph-safeguards3`
+(the paid cleaned run's answers, part 4 recovered, the safeguards in place); `glyph-paid` where
+the paid run itself differs. Article A-82a8a9210bae only.
+
+RISKS the baseline put on its cards and the cleaned cards did not (as the review listed them)
+  1. Over-building of on-site gas generation — ON A CARD: "A repeat of the early-2000s gas-build
+     overbuild … excess capacity and ratepayer burden" is a market risk of the gas-generation
+     thesis (TH-110E3113B1) in the cleaned run. Its source paragraph (page 15) was left open by
+     the dropped part 4 in the paid run; recovered, pass 1b judged that paragraph immaterial
+     beside the risk line that carries it.
+  2. Skilled-labour constraints — CARRIED AS A THESIS of its own ("Skilled-labor shortages
+     constrain data center and power buildout into the 2030s", SKIP-3 after the timing fix) with
+     the 222,600-worker shortage (page 13) verified; it is no longer a risk LINE on other cards.
+  3. European announced data-centre demand that may never materialise ("bragawatts", page 47) —
+     NOT ON A CARD. The paragraph is accounted for (pass 1b: "added" — a hypothesis covers it);
+     in the paid run a pass-2 review re-anchoring had carried the caveat, the $0 replay (no review
+     pass) does not. NOT FLAGGED by any check: a risk stated inside an accounted paragraph is not
+     tracked. OPEN.
+  4. Raw-material inflation on storage returns (page 33: "surging cost inflation from raw
+     materials (i.e. lithium, copper and al…) that might put downward pressure on the IRR of ESS
+     projects") — NOT ON A CARD as a risk. The paragraph is anchored; its figures (45%, 14%, 12%)
+     are captured and carried by the energy-security / storage thesis, so neither ledger nor
+     coverage check flags it. OPEN.
+  Every risk a model pass PROPOSED is now accounted for in the coverage report (11 in the
+  cleaned run, each with the card(s) it is on, or dropped and why).
+
+COMPANIES the baseline named and the cleaned run did not record
+  Renault, Volvo, Carwow, OLX — page 12, "sharp increases in EV enquiries and orders across
+  Renault, Volvo, Carwow and OLX": examples of EV demand after the oil shock, supporting the
+  energy-security thesis (SKIP). CBRE — page 13, "(CBRE, Feb 25)": the dated source of a data
+  centre figure. All five sentences are captured; the names were not extracted (the compact
+  extraction records at most 25 claims, and pass 1b reviews only UNANCHORED paragraphs). Now
+  LISTED for review — "named in a cited paragraph, not recorded", with how the sentence names them
+  (a list of examples / a dated source) — 9 such names in the cleaned run, never added
+  automatically (DW, Reuters, Renault, Volvo, Carwow, OLX, Cox Automotive, CBRE, PV Magazine).
+  Material? None is an exposure the source recommends; Renault and Volvo are sector examples of a
+  SKIP thesis. Start Campus: PRIVATE in the baseline, UNRESOLVED in the cleaned run (a resolution
+  difference, not a loss).
+
+THE NUMBER WRITTEN IN WORDS — a CORRECTION of my own 2026-10-12 report
+  The record docs/records/2026-10-12-theme-intelligence-pdf-glyph-quarantine.md said "added
+  gradually over four years from 2025 to 2028" was SILENTLY ABSENT because the ledger "counts
+  digits". That was WRONG. The ledger already reads counted periods written in words
+  (completeness._WORD_FIG: "four years", "seven straight quarters"): the figure "four years" in
+  that sentence (page 22) was in the cleaned run's ledger, reviewed by pass 1b, and judged
+  IMMATERIAL with a stated reason — "capacity addition timing assumption, modeling context". The
+  baseline captured it. So it was a recorded materiality judgment that differed between two model
+  answers, not a silent loss. A figure without a verdict stays OPEN (no_account), never
+  immaterial — pinned (test_a_figure_without_a_verdict_is_open_never_immaterial). What the
+  ledger still does NOT read as figures: words outside its unit list ("a decade", "double",
+  "dozens of") — widening it would change every completeness prompt and so every cached answer
+  (a $0 replay or a `state pull` would have to pay again); not done here.

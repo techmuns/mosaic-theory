@@ -1,0 +1,25 @@
+runs: [('R-20261011T100759Z-article', 'article', '2026-09-30', 'SUCCEEDED', 0.0), ('R-20261011T100806Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 0.0), ('R-20261011T100807Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 0.0), ('R-20261011T100901Z-ingest', 'ingest', '2026-10-11', 'SUCCEEDED', 0.0)]
+ARTICLE A-decec490fcdd TrendForce — 'AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce'
+   url https://www.trendforce.com/presscenter/news/20260930-13258.html
+   published 2026-09-30 (json-ld Article.datePublished); authors ['TrendForce']
+   version AV-d09770a67754253e FULL 962 words retrieved 2026-10-11 08:26 — fetched (cache); no alternate publication versions declared (hreflang)
+DOCUMENT D-6602664c37c93fa6 DUPLICATE pdf 7pp 2 tables — TrendForce 20260930-13258 AI server memory.pdf
+   article A-decec490fcdd version None; published None (None); received 2026-10-11 10:08 UTC
+   declared {'llm_permitted': 'True'}
+   basis: the operator states it duplicates article A-decec490fcdd
+   issues: 6 (showing 3): ['page 1: carries graphics (3 image(s), 110 vector object(s)) — chart labels are read as tex', 'page 2: carries graphics (3 image(s), 114 vector object(s)) — chart labels are read as tex', 'page 3: carries graphics (6 image(s), 32 vector object(s)) — chart labels are read as text']
+DOCUMENT D-bac61ba06ddc5cc9 DUPLICATE html Nonepp 0 tables — TrendForce 20260930-13258 AI server memory.html
+   article A-decec490fcdd version None; published 2026-09-30 (json-ld Article.datePublished); received 2026-10-11 10:08 UTC
+   declared {'llm_permitted': 'True'}
+   basis: the same text is already registered (another file or format)
+   issues: 0 (showing 0): []
+THESIS TH-1C1CAEA8AF v1 WATCH NEW ACTIVE ai_infrastructure.memory|pricing_cycle|positive|Global|seg:dram_hbm+nand_ssd
+   AI server demand sustains DRAM and NAND contract price increases into 4Q26
+   contributions: [('TrendForce', 'A-decec490fcdd', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: counter-evidence outweighs support)
+THESIS TH-BC52646E83 v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.memory|demand_volume_shift|positive|Global|seg:nand_ssd
+   Enterprise SSD demand from CSP AI inference drives accelerating price growth
+   contributions: [('TrendForce', 'A-decec490fcdd', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-ee57adcf2c3286: forecast window 2026-01-01..2026-12-31 (2026); C-57018f1da7d774: forecast window 2026-10-01..2026-12-31 (4q26); C-ff901694d7e7a3: forecast window 2026-10-01.
+RELATION TH-BC52646E83 -> TH-1C1CAEA8AF SIBLING None | same value-chain node, not the same claim — a different mechanism (pricing_cycle vs demand_volume_shift); overlapping but different segments (DRAM / HBM + NAND / SSD vs NAND / SSD) — adjacent support:
+ISSUE DOCUMENT_REVIEW A-decec490fcdd: D-6602664c37c93fa6 (TrendForce 20260930-13258 AI server memory.pdf): contains the held COMPLETE article plus more — another edition, an appendix or page furniture: a human decides (title overlap 100%, held text found in 

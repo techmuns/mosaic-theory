@@ -1,0 +1,171 @@
+
+===== 0. a fresh restore of the branch BEFORE (the old pull's result)
+$ --data-dir data/theme_intelligence/v2/ledger-z0 state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  paid-call ledger: 4 call(s), $0.5065 — every record of the replaced registry and of the branch kept once
+  rebuilt from theme-intelligence-state-test-20261011@2cf1f7e9b0a0: 4 runs, 2 articles, 2 theses, 3 documents
+  no local document to replay — the branch holds every one
+exit=0
+
+===== 0b. paid-call ledgers before
+branch (fresh restore): 4 call(s), $0.5065
+ledger-y (operator's pre-pull backup): 3 call(s), $0.3082; not on the branch: ['R-20261011T145550Z-ingest']
+ledger-w (fresh's pre-pull backup): 9 call(s), $0.9726; not on the branch: ['R-20261011T150313Z-ingest']
+
+===== 1a. machine X: paid import 1 (SYNTHETIC Markdown note)
+$ --data-dir data/theme_intelligence/v2/ledger-x ingest-file --path /private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-research-alpha-audit-bcba59/40b3c74c-6d2f-48a2-aecb-6ff27f598bd0/scratchpad/input/synthetic-grid-ledger-note.md --source gs_research --llm-permitted --as-of 2026-10-11 --budget 2
+run R-20261011T173147Z-ingest: ingest SUCCEEDED — synthetic-grid-ledger-note.md
+  D-1d40d4bf415e8a02  INGESTED   article A-5cd5bcb27e4e  no article of this publisher resembles it; pipeline PROCESSED
+cost $0.255 · outputs: data/theme_intelligence/v2/ledger-x/runs/R-20261011T173147Z-ingest
+exit=0
+
+===== 1b. machine X: paid import 2 (SYNTHETIC undated PDF, date stated)
+$ --data-dir data/theme_intelligence/v2/ledger-x ingest-file --path tests/fixtures/theme_intelligence/synthetic_documents/undated_synthetic.pdf --source ms_research --llm-permitted --published 2026-10-08 --as-of 2026-10-11 --budget 2
+run R-20261011T173232Z-ingest: ingest SUCCEEDED — undated_synthetic.pdf
+  D-7974ea9a88cd3904  INGESTED   article A-ef5f2dc620fd  no article of this publisher resembles it; pipeline PROCESSED
+cost $0.2523 · outputs: data/theme_intelligence/v2/ledger-x/runs/R-20261011T173232Z-ingest
+exit=0
+
+===== 1c. machine X ledger after its imports
+11 call(s), $1.0138
+
+===== 2a. machine Y (the operator's pre-pull backup): pull with the fix
+$ --data-dir data/theme_intelligence/v2/ledger-y state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  local registry backed up to data/theme_intelligence/v2/ledger-y/backups/registry-20261011T173329Z.db
+  carried 1 run(s) the branch lacks — run id, times, cost and every call record unchanged:
+    R-20261011T145550Z-ingest [ingest]: 3 paid call(s), $0.3082
+  paid-call ledger: 7 call(s), $0.8147 — every record of the replaced registry and of the branch kept once
+  rebuilt from theme-intelligence-state-test-20261011@2cf1f7e9b0a0: 5 runs, 2 articles, 2 theses, 3 documents
+  no local document to replay — the branch holds every one
+exit=0
+
+===== 2b. machine Y: push
+$ --data-dir data/theme_intelligence/v2/ledger-y state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC: carried run record (ledger fix test)
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed 4d53cd76709e onto theme-intelligence-state-test-20261011 (fast-forward from 2cf1f7e9b0a0): 5 runs, 2 articles, 2 theses, 3 documents
+exit=0
+
+===== 3a. machine X: push on a stale base — REFUSED
+$ --data-dir data/theme_intelligence/v2/ledger-x state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state push refused: the branch moved since your last pull (based on 2cf1f7e9b0a0d309f35c1efe38388d129ccfa187, now 4d53cd76709e) — run `state pull` first (your local documents are replayed onto it), then push
+exit=1
+
+===== 3b. machine X: pull — carry its two import runs, replay their documents
+$ --data-dir data/theme_intelligence/v2/ledger-x state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  local registry backed up to data/theme_intelligence/v2/ledger-x/backups/registry-20261011T173339Z.db
+  carried 2 run(s) the branch lacks — run id, times, cost and every call record unchanged:
+    R-20261011T173147Z-ingest [ingest]: 4 paid call(s), $0.2550
+    R-20261011T173232Z-ingest [ingest]: 3 paid call(s), $0.2523
+  paid-call ledger: 14 call(s), $1.3220 — every record of the replaced registry and of the branch kept once
+  rebuilt from theme-intelligence-state-test-20261011@4d53cd76709e: 7 runs, 2 articles, 2 theses, 3 documents
+  replay run R-20261011T173339Z-ingest (as of 2026-10-11) of R-20261011T173147Z-ingest, R-20261011T173232Z-ingest; every model answer from the cache, $0:
+    D-1d40d4bf415e8a02 (synthetic-grid-ledger-note.md): replayed — INGESTED
+    D-7974ea9a88cd3904 (undated_synthetic.pdf): replayed — INGESTED
+exit=0
+
+===== 3c. machine X: push
+$ --data-dir data/theme_intelligence/v2/ledger-x state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC: two paid imports after pull + replay (ledger fix test)
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed d21e466da4e9 onto theme-intelligence-state-test-20261011 (fast-forward from 4d53cd76709e): 8 runs, 4 articles, 4 theses, 5 documents
+exit=0
+
+===== 4a. machine W (fresh's pre-pull backup): pull with the fix
+$ --data-dir data/theme_intelligence/v2/ledger-w state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  local registry backed up to data/theme_intelligence/v2/ledger-w/backups/registry-20261011T173356Z.db
+  carried 1 run(s) the branch lacks — run id, times, cost and every call record unchanged:
+    R-20261011T150313Z-ingest [ingest]: 5 paid call(s), $0.4661
+  paid-call ledger: 19 call(s), $1.7882 — every record of the replaced registry and of the branch kept once
+  rebuilt from theme-intelligence-state-test-20261011@d21e466da4e9: 9 runs, 4 articles, 4 theses, 5 documents
+  no local document to replay — the branch holds every one
+exit=0
+
+===== 4b. machine W: push
+$ --data-dir data/theme_intelligence/v2/ledger-w state push --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011 --message SYNTHETIC: carried run record (ledger fix test)
+state push — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  pushed 8d9d00a73fa0 onto theme-intelligence-state-test-20261011 (fast-forward from d21e466da4e9): 9 runs, 4 articles, 4 theses, 5 documents
+exit=0
+
+===== 5a. a FRESH restore AFTER
+$ --data-dir data/theme_intelligence/v2/ledger-z state pull --remote https://github.com/techmuns/mosaic-theory.git --branch theme-intelligence-state-test-20261011
+state pull — https://github.com/techmuns/mosaic-theory.git theme-intelligence-state-test-20261011
+  paid-call ledger: 19 call(s), $1.7882 — every record of the replaced registry and of the branch kept once
+  rebuilt from theme-intelligence-state-test-20261011@8d9d00a73fa0: 9 runs, 4 articles, 4 theses, 5 documents
+  no local document to replay — the branch holds every one
+exit=0
+
+===== 5b. the ledger, before vs after
+union of every participant's paid calls before: 19 call(s), $1.7882
+fresh restore after: 19 call(s), $1.7882
+identical call by call (id, run, cost): True
+missing: []; extra: []
+runs carried for their record (ledger_only): [('R-20261011T145550Z-ingest', 0.3082), ('R-20261011T150313Z-ingest', 0.4661), ('R-20261011T173147Z-ingest', 0.255), ('R-20261011T173232Z-ingest', 0.2523)]
+replay runs: [('R-20261011T173339Z-ingest', ('R-20261011T173147Z-ingest', 'R-20261011T173232Z-ingest'), 0.0)]
+
+===== 6a. the fresh restore: a $0 scheduled-style scan (live discovery + health)
+$ --data-dir data/theme_intelligence/v2/ledger-z scan --days 10 --max-articles 0
+run R-20261011T173414Z-scan: scan execution SUCCEEDED · window 2026-10-02..2026-10-11 · as-of 2026-10-11
+  citi_must_c          OK       discovered  20 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window  20 · inaccessible   0 · errors  0
+  jpm_tmt              OK       discovered  51 · in window   1 · undated   0 · new   1 · known   0 · processed   0 · queued   1 · out-of-window  50 · inaccessible   0 · errors  0
+  ms_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+  nomura_connects      OK       discovered  14 · in window   1 · undated   1 · new   1 · known   0 · processed   0 · queued   1 · out-of-window  12 · inaccessible   0 · errors  0
+  trendforce           OK       discovered   5 · in window   2 · undated   0 · new   2 · known   0 · processed   0 · queued   2 · out-of-window   3 · inaccessible   0 · errors  0
+  semianalysis         OK       discovered  20 · in window   2 · undated   0 · new   2 · known   0 · processed   0 · queued   2 · out-of-window  18 · inaccessible   0 · errors  0
+  gs_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+counts {'articles_queued': 6, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 38, 'http_cache_hits': 13}
+source health (checked at the start of this scan) — Sources healthy: 2/7 | Degraded: 3 | Blocked: 2 | Errors: 0
+research verification INCOMPLETE — NOT fully verified — over the 4 article(s), 5 version(s) this report's 6 runs analysed: 0 of 25 stated figure(s) and 1 of 21 argument paragraph(s) open; 1 completeness pass(es) did not run; causes: pass_not_run 1. Open material is never used as evidence, so it can hold a thesis back but never raise its research action
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/ledger-z/runs/R-20261011T173414Z-scan
+exit=0
+
+===== 6b. the weekly report's manual imports (each once)
+**Articles manually imported** (5)
+- Goldman Sachs — “Synthetic Grid Note For The Ledger Test” (synthetic-grid-ledger-note.md; markdown) — INGESTED, manual upload; published 2026-10-09 (Markdown front matter (date)); uploaded 2026-10-11 17:31 UTC; analysed as of 2026-10-11; original NOT on this machine — its text is not re-verifiable here; article A-5cd5bcb27e4e [D-1d40d4bf415e8a02]
+- Morgan Stanley — “Synthetic Utilities Note: AI Power Demand” (737cf809ea03c04c0a851836c1ef92fa481d06f1a7d973ff1ea5185008dd3226.pdf; pdf, 2 page(s)) — INGESTED, manual upload; published 2026-10-01 (the document text (page 1-2)); uploaded 2026-10-11 14:56 UTC; analysed as of 2026-10-11; original NOT on this machine — its text is not re-verifiable here; article A-22c4843c119d [D-737cf809ea03c04c]
+- Morgan Stanley — “Synthetic Undated Note” (undated_synthetic.pdf; pdf, 1 page(s)) — INGESTED, manual upload; published 2026-10-08 (operator-stated (the document states no date)); uploaded 2026-10-11 17:32 UTC; analysed as of 2026-10-11; original NOT on this machine — its text is not re-verifiable here; article A-ef5f2dc620fd [D-7974ea9a88cd3904]
+- SemiAnalysis — “Synthetic Memory Note: Inference Keeps Memory Tight” (semianalysis_full_synthetic.pdf; pdf, 1 page(s)) — UPGRADED, manual upload; published 2026-09-28 (the document text (page 1-2)); uploaded 2026-10-11 14:53 UTC; analysed as of 2026-10-11; original NOT on this machine — its text is not re-verifiable here; article A-830a528c98ba [D-d84d23f59e316425]
+- Morgan Stanley — “Synthetic Utilities Note: AI Power Demand Moves On-Site” (ms_report_synthetic.html; html) — REVIEW, manual upload; published 2026-10-01 (the document text (opening lines)); uploaded 2026-10-11 15:03 UTC; analysed as of 2026-10-11; original NOT on this machine — its text is not re-verifiable here; article A-22c4843c119d [D-ff11efe9f6404cc4]
+
+**Partial articles awaiting a complete document** (0)
+- none
+
+**Publishers blocked or degraded** (5)
+- Citi: DEGRADED — partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a teaser / excerpt); 2 sampled page(s) summarise a report they link to — the scan READS it (linked_reports = "fetch")
+- Morgan Stanley: BLOCKED — robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)
+- Nomura: DEGRADED — partial: 1 of 3 sampled article(s) partial (the page summarises a fulle
+
+===== 6c. QA of that run
+$ --data-dir data/theme_intelligence/v2/ledger-z qa --run latest
+[PASS] run status recorded: status SUCCEEDED; counts {'articles_queued': 6, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 38, 'http_cache_hits': 13}
+  [PASS] no unverified claim is linked to a thesis: 30 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 0 of 0 verified claim(s) in 0 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 0 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 0 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 0 article(s)
+  [PASS] every reported figure captured or judged immaterial: 0 figure(s) accounted for
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 0 article(s)
+  [PASS] source health recorded for every scanned channel: 7 channel(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] every configured source reported with consistent counts: 7 sources
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/ledger-z/runs/R-20261011T173414Z-scan
+QA R-20261011T173414Z-scan: 22/22 passed · scan execution SUCCEEDED · research verification NOTHING_ANALYSED — no article was analysed in this run
+exit=0
+
+===== 7. the branch tree
+22 file(s), all JSONL: True; article blocks with text: 0; forbidden content found in: ['registry/claims.jsonl', 'registry/extractions.jsonl']
+
+===== 7. the branch tree
+22 file(s), all JSONL: True; article blocks with text: 0; forbidden content found in: none

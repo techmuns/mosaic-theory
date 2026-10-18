@@ -1,0 +1,7 @@
+$ --data-dir data/theme_intelligence/v2/final-b2 article --url https://www.citigroup.com/global/insights/sizing-the-etf-opportunity-active-etfs-move-to-center-stage --as-of 2026-10-11 --source citi_must_c --budget 10
+run R-20261011T141958Z-article: scan execution PARTIAL — article PARTIAL_PROCESSED
+  TH-1373DCCE1F  SKIP         (was —           ) NEW       novelty_unverified       Active and differentiated ETFs drive next phase of U.S. ETF industry growth
+research verification INCOMPLETE — NOT fully verified — over the 1 article(s), 2 version(s) this run analysed: 1 of 252 stated figure(s) and 0 of 162 argument paragraph(s) open; causes: capture_not_verified 1. Open material is never used as evidence, so it can hold a thesis back but never raise its research action
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/final-b2/runs/R-20261011T141958Z-article
+exit=2

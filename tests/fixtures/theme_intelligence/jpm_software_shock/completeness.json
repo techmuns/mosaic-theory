@@ -1,0 +1,182 @@
+{
+ "provenance": {
+  "what": "FROZEN pass-1b completeness model output for the page above — replayed, never re-generated, so CI is deterministic",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-complete-1",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 20914,
+   "max_tokens": 21333,
+   "output_tokens": 1783
+  }
+ },
+ "output": {
+  "added_claims": [
+   {
+    "approximate": true,
+    "attributed_source": "publisher_own",
+    "block_id": "b017",
+    "chart_derived": true,
+    "confidence": "medium",
+    "epistemic": "actual",
+    "kind": "metric",
+    "local_id": "k1",
+    "measured_as_of": null,
+    "metric": "EV/sales multiple",
+    "period": "late 2021",
+    "qualifiers": [
+     "around"
+    ],
+    "quote": "peaks around 11.8x in late 2021",
+    "statement": "The S&P 500 Software Index EV/sales multiple peaked around 11.8x in late 2021.",
+    "unit": "x",
+    "value": 11.8,
+    "value_text": "11.8x"
+   }
+  ],
+  "added_hypotheses": [],
+  "added_mentions": [],
+  "added_risks": [],
+  "block_reviews": [
+   {
+    "block_id": "b026",
+    "claim_ids": [],
+    "hypothesis_ids": [],
+    "reason": "Index definition / glossary line, not an argument.",
+    "verdict": "immaterial"
+   }
+  ],
+  "figure_reviews": [
+   {
+    "claim_ids": [],
+    "figure_id": "b009#70",
+    "reason": "Reference line on RSI chart shown only as a threshold marker, not used to make the argument.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#30",
+    "reason": "Reference line on RSI chart; the 30 oversold threshold is already captured in c3 from the text.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#29",
+    "reason": "Historical intra-chart point shown only as context for the RSI trajectory.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#70-75",
+    "reason": "Historical chart range shown only as context for the RSI path.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#77",
+    "reason": "Historical peak shown only as chart context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#65-68",
+    "reason": "Historical chart range shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#27-30",
+    "reason": "Historical intra-chart dips shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b009#40-50",
+    "reason": "Historical chart oscillation range shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#6.5",
+    "reason": "Historical EV/sales chart point (2019) shown only as context for the multiple range.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#9-10",
+    "reason": "Historical chart range shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [
+     "k1"
+    ],
+    "figure_id": "b017#11.8",
+    "reason": "Peak multiple relevant to the magnitude of the valuation collapse argument.",
+    "verdict": "captured_by_added_claim"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#7.0",
+    "reason": "Historical trough shown only as context; the Nov 2022 comparison is already captured in c11.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#9-11",
+    "reason": "Historical range shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b017#11.0-11.3",
+    "reason": "Historical peaks shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.6%",
+    "reason": "Chart starting point (Dec '23) shown only as context; the latest Feb '26 gap captured by c19-c21 carries the argument.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.7-12.8%",
+    "reason": "Chart starting point shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.4-12.5%",
+    "reason": "Chart starting point shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#13.6%",
+    "reason": "Historical intermediate chart value shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#14.7-14.8%",
+    "reason": "Historical intermediate chart value shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#13.5%",
+    "reason": "Historical intermediate chart value shown only as context.",
+    "verdict": "immaterial"
+   },
+   {
+    "claim_ids": [],
+    "figure_id": "b023#12.4",
+    "reason": "Historical intermediate chart value shown only as context.",
+    "verdict": "immaterial"
+   }
+  ],
+  "hypothesis_additions": []
+ }
+}

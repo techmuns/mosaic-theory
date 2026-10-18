@@ -1,0 +1,1868 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-09-28",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.memory"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-11",
+   "first_ingested_at": "2026-10-11T10:16:27.762464Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-28",
+   "latest_article_date": "2026-09-28",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-B931F456C4",
+   "title": "Sparse attention does not reduce overall AI memory capacity demand"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-9f3d0dc68a6fd5",
+     "C-293bc78c1049d2"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage, because top-k selection requires the full context in HBM, and system optimizations like HiSparse offload KV cache to host DRAM rather than eliminating it."
+   },
+   {
+    "claim_ids": [
+     "C-9f3d0dc68a6fd5",
+     "C-293bc78c1049d2",
+     "C-6be84c324e943f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames the question as how sparse attention affects memory TAM including HBM and NAND, and concludes the sparse attention memory profile alone cannot portray KV cache efficiency; system optimizations keep memory capacity in play and shift reuse to host DRAM."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If sparse attention does not shrink memory capacity needs and instead shifts reuse to host DRAM, demand for HBM, DRAM and NAND in AI serving infrastructure is unlikely to be eroded by this efficiency technique, supporting the memory TAM."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-77a107cae7c45a"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "On B200, as concurrency rises from 8 to 16 requests, prompt tokens reused from GPU memory fall from 90.3% to 54.8%."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-6be84c324e943f",
+      "C-77a107cae7c45a"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Prompt token reuse from host memory rose from 6.0% to 40.3% as concurrency increased from 8 to 16."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5cff3137138cd2"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Overall cache hit rate stayed above 95% at all concurrency levels on B200."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-74731e5134868a"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "GLM-5 routes each token through 1 shared expert plus 8 of 256 experts, giving sparsity of 32."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9f3d0dc68a6fd5"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Sparse attention does not eliminate the memory capacity bottleneck because top-k selection typically requires the full context in HBM."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-293bc78c1049d2"
+     ],
+     "original_date": "2026-09-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage."
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 9 pieces of evidence from A-c051303aa7e1 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:16 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-9f3d0dc68a6fd5",
+     "C-293bc78c1049d2"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Sparse attention and KV compression reduce per-operation KV cache reads but top-k selection still needs the full context in HBM."
+   },
+   {
+    "claim_ids": [
+     "C-77a107cae7c45a",
+     "C-6be84c324e943f",
+     "C-5cff3137138cd2"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "volumes",
+    "text": "Serving systems offload KV cache from HBM to host DRAM and keep cache hit rates above 95%, sustaining demand for both HBM capacity and host DRAM."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Sustained memory capacity demand would support revenue of HBM/DRAM/NAND suppliers, but the article does not quantify any earnings or revenue effect for listed memory makers."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b062",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1e14d1252b0003",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "IndexShare layer sharing",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "GLM-5.2"
+    ],
+    "quote": "Z.ai proposes IndexShare (aka IndexCache) in GLM-5.2, where every 4 DSA layers share one indexer",
+    "role": "supports",
+    "unit": "DSA layers per indexer",
+    "value": 4.0,
+    "value_text": "4"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b096",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-59670c4e9ba56f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "memory footprint impact",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "computational overhead"
+    ],
+    "quote": "At the cost of computational overhead and doubling memory footprint, SAO replaces group-wise sampling with a value model",
+    "role": "supports",
+    "unit": "x",
+    "value": 2.0,
+    "value_text": "doubling"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5cff3137138cd2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "overall cache hit rate",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis InferenceX",
+    "period": null,
+    "qualifiers": [
+     "above",
+     "all concurrency levels"
+    ],
+    "quote": "keeping the overall cache hit rate above 95% at all concurrency levels",
+    "role": "supports",
+    "unit": "%",
+    "value": 95.0,
+    "value_text": "above 95%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6be84c324e943f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share of prompt tokens reused from host memory",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis InferenceX",
+    "period": null,
+    "qualifiers": [
+     "B200",
+     "concurrency 8 to 16"
+    ],
+    "quote": "Much of that reuse shifts to host memory, which rose from 6.0% to 40.3%.",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "6.0% to 40.3%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-74731e5134868a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "MoE routing",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "1 shared expert",
+     "sparsity 32"
+    ],
+    "quote": "For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+    "role": "supports",
+    "unit": "experts",
+    "value": 256.0,
+    "value_text": "8 out of 256"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-77a107cae7c45a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share of prompt tokens reused from GPU memory",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis InferenceX",
+    "period": null,
+    "qualifiers": [
+     "B200",
+     "concurrency 8 to 16"
+    ],
+    "quote": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%.",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "90.3% to 54.8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-293bc78c1049d2",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Sparse attention reduces KV cache memory and bandwidth requirements at the SDPA operation, but it does not reduce the overall memory capacity usage.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3ad415068055b5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "GLM 5.2/5.3 reduces the cost of retaining conversation history in two ways: KV compression (less cached state per token) and sparse attention (less of that state read per attention operation).",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "KV compression reduces the cached state stored per token, and sparse attention reduces how much of that state each attention operation reads",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-c051303aa7e1",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9f3d0dc68a6fd5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Sparse attention does not eliminate the memory capacity bottleneck because top-k selection typically requires the full context in HBM.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the top-k selection operation typically requires the full context to be in HBM, so sparse attention doesn\u2019t eliminate the memory capacity bottleneck",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2dd2f298c71b9d",
+     "name_as_written": "GB300",
+     "other_securities": [],
+     "quote": "GB300 delivers the lowest modeled serving cost",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GPU system benchmarked as lowest-cost at 150 tps in InferenceX"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-34ce6b28851eb6",
+     "name_as_written": "GB200",
+     "other_securities": [],
+     "quote": "still leaves it ahead of GB200 on cost efficiency",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GPU system benchmarked in InferenceX serving-cost comparison"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2f8f16d4f425dc",
+     "name_as_written": "MI355X",
+     "other_securities": [],
+     "quote": "compared with $0.049 for MI355X running ATOM",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "AMD GPU benchmarked against NVIDIA in serving-cost comparison"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c61613b05c245b",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "In comparison with AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "hardware vendor whose MI355X is compared against NVIDIA systems"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b52130af2769a8",
+     "name_as_written": "NVIDIA GPUs",
+     "other_securities": [],
+     "quote": "Ultra-High Interactivity on NVIDIA GPUs?",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "GPU maker referenced in TileRT interactivity analysis"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-25100ed28a87c6",
+     "name_as_written": "Z.ai",
+     "other_securities": [],
+     "quote": "here we explain the design of Z.ai\u2019s GLM-5 model series",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "developer of the GLM-5 model series analyzed in the article"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-18aafa1ff1028a",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "developer of DeepSeek Sparse Attention and V3.2 compared against GLM-5"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-25a5614a5b7552",
+     "name_as_written": "Moore Threads MTT S4000",
+     "other_securities": [],
+     "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Chinese GPU suspected as GLM-5's target hardware"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4cac927d79e3f0",
+     "name_as_written": "Moore Threads",
+     "other_securities": [],
+     "quote": "Moore Threads\u2019 collaboration with Z.ai",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Chinese GPU vendor collaborating with Z.ai, suspected target hardware for GLM-5"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fc03e3eff390c7",
+     "name_as_written": "H800",
+     "other_securities": [],
+     "quote": "MLA\u2019s SDPA arithmetic intensity during decode is roughly at the ridge point of H800",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GPU whose roofline DeepSeek designed around"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ed66e3b10b27ee",
+     "name_as_written": "vLLM",
+     "other_securities": [],
+     "quote": "vLLM keeping the first decoding step on a consistent CUDA graph execution path",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "open-source inference engine referenced for optimizations"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-86905dfc28f8aa",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: InferenceX | SemiAnalysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "publisher of the article and owner of InferenceX benchmark platform"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2774b4ca845156",
+     "name_as_written": "ATOM",
+     "other_securities": [],
+     "quote": "$0.049 for MI355X running ATOM",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "inference engine for AMD MI355X in benchmarks"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7debe17e096e37",
+     "name_as_written": "TileRT",
+     "other_securities": [],
+     "quote": "TileRT is a low-latency LLM inference engine",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Low-latency LLM inference engine that supported AMD MI355X first for GLM-5.3"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2975ddb7655591",
+     "name_as_written": "MI335X",
+     "other_securities": [],
+     "quote": "2x the P90 interactivity than the best FP4 MI335X config",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "AMD GPU config used as interactivity comparator against FP8 TileRT MI355X"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-30fcd13a4cd6a5",
+     "name_as_written": "GB300 NVL72",
+     "other_securities": [],
+     "quote": "Comparing to GB300 NVL72, it brings a 40% uplift in interactivity",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "NVIDIA GB300 NVL72 rack-scale system used as interactivity comparator"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8e4e50029e0282",
+     "name_as_written": "slime",
+     "other_securities": [],
+     "quote": "Z.ai uses slime , one of the best open-source RL training frameworks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Open-source RL training framework used by Z.ai as post-training infrastructure"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2fea7554655073",
+     "name_as_written": "DeepSeek V3.2",
+     "other_securities": [],
+     "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "DeepSeek model that introduced DeepSeek Sparse Attention, compared to GLM-5"
+    },
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bc3ad598f54875",
+     "name_as_written": "PyTorch",
+     "other_securities": [],
+     "quote": "stores teacher weights as PyTorch tensors pinned to CPU memory",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Framework whose tensors are used in slime's teacher-switching implementation"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-8b8aa7e97474f9",
+     "name_as_written": "SGLang",
+     "other_securities": [],
+     "quote": "the SGLang team designed HiSparse",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "team/engine behind HiSparse hierarchical memory system"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-275a983fa8dcfc",
+     "name_as_written": "InferenceX",
+     "other_securities": [],
+     "quote": "In our realtime benchmark board InferenceX",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "SemiAnalysis's realtime benchmark platform used for serving-cost estimates"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-c051303aa7e1",
+     "claim_ids": [
+      "C-6be84c324e943f"
+     ],
+     "direction": "positive",
+     "name": "DRAM",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "proactively offloads KV cache entries from device HBM to host DRAM"
+    }
+   ],
+   "sectors": [
+    "memory semiconductors",
+    "HBM",
+    "DRAM",
+    "NAND"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-77a107cae7c45a",
+      "C-6be84c324e943f"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The article provides a September 28 benchmark snapshot showing host-memory reuse rising sharply with concurrency, but draws a structural conclusion about memory TAM rather than a near-term trading view."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-9f3d0dc68a6fd5",
+      "C-293bc78c1049d2",
+      "C-6be84c324e943f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Efficiency techniques like sparse attention shift where the memory sits (HBM to host DRAM) rather than eliminating capacity needs, so the memory TAM is more resilient than a naive reading of sparse attention would suggest."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-293bc78c1049d2"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation, which a naive reading could interpret as reducing memory demand and memory TAM."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that sparse attention deployments materially cut aggregate HBM/DRAM provisioning per model"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory suppliers guiding to softer AI inference demand"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether reduced per-operation memory reads eventually translate into lower aggregate memory purchases as techniques mature"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether listed memory makers' earnings or guidance reflect this dynamic"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The magnitude of the net memory TAM effect, which the article does not quantify"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence sparse attention materially reduces aggregate memory provisioning"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Shift of KV cache to non-DRAM storage tiers at scale"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether listed memory suppliers (HBM/DRAM/NAND) quantify AI inference memory demand and whether sparse-attention adoption is factored into their TAM guidance."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory makers cite inference KV-cache offload to host DRAM as a demand driver"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Broader adoption of DSA-style models in production serving"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-c051303aa7e1",
+    "authors": [
+     "Kimbo Chen",
+     "Alec Ibarra",
+     "Wenyao Gao",
+     "Pratt Bhatt",
+     "Bryan Shan",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-9f3d0dc68a6fd5",
+     "C-293bc78c1049d2",
+     "C-77a107cae7c45a",
+     "C-6be84c324e943f",
+     "C-5cff3137138cd2",
+     "C-3ad415068055b5",
+     "C-74731e5134868a",
+     "C-1e14d1252b0003",
+     "C-59670c4e9ba56f"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-28T19:26:41Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Inside GLM-5.3: How Sparse Attention Affects DRAM Memory TAM",
+    "upstream_origins": [
+     "SemiAnalysis InferenceX",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-11 10:43 UTC from the registry (ti-engine-2; run R-20261011T101628Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-09-28",
+   "change_summary": "Initial record \u2014 created from A-c051303aa7e1",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-09-28",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.memory"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-11",
+     "first_ingested_at": "2026-10-11T10:16:27.762464Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-28",
+     "latest_article_date": "2026-09-28",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-B931F456C4",
+     "title": "Sparse attention does not reduce overall AI memory capacity demand"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-9f3d0dc68a6fd5",
+       "C-293bc78c1049d2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage, because top-k selection requires the full context in HBM, and system optimizations like HiSparse offload KV cache to host DRAM rather than eliminating it."
+     },
+     {
+      "claim_ids": [
+       "C-9f3d0dc68a6fd5",
+       "C-293bc78c1049d2",
+       "C-6be84c324e943f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames the question as how sparse attention affects memory TAM including HBM and NAND, and concludes the sparse attention memory profile alone cannot portray KV cache efficiency; system optimizations keep memory capacity in play and shift reuse to host DRAM."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If sparse attention does not shrink memory capacity needs and instead shifts reuse to host DRAM, demand for HBM, DRAM and NAND in AI serving infrastructure is unlikely to be eroded by this efficiency technique, supporting the memory TAM."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-77a107cae7c45a"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "On B200, as concurrency rises from 8 to 16 requests, prompt tokens reused from GPU memory fall from 90.3% to 54.8%."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6be84c324e943f",
+        "C-77a107cae7c45a"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Prompt token reuse from host memory rose from 6.0% to 40.3% as concurrency increased from 8 to 16."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5cff3137138cd2"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Overall cache hit rate stayed above 95% at all concurrency levels on B200."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-74731e5134868a"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "GLM-5 routes each token through 1 shared expert plus 8 of 256 experts, giving sparsity of 32."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9f3d0dc68a6fd5"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Sparse attention does not eliminate the memory capacity bottleneck because top-k selection typically requires the full context in HBM."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-293bc78c1049d2"
+       ],
+       "original_date": "2026-09-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage."
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 9 pieces of evidence from A-c051303aa7e1 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-11 10:16 UTC, analysed as of 2026-09-28, from a source published 2026-09-28; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-9f3d0dc68a6fd5",
+       "C-293bc78c1049d2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Sparse attention and KV compression reduce per-operation KV cache reads but top-k selection still needs the full context in HBM."
+     },
+     {
+      "claim_ids": [
+       "C-77a107cae7c45a",
+       "C-6be84c324e943f",
+       "C-5cff3137138cd2"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "volumes",
+      "text": "Serving systems offload KV cache from HBM to host DRAM and keep cache hit rates above 95%, sustaining demand for both HBM capacity and host DRAM."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Sustained memory capacity demand would support revenue of HBM/DRAM/NAND suppliers, but the article does not quantify any earnings or revenue effect for listed memory makers."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b062",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1e14d1252b0003",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "IndexShare layer sharing",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "GLM-5.2"
+      ],
+      "quote": "Z.ai proposes IndexShare (aka IndexCache) in GLM-5.2, where every 4 DSA layers share one indexer",
+      "role": "supports",
+      "unit": "DSA layers per indexer",
+      "value": 4.0,
+      "value_text": "4"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b096",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-59670c4e9ba56f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "memory footprint impact",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "computational overhead"
+      ],
+      "quote": "At the cost of computational overhead and doubling memory footprint, SAO replaces group-wise sampling with a value model",
+      "role": "supports",
+      "unit": "x",
+      "value": 2.0,
+      "value_text": "doubling"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5cff3137138cd2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "overall cache hit rate",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis InferenceX",
+      "period": null,
+      "qualifiers": [
+       "above",
+       "all concurrency levels"
+      ],
+      "quote": "keeping the overall cache hit rate above 95% at all concurrency levels",
+      "role": "supports",
+      "unit": "%",
+      "value": 95.0,
+      "value_text": "above 95%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6be84c324e943f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share of prompt tokens reused from host memory",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis InferenceX",
+      "period": null,
+      "qualifiers": [
+       "B200",
+       "concurrency 8 to 16"
+      ],
+      "quote": "Much of that reuse shifts to host memory, which rose from 6.0% to 40.3%.",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "6.0% to 40.3%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-74731e5134868a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "MoE routing",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "1 shared expert",
+       "sparsity 32"
+      ],
+      "quote": "For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+      "role": "supports",
+      "unit": "experts",
+      "value": 256.0,
+      "value_text": "8 out of 256"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-77a107cae7c45a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share of prompt tokens reused from GPU memory",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis InferenceX",
+      "period": null,
+      "qualifiers": [
+       "B200",
+       "concurrency 8 to 16"
+      ],
+      "quote": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%.",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "90.3% to 54.8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-293bc78c1049d2",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation but does not reduce overall memory capacity usage.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Sparse attention reduces KV cache memory and bandwidth requirements at the SDPA operation, but it does not reduce the overall memory capacity usage.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3ad415068055b5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "GLM 5.2/5.3 reduces the cost of retaining conversation history in two ways: KV compression (less cached state per token) and sparse attention (less of that state read per attention operation).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "KV compression reduces the cached state stored per token, and sparse attention reduces how much of that state each attention operation reads",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-c051303aa7e1",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9f3d0dc68a6fd5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Sparse attention does not eliminate the memory capacity bottleneck because top-k selection typically requires the full context in HBM.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the top-k selection operation typically requires the full context to be in HBM, so sparse attention doesn\u2019t eliminate the memory capacity bottleneck",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2dd2f298c71b9d",
+       "name_as_written": "GB300",
+       "other_securities": [],
+       "quote": "GB300 delivers the lowest modeled serving cost",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GPU system benchmarked as lowest-cost at 150 tps in InferenceX"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-34ce6b28851eb6",
+       "name_as_written": "GB200",
+       "other_securities": [],
+       "quote": "still leaves it ahead of GB200 on cost efficiency",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GPU system benchmarked in InferenceX serving-cost comparison"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2f8f16d4f425dc",
+       "name_as_written": "MI355X",
+       "other_securities": [],
+       "quote": "compared with $0.049 for MI355X running ATOM",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "AMD GPU benchmarked against NVIDIA in serving-cost comparison"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c61613b05c245b",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "In comparison with AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "hardware vendor whose MI355X is compared against NVIDIA systems"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b52130af2769a8",
+       "name_as_written": "NVIDIA GPUs",
+       "other_securities": [],
+       "quote": "Ultra-High Interactivity on NVIDIA GPUs?",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "GPU maker referenced in TileRT interactivity analysis"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-25100ed28a87c6",
+       "name_as_written": "Z.ai",
+       "other_securities": [],
+       "quote": "here we explain the design of Z.ai\u2019s GLM-5 model series",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "developer of the GLM-5 model series analyzed in the article"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-18aafa1ff1028a",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "developer of DeepSeek Sparse Attention and V3.2 compared against GLM-5"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-25a5614a5b7552",
+       "name_as_written": "Moore Threads MTT S4000",
+       "other_securities": [],
+       "quote": "we suspect GLM-5 is optimized for Moore Threads MTT S4000",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese GPU suspected as GLM-5's target hardware"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4cac927d79e3f0",
+       "name_as_written": "Moore Threads",
+       "other_securities": [],
+       "quote": "Moore Threads\u2019 collaboration with Z.ai",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese GPU vendor collaborating with Z.ai, suspected target hardware for GLM-5"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fc03e3eff390c7",
+       "name_as_written": "H800",
+       "other_securities": [],
+       "quote": "MLA\u2019s SDPA arithmetic intensity during decode is roughly at the ridge point of H800",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GPU whose roofline DeepSeek designed around"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ed66e3b10b27ee",
+       "name_as_written": "vLLM",
+       "other_securities": [],
+       "quote": "vLLM keeping the first decoding step on a consistent CUDA graph execution path",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "open-source inference engine referenced for optimizations"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-86905dfc28f8aa",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: InferenceX | SemiAnalysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "publisher of the article and owner of InferenceX benchmark platform"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2774b4ca845156",
+       "name_as_written": "ATOM",
+       "other_securities": [],
+       "quote": "$0.049 for MI355X running ATOM",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "inference engine for AMD MI355X in benchmarks"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7debe17e096e37",
+       "name_as_written": "TileRT",
+       "other_securities": [],
+       "quote": "TileRT is a low-latency LLM inference engine",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Low-latency LLM inference engine that supported AMD MI355X first for GLM-5.3"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2975ddb7655591",
+       "name_as_written": "MI335X",
+       "other_securities": [],
+       "quote": "2x the P90 interactivity than the best FP4 MI335X config",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "AMD GPU config used as interactivity comparator against FP8 TileRT MI355X"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-30fcd13a4cd6a5",
+       "name_as_written": "GB300 NVL72",
+       "other_securities": [],
+       "quote": "Comparing to GB300 NVL72, it brings a 40% uplift in interactivity",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "NVIDIA GB300 NVL72 rack-scale system used as interactivity comparator"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8e4e50029e0282",
+       "name_as_written": "slime",
+       "other_securities": [],
+       "quote": "Z.ai uses slime , one of the best open-source RL training frameworks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source RL training framework used by Z.ai as post-training infrastructure"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2fea7554655073",
+       "name_as_written": "DeepSeek V3.2",
+       "other_securities": [],
+       "quote": "DeepSeek Sparse Attention (DSA), introduced in DeepSeek V3.2",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "DeepSeek model that introduced DeepSeek Sparse Attention, compared to GLM-5"
+      },
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bc3ad598f54875",
+       "name_as_written": "PyTorch",
+       "other_securities": [],
+       "quote": "stores teacher weights as PyTorch tensors pinned to CPU memory",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Framework whose tensors are used in slime's teacher-switching implementation"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-8b8aa7e97474f9",
+       "name_as_written": "SGLang",
+       "other_securities": [],
+       "quote": "the SGLang team designed HiSparse",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "team/engine behind HiSparse hierarchical memory system"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-275a983fa8dcfc",
+       "name_as_written": "InferenceX",
+       "other_securities": [],
+       "quote": "In our realtime benchmark board InferenceX",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "SemiAnalysis's realtime benchmark platform used for serving-cost estimates"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-c051303aa7e1",
+       "claim_ids": [
+        "C-6be84c324e943f"
+       ],
+       "direction": "positive",
+       "name": "DRAM",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "proactively offloads KV cache entries from device HBM to host DRAM"
+      }
+     ],
+     "sectors": [
+      "memory semiconductors",
+      "HBM",
+      "DRAM",
+      "NAND"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-77a107cae7c45a",
+        "C-6be84c324e943f"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The article provides a September 28 benchmark snapshot showing host-memory reuse rising sharply with concurrency, but draws a structural conclusion about memory TAM rather than a near-term trading view."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-9f3d0dc68a6fd5",
+        "C-293bc78c1049d2",
+        "C-6be84c324e943f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Efficiency techniques like sparse attention shift where the memory sits (HBM to host DRAM) rather than eliminating capacity needs, so the memory TAM is more resilient than a naive reading of sparse attention would suggest."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-293bc78c1049d2"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Sparse attention reduces KV cache memory and bandwidth at the SDPA operation, which a naive reading could interpret as reducing memory demand and memory TAM."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that sparse attention deployments materially cut aggregate HBM/DRAM provisioning per model"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory suppliers guiding to softer AI inference demand"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether reduced per-operation memory reads eventually translate into lower aggregate memory purchases as techniques mature"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed memory makers' earnings or guidance reflect this dynamic"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The magnitude of the net memory TAM effect, which the article does not quantify"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence sparse attention materially reduces aggregate memory provisioning"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Shift of KV cache to non-DRAM storage tiers at scale"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether listed memory suppliers (HBM/DRAM/NAND) quantify AI inference memory demand and whether sparse-attention adoption is factored into their TAM guidance."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory makers cite inference KV-cache offload to host DRAM as a demand driver"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Broader adoption of DSA-style models in production serving"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-c051303aa7e1",
+      "authors": [
+       "Kimbo Chen",
+       "Alec Ibarra",
+       "Wenyao Gao",
+       "Pratt Bhatt",
+       "Bryan Shan",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-9f3d0dc68a6fd5",
+       "C-293bc78c1049d2",
+       "C-77a107cae7c45a",
+       "C-6be84c324e943f",
+       "C-5cff3137138cd2",
+       "C-3ad415068055b5",
+       "C-74731e5134868a",
+       "C-1e14d1252b0003",
+       "C-59670c4e9ba56f"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-28T19:26:41Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Inside GLM-5.3: How Sparse Attention Affects DRAM Memory TAM",
+      "upstream_origins": [
+       "SemiAnalysis InferenceX",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53"
+     }
+    ]
+   },
+   "content_sha": "ba8cd7a88715d6ac1fa290763eed9b016d81f450707078c88d251f0001e6ab32",
+   "created_at": "2026-10-11T10:16:27.768849Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-77a107cae7c45a",
+       "C-6be84c324e943f",
+       "C-5cff3137138cd2",
+       "C-74731e5134868a",
+       "C-1e14d1252b0003"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-9fd2f996fde9",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-77a107cae7c45a",
+       "C-6be84c324e943f",
+       "C-5cff3137138cd2",
+       "C-74731e5134868a"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-77a107cae7c45a: measured 2026-09-28 (0 days before the as-of); C-6be84c324e943f: measured 2026-09-28 (0 days before the as-of); C-5cff3137138cd2: measured 2026-09-28 (0 days before the as-of); C-74731e5134868a: measured 2026-09-28 (0 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: DRAM",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 5 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261011T101627Z-article",
+   "thesis_id": "TH-B931F456C4",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {
+  "s06.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s06.0 prints '28', which none of its cited claims carry: 'The article provides a September 28 benchmark snapshot showing host-memory reuse rising sharply with'"
+ }
+}

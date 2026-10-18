@@ -1,0 +1,72 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.010941Z",
+  "detail": "s07.9: Most sub-claims are supported, but 'PC DRAM end-market sales pressured by higher component costs' is not in any cited span; cited spans cover NAND divergence, smartphone/mobile weakness, flexible SSD pricing, inventory reliance, NAND wafer highs, and weak module demand \u2014 not PC DRAM end-market cost pressure. | 'Consumer-side memory demand remains weak \u2014 PC DRAM end-market sales pressured by higher component co'",
+  "issue_id": "VI-03ba8266068415",
+  "ref_id": "TH-1C1CAEA8AF:s07.9",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-10T19:15:09.953931Z",
+  "detail": "h1 AI server memory demand sustains DRAM and NAND con cites ['C-21603191e915bd'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-11ad60203b79c2",
+  "ref_id": "h1 AI server memory demand sustains DRAM and NAND con",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T19:15:10.011068Z",
+  "detail": "s07.10: first check NUMBER_NOT_IN_CITED_CLAIMS (s07.10 prints '4', which none of its cited claims carry: \"Some suppliers' price increases are expected to lag the market average in 4Q26 due to pricing mechan\") \u2014 re-anchored to C-96dd1222978a45; after re-anchoring: supported",
+  "issue_id": "VI-39728b95166b8c",
+  "ref_id": "TH-1C1CAEA8AF:s07.10",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.014200Z",
+  "detail": "s06.1: The cited span supports agentic AI data growth and QLC demand, but does not mention a 'shift from LLM training to AI deployment'; that framing is not in the cited span. | 'Shift from LLM training to AI deployment and agentic AI data growth structurally lifts enterprise SS'",
+  "issue_id": "VI-ad1cf1b72bfdba",
+  "ref_id": "TH-BC52646E83:s06.1",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T19:15:10.011073Z",
+  "detail": "s07.1: first check REVIEW_PARTIAL (s07.1: Cited span supports negotiations narrowed to price confirmation for small order volumes, but the eMMC/UFS label and the 'OEMs buy only minimum relationsh) \u2014 re-anchored to C-12224ebea45f54; after re-anchoring: supported",
+  "issue_id": "VI-b41a229c00ab0f",
+  "ref_id": "TH-1C1CAEA8AF:s07.1",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.014206Z",
+  "detail": "s07.4: The sentence enumerates specific pressures (PC DRAM higher component costs, mobile bit demand suppressed, client SSD procurement limited by inventories, eMMC/UFS and NAND wafer buyer caution). Cited spans support divergence, smartphone bit demand suppression, flexible pricing, smartphone inventory reliance, NAND wafer historical highs, and modest module-maker price growth \u2014 but the specific 'PC DRAM pressured by higher component costs' and 'client SSD procurement limited by inventories' claims are not in the cited spans. | 'Consumer-side memory demand remains weak \u2014 PC DRAM end-market sales pressured by higher component co'",
+  "issue_id": "VI-b5a5eee88e4e5e",
+  "ref_id": "TH-BC52646E83:s07.4",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.010932Z",
+  "detail": "s03.1: The cited spans say server DRAM remains undersupplied and suppliers prioritize advanced-process capacity, but they do not mention component, packaging/testing, and front-end capacity being unable to fully meet demand \u2014 that specific mechanism is not in the cited spans. | 'Server DRAM remains undersupplied as component, packaging/testing, and front-end capacity cannot ful'",
+  "issue_id": "VI-cd67b6a9eb9f66",
+  "ref_id": "TH-1C1CAEA8AF:s03.1",
+  "run_id": "R-20261010T191509Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]

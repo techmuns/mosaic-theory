@@ -1,0 +1,334 @@
+{
+ "archive": [
+  {
+   "action": "WATCH",
+   "card": "cards/TH-04140F1CA8.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-02-09",
+   "mechanism": "valuation_dislocation",
+   "node": "ai_infrastructure",
+   "region": "US",
+   "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-04140F1CA8",
+   "title": "Hyperscalers, chipmakers and materials mispriced after being swept into software rout",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-8DA46A49DB.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-02-09",
+   "mechanism": "valuation_dislocation",
+   "node": "software",
+   "region": "US",
+   "sector": "Software industry (broad)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8DA46A49DB",
+   "title": "Indiscriminate software sell-off oversold the whole software sector",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-A56902FFB6.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-02-09",
+   "mechanism": "margin_expansion_adoption",
+   "node": "ai_adoption.enterprise_margins",
+   "region": "US",
+   "sector": "Productivity and margin effects at companies adopting AI",
+   "status": "ACTIVE",
+   "thesis_id": "TH-A56902FFB6",
+   "title": "AI adopters show measurable margin expansion versus non-adopters",
+   "versions": 1
+  }
+ ],
+ "archived_total": 0,
+ "articles_blocked": 0,
+ "articles_partial": 0,
+ "articles_read": 1,
+ "attributions_only": 0,
+ "banner": null,
+ "categories": {
+  "ARCHIVED": [],
+  "CHALLENGED": [],
+  "DOWNGRADED": [],
+  "NEW": [
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-02-09",
+    "article_date": "2026-02-09",
+    "card": "cards/TH-04140F1CA8.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-10 19:15 UTC",
+    "flags": [],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-02-09",
+    "named_companies": [
+     "Meta (META)",
+     "Amazon (AMZN)",
+     "Alphabet (GOOGL/GOOG)",
+     "Microsoft (MSFT)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check whether hyperscaler capex guidance (Meta, Amazon, Alphabet, Microsoft) and chip/materials orders remain intact, and gauge how far AI-infrastructure names fell relative to unchanged demand fundamentals.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "the hyperscalers that invested early in AI technology (positive)",
+     "chipmakers and commodity-related players in the AI supply chain (positive)"
+    ],
+    "sectors": [
+     "hyperscalers",
+     "chipmakers",
+     "materials in the AI supply chain"
+    ],
+    "sources": [
+     "J.P. Morgan Private Bank \u2014 Kriti Gupta \u2014 \u201cSoftware Shock: AI\u2019s Broken Logic\u201d (article date 2026-02-09) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-04140F1CA8",
+    "title": "Hyperscalers, chipmakers and materials mispriced after being swept into software rout",
+    "version": 1,
+    "what_changed": [
+     "Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors.",
+     "The author argues the market is selling indiscriminately.",
+     "Stocks that should benefit from AI disruption (hyperscalers, chipmakers, materials) are also down.",
+     "The author recommends focusing on large-cap leaders, chipmakers and commodity-related players in the AI supply chain.",
+     "The large-cap leaders, chipmakers and commodity players have been swept up in the software sell-off but are most likely to benefit long term."
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Capex forecasts from Meta, Amazon, Alphabet and Microsoft were scorned by investors. [C-85c70adb2c6571]",
+     "[novelty_unverified] The author argues the market is selling indiscriminately. [C-6e985cd624ff42]",
+     "[novelty_unverified] Stocks that should benefit from AI disruption (hyperscalers, chipmakers, materials) are also down. [C-4438c21a95273b]",
+     "[novelty_unverified] The author recommends focusing on large-cap leaders, chipmakers and commodity-related players in the AI supply chain. [C-df6e9d3592c8a4]",
+     "[novelty_unverified] The large-cap leaders, chipmakers and commodity players have been swept up in the software sell-off but are most likely to benefit long term. [C-99895a43ebf8d6]"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-02-09",
+    "article_date": "2026-02-09",
+    "card": "cards/TH-8DA46A49DB.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-10 19:15 UTC",
+    "flags": [],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-02-09",
+    "named_companies": [],
+    "named_instruments": [
+     "S&P 500 Software Index [index]",
+     "iShares Expanded Tech-Software Sector ETF (IGV) [fund IGV]"
+    ],
+    "next_action": "Assess whether agentic AI tools (Claude Code) are materially displacing SaaS revenue/seats, and compare current software EV/sales against estimated growth/terminal-value impairment to judge if the sell-off is overdone.",
+    "other_named": [
+     "Claude Code [not a security]"
+    ],
+    "previous_action": null,
+    "private_named": [
+     "DeepSeek [private company]"
+    ],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+    ],
+    "sector_exposures": [
+     "software (positive)"
+    ],
+    "sectors": [
+     "software"
+    ],
+    "sources": [
+     "J.P. Morgan Private Bank \u2014 Kriti Gupta \u2014 \u201cSoftware Shock: AI\u2019s Broken Logic\u201d (article date 2026-02-09) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-8DA46A49DB",
+    "title": "Indiscriminate software sell-off oversold the whole software sector",
+    "version": 1,
+    "what_changed": [
+     "The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990.",
+     "IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash.",
+     "The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x.",
+     "The software sector's EV/sales ratio is near levels seen in November 2022.",
+     "The S&P 500 Software Index has fallen into a bear market.",
+     "If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point."
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] The S&P 500 Software Index has a current RSI of 18, the most oversold since 1990. \u27e8cited figures: data as of 2026-02-05\u27e9 [C-79ada2c20447c0]",
+     "[novelty_unverified] IGV is trading over 20% below its 200-day moving average, the widest spread since the end of the dotcom crash. [C-3f193c5f0fcc97]",
+     "[novelty_unverified] The S&P 500 Software Index EV/sales multiple peaked near 11.5-11.6x in 2025 and the latest reading is 8x. \u27e8cited figures: approximate, read from a chart\u27e9 [C-08b191d8aae04e]",
+     "[novelty_unverified] The software sector's EV/sales ratio is near levels seen in November 2022. [C-f0b54d48c8d4be]",
+     "[novelty_unverified] The S&P 500 Software Index has fallen into a bear market. [C-d345f3606a0f63]",
+     "[novelty_unverified] If you believe Claude Code is just another DeepSeek moment, current software valuations are worth a look as an entry point. [C-b933672d32a384]"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: premise is conditional in the source"
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-02-09",
+    "article_date": "2026-02-09",
+    "card": "cards/TH-A56902FFB6.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-10 19:15 UTC",
+    "flags": [],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-02-09",
+    "named_companies": [],
+    "named_instruments": [
+     "S&P 500 [index]"
+    ],
+    "next_action": "Investigate the composition of the 145-company AI Usage basket and whether its margin advantage reflects AI adoption causally or pre-existing higher margins.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "AI adopters in the S&P 500 (positive)"
+    ],
+    "sectors": [
+     "S&P 500 AI adopters"
+    ],
+    "sources": [
+     "J.P. Morgan Private Bank \u2014 Kriti Gupta \u2014 \u201cSoftware Shock: AI\u2019s Broken Logic\u201d (article date 2026-02-09) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-A56902FFB6",
+    "title": "AI adopters show measurable margin expansion versus non-adopters",
+    "version": 1,
+    "what_changed": [
+     "S&P 500 AI adopters posted margin expansion outpacing the index and non-adopters by 2-3 percentage points.",
+     "At Feb 2026 NTM net margin for the S&P 500 AI Usage basket was 16.4%.",
+     "At Feb 2026 NTM net margin for the Ex AI Usage group was 13.0%.",
+     "The AI Usage basket includes 145 companies in the S&P 500.",
+     "At Feb 2026 NTM net margin for the S&P 500 was 14.5%."
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] S&P 500 AI adopters posted margin expansion outpacing the index and non-adopters by 2-3 percentage points. [C-d2d5f88417e6e6]",
+     "[novelty_unverified] At Feb 2026 NTM net margin for the S&P 500 AI Usage basket was 16.4%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9 [C-b92f649a535a64]",
+     "[novelty_unverified] At Feb 2026 NTM net margin for the Ex AI Usage group was 13.0%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9 [C-32a82882ea3425]",
+     "[novelty_unverified] The AI Usage basket includes 145 companies in the S&P 500. \u27e8cited figures: data as of 2026-02-02\u27e9 [C-c19a377bec9d62]",
+     "[novelty_unverified] At Feb 2026 NTM net margin for the S&P 500 was 14.5%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9 [C-ecd52e2e2bffce]"
+    ],
+    "why_action": "Watch \u2014 not yet Research Now: no verified dislocation or catalyst"
+   }
+  ],
+  "UNCHANGED BUT MATERIAL": [],
+  "UPGRADED": []
+ },
+ "caveats": [],
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191506Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "kpi": {
+  "accessible_sources": null,
+  "archived": 0,
+  "articles_blocked": 0,
+  "articles_full": 1,
+  "articles_partial": 0,
+  "blocked_sources": null,
+  "challenged": 0,
+  "downgraded": 0,
+  "figures_in_articles": 34,
+  "figures_uncaptured": 0,
+  "new": 3,
+  "queued": 0,
+  "research_now": 0,
+  "skip": 0,
+  "theses_this_run": 3,
+  "upgraded": 0,
+  "watch": 3
+ },
+ "no_material_change": [],
+ "notes": [],
+ "run": {
+  "as_of": "2026-02-09",
+  "checkpoint": {},
+  "complete_prompt_version": "ti-complete-1",
+  "cost_usd": 0.0,
+  "counts": {
+   "articles_processed": 1,
+   "attributions_only": 0,
+   "claims_added_by_completeness": 1,
+   "claims_extracted": 26,
+   "claims_verified": 26,
+   "figures_in_articles": 34,
+   "figures_uncaptured": 0,
+   "http_cache_hits": 1,
+   "http_requests": 0,
+   "llm_calls": 7,
+   "llm_calls_cached": 7,
+   "mentions": 14,
+   "replayed_from_cache_cache_creation_input_tokens": 0,
+   "replayed_from_cache_cache_read_input_tokens": 0,
+   "replayed_from_cache_input_tokens": 74672,
+   "replayed_from_cache_output_tokens": 23015,
+   "theses_added_by_completeness": 0,
+   "theses_created": 3,
+   "theses_updated": 0
+  },
+  "db_schema_version": 2,
+  "engine_version": "ti-engine-2",
+  "extract_prompt_version": "ti-extract-6",
+  "fetch_seconds": 0.0,
+  "finished_at": "2026-10-10T19:15:06.856993Z",
+  "llm_model": "claude-opus-4-8",
+  "llm_provider": "anthropic",
+  "llm_seconds": 0.0,
+  "mode": "article",
+  "output_dir": "data/theme_intelligence/v2/software-shock-16/runs/R-20261010T191506Z-article",
+  "parser_version": "ti-parse-4",
+  "review_prompt_version": "ti-review-4",
+  "run_id": "R-20261010T191506Z-article",
+  "sources": [],
+  "started_at": "2026-10-10T19:15:06.529810Z",
+  "status": "SUCCEEDED",
+  "tokens": {},
+  "warnings": [],
+  "window_from": "2026-02-09",
+  "window_to": "2026-02-09"
+ },
+ "sources": [],
+ "sources_checked": 0,
+ "sources_failed": [],
+ "themes_created": 3,
+ "themes_updated": 0,
+ "totals_active": {
+  "RESEARCH NOW": 0,
+  "SKIP": 0,
+  "WATCH": 3
+ },
+ "validation": {
+  "BLOCK": 0,
+  "HOLD": 0,
+  "INFO": 7,
+  "WARN": 7
+ },
+ "verification": {
+  "articles": 1,
+  "articles_preview_only": 0,
+  "articles_unreadable": 0,
+  "figures": 34,
+  "figures_open": 0,
+  "open_causes": {},
+  "open_items": [],
+  "paragraphs": 12,
+  "paragraphs_open": 0,
+  "passes_not_run": 0,
+  "status": "FULLY_VERIFIED",
+  "summary": "every figure and argument paragraph accounted for, full text read (over the 1 article(s) this run analysed: 0 of 34 stated figure(s) and 0 of 12 argument paragraph(s) open)"
+ },
+ "window": "2026-02-09 \u2192 2026-02-09 (as of 2026-02-09, mode article)"
+}

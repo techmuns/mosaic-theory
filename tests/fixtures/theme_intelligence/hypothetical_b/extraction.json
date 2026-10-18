@@ -1,0 +1,87 @@
+{
+ "article_classification": {
+  "article_class": "publisher_commentary",
+  "basis": "HYPOTHETICAL test fixture"
+ },
+ "claims": [
+  {
+   "local_id": "c1",
+   "block_id": "b002",
+   "quote": "Microsoft reaffirmed that its fiscal 2027 capital expenditure will grow 25%",
+   "statement": "Microsoft reaffirmed FY2027 capex growth of 25% (company statement)",
+   "kind": "event",
+   "epistemic": "forecast",
+   "metric": "capex growth guidance",
+   "value": 25,
+   "value_text": "25%",
+   "unit": "%",
+   "period": "FY2027",
+   "scope": "Microsoft",
+   "attributed_source": "Microsoft",
+   "confidence": "high"
+  }
+ ],
+ "mentions": [
+  {
+   "name_as_written": "Microsoft",
+   "block_id": "b002",
+   "quote": "Microsoft reaffirmed that its fiscal 2027 capital expenditure will grow 25%",
+   "entity_type": "company",
+   "role": "spending_customer",
+   "role_detail": "hyperscaler reaffirming AI capex",
+   "direction": "positive",
+   "recommendation_status": "not_a_recommendation",
+   "ticker_hint": "MSFT"
+  }
+ ],
+ "hypotheses": [
+  {
+   "local_id": "h1",
+   "title": "AI infrastructure still sold despite reaffirmed capex",
+   "value_chain_node": "ai_infrastructure",
+   "mechanism": "valuation_dislocation",
+   "direction": "positive",
+   "geography": "US",
+   "sectors": [
+    "Information Technology"
+   ],
+   "horizon": "next_2_4_quarters",
+   "stance_in_source": "asserted",
+   "bottom_line_fact": {
+    "text": "Microsoft reaffirmed 25% FY2027 capex growth while AI infrastructure shares stayed near their lows.",
+    "provenance": "article_fact",
+    "claim_ids": [
+     "c1"
+    ]
+   },
+   "bottom_line_inference": {
+    "text": "Reaffirmed spending alongside depressed shares is consistent with the dislocation thesis; returns on that spending remain unproven.",
+    "provenance": "model_inference"
+   },
+   "transmission_chain": [
+    {
+     "step": "volumes",
+     "text": "Reaffirmed capex sustains AI infrastructure volumes.",
+     "provenance": "model_inference"
+    }
+   ],
+   "supporting_claim_ids": [
+    "c1"
+   ],
+   "catalyst": {
+    "window_text": null
+   },
+   "affected_mentions": [
+    {
+     "name_as_written": "Microsoft",
+     "role": "spending_customer"
+    }
+   ],
+   "next_research_step": "Compare reaffirmed hyperscaler capex with the AI infrastructure names' price moves since 2026-02-09.",
+   "unknowns": [
+    "Whether the spending earns an adequate return"
+   ]
+  }
+ ],
+ "market_risks": []
+}

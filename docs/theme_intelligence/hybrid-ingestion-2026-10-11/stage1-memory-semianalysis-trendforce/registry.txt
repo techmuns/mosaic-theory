@@ -1,0 +1,39 @@
+runs: [('R-20261011T101627Z-article', 'article', '2026-09-28', 'PARTIAL', 0.0), ('R-20261011T101628Z-article', 'article', '2026-09-30', 'SUCCEEDED', 0.0)]
+ARTICLE A-c051303aa7e1 SemiAnalysis — 'Inside GLM-5.3: How Sparse Attention Affects DRAM Memory TAM'
+   url https://newsletter.semianalysis.com/p/sparse-savings-persistent-demand-inside-glm53
+   published 2026-09-28 (json-ld Article.datePublished); authors ['Kimbo Chen', 'Alec Ibarra', 'Wenyao Gao', 'Pratt Bhatt', 'Bryan Shan', 'Dylan Patel']
+   version AV-0e02e6955dbd1cdd PARTIAL 3310 words retrieved 2026-10-11 08:10 — fetched (cache); no alternate publication versions declared (hreflang); paywall / subscriber marker on the page — analysed as an excerpt only
+ARTICLE A-decec490fcdd TrendForce — 'AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists, Says TrendForce'
+   url https://www.trendforce.com/presscenter/news/20260930-13258.html
+   published 2026-09-30 (json-ld Article.datePublished); authors ['TrendForce']
+   version AV-d09770a67754253e FULL 962 words retrieved 2026-10-11 08:26 — fetched (cache); no alternate publication versions declared (hreflang)
+THESIS TH-1C1CAEA8AF v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.memory|pricing_cycle|positive|Global|seg:dram_hbm+nand_ssd
+   AI server memory demand sustains DRAM and NAND contract price increases in 4Q26
+   contributions: [('TrendForce', 'A-decec490fcdd', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-21603191e915bd: forecast window 2026-10-01..2026-12-31 (4q26); C-96dd1222978a45: forecast window 2026-10-01..2026-12-31 (4q26); C-67f0ed20ead1de: forecast window 2026-10-01.
+THESIS TH-B121174B17 v1 WATCH NEW ACTIVE ai_infrastructure.compute_semis|competitive_share_shift|positive|China
+   GLM-5 attention config suggests optimization for Chinese Moore Threads accelerators, not NVIDIA
+   contributions: [('SemiAnalysis', 'A-c051303aa7e1', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is speculative in the source; retrieval PARTIAL)
+THESIS TH-B931F456C4 v1 WATCH NEW ACTIVE ai_infrastructure.memory|demand_volume_shift|positive|Global|seg:dram_hbm
+   Sparse attention does not reduce overall AI memory capacity demand
+   contributions: [('SemiAnalysis', 'A-c051303aa7e1', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)
+THESIS TH-BC52646E83 v1 RESEARCH NOW NEW ACTIVE ai_infrastructure.memory|demand_volume_shift|positive|Global|seg:nand_ssd
+   Enterprise SSD the standout: accelerating prices on CSP AI inference buildout
+   contributions: [('TrendForce', 'A-decec490fcdd', 'novelty_unverified')]
+   rule: NOW all conditions met — near-term window(s) C-25673262dd33cf: forecast window 2026-10-01..2026-12-31 (4q26); C-0679481de62c79: forecast window 2026-01-01..2026-12-31 (2026); C-48b9edfec86838: forecast window 2026-10-01.
+THESIS TH-F2CD2F7AFC v1 WATCH NEW ACTIVE ai_infrastructure.compute_semis|competitive_share_shift|positive|Global
+   GB300/GB200 vs AMD MI355X serving-cost leadership depends on latency constraints
+   contributions: [('SemiAnalysis', 'A-c051303aa7e1', 'novelty_unverified')]
+   rule: WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no sector the source names); no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)
+RELATION TH-1C1CAEA8AF -> TH-B121174B17 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.compute_semis vs ai_infrastructure.memory)
+RELATION TH-BC52646E83 -> TH-B121174B17 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.compute_semis vs ai_infrastructure.memory)
+RELATION TH-B121174B17 -> TH-B931F456C4 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)
+RELATION TH-1C1CAEA8AF -> TH-F2CD2F7AFC SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.compute_semis vs ai_infrastructure.memory)
+RELATION TH-B121174B17 -> TH-F2CD2F7AFC SIBLING None | the same claim at an overlapping but different geography (China vs Global) — a separate thesis, never merged; adjacent support, never an automatic confirmation
+RELATION TH-BC52646E83 -> TH-F2CD2F7AFC SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.compute_semis vs ai_infrastructure.memory)
+RELATION TH-1C1CAEA8AF -> TH-B931F456C4 SIBLING None | same value-chain node, not the same claim — a different mechanism (demand_volume_shift vs pricing_cycle); overlapping but different segments (DRAM / HBM vs DRAM / HBM + NAND / SSD); a timeframe only o
+RELATION TH-F2CD2F7AFC -> TH-B931F456C4 SIBLING None | same parent sector (ai_infrastructure), different child economics (ai_infrastructure.memory vs ai_infrastructure.compute_semis)
+RELATION TH-BC52646E83 -> TH-B931F456C4 SIBLING None | same value-chain node, not the same claim — a different segment (DRAM / HBM vs NAND / SSD); a timeframe only one of them states — adjacent support: context, never a confirmation
+RELATION TH-BC52646E83 -> TH-1C1CAEA8AF SIBLING None | same value-chain node, not the same claim — a different mechanism (pricing_cycle vs demand_volume_shift); overlapping but different segments (DRAM / HBM + NAND / SSD vs NAND / SSD) — adjacent support:

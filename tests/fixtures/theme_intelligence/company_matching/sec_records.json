@@ -1,0 +1,953 @@
+{
+ "provenance": {
+  "what": "AUTHENTIC SEC records for the company-matching pins: the ticker-map rows of the registrants below (company_tickers_exchange.json, every line they list) and two fund rows (company_tickers_mf.json); each registrant's SIC and its recent periodic filings (Enbridge's from 2015 on, to keep its switch from 40-F to 10-K whole; the others the latest four). Cover pages are not included: the tests stand in a cover carrying the registrant's own symbols.",
+  "ticker_map_retrieved": "2026-10-10",
+  "fund_map_retrieved": "2026-10-10",
+  "submissions_retrieved": {
+   "0000004281": "2026-10-10",
+   "0000012927": "2026-10-10",
+   "0000016918": "2026-10-10",
+   "0000027904": "2026-10-10",
+   "0000040545": "2026-10-10",
+   "0000064803": "2026-10-10",
+   "0000097745": "2026-10-10",
+   "0000310158": "2026-10-10",
+   "0000313616": "2026-10-10",
+   "0000895728": "2026-10-14",
+   "0001232384": "2026-10-14",
+   "0001334933": "2026-10-14",
+   "0001455365": "2026-10-10",
+   "0001692063": "2026-10-14",
+   "0001868275": "2026-10-11",
+   "0001996810": "2026-10-11"
+  }
+ },
+ "exchange": {
+  "fields": [
+   "cik",
+   "name",
+   "ticker",
+   "exchange"
+  ],
+  "data": [
+   [
+    310158,
+    "Merck & Co., Inc.",
+    "MRK",
+    "NYSE"
+   ],
+   [
+    40545,
+    "GENERAL ELECTRIC CO",
+    "GE",
+    "NYSE"
+   ],
+   [
+    1996810,
+    "GE Vernova Inc.",
+    "GEV",
+    "NYSE"
+   ],
+   [
+    97745,
+    "THERMO FISHER SCIENTIFIC INC.",
+    "TMO",
+    "NYSE"
+   ],
+   [
+    313616,
+    "DANAHER CORP /DE/",
+    "DHR",
+    "NYSE"
+   ],
+   [
+    12927,
+    "BOEING CO",
+    "BA",
+    "NYSE"
+   ],
+   [
+    64803,
+    "CVS HEALTH Corp",
+    "CVS",
+    "NYSE"
+   ],
+   [
+    1868275,
+    "Constellation Energy Corp",
+    "CEG",
+    "Nasdaq"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENB",
+    "NYSE"
+   ],
+   [
+    4281,
+    "Howmet Aerospace Inc.",
+    "HWM",
+    "NYSE"
+   ],
+   [
+    27904,
+    "DELTA AIR LINES, INC.",
+    "DAL",
+    "NYSE"
+   ],
+   [
+    16918,
+    "CONSTELLATION BRANDS, INC.",
+    "STZ",
+    "NYSE"
+   ],
+   [
+    1692063,
+    "Schneider National, Inc.",
+    "SNDR",
+    "NYSE"
+   ],
+   [
+    1334933,
+    "URANIUM ENERGY CORP",
+    "UEC",
+    "NYSE"
+   ],
+   [
+    1455365,
+    "COGNITION THERAPEUTICS INC",
+    "CGTX",
+    "Nasdaq"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "EBBNF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TRP",
+    "NYSE"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TNCAF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TCANF",
+    "OTC"
+   ],
+   [
+    12927,
+    "BOEING CO",
+    "BA-PA",
+    "NYSE"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "EBBGF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "EBGEF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "EBRGF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "EBRZF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBFF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBGF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBHF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBMF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBNF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBOF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBRF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENBSF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENFFF",
+    "OTC"
+   ],
+   [
+    895728,
+    "ENBRIDGE INC",
+    "ENNPF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TCENF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TCEYF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TRPEF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TRPPF",
+    "OTC"
+   ],
+   [
+    1232384,
+    "TC ENERGY CORP",
+    "TRPRF",
+    "OTC"
+   ]
+  ]
+ },
+ "mf": {
+  "fields": [
+   "cik",
+   "seriesId",
+   "classId",
+   "symbol"
+  ],
+  "data": [
+   [
+    1100663,
+    "S000004354",
+    "C000012084",
+    "SOXX"
+   ],
+   [
+    1137360,
+    "S000034411",
+    "C000105869",
+    "SMH"
+   ]
+  ]
+ },
+ "submissions": {
+  "0000004281": {
+   "name": "Howmet Aerospace Inc.",
+   "sic": "3350",
+   "sicDescription": "Rolling Drawing & Extruding of  Nonferrous Metals",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-08-06",
+     "2026-05-07",
+     "2026-02-12",
+     "2025-10-30"
+    ],
+    "accessionNumber": [
+     "0000004281-26-000025",
+     "0000004281-26-000019",
+     "0000004281-26-000012",
+     "0001628280-25-047584"
+    ],
+    "primaryDocument": [
+     "hwm-20260630.htm",
+     "hwm-20260331.htm",
+     "hwm-20251231.htm",
+     "hwm-20250930.htm"
+    ]
+   }
+  },
+  "0000012927": {
+   "name": "BOEING CO",
+   "sic": "3721",
+   "sicDescription": "Aircraft",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-07-28",
+     "2026-04-22",
+     "2026-01-30",
+     "2025-10-29"
+    ],
+    "accessionNumber": [
+     "0001628280-26-050038",
+     "0001628280-26-026458",
+     "0001628280-26-004357",
+     "0001628280-25-047023"
+    ],
+    "primaryDocument": [
+     "ba-20260630.htm",
+     "ba-20260331.htm",
+     "ba-20251231.htm",
+     "ba-20250930.htm"
+    ]
+   }
+  },
+  "0000016918": {
+   "name": "CONSTELLATION BRANDS, INC.",
+   "sic": "2080",
+   "sicDescription": "Beverages",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-10-07",
+     "2026-07-01",
+     "2026-04-22",
+     "2026-01-08"
+    ],
+    "accessionNumber": [
+     "0000016918-26-000040",
+     "0000016918-26-000029",
+     "0000016918-26-000011",
+     "0000016918-26-000005"
+    ],
+    "primaryDocument": [
+     "stz-20260831.htm",
+     "stz-20260531.htm",
+     "stz-20260228.htm",
+     "stz-20251130.htm"
+    ]
+   }
+  },
+  "0000027904": {
+   "name": "DELTA AIR LINES, INC.",
+   "sic": "4512",
+   "sicDescription": "Air Transportation, Scheduled",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K"
+    ],
+    "filingDate": [
+     "2026-10-09",
+     "2026-07-10",
+     "2026-04-08",
+     "2026-02-11"
+    ],
+    "accessionNumber": [
+     "0000027904-26-000038",
+     "0000027904-26-000031",
+     "0000027904-26-000022",
+     "0000027904-26-000013"
+    ],
+    "primaryDocument": [
+     "dal-20260930.htm",
+     "dal-20260630.htm",
+     "dal-20260331.htm",
+     "dal-20251231.htm"
+    ]
+   }
+  },
+  "0000040545": {
+   "name": "GENERAL ELECTRIC CO",
+   "sic": "3600",
+   "sicDescription": "Electronic & Other Electrical Equipment (No Computer Equip)",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-07-16",
+     "2026-04-21",
+     "2026-01-29",
+     "2025-10-21"
+    ],
+    "accessionNumber": [
+     "0000040545-26-000049",
+     "0000040545-26-000027",
+     "0000040545-26-000008",
+     "0000040545-25-000132"
+    ],
+    "primaryDocument": [
+     "ge-20260630.htm",
+     "ge-20260331.htm",
+     "ge-20251231.htm",
+     "ge-20250930.htm"
+    ]
+   }
+  },
+  "0000064803": {
+   "name": "CVS HEALTH Corp",
+   "sic": "5912",
+   "sicDescription": "Retail-Drug Stores and Proprietary Stores",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-08-05",
+     "2026-05-06",
+     "2026-02-10",
+     "2025-10-29"
+    ],
+    "accessionNumber": [
+     "0000064803-26-000098",
+     "0000064803-26-000052",
+     "0000064803-26-000010",
+     "0000064803-25-000037"
+    ],
+    "primaryDocument": [
+     "cvs-20260630.htm",
+     "cvs-20260331.htm",
+     "cvs-20251231.htm",
+     "cvs-20250930.htm"
+    ]
+   }
+  },
+  "0000097745": {
+   "name": "THERMO FISHER SCIENTIFIC INC.",
+   "sic": "3829",
+   "sicDescription": "Measuring & Controlling Devices, NEC",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-07-31",
+     "2026-05-01",
+     "2026-02-26",
+     "2025-10-31"
+    ],
+    "accessionNumber": [
+     "0000097745-26-000144",
+     "0000097745-26-000092",
+     "0000097745-26-000018",
+     "0000097745-25-000159"
+    ],
+    "primaryDocument": [
+     "tmo-20260627.htm",
+     "tmo-20260328.htm",
+     "tmo-20251231.htm",
+     "tmo-20250927.htm"
+    ]
+   }
+  },
+  "0000310158": {
+   "name": "Merck & Co., Inc.",
+   "sic": "2834",
+   "sicDescription": "Pharmaceutical Preparations",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-08-07",
+     "2026-05-04",
+     "2026-02-24",
+     "2025-11-05"
+    ],
+    "accessionNumber": [
+     "0000310158-26-000212",
+     "0001628280-26-029802",
+     "0000310158-26-000063",
+     "0000310158-25-000059"
+    ],
+    "primaryDocument": [
+     "mrk-20260630.htm",
+     "mrk-20260331.htm",
+     "mrk-20251231.htm",
+     "mrk-20250930.htm"
+    ]
+   }
+  },
+  "0000313616": {
+   "name": "DANAHER CORP /DE/",
+   "sic": "3823",
+   "sicDescription": "Industrial Instruments For Measurement, Display, and Control",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-07-21",
+     "2026-04-21",
+     "2026-02-24",
+     "2025-10-21"
+    ],
+    "accessionNumber": [
+     "0000313616-26-000161",
+     "0000313616-26-000107",
+     "0000313616-26-000062",
+     "0000313616-25-000182"
+    ],
+    "primaryDocument": [
+     "dhr-20260626.htm",
+     "dhr-20260327.htm",
+     "dhr-20251231.htm",
+     "dhr-20250926.htm"
+    ]
+   }
+  },
+  "0000895728": {
+   "name": "ENBRIDGE INC",
+   "sic": "4610",
+   "sicDescription": "Pipe Lines (No Natural Gas)",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K/A",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "40-F",
+     "40-F",
+     "40-F"
+    ],
+    "filingDate": [
+     "2026-07-31",
+     "2026-05-08",
+     "2026-03-10",
+     "2026-02-13",
+     "2025-11-07",
+     "2025-08-01",
+     "2025-05-09",
+     "2025-03-11",
+     "2025-02-14",
+     "2024-11-01",
+     "2024-08-02",
+     "2024-05-10",
+     "2024-03-13",
+     "2024-02-09",
+     "2023-11-03",
+     "2023-08-04",
+     "2023-05-05",
+     "2023-03-06",
+     "2023-02-10",
+     "2022-11-04",
+     "2022-07-29",
+     "2022-05-06",
+     "2022-03-07",
+     "2022-02-11",
+     "2021-11-05",
+     "2021-07-30",
+     "2021-05-07",
+     "2021-03-08",
+     "2021-02-12",
+     "2020-11-06",
+     "2020-07-29",
+     "2020-05-07",
+     "2020-03-09",
+     "2020-02-14",
+     "2019-11-08",
+     "2019-08-02",
+     "2019-05-10",
+     "2019-02-15",
+     "2018-11-02",
+     "2018-08-03",
+     "2018-05-10",
+     "2018-02-16",
+     "2017-02-17",
+     "2016-02-19",
+     "2015-02-19"
+    ],
+    "accessionNumber": [
+     "0001193125-26-326752",
+     "0001193125-26-213266",
+     "0001193125-26-100426",
+     "0001193125-26-049810",
+     "0001193125-25-270991",
+     "0000950170-25-101102",
+     "0000895728-25-000012",
+     "0001193125-25-052058",
+     "0000895728-25-000006",
+     "0000895728-24-000028",
+     "0000895728-24-000020",
+     "0000895728-24-000013",
+     "0001193125-24-066168",
+     "0000895728-24-000007",
+     "0000895728-23-000033",
+     "0000895728-23-000026",
+     "0000895728-23-000016",
+     "0001193125-23-060793",
+     "0000895728-23-000008",
+     "0000895728-22-000033",
+     "0000895728-22-000026",
+     "0000895728-22-000019",
+     "0001193125-22-068180",
+     "0000895728-22-000011",
+     "0000895728-21-000040",
+     "0000895728-21-000032",
+     "0000895728-21-000021",
+     "0001193125-21-073298",
+     "0000895728-21-000010",
+     "0000895728-20-000030",
+     "0000895728-20-000023",
+     "0000895728-20-000016",
+     "0001193125-20-067327",
+     "0000895728-20-000009",
+     "0000895728-19-000149",
+     "0000895728-19-000141",
+     "0000895728-19-000099",
+     "0000895728-19-000033",
+     "0000895728-18-000065",
+     "0000895728-18-000028",
+     "0000895728-18-000017",
+     "0000895728-18-000008",
+     "0001104659-17-010184",
+     "0001104659-16-098507",
+     "0001104659-15-012174"
+    ],
+    "primaryDocument": [
+     "enb-20260630.htm",
+     "enb-20260331.htm",
+     "enb-20251231.htm",
+     "enb-20251231.htm",
+     "enb-20250930.htm",
+     "enb-20250630.htm",
+     "enb-20250331.htm",
+     "d915084d10ka.htm",
+     "enb-20241231.htm",
+     "enb-20240930.htm",
+     "enb-20240630.htm",
+     "enb-20240331.htm",
+     "d568818d10ka.htm",
+     "enb-20231231.htm",
+     "enb-20230930.htm",
+     "enb-20230630.htm",
+     "enb-20230331.htm",
+     "d409094d10ka.htm",
+     "enb-20221231.htm",
+     "enb-20220930.htm",
+     "enb-20220630.htm",
+     "enb-20220331.htm",
+     "d244729d10ka.htm",
+     "enb-20211231.htm",
+     "enb-20210930.htm",
+     "enb-20210630.htm",
+     "enb-20210331.htm",
+     "d122946d10ka.htm",
+     "enb-20201231.htm",
+     "enb-20200930.htm",
+     "ei630202010-qquarterly.htm",
+     "ei331202010-qquarterly.htm",
+     "d885928d10ka.htm",
+     "ei12312019-10kxdocument.htm",
+     "ei9301910-qquarterlyre.htm",
+     "ei6301910-qquarterlyre.htm",
+     "ei3311910-qquarterlyre.htm",
+     "ei12312018-10kxdocument.htm",
+     "ei9301810-qquarterlyreport.htm",
+     "a063018ei10-qquarterlyrepo.htm",
+     "ei2018033110-qquarterlyrep.htm",
+     "ei12312017-10kxdocument.htm",
+     "a16-23211_140f.htm",
+     "a15-24936_140f.htm",
+     "a14-25198_140f.htm"
+    ]
+   }
+  },
+  "0001232384": {
+   "name": "TC ENERGY CORP",
+   "sic": "4922",
+   "sicDescription": "Natural Gas Transmission",
+   "recent": {
+    "form": [
+     "40-F",
+     "40-F",
+     "40-F",
+     "40-F"
+    ],
+    "filingDate": [
+     "2026-02-13",
+     "2025-02-14",
+     "2024-02-16",
+     "2023-02-14"
+    ],
+    "accessionNumber": [
+     "0001232384-26-000015",
+     "0001232384-25-000018",
+     "0001232384-24-000015",
+     "0001232384-23-000021"
+    ],
+    "primaryDocument": [
+     "trp-20251231.htm",
+     "trp-20241231.htm",
+     "trp-20231231.htm",
+     "trp-20221231.htm"
+    ]
+   }
+  },
+  "0001334933": {
+   "name": "URANIUM ENERGY CORP",
+   "sic": "1090",
+   "sicDescription": "Miscellaneous Metal Ores",
+   "recent": {
+    "form": [
+     "10-K",
+     "10-Q",
+     "10-Q",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-09-29",
+     "2026-06-09",
+     "2026-03-10",
+     "2025-12-10"
+    ],
+    "accessionNumber": [
+     "0001437749-26-031414",
+     "0001437749-26-019889",
+     "0001437749-26-007413",
+     "0001437749-25-037296"
+    ],
+    "primaryDocument": [
+     "uec20260731_10k.htm",
+     "uec20260430_10q.htm",
+     "uec20260131c_10q.htm",
+     "uec20251031_10q.htm"
+    ]
+   }
+  },
+  "0001455365": {
+   "name": "COGNITION THERAPEUTICS INC",
+   "sic": "2836",
+   "sicDescription": "Biological Products, (No Diagnostic Substances)",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-08-07",
+     "2026-05-08",
+     "2026-03-26",
+     "2025-11-06"
+    ],
+    "accessionNumber": [
+     "0001104659-26-092362",
+     "0001104659-26-057545",
+     "0001104659-26-034880",
+     "0001104659-25-107402"
+    ],
+    "primaryDocument": [
+     "cgtx-20260630x10q.htm",
+     "cgtx-20260331x10q.htm",
+     "cgtx-20251231x10k.htm",
+     "cgtx-20250930x10q.htm"
+    ]
+   }
+  },
+  "0001692063": {
+   "name": "Schneider National, Inc.",
+   "sic": "4213",
+   "sicDescription": "Trucking (No Local)",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-07-31",
+     "2026-05-01",
+     "2026-02-20",
+     "2025-10-30"
+    ],
+    "accessionNumber": [
+     "0001692063-26-000039",
+     "0001692063-26-000025",
+     "0001692063-26-000013",
+     "0001692063-25-000068"
+    ],
+    "primaryDocument": [
+     "sndr-20260630.htm",
+     "sndr-20260331.htm",
+     "sndr-20251231.htm",
+     "sndr-20250930.htm"
+    ]
+   }
+  },
+  "0001868275": {
+   "name": "Constellation Energy Corp",
+   "sic": "4911",
+   "sicDescription": "Electric Services",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-08-06",
+     "2026-05-11",
+     "2026-02-24",
+     "2025-11-07"
+    ],
+    "accessionNumber": [
+     "0001868275-26-000104",
+     "0001868275-26-000067",
+     "0001868275-26-000032",
+     "0001868275-25-000092"
+    ],
+    "primaryDocument": [
+     "ceg-20260630.htm",
+     "ceg-20260331.htm",
+     "ceg-20251231.htm",
+     "ceg-20250930.htm"
+    ]
+   }
+  },
+  "0001996810": {
+   "name": "GE Vernova Inc.",
+   "sic": "3600",
+   "sicDescription": "Electronic & Other Electrical Equipment (No Computer Equip)",
+   "recent": {
+    "form": [
+     "10-Q",
+     "10-Q",
+     "10-K",
+     "10-Q"
+    ],
+    "filingDate": [
+     "2026-07-22",
+     "2026-04-22",
+     "2026-01-29",
+     "2025-10-22"
+    ],
+    "accessionNumber": [
+     "0001996810-26-000148",
+     "0001996810-26-000064",
+     "0001996810-26-000015",
+     "0001996810-25-000160"
+    ],
+    "primaryDocument": [
+     "gev-20260630.htm",
+     "gev-20260331.htm",
+     "gev-20251231.htm",
+     "gev-20250930.htm"
+    ]
+   }
+  }
+ }
+}

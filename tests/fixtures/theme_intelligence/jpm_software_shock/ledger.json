@@ -1,0 +1,417 @@
+{
+ "provenance": {
+  "what": "the FULL-ARTICLE completeness ledger persisted by the real run (derived analysis: figure as written, its sentence clipped to 240 characters, status and reason)",
+  "run_id": "R-20261010T165605Z-article"
+ },
+ "report": {
+  "article_version_id": "AV-3fd2d0c8917fa66e",
+  "run_id": "R-20261010T165605Z-article",
+  "figures": [
+   {
+    "block_id": "b005",
+    "figure": "18",
+    "sentence": "With a current relative strength index of 18, an indicator used to evaluate oversold levels, it is the most oversold since 1990.",
+    "status": "captured",
+    "claim_ids": [
+     "C-79ada2c20447c0"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b005",
+    "figure": "30",
+    "sentence": "Historically, anything below 30 incentivizes inflows.",
+    "status": "captured",
+    "claim_ids": [
+     "C-56c02de82fb482"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b009",
+    "figure": "70",
+    "sentence": "The chart plots the S&P 500 Software Index Relative Strength Index (RSI) from January 2025 to February 5, 2026, with reference lines at 70 and 30.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Reference line on RSI chart shown only as a threshold marker, not used to make the argument."
+   },
+   {
+    "block_id": "b009",
+    "figure": "30",
+    "sentence": "The chart plots the S&P 500 Software Index Relative Strength Index (RSI) from January 2025 to February 5, 2026, with reference lines at 70 and 30.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Reference line on RSI chart; the 30 oversold threshold is already captured in c3 from the text."
+   },
+   {
+    "block_id": "b009",
+    "figure": "29",
+    "sentence": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70-75 range from May through August, peaking near 77 in August.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical intra-chart point shown only as context for the RSI trajectory."
+   },
+   {
+    "block_id": "b009",
+    "figure": "70-75",
+    "sentence": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70-75 range from May through August, peaking near 77 in August.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical chart range shown only as context for the RSI path."
+   },
+   {
+    "block_id": "b009",
+    "figure": "77",
+    "sentence": "The RSI begins near the mid 30s in January 2025, dips to around 29 in April, then climbs into the 70-75 range from May through August, peaking near 77 in August.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical peak shown only as chart context."
+   },
+   {
+    "block_id": "b009",
+    "figure": "65-68",
+    "sentence": "It falls to the mid 40s in September, rebounds to about 65-68 in October, then declines to the low 30s with brief dips near 27-30 in November.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical chart range shown only as context."
+   },
+   {
+    "block_id": "b009",
+    "figure": "27-30",
+    "sentence": "It falls to the mid 40s in September, rebounds to about 65-68 in October, then declines to the low 30s with brief dips near 27-30 in November.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical intra-chart dips shown only as context."
+   },
+   {
+    "block_id": "b009",
+    "figure": "40-50",
+    "sentence": "It recovers to roughly the low 50s in December, oscillates around 40-50 in early January 2026, and then drops below 30 at month end.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical chart oscillation range shown only as context."
+   },
+   {
+    "block_id": "b009",
+    "figure": "18",
+    "sentence": "The latest reading is 18.",
+    "status": "captured",
+    "claim_ids": [
+     "C-60904408c8a015"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b010",
+    "figure": "20%",
+    "sentence": "To underscore the point, the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average, the widest spread since the tail end of the dotcom crash.",
+    "status": "captured",
+    "claim_ids": [
+     "C-3f193c5f0fcc97"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b013",
+    "figure": "10",
+    "sentence": "In fact, after testing thousands of possible combinations of the top 10 stocks in today's S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1d705296dc93cb"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b013",
+    "figure": "500",
+    "sentence": "In fact, after testing thousands of possible combinations of the top 10 stocks in today's S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
+    "status": "captured",
+    "claim_ids": [
+     "C-a5be834b14aea9"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b013",
+    "figure": "99th percentile",
+    "sentence": "In fact, after testing thousands of possible combinations of the top 10 stocks in today's S&P 500 by taking random samples of 10 from the 500, the actual top 10 in the index yielded a pairwise correlation in the 99th percentile.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1d705296dc93cb"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b017",
+    "figure": "6.5x",
+    "sentence": "The multiple is near 6.5x in early 2019, rises to about 9-10x through 2020, and peaks around 11.8x in late 2021.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical EV/sales chart point (2019) shown only as context for the multiple range."
+   },
+   {
+    "block_id": "b017",
+    "figure": "9-10x",
+    "sentence": "The multiple is near 6.5x in early 2019, rises to about 9-10x through 2020, and peaks around 11.8x in late 2021.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical chart range shown only as context."
+   },
+   {
+    "block_id": "b017",
+    "figure": "11.8x",
+    "sentence": "The multiple is near 6.5x in early 2019, rises to about 9-10x through 2020, and peaks around 11.8x in late 2021.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-32ca21a22c818b"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b017",
+    "figure": "7.0x",
+    "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical trough shown only as context; the Nov 2022 comparison is already captured in c11."
+   },
+   {
+    "block_id": "b017",
+    "figure": "9-11x",
+    "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical range shown only as context."
+   },
+   {
+    "block_id": "b017",
+    "figure": "11.0-11.3x",
+    "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical peaks shown only as context."
+   },
+   {
+    "block_id": "b017",
+    "figure": "11.5-11.6x",
+    "sentence": "It then falls to roughly 7.0x by mid 2022, rebounds into the 9-11x range through 2023-2024 with several peaks near 11.0-11.3x, and in 2025 reaches about 11.5-11.6x before a sharp decline.",
+    "status": "captured",
+    "claim_ids": [
+     "C-08b191d8aae04e"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b017",
+    "figure": "8x",
+    "sentence": "The latest reading is 8x.",
+    "status": "captured",
+    "claim_ids": [
+     "C-08b191d8aae04e"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b019",
+    "figure": "2-3 percentage points",
+    "sentence": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI by 2-3 percentage points.",
+    "status": "captured",
+    "claim_ids": [
+     "C-d2d5f88417e6e6"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b023",
+    "figure": "~12.6%",
+    "sentence": "Approximate values: at Dec '23, S&P 500 ~12.6%, AI Usage ~12.7-12.8%, Ex AI ~12.4-12.5%.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Chart starting point (Dec '23) shown only as context; the latest Feb '26 gap captured by c19-c21 carries the argument."
+   },
+   {
+    "block_id": "b023",
+    "figure": "~12.7-12.8%",
+    "sentence": "Approximate values: at Dec '23, S&P 500 ~12.6%, AI Usage ~12.7-12.8%, Ex AI ~12.4-12.5%.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Chart starting point shown only as context."
+   },
+   {
+    "block_id": "b023",
+    "figure": "~12.4-12.5%",
+    "sentence": "Approximate values: at Dec '23, S&P 500 ~12.6%, AI Usage ~12.7-12.8%, Ex AI ~12.4-12.5%.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Chart starting point shown only as context."
+   },
+   {
+    "block_id": "b023",
+    "figure": "~13.6%",
+    "sentence": "By Dec '24, S&P 500 ~13.6%, AI Usage ~14.7-14.8%, Ex AI ~12.6%.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical intermediate chart value shown only as context."
+   },
+   {
+    "block_id": "b023",
+    "figure": "~14.7-14.8%",
+    "sentence": "By Dec '24, S&P 500 ~13.6%, AI Usage ~14.7-14.8%, Ex AI ~12.6%.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical intermediate chart value shown only as context."
+   },
+   {
+    "block_id": "b023",
+    "figure": "~13.5%",
+    "sentence": "Around Jun '25, S&P 500 ~13.5%, AI Usage ~14.7-14.8%, Ex AI ~12.4.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical intermediate chart value shown only as context."
+   },
+   {
+    "block_id": "b023",
+    "figure": "~12.4",
+    "sentence": "Around Jun '25, S&P 500 ~13.5%, AI Usage ~14.7-14.8%, Ex AI ~12.4.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Historical intermediate chart value shown only as context."
+   },
+   {
+    "block_id": "b023",
+    "figure": "14.5%",
+    "sentence": "At Feb '26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-ecd52e2e2bffce",
+     "C-b92f649a535a64",
+     "C-32a82882ea3425"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b023",
+    "figure": "16.4%",
+    "sentence": "At Feb '26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-ecd52e2e2bffce",
+     "C-b92f649a535a64",
+     "C-32a82882ea3425"
+    ],
+    "reason": ""
+   },
+   {
+    "block_id": "b023",
+    "figure": "13.0%",
+    "sentence": "At Feb '26 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-ecd52e2e2bffce",
+     "C-b92f649a535a64",
+     "C-32a82882ea3425"
+    ],
+    "reason": ""
+   }
+  ],
+  "argument_blocks": [
+   "b003",
+   "b004",
+   "b005",
+   "b010",
+   "b011",
+   "b012",
+   "b013",
+   "b014",
+   "b018",
+   "b019",
+   "b024",
+   "b026"
+  ],
+  "blocks_without_claims": [
+   "b026"
+  ],
+  "added_claims": 1,
+  "added_mentions": 0,
+  "added_hypotheses": 0,
+  "added_risks": 0,
+  "prompt_version": "ti-complete-1",
+  "created_at": "2026-10-10T16:56:05.443501Z",
+  "blocks": [
+   {
+    "block_id": "b003",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b004",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b005",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b010",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b011",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b012",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b013",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b014",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b018",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b019",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b024",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": ""
+   },
+   {
+    "block_id": "b026",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Index definition / glossary line, not an argument."
+   }
+  ],
+  "pass_ran": true,
+  "note": ""
+ }
+}

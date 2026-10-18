@@ -1,0 +1,317 @@
+---
+id: 2026-10-17-theme-intelligence-desk-for-experts
+status: recorded
+date: 2026-10-17
+prs: []
+supersedes:
+superseded-by:
+---
+
+# Theme intelligence — the desk reads for an investment team: decision first, what is missing named, history folded
+
+**WHAT.** The operator, 2026-10-17, on the "Why Watch · on hold" panel: "are the details
+displayed as per what the team of investment experts will need? … are there other such issues in
+other sections?" Then: "fix the bugs and redesign the decision panel". After the first pass:
+"make it readable for the expert investment team … not just for this screen but the entire
+theme-intelligence flow and subscreens and rows/elements, instead of asking me about it".
+
+The rule applied on every page:
+- the decision comes first;
+- what a thesis lacks is named, not counted;
+- history (retired or archived theses) is folded under a count, never mixed with the live
+  theses;
+- a number is never left without its label.
+
+## The thesis page
+
+**The panel** (`desk.thesis_page`) is now the decision box only, in this order:
+1. **The label and what it means** (`_WATCH_KEY`): "On hold — the evidence itself falls short;
+   new evidence is needed, not a data fix", or the "needs data" equivalent.
+2. **What's missing.** Every unmet condition, timing included.
+   - Under an unmet catalyst condition, **the evidence behind it** (`evidence_gap`) replaces the
+     rule's generic detail ("none verified", "a forecast without a corroborating measurement").
+     It gives:
+     - the forecasts, counted (they are named under Key figures beside it);
+     - why the measured observations Timing counts in the last quarter do not carry it (below);
+     - the latest measured figure, with its age against the rule's own window.
+   - That figure is dated by `timewindow.observation_date`, extracted from `timing_of`, so the
+     rule and the page share ONE reading.
+   - Pilot, TH-FBDC863613: "Its latest measured figure, earnings growth 31% (2Q26), dates from
+     30 Jun 2026 — 104 days before the as-of, outside the last quarter (92 days)".
+3. **Clears when.** What would clear each open condition, keyed by its stored code
+   (`WatchReason.code` → `_CLEARS`). A SKIP is keyed by the rule it failed; Research Now has
+   none.
+4. **Next step.**
+5. **"N of M conditions met"**, folded. The exposure check names each exposure **with its
+   direction**, by the desk's own `_lean`, e.g. "Magnificent 7 (could benefit)".
+6. **Timing.** The near-term detail, then "the source's own horizon", told apart.
+
+**What would raise or lower the call** moved out of the panel into the main column, under "What
+would change the call", in two columns. In the panel it had doubled the panel's height beside a
+short main column. On a phone the panel comes first.
+
+**The catalyst condition contradicted Timing on 7 of 23 pilot pages** (operator question on
+#740, 2026-10-17). TH-2FFD9B58A8's Timing counted "6 measured observations dated within the last
+quarter" while the catalyst condition read only "none verified". The rule was right; the page
+did not say why.
+- A last-quarter measured observation counts toward the catalyst only if its quote states a
+  verified change in a fundamental (`priority._fundamental_change`: earnings, revenue, prices,
+  demand, margins …). None of the six passes that test.
+- The panel now says so, with Timing's own count and the rule's own test: "None of its 6
+  measured observations from the last quarter (under Timing) states a verified change in a
+  fundamental — earnings, revenue, prices, demand, margins and the like".
+- On the pilot that is 6 pages: TH-2651327A9B, TH-2FFD9B58A8, TH-41B1AB7F8C, TH-DEB6560D7F, and
+  TH-1D5A6AD90E and TH-8DDD7B2868 in the singular. Each count equals its page's Timing count.
+- The forecasts line now says "no measured change **in a fundamental** from the last quarter".
+  Read beside "15 measured observations", the old wording contradicted itself.
+
+**The seventh page called a measured change a forecast.** On TH-16225B12C4 the one change the
+inflection reading counted is MEASURED ("spending on caffeinated beverages has grown at 6%
+annually"), and nothing corroborates it. The panel said "a forecast without a corroborating
+measurement", the desk's wording for every "not credible" reading. It now says: "Its measured
+change in a fundamental — caffeinated beverage spending growth 6% (since 2019) — is not
+corroborated: no other figure measured in the last quarter states a change in a fundamental in
+its own words, and the source is not the publisher's own data in an industry data report"
+(wording corrected by the code review, below). TH-FBDC863613, the other "not credible" thesis,
+counts a forecast and keeps the forecasts line.
+
+**A fault found while checking the panel.** When the inflection reading is "incomplete" (a
+measured change from the last quarter IS there; only its step to profits is missing), the
+forecasts line would have said "no measured change … corroborates them", which is false.
+- `evidence_gap` now says nothing in that case, and the condition keeps the rule's reason ("no
+  stated step from the change to profits"). The same holds whenever a cited measured
+  observation IS a change in a fundamental (other than the uncorroborated case above).
+- No pilot thesis reads "incomplete" today: as of the published run, F12 reads "absent" on 21
+  of the 23 and "not credible" on 2. So nothing published was wrong. The pin uses a real fixture
+  version with its F12 reading changed.
+
+## This week
+
+Changes are now grouped by **what happened**, not by area. Before, a Research Now sat fourth in
+its area beside retired theses. The groups, in this order:
+1. Research Now
+2. Moved this week (↑/↓). A thesis that is new AND moved goes here, since the move is the news;
+   three pilot theses are both.
+3. New this week
+4. Updated with new evidence
+5. Retired or archived this week — folded
+
+Every row names its area in its meta line. A live Watch says **what it is missing**, by name
+("Missing: near-term timing, named exposure, catalyst or measured change"; the full condition
+names are the tooltip) in place of "3 conditions open". The short names are `_SHORT_GATE`.
+
+## Themes
+
+**One table** in place of nine per-area folds.
+- Under each title: its area and, for a live Watch, the same "Missing:" line.
+- The "N related theses" line under each title is gone (the thesis page lists them).
+- Headers no longer break mid-word ("SOURCE S" before).
+- The area filter and the sorts reach every row, as before.
+
+## Articles
+
+What an article produced lists its **live** theses. Retired or archived ones are folded under
+"+N retired or archived", each still marked as before. Before, one pilot article listed nine
+theses, most of them retired.
+
+## Not changed, deliberately
+
+- **Review** keeps every finding unfolded. It is the triage queue, and the line questioned plus
+  what the review said are what is being triaged. A pinned rule (the tear-sheet test) already
+  says so; the thesis page keeps the one-line form.
+- **Sources** and **Uploads**: no change, beyond the Uploads fix below.
+- **Dashboard**: the full weekly report, a secondary surface.
+
+## The bugs
+
+- **"What changed" read "showing 6 of 17 pieces of evidence from — the rest are in 04 KEY
+  EVIDENCE".** The article id is audit-only, and "04" is the card's own section number.
+  - `cards.more_line` recognises the closing note by its FIELDS (no claims, an UNKNOWN label, an
+    article) and names its publisher.
+  - The desk says it once, under the list, pointing at its Evidence tab. It is no longer counted
+    as one more change: the fold read "4 more changes" for 3.
+  - Stored versions are fixed at render. `engine._more_item` now writes the shared
+    `MORE_POINTER`.
+- **The dated-evidence lines read identically**, because their periods were audit-only. Each line
+  now says its period.
+- **Uploads said "Push before Monday 03:00 UTC".** The weekly run has been started by hand since
+  #729, so the step now reads "before you start the weekly run (Actions → theme-intelligence-weekly
+  → Run workflow)".
+
+**DOES THIS SELECT ON FORM?** No.
+- Nothing the rules read changed. The pages re-present the stored values.
+- `observation_date` is the rule's own date logic, moved, not changed: `timing_of` calls it, and
+  the suite pins `timing_of`.
+- The "Missing:" line is the page's own ✗ list, shortened. A test holds the two equal.
+
+## HOW VERIFIED
+
+**Real run.** A backup copy of the live pilot registry, published with this branch:
+
+| Surface | Count | Detail |
+|---|---|---|
+| Thesis pages | 23 | All 23 carry "What would change the call"; no panel carries raise/lower |
+| This week | 18 rows | Moved 3, New 10, retired or archived 5 (folded); 13 "Missing:" lines, one per live Watch |
+| Themes | 1 table, 23 rows | 13 "Missing:" lines; 0 related counts |
+| Articles | 6 folds | — |
+
+- Catalyst conditions, all 21 unmet ones on the pilot read in full:
+  - 10 carry the forecasts line;
+  - 6 the "measured observations … no change" line;
+  - 1 the uncorroborated measured change;
+  - 1 the measured-age line;
+  - 7 still show only "none verified". All 7 have no dated evidence at all ("timing unknown");
+    one is active (TH-F6906B89B0).
+- Placeholder scan over every published page (every fold open, audit layer hidden): 34 hits on
+  this branch and 30 on main's published desk.
+  - The 4 extra are the new sentence itself ("None of its 4 measured observations…").
+  - The other 30 are ordinary English ("None of the 13 texts…") or an existing audit message on
+    the full report.
+
+**Words on screen** (default view, folds closed; main's published desk → this branch):
+
+| Page | Before | After |
+|---|---|---|
+| This week | 1,486 | 1,086 |
+| Articles | 899 | 693 |
+| Themes | 1,055 | 1,072 (the "Missing:" lines in, the related counts out) |
+| Thesis page TH-FBDC863613 | 1,356 | 1,494 (the panel now says what is missing and what clears it) |
+
+**Preview** (`docs/theme_intelligence/desk-for-experts-2026-10-17/screenshots/`):
+- before (main's published desk) and after, for This week, Themes, Articles and the thesis
+  pages TH-FBDC863613 and TH-2FFD9B58A8;
+- the after pages again with every `<details>` opened (This week, the thesis page) and at 500px
+  (This week, Themes, the thesis page);
+- TH-16225B12C4, the uncorroborated measured change;
+- inside the main app (`#/intel`, `#/intel/themes/TH-16225B12C4`), from a scratch copy of
+  `frontend/` holding this branch's publish. The app frames the published pages
+  (`frontend/views/intel/desk.js`) and styles them with `intel.css`, generated from the desk's own
+  CSS, so there is no second renderer to change. In the app:
+  - the new classes apply (the evidence line is a block, the raise/lower columns are a grid);
+  - none of them is a name the app's stylesheet also uses;
+  - no table header breaks mid-word or overflows at the app's narrower width;
+- Uploads.
+
+**Pins, end to end on committed fixtures:**
+- `tests/test_theme_intelligence_decision_panel.py` (J.P. Morgan fixtures):
+  - the panel's order;
+  - raise/lower in the main column and never in the panel;
+  - "Clears when" against the stored codes;
+  - the evidence lines replacing the generic detail;
+  - the "measured observations … no change" line, with Timing's own count (one observation and
+    two) and the rule's own test;
+  - NEGATIVE: once one observation IS a change in a fundamental, neither line is said;
+  - the uncorroborated measured change named as such;
+  - NEGATIVE: a counted forecast keeps the forecasts line, and a credited change is never called
+    uncorroborated;
+  - NEGATIVE: an "incomplete" inflection keeps the rule's reason;
+  - the measured figure's age;
+  - directions, periods and the named note;
+  - Uploads.
+- `tests/test_theme_intelligence_desk.py` (the twelve-week stress registry):
+  - This week's groups, in order, each row checked from its OWN chips, never from the grouping
+    code;
+  - every row's area;
+  - "Missing:" equal to the thesis page's ✗ list, and absent on Research Now and archived rows;
+  - Themes as one table, with the same "Missing:" equality and no related count.
+- `tests/test_theme_intelligence_product_redesign.py`: the pilot's new-and-downgraded shape
+  files under "Moved this week".
+- `tests/test_theme_intelligence_reanalysis.py`: a retired thesis is folded and names nothing
+  missing.
+- `tests/test_theme_intelligence_group3.py`:
+  - an article's retired thesis is folded with a true count;
+  - NEGATIVE: before its retirement it is listed live;
+  - the related-thesis pins now read the thesis pages.
+
+**Mutation.** 27 mutants on the final code, all killed:
+- This week: the Research Now group, the move group, new-before-moved, the group order, the
+  area, the long names, the retired fold, an archived row naming what is missing;
+- Themes: no "Missing:", no area, headers breaking;
+- Articles: no fold, a wrong count, live theses folded;
+- the panel: the generic detail kept, the evidence lines dropped, the "incomplete" guard, raise
+  and lower back in the panel, raise and lower not rendered;
+- the catalyst lines: the observations line dropped, a count not Timing's own, singular for
+  plural, the change guard removed, the uncorroborated line dropped, forecasts counted as
+  measured, the uncorroborated line on any reading (killed once a credited change was pinned
+  directly), the old forecasts wording.
+
+Four first-round survivors were equivalent mutants, i.e. conditions that can never fire:
+- a retired thesis is always archived as of its run (`ARCHIVING` holds "RETIRED");
+- a Skip archives at once.
+
+The redundant conditions were removed rather than kept unpinned. One first-round survivor was a
+weak assertion (the evidence line replacing the detail); it is now pinned on the panel's spans.
+The first pass's 11 mutants (the key line, "Clears when", the evidence line, the rule's date,
+directions, periods, the note's name and count, the Monday wording, a wrong clearing text) were
+all killed on the first-pass code, before raise and lower moved out of the panel.
+
+**Suite.** ruff and `mypy --strict` clean; `pytest -m "not network"`: 5859 passed, 513 skipped (after the review fixes).
+
+## CODE REVIEW FIXES (code review of #740, 2026-10-17)
+
+Nine findings: seven fixed, two skipped.
+- **The uncorroborated line said more than the rule tested.** It said "neither a second measured
+  change in a fundamental", beside a visible "8% energy drinks spending growth — Observed" on
+  TH-16225B12C4. The rule rejects that figure only because its quote ("energy drinks (8%) and
+  beverage shops (7%) leading the category") does not say so in words. The line now states the
+  rule's actual test: "no other figure measured in the last quarter states a change in a
+  fundamental in its own words".
+- **A Research Now could read "Missing: …" with the tooltip "Not yet Research Now".**
+  - When a Research Now's near-term reading is in conflict, the near-term condition reads
+    unmet until the thesis is reassessed. Removing the Watch-only guard in the first pass let
+    that reach This week and Themes.
+  - The guard is restored: the "Missing:" line is a live Watch's. A Research Now's panel heads
+    such a condition "Under review", never "What's missing".
+  - The first pass called the guard an equivalent mutant; that held only on the fixtures, which
+    hold no conflict.
+- **The measured-age line read figures the rule does not date.** It now reads only measured
+  observations (`claim_provenance`) that `timing_of` classes as current or historical, and never
+  a stale series. Before, an opinion, a scheduled event or a stale series dated by its
+  publication date could silence the line or be named as the latest figure.
+- **"(under Timing)" pointed at a count Timing does not show under a conflict.** It is dropped in
+  that case.
+- **`evidence_gap` re-read the near-term reading.** It now takes the page's own `nt`.
+- **The markdown card still printed "from A-…".** `render_markdown` now uses `more_line` too.
+- **The header no-break rule was global.** It is now scoped to the Themes table
+  (`.arts.themes th`).
+- **Skipped: Themes now builds a card context for every live Watch.** That is inherent to naming
+  what each one is missing, and it is cached for This week and the thesis pages.
+- **Skipped: the "showing N of M" note can count more items than the desk lists** (after
+  de-duplication or a withheld line). Fixing it needs the shown and total counts as structured
+  fields on the change item, and parsing them back out of the text is barred by "parsers consume
+  structured values". It was not measured on the pilot.
+
+Pins for each fix, each with its mutant killed (7): the corrected wording; a Research Now under
+a forced conflict (no "Missing:", "Under review"; NEGATIVE: a Watch still names what it is
+missing); a stale series dated inside the window is never the latest figure; no "(under Timing)"
+under a conflict; the markdown card; the scoped CSS rule.
+
+Re-run on the pilot copy: every catalyst panel is unchanged except TH-16225B12C4's wording. No
+pilot page is a Research Now, so none reads "Under review".
+
+## BOUNDARY
+
+- Measured 2026-10-17 on this branch over main 6965d5b4.
+- Population: the pages published from a backup copy of the live pilot registry
+  (`pilot-2026-10-12`, after its 2026-10-16 catch-up; run R-20261016T163302Z-market). That is 23
+  thesis pages, 13 active theses and 13 articles in the week. "Before" is main's committed
+  `frontend/theme-intelligence/site`.
+
+## WHAT IT COSTS / WHAT IS ACCEPTED
+
+- The published desk on main changes only when it is republished after this merges (an artifact
+  pass).
+- "Clears when" and the short condition names are fixed text per condition. A new condition shows
+  its full name in lower case, and no clearing line, until one is added.
+- The 2Q26 example shows the rule's own boundary (92 days). Whether that window is right is a
+  rule question, not changed here.
+- **Seen, not changed** (rule-level, so reported here and not fixed in a render PR):
+  - The rule's own F12 note for a "not credible" reading says "a forecast alone" even when the
+    counted change is measured (TH-16225B12C4). It is now corrected on the page, not in the
+    stored note.
+  - That change, "6% annually since 2019", counts as a last-quarter observation because a
+    change since a date is dated by the article's publication date. Whether a multi-year rate is
+    a near-term change is a rule question.
+  - "8% energy drinks spending growth" does not corroborate it because the rule reads a change
+    from the quote's words, and that quote has none. A recall gap in `_fundamental_change`: the
+    label says what the quote does not.

@@ -1,0 +1,1595 @@
+{
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-02-09",
+   "ancestry": [
+    "ai_adoption",
+    "ai_adoption.enterprise_margins"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-10",
+   "first_ingested_at": "2026-10-10T19:15:06.850374Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-02-09",
+   "latest_article_date": "2026-02-09",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Productivity and margin effects at companies adopting AI",
+   "status": "ACTIVE",
+   "thesis_id": "TH-A56902FFB6",
+   "title": "AI adopters show measurable margin expansion versus non-adopters"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-d2d5f88417e6e6",
+     "C-c19a377bec9d62",
+     "C-ecd52e2e2bffce",
+     "C-b92f649a535a64",
+     "C-32a82882ea3425"
+    ],
+    "provenance": "FORECAST",
+    "text": "S&P 500 AI adopters have posted margin expansion outpacing the index and non-adopters by 2-3 percentage points; at Feb 2026 NTM net margins were 16.4% for the AI Usage basket (145 companies) vs 14.5% for the S&P 500 and 13.0% for Ex AI Usage. \u27e8cited figures: data as of 2026-02-02; forecast; approximate, read from a chart\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-d2d5f88417e6e6"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "text": "The article states corporate AI adopters are already seeing positive margin impact and that revenue/productivity gains will be worth it."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The margin gap between AI adopters and non-adopters is an association the article presents as evidence AI is already paying off; causation and the durability of the gap are not demonstrated."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d2d5f88417e6e6"
+     ],
+     "original_date": "2026-02-09",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "S&P 500 AI adopters posted margin expansion outpacing the index and non-adopters by 2-3 percentage points."
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b92f649a535a64"
+     ],
+     "original_date": "2026-02-09",
+     "period": "NTM at Feb 2026",
+     "provenance": "FORECAST",
+     "text": "At Feb 2026 NTM net margin for the S&P 500 AI Usage basket was 16.4%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-32a82882ea3425"
+     ],
+     "original_date": "2026-02-09",
+     "period": "NTM at Feb 2026",
+     "provenance": "FORECAST",
+     "text": "At Feb 2026 NTM net margin for the Ex AI Usage group was 13.0%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c19a377bec9d62"
+     ],
+     "original_date": "2026-02-09",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The AI Usage basket includes 145 companies in the S&P 500. \u27e8cited figures: data as of 2026-02-02\u27e9"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ecd52e2e2bffce"
+     ],
+     "original_date": "2026-02-09",
+     "period": "NTM at Feb 2026",
+     "provenance": "FORECAST",
+     "text": "At Feb 2026 NTM net margin for the S&P 500 was 14.5%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-02-09, from a source published 2026-02-09; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d2d5f88417e6e6",
+     "C-0949f685aa48e9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Companies adopting AI gain productivity."
+   },
+   {
+    "claim_ids": [
+     "C-d2d5f88417e6e6",
+     "C-b92f649a535a64",
+     "C-32a82882ea3425"
+    ],
+    "provenance": "FORECAST",
+    "step": "margins",
+    "text": "AI adopters show NTM net margins of 16.4% vs 13.0% for non-adopters, a 2-3pp outperformance. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher margins would flow to adopters' earnings, though the article does not isolate the earnings impact beyond margins."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-32a82882ea3425",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 Ex AI Usage \u2014 NTM net margin",
+    "measured_as_of": "2026-02-02",
+    "origin": "22V, FactSet",
+    "period": "NTM at Feb 2026",
+    "qualifiers": [],
+    "quote": "At Feb \u201926 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 13.0,
+    "value_text": "13.0%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-b92f649a535a64",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 AI Usage basket \u2014 NTM net margin",
+    "measured_as_of": "2026-02-02",
+    "origin": "22V, FactSet",
+    "period": "NTM at Feb 2026",
+    "qualifiers": [],
+    "quote": "At Feb \u201926 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 16.4,
+    "value_text": "16.4%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c19a377bec9d62",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 AI Usage basket \u2014 basket constituent count",
+    "measured_as_of": "2026-02-02",
+    "origin": "22V, FactSet",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Note: AI Usage basket include 145 companies in the S&P 500.",
+    "role": "supports",
+    "unit": "companies",
+    "value": 145.0,
+    "value_text": "145"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d2d5f88417e6e6",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 AI adopters vs index and non-adopters \u2014 margin expansion outperformance",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "outpaces index and non-adopters"
+    ],
+    "quote": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI by 2\u20133 percentage points.",
+    "role": "supports",
+    "unit": "percentage points",
+    "value": null,
+    "value_text": "2\u20133"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-332d3da6f3ac",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-ecd52e2e2bffce",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 \u2014 NTM net margin",
+    "measured_as_of": "2026-02-02",
+    "origin": "22V, FactSet",
+    "period": "NTM at Feb 2026",
+    "qualifiers": [],
+    "quote": "At Feb \u201926 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 14.5,
+    "value_text": "14.5%"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-044e66606f1460",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "Anthropic has released several new models and features",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "AI model developer whose new models/features (Claude Code) drive the software disruption narrative"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-19ff3bdfb23150",
+     "name_as_written": "S&P 500 Software Index",
+     "other_securities": [],
+     "quote": "The S&P 500 Software Index has fallen into a bear market.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Index whose bear market, RSI and EV/sales valuation are the article's core evidence"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c855e68f7fc77c",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P. Data as of February 5, 2026.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for the S&P 500 Software Index RSI data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001100663",
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": null,
+       "instrument": "fund_share",
+       "note": "fund/ETF share class",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "IGV"
+      }
+     ],
+     "mention_id": "M-df393322c882c5",
+     "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+     "other_securities": [],
+     "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "FUND",
+     "role": "market_instrument",
+     "role_detail": "Software ETF cited as trading over 20% below its 200-day moving average"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001326801",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-01-29 (accession 0001628280-26-003942) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-805237c8f68cdc",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001018724",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-02-06 (accession 0001018724-26-000004) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-5262aa55c095e0",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001652044",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-02-09",
+       "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.001 par value",
+       "ticker": "GOOGL"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-02-09",
+       "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class C Capital Stock, $0.001 par value",
+       "ticker": "GOOG"
+      }
+     ],
+     "mention_id": "M-0bdb986c38cf4a",
+     "name_as_written": "Alphabet",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GOOGM"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GOOGN"
+      }
+     ],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0000789019",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-5320319dd93435",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-467a36fed1a979",
+     "name_as_written": "22V",
+     "other_securities": [],
+     "quote": "Sources: 22V, FactSet.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for the NTM net margins / AI Usage basket data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": "0001013237",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": null,
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-01-05 (accession 0001628280-26-000223) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 Par Value",
+       "ticker": "FDS"
+      }
+     ],
+     "mention_id": "M-3ccdf62271db30",
+     "name_as_written": "FactSet",
+     "other_securities": [],
+     "quote": "Sources: 22V, FactSet.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "Source for the NTM net margins / AI Usage basket data"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f04e5de7b60fa2",
+     "name_as_written": "Claude Code",
+     "other_securities": [],
+     "quote": "if you believe Claude Code is just another DeepSeek moment",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Anthropic product cited as the disruptive catalyst for the software sell-off"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9fc728a2e96d81",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "Unlike the DeepSeek episode",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Prior AI episode used as a comparison for the current software repricing"
+    },
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4339911083201a",
+     "name_as_written": "J.P. Morgan Private Bank",
+     "other_securities": [],
+     "quote": "Legal Disclaimer for J.P. Morgan Private Bank",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher of the commentary"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-c19a377bec9d62",
+      "C-b92f649a535a64"
+     ],
+     "provenance": "FORECAST",
+     "text": "S&P 500 AI Usage basket of 145 companies (members not named), tracked for NTM net margins by 22V/FactSet (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-ce33fd0b94e391",
+     "name_as_written": "S&P 500",
+     "other_securities": [],
+     "quote": "Tech\u2019s heavy presence in the S&P 500",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Index whose concentration and top-10 pairwise correlation is the market-structure risk argument"
+    }
+   ],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-332d3da6f3ac",
+     "claim_ids": [
+      "C-d2d5f88417e6e6"
+     ],
+     "direction": "positive",
+     "name": "AI adopters in the S&P 500",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI"
+    }
+   ],
+   "sectors": [
+    "S&P 500 AI adopters"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-ecd52e2e2bffce",
+      "C-b92f649a535a64",
+      "C-32a82882ea3425"
+     ],
+     "provenance": "FORECAST",
+     "text": "NTM net margins (forward estimates to Feb 2026) already show the adopter gap. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-0949f685aa48e9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI will change the productivity landscape and companies that lean into it will be rewarded long term."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI Usage basket margin advantage narrowing in future NTM readings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Adopter margins converging with non-adopters"
+    }
+   ],
+   "market_risks": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the margin comparison reflects causation or selection (AI adopters may already be higher-margin firms)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the margin gap persists or widens"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which specific companies compose the 145-name AI Usage basket (not disclosed)"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Margin gap narrows"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence the gap is driven by sector composition rather than AI use"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Investigate the composition of the 145-company AI Usage basket and whether its margin advantage reflects AI adoption causally or pre-existing higher margins."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI Usage basket margin gap widens in subsequent NTM readings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Company disclosures attribute margin gains specifically to AI"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-332d3da6f3ac",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-d2d5f88417e6e6",
+     "C-c19a377bec9d62",
+     "C-ecd52e2e2bffce",
+     "C-b92f649a535a64",
+     "C-32a82882ea3425"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-02-09T10:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "Software Shock: AI\u2019s Broken Logic",
+    "upstream_origins": [
+     "22V, FactSet",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+   }
+  ]
+ },
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191506Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-02-09",
+   "change_summary": "Initial record \u2014 created from A-332d3da6f3ac",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-02-09",
+     "ancestry": [
+      "ai_adoption",
+      "ai_adoption.enterprise_margins"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-10",
+     "first_ingested_at": "2026-10-10T19:15:06.850374Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-02-09",
+     "latest_article_date": "2026-02-09",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Productivity and margin effects at companies adopting AI",
+     "status": "ACTIVE",
+     "thesis_id": "TH-A56902FFB6",
+     "title": "AI adopters show measurable margin expansion versus non-adopters"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-d2d5f88417e6e6",
+       "C-c19a377bec9d62",
+       "C-ecd52e2e2bffce",
+       "C-b92f649a535a64",
+       "C-32a82882ea3425"
+      ],
+      "provenance": "FORECAST",
+      "text": "S&P 500 AI adopters have posted margin expansion outpacing the index and non-adopters by 2-3 percentage points; at Feb 2026 NTM net margins were 16.4% for the AI Usage basket (145 companies) vs 14.5% for the S&P 500 and 13.0% for Ex AI Usage. \u27e8cited figures: data as of 2026-02-02; forecast; approximate, read from a chart\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-d2d5f88417e6e6"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "The article states corporate AI adopters are already seeing positive margin impact and that revenue/productivity gains will be worth it."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The margin gap between AI adopters and non-adopters is an association the article presents as evidence AI is already paying off; causation and the durability of the gap are not demonstrated."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d2d5f88417e6e6"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "S&P 500 AI adopters posted margin expansion outpacing the index and non-adopters by 2-3 percentage points."
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b92f649a535a64"
+       ],
+       "original_date": "2026-02-09",
+       "period": "NTM at Feb 2026",
+       "provenance": "FORECAST",
+       "text": "At Feb 2026 NTM net margin for the S&P 500 AI Usage basket was 16.4%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-32a82882ea3425"
+       ],
+       "original_date": "2026-02-09",
+       "period": "NTM at Feb 2026",
+       "provenance": "FORECAST",
+       "text": "At Feb 2026 NTM net margin for the Ex AI Usage group was 13.0%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c19a377bec9d62"
+       ],
+       "original_date": "2026-02-09",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The AI Usage basket includes 145 companies in the S&P 500. \u27e8cited figures: data as of 2026-02-02\u27e9"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ecd52e2e2bffce"
+       ],
+       "original_date": "2026-02-09",
+       "period": "NTM at Feb 2026",
+       "provenance": "FORECAST",
+       "text": "At Feb 2026 NTM net margin for the S&P 500 was 14.5%. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-10 19:15 UTC, analysed as of 2026-02-09, from a source published 2026-02-09; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d2d5f88417e6e6",
+       "C-0949f685aa48e9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Companies adopting AI gain productivity."
+     },
+     {
+      "claim_ids": [
+       "C-d2d5f88417e6e6",
+       "C-b92f649a535a64",
+       "C-32a82882ea3425"
+      ],
+      "provenance": "FORECAST",
+      "step": "margins",
+      "text": "AI adopters show NTM net margins of 16.4% vs 13.0% for non-adopters, a 2-3pp outperformance. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher margins would flow to adopters' earnings, though the article does not isolate the earnings impact beyond margins."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-32a82882ea3425",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 Ex AI Usage \u2014 NTM net margin",
+      "measured_as_of": "2026-02-02",
+      "origin": "22V, FactSet",
+      "period": "NTM at Feb 2026",
+      "qualifiers": [],
+      "quote": "At Feb \u201926 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 13.0,
+      "value_text": "13.0%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-b92f649a535a64",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 AI Usage basket \u2014 NTM net margin",
+      "measured_as_of": "2026-02-02",
+      "origin": "22V, FactSet",
+      "period": "NTM at Feb 2026",
+      "qualifiers": [],
+      "quote": "At Feb \u201926 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 16.4,
+      "value_text": "16.4%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c19a377bec9d62",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 AI Usage basket \u2014 basket constituent count",
+      "measured_as_of": "2026-02-02",
+      "origin": "22V, FactSet",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Note: AI Usage basket include 145 companies in the S&P 500.",
+      "role": "supports",
+      "unit": "companies",
+      "value": 145.0,
+      "value_text": "145"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d2d5f88417e6e6",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 AI adopters vs index and non-adopters \u2014 margin expansion outperformance",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "outpaces index and non-adopters"
+      ],
+      "quote": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI by 2\u20133 percentage points.",
+      "role": "supports",
+      "unit": "percentage points",
+      "value": null,
+      "value_text": "2\u20133"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-332d3da6f3ac",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-ecd52e2e2bffce",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 \u2014 NTM net margin",
+      "measured_as_of": "2026-02-02",
+      "origin": "22V, FactSet",
+      "period": "NTM at Feb 2026",
+      "qualifiers": [],
+      "quote": "At Feb \u201926 (S&P 500 14.5%, AI Usage 16.4%, and Ex AI Usage 13.0%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 14.5,
+      "value_text": "14.5%"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-044e66606f1460",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Anthropic has released several new models and features",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "AI model developer whose new models/features (Claude Code) drive the software disruption narrative"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-19ff3bdfb23150",
+       "name_as_written": "S&P 500 Software Index",
+       "other_securities": [],
+       "quote": "The S&P 500 Software Index has fallen into a bear market.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Index whose bear market, RSI and EV/sales valuation are the article's core evidence"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c855e68f7fc77c",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P. Data as of February 5, 2026.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for the S&P 500 Software Index RSI data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001100663",
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": null,
+         "instrument": "fund_share",
+         "note": "fund/ETF share class",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "IGV"
+        }
+       ],
+       "mention_id": "M-df393322c882c5",
+       "name_as_written": "iShares Expanded Tech-Software Sector ETF (IGV)",
+       "other_securities": [],
+       "quote": "the iShares Expanded Tech-Software Sector ETF (IGV) is trading over 20% below its 200-day moving average",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "FUND",
+       "role": "market_instrument",
+       "role_detail": "Software ETF cited as trading over 20% below its 200-day moving average"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001326801",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-01-29 (accession 0001628280-26-003942) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-805237c8f68cdc",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001018724",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-02-06 (accession 0001018724-26-000004) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-5262aa55c095e0",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001652044",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-02-09",
+         "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.001 par value",
+         "ticker": "GOOGL"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-02-09",
+         "pit_source": "10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class C Capital Stock, $0.001 par value",
+         "ticker": "GOOG"
+        }
+       ],
+       "mention_id": "M-0bdb986c38cf4a",
+       "name_as_written": "Alphabet",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GOOGM"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-K filed 2026-02-05 (accession 0001652044-26-000018) cover page and no 8-A12B registration before 2026-02-09 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GOOGN"
+        }
+       ],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0000789019",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-5320319dd93435",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-01-28 (accession 0001193125-26-027207) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "from the likes of Meta, Amazon, Alphabet and Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose capex forecasts were scorned by investors; also a potential beneficiary swept into the sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-467a36fed1a979",
+       "name_as_written": "22V",
+       "other_securities": [],
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for the NTM net margins / AI Usage basket data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": "0001013237",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": null,
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-01-05 (accession 0001628280-26-000223) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 Par Value",
+         "ticker": "FDS"
+        }
+       ],
+       "mention_id": "M-3ccdf62271db30",
+       "name_as_written": "FactSet",
+       "other_securities": [],
+       "quote": "Sources: 22V, FactSet.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Source for the NTM net margins / AI Usage basket data"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f04e5de7b60fa2",
+       "name_as_written": "Claude Code",
+       "other_securities": [],
+       "quote": "if you believe Claude Code is just another DeepSeek moment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Anthropic product cited as the disruptive catalyst for the software sell-off"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9fc728a2e96d81",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "Unlike the DeepSeek episode",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Prior AI episode used as a comparison for the current software repricing"
+      },
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4339911083201a",
+       "name_as_written": "J.P. Morgan Private Bank",
+       "other_securities": [],
+       "quote": "Legal Disclaimer for J.P. Morgan Private Bank",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-c19a377bec9d62",
+        "C-b92f649a535a64"
+       ],
+       "provenance": "FORECAST",
+       "text": "S&P 500 AI Usage basket of 145 companies (members not named), tracked for NTM net margins by 22V/FactSet (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-ce33fd0b94e391",
+       "name_as_written": "S&P 500",
+       "other_securities": [],
+       "quote": "Tech\u2019s heavy presence in the S&P 500",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Index whose concentration and top-10 pairwise correlation is the market-structure risk argument"
+      }
+     ],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-332d3da6f3ac",
+       "claim_ids": [
+        "C-d2d5f88417e6e6"
+       ],
+       "direction": "positive",
+       "name": "AI adopters in the S&P 500",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "AI adopters in the S&P 500 have posted margin expansion that outpaces both the index as a whole and the individual companies not using AI"
+      }
+     ],
+     "sectors": [
+      "S&P 500 AI adopters"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ecd52e2e2bffce",
+        "C-b92f649a535a64",
+        "C-32a82882ea3425"
+       ],
+       "provenance": "FORECAST",
+       "text": "NTM net margins (forward estimates to Feb 2026) already show the adopter gap. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-02-02\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-0949f685aa48e9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI will change the productivity landscape and companies that lean into it will be rewarded long term."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI Usage basket margin advantage narrowing in future NTM readings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Adopter margins converging with non-adopters"
+      }
+     ],
+     "market_risks": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the margin comparison reflects causation or selection (AI adopters may already be higher-margin firms)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the margin gap persists or widens"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific companies compose the 145-name AI Usage basket (not disclosed)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Margin gap narrows"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence the gap is driven by sector composition rather than AI use"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Investigate the composition of the 145-company AI Usage basket and whether its margin advantage reflects AI adoption causally or pre-existing higher margins."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI Usage basket margin gap widens in subsequent NTM readings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Company disclosures attribute margin gains specifically to AI"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-332d3da6f3ac",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-d2d5f88417e6e6",
+       "C-c19a377bec9d62",
+       "C-ecd52e2e2bffce",
+       "C-b92f649a535a64",
+       "C-32a82882ea3425"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-02-09T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "Software Shock: AI\u2019s Broken Logic",
+      "upstream_origins": [
+       "22V, FactSet",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/software-shock-ais-broken-logic"
+     }
+    ]
+   },
+   "content_sha": "110ec40e6e2932a0f843cf76177d30fef5e19b2de9c4f7153e5a7c2bbe530a81",
+   "created_at": "2026-10-10T19:15:06.855452Z",
+   "diffs": [],
+   "engine_version": "ti-engine-2",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d2d5f88417e6e6",
+       "C-c19a377bec9d62",
+       "C-ecd52e2e2bffce",
+       "C-b92f649a535a64",
+       "C-32a82882ea3425"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-a37f57e0581c, ES-fc428945cc0a",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-ecd52e2e2bffce",
+       "C-b92f649a535a64",
+       "C-32a82882ea3425",
+       "C-d2d5f88417e6e6",
+       "C-c19a377bec9d62"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "5 claim(s) inside the next 2-4 quarters (C-ecd52e2e2bffce: forecast window 2026-02-01..2027-02-09 (ntm; feb 2026); C-b92f649a535a64: forecast window 2026-02-01..2027-02-09 (ntm; feb 2026); C-32a82882ea3425: forecast window 2026-02-01..2027-02-09 (ntm; feb 2026); C-d2d5f88417e6e6: measured 2026-02-09 (0 days before the as-of); showing 4 of 5); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, and sectors / themes the source names: sector: AI adopters in the S&P 500; instruments: S&P 500",
+      "value": "0 listed \u00b7 1 sector"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+   },
+   "run_id": "R-20261010T191506Z-article",
+   "thesis_id": "TH-A56902FFB6",
+   "version": 1
+  }
+ ],
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "withheld_sentences": {}
+}

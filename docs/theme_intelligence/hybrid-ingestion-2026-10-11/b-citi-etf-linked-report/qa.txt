@@ -1,0 +1,21 @@
+  [PASS] run status recorded: status PARTIAL; counts {'figures_in_articles': 252, 'figures_uncaptured': 5, 'claims_added_by_completeness': 46, 'theses_added_by_completeness': 0, 'articles_processed': 2, 'articles_partial': 1, 'claims_extracted': 99, 'claims_verified': 99, 'mentions': 16, 'theses_created': 1, 'theses_updated': 1, 'attributions_only': 0, 'linked_reports_fetched_citi_must_c': 1, 'documents_upgraded': 1, 'linked_reports_upgraded': 1, 'replayed_from_cache_cache_creation_input_tokens': 0, 'replayed_from_cache_cache_read_input_tokens': 0, 'replayed_from_cache_input_tokens': 455079, 'replayed_from_cache_output_tokens': 60835, 'llm_calls': 13, 'llm_calls_cached': 13, 'http_requests': 0, 'http_cache_hits': 2}
+  [PASS] no unverified claim is linked to a thesis: 66 linked claim(s) in the registry, all verified
+  [PASS] spans re-found in stored article text: 99 of 99 verified claim(s) in 1 article(s) re-checked
+  [PASS] figures re-found in their quotes: every number-bearing claim checked
+  [PASS] no look-ahead past the run's as-of: as-of 2026-10-11
+  [PASS] cards keep the nine sections in order: 2 version(s) created by this run
+  [PASS] version content hashes recompute: ok
+  [PASS] version chain links to the prior version: ok
+  [PASS] source-labelled lines cite verified claims (or are withheld): every failing line was recorded and withheld
+  [PASS] RESEARCH NOW keeps readiness NOT_ASSESSED: ok
+  [PASS] source-explicit companies are named in the article text: ok
+  [PASS] source-labelled lines carry the weakest label of their claims: 2 version(s) checked
+  [PASS] no share-price / valuation move filed as an earnings step: ok
+  [PASS] listed exposures are point-in-time-verified common equity: as of 2026-10-11
+  [PASS] completeness ledger recorded for every analysed article: 1 article(s)
+  [FAIL] every reported figure captured or judged immaterial: OPEN — 5 of 252 figure(s): A-d8bce0154d69 b016 '$25 trillion' [capture_not_verified]; A-d8bce0154d69 b016 '$40 trillion' [capture_not_verified]; A-d8bce0154d69 b017 '$10 trillion' [capture_not_verified]; A-d8bce0154d69 b052 '$25 trillion' [capture_not_verified]; A-d8bce0154d69 b052 '$40 trillion' [capture_not_verified]
+  [PASS] every argument block accounted for: ok
+  [PASS] every analysed article names its author(s): 1 article(s)
+  [PASS] append-only triggers present: 15 history tables
+  [PASS] HTML / Markdown / JSON agree with the stored card: rendered cards in data/theme_intelligence/v2/hybrid-b2/runs/R-20261011T104153Z-article
+QA R-20261011T104153Z-article: 19/20 passed · scan execution PARTIAL · research verification INCOMPLETE — NOT fully verified — over the 1 article(s), 2 version(s) this run analysed: 5 of 252 stated figure(s) and 0 of 162 argument paragraph(s) open; causes: capture_not_verified 5. Open material is never used as evidence, so it can hold a thesis back but never raise its research action

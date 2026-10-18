@@ -65,6 +65,21 @@ const EDGES = [
     ],
   },
   {
+    // The research desk (vinci/theme_intelligence): rendered by the Python package and published
+    // into frontend/theme-intelligence/ (`python -m vinci.theme_intelligence publish`); one view
+    // module frames every screen. No `does`: each screen opens with its own summary line.
+    // A thesis's reading page is a drill-down under Themes (#/intel/themes/TH-…).
+    key: "intel", label: "Theme intelligence", state: "live",
+    stages: [
+      { route: "intel", label: "This week" },
+      { route: "intel/themes", label: "Themes" },
+      { route: "intel/articles", label: "Articles" },
+      { route: "intel/review", label: "Review" },
+      { route: "intel/uploads", label: "Uploads" },
+      { route: "intel/sources", label: "Sources" },
+    ],
+  },
+  {
     key: "calls", label: "Calls tape", state: "live",
     stages: [
       // No `does` on purpose: the frame prints it as a persistent subtitle, and on a cockpit that
@@ -118,6 +133,7 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
+  intel: () => import("./views/intel/desk.js"),
   calls: () => import("./views/calls/tape.js"),
 };
 
@@ -192,6 +208,7 @@ function renderSidebar() {
       <span class="brand-logo" aria-hidden="true"></span>
       <div class="mark">Nostra Vinci</div>
       <button class="theme-tog" id="theme-tog" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+      <button class="nav-tog" id="nav-tog" type="button"></button>
     </div>
     <div class="nav-group"><div class="label">Shared</div>${SHARED.map(sharedItem).join("")}</div>
     <div class="nav-group"><div class="label">Edges</div>${EDGES.map(edgeItem).join("")}</div>
@@ -313,7 +330,9 @@ async function dispatch() {
     const loader = VIEWS[route];   // base route (first hash segment) → the view module
     if (loader) {
       const mod = await loader();
-      return mod.render(root, params, { item, frame });
+      // awaited: a returned promise skips this try, so a view's failure left a blank or stale
+      // screen with no message (the research desk on a host that serves its index for a miss)
+      return await mod.render(root, params, { item, frame });
     }
     root.innerHTML = frame(item, {
       bodyHtml: `<div class="notice">This live screen is built in the next pass. The frame, breadcrumb, and orientation above are final.</div>`,
@@ -346,6 +365,33 @@ function applyTheme(t) {
   if (btn) btn.innerHTML = t === "dark" ? SUN : MOON;
   requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
 }
+// the menu rail: full, or collapsed to a thin strip so the content gets the width. The choice is
+// remembered (index.html applies it before first paint, as it does the theme).
+const PANEL = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>`;
+function navCollapsed() {
+  return document.documentElement.getAttribute("data-nav") === "collapsed";
+}
+function paintNavToggle() {
+  const btn = document.getElementById("nav-tog");
+  if (!btn) return;
+  const label = navCollapsed() ? "Show the menu" : "Collapse the menu";
+  btn.innerHTML = PANEL;
+  btn.setAttribute("aria-label", label);
+  btn.setAttribute("title", label);
+  btn.setAttribute("aria-expanded", navCollapsed() ? "false" : "true");
+}
+function wireNavToggle() {
+  const btn = document.getElementById("nav-tog");
+  if (!btn) return;
+  paintNavToggle();
+  btn.addEventListener("click", () => {
+    const root = document.documentElement;
+    if (navCollapsed()) root.removeAttribute("data-nav");
+    else root.setAttribute("data-nav", "collapsed");
+    try { localStorage.setItem("nv-nav", navCollapsed() ? "collapsed" : "open"); } catch (e) { /* private mode */ }
+    paintNavToggle();
+  });
+}
 function wireThemeToggle() {
   const btn = document.getElementById("theme-tog");
   if (!btn) return;
@@ -355,5 +401,6 @@ function wireThemeToggle() {
 
 renderSidebar();
 wireThemeToggle();
+wireNavToggle();
 window.addEventListener("hashchange", dispatch);
 dispatch();

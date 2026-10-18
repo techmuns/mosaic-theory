@@ -1,0 +1,9 @@
+engine.py  '    if False:'                                                  KILLED — 1 failed, 18 passed in 0.71s
+cards.py   'if False:'                                                      KILLED — 1 failed, 18 passed in 0.72s
+verify.py  'if held.article_id != new.article_id:'                          KILLED — 1 failed, 22 passed in 0.71s
+verify.py  'if held.article_version_id == new.article_version_id:'          KILLED — 1 failed, 23 passed in 0.73s
+verify.py  'if a != b and (a not in b and b not in a):'                     KILLED — 1 failed, 26 passed in 0.73s
+verify.py  'if a != b:'                                                     KILLED — 1 failed, 20 passed in 0.72s
+verify.py  'return True'                                                    KILLED — 1 failed, 18 passed in 0.73s
+verify.py  'return True'                                                    KILLED — 1 failed, 25 passed in 0.73s
+verify.py  'a, b = held.quote, new.quote'                                   KILLED — 1 failed, 19 passed in 0.73s

@@ -1,0 +1,148 @@
+name: theme-intelligence-weekly
+
+# THEME INTELLIGENCE — the weekly research-discovery scan (`vinci/theme_intelligence/`).
+# RESEARCH ATTENTION ONLY: it reads public publisher pages and writes its OWN registry. It never
+# touches the fund's screen, ranker, dossier, verdict, scoring, freeze, ledger or portfolio, and it
+# commits NOTHING to main.
+#
+# MANUAL TRIGGER ONLY — the operator's ruling, 2026-10-16: the weekly run is started by hand, as
+# weekly-screen.yml is (the 2026-08-24 ruling against timers). There is no schedule, deliberately:
+# Actions → theme-intelligence-weekly → Run workflow, or `bin/theme-intelligence-weekly` locally.
+#
+# DURABLE STATE. A runner's SQLite file dies with the runner, so the registry OF RECORD is the
+# append-only JSONL export on the `theme-intelligence-state` branch — derived analysis, provenance
+# pointers and readouts only, NEVER article full text. Each run: restore JSONL → fresh SQLite →
+# gate → scan → QA → export → commit to that branch. Every run is one commit, so the branch history
+# is both the backup and the audit trail. A FAILED or PARTIAL run commits its run record and
+# readout too: a broken week can never look like a quiet one.
+on:
+  workflow_dispatch: # OPERATOR-TRIGGERED ONLY — see the note above; no schedule, deliberately
+    inputs:
+      days:
+        description: "scan window in days, ending today"
+        default: "10"
+      max_articles:
+        description: "budget cap — articles analysed this run (the rest are QUEUED, not dropped)"
+        default: "25"
+
+permissions:
+  contents: write # to commit the registry + readout to the state branch (never to main)
+
+concurrency:
+  group: theme-intelligence-state # two runs never race on the state branch
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      DAYS: ${{ inputs.days || '10' }}
+      MAX_ARTICLES: ${{ inputs.max_articles || '25' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # FULL HISTORY, as gate.yml takes it: the gate below is the only gate before this job's
+          # push, and pins that read historical blobs skip on a shallow clone.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      # gate.yml's three checks, in gate.yml's order — the code is gated before it runs, and this is
+      # the gate before the state-branch push below (tests/test_scheduled_workflows.py).
+      - name: Gate
+        run: |
+          python -m ruff check vinci tests frontend
+          python -m mypy --strict vinci
+          python -m pytest -m "not network" -p no:warnings --tb=short
+
+      - name: Restore the durable registry from the state branch
+        id: restore
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin theme-intelligence-state >/dev/null; then
+            git fetch origin theme-intelligence-state
+            git worktree add "$RUNNER_TEMP/state" origin/theme-intelligence-state
+            git -C "$RUNNER_TEMP/state" switch -c theme-intelligence-state
+          else
+            git worktree add --detach "$RUNNER_TEMP/state"
+            git -C "$RUNNER_TEMP/state" switch --orphan theme-intelligence-state
+          fi
+          if [ -d "$RUNNER_TEMP/state/registry" ]; then
+            python -m vinci.theme_intelligence import-state --src "$RUNNER_TEMP/state/registry"
+          else
+            python -m vinci.theme_intelligence init
+          fi
+
+      # The LLM cache holds model OUTPUT keyed by content hash, so a re-run of an unchanged article
+      # costs nothing. The raw-page cache is deliberately NOT carried between runs: third-party
+      # article text stays on the runner that fetched it and dies with it.
+      - name: Restore the LLM cache (content-addressed; a miss only costs money and time)
+        uses: actions/cache@v4
+        with:
+          path: data/theme_intelligence/llm_cache
+          key: theme-intelligence-llm-${{ github.run_id }}
+          restore-keys: theme-intelligence-llm-
+
+      - name: Scan
+        id: scan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: |
+          set +e
+          python -m vinci.theme_intelligence scan --days "$DAYS" --max-articles "$MAX_ARTICLES"
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          case $code in
+            0) echo "scan SUCCEEDED" ;;
+            2) echo "::warning::scan PARTIAL — a source or article could not be read; see the readout" ;;
+            *) echo "::error::scan FAILED (exit $code) — its run record is still committed below" ;;
+          esac
+          exit 0
+
+      - name: QA the run's stored records
+        id: qa
+        continue-on-error: true
+        run: python -m vinci.theme_intelligence qa --run latest
+
+      # IS IT PRICED? — market context for every active thesis, as of today: its exposures and the
+      # companies it implies, against SPY, P/E against its own history, consensus revisions from
+      # the fund's committed dossiers. DISPLAY ONLY ($0, no model call; never read by a research
+      # action). A failure is said and leaves the scan's records to be committed as they are.
+      - name: Market context
+        id: market
+        continue-on-error: true
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          # five years of P/E history (Tiingo); absent, the panel reads the two Polygon serves
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+        run: python -m vinci.theme_intelligence market --as-of "$(date -u +%F)"
+
+      # Committed even when the scan failed (its run record is the evidence), but NEVER when the
+      # restore did not succeed: the registry here would then be empty or partial, and pushing it
+      # would make an empty registry the head of the registry of record.
+      - name: Commit the registry and this run's readout to the state branch
+        if: always() && steps.restore.outcome == 'success'
+        run: |
+          rm -rf "$RUNNER_TEMP/state/registry"
+          python -m vinci.theme_intelligence export-state --out "$RUNNER_TEMP/state/registry"
+          mkdir -p "$RUNNER_TEMP/state/readouts"
+          cp -R data/theme_intelligence/runs/. "$RUNNER_TEMP/state/readouts/"
+          cd "$RUNNER_TEMP/state"
+          git add -A registry readouts
+          git diff --staged --quiet || git commit -m "theme intelligence: Actions run ${{ github.run_id }} (scan exit ${{ steps.scan.outputs.code }}, qa ${{ steps.qa.outcome }}, market ${{ steps.market.outcome }})"
+          git push origin HEAD:theme-intelligence-state
+
+      - name: Fail the job when the scan failed or QA did not pass
+        if: (steps.scan.outputs.code != '0' && steps.scan.outputs.code != '2') || steps.qa.outcome == 'failure'
+        run: exit 1

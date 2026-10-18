@@ -1,0 +1,132 @@
+[
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T19:15:10.906291Z",
+  "detail": "s07.7: first check NUMBER_NOT_IN_CITED_CLAIMS (s07.7 prints '4', which none of its cited claims carry: 'Price increases for some DRAM suppliers may lag the market average due to pricing mechanisms stipula') \u2014 re-anchored to C-ddaab26d3b09f3; after re-anchoring: supported",
+  "issue_id": "VI-254b03c1046ea9",
+  "ref_id": "TH-1C1CAEA8AF:s07.7",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.906166Z",
+  "detail": "s07.1: Cited span C-dde03888a57b59 supports 'substantial increases already priced in during previous quarters, growth expected to moderate in 4Q26' but does not specify 'Mobile DRAM.' The sentence attributes this to mobile DRAM specifically, which is not in the cited span. | 'Mobile DRAM price growth is expected to moderate in 4Q26 because substantial increases were already '",
+  "issue_id": "VI-27ca893947dae1",
+  "ref_id": "TH-1C1CAEA8AF:s07.1",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T19:15:10.906287Z",
+  "detail": "s07.6: first check NUMBER_NOT_IN_CITED_CLAIMS (s07.6 prints '4', which none of its cited claims carry: 'NAND Flash wafer prices have reached historical highs that downstream retail channels cannot absorb,') \u2014 re-anchored to C-32ea5263eaf8d7; after re-anchoring: supported",
+  "issue_id": "VI-4a6b1b6e44b902",
+  "ref_id": "TH-1C1CAEA8AF:s07.6",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.906174Z",
+  "detail": "s07.8: Cited span C-5bc472e0144745 supports OEM minimum purchase volumes and negotiations narrowed to price confirmation on small volumes, but does not specify the 'eMMC/UFS' segment or the application list (smartphone/TV/set-top box/wearable). The segment attribution is not supported by cited spans. | 'For eMMC/UFS, demand is so weak that OEMs buy only minimum volumes to maintain supplier relationship'",
+  "issue_id": "VI-69e1f14b18bf46",
+  "ref_id": "TH-1C1CAEA8AF:s07.8",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.906168Z",
+  "detail": "s07.2: Cited span C-5f63772cac66a2 supports flexible pricing stance restraining price increases, but does not mention 'client SSDs' specifically. The scope attribution to client SSDs is not supported by the cited span. | 'For client SSDs, NAND Flash suppliers adopted a more flexible pricing stance, restraining price incr'",
+  "issue_id": "VI-8032ee698a1755",
+  "ref_id": "TH-1C1CAEA8AF:s07.2",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.906162Z",
+  "detail": "s06.1: Claims AI server AND inference demand 'structurally diverts memory capacity away from consumer applications.' Cited spans support server capacity prioritization (C-513077cd369199) and PC DRAM supply decline in 2027 as capacity shifts to server (C-a3a82f872d803a), but 'inference' is not in cited spans. Pool C-ee57adcf2c3286/C-108504edb84ae7 mention inference but are not cited; cited spans only partially support the inference claim. | 'AI server and inference demand structurally diverts memory capacity away from consumer applications.'",
+  "issue_id": "VI-aa1b6c4a5e239d",
+  "ref_id": "TH-1C1CAEA8AF:s06.1",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.906171Z",
+  "detail": "s07.5: The detailed enumeration of segments (PC, client SSD, eMMC/UFS, TVs, set-top boxes, wearables) and 'OEMs resisting price increases' goes beyond cited spans. Cited spans cover NAND divergence, smartphone inventory reliance, flexible supplier pricing, and module-maker weakness, but not the full segment list or OEM price resistance. | 'Consumer-side memory demand (PC, mobile/smartphone, client SSD, eMMC/UFS, TVs, set-top boxes, wearab'",
+  "issue_id": "VI-b0bcbe9a0b754b",
+  "ref_id": "TH-1C1CAEA8AF:s07.5",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T19:15:10.911044Z",
+  "detail": "s07.1: first check REVIEW_PARTIAL (s07.1: Cited span supports OEMs buying minimum volumes to maintain relationships and negotiations narrowing to price confirmation on small volumes. But the clai) \u2014 re-anchored to C-ddaab26d3b09f3; after re-anchoring: supported",
+  "issue_id": "VI-b164eb210fa62a",
+  "ref_id": "TH-BC52646E83:s07.1",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.906157Z",
+  "detail": "s01.1: Claims AI server demand is the 'dominant driver sustaining memory contract price increases' while consumer demand is weak. Cited spans support divergence (accelerating AI demand vs weak consumer demand) and supplier prioritization of server capacity, but do not state AI server demand is the 'dominant driver' across both DRAM and NAND; this is an overstatement/synthesis. | 'AI server demand is the dominant driver sustaining memory contract price increases while consumer-si'",
+  "issue_id": "VI-c7b803610cb2d3",
+  "ref_id": "TH-1C1CAEA8AF:s01.1",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-10T19:15:10.906294Z",
+  "detail": "s07.8: first check REVIEW_PARTIAL (s07.8: The cited span supports OEMs buying minimum volumes and negotiations narrowing to price confirmation on small volumes, but does not state demand is 'so w) \u2014 re-anchored to C-ddaab26d3b09f3; after re-anchoring: supported",
+  "issue_id": "VI-d632e6060d13d0",
+  "ref_id": "TH-1C1CAEA8AF:s07.8",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.910951Z",
+  "detail": "s07.1: First half supported by C-5bc472e0144745 and the moderating pace by C-ddaab26d3b09f3, but 'demand is so weak' and 'limiting suppliers' ability to push through broader price increases' are not in the cited spans; eMMC/UFS/smartphone/TV scope is also not established by cited spans. | 'For eMMC/UFS, demand is so weak that OEMs buy only minimum volumes to maintain supplier relationship'",
+  "issue_id": "VI-dde1767f29d5a6",
+  "ref_id": "TH-BC52646E83:s07.1",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.910948Z",
+  "detail": "s06.1: Cited span supports agentic AI data growth and rising QLC penetration, but 'AI inference deployment' and 'structurally expand enterprise SSD demand' go beyond the span. | 'AI inference deployment and agentic AI data growth structurally expand enterprise SSD/QLC demand.'",
+  "issue_id": "VI-ef900f7ca4d273",
+  "ref_id": "TH-BC52646E83:s06.1",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-10T19:15:10.910944Z",
+  "detail": "s03.0: Cited span supports agentic AI data growth and QLC vector-database penetration, but does not mention a demand shift from LLM training toward actual AI deployment. | 'Demand shifts from LLM training toward actual AI deployment, with agentic AI driving data volume gro'",
+  "issue_id": "VI-ff020e1cb6976b",
+  "ref_id": "TH-BC52646E83:s03.0",
+  "run_id": "R-20261010T191510Z-article",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]

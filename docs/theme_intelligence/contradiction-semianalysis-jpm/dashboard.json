@@ -1,0 +1,294 @@
+{
+ "archive": [
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-30F6348B8B.html",
+   "direction": "negative",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-02",
+   "mechanism": "policy_regulation",
+   "node": "ai_infrastructure.power_grid",
+   "region": "US",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-30F6348B8B",
+   "title": "Rate rise and datacenter moratoriums have pressured utilities exposed to the AI trade",
+   "versions": 1
+  },
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-4BC577D53A.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-02",
+   "mechanism": "dispersion_selection",
+   "node": "macro_market",
+   "region": "US",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-4BC577D53A",
+   "title": "Low stock correlation makes sector and thematic selection the key diversifier within equities",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-0F127079D1.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-15",
+   "mechanism": "policy_regulation",
+   "node": "ai_infrastructure.datacenter_physical",
+   "region": "US",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-0F127079D1",
+   "title": "Datacenter moratoriums barely dent the US AI buildout pipeline",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-5C603995DA.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-09-15",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.power_grid",
+   "region": "United States (esp. Texas)",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-5C603995DA",
+   "title": "Grid friction pushes datacenters behind-the-meter, benefiting on-site generation suppliers",
+   "versions": 1
+  }
+ ],
+ "archived_total": 0,
+ "articles_blocked": 0,
+ "articles_partial": 0,
+ "articles_read": 1,
+ "attributions_only": 0,
+ "banner": null,
+ "categories": {
+  "ARCHIVED": [],
+  "CHALLENGED": [],
+  "DOWNGRADED": [],
+  "NEW": [
+   {
+    "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-02",
+    "article_date": "2026-10-02",
+    "card": "cards/TH-30F6348B8B.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-1b22bbfd754a6a: measured 2026-09-30 (2 days before the as-of); C-c79c88e88540c5: measured 2026-10-02 (0 days before the as-of); C-2b3aa74af5c311: measured 2026-10-02 (0 days before the as-of); source-named exposure(s): sector: utilities, sector: S&P 500 Utilities sector; verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-10 19:15 UTC",
+    "flags": [],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-02",
+    "named_companies": [],
+    "named_instruments": [
+     "S&P 500 Utilities [index]"
+    ],
+    "next_action": "Assess the breadth and duration of state datacenter moratoriums and their actual impact on utilities' load-growth and earnings estimates versus the rates-driven de-rating.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "NOW all conditions met \u2014 near-term window(s) C-1b22bbfd754a6a: measured 2026-09-30 (2 days before the as-of); C-c79c88e88540c5: measured 2026-10-02 (0 days before the as-of); C-2b3aa74af5c311: measured 2026-10-02 (0 days before the as-of); source-named exposure(s): sector: utilities, sector: S&P 500 Utilities sector; verified dislocation/catalyst (3 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "sector_exposures": [
+     "utilities (negative)",
+     "S&P 500 Utilities sector (negative)"
+    ],
+    "sectors": [
+     "utilities"
+    ],
+    "sources": [
+     "J.P. Morgan Private Bank \u2014 Kriti Gupta; Nick Roberts \u2014 \u201cA calm index, a restless market\u201d (article date 2026-10-02) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-30F6348B8B",
+    "title": "Rate rise and datacenter moratoriums have pressured utilities exposed to the AI trade",
+    "version": 1,
+    "what_changed": [
+     "S&P 500 Utilities peaked above 10% in July then fell to around -10% by end of September (price return since May).",
+     "S&P 500 Utilities price and P/E peaked before the New York datacenter moratorium, then declined, with a sharper drop after Texas datacenter restrictions in early August.",
+     "State governments have placed moratoriums on datacenter build-out, weighing on the utilities sector.",
+     "Higher Treasury yields compete with utilities' dividends, weighing on the sector.",
+     "Utilities providers are key enablers of the AI datacenter build-out due to its large electricity requirements."
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] S&P 500 Utilities peaked above 10% in July then fell to around -10% by end of September (price return since May). \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9 [C-1b22bbfd754a6a]",
+     "[novelty_unverified] S&P 500 Utilities price and P/E peaked before the New York datacenter moratorium, then declined, with a sharper drop after Texas datacenter restrictions in early August. [C-c79c88e88540c5]",
+     "[novelty_unverified] State governments have placed moratoriums on datacenter build-out, weighing on the utilities sector. [C-2b3aa74af5c311]",
+     "[novelty_unverified] Higher Treasury yields compete with utilities' dividends, weighing on the sector. [C-e7b2b9cdae6bb0]",
+     "[novelty_unverified] Utilities providers are key enablers of the AI datacenter build-out due to its large electricity requirements. [C-4552c2ba375046]"
+    ],
+    "why_action": "Research Now \u2014 every condition met (an investigation, not a trade)"
+   },
+   {
+    "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-02",
+    "article_date": "2026-10-02",
+    "card": "cards/TH-4BC577D53A.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-2a5ee12b031485: measured 2026-10-02 (0 days before the as-of); C-0e01fcdfe7d3c0: measured 2026-10-02 (0 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (0 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (0 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level, sector: equities market itself; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-10 19:15 UTC",
+    "flags": [],
+    "kind": "market_regime",
+    "last_material_update": "2026-10-02",
+    "named_companies": [],
+    "named_instruments": [
+     "S&P 500 [index]",
+     "Cboe 3-month implied correlation index [index]"
+    ],
+    "next_action": "Examine which sectors/themes offer genuinely low pairwise correlation and verify the implied correlation reading against realized dispersion before relying on it for portfolio construction.",
+    "other_named": [],
+    "previous_action": null,
+    "private_named": [],
+    "rule_trace": [
+     "NOW all conditions met \u2014 near-term window(s) C-2a5ee12b031485: measured 2026-10-02 (0 days before the as-of); C-0e01fcdfe7d3c0: measured 2026-10-02 (0 days before the as-of); C-a97bbb9aa2d733: measured 2026-10-02 (0 days before the as-of); C-a8e001324178a8: measured 2026-10-02 (0 days before the as-of); source-named exposure(s): sector: at both a sector and thematic level, sector: equities market itself; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "sector_exposures": [
+     "at both a sector and thematic level (positive)",
+     "equities market itself (positive)"
+    ],
+    "sectors": [
+     "equities",
+     "sectors and themes"
+    ],
+    "sources": [
+     "J.P. Morgan Private Bank \u2014 Kriti Gupta; Nick Roberts \u2014 \u201cA calm index, a restless market\u201d (article date 2026-10-02) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-4BC577D53A",
+    "title": "Low stock correlation makes sector and thematic selection the key diversifier within equities",
+    "version": 1,
+    "what_changed": [
+     "The Cboe 3-month implied correlation index sits at 11.2, well below its long-run average of 41.",
+     "Only about 43% of S&P 500 stocks are trading above their 200-day average.",
+     "The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August.",
+     "The 20-year average of the S&P 500 3-month implied correlation is about 40",
+     "In the most recent period, S&P 500 3-month implied correlation hovers in the 10-15 range, below the ~40 20-year average.",
+     "S&P 500 3-month implied correlation peaked above 70 in 2020",
+     "showing 6 of 10 pieces of evidence from A-46796449712e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] The Cboe 3-month implied correlation index sits at 11.2, well below its long-run average of 41. [C-2a5ee12b031485]",
+     "[novelty_unverified] Only about 43% of S&P 500 stocks are trading above their 200-day average. \u27e8cited figures: approximate\u27e9 [C-a97bbb9aa2d733]",
+     "[novelty_unverified] The share of S&P 500 stocks above their 200-day average is down from 75% in mid-August. [C-a8e001324178a8]",
+     "[novelty_unverified] The 20-year average of the S&P 500 3-month implied correlation is about 40 \u27e8cited figures: approximate, read from a chart\u27e9 [C-0e01fcdfe7d3c0]",
+     "[novelty_unverified] In the most recent period, S&P 500 3-month implied correlation hovers in the 10-15 range, below the ~40 20-year average. \u27e8cited figures: approximate, read from a chart\u27e9 [C-f3b6838cb01018]",
+     "[novelty_unverified] S&P 500 3-month implied correlation peaked above 70 in 2020 \u27e8cited figures: approximate, read from a chart\u27e9 [C-873c863e0186a0]",
+     "[novelty_unverified] showing 6 of 10 pieces of evidence from A-46796449712e \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why_action": "Research Now \u2014 every condition met (an investigation, not a trade)"
+   }
+  ],
+  "UNCHANGED BUT MATERIAL": [],
+  "UPGRADED": []
+ },
+ "caveats": [
+  "UNSUPPORTED_ENTITY J.P. Morgan Private Bank: 'J.P. Morgan Private Bank' does not occur in the article text \u2014 dropped (no unnamed entity may be source-mentioned)"
+ ],
+ "generated": "Generated 2026-10-10 19:19 UTC from the registry (ti-engine-2; run R-20261010T191512Z-article, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "kpi": {
+  "accessible_sources": null,
+  "archived": 0,
+  "articles_blocked": 0,
+  "articles_full": 1,
+  "articles_partial": 0,
+  "blocked_sources": null,
+  "challenged": 0,
+  "downgraded": 0,
+  "figures_in_articles": 19,
+  "figures_uncaptured": 0,
+  "new": 2,
+  "queued": 0,
+  "research_now": 2,
+  "skip": 0,
+  "theses_this_run": 2,
+  "upgraded": 0,
+  "watch": 0
+ },
+ "no_material_change": [],
+ "notes": [],
+ "run": {
+  "as_of": "2026-10-02",
+  "checkpoint": {},
+  "complete_prompt_version": "ti-complete-1",
+  "cost_usd": 0.0,
+  "counts": {
+   "articles_processed": 1,
+   "attributions_only": 0,
+   "claims_added_by_completeness": 3,
+   "claims_extracted": 23,
+   "claims_verified": 23,
+   "figures_in_articles": 19,
+   "figures_uncaptured": 0,
+   "http_cache_hits": 1,
+   "http_requests": 0,
+   "llm_calls": 4,
+   "llm_calls_cached": 4,
+   "mentions": 12,
+   "replayed_from_cache_cache_creation_input_tokens": 0,
+   "replayed_from_cache_cache_read_input_tokens": 0,
+   "replayed_from_cache_input_tokens": 47504,
+   "replayed_from_cache_output_tokens": 15312,
+   "theses_added_by_completeness": 0,
+   "theses_created": 2,
+   "theses_updated": 0
+  },
+  "db_schema_version": 2,
+  "engine_version": "ti-engine-2",
+  "extract_prompt_version": "ti-extract-6",
+  "fetch_seconds": 0.0,
+  "finished_at": "2026-10-10T19:15:13.079314Z",
+  "llm_model": "claude-opus-4-8",
+  "llm_provider": "anthropic",
+  "llm_seconds": 0.0,
+  "mode": "article",
+  "output_dir": "data/theme_intelligence/v2/contradiction-16/runs/R-20261010T191512Z-article",
+  "parser_version": "ti-parse-4",
+  "review_prompt_version": "ti-review-4",
+  "run_id": "R-20261010T191512Z-article",
+  "sources": [],
+  "started_at": "2026-10-10T19:15:12.883028Z",
+  "status": "SUCCEEDED",
+  "tokens": {},
+  "warnings": [],
+  "window_from": "2026-10-02",
+  "window_to": "2026-10-02"
+ },
+ "sources": [],
+ "sources_checked": 0,
+ "sources_failed": [],
+ "themes_created": 2,
+ "themes_updated": 0,
+ "totals_active": {
+  "RESEARCH NOW": 2,
+  "SKIP": 0,
+  "WATCH": 2
+ },
+ "validation": {
+  "BLOCK": 3,
+  "HOLD": 0,
+  "INFO": 1,
+  "WARN": 6
+ },
+ "verification": {
+  "articles": 1,
+  "articles_preview_only": 0,
+  "articles_unreadable": 0,
+  "figures": 19,
+  "figures_open": 0,
+  "open_causes": {},
+  "open_items": [],
+  "paragraphs": 10,
+  "paragraphs_open": 0,
+  "passes_not_run": 0,
+  "status": "FULLY_VERIFIED",
+  "summary": "every figure and argument paragraph accounted for, full text read (over the 1 article(s) this run analysed: 0 of 19 stated figure(s) and 0 of 10 argument paragraph(s) open)"
+ },
+ "window": "2026-10-02 \u2192 2026-10-02 (as of 2026-10-02, mode article)"
+}

@@ -1,0 +1,48 @@
+cached HTML pages parsed: 58 (population: every text/html entry in data/theme_intelligence/v2/shared_http_cache)
+pages whose content, state, modified date or report links changed: 23 (showing all 23)
+   1714 ->  1714 words |  68 ->  68 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/breakthrough-technology/longevity-science-advances.html
+        links=[] modified None -> 2025-09-26 10:20:25.157000-04:00 (meta last_modified_date (a MODIFICATION date))
+    570 ->   570 words |  12 ->  12 blocks | FULL -> PARTIAL | https://www.citigroup.com/global/insights/latam-poised-for-take-off
+        links=['https://ir.citi.com/d-5vuJiD7Hf-CjTIizbzlF5UZLnoLYiNDtkJOFLK'] modified None -> None (None)
+   1132 ->  1132 words |  61 ->  61 blocks | PARTIAL -> PARTIAL | https://www.nomuraconnects.com/focused-thinking-posts/nomuras-chip-shortage-index-a-signal-for-ai-era-business-cycle
+        links=['http://go.nomuranow.com/research/japi/publication/1316582?ap'] modified 2026-09-18 01:23:00+00:00 -> 2026-09-18 01:23:00+00:00 (json-ld Article.dateModified)
+      0 ->   965 words |   0 ->  32 blocks | BLOCKED -> PARTIAL | https://www.citigroup.com/global/insights/sizing-the-etf-opportunity-active-etfs-move-to-center-stage
+        links=['https://ir.citi.com/J-Y51CHv-fMRqIBiZ3N5L4-MLBXEWIasfQMR9GUj'] modified None -> None (None)
+   2108 ->  2108 words |  83 ->  83 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/breakthrough-technology/ai-gets-physical.html
+        links=[] modified None -> 2025-09-26 10:20:01.416000-04:00 (meta last_modified_date (a MODIFICATION date))
+    313 ->   313 words |   6 ->   6 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/instinct-fx.html
+        links=[] modified None -> 2026-06-25 14:52:21.386000-04:00 (meta last_modified_date (a MODIFICATION date))
+    834 ->   834 words |  40 ->  40 blocks | PARTIAL -> PARTIAL | https://www.nomuraconnects.com/focused-thinking-posts/faster-slower-then-steady
+        links=['http://go.nomuranow.com/research/japi/publication/1318200?ap'] modified 2026-09-29 00:01:53+00:00 -> 2026-09-29 00:01:53+00:00 (json-ld Article.dateModified)
+      0 ->     0 words |   0 ->   0 blocks | BLOCKED -> BLOCKED | https://business.bofa.com/en-us/content/high-touch-electronic-trading.html
+        links=[] modified None -> 2025-09-25 12:41:42.848000-04:00 (meta last_modified_date (a MODIFICATION date))
+    890 ->   890 words |  27 ->  27 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/gis2026/ai-governance-trust-race-for-ai-supremacy.html
+        links=[] modified None -> 2026-05-19 15:19:57.883000-04:00 (meta last_modified_date (a MODIFICATION date))
+    739 ->   739 words |  36 ->  36 blocks | PARTIAL -> PARTIAL | https://www.nomuraconnects.com/focused-thinking-posts/changes-in-the-japan-china-asean-trade-triangle
+        links=['http://go.nomuranow.com/research/japi/publication/1318200?ap'] modified 2026-09-25 03:00:30+00:00 -> 2026-09-25 03:00:30+00:00 (json-ld Article.dateModified)
+    823 ->   823 words |  26 ->  26 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/gis2026/private-credit-markets-infrastructure-uncertainty.html
+        links=[] modified None -> 2026-05-19 15:18:55.070000-04:00 (meta last_modified_date (a MODIFICATION date))
+    675 ->   675 words |   9 ->   9 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/featured-analysts.html
+        links=[] modified None -> 2026-09-18 14:58:27.945000-04:00 (meta last_modified_date (a MODIFICATION date))
+   1123 ->  1123 words |  68 ->  68 blocks | PARTIAL -> PARTIAL | https://www.nomuraconnects.com/focused-thinking-posts/beyond-the-headlines-ai-has-added-jobs-in-asia-so-far
+        links=['http://go.nomuranow.com/research/japi/publication/1314426?ap'] modified 2026-08-21 04:08:27+00:00 -> 2026-08-21 04:08:27+00:00 (json-ld Article.dateModified)
+    898 ->   898 words |  27 ->  27 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/global-solutions-and-insights.html
+        links=[] modified None -> 2026-10-01 15:31:49.555000-04:00 (meta last_modified_date (a MODIFICATION date))
+   1100 ->  1100 words |  30 ->  30 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/gis2026/european-defence-spending-innovation.html
+        links=[] modified None -> 2026-05-19 15:19:30.637000-04:00 (meta last_modified_date (a MODIFICATION date))
+    786 ->   786 words |  21 ->  21 blocks | PARTIAL -> PARTIAL | https://business.bofa.com/en-us/content/institutional-investing-insights.html
+        links=[] modified None -> 2026-09-14 15:46:00.861000-04:00 (meta last_modified_date (a MODIFICATION date))
+   1825 ->  1825 words |  71 ->  71 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/breakthrough-technology/quantum-technology.html
+        links=[] modified None -> 2025-09-26 10:20:12.666000-04:00 (meta last_modified_date (a MODIFICATION date))
+    443 ->   443 words |  13 ->  13 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/golf-industry-growth.html
+        links=[] modified None -> 2026-08-25 11:19:20.658000-04:00 (meta last_modified_date (a MODIFICATION date))
+   1247 ->  1247 words |  26 ->  26 blocks | FULL -> PARTIAL | https://www.citigroup.com/global/insights/overcoming-gridlock-2-0-solving-power-bottlenecks-to-drive-ai-energy-security
+        links=['https://ir.citi.com/-ipZbZShv8EfrgEUnbwp9btzkQTJtfRm3KNMVxJH'] modified None -> None (None)
+    289 ->   289 words |   6 ->   6 blocks | PARTIAL -> PARTIAL | https://www.citigroup.com/global/insights/the-ever-rising-us-public-debt-ten-questions-and-answers
+        links=['https://ir.citi.com/3u9NXj1cXcXmnK86-cXWXCoAIxvpzoYP_g2N61qj'] modified None -> None (None)
+   1168 ->  1168 words |  53 ->  53 blocks | PARTIAL -> PARTIAL | https://www.nomuraconnects.com/focused-thinking-posts/the-seeds-of-political-change
+        links=['http://go.nomuranow.com/research/japi/publication/1317117?ap'] modified 2026-09-28 08:51:43+00:00 -> 2026-09-28 08:51:43+00:00 (json-ld Article.dateModified)
+   1052 ->  1052 words |  52 ->  52 blocks | PARTIAL -> PARTIAL | https://www.nomuraconnects.com/focused-thinking-posts/japans-long-recovery-faces-new-tests
+        links=['http://go.nomuranow.com/research/japi/publication/1318200?ap'] modified 2026-09-24 06:37:59+00:00 -> 2026-09-24 06:37:59+00:00 (json-ld Article.dateModified)
+    640 ->   640 words |  39 ->  39 blocks | FULL -> FULL | https://business.bofa.com/en-us/content/trading-strategy-performance.html
+        links=[] modified None -> 2026-09-10 09:26:46.874000-04:00 (meta last_modified_date (a MODIFICATION date))

@@ -1,0 +1,79 @@
+# P0 — the transformer thesis's subject: grid equipment, never on-site generation
+# identity keys of the Gridlock theses (re-read registry), BEFORE vs AFTER; the corrections
+
+== BEFORE (identity-reread)
+TH-1F366737A1 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:onsite_generation   “AI datacenter power buildout drives multi-year transformer and grid equipment demand”
+TH-D803766B8B ai_infrastructure.power_grid|demand_volume_shift|positive|Australia|seg:onsite_generation   “Australia develops behind-the-meter gas power market for data centers”
+TH-8178B565CB ai_infrastructure.power_grid|capex_spending_cycle|positive|China   “China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand”
+TH-051E7711B1 ai_infrastructure|capex_spending_cycle|positive|US, South Korea, Taiwan   “Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Taiwan”
+TH-5BA11D6167 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global   “Energy infrastructure is a multi-year structural growth story across four pillars”
+TH-CE04BAA34C ai_infrastructure.materials_commodities|demand_volume_shift|positive|Global ex-US   “Energy security accelerates renewables, EVs and energy storage demand globally”
+TH-C840A76413 ai_infrastructure.power_grid|capex_spending_cycle|positive|Europe|seg:grid_utilities   “European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal”
+TH-F14CB7F84C ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation|prod:fuel_cells   “Fuel cells gain data center share on speed-to-power despite CCGT cost edge”
+TH-DDEE0B7EF0 ai_infrastructure.power_grid|competitive_share_shift|positive|US|seg:onsite_generation   “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”
+TH-566BFB9D39 ai_infrastructure.power_grid|cost_inflation|positive|US   “Low-cost US natural gas gives US a structural advantage in powering datacenters”
+TH-426034EB2D ai_infrastructure.power_grid|demand_volume_shift|positive|Global   “Nuclear and SMR interest rising as supportive policy and power demand grow”
+TH-BAA07551ED ai_infrastructure.hyperscaler_capex|competitive_share_shift|positive|US   “Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs”
+TH-5EDF9760FB ai_infrastructure.datacenter_physical|valuation_rerating|positive|Europe   “Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value”
+TH-6EFAD379CB macro_market|capex_spending_cycle|positive|US, South Korea, Taiwan   “Selective continued exposure to US, South Korea, Taiwan AI capex theme”
+TH-CA02B7A83B ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:grid_utilities   “Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout”
+TH-110E3113B1 ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation   “Speed-to-power drives BYOG gas generation equipment multi-year growth cycle”
+TH-C0F7401B12 ai_infrastructure.power_grid|capex_spending_cycle|positive|US|seg:grid_utilities+onsite_generation   “US gas pipeline underinvestment creates attractive midstream growth capex cycle”
+TH-126BEECA00 ai_infrastructure.power_grid|dispersion_selection|positive|US   “Uneven US regional power-market regulation makes regional selection drive grid/generation returns”
+
+== AFTER (closeout-reread)
+TH-1F366737A1 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global|seg:grid_equipment   “AI datacenter power buildout drives multi-year transformer and grid equipment demand”
+TH-D803766B8B ai_infrastructure.power_grid|demand_volume_shift|positive|Australia|seg:onsite_generation   “Australia develops behind-the-meter gas power market for data centers”
+TH-8178B565CB ai_infrastructure.power_grid|capex_spending_cycle|positive|China   “China all-of-the-above power buildout drives nuclear, hydro and pumped-storage equipment demand”
+TH-051E7711B1 ai_infrastructure|capex_spending_cycle|positive|US, South Korea, Taiwan   “Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Taiwan”
+TH-5BA11D6167 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global   “Energy infrastructure is a multi-year structural growth story across four pillars”
+TH-CE04BAA34C ai_infrastructure.materials_commodities|demand_volume_shift|positive|Global ex-US   “Energy security accelerates renewables, EVs and energy storage demand globally”
+TH-C840A76413 ai_infrastructure.power_grid|capex_spending_cycle|positive|Europe|seg:grid_utilities   “European grid expansion is primary beneficiary of electrification, even if datacenters stay marginal”
+TH-DDEE0B7EF0 ai_infrastructure.power_grid|competitive_share_shift|positive|US|seg:onsite_generation   “Fuel cells gain niche data-center power share on speed and grid-constraint advantages”
+TH-566BFB9D39 ai_infrastructure.power_grid|cost_inflation|positive|US   “Low-cost US natural gas gives US a structural advantage in powering datacenters”
+TH-426034EB2D ai_infrastructure.power_grid|demand_volume_shift|positive|Global   “Nuclear and SMR interest rising as supportive policy and power demand grow”
+TH-BAA07551ED ai_infrastructure.hyperscaler_capex|competitive_share_shift|positive|US   “Power scarcity bifurcates AI market, favoring hyperscalers and infrastructure owners over model labs”
+TH-5EDF9760FB ai_infrastructure.datacenter_physical|valuation_rerating|positive|Europe   “Powered-land (grid-connected sites, converted coal) commands premiums as speed-to-power determines value”
+TH-6EFAD379CB macro_market|capex_spending_cycle|positive|US, South Korea, Taiwan   “Selective continued exposure to US, South Korea, Taiwan AI capex theme”
+TH-CA02B7A83B ai_infrastructure.power_grid|supply_constraint|positive|Global   “Skilled-labor shortage is a persistent structural bottleneck on power and datacenter buildout”
+TH-110E3113B1 ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation   “Speed-to-power drives BYOG gas generation equipment multi-year growth cycle”
+TH-C0F7401B12 ai_infrastructure.power_grid|capex_spending_cycle|positive|US   “US gas pipeline underinvestment creates attractive midstream growth capex cycle”
+TH-126BEECA00 ai_infrastructure.power_grid|dispersion_selection|positive|US   “Uneven US regional power-market regulation makes regional selection drive grid/generation returns”
+
+== AFTER: key corrections (same id, versions and evidence; the old key recorded)
+[KEY_CORRECTED] TH-1F366737A1 — segment onsite_generation → grid_equipment: read from the thesis statement, product and evidence — never an incidental mention
+[KEY_CORRECTED] TH-C0F7401B12 — segment grid_utilities+onsite_generation → none (unassigned): read from the thesis statement, product and evidence — never an incidental mention
+[KEY_CORRECTED] TH-CA02B7A83B — segment grid_utilities → none (unassigned): read from the thesis statement, product and evidence — never an incidental mention
+
+== fresh registry BEFORE (identity-replay) / AFTER (closeout-fresh)
+TH-B4AE1EA1AA ai_infrastructure.power_grid|demand_volume_shift|positive|Australia   “Australian data center demand creates behind-the-meter gas power market opportunity”
+TH-F59A0872CA ai_infrastructure.power_grid|demand_volume_shift|positive|China   “China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers”
+TH-051E7711B1 ai_infrastructure|capex_spending_cycle|positive|US, South Korea, Taiwan   “Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Taiwan”
+TH-5BA11D6167 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global   “Citi Wealth sees multi-year structural energy infrastructure growth across four pillars”
+TH-EA64717B05 industrials|demand_volume_shift|positive|Global ex-U.S.   “Energy security accelerates EV and ESS battery demand, boosting Chinese clean-tech”
+TH-C840A76413 ai_infrastructure.power_grid|capex_spending_cycle|positive|Europe|seg:grid_utilities   “European grid expansion is primary beneficiary of electrification and data centre demand”
+TH-F14CB7F84C ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation|prod:fuel_cells   “Fuel cells gain data center share on speed-to-power despite CCGT cost edge”
+TH-3EA660BB0A energy|capex_spending_cycle|positive|US   “Gas demand surge drives record midstream capex and strong project returns”
+TH-426034EB2D ai_infrastructure.power_grid|demand_volume_shift|positive|Global   “Nuclear revival, including SMRs, lifts equipment makers over the coming decade”
+TH-4F00D4815E ai_models_platforms|competitive_share_shift|positive|US   “Power scarcity shifts bargaining power to hyperscalers and infrastructure owners over model labs”
+TH-9F45C42C9E ai_infrastructure.power_grid|valuation_rerating|positive|Europe   “Power-ready land (retired coal sites) commands premiums on scarce grid access in Europe”
+TH-B1F096684F ai_infrastructure.datacenter_physical|supply_constraint|positive|Global   “Skilled-labor shortages constrain data center and power buildout into the 2030s”
+TH-110E3113B1 ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation   “Speed-to-power demand drives multi-year cycle for gas generation equipment makers”
+TH-2312D83A80 ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:onsite_generation   “Transformer shortage drives multi-year demand and pricing for transformer makers”
+TH-01EB1E98A3 ai_infrastructure.power_grid|dispersion_selection|positive|US|seg:grid_utilities   “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity”
+--
+TH-D803766B8B ai_infrastructure.power_grid|demand_volume_shift|positive|Australia|seg:onsite_generation   “Australian data center demand creates behind-the-meter gas power market opportunity”
+TH-F59A0872CA ai_infrastructure.power_grid|demand_volume_shift|positive|China   “China all-of-the-above power buildout drives nuclear, hydro and storage equipment makers”
+TH-051E7711B1 ai_infrastructure|capex_spending_cycle|positive|US, South Korea, Taiwan   “Citi Wealth recommends selective AI capex/supply-chain exposure in US, Korea, Taiwan”
+TH-5BA11D6167 ai_infrastructure.power_grid|capex_spending_cycle|positive|Global   “Citi Wealth sees multi-year structural energy infrastructure growth across four pillars”
+TH-EA64717B05 industrials|demand_volume_shift|positive|Global ex-U.S.   “Energy security accelerates EV and ESS battery demand, boosting Chinese clean-tech”
+TH-C840A76413 ai_infrastructure.power_grid|capex_spending_cycle|positive|Europe|seg:grid_utilities   “European grid expansion is primary beneficiary of electrification and data centre demand”
+TH-F14CB7F84C ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation|prod:fuel_cells   “Fuel cells gain data center share on speed-to-power despite CCGT cost edge”
+TH-3EA660BB0A energy|capex_spending_cycle|positive|US   “Gas demand surge drives record midstream capex and strong project returns”
+TH-426034EB2D ai_infrastructure.power_grid|demand_volume_shift|positive|Global   “Nuclear revival, including SMRs, lifts equipment makers over the coming decade”
+TH-4F00D4815E ai_models_platforms|competitive_share_shift|positive|US   “Power scarcity shifts bargaining power to hyperscalers and infrastructure owners over model labs”
+TH-9F45C42C9E ai_infrastructure.power_grid|valuation_rerating|positive|Europe   “Power-ready land (retired coal sites) commands premiums on scarce grid access in Europe”
+TH-B1F096684F ai_infrastructure.datacenter_physical|supply_constraint|positive|Global   “Skilled-labor shortages constrain data center and power buildout into the 2030s”
+TH-110E3113B1 ai_infrastructure.power_grid|demand_volume_shift|positive|US|seg:onsite_generation   “Speed-to-power demand drives multi-year cycle for gas generation equipment makers”
+TH-D942C46E78 ai_infrastructure.power_grid|supply_constraint|positive|Global|seg:grid_equipment   “Transformer shortage drives multi-year demand and pricing for transformer makers”
+TH-126BEECA00 ai_infrastructure.power_grid|dispersion_selection|positive|US   “Uneven U.S. regional power regulation creates selective wires and generation investment opportunity”

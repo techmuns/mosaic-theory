@@ -1,0 +1,1580 @@
+{
+ "provenance": {
+  "what": "the FULL-ARTICLE completeness ledger persisted by the real run (derived analysis: figure as written, its sentence clipped to 240 characters, status and reason)",
+  "run_id": "R-20261010T190325Z-article"
+ },
+ "report": {
+  "article_version_id": "AV-0e02e6955dbd1cdd",
+  "run_id": "R-20261010T190325Z-article",
+  "figures": [
+   {
+    "block_id": "b009",
+    "figure": "150",
+    "sentence": "In our realtime benchmark board InferenceX, GB300 delivers the lowest modeled serving cost in our comparison at a response speed of 150 tokens per second.",
+    "status": "captured",
+    "claim_ids": [
+     "C-c7bd056b369e12"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "$0.044",
+    "sentence": "At 150 tokens per second, GB200 costs approximately $0.044 per million total tokens, compared with $0.049 for MI355X running ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-6fade64836c7b6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "$0.049",
+    "sentence": "At 150 tokens per second, GB200 costs approximately $0.044 per million total tokens, compared with $0.049 for MI355X running ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-6fade64836c7b6",
+     "C-823d6a6d53a4b7"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "12%",
+    "sentence": "That is about 12% lower cost at the same streaming-speed target.",
+    "status": "captured",
+    "claim_ids": [
+     "C-b2f0fd1d0aed55"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "figure": "150",
+    "sentence": "These values are estimated from the measured curves, rather than from a separate test at exactly 150 tokens per second.",
+    "status": "captured",
+    "claim_ids": [
+     "C-6fade64836c7b6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "figure": "13950",
+    "sentence": "Among the Dynamo-SGLang results, GB300 serves roughly 13950 total tokens per second per GPU here, a 17.5% throughput advantage versus 11873 total tokens for GB200.",
+    "status": "captured",
+    "claim_ids": [
+     "C-bf61a78f94ecdc"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "figure": "17.5%",
+    "sentence": "Among the Dynamo-SGLang results, GB300 serves roughly 13950 total tokens per second per GPU here, a 17.5% throughput advantage versus 11873 total tokens for GB200.",
+    "status": "captured",
+    "claim_ids": [
+     "C-bf61a78f94ecdc",
+     "C-eb8d1a116355cc"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "figure": "11873",
+    "sentence": "Among the Dynamo-SGLang results, GB300 serves roughly 13950 total tokens per second per GPU here, a 17.5% throughput advantage versus 11873 total tokens for GB200.",
+    "status": "captured",
+    "claim_ids": [
+     "C-bf61a78f94ecdc",
+     "C-eb8d1a116355cc"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "figure": "$2.31",
+    "sentence": "However, we assume $2.31 per GB300 GPU hour versus $1.86 for GB200.",
+    "status": "captured",
+    "claim_ids": [
+     "C-5dcc7ad51a4a1c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "figure": "$1.86",
+    "sentence": "However, we assume $2.31 per GB300 GPU hour versus $1.86 for GB200.",
+    "status": "captured",
+    "claim_ids": [
+     "C-5dcc7ad51a4a1c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "13%",
+    "sentence": "In comparison with AMD, ATOM costs about 13% less than GB200 at 100 tokens per second.",
+    "status": "captured",
+    "claim_ids": [
+     "C-4cf472eaf9937f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "100",
+    "sentence": "In comparison with AMD, ATOM costs about 13% less than GB200 at 100 tokens per second.",
+    "status": "captured",
+    "claim_ids": [
+     "C-4cf472eaf9937f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "5%",
+    "sentence": "GB200 costs about 5% less at 125 and 12% less at 150.",
+    "status": "captured",
+    "claim_ids": [
+     "C-4cf472eaf9937f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "125",
+    "sentence": "GB200 costs about 5% less at 125 and 12% less at 150.",
+    "status": "captured",
+    "claim_ids": [
+     "C-4cf472eaf9937f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "12%",
+    "sentence": "GB200 costs about 5% less at 125 and 12% less at 150.",
+    "status": "captured",
+    "claim_ids": [
+     "C-4cf472eaf9937f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "figure": "150",
+    "sentence": "GB200 costs about 5% less at 125 and 12% less at 150.",
+    "status": "captured",
+    "claim_ids": [
+     "C-4cf472eaf9937f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "$5.92",
+    "sentence": "Counting only generated output, GB200 costs $5.92 per million output tokens at a response speed of 150 tokens per second, which is about 11% less than $6.68 for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-98d18432eb7ced"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "150",
+    "sentence": "Counting only generated output, GB200 costs $5.92 per million output tokens at a response speed of 150 tokens per second, which is about 11% less than $6.68 for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-98d18432eb7ced"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "11%",
+    "sentence": "Counting only generated output, GB200 costs $5.92 per million output tokens at a response speed of 150 tokens per second, which is about 11% less than $6.68 for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-98d18432eb7ced"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "figure": "$6.68",
+    "sentence": "Counting only generated output, GB200 costs $5.92 per million output tokens at a response speed of 150 tokens per second, which is about 11% less than $6.68 for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-98d18432eb7ced"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "figure": "150",
+    "sentence": "The GB200 measurements on either side of the 150-token-per-second target have p90 TTFT (time to first token) of roughly 14-19 seconds, compared with about 1.1-1.2 seconds for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-cabbe248e6e697"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "figure": "14-19",
+    "sentence": "The GB200 measurements on either side of the 150-token-per-second target have p90 TTFT (time to first token) of roughly 14-19 seconds, compared with about 1.1-1.2 seconds for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-cabbe248e6e697"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "figure": "1.1-1.2",
+    "sentence": "The GB200 measurements on either side of the 150-token-per-second target have p90 TTFT (time to first token) of roughly 14-19 seconds, compared with about 1.1-1.2 seconds for MI355X ATOM.",
+    "status": "captured",
+    "claim_ids": [
+     "C-cabbe248e6e697"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "figure": "150",
+    "sentence": "We therefore make a second comparison using only configurations that were actually tested and achieved at least 150 tokens per second with p90 TTFT at most two seconds.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-8f3575137f8a6d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "figure": "$0.0607",
+    "sentence": "The chart below shows MI355X with ATOM at $0.0607 per million total tokens versus $0.0666 for B200 with Dynamo-SGLang.",
+    "status": "captured",
+    "claim_ids": [
+     "C-75aeaa9783f71a",
+     "C-5977936b05a6f6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "figure": "$0.0666",
+    "sentence": "The chart below shows MI355X with ATOM at $0.0607 per million total tokens versus $0.0666 for B200 with Dynamo-SGLang.",
+    "status": "captured",
+    "claim_ids": [
+     "C-75aeaa9783f71a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "figure": "9%",
+    "sentence": "ATOM costs about 9% less with the two-second first-token limit.",
+    "status": "captured",
+    "claim_ids": [
+     "C-75aeaa9783f71a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "figure": "$0.0451",
+    "sentence": "If the limit is relaxed to ten seconds, GB300 with Dynamo-TRT-LLM becomes eligible at $0.0451, about 26% below ATOM's $0.0607.",
+    "status": "captured",
+    "claim_ids": [
+     "C-5977936b05a6f6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "figure": "26%",
+    "sentence": "If the limit is relaxed to ten seconds, GB300 with Dynamo-TRT-LLM becomes eligible at $0.0451, about 26% below ATOM's $0.0607.",
+    "status": "captured",
+    "claim_ids": [
+     "C-5977936b05a6f6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b020",
+    "figure": "5.2",
+    "sentence": "In GLM's 5.2 / 5.3 model, its attention architecture reduces memory demands, and long running agents still need to retain earlier conversation history.",
+    "status": "uncaptured",
+    "claim_ids": [],
+    "reason": "pass 1b claimed a capturing claim, but none verified",
+    "open_cause": "capture_not_verified"
+   },
+   {
+    "block_id": "b020",
+    "figure": "5.3",
+    "sentence": "In GLM's 5.2 / 5.3 model, its attention architecture reduces memory demands, and long running agents still need to retain earlier conversation history.",
+    "status": "uncaptured",
+    "claim_ids": [],
+    "reason": "pass 1b claimed a capturing claim, but none verified",
+    "open_cause": "capture_not_verified"
+   },
+   {
+    "block_id": "b021",
+    "figure": "8 to 16",
+    "sentence": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-77a107cae7c45a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "figure": "90.3%",
+    "sentence": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-77a107cae7c45a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "figure": "54.8%",
+    "sentence": "When concurrency increases from 8 to 16 requests, the share of prompt tokens reused from GPU memory falls from 90.3% to 54.8%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-77a107cae7c45a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "figure": "6.0%",
+    "sentence": "Much of that reuse shifts to host memory, which rose from 6.0% to 40.3%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-6be84c324e943f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "figure": "40.3%",
+    "sentence": "Much of that reuse shifts to host memory, which rose from 6.0% to 40.3%.",
+    "status": "captured",
+    "claim_ids": [
+     "C-6be84c324e943f"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "figure": "95%",
+    "sentence": "Much of the decline in GPU cache is offset by reuse from host memory, keeping the overall cache hit rate above 95% at all concurrency levels.",
+    "status": "captured",
+    "claim_ids": [
+     "C-5cff3137138cd2"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "figure": "40",
+    "sentence": "vLLM keeping the first decoding step on a consistent CUDA graph execution path reduced average TPOT (time per output token) from about 40 ms to 22 ms in an NVFP4 study .",
+    "status": "captured",
+    "claim_ids": [
+     "C-0d5b71bc0ab74d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "figure": "22",
+    "sentence": "vLLM keeping the first decoding step on a consistent CUDA graph execution path reduced average TPOT (time per output token) from about 40 ms to 22 ms in an NVFP4 study .",
+    "status": "captured",
+    "claim_ids": [
+     "C-0d5b71bc0ab74d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b025",
+    "figure": "8",
+    "sentence": "On a different 8 MI355X long context workload, ATOM engine processing prefill in chunks across pipeline stages delivered 98% higher total throughput and reduced median TTFT from 28.6 to 8.7 seconds .",
+    "status": "captured",
+    "claim_ids": [
+     "C-80b949d319c366"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b025",
+    "figure": "98%",
+    "sentence": "On a different 8 MI355X long context workload, ATOM engine processing prefill in chunks across pipeline stages delivered 98% higher total throughput and reduced median TTFT from 28.6 to 8.7 seconds .",
+    "status": "captured",
+    "claim_ids": [
+     "C-80b949d319c366"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b025",
+    "figure": "28.6 to 8.7",
+    "sentence": "On a different 8 MI355X long context workload, ATOM engine processing prefill in chunks across pipeline stages delivered 98% higher total throughput and reduced median TTFT from 28.6 to 8.7 seconds .",
+    "status": "captured",
+    "claim_ids": [
+     "C-80b949d319c366"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b029",
+    "figure": "4",
+    "sentence": "Ultra-High Interactivity on NVIDIA GPUs? - TileRT InferenceX Bryan Shan , Daniel Nishball , and 4 others · Aug 10 Read full story",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "'and 4 others' is an author byline count for a linked story, not a decision-relevant figure.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b030",
+    "figure": "2x",
+    "sentence": "On AgentX, FP8 TileRT MI355X achieves 2x the P90 interactivity than the best FP4 MI335X config.",
+    "status": "captured",
+    "claim_ids": [
+     "C-61711c226789ad"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b030",
+    "figure": "40%",
+    "sentence": "Comparing to GB300 NVL72, it brings a 40% uplift in interactivity.",
+    "status": "captured",
+    "claim_ids": [
+     "C-61711c226789ad"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "figure": "744B",
+    "sentence": "GLM-5 (and GLM-5.x models) is a 744B total, 40B active-parameter mixture-of-experts model.",
+    "status": "captured",
+    "claim_ids": [
+     "C-9831923a6e78ad"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "figure": "40B",
+    "sentence": "GLM-5 (and GLM-5.x models) is a 744B total, 40B active-parameter mixture-of-experts model.",
+    "status": "captured",
+    "claim_ids": [
+     "C-9831923a6e78ad"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "figure": "1",
+    "sentence": "For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-74731e5134868a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "figure": "8",
+    "sentence": "For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-74731e5134868a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "figure": "256",
+    "sentence": "For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-74731e5134868a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "figure": "32",
+    "sentence": "For every token, it has 1 shared expert and is routed through 8 out of 256 experts, which is sparsity 32.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-74731e5134868a"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "figure": "42x",
+    "sentence": "Both come with trade-offs: MHA mode has lower FLOPs but 42x higher memory cost, MQA mode has lower memory cost but up to 3.4x higher FLOPs.",
+    "status": "captured",
+    "claim_ids": [
+     "C-93d2cc2b57ea52"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "figure": "3.4x",
+    "sentence": "Both come with trade-offs: MHA mode has lower FLOPs but 42x higher memory cost, MQA mode has lower memory cost but up to 3.4x higher FLOPs.",
+    "status": "captured",
+    "claim_ids": [
+     "C-93d2cc2b57ea52"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "figure": "2K",
+    "sentence": "The intuition is that at shorter sequence length, the memory loading time isn't as dominating, and MHA mode may have an edge for being lower FLOPs. vLLM implements this feature, and configures MHA mode for sequence length 2K to about 5K for",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-67a894ff816eb6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "figure": "5K",
+    "sentence": "The intuition is that at shorter sequence length, the memory loading time isn't as dominating, and MHA mode may have an edge for being lower FLOPs. vLLM implements this feature, and configures MHA mode for sequence length 2K to about 5K for",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-67a894ff816eb6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "figure": "77K",
+    "sentence": "The intuition is that at shorter sequence length, the memory loading time isn't as dominating, and MHA mode may have an edge for being lower FLOPs. vLLM implements this feature, and configures MHA mode for sequence length 2K to about 5K for",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-67a894ff816eb6"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b041",
+    "figure": "48770",
+    "sentence": "Source: vLLM PR #48770",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "vLLM PR number is a chart source reference, not a decision-relevant figure.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b051",
+    "figure": "2",
+    "sentence": "2 * H * L * (d+r) # P = Q [H, d+r] @ K.T [d+r, L] 2 * H * L * d # O = P [H, L] @ V [L * d]",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Constant in FLOPs derivation formula; intermediate math, not decision-relevant.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b055",
+    "figure": "2",
+    "sentence": "(2 * H * L * (2 * d + r)) / (b * (d+r) * (L + H)) = (2 * H * L * (2 * d + r)) / (b * L * (d + r)) # L >> H = (2 * H * (2 * d + r)) / (b * (d + r))",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Constant in arithmetic-intensity derivation formula; intermediate math.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b056",
+    "figure": "512",
+    "sentence": "If we plug in the DeepSeek V3.2 configuration d = 512, r = 64, b = 2), we get",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-cbda404494f3f3"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b056",
+    "figure": "64",
+    "sentence": "If we plug in the DeepSeek V3.2 configuration d = 512, r = 64, b = 2), we get",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-cbda404494f3f3"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b056",
+    "figure": "2",
+    "sentence": "If we plug in the DeepSeek V3.2 configuration d = 512, r = 64, b = 2), we get",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-cbda404494f3f3"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b057",
+    "figure": "2",
+    "sentence": "(2 * H * (2 * 512 + 64) / (2 * (512 + 64)) ~= 2 * H",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Constants in the plugged-in derivation; intermediate math.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b057",
+    "figure": "512",
+    "sentence": "(2 * H * (2 * 512 + 64) / (2 * (512 + 64)) ~= 2 * H",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Repeats config value already captured in k1_5; appears here only in derivation.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b057",
+    "figure": "64",
+    "sentence": "(2 * H * (2 * 512 + 64) / (2 * (512 + 64)) ~= 2 * H",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "Repeats config value already captured in k1_5; appears here only in derivation.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b058",
+    "figure": "258.2",
+    "sentence": "H800's practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-b2ab8d44618580"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b058",
+    "figure": "865",
+    "sentence": "H800's practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-b2ab8d44618580"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b058",
+    "figure": "3.35 TB",
+    "sentence": "H800's practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-b2ab8d44618580"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b058",
+    "figure": "128",
+    "sentence": "H800's practical arithmetic intensity is 258.2 FLOP/B (Practical peak 865 TFLOP/s, 3.35 TB/s bandwidth, according to DeepSeek ), and plugging in the formula gives us H ~= 128.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-b2ab8d44618580"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "64",
+    "sentence": "The fact that GLM-5 has H = 64, half the number of query heads, implies that GLM-5 may be designed for different hardware.",
+    "status": "captured",
+    "claim_ids": [
+     "C-2e8f496792631e"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "512",
+    "sentence": "If we plug in GLM-5's configuration (d = 512, r = 64, b = 2, H = 64), we get an arithmetic intensity of 120.8 FLOP/B.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-783b9d67b5d351"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "2",
+    "sentence": "If we plug in GLM-5's configuration (d = 512, r = 64, b = 2, H = 64), we get an arithmetic intensity of 120.8 FLOP/B.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-783b9d67b5d351"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "120.8",
+    "sentence": "If we plug in GLM-5's configuration (d = 512, r = 64, b = 2, H = 64), we get an arithmetic intensity of 120.8 FLOP/B.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-783b9d67b5d351"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "128",
+    "sentence": "Thus, we suspect GLM-5 is optimized for Moore Threads MTT S4000, which is about 128 FLOP/B.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1d7c092f10529c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "figure": "0",
+    "sentence": "Moore Threads' collaboration with Z.ai, such as GLM-5.3-Flash day 0 support , corroborates our theory.",
+    "status": "captured",
+    "claim_ids": [
+     "C-1d7c092f10529c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b060",
+    "figure": "128 to 192",
+    "sentence": "Separately, GLM-5 increases the QK NoPE dimension from 128 to 192, as ablations show the configuration is superior under iso-FLOP and iso-parameter constraints.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-8fe66a8b4e720d"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b060",
+    "figure": "192 to 256",
+    "sentence": "This increases the SDPA head dimension from 192 to 256, which is still a 33% FLOP reduction after considering the head number reduction.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-c796f7d94f2e89"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b060",
+    "figure": "33%",
+    "sentence": "This increases the SDPA head dimension from 192 to 256, which is still a 33% FLOP reduction after considering the head number reduction.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-c796f7d94f2e89"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b062",
+    "figure": "4",
+    "sentence": "To mitigate the cost, Z.ai proposes IndexShare (aka IndexCache) in GLM-5.2, where every 4 DSA layers share one indexer.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-1e14d1252b0003"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b063",
+    "figure": "30B",
+    "sentence": "Latency cost at different context lengths for a 30B DSA model.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "30B DSA model size is a chart-caption reference for a latency illustration, not a decision-relevant figure for GLM-5.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b067",
+    "figure": "75%",
+    "sentence": "This design reduces indexer cache by 75%, reduces indexer FLOPs by 75%, and boosts throughput by 1.5x to 1.8x at different context lengths and prefill/decode.",
+    "status": "captured",
+    "claim_ids": [
+     "C-475237c656fa5c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b067",
+    "figure": "1.5x",
+    "sentence": "This design reduces indexer cache by 75%, reduces indexer FLOPs by 75%, and boosts throughput by 1.5x to 1.8x at different context lengths and prefill/decode.",
+    "status": "captured",
+    "claim_ids": [
+     "C-475237c656fa5c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b067",
+    "figure": "1.8x",
+    "sentence": "This design reduces indexer cache by 75%, reduces indexer FLOPs by 75%, and boosts throughput by 1.5x to 1.8x at different context lengths and prefill/decode.",
+    "status": "captured",
+    "claim_ids": [
+     "C-475237c656fa5c"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b068",
+    "figure": "30B",
+    "sentence": "GLM-5.2 configuration (red) for a 30B DSA model.",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "The '30B DSA model' is only the size of the illustrative model used in the IndexCache latency/throughput chart, context for the technical demonstration, not a decision-relevant figure about memory TAM or hardware.",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b074",
+    "figure": "two days",
+    "sentence": "Z.ai touted its scale and training efficiency: they merged more than ten expert models into a final model by training for about two days.",
+    "status": "added_by_completeness_pass",
+    "claim_ids": [
+     "C-7d8d9b4bf71960"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b099",
+    "figure": "1000",
+    "sentence": "Z.ai claims the orchestrator supports 1000 concurrent rollouts when training GLM-5.",
+    "status": "captured",
+    "claim_ids": [
+     "C-c078a3b8dd406e"
+    ],
+    "reason": "",
+    "open_cause": ""
+   },
+   {
+    "block_id": "b101",
+    "figure": "1538",
+    "sentence": "In the GLM-5.3 announcement , Z.ai claims to use local storage as a cache layer in addition to host memory, which enables dynamic teacher model switching and prefetching for MOPD . slime PR#1538 implements teacher switching by introducing a",
+    "status": "immaterial",
+    "claim_ids": [],
+    "reason": "'slime PR#1538' is a code pull-request identifier referenced for implementation detail of teacher switching; not a decision-relevant quantitative figure.",
+    "open_cause": ""
+   }
+  ],
+  "argument_blocks": [
+   "b002",
+   "b004",
+   "b006",
+   "b007",
+   "b009",
+   "b010",
+   "b011",
+   "b012",
+   "b014",
+   "b015",
+   "b016",
+   "b017",
+   "b018",
+   "b020",
+   "b021",
+   "b023",
+   "b024",
+   "b025",
+   "b027",
+   "b028",
+   "b029",
+   "b030",
+   "b031",
+   "b033",
+   "b034",
+   "b036",
+   "b040",
+   "b043",
+   "b044",
+   "b051",
+   "b053",
+   "b055",
+   "b056",
+   "b057",
+   "b058",
+   "b059",
+   "b060",
+   "b062",
+   "b064",
+   "b065",
+   "b066",
+   "b067",
+   "b071",
+   "b073",
+   "b074",
+   "b076",
+   "b077",
+   "b078",
+   "b080",
+   "b081",
+   "b083",
+   "b085",
+   "b088",
+   "b090",
+   "b091",
+   "b092",
+   "b093",
+   "b094",
+   "b096",
+   "b098",
+   "b099",
+   "b101",
+   "b102"
+  ],
+  "blocks_without_claims": [
+   "b006",
+   "b010",
+   "b012",
+   "b023",
+   "b028",
+   "b031",
+   "b036",
+   "b043",
+   "b051",
+   "b053",
+   "b055",
+   "b057",
+   "b064",
+   "b065",
+   "b066",
+   "b071",
+   "b073",
+   "b076",
+   "b077",
+   "b078",
+   "b080",
+   "b081",
+   "b083",
+   "b085",
+   "b088",
+   "b090",
+   "b091",
+   "b092",
+   "b093",
+   "b094",
+   "b102"
+  ],
+  "added_claims": 13,
+  "added_mentions": 6,
+  "added_hypotheses": 1,
+  "added_risks": 0,
+  "prompt_version": "ti-complete-1",
+  "created_at": "2026-10-10T19:03:25.350337Z",
+  "blocks": [
+   {
+    "block_id": "b002",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b004",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b006",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "States HiSparse boosts throughput at cost of top-k cache miss I/O — supports the sparse-attention-does-not-reduce-memory-capacity argument in h1.",
+    "claim_ids": [
+     "C-9f3d0dc68a6fd5",
+     "C-293bc78c1049d2"
+    ],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b007",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b009",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b010",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Methodology description of InferenceX cost model and token accounting; no distinct argument or figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b011",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b012",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Repeats the cost-model methodology caveat; no new argument or figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b014",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b015",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b016",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b017",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b018",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b020",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b021",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b023",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Transitional sentence introducing two GLM-5.2 studies; the studies' figures are captured in c24/c25.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b024",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b025",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b027",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b028",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h2"
+    ],
+    "reason": "TileRT prioritizes per-user token speed over batched throughput — supports the latency-dependent serving-cost comparison in h2.",
+    "claim_ids": [
+     "C-61711c226789ad"
+    ],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b029",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b030",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b031",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h2"
+    ],
+    "reason": "TileRT's suboptimal TTFT and development room qualify the AMD interactivity advantage in h2.",
+    "claim_ids": [
+     "C-61711c226789ad"
+    ],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b033",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b034",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b036",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Technical description of the lightning indexer mechanism; no decision-relevant figure or distinct investment argument.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b040",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b043",
+    "status": "covered",
+    "hypothesis_ids": [
+     "b1.hx1_1"
+    ],
+    "reason": "States key MLA config differences (query heads, QK head dimension) between GLM-5 and DeepSeek V3.2 — supports the hardware-targeting hypothesis.",
+    "claim_ids": [
+     "C-8fe66a8b4e720d"
+    ],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b044",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b051",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "FLOPs formula derivation; intermediate math with no decision-relevant figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b053",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Memory-loaded formula derivation; intermediate math.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b055",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Arithmetic-intensity formula derivation; intermediate math.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b056",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b057",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Intermediate derivation step yielding ~2*H; no standalone figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b058",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b059",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b060",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b062",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b064",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Describes DSA two-stage training (dense warm-up then sparse adaptation) as technical background for IndexShare; no investable mechanism or figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b065",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Training-objective detail (KL divergence alignment of indexer logits); pure ML methodology, not decision-relevant.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b066",
+    "status": "covered",
+    "hypothesis_ids": [
+     "h1"
+    ],
+    "reason": "Describes indexer caching of keys and top-K indices under IndexShare; supports the memory-usage argument already carried by h1 (sparse attention does not eliminate cache needs).",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b067",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b071",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Describes the GLM-5 post-training pipeline stages (SFT, three RL stages, cross-stage distillation); methodology background with no investable implication.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b073",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Author commentary on on-policy RL and distillation design choices; technical interpretation, no investable mechanism or figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b074",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b076",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Introductory sentence on comparing RL algorithms; no content to anchor.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b077",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Describes use of GRPO-based RL algorithm with adaptations; ML methodology background.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b078",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "RL algorithm detail (removing KL regularization); methodology, not decision-relevant.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b080",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Clip-Higher RL detail; methodology background.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b081",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Asynchronous RL REINFORCE-like algorithm with DIS detail; methodology background.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b083",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Importance-sampling ratio explanation for sync vs async RL; ML methodology, no investable content.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b085",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Advantage calculation differences (GRPO group-normalized, reverse KL); methodology background.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b088",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Describes SAO for long-horizon RL replacing group-normalized advantage with GAE; ML methodology, no investable mechanism.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b090",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "GAE value-model computation and observation-token handling detail; methodology background.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b091",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Value-model training techniques overview; ML methodology.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b092",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Two-Time-scale Update Rule detail; methodology.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b093",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Attention Parameter Freezing detail; methodology.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b094",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Scaling pre-training of value model corpus (undisclosed); methodology background.",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b096",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b098",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b099",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b101",
+    "status": "anchored",
+    "hypothesis_ids": [],
+    "reason": "",
+    "claim_ids": [],
+    "open_cause": ""
+   },
+   {
+    "block_id": "b102",
+    "status": "immaterial",
+    "hypothesis_ids": [],
+    "reason": "Paywall teaser about cybersecurity capabilities analysis; no substantive argument or figure.",
+    "claim_ids": [],
+    "open_cause": ""
+   }
+  ],
+  "pass_ran": true,
+  "note": ""
+ }
+}

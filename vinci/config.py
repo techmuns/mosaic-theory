@@ -217,8 +217,10 @@ def load_local_env(env_path: Path | None = None) -> None:
 
 
 def sec_user_agent() -> str:
-    """SEC fair-access requires a declared User-Agent with a contact. Overridable via env."""
-    return os.environ.get("SEC_USER_AGENT", "vinci-research tech@muns.io")
+    """SEC fair-access requires a declared User-Agent with a contact. Overridable via env. An
+    EMPTY value is unset: a GitHub secret that does not exist reaches the job as "" — it sent an
+    empty User-Agent and broke `theme_intelligence.config` at import (2026-10-14)."""
+    return (os.environ.get("SEC_USER_AGENT") or "").strip() or "vinci-research tech@muns.io"
 
 
 def require_env(name: str) -> str:

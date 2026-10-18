@@ -1,0 +1,65 @@
+== hybrid-a R-20261010T165609Z-article AV-cfafd53bdd866f67 'Everyone Says Datacenter Moratoriums Are Killing t': 0 of 44 figures open, 1 of 61 blocks open, pass_ran=True
+   BLK b004 [] no verified claim sits in it and pass 1b gave no verifiable account
+   issue codes: {'ARGUMENT_UNACCOUNTED': 1, 'AUTHOR_SPAN_NOT_FOUND': 4, 'CLASS_DISAGREES': 1, 'PARTIAL_RETRIEVAL': 1}
+== hybrid-a R-20261010T165610Z-article AV-52f13ebe82955750 'A calm index, a restless market': 0 of 19 figures open, 0 of 10 blocks open, pass_ran=True
+   issue codes: {'AUTHOR_METADATA_DISCREPANCY': 1}
+== hybrid-a R-20261011T100624Z-ingest AV-51c14867d6652aa1 'Overcoming Gridlock 2.0: Solving Power Bottlenecks': 17 of 851 figures open, 4 of 292 blocks open, pass_ran=True
+   FIG b060 '50' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “| 50-GW+ of data center capacity was | | | | 24% CAGR increase since | | | | | | | | | | The Midwest Independent ; | | | | | | | | | | | | | | | System Operator (MISO) had the fastest growth at”
+   FIG b060 '24%' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “| 50-GW+ of data center capacity was | | | | 24% CAGR increase since | | | | | | | | | | The Midwest Independent ; | | | | | | | | | | | | | | | System Operator (MISO) had the fastest growth at”
+   FIG b093 '~$400 billion' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “~$400 billion Large Unit Lead Times =”
+   FIG b095 '80%' [verification_failed] a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence
+       “Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substatio”
+   FIG b095 '24-48' [verification_failed] a claim quotes it (C-c22794633f809c) but failed verification, so it is never used as evidence
+       “Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substatio”
+   FIG b095 '12 - 30' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substatio”
+   FIG b095 'five years' [verification_failed] a claim quotes it (C-f346d263647623) but failed verification, so it is never used as evidence
+       “Large Power Transformers Medium/High-Voltage Substation Transformers Switchgear & Breakers Used in utility substations, Used in data center electrical Demand up by more than 110% data center substatio”
+   FIG b126 '~27%' [verification_failed] a claim quotes it (C-448a5ba8c162b0) but failed verification, so it is never used as evidence
+       “EV sales in 1Q 2026 were down ~27% YoY.4 Subsequently, European new EV registrations rose 34% YoY in April 2026, the first month to fully reflect the oil shock from the Iran war.”
+   FIG b127 '~27%' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “The U.S. is the exception: 1Q 2026 sales were down ~27% YoY, although the decline slowed from 4Q 2025.”
+   FIG b185 '12' [verification_failed] a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidenc
+       “Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.”
+   FIG b185 '30' [verification_failed] a claim quotes it (C-31eb74ab24d35a, C-c4e5387e88f82f) but failed verification, so it is never used as evidenc
+       “Depending on the voltage and class, wait times can extend to 12 months, or even 30 or more.”
+   FIG b195 '2,358' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “2025 market share by capacity total 2,358.5GVA”
+   FIG b203 '30%' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “Wood Mackenzie estimates that power transformers are in a supply deficit of 30% based on annual supply and demand estimates in 2025.”
+   FIG b208 '10' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “We forecast global high voltage power transformer supply to rise 59% in 2025-2028 and 95% in 2025-2030, taking into account the expansion plans of the global top-10 suppliers (see Figure 14).”
+   FIG b423 '~10%' [verification_failed] a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence
+       “At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, with industrial demand down ~20%).”
+   FIG b423 '15' [verification_failed] a claim quotes it (C-0cb1739790eb5f) but failed verification, so it is never used as evidence
+       “At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, with industrial demand down ~20%).”
+   FIG b423 '~20%' [verification_failed] a claim quotes it (C-2882fc3a5de5cf) but failed verification, so it is never used as evidence
+       “At the same time, underlying power demand has been weak historically (EU27+UK demand down ~10% over the past 15 years, with industrial demand down ~20%).”
+   BLK b153 [account_names_no_record] pass 1b called it covered — 'Durability concern/early-2000s overbuild is already carried as a first-pass market risk.' — but named no verified claim or hypothesis, so the account cannot be checked
+   BLK b329 [account_names_no_record] pass 1b called it covered — 'Scandium supply-chain constraint already captured as a first-pass market risk.' — but named no verified claim or hypothesis, so the account cannot be checked
+   BLK b483 [account_names_no_record] pass 1b called it covered — 'Valuation caution restates stretched-valuation market risk already recorded.' — but named no verified claim or hypothesis, so the account cannot be checked
+   BLK b486 [account_names_no_record] pass 1b called it covered — 'Positioning/concentration caution restates stretched-valuation/positioning market risk already recorded.' — but named no verified claim or hypothesis, so the account canno
+   issue codes: {'ARGUMENT_UNACCOUNTED': 4, 'FIGURE_UNCAPTURED': 17, 'COMPLETENESS_IN_PARTS': 1, 'CLASS_DISAGREES': 1, 'AUTHORS_FROM_TEXT': 1, 'EXTRACTION_COMPACT': 1}
+== hybrid-c R-20261011T100947Z-article AV-615a0cd5a1c66b28 'LatAm Poised for Take-Off': 0 of 5 figures open, 0 of 10 blocks open, pass_ran=True
+   issue codes: {'MALFORMED_ITEM_DROPPED': 3, 'FIGURE_UNCAPTURED': 1, 'EXTRACTION_COMPACT': 1, 'COMPLETENESS_IN_PARTS': 1, 'AUTHORS_FROM_TEXT': 2, 'LINKED_REPORT_UPLOAD': 1, 'CLASS_DISAGREES': 2, 'PARTIAL_RETRIEVAL': 1}
+== hybrid-c R-20261011T101121Z-ingest AV-fc4ce9a39928805c 'LatAm Poised for Take-Off': 1 of 319 figures open, 0 of 208 blocks open, pass_ran=True
+   FIG b157 '23' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “Spending freezes and executive decrees can contribute at the margin (see Figure | | | ; | 23), as evidenced by the government's COP21.9tn expenditure reduction for 2026, but meaningful consolidation |”
+   issue codes: {'MALFORMED_ITEM_DROPPED': 3, 'FIGURE_UNCAPTURED': 1, 'EXTRACTION_COMPACT': 1, 'COMPLETENESS_IN_PARTS': 1, 'AUTHORS_FROM_TEXT': 2, 'LINKED_REPORT_UPLOAD': 1, 'CLASS_DISAGREES': 2, 'PARTIAL_RETRIEVAL': 1}
+== hybrid-b2 R-20261011T104153Z-article AV-16c30c3205b23791 'Sizing the ETF Opportunity: Active ETFs Move to Ce': 5 of 232 figures open, 0 of 144 blocks open, pass_ran=True
+   FIG b016 '$25 trillion' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “Our new Patrick Galvin, CFA base case calls for $25 trillion in assets by the end of this decade, with the U.S.”
+   FIG b016 '$40 trillion' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “ETF Strategy industry breaching the $40 trillion mark in ten years.”
+   FIG b017 '$10 trillion' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “A year ago, we opined on the roadmap to the next $10 trillion in U.S.”
+   FIG b052 '$25 trillion' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “To us, $25 trillion in U.S.”
+   FIG b052 '$40 trillion' [capture_not_verified] pass 1b claimed a capturing claim, but none verified
+       “ETF AUM looks attainable by the end of this decade, with more than $40 trillion possible in ten years.”
+   issue codes: {'FIGURE_UNCAPTURED': 5, 'AUTHORS_FROM_TEXT': 2, 'COMPLETENESS_IN_PARTS': 1, 'PARTIAL_RETRIEVAL': 1, 'CLASS_DISAGREES': 1}
+== hybrid-b2 R-20261011T104153Z-article AV-6fec183b75098414 'Sizing the ETF Opportunity: Active ETFs Move to Ce': 0 of 20 figures open, 0 of 18 blocks open, pass_ran=True
+   issue codes: {'FIGURE_UNCAPTURED': 5, 'AUTHORS_FROM_TEXT': 2, 'COMPLETENESS_IN_PARTS': 1, 'PARTIAL_RETRIEVAL': 1, 'CLASS_DISAGREES': 1}

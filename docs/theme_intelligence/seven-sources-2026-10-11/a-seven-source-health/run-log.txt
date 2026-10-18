@@ -1,0 +1,74 @@
+$ --data-dir data/theme_intelligence/v2/health-7 sources --check-health
+source health — window 2026-10-02..2026-10-11 (newest-article freshness), 7 channel(s)
+Sources healthy: 2/7 | Degraded: 3 | Blocked: 2 | Errors: 0
+
+  Citi                       DEGRADED  QUIET    checked 2026-10-11T14:25  partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a teaser / excerpt); latest sca
+  J.P. Morgan Private Bank   HEALTHY   FRESH    checked 2026-10-11T14:26  discovery, a full-text article, its date and byline all read
+  Morgan Stanley             BLOCKED   UNKNOWN  checked 2026-10-11T08:30  robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — canno
+      not re-requested: access was refused at 2026-10-11 08:30 UTC; next re-test after 2026-10-12 08:30 UTC (or pass --force)
+  Nomura                     DEGRADED  FRESH    checked 2026-10-11T14:26  partial: 1 of 3 sampled article(s) partial (the page summarises a fuller report it links to; that report was n
+  TrendForce                 HEALTHY   FRESH    checked 2026-10-11T14:27  discovery, a full-text article, its date and byline all read
+  SemiAnalysis               DEGRADED  FRESH    checked 2026-10-11T14:27  partial: 1 of 3 sampled article(s) are paywalled previews — only the preview is readable; latest scan R-202610
+  Goldman Sachs              BLOCKED   UNKNOWN  checked 2026-10-11T08:31  https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)
+      not re-requested: access was refused at 2026-10-11 08:31 UTC; next re-test after 2026-10-12 08:31 UTC (or pass --force)
+
+Next actions:
+  Citi (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source citi_must_c [--url <article URL>] if you are entitled to the full text
+      UPLOAD_REQUIRED: https://www.citigroup.com/global/insights/latam-poised-for-take-off — LatAm Poised for Take-Off
+  Morgan Stanley (BLOCKED): automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source ms_research
+      UPLOAD_REQUIRED: unknown — the channel cannot be read
+  Nomura (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source nomura_connects [--url <article URL>] if you are entitled to the full text
+      UPLOAD_REQUIRED: https://www.nomuraconnects.com/focused-thinking-posts/central-banks-recalibrating-monetary-policies — Central Banks Recalibrating Monetary Policies
+  SemiAnalysis (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source semianalysis [--url <article URL>] if you are entitled to the full text
+      UPLOAD_REQUIRED: https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier — Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime
+  Goldman Sachs (BLOCKED): automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source gs_research
+      UPLOAD_REQUIRED: unknown — the channel cannot be read
+exit=0
+$ --data-dir data/theme_intelligence/v2/health-7 sources --check-health
+source health — window 2026-10-02..2026-10-11 (newest-article freshness), 7 channel(s)
+Sources healthy: 2/7 | Degraded: 3 | Blocked: 2 | Errors: 0
+
+  Citi                       DEGRADED  QUIET    checked 2026-10-11T14:28  partial: 1 of 3 sampled article(s) partial (short body (96 words) — treated as a teaser / excerpt); latest sca
+  J.P. Morgan Private Bank   HEALTHY   FRESH    checked 2026-10-11T14:29  discovery, a full-text article, its date and byline all read
+  Morgan Stanley             BLOCKED   UNKNOWN  checked 2026-10-11T08:30  robots.txt unreachable (RemoteProtocolError) — FAIL CLOSED, nothing fetched from www.morganstanley.com — canno
+      not re-requested: access was refused at 2026-10-11 08:30 UTC; next re-test after 2026-10-12 08:30 UTC (or pass --force)
+  Nomura                     DEGRADED  FRESH    checked 2026-10-11T14:29  partial: 1 of 3 sampled article(s) partial (the page summarises a fuller report it links to; that report was n
+  TrendForce                 HEALTHY   FRESH    checked 2026-10-11T14:29  discovery, a full-text article, its date and byline all read
+  SemiAnalysis               DEGRADED  FRESH    checked 2026-10-11T14:29  partial: 1 of 3 sampled article(s) are paywalled previews — only the preview is readable; latest scan R-202610
+  Goldman Sachs              BLOCKED   UNKNOWN  checked 2026-10-11T08:31  https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)
+      not re-requested: access was refused at 2026-10-11 08:31 UTC; next re-test after 2026-10-12 08:31 UTC (or pass --force)
+
+Changes needing attention:
+  [PERSISTENT_FAILURE] Citi: 
+  [PERSISTENT_FAILURE] Nomura: 
+  [PERSISTENT_FAILURE] SemiAnalysis: 
+
+Next actions:
+  Citi (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source citi_must_c [--url <article URL>] if you are entitled to the full text
+      UPLOAD_REQUIRED: https://www.citigroup.com/global/insights/money-the-evolution-to-digital — Money: The Evolution to Digital
+  Morgan Stanley (BLOCKED): automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source ms_research
+      UPLOAD_REQUIRED: unknown — the channel cannot be read
+  Nomura (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source nomura_connects [--url <article URL>] if you are entitled to the full text
+      UPLOAD_REQUIRED: https://www.nomuraconnects.com/focused-thinking-posts/beyond-the-headlines-ai-has-added-jobs-in-asia-so-far — Beyond the Headlines: AI Has Added Jobs in Asia – So Far
+  SemiAnalysis (DEGRADED): upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source semianalysis [--url <article URL>] if you are entitled to the full text
+      UPLOAD_REQUIRED: https://newsletter.semianalysis.com/p/are-open-models-catching-up — Are Open Models Catching Up?
+  Goldman Sachs (BLOCKED): automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence article --url <article URL> --html <saved page> --as-of <date> --source gs_research
+      UPLOAD_REQUIRED: unknown — the channel cannot be read
+
+Alerts: not delivered — no channel configured (THEME_INTELLIGENCE_HEALTH_HOOK unset); shown on the dashboard
+exit=0
+$ --data-dir data/theme_intelligence/v2/health-7 scan --days 10 --max-articles 0
+run R-20261011T151148Z-scan: scan execution SUCCEEDED · window 2026-10-02..2026-10-11 · as-of 2026-10-11
+  citi_must_c          OK       discovered  20 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window  20 · inaccessible   0 · errors  0
+  jpm_tmt              OK       discovered  51 · in window   1 · undated   0 · new   0 · known   1 · processed   0 · queued   0 · out-of-window  50 · inaccessible   0 · errors  0
+  ms_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+  nomura_connects      OK       discovered  14 · in window   1 · undated   1 · new   0 · known   1 · processed   0 · queued   0 · out-of-window  12 · inaccessible   0 · errors  0
+  trendforce           OK       discovered   5 · in window   2 · undated   0 · new   0 · known   2 · processed   0 · queued   0 · out-of-window   3 · inaccessible   0 · errors  0
+  semianalysis         OK       discovered  20 · in window   2 · undated   0 · new   0 · known   2 · processed   0 · queued   0 · out-of-window  18 · inaccessible   0 · errors  0
+  gs_research          MANUAL_FIRST discovered   0 · in window   0 · undated   0 · new   0 · known   0 · processed   0 · queued   0 · out-of-window   0 · inaccessible   0 · errors  0
+counts {'articles_queued': 0, 'llm_calls': 0, 'llm_calls_cached': 0, 'http_requests': 25, 'http_cache_hits': 24}
+source health (checked at the start of this scan) — Sources healthy: 2/7 | Degraded: 3 | Blocked: 2 | Errors: 0
+research verification NOTHING_ANALYSED — no article was analysed in this run
+cost $0.0 · tokens {}
+outputs: data/theme_intelligence/v2/health-7/runs/R-20261011T151148Z-scan
+exit=0

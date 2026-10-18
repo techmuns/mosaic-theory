@@ -1,0 +1,3 @@
+Synthetic memory demand keeps rising as inference workloads scale across hyperscale clusters, and the operators we spoke with expect the tightness to persist into next year.
+
+Our synthetic channel checks point to HBM supply that stays allocated well ahead of shipments, with contract terms lengthening at every major supplier.

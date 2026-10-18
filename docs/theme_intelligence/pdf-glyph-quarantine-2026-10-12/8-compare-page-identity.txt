@@ -1,0 +1,15 @@
+'30-35 years'            base blocks []  verified claims quoting it: 1 ['exceeding their designed useful lives of roughly 30-35 years']
+'30-35 years'            new  blocks []  verified claims quoting it: 0 []
+'20-200%'                base blocks []  verified claims quoting it: 1 ['Manufacturers plan output increases of 20-200%']
+'20-200%'                new  blocks []  verified claims quoting it: 0 []
+'Prolec GE'              base blocks [('b218', 23, 'paragraph')]  verified claims quoting it: 2 ['it would incorporate an additional $1 billion of incremental capex through 2028 from Prole']
+'Prolec GE'              new  blocks [('b217', 23, 'paragraph')]  verified claims quoting it: 2 ['it would incorporate an additional $1 billion of incremental capex through 2028 from Prole']
+'four years from 2025'   base blocks [('b212', 22, 'paragraph')]  verified claims quoting it: 1 ['the new capacity to be added gradually over four years from 2025 to 2028']
+'four years from 2025'   new  blocks [('b211', 22, 'paragraph')]  verified claims quoting it: 0 []
+'increase by two years'  base blocks [('b320', 34, 'paragraph')]  verified claims quoting it: 1 ['which is expected to increase by two years with advancement in technology']
+'increase by two years'  new  blocks [('b320', 34, 'paragraph')]  verified claims quoting it: 1 ['BE systems demonstrating ~5.5 year median stack lifetimes, which is expected to increase b']
+
+pages 1-53 whose blocks are identical (same split, same text): 48 of 53
+pages 1-53 whose text is identical once the blocks are joined: 53 of 53
+pages whose split differs: [7, 8, 9, 26, 38]
+pages 13-19 identical block for block: True

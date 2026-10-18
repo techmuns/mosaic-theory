@@ -1,0 +1,22 @@
+===== hybrid-a-1.log
+run R-20261011T100624Z-ingest: ingest SUCCEEDED — Citi Overcoming Gridlock 2.0.pdf
+  D-c6f361d4d57a6196  INGESTED   article A-82a8a9210bae  no article of this publisher resembles it; pipeline PROCESSED
+      flagged: page 1: carries graphics (1 image(s), 16 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 4: carries graphics (1 image(s), 3 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 5: carries graphics (1 image(s), 2 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 7: carries graphics (0 image(s), 156 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 8: carries graphics (0 image(s), 163 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      flagged: page 9: carries graphics (2 image(s), 5 vector object(s)) — chart labels are read as text, plotted values are NOT; figures shown only in a chart are not verifiable
+      … 33 more flagged item(s) on the document record
+cost $46.6736 · outputs: data/theme_intelligence/v2/hybrid-a/runs/R-20261011T100624Z-ingest
+exit=0
+
+===== hybrid-a-2.log
+$ --data-dir data/theme_intelligence/v2/hybrid-a ingest-file --path data/theme_intelligence/v2/public_reports/gridlock-copy-from-email.pdf --source citi_must_c --llm-permitted --as-of 2026-10-11
+run R-20261011T110003Z-ingest: ingest SUCCEEDED — gridlock-copy-from-email.pdf
+  D-c6f361d4d57a6196  DUPLICATE  article A-82a8a9210bae  the same file was imported as D-c6f361d4d57a6196 on 2026-10-11 10:06 UTC (INGESTED) — nothing re-counted
+cost $0.0 · outputs: data/theme_intelligence/v2/hybrid-a/runs/R-20261011T110003Z-ingest
+exit=0
+$ --data-dir data/theme_intelligence/v2/hybrid-a documents
+D-c6f361d4d57a6196  INGESTED  citi_must_c        pdf      2026-06-28 article A-82a8a9210bae  Citi Overcoming Gridlock 2.0.pdf
+exit=0

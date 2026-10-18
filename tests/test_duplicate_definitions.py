@@ -26,6 +26,9 @@ from __future__ import annotations
 import collections
 import pathlib
 import re
+import subprocess
+
+import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -70,6 +73,66 @@ BASELINE: frozenset[tuple[str, ...]] = frozenset({
 })
 
 
+#: JS GENERATED from the python source, not a hand-copied twin: `publish` writes the research
+#: desk's script (vinci/theme_intelligence/desk.py `JS`) into the published folder byte for byte on
+#: every publish, so it cannot drift — the COMMITTED copy is pinned equal to what the code
+#: generates now (`test_the_committed_desk_script_and_styles_are_what_the_code_generates`, U34);
+#: a tmp publish's copy by tests/test_theme_intelligence_publish.py.
+GENERATED_FROM_PYTHON = ROOT / "frontend" / "theme-intelligence"
+
+
+def _generated_drift(folder: pathlib.Path) -> list[str]:
+    """The generated files under `folder` that differ from what the code generates now."""
+    from vinci.theme_intelligence.publish import app_css, desk_js
+
+    want = {"desk.js": desk_js(), "intel.css": app_css()}
+    return [name for name, text in want.items()
+            if not (folder / name).is_file() or (folder / name).read_text() != text]
+
+
+def _code_moved_since_publish() -> str | None:
+    """The last commit to the published folder (a republish always rewrites its `index.json`; a
+    hand edit is itself such a commit), when the theme-intelligence code has changed since
+    (working tree included) — the desk is then republished by its own artifact PR after the code
+    merges, never in the code PR. None when the code is unchanged since then."""
+    last = subprocess.run(
+        ["git", "log", "-1", "--format=%h", "--", "frontend/theme-intelligence"], cwd=ROOT,
+        capture_output=True, text=True, check=True).stdout.strip()
+    moved = subprocess.run(["git", "diff", "--quiet", last, "--", "vinci/theme_intelligence"],
+                           cwd=ROOT).returncode != 0
+    return last if moved else None
+
+
+def test_the_committed_desk_script_and_styles_are_what_the_code_generates() -> None:
+    """THE EXEMPTION'S PREMISE (U34): `GENERATED_FROM_PYTHON` is skipped by the guard below only
+    because it is generated. Pinned on the COMMITTED files, byte for byte — a pin over a tmp
+    publish never sees a hand edit to the committed copy. Checked whenever the code is the code
+    that published them: in the artifact PR itself, and after a hand edit to either file (that
+    edit is then the last commit to touch them). After a code PR, until the republish, it waits —
+    the generated files are never committed with code (review of #728).
+    Red here: republish (`python -m vinci.theme_intelligence publish`)."""
+    moved = _code_moved_since_publish()
+    if moved is not None:
+        pytest.skip(f"the theme-intelligence code changed since {moved}, the last commit to the "
+                    f"published folder — checked again at the next republish")
+    assert _generated_drift(GENERATED_FROM_PYTHON) == []
+
+
+def test_a_hand_edited_or_missing_generated_file_is_drift(tmp_path: pathlib.Path) -> None:
+    """NEGATIVE: one byte added to a copy of the generated script, and a missing stylesheet,
+    are each caught. The copies are what the code generates NOW, never the committed files: those
+    lag a code PR until its republish, and this test copying them turned the first code PR that
+    changed the desk's styles red (2026-10-16)."""
+    from vinci.theme_intelligence.publish import app_css, desk_js
+
+    js = desk_js()
+    (tmp_path / "desk.js").write_text(js + " ")
+    assert _generated_drift(tmp_path) == ["desk.js", "intel.css"]
+    (tmp_path / "desk.js").write_text(js)
+    (tmp_path / "intel.css").write_text(app_css())
+    assert _generated_drift(tmp_path) == []
+
+
 def _literal_sets(path: pathlib.Path) -> set[frozenset[str]]:
     """Every bracketed literal of >= 3 DISTINCT quoted strings in one file.
 
@@ -91,7 +154,7 @@ def _duplicated_across_twins() -> dict[tuple[str, ...], tuple[list[str], list[st
         for s in _literal_sets(p):
             py[s].append(str(p.relative_to(ROOT)))
     for p in sorted((ROOT / "frontend").rglob("*.js")):
-        if "node_modules" in str(p):
+        if "node_modules" in str(p) or p.is_relative_to(GENERATED_FROM_PYTHON):
             continue
         for s in _literal_sets(p):
             js[s].append(str(p.relative_to(ROOT)))

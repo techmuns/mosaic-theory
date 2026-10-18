@@ -75,10 +75,12 @@ def test_only_the_eps_series_states_the_split_factor() -> None:
     assert share_basis_change(extract_points(fx, "shares")) is None, (
         "the shares series now carries a restatement — the guard could key on it directly")
     assert share_basis_change(extract_points(fx, "eps_diluted")) == pytest.approx(10.02, abs=0.05)
+    # RE-MEASURED 2026-10-16: the 7.0x this series used to return was NFLX's 2015 7-for-1, the
+    # first split found — not a wrong number. Read latest change first, it states the 2025
+    # 10-for-1 as EPS does; the guard stays keyed on EPS (the per-share figure the filer restates)
     wa = share_basis_change(points_for_tag(fx, "WeightedAverageNumberOfDilutedSharesOutstanding"))
-    assert wa is not None and not (9.0 < wa < 11.0), (
-        f"the WA series returned {wa}, which now looks like the real factor — the docstring's "
-        "warning that it is confidently wrong needs re-measuring")
+    assert wa == pytest.approx(10.0, abs=0.05), (
+        f"the WA series returned {wa} — the latest split, read first, is the 2025 10-for-1")
 
 
 @pytest.mark.skipif(not NFLX.is_file(), reason="no NFLX fixture")

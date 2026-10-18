@@ -55,6 +55,9 @@ data/dossiers/*/llm_call.log
 # viewer fetches, so a static serve works without a build step. Raw CIQ in data/manual/ciq stays
 # ignored regardless. (If the repo/deploy goes public, frontend/dossiers reverts to ignored.)
 frontend/snapshots/
+# frontend/theme-intelligence/ IS committed (operator decision 2026-10-13) — the research desk published
+# into the app: derived analysis with short source quotes, never article text. Reverts to ignored with
+# frontend/dossiers if the repo/deploy goes public.
 node_modules/
 
 # THEME FORWARD-VALIDATION ARTIFACTS — COMMITTED as of 2026-08-12, reversing the standing

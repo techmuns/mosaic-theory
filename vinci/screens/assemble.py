@@ -91,6 +91,42 @@ G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE,
 _SPLIT_MIN_FACTOR = 1.5
 _SPLIT_TOL = 0.02          # agreement between periods, as a fraction of the factor
 _SPLIT_MIN_PERIODS = 2
+#: THE REPORTING PRECISION, inside which two factors that state the same split can differ. A filer
+#: states EPS to the cent, so a restated 0.17 is anything in [0.165, 0.175) and the factor read off
+#: it carries that error: NVIDIA's 2024 10-for-1 restated FY2023 1.74 → 0.17 (×10.24) and FY2024
+#: 11.93 → 1.19 (×10.03) — 2.05% apart, outside `_SPLIT_TOL` on rounding alone, so the split went
+#: undetected and its percentile divided split-adjusted prices by pre-split EPS (2026-10-16; NFLX's
+#: 2015 7-for-1 the same way, ×7.12 and ×6.97). Two factors now agree when they are within
+#: `_SPLIT_TOL` (as before) OR
+#: the ranges their stated figures allow overlap. NOT both stacked: widening the ranges by 2% as
+#: well read SMPL's 2021 accounting restatement (FY2018 0.96 → 0.51, ×1.88; FY2019 0.56 → −0.31,
+#: ×1.81) as a split.
+_EPS_DECIMALS = 2
+#: ...but a ratio whose own figures are too coarse to state it — a restatement of cents, 0.01 →
+#: 0.02, allows anything from 1.0x to 5.0x — never establishes agreement: the point is to catch a
+#: split, and a split stated in cents is no statement at all
+_SPLIT_PRECISION = 0.10
+
+
+def _half_unit(v: float) -> float:
+    """Half the last unit a reported figure carries: a cent, or its own last decimal if finer."""
+    text = repr(abs(v))
+    places = len(text.split(".")[1]) if "." in text and "e" not in text else 0
+    return 0.5 * 10.0 ** -max(_EPS_DECIMALS, places)
+
+
+def _factor_range(a: float, b: float) -> tuple[float, float] | None:
+    """The range of factors two reported figures allow (the larger over the smaller), or None
+    when it is wider than `_SPLIT_PRECISION` either way of the stated factor."""
+    hi_v, lo_v = max(a, b), min(a, b)
+    if lo_v - _half_unit(lo_v) <= 0:
+        return None
+    ratio = hi_v / lo_v
+    low = (hi_v - _half_unit(hi_v)) / (lo_v + _half_unit(lo_v))
+    high = (hi_v + _half_unit(hi_v)) / (lo_v - _half_unit(lo_v))
+    if high / ratio - 1 > _SPLIT_PRECISION or 1 - low / ratio > _SPLIT_PRECISION:
+        return None
+    return low, high
 
 
 def share_basis_change(points: list[ConceptPoint]) -> float | None:
@@ -120,8 +156,9 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
             continue
         by_period.setdefault(p.period_end, []).append(p)
 
-    factors: list[float] = []
-    for ps in by_period.values():
+    #: (period end, factor, the factor range its figures allow — None when too coarse to state)
+    factors: list[tuple[date, float, tuple[float, float] | None]] = []
+    for end, ps in by_period.items():
         filings = {p.filed for p in ps}
         if len(filings) < 2:
             continue                      # never re-reported: nothing to compare
@@ -129,6 +166,12 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
         old = [abs(p.value) for p in ps if p.filed == first and p.value]
         new = [abs(p.value) for p in ps if p.filed == last and p.value]
         if not old or not new:
+            continue
+        # A SPLIT RESCALES, IT NEVER CROSSES ZERO: a restatement that turns a profit into a loss
+        # (SMPL FY2019 0.56 → −0.31) is an accounting change, whatever its magnitude
+        signed = [max((p.value for p in ps if p.filed == when and p.value), key=abs)
+                  for when in (first, last)]
+        if (signed[0] > 0) != (signed[1] > 0):
             continue
         # EITHER WAY, like the cap reconciliation's "3.91x either way". The first cut divided
         # old/new, which only catches a FORWARD split (EPS restated DOWN, the NFLX shape) and
@@ -139,10 +182,24 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
         a, b = max(old), max(new)          # the LARGEST per filing: a multi-concept day cannot
         ratio = max(a / b, b / a)          # pair the wrong two
         if ratio >= _SPLIT_MIN_FACTOR:
-            factors.append(ratio)
+            factors.append((end, ratio, _factor_range(a, b)))
 
-    for f in factors:
-        agreeing = [g for g in factors if abs(g - f) / f <= _SPLIT_TOL]
+    # THE PRECISION GATE GUARDS ONLY THE NEW PATH: a factor too coarse to state a range never
+    # widens agreement, but it still agrees within `_SPLIT_TOL` as it always did (review: gating
+    # both dropped an exact ×2.0 restated from 0.10 to 0.05 and missed a split the old rule read)
+    def agree(f: tuple[date, float, tuple[float, float] | None],
+              g: tuple[date, float, tuple[float, float] | None]) -> bool:
+        if abs(g[1] - f[1]) / f[1] <= _SPLIT_TOL:
+            return True
+        return f[2] is not None and g[2] is not None and (f[2][0] <= g[2][1]
+                                                          and g[2][0] <= f[2][1])
+
+    # THE LATEST BASIS CHANGE FIRST: a series can carry two splits (NFLX's 2015 7-for-1 and its
+    # 2025 10-for-1), and the current figures sit on the latest one — the factor a caller locating
+    # the break in a recent share series needs. (Before the precision fix the older split went
+    # unread on rounding, so first-found and latest happened to coincide.)
+    for f in sorted(factors, reverse=True):
+        agreeing = [g[1] for g in factors if agree(f, g)]
         if len(agreeing) >= _SPLIT_MIN_PERIODS:
             return sum(agreeing) / len(agreeing)
     return None
