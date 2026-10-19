@@ -2,7 +2,7 @@
 id: 2026-10-19-net-debt-one-builder
 status: recorded
 date: 2026-10-19
-prs: []
+prs: [749]
 supersedes:
 superseded-by:
 ---
