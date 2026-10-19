@@ -114,8 +114,17 @@ def _dossier(t: str) -> Dossier:
 
 def test_burl_states_that_its_ev_ebitda_is_not_reported_ebitda() -> None:
     """(+) CORPUS, the name the failure was measured on. The line must give BOTH margins and the
-    restated level, because "9.0x, 8th percentile, near-floor" is unreadable without them."""
-    line = rend._multiple_basis_md(_dossier("BURL").mechanical)
+    restated level, because "9.0x, 8th percentile, near-floor" is unreadable without them.
+
+    THE PAGE WITHOUT A LEASE BASIS (2026-10-19). Once a page carries a MATERIAL `lease_basis`
+    the line names the ex-lease history instead and the restatement goes — TEV with the leases
+    over EBITDA after rent is neither basis (tests/test_lease_basis.py). This pins the path every
+    page without the block still takes, so the block is removed here rather than assumed absent."""
+    d = _dossier("BURL")
+    val = d.mechanical.valuation
+    assert val is not None
+    m = d.mechanical.model_copy(update={"valuation": val.model_copy(update={"lease_basis": None})})
+    line = rend._multiple_basis_md(m)
     assert line, "BURL's series implies 19.3% against 11% reported — it must say so"
     assert "19.3%" in line and "11.1%" in line
     assert "NOT the reported EBITDA" in line

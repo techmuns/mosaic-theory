@@ -40,6 +40,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from vinci.dossier.anchor import r1_multiple_band
 from vinci.dossier.schemas import PrimarySource
 from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
 from vinci.scenarios import BASIS_EV_NTM_EBIT, RECIPE_R4, RefPoint
@@ -169,14 +170,19 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
                           str(mg.get("source")), f"{mg.get('anchor_years')} FY through the "
                           "latest reported fiscal year"))
 
-    # multiple base — own-history trailing median. The band LOW is deliberately NOT proposed even
-    # though it sits in the same object: see UNPROPOSED_REASON.
-    oh = (_get(doc, "mechanical", "valuation", "own_history", "value") or [None])[0]
+    # multiple base — the trailing median of the history R1 PRICES ON, chosen by the anchor's own
+    # selector: CIQ's history, or the ex-lease rebuild where rent is material (2026-10-19). One
+    # choice for both, so the record's multiple meets the anchor's net debt on one basis; a band
+    # the anchor refused proposes nothing. The band LOW is deliberately NOT proposed even though
+    # it sits in the same object: see UNPROPOSED_REASON.
+    sel = r1_multiple_band(_get(doc, "mechanical") or {})
+    oh = sel.band if sel.refusal is None else None
+    where = "valuation.lease_basis.ex_lease_band" if sel.ex_lease else "valuation.own_history"
     if isinstance(oh, dict) and isinstance(oh.get("median"), (int, float)):
         out.append(Anchor("multiple", "base", round(float(oh["median"]), 4), "x",
                           float(oh["median"]), "median",
                           f"{oh.get('metric')} trailing median",  # basis= below
-                          f"valuation.own_history {oh.get('metric')} "
+                          f"{where} {oh.get('metric')} "
                           f"({oh.get('n_closes')} closes, {oh.get('source_file')})",
                           str(oh.get("as_of")), basis=str(oh.get("metric") or "") or None))
     return out
@@ -564,8 +570,16 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
 
     # multiple — the own-history band AND the peer row, side by side. Anchoring on own history
     # alone is how a name reads conservative while trading at a premium to its peers.
-    oh = (_get(doc, "mechanical", "valuation", "own_history", "value") or [None])[0]
-    if isinstance(oh, dict):
+    # BOTH histories where rent is material, each labelled, and which one R1 prices on: CIQ's
+    # own and the peer row are struck on a lease-inclusive TEV, so neither is the basis of the
+    # net debt this record subtracts (2026-10-19).
+    sel = r1_multiple_band(_get(doc, "mechanical") or {})
+    ciq_oh = (_get(doc, "mechanical", "valuation", "own_history", "value") or [None])[0]
+    shown = ([("ex-lease (R1's basis)", sel.band)] if sel.ex_lease else []) + [
+        ("CIQ" if sel.ex_lease or sel.refusal else "", ciq_oh)]
+    for tag, oh in shown:
+        if not isinstance(oh, dict):
+            continue
         # `percentile` is WHERE CURRENT SITS in its own range — not a 25th-percentile LEVEL. The
         # first cut of this line labelled it `p25`, which would have put a 0.037 rank where a
         # multiple belongs: one name, two meanings, in a block whose whole job is to be read.
@@ -573,9 +587,18 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
         rank = f"{float(pct) * 100:.1f}th pctile of its own range" if isinstance(
             pct, (int, float)) else "rank unknown"
         ev["multiple"].append(
-            f"own history {oh.get('metric')}: current {oh.get('current')} ({rank}) · "
-            f"low {oh.get('low')} · median {oh.get('median')} · high {oh.get('high')} · "
-            f"{oh.get('n_closes')} closes over {oh.get('window_span_years')}y")
+            f"own history{' ' + tag if tag else ''} {oh.get('metric')}: current "
+            f"{oh.get('current')} ({rank}) · low {oh.get('low')} · median {oh.get('median')} · "
+            f"high {oh.get('high')} · {oh.get('n_closes')} closes over "
+            f"{oh.get('window_span_years')}y")
+    if sel.ex_lease:
+        ev["multiple"].append(
+            f"LEASE BASIS — {sel.materiality}. This record subtracts net debt EXCLUDING operating "
+            "leases, so its exit multiple must be on TEV less operating leases. CIQ's own history "
+            "and the peer row below put operating leases in TEV and rent back in EBITDA; a "
+            "multiple read off either is on the wrong basis for this bridge.")
+    elif sel.refusal:
+        ev["multiple"].append(f"LEASE BASIS — {sel.materiality}. R1 refuses: {sel.refusal}.")
     tm = _get(doc, "mechanical", "peer_comps", "trading_multiples")
     if isinstance(tm, dict) and tm.get("value"):
         ev["multiple"].append(f"PEER CROSS-SECTION (LTM **and** NTM) — {tm['value']}")

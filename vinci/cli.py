@@ -970,6 +970,20 @@ def sync_canonical_ciq(canonical: Path, local: Path, tickers: list[str]) -> list
     return out
 
 
+def _facts_or_none(cfg: Config, cik: Any) -> dict[str, Any] | None:
+    """EDGAR companyfacts for ``cik``, or None when there is no CIK or the fetch fails — the lease
+    basis then states that it could not separate the leases, rather than this command failing."""
+    from vinci.edgar.client import EdgarClient
+
+    if not cik:
+        return None
+    try:
+        facts: dict[str, Any] = EdgarClient.from_config(cfg).companyfacts(str(cik))
+    except Exception:  # noqa: BLE001 — a missing lease basis is stated on the page, never raised
+        return None
+    return facts
+
+
 def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     """Refresh committed ``valuation.own_history`` from the CURRENT on-disk CIQ export (the
     2026-07-21 window-staleness fix), stamping periodicity/span/source_file metadata.
@@ -1030,6 +1044,13 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
             # one book's vocabulary sat in two places at once and got fixed in neither.
             ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
         updates["ev_ebitda"] = ev.model_dump(mode="json")
+        # the lease basis reads the SAME quarterly export (its TEV, leases and EBITDA), so it moves
+        # with the cluster — a band from one export beside a lease basis from another is the drift
+        # this refresh exists to prevent (2026-10-19)
+        from vinci.dossier.lease_basis import lease_basis as _lease_basis
+        lb = _lease_basis(bundle, _facts_or_none(cfg, doc.get("cik")))
+        if lb is not None:
+            updates["lease_basis"] = json.loads(lb.model_dump_json())
         # percentile is EDGAR-screen-sourced when the screen knew it; only the CIQ path is ours
         pct_old = val_old.get("ev_ebitda_percentile_5y") or {}
         if "CIQ" in str(pct_old.get("source_ref") or ""):
@@ -1058,7 +1079,8 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
             from vinci.dossier.schemas import Dossier
             layer_refresh.write_recorded(
                 path, original,
-                Dossier.model_validate_json(replace_valuation_fields(original, updates)),
+                Dossier.model_validate_json(replace_valuation_fields(
+                    original, updates, may_add=frozenset({"lease_basis"}))),
                 "own-history-refresh")
     return 0
 

@@ -1,0 +1,17 @@
+{
+  "rent_expense": 148.8,
+  "rent_ebitda": 10175.8,
+  "rent_to_ebitda": 0.014623,
+  "rent_fiscal_year": "2022-12-31",
+  "threshold": 0.05,
+  "material": false,
+  "materiality": "rent 1.5% of EBITDA (FY ending 2022-12-31: $149M of $10,176M) — immaterial (<5%); R1 keeps CIQ's TEV/LTM EBITDA history",
+  "ex_lease_band": null,
+  "refusal": null,
+  "reconciled_dates": 0,
+  "unreconciled_dates": 0,
+  "unchecked_dates": 0,
+  "pre_adoption_dates": 0,
+  "observations": [],
+  "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
+}

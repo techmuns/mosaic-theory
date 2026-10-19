@@ -21,6 +21,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from vinci.dossier.anchor import (
+    DQ_LEASE_BASIS,
     RECIPE_R1,
     RECIPE_R1_NOT_ROBUST,
     RECIPE_R2,
@@ -113,7 +114,8 @@ def propose(ticker: str, doc: dict[str, Any]) -> Proposal:
     signals: list[str] = []
 
     dq = str(anchor.get("data_quality") or "")
-    band_dead = BAND_INCOHERENT in dq or BAND_UNRECONCILED in dq
+    # a lease-material name without a usable ex-lease history has no usable multiple either
+    band_dead = BAND_INCOHERENT in dq or BAND_UNRECONCILED in dq or DQ_LEASE_BASIS in dq
     if band_dead:
         signals.append(f"band guard flagged: {dq} — the exit multiple has no usable denominator")
 

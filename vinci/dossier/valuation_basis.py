@@ -24,6 +24,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
+from vinci.dossier.anchor import NET_DEBT_EX_LEASE, r1_multiple_band
 from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
 from vinci.dossier.midcycle import R1_FORMULA
 from vinci.dossier.schemas import DateSemantics, Dossier, ValuationBasis
@@ -186,7 +187,15 @@ def _shares_conflict(d: dict[str, Any], conflicts: list[str]) -> None:
         conflicts.append(str(exc))
 
 
-def _r4_bridge(eb: dict[str, Any]) -> dict[str, Any]:
+def _anchor_net_debt_label(d: dict[str, Any]) -> str:
+    """What the anchor's net debt IS, named from its own basis field — ex-lease on a lease-material
+    name since 2026-10-19, lease-inclusive everywhere else."""
+    if (_get(d, "anchor", "net_debt", "basis") or "") == NET_DEBT_EX_LEASE:
+        return "EDGAR net debt excluding operating leases (the anchor's)"
+    return "EDGAR lease-inclusive net debt (the anchor's)"
+
+
+def _r4_bridge(eb: dict[str, Any], anchor_label: str) -> dict[str, Any]:
     ciq = _num(eb.get("ciq_tev_claims"))
     claims = _num(eb.get("claims"))
     return {
@@ -203,7 +212,7 @@ def _r4_bridge(eb: dict[str, Any]) -> dict[str, Any]:
         "reconciles_to_ciq_tev": (abs(claims - ciq) <= EV_BRIDGE_CIQ_TOL
                                   if claims is not None and ciq is not None else None),
         "cross_check": {
-            "basis": "EDGAR lease-inclusive net debt (the anchor's)",
+            "basis": anchor_label,
             "value": _num(eb.get("edgar_net_debt")), "source": eb.get("edgar_source"),
             "eligible_for_primary_bridge": False,
             "reason": ("a different capital-structure and asset-classification basis from the "
@@ -260,7 +269,7 @@ def _r4(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
         conflicts.append("no CIQ TEV bridge on the page (ev_bridge) — the anchor's EDGAR net debt "
                          "is NOT substituted for it")
         return out
-    bridge = _r4_bridge(eb)
+    bridge = _r4_bridge(eb, _anchor_net_debt_label(d))
     out["ev_bridge"], out["exit_claims"] = bridge, _r4_exit_claims(eb)
     if bridge["ciq_tev_less_market_cap"] is None:
         conflicts.append("the bridge is unchecked: no CIQ TEV less market cap to test it against")
@@ -282,12 +291,19 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
     nd = a.get("net_debt") or {}
     raw = d.get("ev_bridge")
     eb: dict[str, Any] = raw if isinstance(raw, dict) else {}
+    # THE ANCHOR SAYS WHICH HISTORY AND WHICH BRIDGE IT PRICED ON (2026-10-19): ex-lease on a
+    # lease-material name, CIQ's own otherwise. Read from its fields, never re-decided here.
+    mult_ex = str(_get(a, "multiple", "source") or "").startswith("valuation.lease_basis")
+    nd_label = _anchor_net_debt_label(d)
     out: dict[str, Any] = {
         "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
         "multiple_basis": a.get("multiple_basis"),
         "current_multiple": None,
-        "history_series": "mechanical.valuation.own_history (trailing EV/EBITDA, TEV/LTM)",
-        "ev_bridge_basis": "EDGAR lease-inclusive net debt (the anchor's)",
+        "history_series": (
+            "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV "
+            "less operating leases / LTM EBITDA)" if mult_ex
+            else "mechanical.valuation.own_history (trailing EV/EBITDA, TEV/LTM)"),
+        "ev_bridge_basis": nd_label,
         "scenario_formula": ("((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda "
                              "- net_debt"),
         "per_share_formula": "exit_equity_value / exit_share_count",
@@ -295,7 +311,7 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
         "non_operating_assets": _NON_OP_VENDOR_TEV,
         "exit_share_count": _share_count(d),
         "ev_bridge": {
-            "primary_basis": "EDGAR lease-inclusive net debt (the anchor's)",
+            "primary_basis": nd_label,
             "current_claims": _num(nd.get("value")),
             "current_claims_source": f"anchor.net_debt ({nd.get('source')})",
             "ciq_tev_less_market_cap": _num(eb.get("ciq_tev_claims")),
@@ -316,6 +332,20 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
         for key in ("multiple", "d_and_a", "net_debt"):
             if _num(_get(a, key, "value")) is None:
                 conflicts.append(f"R1 needs anchor.{key} and the page carries none")
+        # ONE LEASE BASIS ACROSS THE PAIR, and the page's: an ex-lease multiple against a
+        # lease-inclusive bridge (or the reverse) misprices by the whole lease book, and an anchor
+        # derived before the page's lease basis landed is on the wrong one (2026-10-19)
+        nd_ex = nd.get("basis") == NET_DEBT_EX_LEASE
+        if mult_ex != nd_ex:
+            conflicts.append(
+                f"R1's multiple ({'ex-lease' if mult_ex else 'lease-inclusive'}) and net debt "
+                f"({'ex-lease' if nd_ex else 'lease-inclusive'}) are on different lease bases")
+        sel = r1_multiple_band(d.get("mechanical") or {})
+        if sel.ex_lease != mult_ex:
+            conflicts.append(
+                "the anchor's multiple is not on the page's lease basis "
+                f"({'ex-lease' if sel.ex_lease else 'CIQ'} history; {sel.materiality}) — "
+                "re-derive the anchor (anchor-backfill)")
         _shares_conflict(d, conflicts)
     return out
 

@@ -219,6 +219,57 @@ class OwnHistoryBand(BaseModel):
     model_config = {"frozen": True}
 
 
+class LeaseObservation(BaseModel, frozen=True):
+    """One quarter of the ex-lease EV/EBITDA series, with every figure that went into it ($M).
+
+    `operating_leases` is what was taken OUT of CIQ's TEV: CIQ's lease rows less the finance
+    leases EDGAR reports (finance leases are debt under either convention). `status` says how far
+    that split was checked against EDGAR's own operating-lease figure on the same date."""
+
+    balance_sheet_date: str
+    pricing_date: str | None = None           # CIQ prices each quarter's TEV at its filing date
+    tev: float
+    leases_in_tev: float                      # CIQ 'Curr. Port. of Leases' + 'Long-Term Leases'
+    finance_leases: float                     # EDGAR, left inside TEV
+    operating_leases: float                   # removed from TEV
+    edgar_operating_leases: float | None = None
+    ltm_ebitda: float                         # CIQ 'EBITDA', the four quarters ending here
+    multiple: float | None = None             # None when the date is excluded (unreconciled)
+    # "pre-adoption" (no operating lease in CIQ's debt yet) | "reconciled" | "unchecked" (EDGAR
+    # has no complete operating figure that day) | "unreconciled" (excluded from the band)
+    status: str
+
+
+class LeaseBasis(BaseModel, frozen=True):
+    """WHICH EV/EBITDA BASIS R1 MAY USE ON THIS NAME, and the ex-lease history when it needs one.
+
+    CIQ's TEV/LTM EBITDA history mixes two bases: since ASC 842 (2019) CIQ puts operating leases
+    in TEV and adds rent back to EBITDA, and before it did neither. R1 applies the history's
+    median to REPORTED EBITDA (after rent) and subtracts net debt, so where rent is material the
+    median and the bridge disagree. Here the history is rebuilt on ONE basis — TEV less operating
+    leases over reported EBITDA, every quarter — which is the basis R1's arithmetic is on.
+
+    `material` is True when rent is at least `threshold` of EBITDA, OR when rent could not be
+    measured (unmeasured is never assumed small). An immaterial name keeps CIQ's history and
+    carries only the materiality reading."""
+
+    rent_expense: float | None = None         # $M, CIQ annual 'Net Rental Exp.'
+    rent_ebitda: float | None = None          # $M, CIQ annual 'EBITDA', the same fiscal year
+    rent_to_ebitda: float | None = None
+    rent_fiscal_year: str | None = None       # ISO end of the fiscal year measured
+    threshold: float
+    material: bool
+    materiality: str                          # one sentence: what was measured and what follows
+    ex_lease_band: OwnHistoryBand | None = None
+    refusal: str | None = None                # material, but no usable ex-lease history: why
+    reconciled_dates: int = 0
+    unreconciled_dates: int = 0
+    unchecked_dates: int = 0
+    pre_adoption_dates: int = 0
+    observations: list[LeaseObservation] = Field(default_factory=list)
+    source_ref: str
+
+
 class ForwardMultiple(BaseModel):
     """ONE forward multiple THAT NAMES ITS OWN DENOMINATOR.
 
@@ -277,6 +328,9 @@ class Valuation(BaseModel):
     # (G) price-inverted expectations in multiples-space — renders AFTER cross_sectional, BEFORE the
     # own-history range. Optional so a pre-G dossier.json validates; a fresh assembly builds it.
     implied_expectations: ImpliedExpectations | None = None
+    #: (2026-10-19) whether rent is material, and the ex-lease EV/EBITDA history R1 uses when it
+    #: is. Optional → pre-field JSON round-trips unchanged (dropped when unbuilt, as below).
+    lease_basis: LeaseBasis | None = None
 
     model_config = {"frozen": True}
 
@@ -293,6 +347,8 @@ class Valuation(BaseModel):
         d = nxt(self)
         if self.forward_multiples is None:
             d.pop("forward_multiples", None)
+        if self.lease_basis is None:
+            d.pop("lease_basis", None)
         return d
 
 

@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 import statistics as st
 from datetime import date, datetime
-from typing import Any
+from typing import Any, NamedTuple
 
 from pydantic import BaseModel, computed_field
 
@@ -266,7 +266,12 @@ def _own_history_multiple(mechanical: dict[str, Any]) -> dict[str, Any] | None:
     if not isinstance(oh, list):
         return None
     ev = next((r for r in oh if isinstance(r, dict) and "EBITDA" in str(r.get("metric", ""))), None)
-    if not ev or ev.get("median") is None:
+    return _band_read(ev)
+
+
+def _band_read(ev: Any) -> dict[str, Any] | None:
+    """One committed band dict → the fields the anchor judges a multiple leg on, or None."""
+    if not isinstance(ev, dict) or ev.get("median") is None:
         return None
     span = ev.get("window_span_years")
     da_margin = ev.get("implied_d_and_a_margin")
@@ -280,6 +285,52 @@ def _own_history_multiple(mechanical: dict[str, Any]) -> dict[str, Any] | None:
         "data_quality": ev.get("data_quality"),
         "implied_d_and_a_margin": float(da_margin) if da_margin is not None else None,
     }
+
+
+#: The bridge basis of an anchor whose multiple is the ex-lease history (`lease_basis`).
+NET_DEBT_EX_LEASE = "net debt excluding operating leases (latest 10-Q)"
+#: Leases are material and the ex-lease history could not be built or reconciled: the multiple has
+#: no basis R1's arithmetic can use, so the anchor refuses rather than fall back to CIQ's history.
+DQ_LEASE_BASIS = "lease_basis_unresolved"
+_CIQ_BAND_SOURCE = "valuation.own_history.median"
+_EX_LEASE_SOURCE = ("valuation.lease_basis.ex_lease_band.median — TEV less operating leases over "
+                    "reported LTM EBITDA, the basis of the EBITDA R1 prices")
+
+
+class R1Band(NamedTuple):
+    """WHICH EV/EBITDA HISTORY R1 READS, decided in ONE place (2026-10-19).
+
+    The anchor and the scenario template must price the same multiple against the same bridge;
+    two readers choosing separately is how an ex-lease net debt would meet a lease-inclusive
+    multiple. ``band`` is the committed band dict (None: the page has none); ``refusal`` is set
+    when rent is material and no usable ex-lease history exists — the multiple is then unusable,
+    and ``band`` is CIQ's, kept only so the page can show what was refused."""
+
+    band: dict[str, Any] | None
+    ex_lease: bool
+    refusal: str | None
+    source: str
+    materiality: str | None
+
+
+def r1_multiple_band(mechanical: dict[str, Any]) -> R1Band:
+    """The band R1 prices on, read from the committed mechanical layer.
+
+    No `lease_basis` (a page assembled before it) or immaterial rent → CIQ's TEV/LTM EBITDA history,
+    exactly as before. Material rent → the ex-lease history, or a refusal when it is absent."""
+    val = mechanical.get("valuation") or {}
+    oh = (val.get("own_history") or {}).get("value")
+    ciq = next((r for r in oh if isinstance(r, dict) and "EBITDA" in str(r.get("metric", ""))),
+               None) if isinstance(oh, list) else None
+    lb = val.get("lease_basis")
+    if not isinstance(lb, dict) or not lb.get("material"):
+        return R1Band(ciq, False, None, _CIQ_BAND_SOURCE,
+                      lb.get("materiality") if isinstance(lb, dict) else None)
+    ex = lb.get("ex_lease_band")
+    if isinstance(ex, dict) and ex.get("median") is not None:
+        return R1Band(ex, True, None, _EX_LEASE_SOURCE, lb.get("materiality"))
+    return R1Band(ciq, False, str(lb.get("refusal") or "no ex-lease history on the page"),
+                  _CIQ_BAND_SOURCE, lb.get("materiality"))
 
 
 def _fs_annual(mechanical: dict[str, Any]) -> dict[str, Any]:
@@ -552,12 +603,17 @@ def _short_term_securities(facts: dict[str, Any], at: date) -> ConceptPoint | No
     return None
 
 
-def _lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str] | None:
+def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: bool = False,
+                              ) -> tuple[float | None, str] | None:
     """Lease-inclusive net debt ($): total debt (LT + current) + finance leases + operating leases −
     cash − short-term securities, latest 10-Q. Returns ``(value_or_None, bridge)``; the tested
     under-capture guard flips it UNKNOWN (value None) when a single instrument exceeds 1.1× the
     extracted debt total (never a confident understatement — 'pull CIQ'). Wholly-absent debt/cash →
     the whole thing is None.
+
+    ``ex_operating_leases`` drops the operating-lease leg (2026-10-19): the bridge of a multiple
+    struck on TEV LESS operating leases (`lease_basis`). The leg is still printed, as excluded, so
+    the reader sees what the bridge leaves out and why.
 
     THE CASH LEG MATCHES THE MULTIPLE IT BRIDGES (§5.0 row 27, 2026-10-08). Every multiple this
     figure bridges is a CIQ TEV multiple, and CIQ's TEV nets cash AND short-term investments. This
@@ -586,32 +642,46 @@ def _lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str]
     # is netted, so a page that moves is a page whose number moved.
     sec_txt = (f" − short-term investments {sec.value / _USD_M:,.0f} "
                f"({sec.tag}, {sec.period_end.isoformat()})" if sec else "")
-    bridge = (
-        f"total debt {td / _USD_M:,.0f} + finance leases {fin / _USD_M:,.0f} + operating leases "
-        f"{opl / _USD_M:,.0f} − cash {cash.value / _USD_M:,.0f}{sec_txt} ($M)"
-    )
+    if ex_operating_leases:
+        bridge = (
+            f"total debt {td / _USD_M:,.0f} + finance leases {fin / _USD_M:,.0f} − cash "
+            f"{cash.value / _USD_M:,.0f}{sec_txt} ($M); operating leases {opl / _USD_M:,.0f} "
+            "EXCLUDED — the multiple is struck on TEV less operating leases"
+        )
+    else:
+        bridge = (
+            f"total debt {td / _USD_M:,.0f} + finance leases {fin / _USD_M:,.0f} + operating "
+            f"leases {opl / _USD_M:,.0f} − cash {cash.value / _USD_M:,.0f}{sec_txt} ($M)"
+        )
     ref = max((p.period_end.isoformat() for p in (ltd, dc) if p), default=None)
     witness = _max_outstanding_debt(facts, ref)
     if witness and witness[0] > td * 1.10:
         return None, (bridge + f" — UNDER-CAPTURED: {witness[1]} ${witness[0] / _USD_M:,.0f}M "
                       "alone exceeds the extracted long-term+current total; pull CIQ")
-    return td + fin + opl - cash.value - (sec.value if sec else 0.0), bridge
+    return (td + fin + (0.0 if ex_operating_leases else opl) - cash.value
+            - (sec.value if sec else 0.0)), bridge
 
 
 DQ_VENDOR_BRIDGE = "vendor_bridge"
+_NO_VENDOR_EX_LEASE = ("; CIQ's net debt is not substituted, because it carries the operating "
+                       "leases this bridge excludes")
 
 
 def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
-                   ciq: Any = None) -> dict[str, Any]:
+                   ciq: Any = None, *, ex_lease: bool = False) -> dict[str, Any]:
     """Every SOURCE-BOUND scalar the block carries, gathered independently of whether R1 applies.
 
     Split out (2026-07-21, R2 cohort) because the R1 recipe and the FACTS are different things. The
     early returns below used to bail before touching EDGAR, so a name R1 cannot anchor — FUBO has
     no EV/EBITDA band at all, its multiples being NM on a loss-making trailing year — committed an
     anchor block with every input null. Those are exactly the names the R2 recipe underwrites, and
-    exactly the facts it needs. An unusable RECIPE is not a reason to withhold the EVIDENCE."""
+    exactly the facts it needs. An unusable RECIPE is not a reason to withhold the EVIDENCE.
+
+    ``ex_lease`` (2026-10-19): the multiple is the ex-lease history (`lease_basis`), so net debt
+    leaves the operating leases out — and the CIQ workbook may NOT fill a missing net debt, because
+    CIQ's net debt carries those leases. A hole stays a hole rather than a mixed bridge."""
     da = _latest_dep_amort(facts)
-    nd = _lease_inclusive_net_debt(facts)
+    nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
     dil = _latest_point(facts, _DILUTED_TAG)
     ltm_rev = _ltm_revenue_from_fs(mechanical)
@@ -627,7 +697,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                               f"[{ciq.source_file} sha {ciq.source_sha256}]",
                   "consolidated latest FY")
             vendor.append("d_and_a")
-        if nd_val is None and (v := ciq.value("net_debt")) is not None:
+        if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M
             nd = (nd_val, f"CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or "
                           f"under-captured) [{ciq.source_file} sha {ciq.source_sha256}]")
@@ -646,10 +716,12 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             basis=(da[2] if da else "consolidated latest FY"),
             source=(da[1] if da else "UNKNOWN — no D&A tag (combined or split)")),
         "net_debt": AnchorInput(value=(round(nd_val / _USD_M, 3) if nd_val is not None else None),
-                                unit="$M", basis="lease-inclusive net debt (latest 10-Q)",
+                                unit="$M", basis=(NET_DEBT_EX_LEASE if ex_lease
+                                                  else "lease-inclusive net debt (latest 10-Q)"),
                                 source=(nd[1] if nd and nd[1].startswith("CIQ")
                                         else ("EDGAR: " + nd[1]) if nd
-                                        else "UNKNOWN — no debt/cash tag")),
+                                        else "UNKNOWN — no debt/cash tag" + (
+                                            _NO_VENDOR_EX_LEASE if ex_lease else ""))),
         "diluted_shares": AnchorInput(value=(dil.value if dil else None), unit="shares",
                                       basis="diluted weighted-average (latest 10-Q)",
                                       source=(f"EDGAR {_DILUTED_TAG}" if dil
@@ -835,8 +907,10 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     An inapplicable RECIPE never suppresses the FACTS: every return path carries the source-bound
     EDGAR bridge (:func:`_bridge_inputs`), because the names R1 cannot anchor are precisely the
     ones the R2 recipe has to underwrite from those same numbers."""
-    bridge = _bridge_inputs(mechanical, facts, ciq)
-    mult = _own_history_multiple(mechanical)
+    # ONE choice of history, read by the bridge too: an ex-lease multiple takes an ex-lease bridge
+    sel = r1_multiple_band(mechanical)
+    bridge = _bridge_inputs(mechanical, facts, ciq, ex_lease=sel.ex_lease)
+    mult = _band_read(sel.band)
     if mult is None:
         return _with_bridge(Anchor(
             recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=computed_at,
@@ -899,6 +973,12 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # and EBITDA to test the sheet's implied figures against. A trip disqualifies the multiple: the
     # anchor publishes no base value off a denominator that provably is not this company's EBITDA.
     band_detail: list[str] = []
+    if sel.ex_lease:
+        # the sheet-coherence read interrogates CIQ's Multiples ratios — the series this history
+        # REPLACES — so it is not this band's test; the market reconciliation below is, because it
+        # takes the ex-lease current multiple with the ex-lease bridge
+        band_detail.append("recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, "
+                           "which the ex-lease history does not use")
     da_flag, da_detail = bg.recorded_d_and_a_check(
         implied_d_and_a_margin=mult["implied_d_and_a_margin"], revenue=ltm_rev,
         recorded_d_and_a=(da[0] / _USD_M if da else None))
@@ -915,9 +995,13 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         recorded_ebitda=((ltm_ebit + da[0] / _USD_M) if (ltm_ebit is not None and da) else None))
     band_detail += recon.detail if recon else []
     band_flag = bg.compose_flag(bg.compose_flag(mult_dq, da_flag), recon.flag if recon else None)
+    # material rent with no usable ex-lease history: CIQ's history cannot price reported EBITDA
+    lease_refused = sel.refusal is not None
+    if lease_refused:
+        band_flag = bg.compose_flag(band_flag, DQ_LEASE_BASIS)
     # a PARSE-time incoherence (mult_dq) already disqualifies the band; so does either check here
-    band_tripped = bool(da_flag) or bool(recon and recon.flag) or bg.BAND_INCOHERENT in (mult_dq
-                                                                                         or "")
+    band_tripped = (bool(da_flag) or bool(recon and recon.flag) or lease_refused
+                    or bg.BAND_INCOHERENT in (mult_dq or ""))
 
     # CONFIDENCE has a VALIDITY component, not just a count: any data-quality flag (or a fallback)
     # caps the margin leg — and therefore the overall — at "weak", however many years underlie it.
@@ -934,7 +1018,8 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
 
     margin_blk = AnchorMargin(value=round(margin_val, 6), basis="operating margin (EBIT / revenue)",
                               source=margin_source, anchor_years=margin_years, confidence=m_conf)
-    multiple_blk = AnchorMultiple(value=mult_median, history_quarters=mult_qtrs, confidence=x_conf)
+    multiple_blk = AnchorMultiple(value=mult_median, history_quarters=mult_qtrs, confidence=x_conf,
+                                  source=sel.source)
 
     # anchor base — the #150 block's EBITDA-basis value math; needs a complete bridge AND a multiple
     # that survived the band guards. A tripped guard means the multiple's denominator is provably
@@ -961,9 +1046,16 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                       + " supplied by the CIQ workbook because EDGAR had no usable tag")
     if mult_dq:
         detail.append(f"own_history multiple: {mult_dq} (periodicity {mult_period})")
+    if sel.ex_lease or lease_refused:
+        detail.append(f"lease basis: {sel.materiality}")
     detail += band_detail
     reason = None
-    if band_tripped:
+    if lease_refused:
+        reason = ("rent is material and the ex-lease EV/EBITDA history is not usable — "
+                  f"{sel.refusal}. CIQ's TEV/LTM EBITDA history puts operating leases in TEV and "
+                  "rent back in EBITDA since ASC 842 and did neither before, so its median cannot "
+                  "price reported EBITDA; multiple UNUSABLE until the ex-lease history is built")
+    elif band_tripped:
         reason = ("own-history EV/EBITDA band failed a coherence guard — the multiple's "
                   "denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced")
     elif base is None:
@@ -999,7 +1091,8 @@ def insert_anchor_block(text: str, anchor: Anchor) -> str:
     return f"{head},\n{field}\n}}{trailing}"
 
 
-def replace_valuation_fields(text: str, updates: dict[str, Any]) -> str:
+def replace_valuation_fields(text: str, updates: dict[str, Any], *,
+                             may_add: frozenset[str] = frozenset()) -> str:
     """Byte-preserving replace of one or more ``mechanical.valuation.<field>`` values in a committed
     dossier.json TEXT, leaving every OTHER field byte-for-byte identical.
 
@@ -1011,7 +1104,9 @@ def replace_valuation_fields(text: str, updates: dict[str, Any]) -> str:
 
     A model round-trip drifts older-schema dossiers; a plain ``json.load``→``dump(indent=2,
     ensure_ascii=False)`` reproduces the committed bytes EXACTLY (verified), so it is the safe
-    surgical path. Raises when a named field is absent (never silently no-ops)."""
+    surgical path. Raises when a named field is absent (never silently no-ops) — unless it is
+    named in ``may_add``: a field newer than the page (``lease_basis``, 2026-10-19) is added at
+    the end of the block, where a fresh assembly serialises it."""
     import json
 
     doc = json.loads(text)
@@ -1019,7 +1114,7 @@ def replace_valuation_fields(text: str, updates: dict[str, Any]) -> str:
     if not isinstance(val, dict):
         raise ValueError("mechanical.valuation absent — refusing to refresh")
     for field, new in updates.items():
-        if field not in val:
+        if field not in val and field not in may_add:
             raise ValueError(f"mechanical.valuation.{field} absent — refusing to refresh")
         val[field] = new
     out = json.dumps(doc, indent=2, ensure_ascii=False)

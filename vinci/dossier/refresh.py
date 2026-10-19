@@ -1012,6 +1012,51 @@ def horizon_read_transform(ticker: str) -> Transform:
     return _apply
 
 
+def lease_basis_transform(ticker: str, cik: str | None) -> Transform:
+    """A `refresh_dossier` transform writing `mech.valuation.lease_basis` — whether rent is
+    material and, where it is, the ex-lease EV/EBITDA history R1 prices on (2026-10-19) — under a
+    KEPT synthesis. Run `anchor-backfill` after it: the anchor reads this block.
+
+    ONLY FROM THE EXPORT THE PAGE'S HISTORY WAS BUILT FROM. The block reads the same quarterly
+    export as `own_history`, so it is written only when that export's hash is the one the page's
+    bands carry; a page built from another pull is left alone (re-assemble or run
+    `own-history-refresh`, which moves the whole cluster together). A folder that cannot be read
+    leaves the page alone too (the `credit_health_transform` rule).
+
+    NO CITED FIGURE MOVES: the block is a new key, and nothing on the page renders from it until
+    the anchor is re-derived."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import file_provenance
+    from vinci.dossier.lease_basis import lease_basis
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.edgar.client import EdgarClient
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        val = out.get("valuation")
+        if not isinstance(val, dict) or not cik:
+            return out
+        bands = (val.get("own_history") or {}).get("value") or []
+        stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
+        if len(stamps) != 1 or None in stamps:
+            return out              # the page cannot name its export: re-assemble instead
+        cfg = get_config()
+        try:
+            bundle = CiqBundle.from_files(ticker, LocalFolderStore.from_config(cfg).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            return out
+        wb = bundle.workbook("financials", freq="quarterly")
+        if wb is None or file_provenance(wb.path)[0] not in stamps:
+            return out              # the export on disk is not the page's: re-assemble instead
+        built = lease_basis(bundle, EdgarClient.from_config(cfg).companyfacts(cik))
+        if built is not None:
+            val["lease_basis"] = json.loads(built.model_dump_json())
+        return out
+
+    return _apply
+
+
 def ebitda_basis_transform() -> Transform:
     """A `refresh_dossier` transform writing `mech.financial_summary.ebitda_basis`.
 

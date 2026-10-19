@@ -21,7 +21,7 @@ from datetime import date, timedelta
 from typing import Any, NamedTuple, TypeVar
 
 from vinci.config import get_config
-from vinci.dossier import ciq_sheets, edgar_fundamentals
+from vinci.dossier import ciq_sheets, edgar_fundamentals, lease_basis
 from vinci.dossier.capital_allocation import (
     build_capital_allocation,
     build_peer_capital_intensity,
@@ -1704,7 +1704,7 @@ def _adjusted_facts(
 
 def _valuation(
     record: DataRecord, bundle: CiqBundle, adj_eps: Sourced[str], adj_ev: Sourced[str],
-    *, pe_note: str | None = None,
+    *, pe_note: str | None = None, facts: dict[str, Any] | None = None,
 ) -> Valuation:
     f = record.fundamentals
     pe = _sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD latest stored close")
@@ -1752,6 +1752,8 @@ def _valuation(
         # to DIVIDE by a consensus denominator — no anchor or screen value derives from it.
         forward_multiples=ciq_sheets.forward_multiples(
             _fwd_table, price=_fwd_price, price_as_of=_fwd_as_of),
+        # (2026-10-19) whether rent is material, and the ex-lease history R1 prices on when it is
+        lease_basis=lease_basis.lease_basis(bundle, facts),
     )
 
 
@@ -4509,7 +4511,8 @@ def assemble_mechanical(
                 edgar, record.identity.cik, as_of=reference_date)),
     )
     valuation = _valuation(
-        record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None)
+        record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None,
+        facts=_companyfacts_or_none(edgar, record.identity.cik))
     # (G) price-inverted expectations (multiples-space) attach to Valuation. Built from already-
     # assembled fields only (peer multiples + the forward ladder + the derived TEV) — no extraction.
     valuation = valuation.model_copy(
