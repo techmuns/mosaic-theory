@@ -912,7 +912,9 @@ function howToRead() {
 // measure and 3d, the tightest in the fleet, on arrivals alone. Exclusions pinned in test_parity_pins.
 // `price_as_of` (2026-09-30): each forward-multiple row stamps the close its own multiple
 // divides by — a copy of `stock_info.as_of`, which still gates, not a new arrival.
-const _NOT_A_PANEL = /own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points|price_as_of/;
+// `lease_basis` (2026-10-19): the ex-lease band's `as_of` is its latest filing — the date its current
+// reading was struck at, value-borne like `own_history`'s. Twin of freshness.py's _NOT_A_PANEL.
+const _NOT_A_PANEL = /own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points|price_as_of|lease_basis/;
 function panelDates(node, path = "") {
   const out = [];
   if (node && typeof node === "object" && !Array.isArray(node)) {

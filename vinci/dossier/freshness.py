@@ -80,9 +80,15 @@ _INTEGER_TOLERANCE = 0.03
 #: ``compute_price_features`` reads ``bars[-1]`` and uses its ``reference_date`` only to flag
 #: staleness), so the ceiling, which reads the OLDEST panel, cannot move. Counting them would
 #: have added N duplicates of an already-gating date to the inventory and nothing else.
+#:
+#: ``lease_basis`` joined it 2026-10-19 (#750's pages): its ex-lease band is an own-history band
+#: rebuilt on one lease basis, and its ``as_of`` is that band's latest FILING date — the date its
+#: current reading was struck at, travelling with the value exactly as ``own_history``'s does.
+#: Counted as an arrival it read ten pages 47–103 days stale against a 45-day ceiling (AMZN 70d,
+#: VITL 103d) while every export on them was current.
 _NOT_A_PANEL = re.compile(
     r"own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points"
-    r"|price_as_of")
+    r"|price_as_of|lease_basis")
 _PANEL_KEY = re.compile(r"as_of|asof|detail_as_of", re.I)
 _ISO = re.compile(r"(20\d\d-\d\d-\d\d)")
 

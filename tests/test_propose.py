@@ -122,12 +122,15 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
     analyst who says why may sit anywhere, and one who takes the anchor states nothing."""
     ancs = propose_anchors(_doc("SMPL"))
     m = next(a for a in ancs if a.axis == "margin")
+    # the multiple the ANCHOR proposes, read off the proposal like the margin — not a literal of
+    # CIQ's median, which stopped being SMPL's anchor when its lease basis landed (#750's pages)
+    x = next(a for a in ancs if a.axis == "multiple")
     stated = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5,
                          "margin_adjustment": "−1.45pp: this year's gross-margin reset treated as "
                                               "partly structural"})
     assert not [p for p in validate_legs(stated, ancs) if p.startswith("base.margin")]
     at_anchor = _legs(base={"revenue": 1351.7, "margin": m.schema_value,
-                            "multiple": 17.8514})
+                            "multiple": x.schema_value})
     assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.")]
 
 
