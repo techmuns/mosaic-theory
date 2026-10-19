@@ -230,7 +230,7 @@ class LeaseObservation(BaseModel, frozen=True):
     pricing_date: str | None = None           # CIQ prices each quarter's TEV at its filing date
     tev: float
     leases_in_tev: float                      # CIQ 'Curr. Port. of Leases' + 'Long-Term Leases'
-    finance_leases: float                     # EDGAR, left inside TEV
+    finance_leases: float                     # the rest of CIQ's lease rows, left inside TEV
     operating_leases: float                   # removed from TEV
     edgar_operating_leases: float | None = None
     ltm_ebitda: float                         # CIQ 'EBITDA', the four quarters ending here
@@ -257,6 +257,10 @@ class LeaseBasis(BaseModel, frozen=True):
     rent_ebitda: float | None = None          # $M, CIQ annual 'EBITDA', the same fiscal year
     rent_to_ebitda: float | None = None
     rent_fiscal_year: str | None = None       # ISO end of the fiscal year measured
+    # EDGAR's own lease cost for that fiscal year — a cross-check beside CIQ's rent, named on the
+    # materiality sentence when the two disagree; it does not decide materiality
+    edgar_lease_cost: float | None = None     # $M
+    edgar_lease_cost_tag: str | None = None   # "LeaseCost" | "OperatingLeaseCost"
     threshold: float
     material: bool
     materiality: str                          # one sentence: what was measured and what follows

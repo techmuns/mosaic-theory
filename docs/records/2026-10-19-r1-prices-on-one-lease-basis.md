@@ -20,12 +20,23 @@ operating leases out to match.
     operating leases inside it are CIQ's lease rows less EDGAR's finance leases.
   - **The check:** on every date EDGAR tags a complete operating figure, that split must match it
     within 2%. Where CIQ files finance leases outside its lease rows (UBER), the rows alone must
-    match.
+    match. A quarter EDGAR does not check takes the split of the nearest reconciled quarter, on
+    either side.
+  - **Pre-adoption, by filing date:** a short CIQ lease row counts as "CIQ's balance sheet
+    predates the standard" only where EDGAR's figure for that date was first filed more than 100
+    days later (an opening balance or a restated comparative: TJX 2019-02-02, TGT's 2017 quarters).
+    Anywhere else it is a gap.
   - **The refusals:** a quarter that matches neither split is left out of the band. The band
     itself is refused when more than 10% of checkable quarters fail, when fewer than 4 reconcile,
-    or when it has fewer than 8 quarters.
-- **One selector, `anchor.r1_multiple_band`,** used by the anchor, the scenario template, the
-  valuation-basis block and the tagger.
+    when it has fewer than 8 quarters, or when its LATEST quarter is unpriced (no older quarter
+    stands in as current).
+  - **Rent cross-check:** EDGAR's own `LeaseCost` (else `OperatingLeaseCost`) for the same fiscal
+    year is recorded beside CIQ's rent, and the materiality sentence says DISAGREE past 1.5×. It
+    does not decide materiality.
+- **One selector, `anchor.r1_multiple_band`,** for the anchor, the tagger and the R1 audit. The
+  scenario template, the page's basis line and the valuation-basis block key off the ANCHOR's own
+  basis instead, and `anchor.lease_basis_mismatch` names any disagreement between the anchor and
+  the page.
   - **Immaterial rent:** CIQ's history and the lease-inclusive bridge, field for field as before.
   - **Material rent with an ex-lease band:** the ex-lease median with `NET_DEBT_EX_LEASE`. CIQ's
     net debt is not used as a fallback, because it carries the leases.
@@ -35,7 +46,12 @@ operating leases out to match.
   its bridge. The "same TEV over REPORTED EBITDA is nearer N×" restatement is gone for those names,
   because it is neither basis. The screening table says "ex-lease" in both renderers.
 - **The basis block:** it states the anchor's pair, and lists a conflict when the multiple and
-  net debt sit on different lease bases, or when the anchor predates the page's lease basis.
+  net debt sit on different lease bases, when the anchor predates the page's lease basis, or when
+  the page's lease basis refuses R1 while the anchor still prices it. The scenario template
+  refuses in the same states.
+- **The R4 cross-check stays lease-inclusive.** `ev_bridge`'s EDGAR figure sits beside CIQ's TEV
+  claims, which carry the leases, so assembly and `ev_bridge_transform` take it from
+  `lease_inclusive_net_debt`, not from the anchor.
 - **Writers:** `refresh.lease_basis_transform` (only from the export the page's history was built
   from). `own-history-refresh` now moves `lease_basis` with the rest of the multiples cluster.
 
@@ -81,22 +97,49 @@ reported EBITDA before 842.
     UBER (refused, 4 of 30 checkable quarters unreconciled).
 - **Two names change state.**
   - **VITL becomes applicable** (weak → firm; it stays R2-tagged). Its CIQ band tripped the
-    coherence guards because CIQ adds about $288M of "rent" back to about $103M of EBITDA (implied
-    ÷ reported ≈ 3.6×). The ex-lease history does not use those ratios and reconciles to the market.
-    VITL's operator re-tag reason (kept verbatim) still names that "vendor data defect"; whether to
-    revise it is the operator's call.
+    coherence guards because CIQ adds its $288M of rent back to about $103M of EBITDA (implied ÷
+    reported ≈ 3.6×). That rent is VITL's own reported total lease cost (EDGAR `LeaseCost` $293.0M,
+    FY2025), not a vendor defect. The ex-lease history does not use CIQ's ratios and reconciles to
+    the market; the anchor states CIQ's band flag beside it. VITL's operator re-tag reason (kept
+    verbatim) still calls it a "vendor data defect"; whether to revise it is the operator's call.
   - **NFLX loses its vendor-filled net debt.** Its rent is 5.2% of EBITDA, so CIQ's
     lease-inclusive net debt is no longer substituted. It is inapplicable either way, as committed.
-- **Pins:** `tests/test_lease_basis.py`, 28 tests.
+- **Pins:** `tests/test_lease_basis.py`, 49 tests (parametrized cases counted).
   - **The per-date split, on real quarters:** TJX's 2019-02-02 adoption boundary, IT's short row,
     BURL's finance leases inside the rows, UBER's outside them, UBER's mismatch, NKE's zero.
   - **The anchor, template, basis block and both renderers,** on the committed pages with lease
     bases captured from production.
-  - **The refusal and its precedence,** VITL's guard behaviour, and the writers.
+  - **The refusal and its precedence,** VITL's guard behaviour, and the writers:
+    `lease_basis_transform` (written only from the page's own export) and `own-history-refresh`
+    (written with EDGAR, skipped without it), each driven end to end.
+  - **The web twin, rendered** through `dossier.js` in node.
   - **A local corpus pass** asserting the pre-842 agreement (±15%). It skips in CI.
   - **An end-to-end pin** that no committed page prices R1 across lease bases.
-- **Mutation: 16 of 16 killed.** The first run left two survivors, the shortfall after a
-  reconciled quarter and the LTM window's lower bound, and both pins were strengthened.
+- **Mutation: 30 of 30 killed** after the review round: 12 of the first set (still applicable to
+  the revised code) and 18 covering the review's fixes. The first run had left two survivors, the
+  shortfall after a reconciled quarter and the LTM window's lower bound, and both pins were
+  strengthened.
+
+**THE REVIEW, BEFORE MERGE (`/code-review xhigh 750`, 15 findings).** All checked on real data.
+- **Fixed as found:** the template pairing an ex-lease multiple with a stale anchor's
+  lease-inclusive net debt (#1); a refused lease basis beside a still-priced anchor not flagged
+  (#2); an unpriced latest quarter back-filled as current (#3); a failed EDGAR fetch committing a
+  refusal (#4); the page line asserting pricing the anchor did not do (#5); the tagger and R1 audit
+  reading CIQ's band only (#7, #8); the R4 cross-check label/value split (#9, fixed at the root:
+  the cross-check is lease-inclusive by construction); the two-sided split (#12); the pricing date
+  read as a number (#13); untested writers (#14); the dead band helper (#15).
+- **Fixed differently than proposed (#11):** bounding pre-adoption to the first EDGAR date would
+  have refused TGT, an early adopter whose 2017 quarters EDGAR carries as comparatives first filed
+  in 2018. The rule keys on filing date instead.
+- **Checked, then addressed as visibility (#10):** CIQ's rent equals the filer's EDGAR
+  `LeaseCost` on most names (TJX 3,814 = 3,814; ROST 1,104.7; CNXC 444; NFLX 711; SMPL 13.186;
+  VITL 288 beside 293). EDGAR's figure is now recorded beside it, with DISAGREE past 1.5× (WLK 128
+  against 306).
+- **Partly (#6):** the anchor now states CIQ's own band flag. A value guard on thin-EBITDA
+  quarters was NOT added: CIQ reports those multiples itself (VITL 172.5×, NCNO 221×, NFLX 157.7×
+  on CIQ's own closes), so any cap is a new threshold for a separate decision.
+- **The real run after the fixes is identical** for every name: same medians, currents, net debt
+  and R1 values. The fixes change guards, not today's numbers.
 
 **BOUNDARY.**
 - **Population:** the 27 committed dossiers, measured 2026-10-19 on main `c4ebdc37`. Their CIQ
@@ -109,6 +152,11 @@ reported EBITDA before 842.
   pre-842 comparison matches the filing date to CIQ's nearest quarter-end close within 46 days.
 - **The anchor table:** each row is computed on that day's EDGAR facts, so "before" can differ from
   the committed anchor where facts moved since its backfill.
+- **The review probes:** "CIQ's rent equals EDGAR's LeaseCost" compares the latest fiscal year
+  with both, annual points within 7 days of its end, on the 27 names (2026-10-19, the EDGAR cache).
+  "CIQ reports the thin-EBITDA multiples itself" compares each rebuilt quarter above 40× with CIQ's
+  nearest close on the five names printed (VITL, BURL, NFLX, AORT, NCNO). "Comparative" means first
+  filed more than 100 days after the period end.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Committed R1 records were struck on the old basis:** EPAM (9.2%), WERN (8.1%) and SMPL (5.0%,

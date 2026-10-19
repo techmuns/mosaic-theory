@@ -970,20 +970,6 @@ def sync_canonical_ciq(canonical: Path, local: Path, tickers: list[str]) -> list
     return out
 
 
-def _facts_or_none(cfg: Config, cik: Any) -> dict[str, Any] | None:
-    """EDGAR companyfacts for ``cik``, or None when there is no CIK or the fetch fails — the lease
-    basis then states that it could not separate the leases, rather than this command failing."""
-    from vinci.edgar.client import EdgarClient
-
-    if not cik:
-        return None
-    try:
-        facts: dict[str, Any] = EdgarClient.from_config(cfg).companyfacts(str(cik))
-    except Exception:  # noqa: BLE001 — a missing lease basis is stated on the page, never raised
-        return None
-    return facts
-
-
 def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     """Refresh committed ``valuation.own_history`` from the CURRENT on-disk CIQ export (the
     2026-07-21 window-staleness fix), stamping periodicity/span/source_file metadata.
@@ -1047,8 +1033,18 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         # the lease basis reads the SAME quarterly export (its TEV, leases and EBITDA), so it moves
         # with the cluster — a band from one export beside a lease basis from another is the drift
         # this refresh exists to prevent (2026-10-19)
+        # A FAILED FETCH SKIPS THE NAME (review of #750), as `anchor-backfill` does: writing the
+        # lease basis without EDGAR would commit a refusal ("companyfacts unavailable") that the
+        # next backfill reads as R1 refused — a transient outage turned into a page state.
         from vinci.dossier.lease_basis import lease_basis as _lease_basis
-        lb = _lease_basis(bundle, _facts_or_none(cfg, doc.get("cik")))
+        from vinci.edgar.client import EdgarClient
+        try:
+            facts = EdgarClient.from_config(cfg).companyfacts(str(doc["cik"]))
+        except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, not guessed
+            print(f"{t:7}  EDGAR fetch failed ({type(exc).__name__}) — skip, not written (the "
+                  "lease basis needs it)")
+            continue
+        lb = _lease_basis(bundle, facts)
         if lb is not None:
             updates["lease_basis"] = json.loads(lb.model_dump_json())
         # percentile is EDGAR-screen-sourced when the screen knew it; only the CIQ path is ours

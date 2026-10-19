@@ -34,6 +34,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from vinci.dossier.anchor import (
+    NET_DEBT_EX_LEASE,
+    anchor_prices_ex_lease,
+    ciq_ebitda_band,
+    r1_multiple_band,
+)
+
 # --- RATIFIED THRESHOLDS (2026-07-22) ----------------------------------------------------------
 # Face-validity calibrated against the committed book, never against forward returns. Each is the
 # line at which the hand audit's judgment flipped, written down so it stops being a judgment.
@@ -130,12 +137,20 @@ def _fy_margins(dossier: dict[str, Any]) -> list[float]:
     return out
 
 
-def _band(dossier: dict[str, Any]) -> dict[str, Any] | None:
-    oh = (((dossier.get("mechanical") or {}).get("valuation") or {})
-          .get("own_history") or {}).get("value") or []
-    row = next((r for r in oh if str(r.get("metric", "")).startswith("EV/EBITDA")
-                and r.get("series")), None)
-    if not row:
+def _band(dossier: dict[str, Any], record: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    """The EV/EBITDA band a bear multiple is judged against: the one ON THE RECORD'S lease basis.
+
+    A record states its basis through the net debt it subtracts (2026-10-19, review of #750): one
+    struck on net debt excluding operating leases is priced on the ex-lease history, and judging
+    its bear leg against CIQ's lease-inclusive band — BURL's runs 9.0x against the ex-lease 14.3x
+    — would call a de-rating a re-rating. Without a record, the band the anchor prices on."""
+    mech = dossier.get("mechanical") or {}
+    nd_basis = (((record or {}).get("facts") or {}).get("net_debt") or {}).get("basis")
+    ex = (nd_basis == NET_DEBT_EX_LEASE if record
+          else anchor_prices_ex_lease(dossier.get("anchor")))
+    sel = r1_multiple_band(mech)
+    row = (sel.band if ex and sel.ex_lease else None) if ex else ciq_ebitda_band(mech)
+    if not row or not row.get("series"):
         return None
     ser = [(str(a), float(b)) for a, b in row["series"]]
     span = ((int(ser[-1][0][:4]) + int(ser[-1][0][5:7]) / 12)
@@ -176,8 +191,9 @@ def check_margin_shape(a: NameAudit, dossier: dict[str, Any]) -> None:
         a.flags.append(Flag("margin", "note", f"thin history: {len(mg)} completed FYs"))
 
 
-def check_band(a: NameAudit, dossier: dict[str, Any]) -> dict[str, Any] | None:
-    b = _band(dossier)
+def check_band(a: NameAudit, dossier: dict[str, Any],
+               record: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    b = _band(dossier, record)
     if b is None:
         a.rows["band"] = "NO COMMITTED BAND"
         a.flags.append(Flag("band", "flag", "no committed multiple band — R1 has nothing to "
@@ -345,7 +361,7 @@ def audit_name(ticker: str, dossier: dict[str, Any], record: dict[str, Any] | No
     a = NameAudit(ticker=ticker, anchor_applicable=bool(anc.get("applicable")),
                   recipe_hint=anc.get("recipe_hint"), guards_tripped=anc.get("data_quality"))
     check_margin_shape(a, dossier)
-    band = check_band(a, dossier)
+    band = check_band(a, dossier, record)
     check_bear(a, record, band)
     check_leverage(a, dossier, spot)
     check_perimeter(a, dossier)

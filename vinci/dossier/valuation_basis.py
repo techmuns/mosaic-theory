@@ -24,7 +24,11 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
-from vinci.dossier.anchor import NET_DEBT_EX_LEASE, r1_multiple_band
+from vinci.dossier.anchor import (
+    NET_DEBT_EX_LEASE,
+    anchor_prices_ex_lease,
+    lease_basis_mismatch,
+)
 from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
 from vinci.dossier.midcycle import R1_FORMULA
 from vinci.dossier.schemas import DateSemantics, Dossier, ValuationBasis
@@ -195,6 +199,15 @@ def _anchor_net_debt_label(d: dict[str, Any]) -> str:
     return "EDGAR lease-inclusive net debt (the anchor's)"
 
 
+def _cross_check_label(d: dict[str, Any]) -> str:
+    """The R4 cross-check's basis. Its VALUE is always lease-inclusive (it sits beside CIQ's TEV
+    claims, which carry the leases — review of #750); only whose figure it is changes."""
+    if (_get(d, "anchor", "net_debt", "basis") or "") == NET_DEBT_EX_LEASE:
+        return ("EDGAR lease-inclusive net debt (the anchor's bridge before its operating leases "
+                "are taken out)")
+    return "EDGAR lease-inclusive net debt (the anchor's)"
+
+
 def _r4_bridge(eb: dict[str, Any], anchor_label: str) -> dict[str, Any]:
     ciq = _num(eb.get("ciq_tev_claims"))
     claims = _num(eb.get("claims"))
@@ -269,7 +282,7 @@ def _r4(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
         conflicts.append("no CIQ TEV bridge on the page (ev_bridge) — the anchor's EDGAR net debt "
                          "is NOT substituted for it")
         return out
-    bridge = _r4_bridge(eb, _anchor_net_debt_label(d))
+    bridge = _r4_bridge(eb, _cross_check_label(d))
     out["ev_bridge"], out["exit_claims"] = bridge, _r4_exit_claims(eb)
     if bridge["ciq_tev_less_market_cap"] is None:
         conflicts.append("the bridge is unchecked: no CIQ TEV less market cap to test it against")
@@ -293,7 +306,7 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
     eb: dict[str, Any] = raw if isinstance(raw, dict) else {}
     # THE ANCHOR SAYS WHICH HISTORY AND WHICH BRIDGE IT PRICED ON (2026-10-19): ex-lease on a
     # lease-material name, CIQ's own otherwise. Read from its fields, never re-decided here.
-    mult_ex = str(_get(a, "multiple", "source") or "").startswith("valuation.lease_basis")
+    mult_ex = anchor_prices_ex_lease(a)
     nd_label = _anchor_net_debt_label(d)
     out: dict[str, Any] = {
         "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
@@ -333,19 +346,11 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
             if _num(_get(a, key, "value")) is None:
                 conflicts.append(f"R1 needs anchor.{key} and the page carries none")
         # ONE LEASE BASIS ACROSS THE PAIR, and the page's: an ex-lease multiple against a
-        # lease-inclusive bridge (or the reverse) misprices by the whole lease book, and an anchor
-        # derived before the page's lease basis landed is on the wrong one (2026-10-19)
-        nd_ex = nd.get("basis") == NET_DEBT_EX_LEASE
-        if mult_ex != nd_ex:
-            conflicts.append(
-                f"R1's multiple ({'ex-lease' if mult_ex else 'lease-inclusive'}) and net debt "
-                f"({'ex-lease' if nd_ex else 'lease-inclusive'}) are on different lease bases")
-        sel = r1_multiple_band(d.get("mechanical") or {})
-        if sel.ex_lease != mult_ex:
-            conflicts.append(
-                "the anchor's multiple is not on the page's lease basis "
-                f"({'ex-lease' if sel.ex_lease else 'CIQ'} history; {sel.materiality}) — "
-                "re-derive the anchor (anchor-backfill)")
+        # lease-inclusive bridge (or the reverse) misprices by the whole lease book; an anchor
+        # derived before the page's lease basis landed, or still pricing a name it now refuses,
+        # is on the wrong one (2026-10-19; the one test, `anchor.lease_basis_mismatch`)
+        if (why := lease_basis_mismatch(d)) is not None:
+            conflicts.append(why)
         _shares_conflict(d, conflicts)
     return out
 

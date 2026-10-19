@@ -253,24 +253,25 @@ class Anchor(BaseModel, frozen=True):
 
 
 # --- committed-artifact readers (work on the mechanical layer as a dict) -----------------------
-def _own_history_multiple(mechanical: dict[str, Any]) -> dict[str, Any] | None:
-    """The committed own-history EV/EBITDA band — READ, never recomputed. Returns the median, close
-    count, calendar span, periodicity label and any data-quality flag so the caller can judge the
-    multiple leg on the WINDOW it actually spans, not the raw point count. None when absent/UNKNOWN.
+def ciq_ebitda_band(mechanical: dict[str, Any]) -> dict[str, Any] | None:
+    """CIQ's committed own-history EV/EBITDA band dict — READ, never recomputed — or None. The ONE
+    lookup of it: the R1 selector, the tagger and the R1 audit all come through here."""
+    oh = ((mechanical.get("valuation") or {}).get("own_history") or {}).get("value")
+    if not isinstance(oh, list):
+        return None
+    return next((r for r in oh if isinstance(r, dict) and "EBITDA" in str(r.get("metric", ""))),
+                None)
+
+
+def _band_read(ev: Any) -> dict[str, Any] | None:
+    """One committed band dict → the fields the anchor judges a multiple leg on, or None: the
+    median, close count, calendar span, periodicity label and any data-quality flag, so the leg is
+    judged on the WINDOW it spans, not the raw point count.
 
     ``window_span_years``/``periodicity`` are optional (pre-metadata committed JSON lacks them): a
     band without them is treated as span-UNKNOWN → the leg cannot be firm (the safe read). Likewise
     ``implied_d_and_a_margin`` (the band-coherence read) — absent on pre-guard JSON, which simply
     leaves the recorded-D&A cross-check unrun rather than failing."""
-    oh = ((mechanical.get("valuation") or {}).get("own_history") or {}).get("value")
-    if not isinstance(oh, list):
-        return None
-    ev = next((r for r in oh if isinstance(r, dict) and "EBITDA" in str(r.get("metric", ""))), None)
-    return _band_read(ev)
-
-
-def _band_read(ev: Any) -> dict[str, Any] | None:
-    """One committed band dict → the fields the anchor judges a multiple leg on, or None."""
     if not isinstance(ev, dict) or ev.get("median") is None:
         return None
     span = ev.get("window_span_years")
@@ -319,9 +320,7 @@ def r1_multiple_band(mechanical: dict[str, Any]) -> R1Band:
     No `lease_basis` (a page assembled before it) or immaterial rent → CIQ's TEV/LTM EBITDA history,
     exactly as before. Material rent → the ex-lease history, or a refusal when it is absent."""
     val = mechanical.get("valuation") or {}
-    oh = (val.get("own_history") or {}).get("value")
-    ciq = next((r for r in oh if isinstance(r, dict) and "EBITDA" in str(r.get("metric", ""))),
-               None) if isinstance(oh, list) else None
+    ciq = ciq_ebitda_band(mechanical)
     lb = val.get("lease_basis")
     if not isinstance(lb, dict) or not lb.get("material"):
         return R1Band(ciq, False, None, _CIQ_BAND_SOURCE,
@@ -331,6 +330,52 @@ def r1_multiple_band(mechanical: dict[str, Any]) -> R1Band:
         return R1Band(ex, True, None, _EX_LEASE_SOURCE, lb.get("materiality"))
     return R1Band(ciq, False, str(lb.get("refusal") or "no ex-lease history on the page"),
                   _CIQ_BAND_SOURCE, lb.get("materiality"))
+
+
+def anchor_prices_ex_lease(anchor: dict[str, Any] | None) -> bool:
+    """Whether a committed anchor is on the ex-lease side of the lease line: its multiple was read
+    from the ex-lease history, or — on an anchor that stopped before the multiple leg (an R2 name)
+    — its net debt leaves the operating leases out. The bridge is gathered on every path, and an
+    R2 template pairs it with the band, so it carries the basis where the multiple cannot."""
+    a = anchor or {}
+    if a.get("multiple"):
+        return str((a.get("multiple") or {}).get("source") or "").startswith(
+            "valuation.lease_basis")
+    return (a.get("net_debt") or {}).get("basis") == NET_DEBT_EX_LEASE
+
+
+def lease_basis_mismatch(doc: dict[str, Any]) -> str | None:
+    """Why this page's R1 anchor is NOT on the page's lease basis, or None when it is.
+
+    THE ANCHOR IS WHAT R1 PRICES, so every reader that states or proposes R1's multiple keys off
+    it — and this is the one test of whether that is safe. The lease basis is written by
+    `lease_basis_transform` / `own-history-refresh` WITHOUT re-deriving the anchor, so between
+    those and `anchor-backfill` the two can disagree; a consumer that read the page's choice there
+    would pair an ex-lease multiple with the anchor's lease-inclusive net debt (review of #750).
+    Four ways, each named: the anchor predates an ex-lease history; it is on one the page no longer
+    has; it still prices a name whose lease basis now refuses R1; its multiple and net debt sit on
+    different bases."""
+    anchor = doc.get("anchor") or {}
+    if not anchor.get("multiple") and not anchor.get("net_debt"):
+        return None                 # nothing priced, nothing bridged — nothing to disagree
+    sel = r1_multiple_band(doc.get("mechanical") or {})
+    mult_ex = anchor_prices_ex_lease(anchor)
+    nd_ex = ((anchor.get("net_debt") or {}).get("basis") == NET_DEBT_EX_LEASE)
+    if anchor.get("multiple") and mult_ex != nd_ex:
+        return (f"R1's multiple ({'ex-lease' if mult_ex else 'lease-inclusive'}) and net debt "
+                f"({'ex-lease' if nd_ex else 'lease-inclusive'}) are on different lease bases")
+    if sel.ex_lease and not mult_ex:
+        return ("the anchor predates the page's lease basis — rent is material and the page "
+                "carries the ex-lease history, but the anchor still prices CIQ's; re-derive the "
+                "anchor (anchor-backfill)")
+    if mult_ex and not sel.ex_lease:
+        return ("the anchor prices an ex-lease history the page's lease basis no longer carries; "
+                "re-derive the anchor (anchor-backfill)")
+    if sel.refusal and anchor.get("applicable") and DQ_LEASE_BASIS not in str(
+            anchor.get("data_quality") or ""):
+        return ("the page's lease basis refuses R1 (" + sel.refusal + ") but the anchor still "
+                "prices CIQ's mixed history; re-derive the anchor (anchor-backfill)")
+    return None
 
 
 def _fs_annual(mechanical: dict[str, Any]) -> dict[str, Any]:
@@ -739,6 +784,20 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
 _BRIDGE_FIELDS = ("d_and_a", "net_debt", "diluted_shares", "ltm_revenue", "ltm_fcf")
 
 
+def lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str | None]:
+    """($M, source) — EDGAR's net debt WITH the operating leases, whatever basis R1 prices on.
+
+    THE CROSS-CHECK BESIDE A CIQ TEV IS LEASE-INCLUSIVE BY CONSTRUCTION (review of #750). CIQ's
+    TEV claims carry the operating leases, so the EDGAR figure set beside them (`ev_bridge`) must
+    too. It used to be "the anchor's" net debt, which was the same number until R1 moved to the
+    ex-lease bridge on lease-material names; reading the anchor there would set AMZN's $22,687M
+    beside CIQ claims that hold $96B of leases."""
+    nd = _lease_inclusive_net_debt(facts)
+    if nd is None:
+        return None, "UNKNOWN — no debt/cash tag"
+    return (round(nd[0] / _USD_M, 3) if nd[0] is not None else None), "EDGAR: " + nd[1]
+
+
 def _with_bridge(anchor: Anchor, bridge: dict[str, Any]) -> Anchor:
     """Attach the source-bound inputs to an anchor whose RECIPE did not resolve — the facts stand
     on their own footing, and the R2 cohort reads them from here.
@@ -976,9 +1035,14 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     if sel.ex_lease:
         # the sheet-coherence read interrogates CIQ's Multiples ratios — the series this history
         # REPLACES — so it is not this band's test; the market reconciliation below is, because it
-        # takes the ex-lease current multiple with the ex-lease bridge
+        # takes the ex-lease current multiple with the ex-lease bridge. What CIQ's own band said
+        # is still stated, so a reader can see what the rebuild set aside (review of #750).
         band_detail.append("recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, "
                            "which the ex-lease history does not use")
+        ciq_dq = (ciq_ebitda_band(mechanical) or {}).get("data_quality")
+        if ciq_dq:
+            band_detail.append(f"CIQ's own EV/EBITDA band is flagged {ciq_dq} — not the history "
+                               "R1 prices")
     da_flag, da_detail = bg.recorded_d_and_a_check(
         implied_d_and_a_margin=mult["implied_d_and_a_margin"], revenue=ltm_rev,
         recorded_d_and_a=(da[0] / _USD_M if da else None))

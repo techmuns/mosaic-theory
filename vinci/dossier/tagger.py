@@ -26,6 +26,7 @@ from vinci.dossier.anchor import (
     RECIPE_R1_NOT_ROBUST,
     RECIPE_R2,
     RECIPE_UNRESOLVED,
+    r1_multiple_band,
 )
 from vinci.dossier.band_guards import BAND_INCOHERENT, BAND_UNRECONCILED
 
@@ -125,9 +126,11 @@ def propose(ticker: str, doc: dict[str, Any]) -> Proposal:
     lev, lev_note = _leverage(anchor)
     signals.append(lev_note)
 
-    mult = ((mech.get("valuation") or {}).get("own_history") or {}).get("value")
-    has_band = any("EBITDA" in str(b.get("metric", "")) and b.get("median") is not None
-                   for b in (mult or []) if isinstance(b, dict))
+    # THE BAND R1 PRICES ON, through the anchor's own selector (review of #750): a lease-material
+    # name's ex-lease history is a usable trailing multiple even where CIQ's own band refused
+    sel = r1_multiple_band(mech)
+    has_band = (sel.refusal is None and isinstance(sel.band, dict)
+                and sel.band.get("median") is not None)
     if not has_band:
         signals.append("no own-history EV/EBITDA band — the trailing multiple series does not "
                        "exist (typically every period NM on a loss-making year)")

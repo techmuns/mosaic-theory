@@ -3,9 +3,11 @@
   "rent_ebitda": 1241.45,
   "rent_to_ebitda": 0.774307,
   "rent_fiscal_year": "2026-01-31",
+  "edgar_lease_cost": 969.577,
+  "edgar_lease_cost_tag": "LeaseCost",
   "threshold": 0.05,
   "material": true,
-  "materiality": "rent 77.4% of EBITDA (FY ending 2026-01-31: $961M of $1,241M) — material (≥5%); R1 uses the ex-lease history",
+  "materiality": "rent 77.4% of EBITDA (FY ending 2026-01-31: $961M of $1,241M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $970M",
   "ex_lease_band": {
     "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
     "current": 14.276583,

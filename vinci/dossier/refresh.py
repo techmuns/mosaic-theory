@@ -900,10 +900,12 @@ def ev_bridge_transform(ticker: str) -> TopLevelTransform:
     ONLY FROM THE EXPORTS THE PAGE WAS BUILT FROM, BOTH OF THEM. The claims come off the Financials
     export, which the page's trailing own-history bands stamp; the consensus check reads the
     Estimates export the page's `forward_consensus` names by hash. A page that cannot name either,
-    or names another, is left alone and waits for a re-assembly. The EDGAR cross-check is the page's
-    own anchor figure. A folder that cannot be read leaves the page alone too (the
-    `credit_health_transform` rule)."""
+    or names another, is left alone and waits for a re-assembly. The EDGAR cross-check is
+    lease-INCLUSIVE, as CIQ's claims are: the anchor's figure where its bridge is, EDGAR's own
+    where the anchor prices ex-lease (review of #750). A folder that cannot be read leaves the page
+    alone too (the `credit_health_transform` rule)."""
     from vinci.config import get_config
+    from vinci.dossier.anchor import NET_DEBT_EX_LEASE, lease_inclusive_net_debt
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
     from vinci.dossier.ciq_sheets import ev_bridge
     from vinci.dossier.manual_store import LocalFolderStore
@@ -920,9 +922,16 @@ def ev_bridge_transform(ticker: str) -> TopLevelTransform:
                 ticker, LocalFolderStore.from_config(get_config()).files(ticker))
         except (FileNotFoundError, CiqUnavailableError):
             return {}
+        # THE CROSS-CHECK IS LEASE-INCLUSIVE (review of #750): the anchor's figure where its
+        # bridge is, EDGAR's lease-inclusive figure where the anchor prices ex-lease
         nd = (doc.get("anchor") or {}).get("net_debt") or {}
+        edgar_nd: tuple[Any, Any] = (nd.get("value"), nd.get("source"))
+        if nd.get("basis") == NET_DEBT_EX_LEASE:
+            from vinci.edgar.client import EdgarClient
+            edgar_nd = lease_inclusive_net_debt(
+                EdgarClient.from_config(get_config()).companyfacts(str(doc.get("cik"))))
         built = ev_bridge(bundle, fy_periods=list(fc.get("periods") or []),
-                          edgar_net_debt=nd.get("value"), edgar_source=nd.get("source"))
+                          edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1])
         if (built is None or built.source_sha256 not in stamps
                 or built.estimates_sha256 != fc.get("source_sha256")):
             return {}               # an export on disk is not the page's: re-assemble instead
@@ -1023,8 +1032,10 @@ def lease_basis_transform(ticker: str, cik: str | None) -> Transform:
     `own-history-refresh`, which moves the whole cluster together). A folder that cannot be read
     leaves the page alone too (the `credit_health_transform` rule).
 
-    NO CITED FIGURE MOVES: the block is a new key, and nothing on the page renders from it until
-    the anchor is re-derived."""
+    NO CITED FIGURE MOVES: the block is a new key. The page's basis line reads the ANCHOR, so until
+    `anchor-backfill` re-derives it the line says the anchor predates the page's lease basis, and
+    the valuation-basis block lists that as a conflict — the half-done pass is visible, never a
+    page claiming a pricing its anchor does not do."""
     from vinci.config import get_config
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
     from vinci.dossier.ciq_sheets import file_provenance

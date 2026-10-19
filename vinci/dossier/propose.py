@@ -40,7 +40,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from vinci.dossier.anchor import r1_multiple_band
+from vinci.dossier.anchor import (
+    anchor_prices_ex_lease,
+    ciq_ebitda_band,
+    lease_basis_mismatch,
+    r1_multiple_band,
+)
 from vinci.dossier.schemas import PrimarySource
 from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
 from vinci.scenarios import BASIS_EV_NTM_EBIT, RECIPE_R4, RefPoint
@@ -170,14 +175,18 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
                           str(mg.get("source")), f"{mg.get('anchor_years')} FY through the "
                           "latest reported fiscal year"))
 
-    # multiple base — the trailing median of the history R1 PRICES ON, chosen by the anchor's own
-    # selector: CIQ's history, or the ex-lease rebuild where rent is material (2026-10-19). One
-    # choice for both, so the record's multiple meets the anchor's net debt on one basis; a band
-    # the anchor refused proposes nothing. The band LOW is deliberately NOT proposed even though
-    # it sits in the same object: see UNPROPOSED_REASON.
-    sel = r1_multiple_band(_get(doc, "mechanical") or {})
-    oh = sel.band if sel.refusal is None else None
-    where = "valuation.lease_basis.ex_lease_band" if sel.ex_lease else "valuation.own_history"
+    # multiple base — the trailing median of the history the ANCHOR prices on (2026-10-19): the
+    # record takes its net debt from the anchor, so its multiple must come from the same side of
+    # the lease line. Read off the anchor, not re-decided from the page's lease basis, which can
+    # land before the anchor is re-derived (review of #750); when the two disagree, or the page
+    # refuses R1, nothing is proposed. The band LOW is deliberately NOT proposed even though it
+    # sits in the same object: see UNPROPOSED_REASON.
+    mech = _get(doc, "mechanical") or {}
+    sel = r1_multiple_band(mech)
+    ex = anchor_prices_ex_lease(_get(doc, "anchor"))
+    oh = (None if lease_basis_mismatch(doc) is not None or sel.refusal is not None
+          else sel.band if ex else ciq_ebitda_band(mech))
+    where = "valuation.lease_basis.ex_lease_band" if ex else "valuation.own_history"
     if isinstance(oh, dict) and isinstance(oh.get("median"), (int, float)):
         out.append(Anchor("multiple", "base", round(float(oh["median"]), 4), "x",
                           float(oh["median"]), "median",
@@ -696,6 +705,11 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     if _get(doc, "anchor", "recipe_hint") == RECIPE_R4:
         return build_r4_template(doc)
     _refuse_if_recipe_unresolved(doc, ticker)
+    # ONE LEASE BASIS OR NO TEMPLATE (review of #750): the facts below come from the anchor, the
+    # multiple from its history; a page whose lease basis the anchor is not on would pair them
+    # across the lease line
+    if (why := lease_basis_mismatch(doc)) is not None:
+        raise ProposalRefusedError(f"{ticker}: {why}")
     ancs = {(a.axis, a.leg): a for a in propose_anchors(doc)}
     shares, sh_basis, sh_source = resolve_shares(doc)
     ev = evidence_for(doc)
@@ -1019,7 +1033,8 @@ def r4_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
             f"{eb.get('ciq_tev_claims')} ({eb.get('ciq_tev_claims_source')}); CIQ 'Net Debt' "
             f"line {eb.get('net_debt')}")
         ev["net_debt"].append(
-            f"EDGAR cross-check (the anchor's net debt, not the bridge): {eb.get('edgar_net_debt')}"
+            f"EDGAR cross-check (lease-inclusive net debt, not the bridge): "
+            f"{eb.get('edgar_net_debt')}"
             + (f" — {eb.get('edgar_source')}" if eb.get("edgar_source") else " — withheld"))
         cons = eb.get("consensus") or {}
         for y in cons.get("years") or []:
