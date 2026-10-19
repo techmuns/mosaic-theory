@@ -1313,8 +1313,11 @@ function anchorInner(a) {
     row("Method", escapeHtml(methodName), isR1 ? fit : `R1 screen: ${fit}`, { prose: true }),
     mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
              `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
+    // the ex-lease history names its lease convention (2026-10-19). Twin of _screening_context_lines()
     mu ? row("Median multiple, own history", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
-             `${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}`) : "",
+             `${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
+               String(mu.source || "").startsWith("valuation.lease_basis")
+                 ? " ex-lease (TEV less operating leases; net debt likewise)" : ""}`) : "",
     base != null ? row("Screen value / share", `$${base.toFixed(2)}`,
                        `spot-independent · EV/EBIT ${a.anchor_ev_ebit != null ? a.anchor_ev_ebit.toFixed(1) : "—"}x`) : "",
     row("Overall confidence", conf(a.overall_confidence), ""),

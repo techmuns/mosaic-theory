@@ -23,7 +23,13 @@ from pydantic import ValidationError
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
 from vinci.dossier import flags as dossier_flags
-from vinci.dossier.anchor import RECIPE_UNKNOWN, Anchor, compute_anchor, preserve_operator_tag
+from vinci.dossier.anchor import (
+    RECIPE_UNKNOWN,
+    Anchor,
+    compute_anchor,
+    lease_inclusive_net_debt,
+    preserve_operator_tag,
+)
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.covenant_extract import (
     covenant_digest,
@@ -1095,8 +1101,13 @@ def assemble_one(
     # effort: any own-history gap or EDGAR error yields an INAPPLICABLE anchor with a reason,
     # never a crashed assembly (the dossier stands on its own; the anchor is committed triage
     # context).
+    # the EDGAR net debt beside CIQ's TEV claims (ev_bridge) is lease-INCLUSIVE whatever R1 prices
+    # on — CIQ's claims carry the leases (review of #750) — so it is gathered here, not read off
+    # the anchor, whose bridge is ex-lease on a lease-material name
+    edgar_nd: tuple[float | None, str | None] = (None, None)
     try:
         anchor_facts = EdgarClient.from_config(cfg).companyfacts(rec.identity.cik)
+        edgar_nd = lease_inclusive_net_debt(anchor_facts)
         anchor = compute_anchor(mech.model_dump(mode="json"), facts=anchor_facts,
                                 computed_at=datetime.now(UTC))
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier
@@ -1121,11 +1132,10 @@ def assemble_one(
         # (historical forecast error) the final consensus's miss per fiscal year — same rules
         historical_forecast_error=ciq_sheets.historical_forecast_error(bundle),
         # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — same
-        # rules, with the anchor's EDGAR figure beside it as a cross-check
+        # rules, with EDGAR's lease-inclusive net debt beside it as a cross-check
         ev_bridge=ciq_sheets.ev_bridge(
             bundle, fy_periods=(forward_consensus.periods if forward_consensus else []),
-            edgar_net_debt=(anchor.net_debt.value if anchor.net_debt else None),
-            edgar_source=(anchor.net_debt.source if anchor.net_debt else None)),
+            edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1]),
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=built_at,

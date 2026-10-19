@@ -1030,6 +1030,23 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
             # one book's vocabulary sat in two places at once and got fixed in neither.
             ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
         updates["ev_ebitda"] = ev.model_dump(mode="json")
+        # the lease basis reads the SAME quarterly export (its TEV, leases and EBITDA), so it moves
+        # with the cluster — a band from one export beside a lease basis from another is the drift
+        # this refresh exists to prevent (2026-10-19)
+        # A FAILED FETCH SKIPS THE NAME (review of #750), as `anchor-backfill` does: writing the
+        # lease basis without EDGAR would commit a refusal ("companyfacts unavailable") that the
+        # next backfill reads as R1 refused — a transient outage turned into a page state.
+        from vinci.dossier.lease_basis import lease_basis as _lease_basis
+        from vinci.edgar.client import EdgarClient
+        try:
+            facts = EdgarClient.from_config(cfg).companyfacts(str(doc["cik"]))
+        except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, not guessed
+            print(f"{t:7}  EDGAR fetch failed ({type(exc).__name__}) — skip, not written (the "
+                  "lease basis needs it)")
+            continue
+        lb = _lease_basis(bundle, facts)
+        if lb is not None:
+            updates["lease_basis"] = json.loads(lb.model_dump_json())
         # percentile is EDGAR-screen-sourced when the screen knew it; only the CIQ path is ours
         pct_old = val_old.get("ev_ebitda_percentile_5y") or {}
         if "CIQ" in str(pct_old.get("source_ref") or ""):
@@ -1058,7 +1075,8 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
             from vinci.dossier.schemas import Dossier
             layer_refresh.write_recorded(
                 path, original,
-                Dossier.model_validate_json(replace_valuation_fields(original, updates)),
+                Dossier.model_validate_json(replace_valuation_fields(
+                    original, updates, may_add=frozenset({"lease_basis"}))),
                 "own-history-refresh")
     return 0
 

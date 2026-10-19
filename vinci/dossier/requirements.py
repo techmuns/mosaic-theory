@@ -107,8 +107,9 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
             "(interest_coverage), net-debt/EBITDA from CIQ Net/Total Debt + LTM EBITDA "
             "(net_debt / total_debt / ltm_ebitda), capital-structure / covenant flags "
             "(liquidity_covenant_flags), segment + geographic concentration (segments / "
-            "segment_ebitda / geographic), and the multi-year revenue/segment arc "
-            "(multi_year_trajectory)"
+            "segment_ebitda / geographic), the multi-year revenue/segment arc "
+            "(multi_year_trajectory), and rent's share of EBITDA — whether R1 needs the ex-lease "
+            "history (lease_basis.rent_share)"
         ),
         granularity=Granularity.ANNUAL,
         lookback="5 fiscal years (export with Period Type: Annual)",
@@ -120,7 +121,7 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         freq="quarterly",
         sheets=(
             "Multiples", "Income Statement", "Balance Sheet", "Cash Flow",
-            "Capital Structure Details", "Capital Structure Summary",
+            "Capital Structure Details", "Capital Structure Summary", "Historical Capitalization",
         ),
         used_for=(
             "valuation-range position / multiple percentiles (ev_ebitda_current, "
@@ -136,7 +137,10 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
             "sheet, declared because it is READ during selection even though it is almost never "
             "the one used: CIQ ships no quarterly capital detail, so this workbook repeats the "
             "annual sections under a newer workbook-level note, and _cs_details_freq rejects it "
-            "for exactly that reason (see the annual module below)"
+            "for exactly that reason (see the annual module below) — and the HISTORICAL "
+            "CAPITALIZATION sheet, whose quarterly TEV (with the Balance Sheet's lease rows and "
+            "the Income Statement's EBITDA) rebuilds the EV/EBITDA history ex-lease for a "
+            "lease-material name (lease_basis)"
         ),
         granularity=Granularity.QUARTERLY,
         lookback=(

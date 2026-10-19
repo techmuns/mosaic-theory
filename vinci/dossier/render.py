@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.config import get_config
-from vinci.dossier.anchor import Anchor
+from vinci.dossier.anchor import DQ_LEASE_BASIS, Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import (
     refresh_line,
@@ -33,7 +33,9 @@ from vinci.dossier.schemas import (
     Dossier,
     FinancialSummary,
     ForwardMultiple,
+    LeaseBasis,
     MechanicalLayer,
+    OwnHistoryBand,
     PriceStoreStamp,
     Sourced,
     SourceStatus,
@@ -221,18 +223,24 @@ def _reported_ltm_ebitda_margin(m: MechanicalLayer) -> float | None:
     return float(ebitda) / float(revenue)
 
 
-def _multiple_basis_md(m: MechanicalLayer) -> str:
+def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None) -> str:
     """State the EV/EBITDA series' OWN denominator when it is not the reported one.
 
     Empty when the two agree, when either is missing, or when no band carries an implied margin —
-    so the line appears only where it changes how the multiple should be read."""
+    so the line appears only where it changes how the multiple should be read. A page whose rent
+    is MATERIAL (`valuation.lease_basis`) always gets the line, because R1 then prices a different
+    history from the one shown above it (:func:`_lease_basis_md`)."""
     val = getattr(m, "valuation", None)
     oh = getattr(val, "own_history", None) if val is not None else None
     bands = oh.value if oh is not None and oh.status is SourceStatus.PRESENT else None
+    lb = getattr(val, "lease_basis", None) if val is not None else None
+    reported = _reported_ltm_ebitda_margin(m)
+    if lb is not None and lb.material:
+        ciq = next((b for b in bands or [] if "EBITDA" in str(b.metric)), None)
+        return _lease_basis_md(lb, ciq, reported, anchor)
     if not bands:
         return ""
     band = next((b for b in bands if b.implied_ebitda_margin and "EBITDA" in str(b.metric)), None)
-    reported = _reported_ltm_ebitda_margin(m)
     if band is None or not reported or reported <= 0:
         return ""
     implied = float(band.implied_ebitda_margin or 0)
@@ -246,6 +254,57 @@ def _multiple_basis_md(m: MechanicalLayer) -> str:
             f"denominator is NOT the reported EBITDA{tail}. The level and percentile above are "
             f"internally consistent on the series' own basis; they are not comparable to a "
             f"multiple struck on reported EBITDA.")
+
+
+def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float | None,
+                    anchor: Anchor | None) -> str:
+    """THE LINE FOR A LEASE-MATERIAL NAME (2026-10-19): which history R1 prices, on ONE basis.
+
+    It replaces the "same TEV over REPORTED EBITDA" restatement for these names, because that
+    figure is neither basis: CIQ's TEV carries the operating leases while reported EBITDA is after
+    rent (TJX's read 19.1x where the consistent ex-lease figure is about 16x). The two consistent
+    pairs are TEV with leases over EBITDA plus rent, or TEV without them over reported EBITDA; R1's
+    earnings are reported EBITDA, so the line names the second, and the bridge that goes with it.
+
+    WHAT R1 PRICES IS READ OFF THE ANCHOR, not the lease block (review of #750): the block can land
+    before the anchor is re-derived, and a line asserting the ex-lease pricing beside a screening
+    table still on CIQ's series would be the page contradicting itself. That state is named."""
+    fy = f"FY ending {lb.rent_fiscal_year}" if lb.rent_fiscal_year else "fiscal year unmeasured"
+    rent = (f"rent is {lb.rent_to_ebitda * 100:,.1f}% of EBITDA ({fy})"
+            if lb.rent_to_ebitda is not None and (lb.rent_ebitda or 0) > 0
+            else "rent's share of EBITDA could not be measured, so it is treated as material")
+    # STATED PER NAME, NOT AS A RULE ABOUT CIQ: whether a close adds rent back to EBITDA varies
+    # (PARR's and WLK's latest closes do not), so the line gives this name's own implied margin
+    # and claims only what holds everywhere — since 842 CIQ's TEV carries the operating leases
+    implied = ciq.implied_ebitda_margin if ciq is not None else None
+    evidence = (f"; its latest close implies a {implied * 100:,.1f}% EBITDA margin against "
+                f"{reported * 100:,.1f}% reported" if implied and reported else "")
+    head = (f"- **Multiple basis — read before the level:** {rent}. Since ASC 842 CIQ's TEV "
+            "carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) "
+            f"history is not on one basis{evidence}. ")
+    b = lb.ex_lease_band
+    priced_ex = (anchor is not None and anchor.multiple is not None
+                 and anchor.multiple.source.startswith(_EX_LEASE_SOURCE_PREFIX))
+    refused = anchor is not None and DQ_LEASE_BASIS in (anchor.data_quality or "")
+    stale = (" This page's R1 anchor was derived before that and still prices CIQ's series — "
+             "re-derive the anchor before reading its value.")
+    if b is None:
+        return (head + f"The ex-lease history could not be built ({lb.refusal}), so R1 does not "
+                "price this name on either series."
+                + ("" if refused or anchor is None or anchor.multiple is None else stale)
+                + _cite(lb.source_ref))
+    history = ("R1's earnings are reported EBITDA, after rent; on that basis — TEV less "
+               f"operating leases over reported EBITDA — the median is {b.median:,.1f}x over "
+               f"{b.n_closes} quarters (current {b.current:,.1f}x at the {b.as_of} filing; "
+               f"{b.percentile:.0%} of the history at or below it).")
+    if priced_ex:
+        tail = (" R1 prices that median with net debt excluding operating leases. The level and "
+                "percentile above are CIQ's own series.")
+    elif anchor is None or anchor.multiple is None:
+        tail = " The level and percentile above are CIQ's own series."
+    else:
+        tail = stale
+    return head + history + tail + _cite(lb.source_ref)
 
 
 def _forward_multiples_md(s: Sourced[list[ForwardMultiple]] | None) -> str:
@@ -3301,6 +3360,12 @@ _SCREEN_SUBTITLE = (
     "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
 
 
+#: An anchor multiple read from the ex-lease history carries this source prefix (anchor.py), and
+#: the screening table names the convention beside it. Twin: anchorInner() in dossier.js.
+_EX_LEASE_SOURCE_PREFIX = "valuation.lease_basis"
+_EX_LEASE_LABEL = " ex-lease (TEV less operating leases; net debt likewise)"
+
+
 def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     """(md/web parity) The screening ANCHOR — how this name surfaced. Twin of anchorInner() in
     frontend dossier.js, which renders it for every name; this renderer rendered it for NONE, so
@@ -3337,10 +3402,13 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         rows.append(f"| Mid-cycle margin | {'—' if mg.value is None else f'{mg.value * 100:.1f}%'} "
                     f"| {mg.anchor_years}y history · {mg.confidence} |")
     if mu is not None:
+        # THE BASIS NAMES THE LEASE CONVENTION when the history is the ex-lease rebuild
+        # (2026-10-19): "EV/EBITDA" alone read as CIQ's series. Twin: anchorInner().
+        ex = mu.source.startswith(_EX_LEASE_SOURCE_PREFIX)
         rows.append(f"| Median multiple, own history | "
                     f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
                     f"{mu.history_quarters} closes · {mu.confidence} · "
-                    f"{_md_cell(anchor.multiple_basis)} |")
+                    f"{_md_cell(anchor.multiple_basis)}{_EX_LEASE_LABEL if ex else ''} |")
     base = anchor.anchor_base_value_per_share
     if base is not None:
         ev = anchor.anchor_ev_ebit
@@ -3515,7 +3583,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
         # BLANK LINE in the rendered page, which makes the committed .md stale against its own
         # JSON on names that gained nothing. Caught by the three e2e mirror pins, not by a unit.
         out += [line for line in (_forward_multiples_md(m.valuation.forward_multiples),
-                                  _multiple_basis_md(m)) if line]
+                                  _multiple_basis_md(m, d.anchor)) if line]
     if m.peer_comps is not None:
         out.append(_fact("Comparability", m.peer_comps.comparability))
     if m.catalyst_path is not None:
