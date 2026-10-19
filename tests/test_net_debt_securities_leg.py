@@ -4,7 +4,9 @@ GOOGL's page carried net DEBT +$64,880M (`anchor.net_debt`) beside net CASH −$
 same quarter). The gap was its $186,563M of marketable securities to the dollar: EDGAR's `cash`
 concept is cash and equivalents only, CIQ's is "Total Cash & ST Investments", and every multiple
 the anchor's net debt bridges is a CIQ TEV multiple. The anchor now subtracts ONE
-current-securities tag, read only at the cash instant (`anchor._short_term_securities`).
+current-securities tag, read only at the cash instant
+(`vinci.edgar.net_debt._short_term_securities`, the one builder the anchor and the screen's
+snapshot share since §5.0 row 27 (1)).
 
 Every pin here runs on frozen REAL data: the companyfacts fixtures, and CIQ's own figures frozen in
 `tests/fixtures/ciq_cash_and_st_investments.json` (derived values, read 2026-10-08; the workbooks
@@ -21,6 +23,7 @@ from typing import Any
 import pytest
 
 from vinci.dossier import anchor as anc
+from vinci.edgar import net_debt as nd
 from vinci.edgar.concepts import extract_points, latest_instant, points_for_tag
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -70,7 +73,7 @@ def test_edgar_cash_plus_the_leg_is_ciqs_cash_and_st_investments(ticker: str) ->
     assert cash.period_end.isoformat() == ciq["balance_sheet_date"], (
         f"{ticker}: the EDGAR cash instant moved off CIQ's balance-sheet date — this comparison "
         "is only meaningful at a shared date; refreeze both sides together")
-    leg = anc._short_term_securities(facts, cash.period_end)
+    leg = nd._short_term_securities(facts, cash.period_end)
     assert leg is not None and leg.tag == _EXPECTED_TAG[ticker], (
         f"{ticker}: read {leg.tag if leg else None}, expected {_EXPECTED_TAG[ticker]}")
     edgar_total = (cash.value + leg.value) / 1e6
@@ -102,7 +105,7 @@ def test_orka_parent_and_noncurrent_securities_are_present_and_not_netted() -> N
     end = _cash_end(facts)
     assert _at(facts, "MarketableSecurities", end), "the trap must be in the data, or it is vacuous"
     assert _at(facts, "MarketableSecuritiesNoncurrent", end)
-    leg = anc._short_term_securities(facts, end)
+    leg = nd._short_term_securities(facts, end)
     assert leg is not None and leg.tag == "MarketableSecuritiesCurrent"
     assert leg.value / 1e6 == pytest.approx(605.094, abs=0.001)
 
@@ -115,7 +118,7 @@ def test_nflx_afs_total_is_present_and_not_netted() -> None:
     end = _cash_end(facts)
     afs = _at(facts, "AvailableForSaleSecuritiesDebtSecurities", end)
     assert afs and max(afs) / 1e6 > 9_000, "the trap must be in the data, or this is vacuous"
-    leg = anc._short_term_securities(facts, end)
+    leg = nd._short_term_securities(facts, end)
     assert leg is not None and leg.tag == "ShortTermInvestments"
     assert leg.value / 1e6 == pytest.approx(28.678, abs=0.001)
 
@@ -132,12 +135,12 @@ def test_a_securities_tag_that_stopped_before_the_cash_instant_is_not_netted(tic
     facts = _facts(ticker)
     end = _cash_end(facts)
     present = {t: max(p.period_end for p in points_for_tag(facts, t) if p.period_start is None)
-               for t in anc._SHORT_TERM_SECURITIES_TAGS
+               for t in nd._SHORT_TERM_SECURITIES_TAGS
                if any(p.period_start is None for p in points_for_tag(facts, t))}
     assert present, f"{ticker}: no read tag in the fixture — the stale case is not in the data"
     assert all(last < end for last in present.values()), (
         f"{ticker}: a read tag reaches the cash instant {end} — not a stale case: {present}")
-    assert anc._short_term_securities(facts, end) is None
+    assert nd._short_term_securities(facts, end) is None
     got = anc._lease_inclusive_net_debt(facts)
     if got is not None:
         assert "short-term investments" not in got[1], f"{ticker}: a stale balance was netted"
@@ -150,7 +153,7 @@ def test_wlk_falls_through_a_stale_first_tag_to_the_live_one() -> None:
     end = _cash_end(facts)
     msc = [p.period_end for p in points_for_tag(facts, "MarketableSecuritiesCurrent")]
     assert msc and max(msc) < end, "the stale first tag must be in the data"
-    leg = anc._short_term_securities(facts, end)
+    leg = nd._short_term_securities(facts, end)
     assert leg is not None and leg.tag == "AvailableForSaleSecuritiesDebtSecuritiesCurrent"
     assert leg.value / 1e6 == pytest.approx(209.0, abs=0.001)
 
@@ -159,7 +162,7 @@ def test_a_name_without_the_line_keeps_its_bridge_text() -> None:
     """BRBR tags none of the three: its net debt and its bridge text are what they were — the leg
     prints only where it is netted, so a page that moves is a page whose number moved."""
     facts = _facts("BRBR")
-    assert not any(points_for_tag(facts, t) for t in anc._SHORT_TERM_SECURITIES_TAGS)
+    assert not any(points_for_tag(facts, t) for t in nd._SHORT_TERM_SECURITIES_TAGS)
     got = anc._lease_inclusive_net_debt(facts)
     assert got is not None and "short-term investments" not in got[1]
     assert got[1].endswith(" ($M)") and " − cash " in got[1]
@@ -181,7 +184,7 @@ def test_amzns_anchor_carries_the_leg_and_its_base_value_moves_by_exactly_it(
     assert "short-term investments 44,775 (MarketableSecuritiesCurrent, 2026-06-30)" in (
         with_leg.net_debt.source)
 
-    monkeypatch.setattr(anc, "_SHORT_TERM_SECURITIES_TAGS", ())
+    monkeypatch.setattr(nd, "_SHORT_TERM_SECURITIES_TAGS", ())
     without = anc.compute_anchor(mech, facts=_facts("AMZN"), computed_at=now, ciq=None)
     assert without.net_debt is not None and without.net_debt.value is not None
     assert without.net_debt.value - with_leg.net_debt.value == pytest.approx(44_775.0, abs=0.001)

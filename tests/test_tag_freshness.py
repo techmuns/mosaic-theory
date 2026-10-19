@@ -216,6 +216,11 @@ def test_total_debt_and_current_debt_never_double_count() -> None:
 
     MVST already served the total basis BEFORE this work, so the double count predates the
     fall-through on that name; the guard covers both.
+
+    SINCE §5.0 row 27 (1) every line is read at ONE balance-sheet date, so VITL's 2020 current
+    figure is not on its 2026-06-28 sheet and is never read. MVST's `LongTermDebt` total stopped
+    at 2025-12-31 while its sheet is dated 2026-06-30: that $13M is not read either, and the
+    filer's own $119M total refuses the reading — the false net cash this guard sat beside.
     """
     from vinci.dossier.anchor import _lease_inclusive_net_debt
     from vinci.edgar.concepts import latest_instant
@@ -227,7 +232,13 @@ def test_total_debt_and_current_debt_never_double_count() -> None:
             continue
         dc = latest_instant(extract_points(facts, "debt_current"))
         got = _lease_inclusive_net_debt(facts)
-        assert got is not None and got[0] is not None, f"{ticker}: net debt went UNKNOWN"
+        assert got is not None, f"{ticker}: no net-debt reading at all"
+        if ticker == "MVST":
+            assert got[0] is None and "UNDER-CAPTURED: DebtLongtermAndShorttermCombinedAmount" in (
+                got[1]), got[1]
+            assert "total debt 13 " not in got[1], "the stale 2025-12-31 total was read"
+        else:
+            assert got[0] is not None, f"{ticker}: net debt went UNKNOWN"
         assert f"{ltd.value / 1e6:,.0f}" in got[1] or True
         if dc is not None:
             # the current figure must NOT appear inside the total when the total basis is served

@@ -86,6 +86,7 @@ from vinci.edgar.concepts import (
     latest_instant,
     points_for_tag,
 )
+from vinci.edgar.net_debt import not_applicable
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.edgar.submissions import FormerName
 from vinci.eod import compute_price_features
@@ -1666,7 +1667,10 @@ def _adjusted_facts(
         )
     except (HttpError, KeyError):
         snap, share_pts = None, []
-    net_debt = snap.net_debt.value if snap and snap.net_debt.is_known else None
+    # a bank, lender or insurer has no net-debt leverage (vinci.edgar.net_debt): its borrowings
+    # fund its book — the same rule the screen applies to the record's ratios
+    na = not_applicable(record.identity.sic)
+    net_debt = snap.net_debt.value if snap and snap.net_debt.is_known and not na else None
     # THE SAME STALENESS BOUND AS THE STOCK-INFO BASIS, because this multiplies it by a price:
     # `ev = price * shares + net_debt` below. A multi-class filer whose newest undimensioned count
     # predates a split (Visa: 2010, then a 4-for-1 in 2015) would compute an EV wrong by that
@@ -1684,6 +1688,8 @@ def _adjusted_facts(
         eb_lo, eb_hi = float(eb.group(1)), float(eb.group(2))
         eb_mid = (eb_lo + eb_hi) / 2 * 1e6  # $ (the guide is in $M)
         band = f"FY26 adj-EBITDA ${eb_lo:.0f}–${eb_hi:.0f}M"
+        if na:
+            nd_adj = ev_adj = Sourced.unknown(note=na)
         if net_debt is not None:
             nd_adj = Sourced.present(
                 f"~{net_debt / eb_mid:.1f}x fwd-adj (net debt ${net_debt / 1e6:,.0f}M / {band})",

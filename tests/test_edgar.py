@@ -212,7 +212,12 @@ def test_net_debt_undercaptured_fails_loud() -> None:
     snap = compute_fundamental_snapshot("x", facts)
     assert not snap.net_debt.is_known  # NOT a false net-cash of 13.2 - 126.1 = -112.9M
     assert "under-captured" in (snap.net_debt.note or "")
-    assert "ShortTermBorrowings" in (snap.net_debt.note or "")  # names the largest witness
+    # Since §5.0 row 27 (1) the $111.2M of borrowings IS read (13.2 + 111.2 = 124.4), so the
+    # instrument that proves under-capture is the convertible: $76.5M cannot sit inside $13.2M of
+    # long-term debt, and one borrowing line does not hold it — read it as held and the figure is
+    # the false net cash of 124.4 − 126.1 = −1.7M this test exists to refuse.
+    assert "ConvertibleDebtCurrent $76M is more than the $13M of long-term debt" in (
+        snap.net_debt.note or "")
     # net-leverage and net-debt/OCF share the numerator → they inherit UNKNOWN, not a false value
     assert not snap.net_leverage.is_known and not snap.net_debt_to_ocf.is_known
 

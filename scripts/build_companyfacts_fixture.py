@@ -18,6 +18,12 @@ the fixture TRACKS the artifacts rather than describing them.
 
     python scripts/build_companyfacts_fixture.py            # all committed dossier names
     python scripts/build_companyfacts_fixture.py SMPL BRBR  # just these
+    python scripts/build_companyfacts_fixture.py --net-debt-shapes ATEC CSIQ  # net-debt shapes
+
+NET-DEBT SHAPES. ``--net-debt-shapes`` freezes only the tags :mod:`vinci.edgar.net_debt` reads
+(its ``READ_TAGS``) for names OUTSIDE the dossier set, each one a tagging shape the builder's rules
+were measured on (`tests/test_net_debt_one_builder.py`). Derived from the code, so the subset
+cannot drift from what is read.
 
 Needs a warm cache or network; it is an operator tool, never imported by the suite.
 """
@@ -94,6 +100,30 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
     "MarketableSecurities",
     "MarketableSecuritiesNoncurrent",
     "AvailableForSaleSecuritiesDebtSecurities",
+    # net debt: every line `vinci.edgar.net_debt` reads at the balance-sheet date (§5.0 row 27 (1),
+    # 2026-10-19) — the borrowings beside long-term debt, the debt-and-finance-lease family, the
+    # lease totals, the filer's own total debt, and every under-capture witness, so the refusals
+    # are exercised offline rather than passing on an absent tag
+    "ShortTermBorrowings",
+    "CommercialPaper",
+    "LinesOfCreditCurrent",
+    "LongTermDebtAndCapitalLeaseObligations",
+    "LongTermDebtAndCapitalLeaseObligationsCurrent",
+    "LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities",
+    "DebtLongtermAndShorttermCombinedAmount",
+    "FinanceLeaseLiability",
+    "OperatingLeaseLiability",
+    "ConvertibleDebt",
+    "NotesPayableCurrent",
+    "LongTermNotesPayable",
+    "SubordinatedDebtCurrent",
+    "SubordinatedDebt",
+    "SecuredDebt",
+    "SecuredDebtCurrent",
+    "LongTermLineOfCredit",
+    "OtherLongTermDebt",
+    "OtherLongTermDebtNoncurrent",
+    "OtherLongTermDebtCurrent",
     # free cash flow
     "NetCashProvidedByUsedInOperatingActivities",
     "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations",
@@ -102,11 +132,14 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
 })
 
 
-def subset(facts: dict[str, Any]) -> dict[str, Any]:
-    """Keep only :data:`FIXTURE_TAGS`, preserving the exact companyfacts shape callers expect."""
+NET_DEBT_SHAPES_DIR = ROOT / "tests" / "fixtures" / "net_debt_shapes"
+
+
+def subset(facts: dict[str, Any], tags: frozenset[str] = FIXTURE_TAGS) -> dict[str, Any]:
+    """Keep only ``tags``, preserving the exact companyfacts shape callers expect."""
     out: dict[str, dict[str, Any]] = {}
     for ns, node in (facts.get("facts") or {}).items():
-        kept = {tag: body for tag, body in node.items() if tag in FIXTURE_TAGS}
+        kept = {tag: body for tag, body in node.items() if tag in tags}
         if kept:
             out[ns] = kept
     return {"cik": facts.get("cik"), "entityName": facts.get("entityName"), "facts": out}
@@ -127,13 +160,18 @@ def main(argv: list[str]) -> int:
                 if p.is_dir() and (p / "dossier.json").is_file()}
     records = {p.stem for p in (ROOT / "scenarios").glob("*.json")
                if not p.stem.startswith("_")}
-    names = [t.upper() for t in argv] or sorted(dossiers | records)
-    FIXTURE_DIR.mkdir(parents=True, exist_ok=True)
+    shapes = bool(argv) and argv[0] == "--net-debt-shapes"
+    if shapes:
+        from vinci.edgar.net_debt import READ_TAGS
+        argv = argv[1:]
+    out_dir = NET_DEBT_SHAPES_DIR if shapes else FIXTURE_DIR
+    names = [t.upper() for t in argv] or ([] if shapes else sorted(dossiers | records))
+    out_dir.mkdir(parents=True, exist_ok=True)
     total = 0
     for ticker in names:
         facts = edgar.companyfacts(resolver.resolve_ticker(ticker).cik)
-        thin = subset(facts)
-        path = FIXTURE_DIR / f"{ticker}.json"
+        thin = subset(facts, READ_TAGS) if shapes else subset(facts)
+        path = out_dir / f"{ticker}.json"
         # sort_keys so a regeneration produces a byte-identical file when nothing moved — a
         # fixture that churns on every run cannot be reviewed for what actually changed
         path.write_text(json.dumps(thin, indent=1, sort_keys=True) + "\n")
@@ -141,7 +179,7 @@ def main(argv: list[str]) -> int:
         total += kb
         kept = sum(len(v) for v in thin["facts"].values())
         print(f"  {ticker:6} {kept:>3} tags  {kb:>7.1f} KB")
-    print(f"\n=== {len(names)} name(s) · {total / 1024:.2f} MB total → {FIXTURE_DIR} ===")
+    print(f"\n=== {len(names)} name(s) · {total / 1024:.2f} MB total → {out_dir} ===")
     return 0
 
 

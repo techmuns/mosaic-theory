@@ -5357,6 +5357,64 @@
      ]
     }
    },
+   "FinanceLeaseLiability": {
+    "description": "Present value of lessee's discounted obligation for lease payments from finance lease.",
+    "label": "Finance Lease, Liability",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001193125-24-200609",
+       "end": "2024-06-30",
+       "filed": "2024-08-14",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2024Q2I",
+       "fy": 2024,
+       "val": 1111000
+      },
+      {
+       "accn": "0000950170-25-042648",
+       "end": "2024-12-31",
+       "filed": "2025-03-20",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2024,
+       "val": 876000
+      },
+      {
+       "accn": "0001193125-26-076793",
+       "end": "2025-12-31",
+       "filed": "2026-02-26",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2025Q4I",
+       "fy": 2025,
+       "val": 387000
+      },
+      {
+       "accn": "0001193125-26-212016",
+       "end": "2026-03-31",
+       "filed": "2026-05-07",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2026Q1I",
+       "fy": 2026,
+       "val": 282000
+      },
+      {
+       "accn": "0001193125-26-338062",
+       "end": "2026-06-30",
+       "filed": "2026-08-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2026Q2I",
+       "fy": 2026,
+       "val": 186000
+      }
+     ]
+    }
+   },
    "FinanceLeaseLiabilityCurrent": {
     "description": "Present value of lessee's discounted obligation for lease payments from finance lease, classified as current.",
     "label": "Finance Lease, Liability, Current",
@@ -5936,6 +5994,176 @@
        "frame": "CY2023Q1I",
        "fy": 2023,
        "val": 15000000
+      }
+     ]
+    }
+   },
+   "LongTermNotesPayable": {
+    "description": "Carrying value as of the balance sheet date of notes payable (with maturities initially due after one year or beyond the operating cycle if longer), excluding current portion.",
+    "label": "Notes Payable, Noncurrent",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001564590-22-010895",
+       "end": "2021-12-31",
+       "filed": "2022-03-17",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2021,
+       "val": 14945000
+      },
+      {
+       "accn": "0001564590-22-019306",
+       "end": "2021-12-31",
+       "filed": "2022-05-10",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2022,
+       "val": 14945000
+      },
+      {
+       "accn": "0000950170-22-016117",
+       "end": "2021-12-31",
+       "filed": "2022-08-09",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2022,
+       "val": 14945000
+      },
+      {
+       "accn": "0000950170-22-023269",
+       "end": "2021-12-31",
+       "filed": "2022-11-08",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2022,
+       "val": 14945000
+      },
+      {
+       "accn": "0000950170-23-009527",
+       "end": "2021-12-31",
+       "filed": "2023-03-23",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 14945000
+      },
+      {
+       "accn": "0001564590-22-019306",
+       "end": "2022-03-31",
+       "filed": "2022-05-10",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2022Q1I",
+       "fy": 2022,
+       "val": 15020000
+      },
+      {
+       "accn": "0000950170-22-016117",
+       "end": "2022-06-30",
+       "filed": "2022-08-09",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2022Q2I",
+       "fy": 2022,
+       "val": 15104000
+      },
+      {
+       "accn": "0000950170-22-023269",
+       "end": "2022-09-30",
+       "filed": "2022-11-08",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2022Q3I",
+       "fy": 2022,
+       "val": 15205000
+      },
+      {
+       "accn": "0000950170-23-009527",
+       "end": "2022-12-31",
+       "filed": "2023-03-23",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2022,
+       "val": 15276000
+      },
+      {
+       "accn": "0000950170-23-021318",
+       "end": "2022-12-31",
+       "filed": "2023-05-11",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2023,
+       "val": 15276000
+      },
+      {
+       "accn": "0000950170-23-041408",
+       "end": "2022-12-31",
+       "filed": "2023-08-10",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2023,
+       "val": 15276000
+      },
+      {
+       "accn": "0000950170-23-062131",
+       "end": "2022-12-31",
+       "filed": "2023-11-09",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2023,
+       "val": 15276000
+      },
+      {
+       "accn": "0000950170-24-031635",
+       "end": "2022-12-31",
+       "filed": "2024-03-14",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2023,
+       "val": 15276000
+      },
+      {
+       "accn": "0000950170-23-021318",
+       "end": "2023-03-31",
+       "filed": "2023-05-11",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2023,
+       "val": 15356000
+      },
+      {
+       "accn": "0000950170-23-041408",
+       "end": "2023-06-30",
+       "filed": "2023-08-10",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2023Q2I",
+       "fy": 2023,
+       "val": 0
+      },
+      {
+       "accn": "0000950170-23-062131",
+       "end": "2023-09-30",
+       "filed": "2023-11-09",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2023Q3I",
+       "fy": 2023,
+       "val": 0
+      },
+      {
+       "accn": "0000950170-24-031635",
+       "end": "2023-12-31",
+       "filed": "2024-03-14",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2023,
+       "val": 0
       }
      ]
     }
@@ -7667,6 +7895,134 @@
        "fy": 2026,
        "start": "2026-04-01",
        "val": -24218000
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiability": {
+    "description": "Present value of lessee's discounted obligation for lease payments from operating lease.",
+    "label": "Operating Lease, Liability",
+    "units": {
+     "USD": [
+      {
+       "accn": "0000950170-23-009527",
+       "end": "2022-01-01",
+       "filed": "2023-03-23",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 1593000
+      },
+      {
+       "accn": "0000950170-23-009527",
+       "end": "2022-12-31",
+       "filed": "2023-03-23",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2022,
+       "val": 1187000
+      },
+      {
+       "accn": "0000950170-23-021318",
+       "end": "2023-03-31",
+       "filed": "2023-05-11",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2023,
+       "val": 2979000
+      },
+      {
+       "accn": "0000950170-23-041408",
+       "end": "2023-06-30",
+       "filed": "2023-08-10",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2023Q2I",
+       "fy": 2023,
+       "val": 2384000
+      },
+      {
+       "accn": "0000950170-23-062131",
+       "end": "2023-09-30",
+       "filed": "2023-11-09",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2023Q3I",
+       "fy": 2023,
+       "val": 1752000
+      },
+      {
+       "accn": "0000950170-24-031635",
+       "end": "2023-12-31",
+       "filed": "2024-03-14",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2023,
+       "val": 878000
+      },
+      {
+       "accn": "0000950170-24-057091",
+       "end": "2024-03-31",
+       "filed": "2024-05-09",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2024Q1I",
+       "fy": 2024,
+       "val": 224000
+      },
+      {
+       "accn": "0001193125-24-200609",
+       "end": "2024-06-30",
+       "filed": "2024-08-14",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2024Q2I",
+       "fy": 2024,
+       "val": 2333000
+      },
+      {
+       "accn": "0000950170-25-042648",
+       "end": "2024-12-31",
+       "filed": "2025-03-20",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2024,
+       "val": 2427000
+      },
+      {
+       "accn": "0001193125-26-076793",
+       "end": "2025-12-31",
+       "filed": "2026-02-26",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2025Q4I",
+       "fy": 2025,
+       "val": 889000
+      },
+      {
+       "accn": "0001193125-26-212016",
+       "end": "2026-03-31",
+       "filed": "2026-05-07",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2026Q1I",
+       "fy": 2026,
+       "val": 4351000
+      },
+      {
+       "accn": "0001193125-26-338062",
+       "end": "2026-06-30",
+       "filed": "2026-08-06",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2026Q2I",
+       "fy": 2026,
+       "val": 4213000
       }
      ]
     }
