@@ -38,6 +38,9 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | unknown | R1 screen: NOT applicable |
 | Overall confidence | — |  |
 
+**data_quality: vendor_bridge**
+- vendor bridge: net_debt supplied by the CIQ workbook because EDGAR had no usable tag
+
 _own-history multiple missing (valuation.own_history.median absent)_
 
 ## The case
@@ -453,6 +456,7 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-09; (R) = Reclas
   - 2026-10-08 · forward_consensus, historical_forecast_error — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-10 · anchor, date_semantics, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-20 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 28d old — 2026-08-31 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus is 50d old (2026-08-09, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.
