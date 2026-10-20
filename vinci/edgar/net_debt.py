@@ -156,9 +156,14 @@ _FILER_TOTAL_DEBT = "DebtLongtermAndShorttermCombinedAmount"
 _NOT_APPLICABLE_SIC_GROUPS: frozenset[int] = frozenset({60, 61, 63})
 
 
+def _usd(facts: dict[str, Any], tag: str) -> list[ConceptPoint]:
+    """``tag``'s points in dollars — the one parser every leg and the witness read through."""
+    return [p for p in points_for_tag(facts, tag) if p.unit == "USD"]
+
+
 def _at(facts: dict[str, Any], tag: str, at: date) -> ConceptPoint | None:
     """``tag``'s instant value AT ``at`` (the latest filing of it), else None."""
-    pts = [p for p in points_for_tag(facts, tag) if p.period_start is None and p.period_end == at]
+    pts = [p for p in _usd(facts, tag) if p.period_start is None and p.period_end == at]
     return max(pts, key=lambda p: p.filed) if pts else None
 
 
@@ -196,7 +201,7 @@ def _lease(facts: dict[str, Any], total: str, parts: tuple[str, str],
         return t.value, [t]
     read: list[ConceptPoint] = []
     for tag in parts:
-        p = _at(facts, tag, at) or latest_instant(points_for_tag(facts, tag))
+        p = _at(facts, tag, at) or latest_instant(_usd(facts, tag))
         if p is not None and p.period_end <= at and (at - p.period_end).days <= LEASE_MAX_AGE_DAYS:
             read.append(p)
     return sum(p.value for p in read), read
@@ -231,13 +236,10 @@ def _unread_debt(facts: dict[str, Any], at: date,
     beside its bank borrowings, not inside them. The filer's own total debt is held when the
     whole reading reaches it. Values dated before ``at`` are ignored: a since-repaid instrument's
     last value persists at its stale date."""
-    us = facts.get("facts", {}).get("us-gaap", {})
-
     def latest(tag: str) -> float | None:
-        pts = [r for r in us.get(tag, {}).get("units", {}).get("USD", [])
-               if str(r.get("end", "")) >= at.isoformat() and r.get("val") is not None]
-        return (float(max(pts, key=lambda r: (r.get("end", ""), r.get("filed", "")))["val"])
-                if pts else None)
+        # the same parser as the reading (review of #749): one value, one reader
+        pts = [p for p in _usd(facts, tag) if p.period_end >= at]
+        return max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
 
     full = b.value if b else 0.0
     hold = max(b.long_term, b.current_total or 0.0) if b else 0.0
@@ -307,6 +309,14 @@ def _borrowings(facts: dict[str, Any], at: date) -> Borrowings | None:
     if dcur is not None and maturities is not None:
         # the filer's own current-debt total: borrowings are what it holds beyond the maturities
         short = max(0.0, dcur.value - maturities)
+        # ... less the current finance leases, where it carries them: those are added as finance
+        # leases below, and a current total that equals maturities + borrowings + them would count
+        # them twice (GPK: $552M = $533M + $12M of borrowings + $7M; review of #749)
+        fc = get("FinanceLeaseLiabilityCurrent")
+        sb_v = sb.value if sb is not None else 0.0
+        if (not inside and fc is not None and 0 < fc.value <= short
+                and _same(short - fc.value, sb_v) and not _same(short, sb_v)):
+            short -= fc.value
         current_total = dcur.value
         read.append(dcur)
     elif (sb is not None and sb.value > 0 and not any(_same(sb.value, v) for v in dup_of)
@@ -360,6 +370,12 @@ class NetDebt:
     stale_debt: ConceptPoint | None
 
     @property
+    def nothing_to_read(self) -> bool:
+        """No debt line ever, nothing missed, nothing stale: the filer reports no debt to read —
+        as opposed to a reading that failed a check (:data:`NO_DEBT_OR_CASH`)."""
+        return self.borrowings is None and self.stale_debt is None and self.witness is None
+
+    @property
     def undercaptured(self) -> bool:
         """A debt balance the reading cannot hold exists: debt was missed (`_unread_debt`)."""
         return self.witness is not None
@@ -411,8 +427,12 @@ class NetDebt:
 
 
 def net_debt(facts: dict[str, Any]) -> NetDebt | None:
-    """Every component at the cash instant, or None when the filer reports no cash line."""
-    cash = latest_instant(extract_points(facts, "cash"))
+    """Every component at the cash instant, or None when the filer reports no cash line in DOLLARS.
+
+    Every leg is read in USD (`_usd`), cash included: a filer reporting in another currency (LPL
+    in won, HSAI in yuan) would otherwise net a dollar debt line against a foreign cash figure —
+    LPL read 3.26 trillion "dollars" of net debt before this, review of #749."""
+    cash = latest_instant([p for p in extract_points(facts, "cash") if p.unit == "USD"])
     if cash is None:
         return None
     at = cash.period_end
@@ -420,8 +440,11 @@ def net_debt(facts: dict[str, Any]) -> NetDebt | None:
     stale = None
     if b is None:
         earlier = [p for t in _CORE_DEBT_TAGS
-                   if (p := latest_instant(points_for_tag(facts, t))) is not None]
-        stale = max(earlier, key=lambda p: (p.period_end, p.filed)) if earlier else None
+                   if (p := latest_instant(_usd(facts, t))) is not None]
+        # the latest NONZERO one where any is: a $0 line is not what was being served (KLIC's
+        # 2012 `DebtCurrent` of $0 beside the $109M of notes the old reading carried)
+        carried = [p for p in earlier if p.value] or earlier
+        stale = max(carried, key=lambda p: (p.period_end, p.filed)) if carried else None
     fin_pts: list[ConceptPoint] = []
     if b is not None and b.finance_leases_inside:
         fin = 0.0

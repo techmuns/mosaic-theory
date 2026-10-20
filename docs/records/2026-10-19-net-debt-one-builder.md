@@ -84,7 +84,10 @@ keys on what the balance sheet IS, not on how it is disclosed.
   2026-10-19 from this machine's workbooks, against the anchor's EV basis (old reading on main
   c4ebdc37 → new). Names where CIQ shares EDGAR's balance-sheet date:
   - **Within $15M of CIQ, 13 names:** BRBR (−8), BURL (0; was +136), EPAM, GOOGL, HLF (+3), NFLX
-    (−15; was refused), PARR, PENG (0; was +3), ROST, SMPL, TJX, WERN (−1; was +8), WLK.
+    (−15; was refused), PARR, PENG (0; was +3), ROST, SMPL, TJX, WERN (−1; was +8), WLK. This
+    is the live-cache run. The pin (`test_the_anchor_reads_ciqs_net_debt_on_every_shared_date`)
+    checks the 13 names in the frozen CIQ fixture, which has no TJX workbook date match and
+    includes TGT, at a wider tolerance of max($15M, 1% of CIQ's total debt).
   - **Closer, not there:**
     - TGT −135 (was +1,019).
     - UBER +222 (was −1,775); the remainder is its finance leases. Its page's CIQ Net Debt
@@ -211,3 +214,55 @@ no-lease-basis figures. STATE row 27 carries this as items (1) and (4) sharing o
 
 **BOUNDARY.** Rebased onto main 618f07e5 (#750 4bba300c, #751). Interaction measured on this
 branch's committed pages and fixtures, 2026-10-20.
+
+## CODE REVIEW FIXES (code review of #749, high, 2026-10-20)
+
+Ten findings: seven fixed, one fixed differently, two not changed after measuring.
+- **Fixed — `DebtCurrent` can carry the current finance leases.** They were added again as finance
+  leases. Measured: 1 of the 12 names that read `DebtCurrent` beside current finance leases. GPK's
+  $552M = $533M maturities + $12M borrowings + $7M current finance leases, now $7M lower ($5,599M →
+  $5,592M net debt). Stripped only where the excess over maturities is exactly borrowings + those
+  leases (WS-shaped totals keep their borrowings). Pinned on GPK, with the negative.
+- **Fixed — the stale refusal named a $0 line.** KLIC's refusal cited "`DebtCurrent` $0M at
+  2012-09-29". It now names the latest NONZERO standard tag: "`LongTermDebt` $109M at 2012-03-31",
+  the balance the old reading carried.
+- **Fixed — the witness parsed raw JSON**, a second parser of the same values. It reads through
+  the builder's own dollar reader now. Doing so surfaced a real defect: **every leg must be read
+  in USD.**
+  - Cash and the lease fallback read any unit, while debt read dollars.
+  - LPL (won) and HSAI (yuan) netted dollar debt against foreign figures: LPL read 3.26 trillion
+    "dollars" of net debt.
+  - Every leg now goes through one USD reader. LPL reads its dollar figures ($2,802M); HSAI its
+    20-F convenience translation (−$576M); LAES moves $0.2M.
+  - Pinned on every fixture: no read point is in another unit.
+- **Fixed — the refusal kind was a string sentinel.** `NetDebt.nothing_to_read` now carries it,
+  for the snapshot and the anchor alike.
+- **Fixed — no glossary line** for "one builder / LEVERAGE basis / EV basis"; added to
+  `docs/engineering.md` §House vocabulary.
+- **Fixed — this record's CIQ list** did not match the pin's population (above).
+- **Fixed differently — the sector rule lives at the consumers.** It stays there, because a
+  snapshot-level rule would need SIC in a pure facts function and in every test fake. Instead a
+  scan pins it: every `vinci/` function that calls `fundamental_snapshot` must call
+  `not_applicable`, so a third consumer cannot forget it.
+- **Not changed — the bare-tag-beside-current rule ignores the filer's total.**
+  - An arbiter check was written and then removed, because it moves nothing.
+  - Measured: no corpus name reports a total equal to the bare tag alone in this shape.
+  - The 8 unsettled names have no total to consult.
+  - Under "don't build speculatively" it waits for a real case.
+- **Not changed — borrowings beside a bare total with no arbiter are still added.**
+  - Measured: 11 non-financial names have this shape.
+  - The one a total can settle (ETSY: $2,336M + $650M = its $2,986M) has them outside.
+  - The others are separate revolver or note lines (AKR, GT, LW, CXT).
+  - The inside case (CSIQ) is settled by its own total already.
+- **Skipped — the builder runs once per consumer per page.** A few dozen tag lookups each,
+  milliseconds. Not worth a cache.
+
+**Corpus effect of the fixes** (1,694 names, old → new): 4 values move (GPK, LPL, HSAI, LAES) and
+37 refusal notes are reworded (the nonzero stale tag). No other figure changes.
+
+**Seen, not changed:** the builder has no bound on how OLD the balance sheet is. LPL's latest
+us-gaap cash is 2009-12-31, because it moved to IFRS tags. Its net debt reads that date's balance
+sheet, stamped with its 2010 filing date, as before this PR.
+
+**Verified.** ruff and `mypy --strict` clean; `pytest -m "not network"` with the store moved aside, 6,007 passed / 525 skipped. Mutation 30/30 killed, the six new mutants included: no finance-lease strip, a $0 stale line, legs in any unit, cash in any unit, `nothing_to_read` without the witness, and route A without the sector rule. Three shape fixtures were added (GPK, LPL, HSAI).
+

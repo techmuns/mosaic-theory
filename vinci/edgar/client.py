@@ -140,9 +140,10 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     # witness (the MVST case — a single instrument above the debt read is debt missed, never a
     # confident false net cash), and now a debt line absent from the balance sheet.
     nd = net_debt(facts)
+    absent = nd is None or nd.nothing_to_read
     refusal = NO_DEBT_OR_CASH if nd is None else nd.refusal
     net_debt_val: float | None = None
-    if refusal == NO_DEBT_OR_CASH:
+    if absent:
         net_debt_f = _unknown_f(NO_DEBT_OR_CASH)
     elif refusal is not None:
         net_debt_f = _unknown_f(f"{refusal} — pull CIQ")
@@ -152,7 +153,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
         assert net_debt_val is not None
         net_debt_f = _present_f(net_debt_val, nd.filed)
     # the ratios name the SAME reason, so a refused reading never reads as an absent one
-    no_nd = ("no net-debt — debt/cash not in XBRL" if refusal in (None, NO_DEBT_OR_CASH)
+    no_nd = ("no net-debt — debt/cash not in XBRL" if absent or refusal is None
              else f"no net-debt — {refusal}")
 
     # net leverage = net debt / EBITDA; UNKNOWN with the SPECIFIC missing input — never lump them.

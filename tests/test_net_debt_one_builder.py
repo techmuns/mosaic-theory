@@ -10,8 +10,8 @@ Both now read `vinci.edgar.net_debt`.
 Every pin runs on frozen REAL data:
 - `tests/fixtures/companyfacts/` — the committed dossier names (their builder tags merged in at each
   fixture's own filing vintage);
-- `tests/fixtures/net_debt_shapes/` — ten names outside the dossier set, one per tagging shape the
-  rules were measured on, frozen from the companyfacts cache fetched 2026-08-06..2026-10-18
+- `tests/fixtures/net_debt_shapes/` — thirteen names outside the dossier set, one per tagging shape
+  the rules were measured on, frozen from the companyfacts cache fetched 2026-08-06..2026-10-18
   (`python scripts/build_companyfacts_fixture.py --net-debt-shapes <TICKERS>`);
 - `tests/fixtures/ciq_net_debt_one_builder.json` — CIQ's own Total Debt and Total Cash & ST
   Investments, read 2026-10-19 (derived scalars; the workbooks are never committed). The
@@ -171,7 +171,7 @@ def test_a_current_tag_a_quarter_old_is_not_read() -> None:
 
 @pytest.mark.parametrize(("ticker", "stopped"), [
     ("TECX", "LongTermDebt last reported $15M at 2023-03-31"),
-    ("KLIC", "last reported $0M at 2012-09-29"),
+    ("KLIC", "LongTermDebt last reported $109M at 2012-03-31"),
 ])
 def test_a_debt_line_absent_from_the_balance_sheet_is_refused(ticker: str, stopped: str) -> None:
     """A filer that used the standard tags and reports none at the date has repaid or MOVED its
@@ -420,3 +420,58 @@ def test_a_refused_snapshot_says_so_on_the_ratio() -> None:
     assert "under-captured" in (snap.net_leverage.note or "")
     absent = compute_fundamental_snapshot("x", {"facts": {"us-gaap": {}}})
     assert absent.net_leverage.note == "no net-debt — debt/cash not in XBRL"
+
+
+# --- code review of #749 -------------------------------------------------------------------------
+
+def test_a_current_debt_total_that_carries_finance_leases_does_not_count_them_twice() -> None:
+    """GPK's `DebtCurrent` ($552M) is its current maturities ($533M) + borrowings ($12M) + its
+    current finance leases ($7M) — and finance leases are added once, as finance leases. The
+    borrowings read are $12M, not $19M. NEGATIVE: the same filing without the current finance-lease
+    tag has nothing to strip, so the excess is all borrowings — the rule is what removes the $7M."""
+    facts = _facts("GPK")
+    r = _read("GPK")
+    assert r.borrowings is not None and r.borrowings.value / M == pytest.approx(5115 + 533 + 12,
+                                                                                abs=0.5)
+    stripped = {**facts, "facts": {ns: {t: v for t, v in node.items()
+                                        if t != "FinanceLeaseLiabilityCurrent"}
+                                   for ns, node in facts["facts"].items()}}
+    b2 = nd._borrowings(stripped, r.at)
+    assert b2 is not None and (b2.value - r.borrowings.value) / M == pytest.approx(7.0, abs=0.5)
+
+
+def test_every_leg_is_read_in_dollars() -> None:
+    """LPL files in won and HSAI in yuan, with dollar convenience figures beside them. Cash was
+    read in ANY unit while debt is read in dollars, so LPL netted dollar debt against won cash
+    (3.26 trillion "dollars"). Every point the builder reads, on every fixture, is now USD."""
+    for p in [*FACTS.glob("*.json"), *SHAPES.glob("*.json")]:
+        r = nd.net_debt(json.loads(p.read_text()))
+        if r is None:
+            continue
+        pts = [r.cash, *(r.borrowings.read if r.borrowings else ()), *r.finance_lease_points,
+               *r.operating_lease_points, *([r.securities] if r.securities else [])]
+        assert all(q.unit == "USD" for q in pts), (p.stem, {q.unit for q in pts})
+    lpl = _read("LPL")
+    assert lpl.cash.unit == "USD" and lpl.value(nd.Basis.LEVERAGE) is not None
+    assert abs(lpl.value(nd.Basis.LEVERAGE) or 0) / M < 10_000, "a won figure read as dollars"
+
+
+def test_every_snapshot_consumer_applies_the_sector_rule() -> None:
+    """The bank/lender/insurer rule lives at the consumers of `fundamental_snapshot`, so a NEW
+    consumer must apply it too: every function in `vinci/` that calls it also calls
+    `not_applicable` — a third reader cannot print a bank's "net debt" by forgetting."""
+    import ast
+
+    callers: list[str] = []
+    for path in (ROOT / "vinci").rglob("*.py"):
+        tree = ast.parse(path.read_text())
+        for fn in ast.walk(tree):
+            if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            calls = {c.func.attr if isinstance(c.func, ast.Attribute) else getattr(c.func, "id", "")
+                     for c in ast.walk(fn) if isinstance(c, ast.Call)}
+            if "fundamental_snapshot" in calls and fn.name != "fundamental_snapshot":
+                callers.append(f"{path.relative_to(ROOT)}:{fn.name}")
+                assert "not_applicable" in calls, f"{path.name}:{fn.name} skips the sector rule"
+    assert len(callers) >= 2, f"the scan found {callers} — near-vacuous"
+

@@ -628,7 +628,7 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
     latest date, so a current-debt tag that stopped a quarter early still counted (WERN: $9M of
     debt not on its 2026-06-30 balance sheet, which CIQ's $889M does not carry either)."""
     nd = net_debt(facts)
-    if nd is None or (nd.borrowings is None and nd.stale_debt is None and not nd.undercaptured):
+    if nd is None or nd.nothing_to_read:
         return None
     if nd.borrowings is None and not nd.undercaptured:
         return None, f"{nd.refusal}; pull CIQ"
