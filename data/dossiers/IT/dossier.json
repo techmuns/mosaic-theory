@@ -489,25 +489,6 @@
         "vintage_coherent": true,
         "coherence_note": "vintage-coherent: derived FY26 $1573.7M vs direct consensus $1574.0M (residual 0.000 ≤ 0.10 tolerance)",
         "net_debt_reconciled": true
-      },
-      "lease_basis": {
-        "rent_expense": 57.431,
-        "rent_ebitda": 1310.532,
-        "rent_to_ebitda": 0.043823,
-        "rent_fiscal_year": "2025-12-31",
-        "edgar_lease_cost": 57.431,
-        "edgar_lease_cost_tag": "LeaseCost",
-        "threshold": 0.05,
-        "material": false,
-        "materiality": "rent 4.4% of EBITDA (FY ending 2025-12-31: $57M of $1,311M) — immaterial (<5%); R1 keeps CIQ's TEV/LTM EBITDA history; EDGAR LeaseCost that year: $57M",
-        "ex_lease_band": null,
-        "refusal": null,
-        "reconciled_dates": 0,
-        "unreconciled_dates": 0,
-        "unchecked_dates": 0,
-        "pre_adoption_dates": 0,
-        "observations": [],
-        "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
       }
     },
     "quality": {
@@ -13330,14 +13311,6 @@
         "forward_multiple_history",
         "qa_flags",
         "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.valuation"
       ]
     }
   ],

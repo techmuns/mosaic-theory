@@ -119,6 +119,13 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **One builder / LEVERAGE basis / EV basis** — how EDGAR net debt is read. Plain words: *net debt
+  read once, from every balance-sheet line at the same date, then stated two ways.* The **LEVERAGE
+  basis** is debt + finance leases − cash − short-term investments, operating leases left out
+  because EBITDA is already after rent (the screen's ratios; R1's ex-lease bridge). The **EV
+  basis** adds the operating leases back, the way CIQ's enterprise value carries them (the
+  lease-inclusive bridge and the EV cross-check). Home: `vinci/edgar/net_debt.py` (`net_debt`,
+  `Basis`).
 - **Release frame / combined release / figure period** — how an earnings-release figure gets its
   period. Plain words: *which quarter or year does this number belong to?* The **release frame**
   is what the header says the exhibit covers; a **combined release** names a fourth quarter AND

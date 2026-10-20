@@ -615,7 +615,6 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-18 · mechanical.idiosyncratic_vs_shared, mechanical.stock_performance — refresh at 2026-10-09.3
-  - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 9d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-30 build
 - **Consensus age:** consensus 13d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
