@@ -1,0 +1,2 @@
+{"payload": "{\"snapshot_id\":\"SN-31d5329d5d6e1c\",\"run_id\":\"R-20261020T180551Z-market\",\"as_of\":\"2026-10-20\",\"thesis_versions\":[],\"created_at\":\"2026-10-20T18:05:51.972623Z\",\"report_paths\":[]}", "run_id": "R-20261020T180551Z-market", "snapshot_id": "SN-31d5329d5d6e1c"}
+{"payload": "{\"snapshot_id\":\"SN-f5e33c109bffe3\",\"run_id\":\"R-20261020T180250Z-scan\",\"as_of\":\"2026-10-20\",\"thesis_versions\":[],\"created_at\":\"2026-10-20T18:05:50.185730Z\",\"report_paths\":[]}", "run_id": "R-20261020T180250Z-scan", "snapshot_id": "SN-f5e33c109bffe3"}

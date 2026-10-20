@@ -1,0 +1,168 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name="robots" content="noindex, nofollow"><title>Theme intelligence weekly</title><style>
+:root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
+--soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
+--watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
+--warn-bg:#fff3ea;--ok:#1f6f43;--ok-bg:#e6f2eb;--bad:#9b1c1c;--bad-bg:#fbe9e7;--info:#0f5f6e;
+--info-bg:#e3f1f3;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;--ext:#1d4f91;
+--unk:#676d78;--block:#9b1c1c}
+@media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
+--ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
+--accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--ok-bg:#132621;
+--bad:#ffb4ab;--bad-bg:#3a1916;--info:#8fd6e0;--info-bg:#10272b;--obs:#7fd4a4;--fc:#8fd6e0;
+--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
+BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.topnav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.topnav .in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+gap:20px;min-height:50px}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink)}.brand small{font-weight:500;
+color:var(--muted);margin-left:6px}
+.links{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;flex:1;min-width:0;
+scrollbar-width:none}.links::-webkit-scrollbar{display:none}
+.links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
+.links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.links a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.subnav{max-width:1120px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.subnav a{margin:0 4px}
+.auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
+border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+#audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
+.wrap.narrow{max-width:940px}
+.pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
+border-radius:999px;white-space:nowrap;vertical-align:1px}
+.pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
+color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
+.pill.kind{background:var(--accent-bg);color:var(--accent)}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
+#audit:checked~.wrap .nonaud{display:none}
+@media (max-width:720px){.topnav .in{gap:0 12px;flex-wrap:wrap;padding-top:8px}
+.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}.wrap{padding:18px 12px 48px}}
+@media print{.topnav,.subnav{display:none}body{background:#fff}.aud{display:revert!important}
+.nonaud{display:none!important}}
+
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt .mktl{margin:6px 0 2px}details.mkth{margin:6px 0}.mkt td.mkw{color:var(--warn,#8a5a00)}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+color:var(--muted)}
+h1{font-size:27px;line-height:1.22;margin:6px 0 8px;font-weight:680;letter-spacing:-.01em}
+h2{font-size:19px;margin:36px 0 12px;font-weight:660;letter-spacing:-.005em}
+h3{font-size:16px;margin:0 0 6px;font-weight:640;line-height:1.3}
+.tag{display:inline-block;font-size:12px;color:var(--ink2);border:1px solid var(--line);
+border-radius:999px;padding:1px 9px;white-space:nowrap}.tag.down{color:var(--now)}
+.tag.up{color:var(--ok)}
+.flag{display:inline-block;font-size:12px;font-weight:650;color:var(--warn);
+background:var(--warn-bg);border-radius:6px;padding:3px 9px;white-space:nowrap}
+.okflag{font-size:12px;color:var(--muted)}
+.hdr .hline{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:6px 0 4px}
+.hdr .meta{color:var(--ink2);font-size:13.5px}
+.dates{color:var(--muted);font-size:13px;margin-top:6px}.vline{margin-top:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:24px 26px;margin:0 0 18px}
+.glance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 8px}
+.glance .g{border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+background:var(--panel)}
+.glance .g.wide{grid-column:1/-1}
+details.glancefold{margin:18px 0 6px}details.glancefold>summary{cursor:pointer;font-size:13px;
+color:var(--muted)}details.glancefold .glance{margin-top:10px}
+.glance h3{font-size:12px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
+color:var(--muted);margin:0 0 8px}
+.glance ul{margin:0;padding-left:18px}.glance li{margin:3px 0}
+.more{font-size:12.5px;display:inline-block;margin-top:6px}
+.sec{border-top:1px solid var(--line);padding:16px 0 6px}
+.sec h2,.sec summary{font-size:13px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
+margin:0 0 10px;color:var(--ink2);cursor:pointer}
+.sec summary small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
+details.sec>summary{list-style:none}details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::before{content:"▸ ";color:var(--muted)}
+details.sec[open]>summary::before{content:"▾ "}
+.s{margin:4px 0 10px}.lab{display:inline-block;font-size:11.5px;font-weight:500;
+letter-spacing:0;text-transform:lowercase;color:var(--muted);margin-right:6px;white-space:nowrap}
+.sys{color:var(--muted);font-size:12.5px}
+.lab::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+margin-right:5px;background:var(--unk);vertical-align:1px}
+.lab.obs::before,.lab.fact::before{background:var(--obs)}.lab.fc::before{background:var(--fc)}
+.lab.op::before{background:var(--op)}.lab.inf::before{background:var(--inf)}
+.lab.ext::before{background:var(--ext)}
+.cc{font:600 11px/1.3 ui-monospace,Menlo,monospace;color:var(--muted)}
+.step{font-size:12px;font-weight:600;color:var(--ink2);margin-right:6px}
+.ref{font:11px ui-monospace,Menlo,monospace;color:var(--muted);text-decoration:none}
+.hscroll{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:4px 0 12px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+font-weight:600}
+.q{color:var(--muted);font-style:italic}.withheld{color:var(--block);font-weight:650}
+.rw{color:var(--warn);background:var(--warn-bg);font-size:13px;margin:4px 0 0;padding:6px 9px;
+border-radius:6px}.flagged{border-left:3px solid var(--warn);padding-left:10px}
+.corr{color:var(--accent);font-size:12.5px;margin-top:3px}
+.rv{color:var(--muted);font-size:12.5px;margin-top:3px}.rv details{display:inline}
+.rv summary{display:inline;cursor:pointer;margin-left:6px;text-transform:none;
+letter-spacing:0;font-weight:400;color:var(--accent)}
+details.more{margin-top:10px;max-width:100%;min-width:0;overflow-x:auto}
+details.more>summary{cursor:pointer;color:var(--accent);font-size:13px;text-transform:none;
+letter-spacing:0}
+.ref.nolink{color:var(--muted)}.hit{outline:2px solid var(--accent);outline-offset:3px}
+tr.hit>td{background:var(--accent-bg)}
+.note{color:var(--muted);font-size:13px}.sub{font-weight:650;font-size:12px;margin:14px 0 4px;
+color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.foot{color:var(--muted);font-size:12px;margin-top:14px}
+.statusnote{margin-top:10px;padding:7px 10px;border-radius:6px;background:var(--soft);
+font-weight:600;font-size:13px}
+.legend{font-size:12.5px;color:var(--muted);margin:14px 0 4px}
+.legend summary{cursor:pointer}
+@media (max-width:720px){.hscroll table{min-width:620px}
+.glance{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}
+.card{padding:16px 14px;border-radius:10px}}
+@media print{details>*{display:block!important}
+details.sec>summary::before{content:""}body{background:#fff}.card{border:0;padding:0}
+.aud{display:revert!important}.nonaud{display:none!important}.hscroll{overflow:visible}
+.glance{grid-template-columns:repeat(2,minmax(0,1fr))}.g,.thesis{break-inside:avoid}}
+
+.dhead{margin:4px 0 18px}.dhead .subline{color:var(--muted);font-size:14px}
+.banner{background:var(--now-bg);color:var(--now);padding:10px 12px;border-radius:8px;
+font-weight:650;margin:0 0 14px}
+.summary{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}
+.stat{flex:1 1 120px;min-width:0;background:var(--panel);border:1px solid var(--line);
+border-radius:10px;padding:10px 14px;color:var(--ink)}a.stat:hover{text-decoration:none;
+border-color:var(--accent)}.stat b{display:block;font-size:22px;line-height:1.2;font-weight:680}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}.stat.warn b{color:var(--warn)}
+.stat .vt{font-size:15px;line-height:1.9}
+.theses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.thesis{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.thesis .ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.thesis h3{font-size:16.5px;margin:2px 0 0}.thesis h3 a{color:var(--ink)}
+.mech{font-size:13.5px;color:var(--ink2);margin-top:2px}
+.chain{font-size:12.5px;color:var(--muted);margin-bottom:3px}.legend{margin:10px 0 0}
+.stat span.sm{font-size:11.5px;margin-top:2px}details.rqd{margin-top:10px}
+details.rqd>summary{font-size:14px;font-weight:600}
+.tgrid{display:grid;grid-template-columns:118px minmax(0,1fr);gap:6px 12px;margin:4px 0 0;
+font-size:14px}.tgrid dt{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.03em;
+padding-top:2px}.tgrid dd{margin:0}.tgrid ul{margin:0;padding-left:16px}
+.tfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;margin-top:auto;
+padding-top:8px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.acts{list-style:none;margin:0;padding:0}.acts li{padding:8px 0;border-bottom:1px solid var(--line);
+display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;
+margin:0 0 12px}.rq h3{font-size:14px;margin:0 0 8px}.rq ul{margin:0;padding-left:18px}
+.rq li{margin:4px 0}.vstat{border:1px solid var(--line);border-left:4px solid var(--watch);
+border-radius:8px;padding:10px 14px;margin:0 0 12px;background:var(--panel)}
+.sh{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+margin:0 0 12px}.sh ul{margin:6px 0 0;padding-left:18px}.sh li{margin:6px 0}
+.sh .pill{margin-left:6px}.k{color:var(--muted);font-size:12px;text-transform:uppercase;
+letter-spacing:.05em;margin:0 0 4px;font-weight:600}
+.empty{color:var(--muted);font-style:italic;margin:4px 0 8px}
+input.search{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;
+background:var(--panel);color:var(--ink);margin:6px 0;font:inherit}
+.ops>details{margin:0 0 6px}
+@media (max-width:820px){.theses{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.tgrid{grid-template-columns:minmax(0,1fr)}.tgrid dt{padding-top:6px}
+.stat{flex-basis:44%}}
+@media print{.thesis,.rq{break-inside:avoid}details{display:block}input.search{display:none}}
+</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="index.html">This week</a><a href="themes.html">Themes</a><a href="articles.html">Articles</a><a href="review.html">Review</a><a href="uploads.html">Uploads</a><a href="sources.html">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><div class="subnav">On this page: <a href="#top">Overview</a> · <a href="#theses">Theses</a> · <a href="#review">Review queue</a> · <a href="#sources">Sources</a> · <a href="#archive">Archive</a> · <a href="#ops">Operations</a></div><div class=wrap><header class="dhead"><div class="eyebrow">Weekly research brief</div><h1>What to research this week</h1><div class="subline">2026-10-20 – 2026-10-20 · as of 2026-10-20 · research attention only — never a purchase or sale</div></header><div class="summary"><div class="stat"><b>0</b><span>Research Now</span></div><div class="stat"><b>0</b><span>Watch</span></div><div class="stat"><b>0</b><span>Skip</span></div><a class="stat" href="#review"><b>0</b><span>Review items</span><span class="sm">on this week's cards</span></a><a class="stat" href="#review"><b class="vt">Nothing analysed</b><span>Verification · 0 figure(s), 0 paragraph(s) open</span></a><div class="stat"><b>0</b><span>Articles read · 0 in part</span></div></div><section id="theses"><h2>Theses this week <small class="note">(0) — ranked by research action, then the freshest evidence</small></h2><div class="empty">No thesis created or changed this week.</div><div class="note legend">“First ingested” = new to this registry, not necessarily new to the market.</div></section><section id="activity"><h2>This week's activity <small class="note">— 0 new · 0 upgraded · 0 downgraded · 0 challenged</small></h2><div class="empty">No change this week.</div></section><section id="review"><h2>Review queue <small class="note">(0 on current cards; the rest grouped below)</small></h2><div class="rq"><h3>On the current cards — lines withheld or questioned (0)</h3><div class="note">Each finding is shortened here (…); the whole finding is on its card line — follow the link.</div><div class="empty">None — no line of a current card is withheld or questioned.</div></div><details class="sec rqd" open><summary>Incomplete sources (0) — figures and paragraphs not accounted for; articles read only in part</summary><div class="vstat"><b>Research verification: Nothing analysed</b> — 0 of 0 stated figures and 0 of 0 argument paragraphs open over 0 article version(s); 0 read only in part. Open material is never used as evidence.</div><div class="rq"><h3>Figures and paragraphs not yet accounted for</h3><div class="empty">None.</div></div><div class="rq"><h3>Articles read only in part — awaiting a complete copy</h3><div class="empty">None.</div></div></details><details class="sec rqd" open><summary>Background alerts (0) — evidence no thesis carries, or a proposition dropped</summary><div class="empty">None.</div></details><details class="sec rqd" open><summary>Resolved or historical (0) — past validation failures since corrected; review findings a later version resolved</summary><div class="note">Kept as history: the stored records are never edited. None of these bears on a current card.</div><div class="empty">None.</div></details></section><section id="sources"><h2>Sources</h2><div class="sh"><div><b>3 of 6 sources working · 1 partly · 2 blocked</b> <span class="note">checked 2026-10-20 18:05 UTC</span></div><ul><li><b>Morgan Stanley</b><span class="pill now">blocked</span><div class="note">the site refuses automated access; a known restriction — supply its research by upload</div></li><li><b>SemiAnalysis</b><span class="pill watch">partly working</span><div class="note">articles are read only in part; some articles are previews or summaries of a fuller report</div></li><li><b>Goldman Sachs</b><span class="pill now">blocked</span><div class="note">the site refuses automated access; a known restriction — supply its research by upload</div></li></ul></div><details class="sec" open><summary>All 6 publishers</summary><div class="hscroll"><table><tr><th>Publisher</th><th>Working?</th><th>New articles</th><th>Last listed</th><th>Last read in full</th><th>Articles</th></tr><tr><td>Citi</td><td>working</td><td>nothing new recently · newest 2026-09-14</td><td>2026-10-20</td><td>never</td><td>20 found · 0 in the window</td></tr><tr><td>J.P. Morgan Private Bank</td><td>working</td><td>new articles recently · newest 2026-10-16</td><td>2026-10-20</td><td>2026-10-20</td><td>52 found · 1 in the window</td></tr><tr><td>Morgan Stanley</td><td>blocked</td><td>not known</td><td>never</td><td>never</td><td>0 found · 0 in the window</td></tr><tr><td>TrendForce</td><td>working</td><td>new articles recently · newest 2026-10-19</td><td>2026-10-20</td><td>2026-10-20</td><td>5 found · 4 in the window</td></tr><tr><td>SemiAnalysis</td><td>partly working</td><td>new articles recently · newest 2026-10-19</td><td>2026-10-20</td><td>never</td><td>20 found · 2 in the window</td></tr><tr><td>Goldman Sachs</td><td>blocked</td><td>not known</td><td>never</td><td>never</td><td>0 found · 0 in the window</td></tr></table></div></details><details class="sec" open><summary>What each publisher gave this week (6)</summary><ul><li>Citi — read automatically: 0 read this week</li><li>J.P. Morgan Private Bank — read automatically: 0 read this week</li><li>Morgan Stanley — by upload (the site refuses automated reading): nothing supplied this week — its research this week is missing, not absent</li><li>TrendForce — read automatically: 0 read this week</li><li>SemiAnalysis — read automatically, in part: 0 read this week</li><li>Goldman Sachs — by upload (the site refuses automated reading): nothing supplied this week — its research this week is missing, not absent</li></ul></details></section><section id="archive"><h2>Archive <small class="note">(0 theses, every status)</small></h2><input class="search" placeholder="Filter by title, sector, action or status…" oninput="filt(this.value)" aria-label="Filter the archive"><div class="hscroll"><table id="arch"><tr><th>Thesis</th><th>Action</th><th>Status</th><th>Sector</th><th>Versions</th><th>Last material update</th><th class="aud">Id · node / mechanism</th></tr></table></div></section><section id="ops"><h2>Operations &amp; audit <small class="note">— run ids, engine codes, upload commands and the validation log</small></h2><div class="ops"><details class="sec" open><summary>Run and report scope</summary><div class="s cc">run R-20261020T180551Z-market · mode market · scan execution SUCCEEDED · research verification NOTHING_ANALYSED · window 2026-10-20 → 2026-10-20 (as of 2026-10-20, mode market)</div><div class="s note">This report covers 1 run(s): R-20261020T180551Z-market</div><div class="s note">Verification log: 0 blocked · 0 held · 0 warnings · 0 info (validation_log.json)</div></details><details class="sec" open><summary>Research source health (full)</summary><div class="sh"><div class="k">Research source health</div><div><b>Sources healthy: 3/6 | Degraded: 1 | Blocked: 2 | Errors: 0</b> <small class="note">checked 2026-10-20 18:05 UTC — the health of the publisher channels, apart from the scan's execution and research verification</small></div><div class="banner">Source-health changes: SemiAnalysis [new failure] — first check of this channel</div><ul><li><b>Morgan Stanley</b> <span class="pill now">BLOCKED</span> <small>(known standing restriction)</small><div class="note">robots.txt unreachable (ReadTimeout) — FAIL CLOSED, nothing fetched from www.morganstanley.com — cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)</div><div class="note"><b>Upload Required</b>: automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path &lt;report.pdf or saved page&gt; --source ms_research [--url &lt;article URL&gt;] — affected: unknown — the channel cannot be read</div></li><li><b>SemiAnalysis</b> <span class="pill watch">DEGRADED</span><div class="note">partial: 3 of 3 sampled article(s) are paywalled previews — only the preview is readable</div><div class="note">none to supply — paid posts are read as their free preview by the operator&#x27;s decision (paywalled_posts = &quot;preview_only&quot;)</div></li><li><b>Goldman Sachs</b> <span class="pill now">BLOCKED</span> <small>(known standing restriction)</small><div class="note">https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)</div><div class="note"><b>Upload Required</b>: automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path &lt;report.pdf or saved page&gt; --source gs_research [--url &lt;article URL&gt;] — affected: unknown — the channel cannot be read</div></li></ul><details class="sec" open><summary>All 6 publishers — last successful checks</summary><div class="hscroll"><table><tr><th>Publisher</th><th>Health</th><th>Freshness</th><th>Last checked (UTC)</th><th>Last discovery OK</th><th>Last full-text OK</th><th>Last verified publication date</th><th>Discovered / listing-dated in window</th><th>Consecutive failed checks</th><th>Manual upload</th></tr><tr><td>Citi</td><td>HEALTHY</td><td>QUIET · newest 2026-09-14</td><td>2026-10-20 18:02</td><td>2026-10-20</td><td>—</td><td>2026-09-14</td><td>20 / 0</td><td>0</td><td>—</td></tr><tr><td>J.P. Morgan Private Bank</td><td>HEALTHY</td><td>FRESH · newest 2026-10-16</td><td>2026-10-20 18:03</td><td>2026-10-20</td><td>2026-10-20</td><td>2026-10-16</td><td>52 / 1</td><td>0</td><td>—</td></tr><tr><td>Morgan Stanley</td><td>BLOCKED</td><td>UNKNOWN</td><td>2026-10-20 18:03</td><td>—</td><td>—</td><td>—</td><td>0 / 0</td><td>1</td><td>yes</td></tr><tr><td>TrendForce</td><td>HEALTHY</td><td>FRESH · newest 2026-10-19</td><td>2026-10-20 18:04</td><td>2026-10-20</td><td>2026-10-20</td><td>2026-10-19</td><td>5 / 4</td><td>0</td><td>—</td></tr><tr><td>SemiAnalysis</td><td>DEGRADED</td><td>FRESH · newest 2026-10-19</td><td>2026-10-20 18:04</td><td>2026-10-20</td><td>—</td><td>2026-10-19</td><td>20 / 2</td><td>1</td><td>—</td></tr><tr><td>Goldman Sachs</td><td>BLOCKED</td><td>UNKNOWN</td><td>2026-10-20 18:05</td><td>—</td><td>—</td><td>—</td><td>0 / 0</td><td>1</td><td>yes</td></tr></table></div></details></div></details><details class="sec" open><summary>Research intake / manual action</summary><div class="sh"><div class="k">Research intake / manual action</div><div><b>0 analysed automatically · 0 imported manually · 0 partial awaiting a complete document · 3 publisher(s) blocked or degraded · 2 needing an upload · 0 needing a metadata, licence or visual check · 2 coverage gap(s)</b> <small class="note">ingestion coverage over 1 run(s) — apart from source health and research verification; one ranked list below, whatever the route in</small></div><details class="sec" open><summary>Coverage by publisher (the configured channels) (6)</summary><div class="s note">Citi [automatic; access HEALTHY] — 0 article(s) analysed automatically, 0 supplied — automated coverage</div><div class="s note">J.P. Morgan Private Bank [automatic; access HEALTHY] — 0 article(s) analysed automatically, 0 supplied — automated coverage</div><div class="s note">Morgan Stanley [manual-first; access BLOCKED] — 0 article(s) analysed automatically, 0 supplied — MANUAL-FIRST — nothing supplied this week: its research this week is MISSING, not absent</div><div class="s note">TrendForce [automatic; access HEALTHY] — 0 article(s) analysed automatically, 0 supplied — automated coverage</div><div class="s note">SemiAnalysis [automatic; access DEGRADED] — 0 article(s) analysed automatically, 0 supplied — PARTIAL automated coverage — see source health</div><div class="s note">Goldman Sachs [manual-first; access BLOCKED] — 0 article(s) analysed automatically, 0 supplied — MANUAL-FIRST — nothing supplied this week: its research this week is MISSING, not absent</div></details><details class="sec"><summary>Articles automatically analysed (0)</summary><div class="s note">none</div></details><details class="sec"><summary>Articles manually imported (0)</summary><div class="s note">none</div></details><details class="sec"><summary>Partial articles awaiting a complete document (0)</summary><div class="s note">none</div></details><details class="sec" open><summary>Publishers blocked or degraded (3)</summary><div class="s note">Morgan Stanley: BLOCKED — robots.txt unreachable (ReadTimeout) — FAIL CLOSED, nothing fetched from www.morganstanley.com — cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)</div><div class="s note">SemiAnalysis: DEGRADED — partial: 3 of 3 sampled article(s) are paywalled previews — only the preview is readable</div><div class="s note">Goldman Sachs: BLOCKED — https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)</div></details><details class="sec" open><summary>Known articles requiring an upload (2)</summary><div class="s note">Morgan Stanley (channel BLOCKED) — automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path &lt;report.pdf or saved page&gt; --source ms_research [--url &lt;article URL&gt;] — known: unknown — the channel cannot be read</div><div class="s note">Goldman Sachs (channel BLOCKED) — automatic access is refused or unsafe — never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path &lt;report.pdf or saved page&gt; --source gs_research [--url &lt;article URL&gt;] — known: unknown — the channel cannot be read</div></details><details class="sec"><summary>Requiring a metadata, licence or visual check (0)</summary><div class="s note">none</div></details><details class="sec" open><summary>Unknown publisher-level coverage gaps (2)</summary><div class="s note">Morgan Stanley: coverage UNKNOWN (BLOCKED) — what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing</div><div class="s note">Goldman Sachs: coverage UNKNOWN (BLOCKED) — what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing</div></details></div></details></div></section><div class="foot">Generated 2026-10-20 18:05 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261020T180551Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div></div><script>function filt(q){q=q.toLowerCase();document.querySelectorAll('#arch tr').forEach((r,i)=>{if(i)r.style.display=r.textContent.toLowerCase().includes(q)?'':'none'})}window.addEventListener('beforeprint',()=>document.querySelectorAll('details').forEach(d=>d.open=true));</script><script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById(decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){t.classList.remove('hit')},2500)}addEventListener('hashchange',function(){reveal(location.hash)});addEventListener('load',function(){reveal(location.hash)});document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)reveal(location.hash)});</script></body></html>
