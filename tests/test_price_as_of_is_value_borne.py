@@ -46,9 +46,15 @@ _TERMS_BEFORE = frozenset({"own_history", "stock_performance", "gap_date", "fili
                            "maturity", "expected_date", "dated", "points"})
 
 
+#: Terms added AFTER `price_as_of`, each for its own reason and named — so the reference below
+#: is "everything but `price_as_of`" and this file keeps measuring that one term's effect.
+#: `lease_basis` (2026-10-19): docs/records/2026-10-19-lease-basis-dates-are-value-borne.md.
+_TERMS_LATER = frozenset({"lease_basis"})
+
+
 def _without() -> re.Pattern[str]:
-    """`_NOT_A_PANEL` as it stood before this change."""
-    return re.compile("|".join(sorted(_TERMS_BEFORE)))
+    """`_NOT_A_PANEL` without `price_as_of` — the terms before it, plus the named later ones."""
+    return re.compile("|".join(sorted(_TERMS_BEFORE | _TERMS_LATER)))
 
 
 def _fleet() -> dict[str, dict]:
@@ -182,10 +188,14 @@ def test_the_exclusion_is_on_both_sides_of_the_twin() -> None:
     compares the lists to each other, so removing `price_as_of` from BOTH stays green while the
     defect returns. This names the term on each side."""
     live = set(fr._NOT_A_PANEL.pattern.split("|"))
-    assert live - _TERMS_BEFORE == {"price_as_of"}, (
-        f"the exclusion list gained or lost something other than `price_as_of`: "
+    # `lease_basis` joined 2026-10-19: the ex-lease band's `as_of` is value-borne too (#750's pages;
+    # docs/records/2026-10-19-lease-basis-dates-are-value-borne.md). Each addition is named here.
+    assert live - _TERMS_BEFORE == {"price_as_of"} | _TERMS_LATER, (
+        f"the exclusion list gained or lost something other than the named additions: "
         f"added={sorted(live - _TERMS_BEFORE)} removed={sorted(_TERMS_BEFORE - live)}")
     js = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
     m = re.search(r"const _NOT_A_PANEL = /([^/]+)/", js)
     assert m and "price_as_of" in set(m.group(1).split("|")), (
         "dossier.js would count a forward multiple's price stamp as a panel arrival")
+    assert "lease_basis" in set(m.group(1).split("|")), (
+        "dossier.js would count the ex-lease band's filing date as a panel arrival")

@@ -326,11 +326,26 @@ def _committed() -> list[tuple[str, dict]]:
 def test_no_committed_dossier_publishes_a_base_off_a_flagged_band() -> None:
     """THE END-TO-END PIN, phrasing- and value-independent: across every committed dossier, a band
     carrying ``band_incoherent`` must not sit beside an anchor still quoting a base value. This is
-    the invariant VITL violated for a day, and it stays meaningful after any re-pull."""
+    the invariant VITL violated for a day, and it stays meaningful after any re-pull.
+
+    THE BAND R1 PRICES ON (2026-10-19, #750). A lease-material page prices the ex-lease history,
+    which does not read CIQ's Multiples ratios the coherence check tests — so CIQ's band may stay
+    flagged beside a base struck on a coherent history (VITL: CIQ's band flagged by the $288M of
+    rent CIQ adds back, the ex-lease history clean). Then the flag must still be STATED on the
+    anchor; it must not disqualify a history it does not describe."""
+    from vinci.dossier.anchor import r1_multiple_band
+
     for t, doc in _committed():
-        bands = (((doc.get("mechanical") or {}).get("valuation") or {})
-                 .get("own_history") or {}).get("value") or []
-        flagged = any(bg.BAND_INCOHERENT in str(b.get("data_quality") or "") for b in bands)
+        sel = r1_multiple_band(doc.get("mechanical") or {})
+        if sel.ex_lease:
+            ciq = next((b for b in (((doc.get("mechanical") or {}).get("valuation") or {})
+                                    .get("own_history") or {}).get("value") or []
+                        if "EBITDA" in str(b.get("metric", ""))), {})
+            if bg.BAND_INCOHERENT in str(ciq.get("data_quality") or ""):
+                detail = " ".join((doc.get("anchor") or {}).get("data_quality_detail") or [])
+                assert bg.BAND_INCOHERENT in detail, (
+                    f"{t}: CIQ's band is flagged but the ex-lease anchor does not say so")
+        flagged = bg.BAND_INCOHERENT in str((sel.band or {}).get("data_quality") or "")
         if not flagged:
             continue
         anchor = doc.get("anchor") or {}

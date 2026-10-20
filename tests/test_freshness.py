@@ -468,6 +468,22 @@ def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> Non
             "invariant covers nothing yet — it begins covering names as the fleet re-assembles")
 
 
+def test_a_lease_basis_date_is_not_a_panel_arrival() -> None:
+    """(+/-) #750's pages: the ex-lease band's `as_of` is the date its current reading was struck
+    at (TJX's 2026-08-28 filing) — value-borne, like `own_history`'s. On TJX's real page with its
+    real lease basis it must not enter the panel set or move the panel age; a panel date beside it
+    still does."""
+    mech = json.loads(json.dumps(_fleet()["TJX"]))
+    before = fr.panel_age(mech, _assembled("TJX"), kind="export")
+    lb = json.loads((ROOT / "tests" / "fixtures" / "lease_basis" / "TJX.json").read_text())
+    assert lb["ex_lease_band"]["as_of"], "the fixture must carry the dated band this pins"
+    mech["valuation"]["lease_basis"] = lb
+    keys = {k for k, _ in fr.panel_dates(mech)}
+    assert not [k for k in keys if "lease_basis" in k], sorted(keys)
+    assert fr.panel_age(mech, _assembled("TJX"), kind="export") == before
+    assert keys, "the panel dates beside it are still harvested"
+
+
 #: Every dated panel key the committed fleet actually carries, each consciously classified.
 #: EXPORT = ours to re-pull, so it GATES. CONSENSUS = the street's to revise, so it prints.
 _CLASSIFIED_PANEL_KEYS = {
