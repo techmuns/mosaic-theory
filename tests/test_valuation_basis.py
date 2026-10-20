@@ -362,11 +362,20 @@ def test_every_dossier_writer_saves_through_the_one_write() -> None:
 def test_a_spliced_anchor_is_written_with_blocks_that_describe_it(tmp_path: pathlib.Path) -> None:
     """The real failure shape, on NFLX: an anchor write that flips `applicable` left the stored
     block saying the R1 fields were ineligible while the anchor's own tag said eligible. Written
-    through `write_recorded`, the block follows the anchor, and the page records that it moved."""
+    through `write_recorded`, the block follows the anchor, and the page records that it moved.
+
+    THE SHAPE IS BUILT HERE, not read off the living page (2026-10-20): the pin took NFLX's
+    committed anchor to be inapplicable, and #752's pass made it applicable ($52.00 — #749 reads its
+    net debt), so the "flip" became a no-op that recorded nothing. The page is set to the
+    inapplicable state first, through the same serializer, then flipped."""
     from vinci.dossier import layer_refresh
 
     path = tmp_path / "dossier.json"
-    original = (DOSS / "NFLX" / "dossier.json").read_text()
+    d0 = Dossier.model_validate_json((DOSS / "NFLX" / "dossier.json").read_text())
+    assert d0.anchor is not None
+    original = dossier_json(d0.model_copy(update={"anchor": d0.anchor.model_copy(
+        update={"applicable": False})}))
+    assert json.loads(original)["valuation_basis"]["anchor_fields_eligible"] is False
     path.write_text(original)
     d = Dossier.model_validate_json(original)
     assert d.anchor is not None
