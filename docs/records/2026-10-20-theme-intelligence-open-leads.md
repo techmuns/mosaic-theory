@@ -2,7 +2,7 @@
 id: 2026-10-20-theme-intelligence-open-leads
 status: recorded
 date: 2026-10-20
-prs: []
+prs: [755]
 supersedes:
 superseded-by:
 ---
@@ -89,8 +89,8 @@ writing).
 - **The live pilot alone** shows neither desk lead today: its 3 PARTIAL rows already agreed, and
   no thesis carries a verdict. The leads were real on the wider corpus, which is why it was
   measured.
-- **Pins** (`tests/test_theme_intelligence_open_leads.py`, 11, on committed fixtures through the
-  real functions):
+- **Pins** (`tests/test_theme_intelligence_open_leads.py`, 10 for these fixes and 2 for the secret
+  below, on committed fixtures through the real functions):
   - the four corpus sentences, and figures beside a reference that must stay, including words
     between a reference word and its number;
   - a stored version in the pilot's exact shape (no `price_context`), and a tampered version that
@@ -98,16 +98,42 @@ writing).
   - the batch-B contested case through `desk.gates`, with its negative;
   - the preview-only unreadable case through `desk.week_articles`, and its back-matter variant;
   - a text lint of the workflow's cache steps, and the combined form main carried as its negative.
-- **Mutation:** 13 mutants, all killed.
+- **Mutation:** 16 mutants, all killed (13 for these fixes, 3 for the secret guards below).
 - **Suite:** ruff and `mypy --strict` clean; `pytest -m "not network"` with the store moved
-  aside, 6,018 passed / 526 skipped.
+  aside, 6,021 passed / 526 skipped.
 
-**THE FIRST WEEKLY RUN ON ACTIONS (U31f's proof).** Started 2026-10-20 17:55 UTC on
-`fix/theme-intelligence-open-leads` (run 39470335127):
-- defaults: a 10-day window, at most 25 articles analysed;
-- expected at most about $30, at the pilot's $1.19 per analysed article.
-
-Its result is below.
+**THE FIRST WEEKLY RUN ON ACTIONS — it FAILED on a malformed secret, and U31f is NOT yet proven.**
+Started 2026-10-20 17:55 UTC on `fix/theme-intelligence-open-leads` (run 39470335127), with a
+10-day window and at most 25 articles.
+- **What happened.** The gate, the restore, QA, market context and the state-branch commit
+  succeeded. The scan failed at its FIRST model call: `httpx2.LocalProtocolError: Illegal header
+  value b'*** '`, raised as `anthropic.APIConnectionError: Connection error.`
+  - The `ANTHROPIC_API_KEY` Actions secret carries trailing whitespace, which an HTTP header
+    cannot carry.
+  - The run's own environment dump shows it: `ANTHROPIC_API_KEY: *** ` with a space after the
+    mask, where the other secrets show a bare `***`.
+- **Cost: $0.** No request was sent.
+- **U31f was not exercised.** No model answer was paid for, so no cache was written, and the save
+  step was correctly skipped: its `hashFiles(...) != ''` condition held no files. The fix stays
+  unproven until a run makes a paid call.
+- **The state branch now exists.** `theme-intelligence-state`, root commit `3d577517`, holds this
+  failed run's record and readout ("scan exit 1, qa failure"). That is the workflow's design: a
+  broken week never looks like a quiet one. The next run imports it.
+- **Why it went unnoticed since June.** `validate-keys` (re-run 2026-10-20, run 39472048588) reads
+  any non-auth exception as "runner connectivity, NOT a key problem" and passed this key as a
+  WARN. Both of its earlier runs failed on 2026-06-26, minutes after the secrets were created;
+  their logs have expired.
+- **Fixed here:**
+  - `require_env` refuses a secret with leading or trailing whitespace, by name and before any
+    request. The value is never printed. On this machine all four secrets are clean, so nothing
+    local changes.
+  - `validate_keys.py` FAILS a padded Anthropic or Polygon key before pinging it.
+  - Pinned: a padded value refused by name, a clean one returned as it is, and the validator
+    failing both padded keys without printing them. 3 mutants, all killed.
+- **OPERATOR, to unblock:**
+  1. Re-save the `ANTHROPIC_API_KEY` Actions secret without the trailing whitespace.
+  2. Run `validate-keys`, which now fails a padded key.
+  3. Run `theme-intelligence-weekly` again. Its first paid call is U31f's proof.
 
 **(d) The stale test branch is deleted.** `theme-intelligence-state-test-20261011` held only
 SYNTHETIC commits from 2026-10-11, with no PR. Tip `8d9d00a73fa025fc05974f91f870637f85503d7c`;
@@ -123,9 +149,8 @@ restore with `git push origin 8d9d00a73fa025fc05974f91f870637f85503d7c:refs/head
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The ledger change re-bills a completeness pass only for an article whose ledger it changes.**
   Four stored figures across the corpus; the first Actions run starts from an empty cache anyway.
-- **The first state-branch commit comes from this PR's branch, not main.** The run is the only
-  way to prove U31f before merge, and the branch differs from main only by these fixes. If the PR
-  changes, the state branch keeps that run's records.
+- **The first state-branch commit comes from this PR's branch, not main.** It is a failed run's
+  record, made by code that differs from main only by these fixes.
 - **Still open, the operator's:**
   - (a) whether a qualitative sell-off is a dislocation;
   - (d) the article prompt cache;
