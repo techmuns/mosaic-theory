@@ -26,13 +26,14 @@ a QA pass is evidence about the persisted state, not a restatement of the run's 
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from vinci.theme_intelligence.cards import capped_label, card_sha
+from vinci.theme_intelligence.cards import capped_label
 from vinci.theme_intelligence.config import load_sources
 from vinci.theme_intelligence.display import first_of
 from vinci.theme_intelligence.schemas import (
@@ -94,6 +95,23 @@ def _stored_sections(store: Store, thesis_id: str, version: int) -> list[str]:
                              "version=?", (thesis_id, version)).fetchone()
     content = json.loads(row[0]).get("content", {}) if row else {}
     return [k for k in content if k != "header"]
+
+
+def _stored_content_sha(store: Store, thesis_id: str, version: int) -> str | None:
+    """sha256 of one version's content AS STORED — the bytes `card_sha` hashed when it was written.
+
+    NOT `card_sha(v.content)`: that re-serialises the PARSED content through today's model, so a
+    field the schema gained later (with its default) changes the hash of a version that is intact.
+    Measured 2026-10-20 over every local registry: the stored content reproduces 1,011 of 1,011
+    stored hashes, the re-serialisation 42 — the pilot's six failures were
+    `s07_what_could_go_wrong.price_context`, added after they were written."""
+    row = store.conn.execute("SELECT payload FROM thesis_versions WHERE thesis_id=? AND "
+                             "version=?", (thesis_id, version)).fetchone()
+    if row is None:
+        return None
+    content = json.loads(row[0]).get("content")
+    return hashlib.sha256(json.dumps(content, separators=(",", ":"),
+                                     ensure_ascii=False).encode()).hexdigest()
 
 
 def run_qa(store: Store, run_id: str) -> QaResult:
@@ -186,7 +204,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
         fields = _stored_sections(store, v.thesis_id, v.version)
         if fields != order:
             struct_bad.append(f"{v.thesis_id} v{v.version}: {fields}")
-        if card_sha(v.content) != v.content_sha:
+        if _stored_content_sha(store, v.thesis_id, v.version) != v.content_sha:
             sha_bad.append(f"{v.thesis_id} v{v.version}")
         if v.version > 1:
             prior = store.thesis_version(v.thesis_id, v.version - 1)

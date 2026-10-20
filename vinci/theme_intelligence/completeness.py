@@ -113,6 +113,14 @@ _WORD_FIG = re.compile(
     r"(?:(?:more|straight|consecutive|successive|additional|further)\s+)?"
     r"(quarters|years|months|weeks|days|hikes|cuts|times|points)\b", re.I)
 _TENOR = re.compile(r"^-(?:day|week|month|year|quarter|yr|mo)s?\b", re.I)
+#: A number that NAMES a figure, table, section or page rather than stating a value: "see Figure
+#: | | ; | 23" (a PDF's table debris between the word and its number), "section 165(c)", "Penn
+#: World Table 10.0". Only punctuation and that debris may stand between the word and the number.
+#: Measured 2026-10-20 over 27,758 stored ledger figures in 132 local registries: exactly these
+#: three were references; "5 pp" (percentage points) and every unit-bearing figure are untouched,
+#: because a number with a unit is read before this test.
+_REFERENCE = re.compile(r"(?:\b(?:fig(?:ure)?s?|tables?|exhibits?|charts?|sections?|appendix|"
+                        r"annex|slides?|pages?)\.?|§)[\s|;:,\-–(\[]*$", re.I)
 _SENT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9“\"(])")
 
 
@@ -172,6 +180,8 @@ def _skip_number(text: str, m: re.Match[str]) -> bool:
     before = text[:m.start()].rstrip()
     if unit or cur:
         return False
+    if _REFERENCE.search(before):
+        return True  # a reference to a figure, table, section or page — not a figure
     if re.fullmatch(r"(19|20)\d{2}", num) and (
             not m.group("num2") or re.fullmatch(r"(19|20)?\d{2}", m.group("num2"))):
         return True  # a year, or a range of years ("2023-2024")
