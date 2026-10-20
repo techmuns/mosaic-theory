@@ -1960,7 +1960,12 @@ function financialSnapshot(m) {
   if (!cols.length || !rows.length) return "";
   const isE = fsa.value.is_estimate || [], ec = (i) => (isE[i] ? " est-col" : "");  // (P3) shade E cols
   const head = `<tr><th></th>${idx.map((i) => `<th class="num${ec(i)}">${escapeHtml(String(fsa.value.columns[i]))}</th>`).join("")}</tr>`;
-  const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${idx.map((i) => `<td class="num mono${ec(i)}">${escapeHtml(String((r.cells || [])[i]))}</td>`).join("")}</tr>`).join("");
+  // the row is SELECTED on its stored label (`want`, parity-pinned) and DISPLAYED under the
+  // appendix's levered-FCF label, with its basis note (2026-10-21) — twin: render._brief_financials
+  const label = (r) => (r.label === FCF_ROW ? FCF_LEVERED_LABEL : r.label);
+  const body = rows.map((r) => `<tr><td>${escapeHtml(label(r))}</td>${idx.map((i) => `<td class="num mono${ec(i)}">${escapeHtml(String((r.cells || [])[i]))}</td>`).join("")}</tr>`).join("");
+  const fcfNote = rows.some((r) => r.label === FCF_ROW)
+    ? `<div class="muted" style="font-size:11px; margin-top:4px;">${escapeHtml(FCF_LEVERED_NOTE)}</div>` : "";
   // (tier redesign) the return-ratios EXHIBIT stays on the first cut; its per-period TABLE is
   // depth and moved to the Analysis trajectory section. Fail-honest fallback unchanged: a name
   // without the Ratios panel keeps the committed latest-period line.
@@ -1976,7 +1981,7 @@ function financialSnapshot(m) {
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot<span class="ds-route">full statements in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
-    ${ebitdaBasisNote(m)}
+    ${fcfNote}${ebitdaBasisNote(m)}
     ${citeMark(fsa.source_ref)}${more}${capitalAllocation(m)}${ratios}</div>`;
 }
 
@@ -3688,12 +3693,17 @@ function finTable(label, s) {
 }
 
 // (D5b) relabel the levered-FCF row + footnote (display-only; the FinTable is rebuilt in place).
+// ONE wording for the appendix AND the brief's snapshot, which printed the bare "FCF ($M)" until
+// 2026-10-21 beside an appendix that said what it was.
+const FCF_ROW = "FCF ($M)";
+const FCF_LEVERED_LABEL = "FCF (levered)";
+const FCF_LEVERED_NOTE = "FCF (levered) = levered free cash flow as sourced — NOT CFO − capex";
 function fcfRelabel(s) {
   if (!s || s.status !== "present" || !s.value) return s;
   const ft = s.value;
-  if (!(ft.rows || []).some((r) => r.label === "FCF ($M)")) return s;
-  const rows = ft.rows.map((r) => (r.label === "FCF ($M)" ? { ...r, label: "FCF (levered)" } : r));
-  const fn = "FCF (levered) = levered free cash flow as sourced — NOT CFO − capex";
+  if (!(ft.rows || []).some((r) => r.label === FCF_ROW)) return s;
+  const rows = ft.rows.map((r) => (r.label === FCF_ROW ? { ...r, label: FCF_LEVERED_LABEL } : r));
+  const fn = FCF_LEVERED_NOTE;
   return { ...s, value: { ...ft, rows, note: ft.note ? `${ft.note} · ${fn}` : fn } };
 }
 

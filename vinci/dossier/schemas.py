@@ -680,6 +680,9 @@ class ForecastErrorObservation(BaseModel, frozen=True):
 
     fiscal_year: int
     announced: str | None = None          # the result's announcement date — the estimate's as-of
+    # CIQ's 'Acctg. Standard' cell: the filer's accounting STANDARD (US GAAP, IFRS). NOT the basis
+    # of `actual`, which is the figure CIQ set against its consensus — TJX's FY2026 EBIT reads
+    # 6,957 here, 7,178 as reported, beside "US GAAP".
     accounting_basis: str | None = None
     actual: float
     final_estimate: float
