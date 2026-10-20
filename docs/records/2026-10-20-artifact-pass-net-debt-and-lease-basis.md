@@ -2,7 +2,7 @@
 id: 2026-10-20-artifact-pass-net-debt-and-lease-basis
 status: shipped
 date: 2026-10-20
-prs: []
+prs: [753]
 supersedes:
 superseded-by:
 ---
