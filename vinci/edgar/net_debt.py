@@ -45,11 +45,14 @@ TWO NAMED BASES, because the two consumers divide by different things:
 
 * :attr:`Basis.LEVERAGE`: borrowings + finance leases − cash − short-term investments. Under US
   GAAP (ASC 842) an operating lease's cost stays inside operating expense, so EBITDA is post-rent,
-  and a ratio over it must leave operating leases out. A finance lease's cost sits below EBITDA
-  (depreciation and interest), so it is debt on this basis. The screen's leverage ratios read it.
-* :attr:`Basis.EV`: LEVERAGE + operating leases, the CIQ TEV ruler. Every multiple the anchor
-  bridges is a CIQ TEV multiple, and CIQ's total debt carries operating leases (PARR: EDGAR + leases
-  = CIQ's $949M to the dollar), so the bridge must too (the operator's 2026-07-22 convention).
+  and anything set against it must leave operating leases out. A finance lease's cost sits below
+  EBITDA (depreciation and interest), so it is debt on this basis. The screen's leverage ratios
+  read it, and so does the anchor wherever R1 prices the ex-lease history (#750: TEV less
+  operating leases over reported EBITDA, on lease-material names).
+* :attr:`Basis.EV`: LEVERAGE + operating leases, the CIQ TEV ruler. CIQ's TEV and total debt carry
+  operating leases (PARR: EDGAR + leases = CIQ's $949M to the dollar), so a bridge to CIQ's own
+  multiple history carries them too (the operator's 2026-07-22 convention). The anchor reads it
+  where rent is immaterial, and the EV bridge's cross-check beside CIQ's claims always does.
 
 FAIL LOUD. A debt line absent at ``at`` from a filer that used the standard tags before is
 REFUSED, never read as zero: of 195 such names, about 110 still show debt elsewhere (another tag at

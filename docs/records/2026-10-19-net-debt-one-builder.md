@@ -54,9 +54,10 @@ now read.
   - The debt-and-finance-lease family is read where no debt-only line exists (LUMN, TGT, BURL,
     PPC), with its finance leases not added again.
 - **Two named bases.** LEVERAGE = borrowings + finance leases − cash − short-term investments; the
-  snapshot's ratios read it. EV = LEVERAGE + operating leases, the CIQ TEV ruler; the anchor reads
-  it. Under ASC 842 EBITDA is post-rent, so a ratio over it leaves operating leases out. A bridge
-  to CIQ TEV multiples keeps them, as CIQ's total debt does (PARR to the dollar).
+  snapshot's ratios read it, and so does the anchor wherever R1 prices #750's ex-lease history.
+  EV = LEVERAGE + operating leases, the CIQ TEV ruler; the anchor reads it where rent is
+  immaterial. Under ASC 842 EBITDA is post-rent, so a ratio over it leaves operating leases out. A
+  bridge to CIQ's own multiple history keeps them, as CIQ's total debt does (PARR to the dollar).
 - **Fail loud.**
   - A debt line absent at the date from a filer that used the standard tags before is REFUSED,
     never zero. Of 195 such names, about 110 still show debt elsewhere (another tag at the date, or
@@ -162,3 +163,51 @@ keys on what the balance sheet IS, not on how it is disclosed.
     mostly its $4bn of operating leases. A consistent row (CIQ net debt less its operating leases)
     is a page decision for the operator, not made here.
   - **Row 27 (2)'s debt-side gaps** (AMZN, UBER's long-term securities) are smaller but remain.
+
+## REBASED ONTO #750 AND #751 (2026-10-20)
+
+Operator, 2026-10-20: "the code is merged to main by the other session, check and rebase your code
+to latest main and if there's any change we need to revert on our end?"
+
+**WHAT #750 CHANGED THAT THIS TOUCHES.** R1 now prices lease-material names (rent ≥5% of EBITDA)
+on the ex-lease history and bridges them with net debt EXCLUDING operating leases
+(`docs/records/2026-10-19-r1-prices-on-one-lease-basis.md`). It did so by adding
+`ex_operating_leases=` to `anchor._lease_inclusive_net_debt`, the function this PR rewrote.
+
+**RESOLVED, NOTHING REVERTED.**
+- #750's interface is kept as it merged: the `ex_operating_leases` option, its "operating leases X
+  EXCLUDED" bridge wording, the public `lease_inclusive_net_debt` for the EV-bridge cross-check,
+  and the vendor-fill refusal on the ex-lease path.
+- Only the reading under it changed. The ex-lease bridge is the builder's LEVERAGE basis (#750's
+  definition: operating leases out, finance leases in); the default is EV.
+- One #750 pin imported `anchor._sum_latest_tags`, which this PR retires. It now takes the
+  operating leases from the builder, the same reading both bridges are built from, and its
+  assertion ("the bridge drops the leases, only") is unchanged. All 48 of #750's lease-basis pins
+  pass.
+- This PR's BURL page pin read the live page's state. It now sets and removes the lease basis
+  explicitly (#750's convention), pinning both bridges: EV $5,202.4M, and ex-lease = LEVERAGE,
+  exactly $3,993M of operating leases less, printed as EXCLUDED.
+
+**THE TWO CHANGES TOGETHER, MEASURED.** R1 with the frozen lease basis set, on the same inputs
+(this branch's pages and fixtures), main's net-debt reading → the builder:
+- TJX: ex-lease net debt −3,133 → −3,133, base $129.10 → $129.10. Identical; #750's own figure.
+- BURL: 1,346 → 1,210, base $319.93 → $322.06 (+0.7%). Main still served its stale
+  `LongTermDebt`; the builder reads its debt-and-finance-lease line.
+- TGT: 11,100 → 9,946, base $155.94 → $158.47 (+1.6%), for the same reason.
+- VITL, LLY: identical. UBER: 7,565 → 9,562 on the lease-inclusive basis, no base value either
+  way.
+- #750's "not covered" note on NFLX (CIQ's net debt not offered on the ex-lease path) no longer
+  bites: NFLX's EDGAR net debt now reads (7,512), so no vendor fill is needed.
+
+**ONE ARTIFACT PASS, NOT TWO.** Both PRs leave the committed pages for an artifact pass, and they
+move the same retail anchors. The lease-basis refresh then the anchor backfill, run once after
+this merges, lands BURL and TGT on their ex-lease values. The +1.16% / +1.84% above are the
+no-lease-basis figures. STATE row 27 carries this as items (1) and (4) sharing one pass.
+
+**VERIFIED.**
+- Full suite on the rebased branch: 6,004 passed, 525 skipped.
+- Mutation: 24 mutants, all killed. The two anchor-basis mutants now target the merged line: the
+  ex-lease bridge reading EV, and the default reading LEVERAGE.
+
+**BOUNDARY.** Rebased onto main 618f07e5 (#750 4bba300c, #751). Interaction measured on this
+branch's committed pages and fixtures, 2026-10-20.

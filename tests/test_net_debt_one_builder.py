@@ -100,16 +100,38 @@ def test_the_moved_names_move_toward_ciq(ticker: str) -> None:
     assert abs(got - ciq) < abs(_BEFORE[ticker] - ciq), (ticker, got, _BEFORE[ticker], ciq)
 
 
-def test_the_page_field_carries_the_reading() -> None:
-    """Pinned on `compute_anchor`, the field the page prints: BURL's `anchor.net_debt` is CIQ's
-    $5,202M, and its bridge names the debt-and-finance-lease line, adding no lease twice."""
+def _burl_anchor(lease_basis: dict[str, Any] | None) -> Any:
+    """BURL's anchor with the page's lease basis SET or REMOVED explicitly (#750's convention), so
+    the pin reads one state before and after the artifact pass lands the block on the page."""
     mech = json.loads((ROOT / "data" / "dossiers" / "BURL" / "dossier.json").read_text())[
         "mechanical"]
-    a = anc.compute_anchor(mech, facts=_facts("BURL"),
-                           computed_at=datetime(2026, 10, 19, tzinfo=UTC), ciq=None)
-    assert a.net_debt is not None and a.net_debt.value == pytest.approx(5202.4, abs=0.5)
-    assert "total debt incl. finance leases 1,914 + operating leases 3,993" in a.net_debt.source
-    assert "+ finance leases" not in a.net_debt.source
+    mech["valuation"].pop("lease_basis", None)
+    if lease_basis is not None:
+        mech["valuation"]["lease_basis"] = lease_basis
+    return anc.compute_anchor(mech, facts=_facts("BURL"),
+                              computed_at=datetime(2026, 10, 19, tzinfo=UTC), ciq=None)
+
+
+def test_the_page_field_carries_the_reading_on_both_bridges() -> None:
+    """Pinned on `compute_anchor`, the field the page prints.
+
+    WITHOUT a lease basis R1 bridges CIQ's own history, and BURL's `anchor.net_debt` is CIQ's
+    $5,202M on the EV basis; the bridge names the debt-and-finance-lease line, adding no lease
+    twice. WITH its material lease basis (#750) R1 prices the ex-lease history, and the net debt
+    is the builder's LEVERAGE basis — the same reading less exactly its $3,993M of operating
+    leases, printed as EXCLUDED."""
+    ev = _burl_anchor(None)
+    assert ev.net_debt is not None and ev.net_debt.value == pytest.approx(5202.4, abs=0.5)
+    assert "total debt incl. finance leases 1,914 + operating leases 3,993" in ev.net_debt.source
+    assert "+ finance leases" not in ev.net_debt.source
+    lb = json.loads((ROOT / "tests" / "fixtures" / "lease_basis" / "BURL.json").read_text())
+    assert lb["material"], "BURL's frozen lease basis must be the material case"
+    ex = _burl_anchor(lb)
+    assert ex.net_debt is not None and ex.net_debt.basis == anc.NET_DEBT_EX_LEASE
+    reading = _read("BURL")
+    assert ex.net_debt.value == pytest.approx(reading.value(nd.Basis.LEVERAGE) / M, abs=1e-3)
+    assert ev.net_debt.value - ex.net_debt.value == pytest.approx(3993.0, abs=0.5)
+    assert "operating leases 3,993 EXCLUDED" in ex.net_debt.source
 
 
 # --- ONE BUILDER: the screen and the anchor differ by operating leases and nothing else ---------

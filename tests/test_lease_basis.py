@@ -33,13 +33,13 @@ from vinci.dossier.anchor import (
     DQ_LEASE_BASIS,
     NET_DEBT_EX_LEASE,
     _lease_inclusive_net_debt,
-    _sum_latest_tags,
     compute_anchor,
     r1_multiple_band,
     replace_valuation_fields,
 )
 from vinci.dossier.propose import propose_anchors
 from vinci.dossier.schemas import Dossier, LeaseBasis
+from vinci.edgar.net_debt import net_debt
 
 CORPUS = pathlib.Path("data/dossiers")
 FIX = pathlib.Path("tests/fixtures/lease_basis")
@@ -304,8 +304,11 @@ def test_a_lease_material_anchor_prices_the_ex_lease_median_against_ex_lease_net
     inc, ex = _lease_inclusive_net_debt(facts), _lease_inclusive_net_debt(
         facts, ex_operating_leases=True)
     assert inc and ex and inc[0] is not None and ex[0] is not None
-    opl = _sum_latest_tags(facts, "OperatingLeaseLiabilityCurrent",
-                           "OperatingLeaseLiabilityNoncurrent")
+    # the operating leases as the one net-debt builder reads them (§5.0 row 27 (1), #749) — the
+    # same reading both bridges are built from
+    reading = net_debt(facts)
+    assert reading is not None
+    opl = reading.operating_leases
     assert opl > 0 and inc[0] - ex[0] == pytest.approx(opl), "the bridge drops the leases, only"
     assert a.net_debt.value == pytest.approx(ex[0] / 1e6, abs=1e-3)
     assert a.margin is not None and a.d_and_a is not None and a.ltm_revenue is not None

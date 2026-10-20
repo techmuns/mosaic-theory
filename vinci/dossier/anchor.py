@@ -616,8 +616,8 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
     understatement, 'pull CIQ'. A filer with no cash line or no debt tag ever → None.
 
     ``ex_operating_leases`` drops the operating-lease leg (2026-10-19): the bridge of a multiple
-    struck on TEV LESS operating leases (`lease_basis`). The leg is still printed, as excluded, so
-    the reader sees what the bridge leaves out and why.
+    struck on TEV LESS operating leases (`lease_basis`) — the builder's LEVERAGE basis. The leg is
+    still printed, as excluded, so the reader sees what the bridge leaves out and why.
 
     THE CASH LEG MATCHES THE MULTIPLE IT BRIDGES (§5.0 row 27, 2026-10-08). Every multiple this
     figure bridges is a CIQ TEV multiple, and CIQ's TEV nets cash AND short-term investments.

@@ -350,6 +350,8 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: 30.82→30.96 (+0.46%; 897→888 against CIQ's 889). This pin cannot see the rest: AMZN's net debt
 #: +1,096 (base −0.04%, under the bar), UBER's 7,565→9,562, NFLX's UNKNOWN→7,512 (its committed
 #: base is null), TECX's −208→refused (`docs/records/2026-10-19-net-debt-one-builder.md`).
+#: These moves are on pages WITHOUT a lease basis; #750's lease-basis pass moves BURL and TGT onto
+#: the ex-lease bridge in the SAME artifact pass, so their landed values are the ex-lease ones.
 ANCHORS_AWAITING_BACKFILL: set[str] = {"BURL", "TGT", "WERN"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
