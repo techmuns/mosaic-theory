@@ -8091,16 +8091,26 @@
         "date_semantics",
         "valuation_basis"
       ]
+    },
+    {
+      "date": "2026-10-20",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-28T18:31:35.788177Z",
+    "computed_at": "2026-10-20T13:23:15.715428Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
-    "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality": "vendor_bridge",
+    "data_quality_detail": [
+      "vendor bridge: net_debt supplied by the CIQ workbook because EDGAR had no usable tag"
+    ],
     "margin": null,
     "multiple": null,
     "d_and_a": {
@@ -8110,10 +8120,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2019 (6y behind)"
     },
     "net_debt": {
-      "value": -207.669,
+      "value": -222.7,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 15 + finance leases 0 + operating leases 4 − cash 227 ($M)"
+      "source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [Tectonic Therapeutic Inc NasdaqGM TECX Financials_Quarterly.xls sha dce450e41b]"
     },
     "diluted_shares": {
       "value": 18964008.0,

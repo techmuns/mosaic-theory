@@ -501,6 +501,608 @@
         "vintage_coherent": true,
         "coherence_note": "vintage-coherent: derived FY26 $952.0M vs direct consensus $951.8M (residual 0.000 ≤ 0.10 tolerance)",
         "net_debt_reconciled": true
+      },
+      "lease_basis": {
+        "rent_expense": 64.883,
+        "rent_ebitda": 707.23,
+        "rent_to_ebitda": 0.091742,
+        "rent_fiscal_year": "2025-12-31",
+        "edgar_lease_cost": 64.883,
+        "edgar_lease_cost_tag": "LeaseCost",
+        "threshold": 0.05,
+        "material": true,
+        "materiality": "rent 9.2% of EBITDA (FY ending 2025-12-31: $65M of $707M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $65M",
+        "ex_lease_band": {
+          "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
+          "current": 5.5363,
+          "low": 6.494456,
+          "high": 68.684962,
+          "median": 25.300835499999998,
+          "percentile": 0.0,
+          "n_closes": 34,
+          "as_of": "2026-08-06",
+          "mean": 26.788249411764706,
+          "series": [
+            [
+              "2018-02-27",
+              26.791972
+            ],
+            [
+              "2018-05-10",
+              28.673329
+            ],
+            [
+              "2018-08-06",
+              26.766924
+            ],
+            [
+              "2018-11-05",
+              23.834747
+            ],
+            [
+              "2019-02-26",
+              27.95309
+            ],
+            [
+              "2019-05-09",
+              28.385614
+            ],
+            [
+              "2019-08-08",
+              30.070893
+            ],
+            [
+              "2019-11-07",
+              28.394199
+            ],
+            [
+              "2020-03-02",
+              33.913129
+            ],
+            [
+              "2020-05-07",
+              31.282647
+            ],
+            [
+              "2020-08-06",
+              39.963502
+            ],
+            [
+              "2020-11-05",
+              44.347889
+            ],
+            [
+              "2021-02-25",
+              43.303163
+            ],
+            [
+              "2021-05-06",
+              52.846579
+            ],
+            [
+              "2021-08-06",
+              63.835138
+            ],
+            [
+              "2021-11-05",
+              68.684962
+            ],
+            [
+              "2022-02-25",
+              32.410553
+            ],
+            [
+              "2022-05-10",
+              23.253952
+            ],
+            [
+              "2022-08-05",
+              31.576318
+            ],
+            [
+              "2022-11-04",
+              21.057018
+            ],
+            [
+              "2023-02-24",
+              19.609771
+            ],
+            [
+              "2023-05-05",
+              16.555031
+            ],
+            [
+              "2023-08-03",
+              16.168205
+            ],
+            [
+              "2023-11-03",
+              16.642837
+            ],
+            [
+              "2024-02-22",
+              22.82707
+            ],
+            [
+              "2024-05-09",
+              12.78946
+            ],
+            [
+              "2024-08-08",
+              14.20269
+            ],
+            [
+              "2024-11-07",
+              16.65332
+            ],
+            [
+              "2025-02-28",
+              15.537276
+            ],
+            [
+              "2025-05-08",
+              13.460179
+            ],
+            [
+              "2025-08-07",
+              11.282612
+            ],
+            [
+              "2025-11-06",
+              12.065818
+            ],
+            [
+              "2026-02-26",
+              9.166137
+            ],
+            [
+              "2026-05-07",
+              6.494456
+            ],
+            [
+              "2026-08-06",
+              5.5363
+            ]
+          ],
+          "periodicity_days_median": 91.0,
+          "window_span_years": 8.44,
+          "periodicity": "quarterly",
+          "data_quality": null,
+          "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls",
+          "implied_ebitda_margin": null,
+          "implied_ebit_margin": null,
+          "implied_d_and_a_margin": null,
+          "source_sha256": "7baf86ffeb",
+          "source_mtime": "2026-09-01T17:49:32+00:00"
+        },
+        "refusal": null,
+        "reconciled_dates": 30,
+        "unreconciled_dates": 0,
+        "unchecked_dates": 0,
+        "pre_adoption_dates": 5,
+        "observations": [
+          {
+            "balance_sheet_date": "2017-12-31",
+            "pricing_date": "2018-02-27",
+            "tev": 5521.343,
+            "leases_in_tev": 0.0,
+            "finance_leases": 0.0,
+            "operating_leases": 0.0,
+            "edgar_operating_leases": null,
+            "ltm_ebitda": 206.082,
+            "multiple": 26.791972,
+            "status": "pre-adoption"
+          },
+          {
+            "balance_sheet_date": "2018-03-31",
+            "pricing_date": "2018-05-10",
+            "tev": 6329.437,
+            "leases_in_tev": 0.0,
+            "finance_leases": 0.0,
+            "operating_leases": 0.0,
+            "edgar_operating_leases": null,
+            "ltm_ebitda": 220.743,
+            "multiple": 28.673329,
+            "status": "pre-adoption"
+          },
+          {
+            "balance_sheet_date": "2018-06-30",
+            "pricing_date": "2018-08-06",
+            "tev": 6323.418,
+            "leases_in_tev": 0.0,
+            "finance_leases": 0.0,
+            "operating_leases": 0.0,
+            "edgar_operating_leases": null,
+            "ltm_ebitda": 236.24,
+            "multiple": 26.766924,
+            "status": "pre-adoption"
+          },
+          {
+            "balance_sheet_date": "2018-09-30",
+            "pricing_date": "2018-11-05",
+            "tev": 6046.804,
+            "leases_in_tev": 0.0,
+            "finance_leases": 0.0,
+            "operating_leases": 0.0,
+            "edgar_operating_leases": null,
+            "ltm_ebitda": 253.697,
+            "multiple": 23.834747,
+            "status": "pre-adoption"
+          },
+          {
+            "balance_sheet_date": "2018-12-31",
+            "pricing_date": "2019-02-26",
+            "tev": 7905.525,
+            "leases_in_tev": 0.0,
+            "finance_leases": 0.0,
+            "operating_leases": 0.0,
+            "edgar_operating_leases": 0.0,
+            "ltm_ebitda": 282.814,
+            "multiple": 27.95309,
+            "status": "pre-adoption"
+          },
+          {
+            "balance_sheet_date": "2019-03-31",
+            "pricing_date": "2019-05-09",
+            "tev": 8706.155,
+            "leases_in_tev": 167.791,
+            "finance_leases": 0.0,
+            "operating_leases": 167.791,
+            "edgar_operating_leases": 167.791,
+            "ltm_ebitda": 300.799,
+            "multiple": 28.385614,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2019-06-30",
+            "pricing_date": "2019-08-08",
+            "tev": 9874.659,
+            "leases_in_tev": 206.566,
+            "finance_leases": 0.0,
+            "operating_leases": 206.566,
+            "edgar_operating_leases": 206.566,
+            "ltm_ebitda": 321.51,
+            "multiple": 30.070893,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2019-09-30",
+            "pricing_date": "2019-11-07",
+            "tev": 9840.209,
+            "leases_in_tev": 205.404,
+            "finance_leases": 0.0,
+            "operating_leases": 205.404,
+            "edgar_operating_leases": 205.405,
+            "ltm_ebitda": 339.323,
+            "multiple": 28.394199,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2019-12-31",
+            "pricing_date": "2020-03-02",
+            "tev": 12029.341,
+            "leases_in_tev": 238.39,
+            "finance_leases": 0.0,
+            "operating_leases": 238.39,
+            "edgar_operating_leases": 238.389,
+            "ltm_ebitda": 347.681,
+            "multiple": 33.913129,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2020-03-31",
+            "pricing_date": "2020-05-07",
+            "tev": 11988.921,
+            "leases_in_tev": 249.42,
+            "finance_leases": 0.0,
+            "operating_leases": 249.42,
+            "edgar_operating_leases": 249.42,
+            "ltm_ebitda": 375.272,
+            "multiple": 31.282647,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2020-06-30",
+            "pricing_date": "2020-08-06",
+            "tev": 15828.967,
+            "leases_in_tev": 242.642,
+            "finance_leases": 0.0,
+            "operating_leases": 242.642,
+            "edgar_operating_leases": 242.642,
+            "ltm_ebitda": 390.014,
+            "multiple": 39.963502,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2020-09-30",
+            "pricing_date": "2020-11-05",
+            "tev": 18456.369,
+            "leases_in_tev": 245.042,
+            "finance_leases": 0.0,
+            "operating_leases": 245.042,
+            "edgar_operating_leases": 245.042,
+            "ltm_ebitda": 410.647,
+            "multiple": 44.347889,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2020-12-31",
+            "pricing_date": "2021-02-25",
+            "tev": 19343.687,
+            "leases_in_tev": 241.363,
+            "finance_leases": 0.0,
+            "operating_leases": 241.363,
+            "edgar_operating_leases": 241.363,
+            "ltm_ebitda": 441.13,
+            "multiple": 43.303163,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2021-03-31",
+            "pricing_date": "2021-05-06",
+            "tev": 24725.204,
+            "leases_in_tev": 218.184,
+            "finance_leases": 0.0,
+            "operating_leases": 218.184,
+            "edgar_operating_leases": 218.184,
+            "ltm_ebitda": 463.739,
+            "multiple": 52.846579,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2021-06-30",
+            "pricing_date": "2021-08-06",
+            "tev": 32812.752,
+            "leases_in_tev": 204.806,
+            "finance_leases": 0.0,
+            "operating_leases": 204.806,
+            "edgar_operating_leases": 204.806,
+            "ltm_ebitda": 510.815,
+            "multiple": 63.835138,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2021-09-30",
+            "pricing_date": "2021-11-05",
+            "tev": 38949.832,
+            "leases_in_tev": 200.73,
+            "finance_leases": 0.0,
+            "operating_leases": 200.73,
+            "edgar_operating_leases": 200.73,
+            "ltm_ebitda": 564.157,
+            "multiple": 68.684962,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2021-12-31",
+            "pricing_date": "2022-02-25",
+            "tev": 20553.313,
+            "leases_in_tev": 192.906,
+            "finance_leases": 0.0,
+            "operating_leases": 192.906,
+            "edgar_operating_leases": 192.906,
+            "ltm_ebitda": 628.203,
+            "multiple": 32.410553,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2022-03-31",
+            "pricing_date": "2022-05-10",
+            "tev": 17220.122,
+            "leases_in_tev": 187.835,
+            "finance_leases": 0.0,
+            "operating_leases": 187.835,
+            "edgar_operating_leases": 187.835,
+            "ltm_ebitda": 732.447,
+            "multiple": 23.253952,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2022-06-30",
+            "pricing_date": "2022-08-05",
+            "tev": 23375.242,
+            "leases_in_tev": 172.016,
+            "finance_leases": 0.0,
+            "operating_leases": 172.016,
+            "edgar_operating_leases": 172.016,
+            "ltm_ebitda": 734.83,
+            "multiple": 31.576318,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2022-09-30",
+            "pricing_date": "2022-11-04",
+            "tev": 16625.068,
+            "leases_in_tev": 161.302,
+            "finance_leases": 0.0,
+            "operating_leases": 161.302,
+            "edgar_operating_leases": 161.302,
+            "ltm_ebitda": 781.866,
+            "multiple": 21.057018,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2022-12-31",
+            "pricing_date": "2023-02-24",
+            "tev": 16104.217,
+            "leases_in_tev": 162.669,
+            "finance_leases": 0.0,
+            "operating_leases": 162.669,
+            "edgar_operating_leases": 162.669,
+            "ltm_ebitda": 812.939,
+            "multiple": 19.609771,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2023-03-31",
+            "pricing_date": "2023-05-05",
+            "tev": 12419.137,
+            "leases_in_tev": 158.845,
+            "finance_leases": 0.0,
+            "operating_leases": 158.845,
+            "edgar_operating_leases": 158.845,
+            "ltm_ebitda": 740.578,
+            "multiple": 16.555031,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2023-06-30",
+            "pricing_date": "2023-08-03",
+            "tev": 12534.675,
+            "leases_in_tev": 154.988,
+            "finance_leases": 0.0,
+            "operating_leases": 154.988,
+            "edgar_operating_leases": 154.988,
+            "ltm_ebitda": 765.681,
+            "multiple": 16.168205,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2023-09-30",
+            "pricing_date": "2023-11-03",
+            "tev": 12129.802,
+            "leases_in_tev": 146.626,
+            "finance_leases": 0.0,
+            "operating_leases": 146.626,
+            "edgar_operating_leases": 146.626,
+            "ltm_ebitda": 720.02,
+            "multiple": 16.642837,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2023-12-31",
+            "pricing_date": "2024-02-22",
+            "tev": 15685.758,
+            "leases_in_tev": 145.819,
+            "finance_leases": 0.0,
+            "operating_leases": 145.819,
+            "edgar_operating_leases": 145.819,
+            "ltm_ebitda": 680.768,
+            "multiple": 22.82707,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2024-03-31",
+            "pricing_date": "2024-05-09",
+            "tev": 8674.866,
+            "leases_in_tev": 146.573,
+            "finance_leases": 0.0,
+            "operating_leases": 146.573,
+            "edgar_operating_leases": 146.573,
+            "ltm_ebitda": 666.822,
+            "multiple": 12.78946,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2024-06-30",
+            "pricing_date": "2024-08-08",
+            "tev": 9201.657,
+            "leases_in_tev": 140.483,
+            "finance_leases": 0.0,
+            "operating_leases": 140.483,
+            "edgar_operating_leases": 140.483,
+            "ltm_ebitda": 637.99,
+            "multiple": 14.20269,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2024-09-30",
+            "pricing_date": "2024-11-07",
+            "tev": 11318.87,
+            "leases_in_tev": 140.112,
+            "finance_leases": 0.0,
+            "operating_leases": 140.112,
+            "edgar_operating_leases": 140.112,
+            "ltm_ebitda": 671.263,
+            "multiple": 16.65332,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2024-12-31",
+            "pricing_date": "2025-02-28",
+            "tev": 10604.156,
+            "leases_in_tev": 138.06,
+            "finance_leases": 0.0,
+            "operating_leases": 138.06,
+            "edgar_operating_leases": 138.06,
+            "ltm_ebitda": 673.612,
+            "multiple": 15.537276,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2025-03-31",
+            "pricing_date": "2025-05-08",
+            "tev": 9166.142,
+            "leases_in_tev": 133.083,
+            "finance_leases": 0.0,
+            "operating_leases": 133.083,
+            "edgar_operating_leases": 133.083,
+            "ltm_ebitda": 671.095,
+            "multiple": 13.460179,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2025-06-30",
+            "pricing_date": "2025-08-07",
+            "tev": 7907.559,
+            "leases_in_tev": 137.653,
+            "finance_leases": 0.0,
+            "operating_leases": 137.653,
+            "edgar_operating_leases": 137.653,
+            "ltm_ebitda": 688.662,
+            "multiple": 11.282612,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2025-09-30",
+            "pricing_date": "2025-11-06",
+            "tev": 8197.423,
+            "leases_in_tev": 130.181,
+            "finance_leases": 0.0,
+            "operating_leases": 130.181,
+            "edgar_operating_leases": 130.181,
+            "ltm_ebitda": 668.603,
+            "multiple": 12.065818,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2025-12-31",
+            "pricing_date": "2026-02-26",
+            "tev": 6353.092,
+            "leases_in_tev": 118.67,
+            "finance_leases": 0.0,
+            "operating_leases": 118.67,
+            "edgar_operating_leases": 118.67,
+            "ltm_ebitda": 680.158,
+            "multiple": 9.166137,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2026-03-31",
+            "pricing_date": "2026-05-07",
+            "tev": 4697.528,
+            "leases_in_tev": 122.943,
+            "finance_leases": 0.0,
+            "operating_leases": 122.943,
+            "edgar_operating_leases": 122.943,
+            "ltm_ebitda": 704.383,
+            "multiple": 6.494456,
+            "status": "reconciled"
+          },
+          {
+            "balance_sheet_date": "2026-06-30",
+            "pricing_date": "2026-08-06",
+            "tev": 4164.628,
+            "leases_in_tev": 127.243,
+            "finance_leases": 0.0,
+            "operating_leases": 127.243,
+            "edgar_operating_leases": 127.243,
+            "ltm_ebitda": 729.257,
+            "multiple": 5.5363,
+            "status": "reconciled"
+          }
+        ],
+        "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
       }
     },
     "quality": {
@@ -12586,8 +13188,8 @@
     "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
     "multiple_basis": "EV/EBITDA",
     "current_multiple": null,
-    "history_series": "mechanical.valuation.own_history (trailing EV/EBITDA, TEV/LTM)",
-    "ev_bridge_basis": "EDGAR lease-inclusive net debt (the anchor's)",
+    "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
+    "ev_bridge_basis": "EDGAR net debt excluding operating leases (the anchor's)",
     "scenario_formula": "((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda - net_debt",
     "per_share_formula": "exit_equity_value / exit_share_count",
     "formula_steps": [
@@ -12598,9 +13200,9 @@
       "value/share = equity ÷ diluted shares"
     ],
     "ev_bridge": {
-      "primary_basis": "EDGAR lease-inclusive net debt (the anchor's)",
-      "current_claims": -637.154,
-      "current_claims_source": "anchor.net_debt (EDGAR: total debt 25 + finance leases 0 + operating leases 127 − cash 789 ($M))",
+      "primary_basis": "EDGAR net debt excluding operating leases (the anchor's)",
+      "current_claims": -764.397,
+      "current_claims_source": "anchor.net_debt (EDGAR: total debt 25 + finance leases 0 − cash 789 ($M); operating leases 127 EXCLUDED — the multiple is struck on TEV less operating leases)",
       "balance_sheet_date": null,
       "components": [],
       "ciq_tev_less_market_cap": -636.6,
@@ -12616,7 +13218,7 @@
     "exit_claims": {
       "method": "HOLD_CURRENT_SAME_BASIS",
       "forecast_status": "assumption",
-      "current_claims": -637.154,
+      "current_claims": -764.397,
       "by_year": [],
       "fcf_rollforward_used": false,
       "rule": "R1's record subtracts the anchor's net debt as given — today's figure, held",
@@ -12720,16 +13322,39 @@
         "forward_multiple_history",
         "valuation_basis"
       ]
+    },
+    {
+      "date": "2026-10-20",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.valuation",
+        "qa_flags",
+        "valuation_basis"
+      ]
+    },
+    {
+      "date": "2026-10-20",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor",
+        "qa_flags",
+        "valuation_basis"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-09-17T19:23:12.363185Z",
+    "computed_at": "2026-10-20T13:23:15.147910Z",
     "reason": null,
     "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality_detail": [
+      "lease basis: rent 9.2% of EBITDA (FY ending 2025-12-31: $65M of $707M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $65M",
+      "recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the ex-lease history does not use"
+    ],
     "margin": {
       "value": 0.118997,
       "unit": "fraction",
@@ -12739,10 +13364,10 @@
       "confidence": "firm"
     },
     "multiple": {
-      "value": 22.414586,
+      "value": 25.300835499999998,
       "unit": "EV/EBITDA",
-      "source": "valuation.own_history.median",
-      "history_quarters": 38,
+      "source": "valuation.lease_basis.ex_lease_band.median — TEV less operating leases over reported LTM EBITDA, the basis of the EBITDA R1 prices",
+      "history_quarters": 34,
       "confidence": "firm"
     },
     "d_and_a": {
@@ -12752,10 +13377,10 @@
       "source": "EDGAR companyfacts DepreciationAndAmortization (combined, FY2025) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2019 (6y behind)"
     },
     "net_debt": {
-      "value": -637.154,
+      "value": -764.397,
       "unit": "$M",
-      "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 25 + finance leases 0 + operating leases 127 − cash 789 ($M)"
+      "basis": "net debt excluding operating leases (latest 10-Q)",
+      "source": "EDGAR: total debt 25 + finance leases 0 − cash 789 ($M); operating leases 127 EXCLUDED — the multiple is struck on TEV less operating leases"
     },
     "diluted_shares": {
       "value": 52267000.0,
@@ -12775,8 +13400,8 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 352.3459,
-    "anchor_ev_ebit": 26.6002,
+    "anchor_base_value_per_share": 398.5811,
+    "anchor_ev_ebit": 30.0255,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
     "scenario_eligibility": {
