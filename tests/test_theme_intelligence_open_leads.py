@@ -254,3 +254,42 @@ def test_the_combined_cache_main_carried_is_rejected() -> None:
 def test_the_dates_in_this_file_are_the_measurement_dates() -> None:
     """The corpus counts above were measured on one date; a pin that quotes them states it."""
     assert dt.date(2026, 10, 20).isoformat() in Path(__file__).read_text()
+
+
+# --- the first Actions run: a secret with surrounding whitespace is refused by name -------------
+
+def test_a_padded_secret_is_refused_by_name_before_any_request(monkeypatch: Any) -> None:
+    """2026-10-20: the first Actions run's ANTHROPIC_API_KEY carried trailing whitespace, and the
+    run died in the HTTP client as "Connection error" ("Illegal header value"). `require_env`
+    now refuses it by name, never printing it. NEGATIVE: a clean value is returned as it is."""
+    import pytest
+
+    from vinci.config import require_env
+
+    monkeypatch.setenv("VINCI_TEST_SECRET", "sk-test-value ")
+    with pytest.raises(RuntimeError, match="VINCI_TEST_SECRET.*whitespace") as e:
+        require_env("VINCI_TEST_SECRET")
+    assert "sk-test-value" not in str(e.value)
+    monkeypatch.setenv("VINCI_TEST_SECRET", "sk-test-value")
+    assert require_env("VINCI_TEST_SECRET") == "sk-test-value"
+
+
+def test_the_key_validator_fails_a_padded_key_instead_of_calling_it_connectivity(
+        monkeypatch: Any, capsys: Any) -> None:
+    """`validate-keys` read the padded key's connection error as "runner connectivity, NOT a key
+    problem" and passed green from 2026-06-26 until the 2026-10-20 run. It now FAILS the key
+    before any request (no network here: the check precedes the call)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "validate_keys", ROOT / ".github" / "scripts" / "validate_keys.py")
+    assert spec is not None and spec.loader is not None
+    vk = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(vk)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test\n")
+    monkeypatch.setenv("POLYGON_API_KEY", " pk-test")
+    assert vk.check_anthropic() is False and vk.check_polygon() is False
+    out = capsys.readouterr().out
+    assert "ANTHROPIC_API_KEY: FAIL — the secret has leading or trailing whitespace" in out
+    assert "POLYGON_API_KEY: FAIL — the secret has leading or trailing whitespace" in out
+    assert "sk-ant-test" not in out and "pk-test" not in out

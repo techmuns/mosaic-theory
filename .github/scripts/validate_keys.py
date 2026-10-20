@@ -20,6 +20,8 @@ def check_anthropic() -> bool:
     if not key:
         print("ANTHROPIC_API_KEY: FAIL — secret not set / empty")
         return False
+    if padded("ANTHROPIC_API_KEY", key):
+        return False
     import anthropic
 
     try:
@@ -41,10 +43,23 @@ def check_anthropic() -> bool:
     return True
 
 
+def padded(name: str, key: str) -> bool:
+    """A key with leading or trailing whitespace is a key problem, reported as one: it cannot
+    travel in an HTTP header, and the client then raises a CONNECTION error that this script read
+    as "runner connectivity, NOT a key problem" and passed — ANTHROPIC_API_KEY from 2026-06-26 to
+    2026-10-20. Checked before any request; the value is never printed."""
+    if key != key.strip():
+        print(f"{name}: FAIL — the secret has leading or trailing whitespace; re-save it without")
+        return True
+    return False
+
+
 def check_polygon() -> bool:
     key = os.environ.get("POLYGON_API_KEY")
     if not key:
         print("POLYGON_API_KEY: FAIL — secret not set / empty")
+        return False
+    if padded("POLYGON_API_KEY", key):
         return False
     try:
         r = httpx.get(
