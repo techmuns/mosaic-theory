@@ -352,7 +352,9 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: base is null), TECX's −208→refused (`docs/records/2026-10-19-net-debt-one-builder.md`).
 #: These moves are on pages WITHOUT a lease basis; #750's lease-basis pass moves BURL and TGT onto
 #: the ex-lease bridge in the SAME artifact pass, so their landed values are the ex-lease ones.
-ANCHORS_AWAITING_BACKFILL: set[str] = {"BURL", "TGT", "WERN"}
+#: **EMPTY AGAIN** after that joint pass (2026-10-20, `docs/records/2026-10-20-artifact-pass-net-
+#: debt-and-lease-basis.md`): BURL 183.42→322.06, TGT 137.57→158.47, WERN 30.82→32.53.
+ANCHORS_AWAITING_BACKFILL: set[str] = set()
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
