@@ -13,6 +13,7 @@ from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import ConceptPoint, extract_points, share_count_change
+from vinci.edgar.net_debt import not_applicable
 from vinci.eod.features import _close_on_or_before, compute_price_features, relative_return
 from vinci.schemas.data_record import (
     CoverageTier,
@@ -462,6 +463,11 @@ def enrich_with_fundamentals(
         else DataField.unknown(source="EDGAR", tier=SourceTier.EDGAR,
                                note="fewer than 2 usable XBRL share points")
     )
+    # A bank, lender or insurer has no net-debt leverage to read (vinci.edgar.net_debt): its
+    # borrowings fund its book. Both ratios say so, and every page reads them from this record.
+    na = not_applicable(rec.identity.sic)
+    na_field: DataField[float] | None = (
+        DataField.unknown(source="EDGAR", tier=SourceTier.EDGAR, note=na) if na else None)
     fundamentals = Fundamentals(
         ev_ebitda=ev_unknown,
         ev_ebitda_pctile_vs_history=ev_unknown,
@@ -469,8 +475,8 @@ def enrich_with_fundamentals(
         pe_pctile_vs_history=pe_pctile,
         fcf_sign=snap.fcf_sign,
         op_income_sign=snap.op_income_sign,
-        net_leverage=snap.net_leverage,
-        net_debt_to_ocf=snap.net_debt_to_ocf,
+        net_leverage=na_field or snap.net_leverage,
+        net_debt_to_ocf=na_field or snap.net_debt_to_ocf,
         share_count_change_730d=shares_change,
     )
     return rec.model_copy(update={"fundamentals": fundamentals})

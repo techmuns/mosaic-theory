@@ -4582,6 +4582,259 @@
      ]
     }
    },
+   "FinanceLeaseLiability": {
+    "description": "Present value of lessee's discounted obligation for lease payments from finance lease.",
+    "label": "Finance Lease, Liability",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001902733-23-000024",
+       "end": "2020-11-30",
+       "filed": "2023-03-28",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2023,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2020-11-30",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2024,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-23-000062",
+       "end": "2020-11-30",
+       "filed": "2023-08-29",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2024,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-23-000078",
+       "end": "2020-11-30",
+       "filed": "2023-11-29",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2024,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-24-000053",
+       "end": "2020-11-30",
+       "filed": "2024-03-26",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2024,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-25-000026",
+       "end": "2020-11-30",
+       "filed": "2025-04-01",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2020Q4I",
+       "fy": 2025,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-22-000013",
+       "end": "2022-01-31",
+       "filed": "2022-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 34099000
+      },
+      {
+       "accn": "0001902733-22-000021",
+       "end": "2022-04-30",
+       "filed": "2022-06-01",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2022Q1I",
+       "fy": 2023,
+       "val": 33949000
+      },
+      {
+       "accn": "0001902733-22-000029",
+       "end": "2022-07-31",
+       "filed": "2022-09-01",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2022Q2I",
+       "fy": 2023,
+       "val": 33796000
+      },
+      {
+       "accn": "0001902733-22-000036",
+       "end": "2022-10-31",
+       "filed": "2022-11-30",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2022Q3I",
+       "fy": 2023,
+       "val": 33641000
+      },
+      {
+       "accn": "0001902733-23-000024",
+       "end": "2023-01-31",
+       "filed": "2023-03-28",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2023,
+       "val": 55380000
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2023-04-30",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2024,
+       "val": 55136000
+      },
+      {
+       "accn": "0001902733-23-000062",
+       "end": "2023-07-31",
+       "filed": "2023-08-29",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2023Q2I",
+       "fy": 2024,
+       "val": 54816000
+      },
+      {
+       "accn": "0001902733-23-000078",
+       "end": "2023-10-31",
+       "filed": "2023-11-29",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2023Q3I",
+       "fy": 2024,
+       "val": 54492000
+      },
+      {
+       "accn": "0001902733-24-000053",
+       "end": "2024-01-31",
+       "filed": "2024-03-26",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2024,
+       "val": 54154000
+      },
+      {
+       "accn": "0001902733-24-000115",
+       "end": "2024-04-30",
+       "filed": "2024-05-29",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2024Q1I",
+       "fy": 2025,
+       "val": 53795000
+      },
+      {
+       "accn": "0001902733-24-000152",
+       "end": "2024-07-31",
+       "filed": "2024-08-27",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2024Q2I",
+       "fy": 2025,
+       "val": 53432000
+      },
+      {
+       "accn": "0001902733-24-000188",
+       "end": "2024-10-31",
+       "filed": "2024-12-04",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2024Q3I",
+       "fy": 2025,
+       "val": 53238000
+      },
+      {
+       "accn": "0001902733-25-000026",
+       "end": "2025-01-31",
+       "filed": "2025-04-01",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2025,
+       "val": 52852000
+      },
+      {
+       "accn": "0001902733-25-000076",
+       "end": "2025-04-30",
+       "filed": "2025-05-28",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2025Q1I",
+       "fy": 2026,
+       "val": 52442000
+      },
+      {
+       "accn": "0001902733-25-000106",
+       "end": "2025-07-31",
+       "filed": "2025-08-26",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2025Q2I",
+       "fy": 2026,
+       "val": 52028000
+      },
+      {
+       "accn": "0001902733-25-000131",
+       "end": "2025-10-31",
+       "filed": "2025-12-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2025Q3I",
+       "fy": 2026,
+       "val": 51607000
+      },
+      {
+       "accn": "0001902733-26-000022",
+       "end": "2026-01-31",
+       "filed": "2026-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2025Q4I",
+       "fy": 2026,
+       "val": 51218000
+      },
+      {
+       "accn": "0001902733-26-000066",
+       "end": "2026-04-30",
+       "filed": "2026-05-27",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2026Q1I",
+       "fy": 2027,
+       "val": 50897000
+      },
+      {
+       "accn": "0001902733-26-000101",
+       "end": "2026-07-31",
+       "filed": "2026-08-25",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2026Q2I",
+       "fy": 2027,
+       "val": 50571000
+      }
+     ]
+    }
+   },
    "FinanceLeaseLiabilityCurrent": {
     "description": "Present value of lessee's discounted obligation for lease payments from finance lease, classified as current.",
     "label": "Finance Lease, Liability, Current",
@@ -5487,6 +5740,43 @@
      ]
     }
    },
+   "LinesOfCreditCurrent": {
+    "description": "The carrying value as of the balance sheet date of the current portion of long-term obligations drawn from a line of credit, which is a bank's commitment to make loans up to a specific amount. Examples of items that might be included in the application of this element may consist of letters of credit, standby letters of credit, and revolving credit arrangements, under which borrowings can be made up to a maximum amount as of any point in time conditional on satisfaction of specified terms before, as of and after the date of drawdowns on the line. Includes short-term obligations that would normally be classified as current liabilities but for which (a) postbalance sheet date issuance of a long term obligation to refinance the short term obligation on a long term basis, or (b) the enterprise has entered into a financing agreement that clearly permits the enterprise to refinance the short-term obligation on a long term basis and the following conditions are met (1) the agreement does not expire within 1 year and is not cancelable by the lender except for violation of an objectively determinable provision, (2) no violation exists at the BS date, and (3) the lender has entered into the financing agreement is expected to be financially capable of honoring the agreement.",
+    "label": "Line of Credit, Current",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001902733-23-000024",
+       "end": "2023-01-31",
+       "filed": "2023-03-28",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2023,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2023-01-31",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2022Q4I",
+       "fy": 2024,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2023-04-30",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2024,
+       "val": 15000000
+      }
+     ]
+    }
+   },
    "LongTermDebt": {
     "description": "Amount, after unamortized (discount) premium and debt issuance costs, of long-term debt. Includes, but not limited to, notes payable, bonds payable, debentures, mortgage loans and commercial paper. Excludes capital lease obligations.",
     "label": "Long-term Debt",
@@ -5624,6 +5914,281 @@
        "frame": "CY2026Q2I",
        "fy": 2027,
        "val": 265557000
+      }
+     ]
+    }
+   },
+   "LongTermLineOfCredit": {
+    "description": "The carrying value as of the balance sheet date of the noncurrent portion of long-term obligations drawn from a line of credit, which is a bank's commitment to make loans up to a specific amount. Examples of items that might be included in the application of this element may consist of letters of credit, standby letters of credit, and revolving credit arrangements, under which borrowings can be made up to a maximum amount as of any point in time conditional on satisfaction of specified terms before, as of and after the date of drawdowns on the line. Includes short-term obligations that would normally be classified as current liabilities but for which (a) postbalance sheet date issuance of a long term obligation to refinance the short term obligation on a long term basis, or (b) the enterprise has entered into a financing agreement that clearly permits the enterprise to refinance the short-term obligation on a long term basis and the following conditions are met (1) the agreement does not expire within 1 year and is not cancelable by the lender except for violation of an objectively determinable provision, (2) no violation exists at the BS date, and (3) the lender has entered into the financing agreement is expected to be financially capable of honoring the agreement.",
+    "label": "Long-term Line of Credit, Noncurrent",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001902733-22-000036",
+       "end": "2022-01-31",
+       "filed": "2022-11-30",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2023,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-23-000024",
+       "end": "2022-01-31",
+       "filed": "2023-03-28",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2023,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-22-000036",
+       "end": "2022-10-31",
+       "filed": "2022-11-30",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2022Q3I",
+       "fy": 2023,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-23-000024",
+       "end": "2023-01-31",
+       "filed": "2023-03-28",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2023,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2023-01-31",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2024,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-23-000062",
+       "end": "2023-01-31",
+       "filed": "2023-08-29",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2024,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-23-000078",
+       "end": "2023-01-31",
+       "filed": "2023-11-29",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2024,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-24-000053",
+       "end": "2023-01-31",
+       "filed": "2024-03-26",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2024,
+       "val": 30000000
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2023-04-30",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2024,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-23-000062",
+       "end": "2023-07-31",
+       "filed": "2023-08-29",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2023Q2I",
+       "fy": 2024,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-23-000078",
+       "end": "2023-10-31",
+       "filed": "2023-11-29",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2023Q3I",
+       "fy": 2024,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-24-000053",
+       "end": "2024-01-31",
+       "filed": "2024-03-26",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2024,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-24-000115",
+       "end": "2024-01-31",
+       "filed": "2024-05-29",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2025,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-24-000152",
+       "end": "2024-01-31",
+       "filed": "2024-08-27",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2025,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-24-000188",
+       "end": "2024-01-31",
+       "filed": "2024-12-04",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2025,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-25-000026",
+       "end": "2024-01-31",
+       "filed": "2025-04-01",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2025,
+       "val": 0
+      },
+      {
+       "accn": "0001902733-24-000115",
+       "end": "2024-04-30",
+       "filed": "2024-05-29",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2024Q1I",
+       "fy": 2025,
+       "val": 55000000
+      },
+      {
+       "accn": "0001902733-24-000152",
+       "end": "2024-07-31",
+       "filed": "2024-08-27",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2024Q2I",
+       "fy": 2025,
+       "val": 40000000
+      },
+      {
+       "accn": "0001902733-24-000188",
+       "end": "2024-10-31",
+       "filed": "2024-12-04",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2024Q3I",
+       "fy": 2025,
+       "val": 166000000
+      },
+      {
+       "accn": "0001902733-25-000026",
+       "end": "2025-01-31",
+       "filed": "2025-04-01",
+       "form": "10-K",
+       "fp": "FY",
+       "fy": 2025,
+       "val": 166000000
+      },
+      {
+       "accn": "0001902733-25-000076",
+       "end": "2025-01-31",
+       "filed": "2025-05-28",
+       "form": "10-Q",
+       "fp": "Q1",
+       "fy": 2026,
+       "val": 166000000
+      },
+      {
+       "accn": "0001902733-25-000106",
+       "end": "2025-01-31",
+       "filed": "2025-08-26",
+       "form": "10-Q",
+       "fp": "Q2",
+       "fy": 2026,
+       "val": 166000000
+      },
+      {
+       "accn": "0001902733-25-000131",
+       "end": "2025-01-31",
+       "filed": "2025-12-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "fy": 2026,
+       "val": 166000000
+      },
+      {
+       "accn": "0001902733-26-000022",
+       "end": "2025-01-31",
+       "filed": "2026-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2026,
+       "val": 166000000
+      },
+      {
+       "accn": "0001902733-25-000076",
+       "end": "2025-04-30",
+       "filed": "2025-05-28",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2025Q1I",
+       "fy": 2026,
+       "val": 208500000
+      },
+      {
+       "accn": "0001902733-25-000106",
+       "end": "2025-07-31",
+       "filed": "2025-08-26",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2025Q2I",
+       "fy": 2026,
+       "val": 203500000
+      },
+      {
+       "accn": "0001902733-25-000131",
+       "end": "2025-10-31",
+       "filed": "2025-12-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2025Q3I",
+       "fy": 2026,
+       "val": 203500000
+      },
+      {
+       "accn": "0001902733-26-000022",
+       "end": "2026-01-31",
+       "filed": "2026-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2025Q4I",
+       "fy": 2026,
+       "val": 213500000
       }
      ]
     }
@@ -6717,6 +7282,214 @@
        "fy": 2027,
        "start": "2026-05-01",
        "val": 13614000
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiability": {
+    "description": "Present value of lessee's discounted obligation for lease payments from operating lease.",
+    "label": "Operating Lease, Liability",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001902733-22-000013",
+       "end": "2020-11-30",
+       "filed": "2022-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2020Q4I",
+       "fy": 2022,
+       "val": 16300000
+      },
+      {
+       "accn": "0001902733-22-000013",
+       "end": "2022-01-31",
+       "filed": "2022-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 14746000
+      },
+      {
+       "accn": "0001902733-22-000021",
+       "end": "2022-04-30",
+       "filed": "2022-06-01",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2022Q1I",
+       "fy": 2023,
+       "val": 13519000
+      },
+      {
+       "accn": "0001902733-22-000029",
+       "end": "2022-07-31",
+       "filed": "2022-09-01",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2022Q2I",
+       "fy": 2023,
+       "val": 13274000
+      },
+      {
+       "accn": "0001902733-22-000036",
+       "end": "2022-10-31",
+       "filed": "2022-11-30",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2022Q3I",
+       "fy": 2023,
+       "val": 13497000
+      },
+      {
+       "accn": "0001902733-23-000024",
+       "end": "2023-01-31",
+       "filed": "2023-03-28",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2023,
+       "val": 11156000
+      },
+      {
+       "accn": "0001902733-23-000034",
+       "end": "2023-04-30",
+       "filed": "2023-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2023Q1I",
+       "fy": 2024,
+       "val": 10270000
+      },
+      {
+       "accn": "0001902733-23-000062",
+       "end": "2023-07-31",
+       "filed": "2023-08-29",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2023Q2I",
+       "fy": 2024,
+       "val": 9267000
+      },
+      {
+       "accn": "0001902733-23-000078",
+       "end": "2023-10-31",
+       "filed": "2023-11-29",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2023Q3I",
+       "fy": 2024,
+       "val": 9983000
+      },
+      {
+       "accn": "0001902733-24-000053",
+       "end": "2024-01-31",
+       "filed": "2024-03-26",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2024,
+       "val": 20072000
+      },
+      {
+       "accn": "0001902733-24-000115",
+       "end": "2024-04-30",
+       "filed": "2024-05-29",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2024Q1I",
+       "fy": 2025,
+       "val": 17761000
+      },
+      {
+       "accn": "0001902733-24-000152",
+       "end": "2024-07-31",
+       "filed": "2024-08-27",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2024Q2I",
+       "fy": 2025,
+       "val": 17258000
+      },
+      {
+       "accn": "0001902733-24-000188",
+       "end": "2024-10-31",
+       "filed": "2024-12-04",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2024Q3I",
+       "fy": 2025,
+       "val": 16659000
+      },
+      {
+       "accn": "0001902733-25-000026",
+       "end": "2025-01-31",
+       "filed": "2025-04-01",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2025,
+       "val": 17972000
+      },
+      {
+       "accn": "0001902733-25-000076",
+       "end": "2025-04-30",
+       "filed": "2025-05-28",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2025Q1I",
+       "fy": 2026,
+       "val": 17406000
+      },
+      {
+       "accn": "0001902733-25-000106",
+       "end": "2025-07-31",
+       "filed": "2025-08-26",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2025Q2I",
+       "fy": 2026,
+       "val": 13957000
+      },
+      {
+       "accn": "0001902733-25-000131",
+       "end": "2025-10-31",
+       "filed": "2025-12-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2025Q3I",
+       "fy": 2026,
+       "val": 14264000
+      },
+      {
+       "accn": "0001902733-26-000022",
+       "end": "2026-01-31",
+       "filed": "2026-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2025Q4I",
+       "fy": 2026,
+       "val": 13977000
+      },
+      {
+       "accn": "0001902733-26-000066",
+       "end": "2026-04-30",
+       "filed": "2026-05-27",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2026Q1I",
+       "fy": 2027,
+       "val": 13005000
+      },
+      {
+       "accn": "0001902733-26-000101",
+       "end": "2026-07-31",
+       "filed": "2026-08-25",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2026Q2I",
+       "fy": 2027,
+       "val": 12696000
       }
      ]
     }

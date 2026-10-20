@@ -1,0 +1,117 @@
+{
+ "_about": "CIQ 'Total Debt' and 'Total Cash & ST Investments' ($M), read 2026-10-19 through vinci.dossier.ciq_sheets._bs_latest from the git-ignored Financials workbooks named here. DERIVED values only — the workbooks are never committed. Frozen so the one-builder net-debt pins (§5.0 row 27 (1)) check EDGAR against an independent source in CI. Every balance sheet here shares its date with the name's EDGAR cash instant.",
+ "names": {
+  "BRBR": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "cb902c8d1d",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [FQ3/CQ2 Jun-30-2026]",
+   "total_cash_and_st_investments": 50.4,
+   "total_debt": 1173.1,
+   "workbook": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls"
+  },
+  "BURL": {
+   "balance_sheet_date": "2026-08-01",
+   "sha": "b4a0f828ee",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Aug-01-2026]",
+   "total_cash_and_st_investments": 703.7,
+   "total_debt": 5906.1,
+   "workbook": "Burlington Stores Inc NYSE BURL Financials_Quarterly.xls"
+  },
+  "EPAM": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "7baf86ffeb",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 789.4,
+   "total_debt": 152.2,
+   "workbook": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls"
+  },
+  "GOOGL": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "36160a403e",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 242474.0,
+   "total_debt": 120791.0,
+   "workbook": "Alphabet Inc NasdaqGS GOOGL Financials_Quarterly 2.12.06 PM.xls"
+  },
+  "HLF": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "8fa655add7",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 370.5,
+   "total_debt": 2203.8,
+   "workbook": "Herbalife Ltd NYSE HLF Financials_Quarterly.xls"
+  },
+  "NFLX": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "d162f709ec",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 9127.9,
+   "total_debt": 16654.7,
+   "workbook": "Netflix Inc NasdaqGS NFLX Financials_Quarterly.xls"
+  },
+  "PARR": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "abe144277e",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 185.0,
+   "total_debt": 1134.0,
+   "workbook": "Par Pacific Holdings Inc NYSE PARR Financials_Quarterly.xls"
+  },
+  "PENG": {
+   "balance_sheet_date": "2026-05-29",
+   "sha": "4fcbe956ae",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [FQ3/CQ2 May-29-2026]",
+   "total_cash_and_st_investments": 440.3,
+   "total_debt": 508.7,
+   "workbook": "Penguin Solutions Inc NasdaqGS PENG Financials_Quarterly.xls"
+  },
+  "ROST": {
+   "balance_sheet_date": "2026-08-01",
+   "sha": "ab024ede42",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Aug-01-2026]",
+   "total_cash_and_st_investments": 4288.1,
+   "total_debt": 4739.2,
+   "workbook": "Ross Stores Inc NasdaqGS ROST Financials_Quarterly.xls"
+  },
+  "SMPL": {
+   "balance_sheet_date": "2026-05-30",
+   "sha": "e41ebc16a4",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [FQ3/CQ2 May-30-2026]",
+   "total_cash_and_st_investments": 123.9,
+   "total_debt": 448.5,
+   "workbook": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls"
+  },
+  "TGT": {
+   "balance_sheet_date": "2026-08-01",
+   "sha": "71714677f3",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Aug-01-2026]",
+   "total_cash_and_st_investments": 5411.0,
+   "total_debt": 19196.0,
+   "workbook": "Target Corporation NYSE TGT Financials_Quarterly.xls"
+  },
+  "UBER": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "a55c4821ce",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 5391.0,
+   "total_debt": 14731.0,
+   "workbook": "Uber Technologies Inc NYSE UBER Financials_Quarterly.xls"
+  },
+  "WERN": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "797fc18691",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 57.0,
+   "total_debt": 945.8,
+   "workbook": "Werner Enterprises Inc NasdaqGS WERN Financials_Quarterly.xls"
+  },
+  "WLK": {
+   "balance_sheet_date": "2026-06-30",
+   "sha": "15bec6cee3",
+   "source": "CIQ Financials→Balance Sheet 'Total Cash & ST Investments' [Q2 Jun-30-2026]",
+   "total_cash_and_st_investments": 1852.0,
+   "total_debt": 5876.0,
+   "workbook": "Westlake Corporation NYSE WLK Financials_Quarterly.xls"
+  }
+ }
+}

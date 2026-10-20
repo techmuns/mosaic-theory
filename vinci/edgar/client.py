@@ -25,7 +25,8 @@ from typing import Any, NoReturn, cast
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
-from vinci.edgar.concepts import extract_points, latest_annual, latest_instant
+from vinci.edgar.concepts import extract_points, latest_annual
+from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver.index import pad_cik
@@ -70,7 +71,9 @@ class FundamentalSnapshot(BaseModel, frozen=True):
     net_leverage: DataField[float]
     net_debt_to_ocf: DataField[float]  # net debt / operating cash flow — survives untaggable D&A
     ebitda_annual: DataField[float]  # operating income + D&A (for EV/EBITDA in step 5)
-    net_debt: DataField[float]  # total debt - cash (for EV in step 5)
+    # borrowings + finance leases − cash − short-term investments, every line at ONE balance-sheet
+    # date (vinci.edgar.net_debt, the LEVERAGE basis: operating leases out, as EBITDA is post-rent)
+    net_debt: DataField[float]
     eps_diluted_annual: DataField[float]  # for P/E in step 5
     as_of: date | None
 
@@ -110,42 +113,6 @@ def all_unknown_snapshot(cik10: str) -> FundamentalSnapshot:
     )
 
 
-# Interest-bearing-debt instrument tags used ONLY as a consistency witness (see
-# _max_outstanding_debt) — instruments the LongTermDebt+current extraction does NOT read, so a large
-# value here means that extraction missed debt. NOT summed (tags overlap; summing double-counts).
-# Finance-lease tags are excluded (the "is a lease debt" question is genuinely nuanced).
-_DEBT_WITNESS_TAGS: tuple[str, ...] = (
-    "ShortTermBorrowings", "ConvertibleDebt", "ConvertibleDebtCurrent", "ConvertibleDebtNoncurrent",
-    "NotesPayableCurrent", "NotesPayable", "LongTermNotesPayable", "SubordinatedDebtCurrent",
-    "SubordinatedDebt", "SecuredDebt", "SecuredDebtCurrent", "LinesOfCreditCurrent",
-    "LongTermLineOfCredit", "OtherLongTermDebt", "OtherLongTermDebtNoncurrent",
-    "OtherLongTermDebtCurrent",
-)
-
-
-def _max_outstanding_debt(facts: dict[str, Any], ref_end: str | None) -> tuple[float, str] | None:
-    """Largest SINGLE outstanding-debt instrument balance a filer reports AT OR AFTER ``ref_end``
-    (the captured-debt period). A CONSISTENCY WITNESS only: if it exceeds the long-term+current
-    extraction, that extraction missed debt (the MVST case — convertible / notes / short-term tags),
-    and the caller fails loud rather than show a confident understated (false net-cash) figure.
-    The ``ref_end`` filter drops a since-repaid instrument whose value persists at a STALE date,
-    so a clean current balance sheet isn't false-flagged by a long-gone borrowing."""
-    us = facts.get("facts", {}).get("us-gaap", {})
-    best: tuple[float, str] | None = None
-    for tag in _DEBT_WITNESS_TAGS:
-        pts = us.get(tag, {}).get("units", {}).get("USD")
-        if not pts:
-            continue
-        current = [p for p in pts if not ref_end or str(p.get("end", "")) >= ref_end]
-        if not current:
-            continue
-        latest = max(current, key=lambda r: (r.get("end", ""), r.get("filed", "")))
-        val = latest.get("val")
-        if val is not None and (best is None or float(val) > best[0]):
-            best = (float(val), tag)
-    return best
-
-
 def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> FundamentalSnapshot:
     """Pure: derive the non-distress signals + step-5 inputs from a ``companyfacts`` dict."""
     op = latest_annual(extract_points(facts, "operating_income"))
@@ -153,9 +120,6 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     ocf = latest_annual(extract_points(facts, "operating_cash_flow"))
     capex = latest_annual(extract_points(facts, "capex"))
     eps = latest_annual(extract_points(facts, "eps_diluted"))
-    ltd = latest_instant(extract_points(facts, "long_term_debt"))
-    dc = latest_instant(extract_points(facts, "debt_current"))
-    cash = latest_instant(extract_points(facts, "cash"))
 
     op_sign = _present_i(_sign(op.value), op.filed) if op else _unknown_i("no operating_income")
     if ocf and capex:
@@ -170,61 +134,59 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     else:
         ebitda = _unknown_f("no operating_income/D&A")
 
-    debt_total = (ltd.value if ltd else 0.0) + (dc.value if dc else 0.0)
-    # CONSISTENCY GUARD: the LongTermDebt+current extraction misses debt booked under convertible /
-    # notes / short-term / subordinated tags (the MVST case) — a partial sum that understates gross
-    # debt and flips net-debt to a FALSE net-cash. If a single instrument (at/after the captured
-    # period) exceeds the extracted total, fail loud (never a confident understated figure); CIQ's
-    # balance sheet is the authority. No (ltd or dc) gate — a filer with ALL debt in witness tags
-    # (debt_total 0) must fail loud too, not read as debt-free.
-    ref_end = max((p.period_end.isoformat() for p in (ltd, dc) if p), default=None)
-    witness = _max_outstanding_debt(facts, ref_end)
-    undercaptured = bool(witness and witness[0] > debt_total * 1.10)
+    # ONE builder, every line at ONE balance-sheet date (vinci.edgar.net_debt, §5.0 row 27 (1)):
+    # each leg used to be read at its OWN latest date, so a tag the filer stopped using was served
+    # for years. Its refusals carry the cases this block used to spell out: the under-capture
+    # witness (the MVST case — a single instrument above the debt read is debt missed, never a
+    # confident false net cash), and now a debt line absent from the balance sheet.
+    nd = net_debt(facts)
+    absent = nd is None or nd.nothing_to_read
+    refusal = NO_DEBT_OR_CASH if nd is None else nd.refusal
     net_debt_val: float | None = None
-    if undercaptured:
-        assert witness is not None
-        net_debt = _unknown_f(
-            f"EDGAR debt under-captured: {witness[1]} ${witness[0] / 1e6:,.0f}M alone exceeds the "
-            f"${debt_total / 1e6:,.0f}M long-term+current extracted — pull CIQ"
-        )
-    elif (ltd or dc) and cash:
-        net_debt_val = debt_total - cash.value
-        filed = max(p.filed for p in (ltd, dc, cash) if p)
-        net_debt = _present_f(debt_total - cash.value, filed)
+    if absent:
+        net_debt_f = _unknown_f(NO_DEBT_OR_CASH)
+    elif refusal is not None:
+        net_debt_f = _unknown_f(f"{refusal} — pull CIQ")
     else:
-        net_debt = _unknown_f("no debt/cash")
+        assert nd is not None
+        net_debt_val = nd.value(Basis.LEVERAGE)
+        assert net_debt_val is not None
+        net_debt_f = _present_f(net_debt_val, nd.filed)
+    # the ratios name the SAME reason, so a refused reading never reads as an absent one
+    no_nd = ("no net-debt — debt/cash not in XBRL" if absent or refusal is None
+             else f"no net-debt — {refusal}")
 
     # net leverage = net debt / EBITDA; UNKNOWN with the SPECIFIC missing input — never lump them.
     # "missing debt/cash" and "EBITDA<=0" are different facts: a positive-EBITDA name (e.g. one with
     # 10x interest coverage) reading "EBITDA<=0 or…" mis-reads as distress when the real gap is just
     # that no debt/cash line was in the XBRL.
     if net_debt_val is None:
-        net_lev = _unknown_f("no net-debt — debt/cash not in XBRL")
+        net_lev = _unknown_f(no_nd)
     elif ebitda_val is None:
         net_lev = _unknown_f("no EBITDA in XBRL")
     elif ebitda_val <= 0:
         net_lev = _unknown_f("EBITDA<=0 (ratio meaningless)")
-    elif not net_debt.as_of:
+    elif not net_debt_f.as_of:
         net_lev = _unknown_f("net-debt as-of date missing")
     else:
-        net_lev = _present_f(net_debt_val / ebitda_val, net_debt.as_of)
+        net_lev = _present_f(net_debt_val / ebitda_val, net_debt_f.as_of)
 
     # net debt / OCF — the leverage read that SURVIVES untaggable D&A (the MVST case): operating
     # cash flow already contains the D&A add-back EBITDA needs, and OCF is reliably tagged. Same
     # fail-loud discipline as net leverage: UNKNOWN naming the SPECIFIC missing input, not a guess.
     if net_debt_val is None:
-        net_ocf = _unknown_f("no net-debt — debt/cash not in XBRL")
+        net_ocf = _unknown_f(no_nd)
     elif ocf is None:
         net_ocf = _unknown_f("no operating cash flow in XBRL")
     elif ocf.value <= 0:
         net_ocf = _unknown_f("OCF<=0 (ratio meaningless)")
-    elif not net_debt.as_of:
+    elif not net_debt_f.as_of:
         net_ocf = _unknown_f("net-debt as-of date missing")
     else:
-        net_ocf = _present_f(net_debt_val / ocf.value, net_debt.as_of)
+        net_ocf = _present_f(net_debt_val / ocf.value, net_debt_f.as_of)
 
     eps_df = _present_f(eps.value, eps.filed) if eps else _unknown_f("no diluted EPS")
-    filed_dates = [p.filed for p in (op, da, ocf, capex, eps, ltd, dc, cash) if p]
+    filed_dates = [p.filed for p in (op, da, ocf, capex, eps) if p] + ([nd.filed] if nd else [])
     return FundamentalSnapshot(
         cik=cik10,
         op_income_sign=op_sign,
@@ -232,7 +194,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
         net_leverage=net_lev,
         net_debt_to_ocf=net_ocf,
         ebitda_annual=ebitda,
-        net_debt=net_debt,
+        net_debt=net_debt_f,
         eps_diluted_annual=eps_df,
         as_of=max(filed_dates) if filed_dates else None,
     )

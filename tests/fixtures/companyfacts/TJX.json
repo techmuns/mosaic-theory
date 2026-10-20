@@ -20909,6 +20909,114 @@
      ]
     }
    },
+   "OperatingLeaseLiability": {
+    "description": "Present value of lessee's discounted obligation for lease payments from operating lease.",
+    "label": "Operating Lease, Liability",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001628280-19-007432",
+       "end": "2019-05-04",
+       "filed": "2019-05-31",
+       "form": "10-Q",
+       "fp": "Q1",
+       "frame": "CY2019Q1I",
+       "fy": 2020,
+       "val": 8964774000
+      },
+      {
+       "accn": "0001628280-19-011321",
+       "end": "2019-08-03",
+       "filed": "2019-08-30",
+       "form": "10-Q",
+       "fp": "Q2",
+       "frame": "CY2019Q2I",
+       "fy": 2020,
+       "val": 9096587000
+      },
+      {
+       "accn": "0001628280-19-014690",
+       "end": "2019-11-02",
+       "filed": "2019-12-03",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2019Q3I",
+       "fy": 2020,
+       "val": 9234329000
+      },
+      {
+       "accn": "0000109198-20-000004",
+       "end": "2020-02-01",
+       "filed": "2020-03-27",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2019Q4I",
+       "fy": 2019,
+       "val": 9227849000
+      },
+      {
+       "accn": "0000109198-21-000006",
+       "end": "2021-01-30",
+       "filed": "2021-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2020Q4I",
+       "fy": 2020,
+       "val": 9420821000
+      },
+      {
+       "accn": "0000109198-22-000008",
+       "end": "2022-01-29",
+       "filed": "2022-03-30",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 9152151000
+      },
+      {
+       "accn": "0000109198-23-000004",
+       "end": "2023-01-28",
+       "filed": "2023-03-29",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2023,
+       "val": 9385000000
+      },
+      {
+       "accn": "0000109198-24-000014",
+       "end": "2024-02-03",
+       "filed": "2024-04-03",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2024,
+       "val": 9680000000
+      },
+      {
+       "accn": "0000109198-25-000010",
+       "end": "2025-02-01",
+       "filed": "2025-04-02",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2025,
+       "val": 9912000000
+      },
+      {
+       "accn": "0000109198-26-000008",
+       "end": "2026-01-31",
+       "filed": "2026-03-31",
+       "form": "10-K",
+       "fp": "FY",
+       "frame": "CY2025Q4I",
+       "fy": 2026,
+       "val": 10620000000
+      }
+     ]
+    }
+   },
    "OperatingLeaseLiabilityCurrent": {
     "description": "Present value of lessee's discounted obligation for lease payments from operating lease, classified as current.",
     "label": "Operating Lease, Liability, Current",
@@ -27273,6 +27381,44 @@
        "fy": 2018,
        "start": "2018-02-04",
        "val": 8688720000
+      }
+     ]
+    }
+   },
+   "ShortTermBorrowings": {
+    "description": "Reflects the total carrying amount as of the balance sheet date of debt having initial terms less than one year or the normal operating cycle, if longer.",
+    "label": "Short-term Debt",
+    "units": {
+     "USD": [
+      {
+       "accn": "0000950123-09-067237",
+       "end": "2008-10-25",
+       "filed": "2009-12-01",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2008Q3I",
+       "fy": 2009,
+       "val": 105930000
+      },
+      {
+       "accn": "0000950123-09-067237",
+       "end": "2009-01-31",
+       "filed": "2009-12-01",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2008Q4I",
+       "fy": 2009,
+       "val": 0
+      },
+      {
+       "accn": "0000950123-09-067237",
+       "end": "2009-10-31",
+       "filed": "2009-12-01",
+       "form": "10-Q",
+       "fp": "Q3",
+       "frame": "CY2009Q3I",
+       "fy": 2009,
+       "val": 0
       }
      ]
     }

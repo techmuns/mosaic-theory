@@ -14,22 +14,21 @@ from __future__ import annotations
 
 import re
 import statistics as st
-from datetime import date, datetime
+from datetime import datetime
 from typing import Any, NamedTuple
 
 from pydantic import BaseModel, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
-from vinci.edgar.client import _max_outstanding_debt
 from vinci.edgar.concepts import (
     CONCEPT_ALIASES,
     ConceptPoint,
     extract_points,
     latest_annual,
-    latest_instant,
     points_for_tag,
 )
+from vinci.edgar.net_debt import Basis, net_debt
 
 # --- tunable constants (named, not magic) -----------------------------------------------------
 ANCHOR_FIRM_MIN_YEARS = 7            # a margin spanning >=7 FYs plausibly covers a cycle -> "firm"
@@ -607,104 +606,57 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     return max(pts, key=lambda p: (p.period_end, -span(p), p.filed))
 
 
-def _sum_latest_tags(facts: dict[str, Any], *tags: str) -> float:
-    """Sum the latest-instant value of each explicit tag — an absent LEASE tag is a legitimate 0
-    (a filer without that lease type), unlike debt/cash which fail loud when wholly absent."""
-    return sum(p.value for t in tags if (p := latest_instant(points_for_tag(facts, t))))
-
-
-#: The CURRENT securities a CIQ TEV nets beside cash ("Total Cash & ST Investments"), in priority
-#: order. ONE tag is read, never a sum: a filer can tag one balance twice (a balance-sheet line and
-#: its note), and summing would net it twice. Two tags are deliberately ABSENT, because each holds
-#: more than the current balance — the bare parent ``MarketableSecurities`` carries the NONCURRENT
-#: part too (ORKA: $857.1M parent = $605.1M current + $252.0M noncurrent, and CIQ nets only the
-#: $605.1M), and ``AvailableForSaleSecuritiesDebtSecurities`` is every AFS security including those
-#: already inside cash equivalents (NFLX: $9,131.5M against $28.7M of short-term investments).
-#: Measured 2026-10-08 on the 26 committed names: each tag below is the one that reproduces CIQ's
-#: figure where EDGAR and CIQ share a balance-sheet date (AMZN, GOOGL, ORKA, UBER: the first;
-#: NFLX: the second; WLK: the third, its `MarketableSecuritiesCurrent` having stopped in 2016).
-_SHORT_TERM_SECURITIES_TAGS: tuple[str, ...] = (
-    "MarketableSecuritiesCurrent",
-    "ShortTermInvestments",
-    "AvailableForSaleSecuritiesDebtSecuritiesCurrent",
-)
-
-
-def _short_term_securities(facts: dict[str, Any], at: date) -> ConceptPoint | None:
-    """The first securities tag in :data:`_SHORT_TERM_SECURITIES_TAGS` reported AT ``at`` — the
-    cash instant — else None (a filer without the line nets nothing, like an absent lease tag).
-
-    THE SHARED PERIOD IS THE GUARD (§5.0 row 27). A tag is read only at the cash instant, never at
-    its own latest: six of the 26 committed names carry one of these tags that STOPPED before their
-    cash instant (EPAM 2024-12-31, LLY 2025-09-30, TGT 2026-01-31, MVST, NKE, ROST), and netting a
-    stale balance against today's cash subtracts money the company may no longer hold. CIQ nets
-    none of them either. A tag absent at the instant falls through to the next, which is how WLK's
-    current figure is found under the third tag."""
-    for tag in _SHORT_TERM_SECURITIES_TAGS:
-        at_cash = [p for p in points_for_tag(facts, tag)
-                   if p.period_start is None and p.period_end == at]
-        if at_cash:
-            return max(at_cash, key=lambda p: p.filed)
-    return None
-
-
 def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: bool = False,
                               ) -> tuple[float | None, str] | None:
-    """Lease-inclusive net debt ($): total debt (LT + current) + finance leases + operating leases −
-    cash − short-term securities, latest 10-Q. Returns ``(value_or_None, bridge)``; the tested
-    under-capture guard flips it UNKNOWN (value None) when a single instrument exceeds 1.1× the
-    extracted debt total (never a confident understatement — 'pull CIQ'). Wholly-absent debt/cash →
-    the whole thing is None.
+    """Lease-inclusive net debt ($): total debt + finance leases + operating leases − cash −
+    short-term securities, every line at the latest balance sheet — the EV basis of
+    :func:`vinci.edgar.net_debt.net_debt`, the ONE builder the screen's snapshot reads too.
+    Returns ``(value_or_None, bridge)``; a refused reading (the tested under-capture witness, or a
+    debt line absent from that balance sheet) is ``(None, why)`` — never a confident
+    understatement, 'pull CIQ'. A filer with no cash line or no debt tag ever → None.
 
     ``ex_operating_leases`` drops the operating-lease leg (2026-10-19): the bridge of a multiple
-    struck on TEV LESS operating leases (`lease_basis`). The leg is still printed, as excluded, so
-    the reader sees what the bridge leaves out and why.
+    struck on TEV LESS operating leases (`lease_basis`) — the builder's LEVERAGE basis. The leg is
+    still printed, as excluded, so the reader sees what the bridge leaves out and why.
 
     THE CASH LEG MATCHES THE MULTIPLE IT BRIDGES (§5.0 row 27, 2026-10-08). Every multiple this
-    figure bridges is a CIQ TEV multiple, and CIQ's TEV nets cash AND short-term investments. This
-    netted cash alone, so on a name holding securities the bridge deducted debt the multiple had
-    already netted — GOOGL's anchor read net DEBT +$64,880M against CIQ's net CASH −$121,683M, the
-    gap its $186,563M of marketable securities to the dollar. The 2026-07-22 lease convention made
-    the DEBT leg one ruler with CIQ; this does the same for the cash leg."""
-    ltd = latest_instant(extract_points(facts, "long_term_debt"))
-    dc = latest_instant(extract_points(facts, "debt_current"))
-    cash = latest_instant(extract_points(facts, "cash"))
-    if not (ltd or dc) or cash is None:
+    figure bridges is a CIQ TEV multiple, and CIQ's TEV nets cash AND short-term investments.
+    Netting cash alone left GOOGL's anchor at net DEBT +$64,880M against CIQ's net CASH
+    −$121,683M, the gap its $186,563M of marketable securities to the dollar.
+
+    ONE DATE FOR EVERY LINE (§5.0 row 27 (1), 2026-10-19). Each leg used to be read at its own
+    latest date, so a current-debt tag that stopped a quarter early still counted (WERN: $9M of
+    debt not on its 2026-06-30 balance sheet, which CIQ's $889M does not carry either)."""
+    nd = net_debt(facts)
+    if nd is None or nd.nothing_to_read:
         return None
-    sec = _short_term_securities(facts, cash.period_end)
-    # THE TWO TERMS MUST SHARE A BASIS (review of #531). `LongTermDebtNoncurrent` EXCLUDES current
-    # maturities and is meant to be added to a current figure; bare `LongTermDebt` is the total and
-    # already CONTAINS them. The alias order encodes that, and adding `debt_current` on top of the
-    # total double-counts — VITL surfaced it: $30.0M total (2026-06-28) plus a $1.1M current figure
-    # whose own tag stopped in 2020, summed under a "latest 10-Q" label. Which tag was served is the
-    # only thing that says which basis this is, so read it rather than assume the pairing.
-    ltd_is_total = ltd is not None and ltd.tag == "LongTermDebt"
-    td = (ltd.value if ltd else 0.0) + (0.0 if ltd_is_total else (dc.value if dc else 0.0))
-    fin = _sum_latest_tags(facts, "FinanceLeaseLiabilityCurrent", "FinanceLeaseLiabilityNoncurrent")
-    opl = _sum_latest_tags(facts, "OperatingLeaseLiabilityCurrent",
-                           "OperatingLeaseLiabilityNoncurrent")
+    if nd.borrowings is None and not nd.undercaptured:
+        return None, f"{nd.refusal}; pull CIQ"
+    sec = nd.securities
+    td = nd.debt
     # A name without the line keeps its bridge text byte-for-byte: the leg is printed only where it
     # is netted, so a page that moves is a page whose number moved.
     sec_txt = (f" − short-term investments {sec.value / _USD_M:,.0f} "
                f"({sec.tag}, {sec.period_end.isoformat()})" if sec else "")
+    debt_txt = (f"total debt incl. finance leases {td / _USD_M:,.0f}"
+                if nd.borrowings is not None and nd.borrowings.finance_leases_inside
+                else f"total debt {td / _USD_M:,.0f} + finance leases "
+                     f"{nd.finance_leases / _USD_M:,.0f}")
+    opl = nd.operating_leases / _USD_M
     if ex_operating_leases:
+        # the ex-lease bridge IS the builder's LEVERAGE basis: operating leases out, finance in
         bridge = (
-            f"total debt {td / _USD_M:,.0f} + finance leases {fin / _USD_M:,.0f} − cash "
-            f"{cash.value / _USD_M:,.0f}{sec_txt} ($M); operating leases {opl / _USD_M:,.0f} "
-            "EXCLUDED — the multiple is struck on TEV less operating leases"
+            f"{debt_txt} − cash {nd.cash.value / _USD_M:,.0f}{sec_txt} ($M); operating leases "
+            f"{opl:,.0f} EXCLUDED — the multiple is struck on TEV less operating leases"
         )
     else:
         bridge = (
-            f"total debt {td / _USD_M:,.0f} + finance leases {fin / _USD_M:,.0f} + operating "
-            f"leases {opl / _USD_M:,.0f} − cash {cash.value / _USD_M:,.0f}{sec_txt} ($M)"
+            f"{debt_txt} + operating leases {opl:,.0f} − cash "
+            f"{nd.cash.value / _USD_M:,.0f}{sec_txt} ($M)"
         )
-    ref = max((p.period_end.isoformat() for p in (ltd, dc) if p), default=None)
-    witness = _max_outstanding_debt(facts, ref)
-    if witness and witness[0] > td * 1.10:
-        return None, (bridge + f" — UNDER-CAPTURED: {witness[1]} ${witness[0] / _USD_M:,.0f}M "
-                      "alone exceeds the extracted long-term+current total; pull CIQ")
-    return (td + fin + (0.0 if ex_operating_leases else opl) - cash.value
-            - (sec.value if sec else 0.0)), bridge
+    if nd.undercaptured:
+        return None, f"{bridge} — UNDER-CAPTURED: {nd.witness_text}; pull CIQ"
+    return nd.value(Basis.LEVERAGE if ex_operating_leases else Basis.EV), bridge
 
 
 DQ_VENDOR_BRIDGE = "vendor_bridge"

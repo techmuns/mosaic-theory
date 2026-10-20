@@ -343,7 +343,16 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: pages the same day — AMZN 245.46→249.57, WLK 104.35→105.98, VRRM 21.75→21.79 (GOOGL
 #: 197.01→212.17 and UBER's net debt moved too; this pin cannot see either). **EMPTY AGAIN**, the
 #: load-bearing state: committed JSON and a fresh recompute agree on every applicable anchor.
-ANCHORS_AWAITING_BACKFILL: set[str] = set()
+#:
+#: It holds ``{BURL, TGT, WERN}`` from §5.0 row 27 (1) (2026-10-19): net debt is read by ONE builder
+#: with every line at one balance-sheet date. BURL 183.42→185.55 (+1.16%; net debt 5,338→5,202,
+#: CIQ's own figure), TGT 137.57→140.10 (+1.84%; 14,804→13,650 against CIQ's 13,785), WERN
+#: 30.82→30.96 (+0.46%; 897→888 against CIQ's 889). This pin cannot see the rest: AMZN's net debt
+#: +1,096 (base −0.04%, under the bar), UBER's 7,565→9,562, NFLX's UNKNOWN→7,512 (its committed
+#: base is null), TECX's −208→refused (`docs/records/2026-10-19-net-debt-one-builder.md`).
+#: These moves are on pages WITHOUT a lease basis; #750's lease-basis pass moves BURL and TGT onto
+#: the ex-lease bridge in the SAME artifact pass, so their landed values are the ex-lease ones.
+ANCHORS_AWAITING_BACKFILL: set[str] = {"BURL", "TGT", "WERN"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
