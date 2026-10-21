@@ -433,7 +433,7 @@ R1_FORMULA: tuple[str, ...] = (
     "EBITDA = EBIT + D&A",
     "EV = EBITDA × exit multiple (EV/EBITDA)",
     "equity = EV − net debt",
-    "value/share = equity ÷ point-in-time shares outstanding (dilution tested separately)",
+    "value/share = equity ÷ diluted shares",
 )
 
 

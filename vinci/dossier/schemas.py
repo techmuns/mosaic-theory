@@ -333,13 +333,15 @@ class EvEbitdaAtPrice(BaseModel, frozen=True):
 
     The ex-lease history's own `current` is the latest QUARTERLY close in CIQ's Historical
     Capitalization (TJX: 16.3x at 2026-08-28), weeks behind the page. This strikes the same basis
-    at the stored close: (price × point-in-time shares + net debt excluding operating leases, the
-    anchor's builder) ÷ the history's latest LTM EBITDA."""
+    at the stored close: (price × the anchor's share count + net debt excluding operating leases,
+    the anchor's builder) ÷ the history's latest LTM EBITDA. The count is `anchor.share_denominator`
+    — the one the base value per share divides, named in `shares_basis`."""
 
     value: float
     price: float
     price_as_of: str | None = None
     shares: float
+    shares_basis: str
     net_debt: float                           # $M, excluding operating leases
     net_debt_source: str
     ev: float                                 # $M

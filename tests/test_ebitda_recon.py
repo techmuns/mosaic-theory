@@ -204,3 +204,46 @@ def test_the_brief_prints_the_reconciliation_where_quarters_differ_md_e2e() -> N
 
 def test_period_ends_are_iso_dates() -> None:
     assert all(date.fromisoformat(r.period_end) for r in _tjx().quarters)
+
+
+# --- the leverage caveat, regenerated on a kept synthesis -----------------------------------------
+
+#: TGT's caveat VERBATIM as main 4b514dca committed it — the one sentence that called CIQ's EBITDA
+#: "REPORTED … (CIQ / consolidated GAAP)".
+_OLD_TGT_CAVEAT = (
+    "Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant "
+    "basis; management and credit covenants typically define leverage on adjusted EBITDA (a "
+    "larger denominator → a lower ratio), reconciled in the earnings release/transcript "
+    "(currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.")
+
+
+def test_the_leverage_caveat_is_regenerated_never_string_edited() -> None:
+    """(+) TGT's page with main's caveat put back: the transform rebuilds exactly that one, through
+    the assembler's `_leverage_basis_flag`, into the caveat the committed page carries. (0) The
+    committed page — nothing to regenerate. (−) Two candidates: refused, never a guess at which."""
+    from vinci.dossier.refresh import leverage_caveat_transform
+
+    doc = json.loads(Path("data/dossiers/TGT/dossier.json").read_text())
+    now = list(doc["caveats"])
+    i = next(i for i, c in enumerate(now) if c.startswith("Net debt/EBITDA ("))
+    assert "CIQ's EBITDA (vendor-normalised" in now[i]
+    old = dict(doc, caveats=[*now[:i], _OLD_TGT_CAVEAT, *now[i + 1:]])
+    assert leverage_caveat_transform()(old) == {"caveats": now}
+    assert leverage_caveat_transform()(doc) == {}
+    with pytest.raises(ValueError, match="cannot be regenerated"):
+        leverage_caveat_transform()(dict(doc, caveats=[_OLD_TGT_CAVEAT, _OLD_TGT_CAVEAT]))
+
+
+def test_a_stated_amount_matches_only_at_its_own_precision() -> None:
+    """(−) SIMPLY GOOD, verbatim (8-K 0001702744-26-000021): +$95.5M is an $82.0M impairment with
+    integration and restructuring costs; the 2% window alone quoted the marketing line, 1.6% away.
+    (+) VISA, verbatim (8-K 0001403161-26-000044): "$707 million" against +$708.0M — one unit of
+    its stated precision, the rounding of a figure stated to the million."""
+    smpl = ("Selling and marketing expenses of $97.0 million decreased 4.8% versus the comparable "
+            "year ago period driven by planned marketing declines for Atkins.")
+    assert er._matching_sentence(smpl, 95.5) is None
+    assert er._matching_sentence(smpl, 97.05) is not None          # within its 0.1 unit
+    visa = ("Current year's results included special items of $707 million for a litigation "
+            "provision associated with the interchange multidistrict litigation (\"MDL\") case.")
+    assert er._matching_sentence(visa, 708.0) is not None
+    assert er._matching_sentence(visa, 709.0) is None              # two units off

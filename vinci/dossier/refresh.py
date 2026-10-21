@@ -1108,6 +1108,14 @@ def valuation_bases_transform(ticker: str, cik: str | None) -> Transform:
                 bundle = cand
         except (FileNotFoundError, CiqUnavailableError):
             bundle = None
+        # REBUILT, NEVER CARRIED: a block the builder no longer writes must not survive the refresh
+        # (and a block in an older shape must not fail the validation below). The reconciliation is
+        # dropped only when it is rebuilt — without the page's own export, the one built from it at
+        # assembly stands.
+        for key in ("ev_ebitda_basis", "ev_ebitda_ex_lease_at_price"):
+            out["valuation"].pop(key, None)
+        if bundle is not None and isinstance(out.get("financial_summary"), dict):
+            out["financial_summary"].pop("ebitda_reconciliation", None)
         built = dm.with_valuation_bases(MechanicalLayer.model_validate(out), facts, bundle,
                                         text_for=dm.release_text_fn(build_sec_http(cfg), cik))
         for key in ("ev_ebitda_basis", "ev_ebitda_ex_lease_at_price"):

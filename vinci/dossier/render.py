@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.config import get_config
-from vinci.dossier.anchor import DQ_LEASE_BASIS, Anchor
+from vinci.dossier.anchor import DQ_LEASE_BASIS, SHARES_REFUSED, Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import (
     refresh_line,
@@ -3456,6 +3456,11 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
               else " · on the diluted weighted average")
         rows.append(f"| Screen value / share | ${base:,.2f} | spot-independent · "
                     f"EV/EBIT {'—' if ev is None else f'{ev:.1f}'}x{on} |")
+        # a REFUSED point-in-time count is stated, never left to look like an oversight (LLY's
+        # trust shares, 2026-10-21). Twin: anchorInner() in dossier.js.
+        if so is not None and so.value is None and so.source.startswith(SHARES_REFUSED):
+            rows.append(f"| Point-in-time count | refused | "
+                        f"{_md_cell(so.source[len(SHARES_REFUSED):])} |")
         # (2026-10-21) dilution TESTED beside it, never folded in: the filer's own increment.
         # Twin: anchorInner() in dossier.js.
         dil, inc = anchor.anchor_base_value_per_share_diluted, anchor.dilutive_increment

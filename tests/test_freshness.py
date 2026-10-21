@@ -510,6 +510,10 @@ _CLASSIFIED_PANEL_KEYS = {
     # and is already "export". A CIQ export is ours to re-pull on our own schedule, never the
     # street's to revise, so it GATES. Not added to CONSENSUS_PANELS.
     "stock_info.market_cap_as_of": "export",
+    # (2026-10-21) FOUND BY THIS GUARD on the valuation-bases pass: the date of the comps TEV that
+    # `ev_ebitda_basis` divides — a copy of `valuation.implied_expectations.tev_as_of` above, the
+    # same CIQ export, so it gates exactly as that one does and moves no page's oldest export age.
+    "valuation.ev_ebitda_basis.tev_as_of": "export",
 }
 
 

@@ -7,10 +7,12 @@ added back reproduces 13.3x to 0.7% — but the page never said so, and R1's own
 less operating leases over reported EBITDA, at the page's price: 17.8x) was nowhere on it; its only
 "current" was 16.3x at a two-month-old quarterly close.
 
-THE FLEET, measured before any pin (2026-10-21, main 4b514dca, 27 pages): 14 reproduce the
-rent-inclusive pairing within 0.7%–4.9%, NFLX the reported one, BRBR/GOOGL/LLY/UBER/V cannot be told
-apart (rent under 5% of EBITDA), AORT/IT/VITL/VRRM reproduce neither, four lack an input. A label
-assumed fleet-wide would be wrong on a third of the pages, so each is measured.
+THE FLEET, as the 2026-10-21 pass wrote it (27 pages, main 4b514dca's inputs): 13 reproduce the
+rent-inclusive pairing within 0.1% (TGT)–4.6% (AMZN), NFLX the reported one, BRBR/GOOGL/LLY/UBER/V
+cannot be told apart (rent under 5% of EBITDA), AORT/IT/VITL/VRRM reproduce neither, and FUBO/NKE/
+ORKA/TECX lack an input. A label assumed fleet-wide would be wrong on half the pages, so each is
+measured. (A pre-pin probe the same day reported "14"; its five buckets summed to 28 — one name was
+counted twice — and the pages, not the probe, are the count.)
 """
 from __future__ import annotations
 
@@ -21,6 +23,7 @@ from pathlib import Path
 
 import pytest
 
+from vinci.dossier import anchor as an
 from vinci.dossier import ev_ebitda_basis as eb
 from vinci.dossier import render as dr
 from vinci.dossier import schemas as ds
@@ -87,7 +90,7 @@ def test_no_snapshot_tev_no_reading() -> None:
 
 def test_the_at_price_figure_is_its_own_arithmetic_e2e() -> None:
     """On every committed page that carries it: (price × shares + net debt) ÷ LTM EBITDA, from the
-    block's own fields; the shares are the page's point-in-time count; the LTM EBITDA is the
+    block's own fields; the shares are the anchor's own denominator; the LTM EBITDA is the
     ex-lease history's latest; and the anchor's ex-lease net debt is the same figure."""
     seen = 0
     for p in _PAGES:
@@ -98,7 +101,8 @@ def test_the_at_price_figure_is_its_own_arithmetic_e2e() -> None:
         seen += 1
         assert at["value"] == pytest.approx(
             (at["price"] * at["shares"] / 1e6 + at["net_debt"]) / at["ltm_ebitda"], rel=1e-6)
-        assert at["shares"] == d["mechanical"]["stock_info"]["shares_out"]["value"]
+        # ONE COUNT: the price is struck on the count the base value per share divides
+        assert at["shares"] == pytest.approx(an.per_share_shares(d["anchor"])), p
         obs = [o for o in d["mechanical"]["valuation"]["lease_basis"]["observations"]
                if o["multiple"] is not None]
         assert at["ltm_ebitda"] == pytest.approx(obs[-1]["ltm_ebitda"])
@@ -183,3 +187,61 @@ console.log(JSON.stringify(out));
                                     capture_output=True, text=True, check=True).stdout)
     assert res["TJX"] == {"divides": True, "atPrice": True}, res
     assert res["NFLX"]["divides"] is False, res
+
+
+def _fixture(t: str) -> dict[str, object]:
+    return json.loads(Path(f"tests/fixtures/companyfacts/{t}.json").read_text())
+
+
+@pytest.mark.parametrize(("t", "shares", "label"), [
+    # the corroborated point-in-time count (−0.4% against the basic average)
+    ("TJX", 1_099_974_061.0, an.SHARES_OUTSTANDING_LABEL),
+    # REFUSED (+3.3%): the price is struck on the diluted average the base divides, not on a count
+    # the anchor would not divide by
+    ("PARR", 49_444_000.0, an.SHARES_DILUTED_WA_LABEL),
+])
+def test_the_price_and_the_value_are_struck_on_one_count(t: str, shares: float,
+                                                         label: str) -> None:
+    """THE COMPUTE, on the real page and its frozen companyfacts: R1's multiple at the page's price
+    divides by `anchor.share_denominator` — and the line names which count it is."""
+    at = eb.ex_lease_at_price(_doc(t).mechanical, _fixture(t))
+    assert at is not None and at.shares == shares and at.shares_basis == label
+    assert f"{shares:,.0f} {label}" in at.line
+
+
+def _offline_transform(monkeypatch: pytest.MonkeyPatch, t: str) -> object:
+    """`valuation_bases_transform` with EDGAR served from the frozen fixture and no CIQ folder."""
+    from types import SimpleNamespace
+
+    import vinci.dossier.manual_store as ms
+    import vinci.edgar.client as ec
+    import vinci.sec as sec
+    from vinci.dossier import refresh as rf
+
+    def _no_folder(_t: str) -> list[Path]:
+        raise FileNotFoundError(_t)
+
+    monkeypatch.setattr(ec.EdgarClient, "from_config", staticmethod(
+        lambda _cfg: SimpleNamespace(companyfacts=lambda _cik: _fixture(t))))
+    monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
+        lambda _cfg: SimpleNamespace(files=_no_folder)))
+    monkeypatch.setattr(sec, "build_sec_http", lambda _cfg: None)
+    return rf.valuation_bases_transform(t, _doc(t).cik)
+
+
+def test_the_transform_rebuilds_a_block_never_carries_it(monkeypatch: pytest.MonkeyPatch) -> None:
+    """REGRESSION (the 2026-10-21 pass): TJX's page, assembled minutes before `shares_basis`
+    existed, failed the transform's own validation — the old block was carried into the rebuild.
+    (+) An old-shape block is replaced by the rebuilt one. (−) On a page the builder writes no
+    ex-lease figure for (LLY, rent immaterial), a planted block does not survive."""
+    tjx = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())["mechanical"]
+    old = dict(tjx["valuation"]["ev_ebitda_ex_lease_at_price"])
+    old.pop("shares_basis")
+    tjx["valuation"]["ev_ebitda_ex_lease_at_price"] = old
+    out = _offline_transform(monkeypatch, "TJX")(tjx)  # type: ignore[operator]
+    assert out["valuation"]["ev_ebitda_ex_lease_at_price"]["shares_basis"] == (
+        an.SHARES_OUTSTANDING_LABEL)
+    lly = json.loads(Path("data/dossiers/LLY/dossier.json").read_text())["mechanical"]
+    lly["valuation"]["ev_ebitda_ex_lease_at_price"] = old
+    out = _offline_transform(monkeypatch, "LLY")(lly)  # type: ignore[operator]
+    assert "ev_ebitda_ex_lease_at_price" not in out["valuation"]

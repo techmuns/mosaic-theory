@@ -39,7 +39,11 @@ from vinci.edgar.concepts import CONCEPT_ALIASES, points_for_tag
 #: names that match do so to the dollar or within 0.5% (UBER's +$7M on ~$2,000M), so two percent is
 #: a gap no rounding or tag choice explains.
 DIFFERENT_SHARE = 0.02
-#: How close a release's stated amount must sit to the gap to be quoted beside it.
+#: How close a release's stated amount must sit to the gap to be quoted beside it — AND it must sit
+#: within ONE UNIT of its own stated precision ("$707 million" ±1, "$97.0 million" ±0.1). A long
+#: release states dozens of amounts, so a share alone finds coincidences: on 2026-10-21 Simply
+#: Good's +$95.5M quarter (an $82.0M impairment with integration and restructuring costs) quoted
+#: "Selling and marketing expenses of $97.0 million", 1.6% away and fifteen units off its precision.
 MATCH_TOL = 0.02
 #: A release governs a quarter when it is filed within this many days after the quarter ends.
 _RELEASE_WINDOW_DAYS = 80
@@ -106,17 +110,22 @@ def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
 
 
 def _matching_sentence(text: str, gap: float) -> str | None:
-    """The first sentence stating a dollar amount within `MATCH_TOL` of |gap|, verbatim, or None."""
+    """The first sentence stating a dollar amount within `MATCH_TOL` of |gap| AND within one unit of
+    the amount's own stated precision, verbatim, or None."""
     want = abs(gap)
     if want <= 0:
         return None
     for m in _AMOUNT.finditer(text):
+        digits = m.group(1).replace(",", "")
         try:
-            v = float(m.group(1).replace(",", ""))
+            v = float(digits)
         except ValueError:
             continue
-        v *= 1000.0 if m.group(2).lower() == "billion" else 1.0
-        if abs(v - want) <= MATCH_TOL * want:
+        scale = 1000.0 if m.group(2).lower() == "billion" else 1.0
+        unit = 10.0 ** -len(digits.partition(".")[2]) * scale
+        v *= scale
+        off = abs(v - want)
+        if off <= MATCH_TOL * want and off <= unit + 1e-9:
             lo = max(text.rfind(". ", 0, m.start()) + 2, m.start() - 300, 0)
             hi = text.find(". ", m.end())
             hi = m.end() + 200 if hi == -1 else min(hi + 1, m.end() + 200)

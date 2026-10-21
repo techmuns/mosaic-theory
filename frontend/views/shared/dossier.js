@@ -1325,6 +1325,12 @@ function anchorInner(a) {
                          a.shares_outstanding && a.shares_outstanding.value
                            ? ` · on ${Math.round(a.shares_outstanding.value).toLocaleString("en-US")} shares outstanding`
                            : " · on the diluted weighted average"}`) : "",
+    // a REFUSED point-in-time count is stated (LLY's trust shares, 2026-10-21). Twin of
+    // _screening_context_lines() in render.py.
+    base != null && a.shares_outstanding && a.shares_outstanding.value == null
+      && String(a.shares_outstanding.source || "").startsWith("REFUSED — ")
+      ? row("Point-in-time count", "refused",
+            escapeHtml(String(a.shares_outstanding.source).slice("REFUSED — ".length)), { prose: true }) : "",
     // (2026-10-21) dilution TESTED beside it, never folded in: the filer's own increment.
     // Twin of _screening_context_lines() in render.py.
     a.anchor_base_value_per_share_diluted != null && a.dilutive_increment && a.dilutive_increment.value != null

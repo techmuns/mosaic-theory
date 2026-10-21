@@ -125,10 +125,12 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
 def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
                       ) -> EvEbitdaAtPrice | None:
     """R1's ex-lease EV/EBITDA at the page's stored close — only where R1 prices that basis (rent
-    material and an ex-lease history built), and only from a complete bridge: a price, a
-    point-in-time share count, net debt excluding operating leases (the anchor's builder) and the
-    history's latest LTM EBITDA. None otherwise, never a partial figure."""
-    from vinci.dossier.anchor import _lease_inclusive_net_debt  # the anchor's ONE bridge builder
+    material and an ex-lease history built), and only from a complete bridge: a price, the
+    anchor's share count (`share_denominator` — the one its base value divides), net debt excluding
+    operating leases (the anchor's builder) and the history's latest LTM EBITDA. None otherwise,
+    never a partial figure."""
+    # the anchor's ONE bridge builder and ONE denominator
+    from vinci.dossier.anchor import _lease_inclusive_net_debt, share_denominator
 
     lb = mech.valuation.lease_basis
     si = mech.stock_info
@@ -138,19 +140,20 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
     if last is None or last.ltm_ebitda <= 0:
         return None
     price = si.price.value if si.price.status is SourceStatus.PRESENT else None
-    shares = si.shares_out.value if si.shares_out.status is SourceStatus.PRESENT else None
+    count = share_denominator(mech.model_dump(mode="json"), facts)
     nd = _lease_inclusive_net_debt(facts, ex_operating_leases=True)
-    if not price or not shares or nd is None or nd[0] is None:
+    if not price or count is None or nd is None or nd[0] is None:
         return None
+    shares, shares_basis = count
     nd_m = nd[0] / 1e6
     ev = price * shares / 1e6 + nd_m
     value = ev / last.ltm_ebitda
     line = (f"at the page's ${price:,.2f} close ({_iso(si.as_of) or 'date unstated'}): "
-            f"(${price:,.2f} × {shares:,.0f} shares + net debt {_money(nd_m)} excluding "
+            f"(${price:,.2f} × {shares:,.0f} {shares_basis} + net debt {_money(nd_m)} excluding "
             f"operating leases) ÷ LTM EBITDA ${last.ltm_ebitda:,.0f}M (four quarters to "
             f"{last.balance_sheet_date}) = {value:.1f}x")
     return EvEbitdaAtPrice(
         value=round(value, 6), price=float(price), price_as_of=_iso(si.as_of),
-        shares=float(shares),
+        shares=float(shares), shares_basis=shares_basis,
         net_debt=round(nd_m, 3), net_debt_source="EDGAR: " + nd[1], ev=round(ev, 3),
         ltm_ebitda=round(last.ltm_ebitda, 3), ltm_through=last.balance_sheet_date, line=line)

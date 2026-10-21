@@ -70,6 +70,17 @@ _DILUTED_TAG = "WeightedAverageNumberOfDilutedSharesOutstanding"
 #: dilutive increment the filer itself counts (options and RSUs by treasury stock, convertibles
 #: if-converted) — the only dilution figure this repo reads rather than estimates.
 _BASIC_TAG = "WeightedAverageNumberOfSharesOutstandingBasic"
+#: How far the point-in-time count may sit from that basic weighted average and still be the
+#: per-share denominator. BELOW it is what a buyback does between the quarter's midpoint and the
+#: cover date (IT −5.0% on $1,082M repurchased in the half — the deepest of the 19 pages carrying a
+#: base value, measured 2026-10-21 on main 4b514dca's 27 pages). ABOVE it is issuance OR a count the
+#: filer does not treat as outstanding for EPS — Lilly's cover reads 941.4M against 892.4M basic,
+#: the gap its employee benefit trust holds (`CommonStockSharesHeldInEmployeeTrustShares`
+#: 50,000,000, FY2025 10-K); PARR +3.3% — and the counts cannot tell those apart, so beyond the
+#: margin neither is chosen. The other 16 pages with a base sit within −1.6% (SMPL) .. +0.7%
+#: (GOOGL).
+SHARES_BELOW_BASIC = 0.10
+SHARES_ABOVE_BASIC = 0.02
 _NOTE = (
     "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 "
     "underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored "
@@ -696,8 +707,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
     dil = _latest_point(facts, _DILUTED_TAG)
-    out, out_src = _shares_outstanding(mechanical)
-    inc = _dilutive_increment(facts, dil)
+    out, out_src = _shares_outstanding(mechanical, facts, dil)
+    inc = _dilutive_increment(facts, dil) if out is not None else None
     ltm_rev = _ltm_revenue_from_fs(mechanical)
     fcf = _latest_fcf(facts)
 
@@ -749,8 +760,11 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             value=(inc[0] if inc else None), unit="shares",
             basis="diluted less basic weighted average over the latest 10-Q quarter — the "
                   "dilution test",
-            source=(inc[1] if inc else "UNKNOWN — the 10-Q tags no basic weighted average for "
-                                       "the diluted figure's own period")),
+            source=(inc[1] if inc else
+                    "UNKNOWN — the 10-Q tags no basic weighted average for the diluted figure's "
+                    "own period" if out is not None else
+                    "not tested — the base divides the diluted weighted average, which already "
+                    "counts it")),
         "ltm_revenue": AnchorInput(value=(round(ltm_rev, 3) if ltm_rev is not None else None),
                                    unit="$M", basis="LTM revenue",
                                    source="committed financial_summary.annual (LTM)"),
@@ -765,15 +779,53 @@ _BRIDGE_FIELDS = ("d_and_a", "net_debt", "diluted_shares", "shares_outstanding",
                   "dilutive_increment", "ltm_revenue", "ltm_fcf")
 
 
-def _shares_outstanding(mechanical: dict[str, Any]) -> tuple[float | None, str]:
+#: The refusal's prefix — the renderers print the sentence after it as the page's reason.
+SHARES_REFUSED = "REFUSED — "
+
+
+def _basic_point(facts: dict[str, Any], dil: ConceptPoint | None) -> ConceptPoint | None:
+    """The basic weighted average over the diluted figure's OWN period (same start, same end)."""
+    if dil is None:
+        return None
+    basic = [p for p in points_for_tag(facts, _BASIC_TAG)
+             if p.period_end == dil.period_end and p.period_start == dil.period_start]
+    return max(basic, key=lambda p: p.filed) if basic else None
+
+
+def _span(p: ConceptPoint) -> str:
+    return f"{p.period_start.isoformat() if p.period_start else '?'}..{p.period_end.isoformat()}"
+
+
+def _shares_outstanding(mechanical: dict[str, Any], facts: dict[str, Any],
+                        dil: ConceptPoint | None) -> tuple[float | None, str]:
     """(count, source) — the page's own POINT-IN-TIME count, `stock_info.shares_out`: the count its
-    market cap is struck on, guarded upstream for age and share class (`_stock_info`). Read, never
-    re-derived, so the anchor and the CMP cannot disagree about how many shares there are."""
+    market cap is struck on. Read, never re-derived, so the anchor and the CMP cannot disagree about
+    how many shares there are — and USED only where the filer's own basic weighted average over the
+    latest 10-Q quarter corroborates it (`SHARES_BELOW_BASIC` / `SHARES_ABOVE_BASIC`). A count the
+    filer's EPS does not recognise is refused, never divided by: the base then stays on the diluted
+    weighted average and the refusal is the page's to state (None, "REFUSED — …")."""
     so = ((mechanical.get("stock_info") or {}).get("shares_out") or {})
     v = so.get("value") if so.get("status") == "present" else None
-    if isinstance(v, (int, float)) and v > 0:
-        return float(v), f"mechanical.stock_info.shares_out ({so.get('source_ref')})"
-    return None, f"UNKNOWN — stock_info.shares_out absent ({so.get('note') or 'no count'})"
+    if not (isinstance(v, (int, float)) and v > 0):
+        return None, f"UNKNOWN — stock_info.shares_out absent ({so.get('note') or 'no count'})"
+    src = f"mechanical.stock_info.shares_out ({so.get('source_ref')})"
+    b = _basic_point(facts, dil)
+    if b is None or b.value <= 0:
+        return None, (f"{SHARES_REFUSED}the point-in-time count {v:,.0f} cannot be checked: the "
+                      "filer tags no basic weighted average for its latest diluted figure's "
+                      f"period. {src}")
+    gap = v / b.value - 1
+    # UNSIGNED, with its direction in words: the screening block carries no signed percentage
+    # (test_parity_pins — a "+x%" there reads as an implied upside against spot)
+    where = (f"{abs(gap):.1%} {'above' if gap > 0 else 'below'} the filer's basic weighted "
+             f"average {b.value:,.0f} ({_span(b)})")
+    if -SHARES_BELOW_BASIC <= gap <= SHARES_ABOVE_BASIC:
+        return float(v), f"{src}; {where}"
+    why = ("issuance or shares the filer does not count as outstanding for EPS (an employee "
+           "benefit trust, unvested restricted stock), which the counts cannot tell apart"
+           if gap > 0 else "more than a quarter's buyback pace explains")
+    return None, (f"{SHARES_REFUSED}the point-in-time count {v:,.0f} sits {where} — {why}. "
+                  f"{src}")
 
 
 def _dilutive_increment(facts: dict[str, Any], dil: ConceptPoint | None,
@@ -781,16 +833,32 @@ def _dilutive_increment(facts: dict[str, Any], dil: ConceptPoint | None,
     """(shares, source) — diluted less basic weighted average over the diluted figure's OWN period
     (same start, same end), or None. Never two periods mixed: a basic count from another span
     differs by the buyback pace, the very error this field keeps apart from dilution."""
-    if dil is None:
+    b = _basic_point(facts, dil)
+    if dil is None or b is None:
         return None
-    basic = [p for p in points_for_tag(facts, _BASIC_TAG)
-             if p.period_end == dil.period_end and p.period_start == dil.period_start]
-    if not basic:
-        return None
-    b = max(basic, key=lambda p: p.filed)
-    span = f"{b.period_start.isoformat() if b.period_start else '?'}..{b.period_end.isoformat()}"
+    span = _span(b)
     return (max(0.0, dil.value - b.value),
             f"EDGAR {_DILUTED_TAG} {dil.value:,.0f} − {_BASIC_TAG} {b.value:,.0f} ({span})")
+
+
+#: What the denominator IS, as both consumers print it.
+SHARES_OUTSTANDING_LABEL = "shares outstanding"
+SHARES_DILUTED_WA_LABEL = ("diluted weighted-average shares (the point-in-time count is refused "
+                           "against the filer's basic weighted average)")
+
+
+def share_denominator(mechanical: dict[str, Any], facts: dict[str, Any],
+                      ) -> tuple[float, str] | None:
+    """(count, label) — THE per-share denominator, the one rule for the anchor's base and for R1's
+    ex-lease multiple at the page's price, so a price and a value are never struck on two counts:
+    the corroborated point-in-time count, else the diluted weighted average, else None."""
+    dil = _latest_point(facts, _DILUTED_TAG)
+    out, _src = _shares_outstanding(mechanical, facts, dil)
+    if out is not None:
+        return out, SHARES_OUTSTANDING_LABEL
+    if dil is not None and dil.value > 0:
+        return dil.value, SHARES_DILUTED_WA_LABEL
+    return None
 
 
 def per_share_shares(anchor: dict[str, Any]) -> float | None:
@@ -1111,14 +1179,17 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # not this company's EBITDA, so re-rating to it would publish a fabricated fundamental — the one
     # outcome the fail-loud rule exists to prevent. UNUSABLE until cleared, not merely "weak".
     base = base_diluted = ev_ebit = None
-    out, inc = bridge["out"], bridge["inc"]
-    if (da and nd_val is not None and out and ltm_rev is not None and not band_tripped):
+    # THE DENOMINATOR: the corroborated point-in-time count, else the diluted weighted average the
+    # base was struck on before 2026-10-21 — a refused count never silently becomes the divisor.
+    out, inc, dil = bridge["out"], bridge["inc"], bridge["dil"]
+    shares = out or (dil.value if dil and dil.value > 0 else None)
+    if (da and nd_val is not None and shares and ltm_rev is not None and not band_tripped):
         sv = mc.scenario_value(
             mc.Scenario(name="base", revenue=ltm_rev, margin=margin_val, multiple=mult_median,
                         source="anchor default", d_and_a=da[0] / _USD_M),
-            net_debt=nd_val / _USD_M, shares=out)
-        base = round(sv.equity * _USD_M / out, 4)
-        if inc is not None:
+            net_debt=nd_val / _USD_M, shares=shares)
+        base = round(sv.equity * _USD_M / shares, 4)
+        if out and inc is not None:
             base_diluted = round(sv.equity * _USD_M / (out + inc), 4)
         ev_ebit = round(sv.ev_ebit, 4) if sv.ev_ebit is not None else None
 

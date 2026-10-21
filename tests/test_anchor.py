@@ -26,6 +26,7 @@ from vinci.dossier.anchor import (
     _latest_dep_amort,
     compute_anchor,
     insert_anchor_block,
+    per_share_shares,
     replace_anchor_block,
 )
 from vinci.dossier.schemas import Dossier
@@ -53,6 +54,9 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         # midcycle_gap (2026-09-21): R1's central assumption stated where it is STRETCHED — set
         # only when the LTM margin sits MIDCYCLE_GAP_PTS or more from the median, else absent.
         "midcycle_gap",
+        # (2026-10-21) the per-share denominator — the point-in-time count where the filer's basic
+        # weighted average corroborates it — and the dilution test struck beside the base.
+        "shares_outstanding", "dilutive_increment", "anchor_base_value_per_share_diluted",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}
@@ -95,12 +99,15 @@ def test_backfilled_anchor_base_consistent_with_stored_inputs() -> None:
     d = json.loads((_ROOT / "data" / "dossiers" / "IT" / "dossier.json").read_text())
     a = d.get("anchor")
     assert a and a["recipe_hint"] == RECIPE_R1 and a["applicable"]
+    # the count the base was struck on (`per_share_shares`: point-in-time since 2026-10-21)
+    shares = per_share_shares(a)
+    assert shares is not None
     sv = mc.scenario_value(
         mc.Scenario(name="base", revenue=a["ltm_revenue"]["value"], margin=a["margin"]["value"],
                     multiple=a["multiple"]["value"], source="anchor default",
                     d_and_a=a["d_and_a"]["value"]),
-        net_debt=a["net_debt"]["value"], shares=a["diluted_shares"]["value"])
-    recomputed = sv.equity * 1e6 / a["diluted_shares"]["value"]
+        net_debt=a["net_debt"]["value"], shares=shares)
+    recomputed = sv.equity * 1e6 / shares
     assert recomputed == pytest.approx(a["anchor_base_value_per_share"], abs=0.01)
     # EBITDA basis: the stored EV/EBIT exceeds the multiple (EV/EBITDA) because EBIT < EBITDA
     assert a["anchor_ev_ebit"] > a["multiple"]["value"]
