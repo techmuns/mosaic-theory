@@ -68,7 +68,9 @@ _Bear case — the decline is real:_
 | Net income ($M) | 435 | 314 | 251 | -1,279 | -1,314 | 199 | 372 |
 | EPS (GAAP, dil.) | 8.28 | 5.70 | 3.71 | -20.36 | -21.35 | 3.19 | 6.04 |
 | Impairment of Goodwill ($M) | — | — | — | -1,523 | -1,523 | — | — |
-| FCF ($M) | 505 | 476 | 632 | 705 | 776 | — | — |
+| FCF (levered, CIQ) | 505 | 476 | 632 | 705 | 776 | — | — |
+
+_FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 

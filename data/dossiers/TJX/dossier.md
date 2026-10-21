@@ -63,7 +63,9 @@ _Bear case — the decline is real:_
 | EBIT ($M) | 4,860 | 5,797 | 6,302 | 7,178 | 7,584 | 7,683 | 8,316 |
 | Net income ($M) | 3,498 | 4,474 | 4,864 | 5,494 | 6,067 | 5,947 | 6,381 |
 | EPS (GAAP, dil.) | 2.97 | 3.86 | 4.26 | 4.87 | 5.40 | 5.33 | 5.79 |
-| FCF ($M) | 1,894 | 3,527 | 3,209 | 3,892 | 4,398 | — | — |
+| FCF (levered, CIQ) | 1,894 | 3,527 | 3,209 | 3,892 | 4,398 | — | — |
+
+_FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 

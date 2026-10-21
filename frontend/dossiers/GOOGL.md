@@ -100,7 +100,9 @@ _Bear case — the price already pays for it:_
 | EBIT ($M) | 74,842 | 84,293 | 112,390 | 129,039 | 147,628 | 171,734 | 216,725 |
 | Net income ($M) | 59,972 | 73,795 | 100,118 | 132,170 | 244,205 | 252,155 | 186,577 |
 | EPS (GAAP, dil.) | 4.56 | 5.80 | 8.04 | 10.80 | 19.93 | 20.62 | 14.91 |
-| FCF ($M) | 49,939 | 56,280 | 53,158 | 38,088 | 22,665 | — | — |
+| FCF (levered, CIQ) | 49,939 | 56,280 | 53,158 | 38,088 | 22,665 | — | — |
+
+_FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
