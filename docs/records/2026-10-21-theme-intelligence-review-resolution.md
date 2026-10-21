@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-review-resolution
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [768]
 supersedes:
 superseded-by:
 ---
