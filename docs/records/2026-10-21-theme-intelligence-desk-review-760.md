@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-desk-review-760
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [761]
 supersedes:
 superseded-by:
 ---
