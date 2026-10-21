@@ -2,7 +2,7 @@
 id: 2026-10-21-validate-keys-pings-the-pipeline-model
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [758]
 supersedes:
 superseded-by:
 ---
@@ -46,7 +46,8 @@ superseded-by:
   - NEGATIVE: a connection error still only warns.
 - **Mutation:** 5 mutants, all killed: Haiku restored, 404 handler removed, 404 passing, a
   16-token ping, a connection error failing.
-- **Actions:** the `validate-keys` run on this branch is in the PR.
+- **Actions,** run 39585936189 on this branch (ff04f549): "ANTHROPIC_API_KEY: PASS —
+  authenticated; claude-opus-4-8 answered", with Polygon, Tiingo and SEC all PASS.
 
 **BOUNDARY.**
 - "Every pipeline": the four workflows that read `ANTHROPIC_API_KEY` (`weekly-screen`,
