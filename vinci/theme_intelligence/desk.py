@@ -93,6 +93,7 @@ from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
     MANUAL_MODES,
     PRICE_ONLY_MODES,
+    REFRESH_MODES,
     REVIEW_WARNINGS,
     AsOf,
     Dashboard,
@@ -392,11 +393,12 @@ def desk_weeks(store: Store, run: WeeklyRun) -> list[Week]:
         # window is no week's research (`report_runs` never takes it either)
         after = [r for r in runs if r.mode in MANUAL_MODES and since(r) and follows(r, s)
                  and (nxt is None or r.started_at < nxt)
-                 and (r.mode in PRICE_ONLY_MODES or r.as_of >= start)]
-        priced = [r for r in after if r.mode in PRICE_ONLY_MODES and done(r)]
-        reread = [r for r in after if r.mode not in PRICE_ONLY_MODES and done(r)]
+                 and (r.mode in REFRESH_MODES or r.as_of >= start)]
+        refreshed = [r for r in after if r.mode in REFRESH_MODES and done(r)]
+        priced = [r for r in refreshed if r.mode in PRICE_ONLY_MODES]
+        reread = [r for r in after if r.mode not in REFRESH_MODES and done(r)]
         out.append(Week(key="", start=start, end=end,
-                        runs=(*report_runs(store, s), *priced, *reread),
+                        runs=(*report_runs(store, s), *refreshed, *reread),
                         failed=(*failed, *(r for r in after if r.status is RunStatus.FAILED)),
                         scanned=True, priced_to=max((r.as_of for r in priced), default=None),
                         reread=bool(reread)))
