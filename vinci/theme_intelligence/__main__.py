@@ -675,7 +675,9 @@ def cmd_upload(a: argparse.Namespace) -> int:
                      as_new=a.as_new, dry_run=a.dry_run,
                      make_pipeline=lambda: pipeline(_client(required=False)),
                      make_replay_pipeline=lambda: pipeline(None))  # the replay: cache only
-    except UploadError as exc:
+    except UploadError as exc:  # what it did before it stopped, then why it stopped
+        for line in exc.lines:
+            print(line)
         print(f"upload refused at {exc}")
         return 1
     for line in res.lines:

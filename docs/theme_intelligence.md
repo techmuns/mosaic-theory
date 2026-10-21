@@ -830,10 +830,10 @@ nothing.
    `state pull`.
 2. **Preflight** — no model call, nothing written:
    - the channel is active and the file is readable;
-   - **author:** the document names its author(s), or `--author` states them. QA requires them,
-     so they are asked for before paying;
    - **identity:** the same file or text already held means nothing to import; an uncertain match
      means decide with `--same-as` / `--duplicate-of` / `--as-new`;
+   - **author:** the document names its author(s), `--author` states them, or it is a new version
+     of an article whose authors are held. QA requires them, so they are asked for before paying;
    - **licence:** `--llm-permitted` is stated, or the channel's policy permits;
    - **cost:** the estimate's HIGH end must fit the required `--budget`.
 3. **Import.** `--budget` is both the run's limit and the document's.

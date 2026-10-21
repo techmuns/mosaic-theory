@@ -15,7 +15,8 @@ In order. Any refusal stops the upload, says why, and pushes NOTHING:
     `state pull`, never a side effect of an upload. (2026-10-21: a cache-only rehearsal printed
     "$0" while it skipped what the paid merge then spent $4.81 on.)
   2 PREFLIGHT — no model call, nothing written. The channel is active. The file is readable
-    and names its author(s), or --author states them (QA requires them: asked before paying).
+    and, once its identity is known, names its author(s) — or --author states them, or it is a
+    new version of an article whose authors are held (QA requires them: asked before paying).
     Its identity: the same file or text already held means nothing to import; an uncertain match
     means decide with --same-as / --duplicate-of / --as-new. Its licence: third-party LLM
     processing is authorised. Its cost estimate, whose HIGH end must fit the stated --budget.
@@ -45,10 +46,13 @@ from typing import TYPE_CHECKING, Any
 
 from vinci.theme_intelligence import state
 from vinci.theme_intelligence.config import Paths
+from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.documents import Declared, DocumentError, read_document
 from vinci.theme_intelligence.ingest import (
     DUPLICATE,
+    RETRY,
     REVIEW,
+    UPGRADE,
     _require_active,
     estimate_cost,
     identify,
@@ -56,7 +60,7 @@ from vinci.theme_intelligence.ingest import (
 )
 from vinci.theme_intelligence.qa import run_qa
 from vinci.theme_intelligence.report import write_run_outputs
-from vinci.theme_intelligence.schemas import FieldStatus, RetrievalState, RunStatus
+from vinci.theme_intelligence.schemas import Article, FieldStatus, RetrievalState, RunStatus
 from vinci.theme_intelligence.store import Store
 
 if TYPE_CHECKING:
@@ -74,6 +78,9 @@ class UploadError(RuntimeError):
     def __init__(self, step: str, why: str) -> None:
         super().__init__(f"{step}: {why}")
         self.step = step
+        #: what the upload did before it stopped (the pull's backup path, the import's cost …):
+        #: said with the refusal, never lost with it (review of #769)
+        self.lines: list[str] = []
 
 
 @dataclass
@@ -115,23 +122,15 @@ def preflight(pipe: Pipeline, path: Path, declared: Declared, *, budget: float,
     if read.doc.retrieval_state is RetrievalState.BLOCKED:
         raise UploadError("preflight", f"{path.name} has no readable text (a scanned or "
                                        f"image-only document?) — nothing imported")
-    if read.doc.authors_status is not FieldStatus.KNOWN and not duplicate_of:
-        # QA's integrity check needs every analysed article to name its author(s); the model
-        # credits one from the text only SOMETIMES — of the registry's 9 uploads on 2026-10-21,
-        # none named one in metadata and 3 stayed without one, failing QA on both runs of the
-        # one-registry merge. Paid, then refused at QA, an upload could never be pushed: asked now
-        raise UploadError("preflight", f"{path.name} names no author (no metadata, no byline) "
-                                       f"and none is stated — an article with no author fails "
-                                       f"QA, so the upload would pay and then refuse to push. "
-                                       f"State the author(s) from the document: --author NAME "
-                                       f"(repeatable)")
     for flag, aid in (("--same-as", same_as), ("--duplicate-of", duplicate_of)):
         if aid and st.article(aid) is None:
             raise UploadError("preflight", f"{flag} {aid}: no such article")
     if duplicate_of:
         return Preflight("record", [*lines, f"identity: the operator states it duplicates "
                                             f"{duplicate_of} — recorded, nothing analysed, $0"])
+    held: Article | None = None  # the article it enters as a NEW VERSION of, keeping its authors
     if same_as:
+        held = st.article(same_as)
         lines.append(f"identity: the operator states it is a version of {same_as}")
     elif as_new:
         lines.append("identity: the operator states a new article")
@@ -146,7 +145,21 @@ def preflight(pipe: Pipeline, path: Path, declared: Declared, *, budget: float,
                                            f"again with --same-as <article id> (a fuller "
                                            f"version of it), --duplicate-of <article id> or "
                                            f"--as-new")
+        held = m.article if m.kind in (UPGRADE, RETRY) else None
         lines.append(f"identity: {m.kind} — {m.basis}")
+    if read.doc.authors_status is not FieldStatus.KNOWN and not (held and held.authors):
+        # QA's integrity check needs every analysed article to name its author(s); the model
+        # credits one from the text only SOMETIMES — of the registry's 9 uploads on 2026-10-21,
+        # none named one in metadata and 3 stayed without one, failing QA on both runs of the
+        # one-registry merge. Paid, then refused at QA, an upload could never be pushed: asked
+        # now — after the identity check (a copy of a held text is nothing to import, whoever
+        # wrote it) and never for a new version of an article whose authors are held (it keeps
+        # them: ingest._as_version_of)
+        raise UploadError("preflight", f"{path.name} names no author (no metadata, no byline) "
+                                       f"and none is stated — an article with no author fails "
+                                       f"QA, so the upload would pay and then refuse to push. "
+                                       f"State the author(s) from the document: --author NAME "
+                                       f"(repeatable)")
     ok, why = llm_authorised(pipe, declared)
     if not ok:  # said in the upload's own words: nothing is HELD here — nothing is written
         src = pipe.sources.get(declared.source_id)
@@ -179,14 +192,34 @@ def upload(data_dir: Path, remote: str, path: Path, declared: Declared, *, budge
            completeness_fixture: dict[str, Any] | None = None,
            replay_fixtures: dict[str, dict[str, Any]] | None = None) -> UploadResult:
     """The six steps (module docstring). Raises UploadError at the first refusal, having
-    pushed nothing. `fixture` / `completeness_fixture` / `replay_fixtures`: offline answers for
-    tests (the document's extraction; the pull's replays, by document sha256)."""
+    pushed nothing, with the lines of every step before it (`UploadError.lines`).
+    `fixture` / `completeness_fixture` / `replay_fixtures`: offline answers for tests (the
+    document's extraction; the pull's replays, by document sha256)."""
+    out = UploadResult("dry run")
+    try:
+        return _steps(out, data_dir, remote, path, declared, budget=budget, as_of=as_of,
+                      make_pipeline=make_pipeline, make_replay_pipeline=make_replay_pipeline,
+                      branch=branch, same_as=same_as, duplicate_of=duplicate_of, as_new=as_new,
+                      dry_run=dry_run, fixture=fixture,
+                      completeness_fixture=completeness_fixture,
+                      replay_fixtures=replay_fixtures)
+    except UploadError as exc:
+        exc.lines = list(out.lines)
+        raise
+
+
+def _steps(out: UploadResult, data_dir: Path, remote: str, path: Path, declared: Declared, *,
+           budget: float, as_of: date, make_pipeline: Callable[[], Pipeline],
+           make_replay_pipeline: Callable[[], Pipeline], branch: str, same_as: str | None,
+           duplicate_of: str | None, as_new: bool, dry_run: bool,
+           fixture: dict[str, Any] | None, completeness_fixture: dict[str, Any] | None,
+           replay_fixtures: dict[str, dict[str, Any]] | None) -> UploadResult:
+    """`upload`'s body, each step's lines written into `out` as it goes."""
     from vinci.theme_intelligence.ingest import ingest_file
 
     if budget <= 0:
         raise UploadError("preflight", "--budget must be a positive amount in USD")
     paths = Paths(data_dir)
-    out = UploadResult("dry run")
     # 1 — the registry of record, rebuilt; a local replay from the cache only
     t0 = datetime.now(tz=UTC)
     try:
@@ -239,7 +272,7 @@ def upload(data_dir: Path, remote: str, path: Path, declared: Declared, *, budge
                                        f"article {res.article_id or '—'}; cost "
                           + (f"${run.cost_usd:.4f}" if run.cost_usd is not None
                              else "UNKNOWN") + f" of a ${budget:,.2f} budget",
-                          f"  {res.note[:300]}"]
+                          f"  {clip(res.note, 300, 'the document record')}"]
             run_ids.append(run.run_id)
         else:
             out.lines.append("3 import: nothing to import")

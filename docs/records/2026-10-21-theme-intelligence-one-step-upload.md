@@ -22,11 +22,12 @@ the operator's direction ("yes, start B and A", 2026-10-21).
      completeness pass or a card review — the steps a paid replay would run and bill.
 2. **Preflight — no model call, nothing written:**
    - the channel is active and the file is readable;
-   - **author:** the document names its author(s), or `--author` states them. QA requires an
-     author, so this is asked before paying (see WHY);
    - **identity:** the same file or the same text already held means nothing to import; an
      uncertain match means the operator decides with `--same-as` / `--duplicate-of` /
      `--as-new`;
+   - **author** (after identity): the document names its author(s), `--author` states them, or
+     it enters as a new version of an article whose authors are held (it keeps them). QA
+     requires an author, so this is asked before paying (see WHY);
    - **licence:** stated, or the channel permits it;
    - **cost:** the estimate's HIGH end must fit the required `--budget`.
 3. **Import** through the shared pipeline. `--budget` is both the run's limit and the document's.
@@ -77,7 +78,7 @@ updated.
     5. **Its dry run:** identity NEW, licence stated, cost $1–$7 against $50, "nothing imported,
        nothing pushed".
   - The paid path was NOT run on real data: paying for a document is the operator's call.
-- **The paid path, offline** — 21 tests in `tests/test_theme_intelligence_upload.py`.
+- **The paid path, offline** — 24 tests in `tests/test_theme_intelligence_upload.py`.
   - **The setup:** a local bare repository stands in for GitHub. A fake model answers through
     the REAL spend guard and the REAL content-addressed cache, so its paid calls land in the real
     ledger (fake money) and a later cache-only replay is genuine.
@@ -104,9 +105,26 @@ updated.
       the preflight, before paying.
     - **The test's replay pipeline ran with reviews OFF**, which made a cached review look
       skipped. Fixed in the test, so the pipelines are built as the CLI builds them.
-- **Mutation:** 18 mutants, all killed. They cover each preflight gate (the author gate
-  included), both pull stops, the dry run, the QA stop, each ledger rule, the no-op push, the
-  pull's `local_only`, and a refused push reported as pushed.
+- **Code review of #769 (2026-10-21):**
+  - **Fixed:**
+    - the author gate ran before the identity check, so a copy of a held text with no author
+      was refused instead of being nothing to import;
+    - it read only the new file, so a fuller version of an article whose authors are held was
+      refused, though it keeps them;
+    - a refusal printed only its reason, losing the pull's backup path and the steps before it
+      (`UploadError.lines` now carries them, and the CLI prints them first);
+    - a note was cut at 300 characters without saying so (now `clip`).
+  - **Not changed:**
+    - the preflight repeats `ingest_file`'s gates, rather than sharing one function, to keep
+      `ingest.py` out of this change; the two can drift, and the tests pin both ends;
+    - QA renders each replay run's outputs: a pull replays only documents the branch lacks,
+      none in the normal flow.
+- **Mutation:** 22 mutants, all killed. They cover each preflight gate (the author gate, its
+  held-article rule and the `--same-as` target included), both pull stops, the dry run, the QA
+  stop, each ledger rule, the no-op push, the pull's `local_only`, a refused push reported as
+  pushed, and the refusal's lines in the result and on the CLI.
+- The real-data paths were re-run on the fixed code, merged with #768: the same results, each
+  refusal now printed after the pull's lines.
 - **Suite:** see the PR.
 
 **BOUNDARY.** Registry `theme-intelligence-state` 9939047e on 2026-10-21, mirrored privately and
@@ -121,9 +139,10 @@ every paid model call the registry holds: 213 calls, $26.5690. The estimate is
   paid replay (`state pull`) is the operator's call.
 - **An uncertain identity is always refused**, never guessed. The operator decides with
   `--same-as` / `--duplicate-of` / `--as-new`.
-- **The author gate asks for `--author` on every upload whose metadata names none.** On the
+- **The author gate asks for `--author` on every new article whose metadata names none.** On the
   registry that was all 9, including the 6 the model would have credited from the text. That is
-  the price of never paying for an import QA will refuse.
+  the price of never paying for an import QA will refuse. A new version of an article whose
+  authors are held needs none stated.
 - **OPEN, the operator's call:** the 3 analysed uploads with no author keep QA's integrity check
   failing on both merge runs.
   - A $0 path to state an analysed article's author was not found. Searched: `ingest-file

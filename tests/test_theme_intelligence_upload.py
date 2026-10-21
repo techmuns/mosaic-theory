@@ -28,6 +28,7 @@ from tests.test_theme_intelligence_state_sync import AS_OF, MS_PDF, _ms_ext, _of
 from tests.theme_intelligence_support import make_pipeline
 from vinci.theme_intelligence import state
 from vinci.theme_intelligence import upload as up
+from vinci.theme_intelligence.__main__ import main
 from vinci.theme_intelligence.budget import GuardedClient
 from vinci.theme_intelligence.config import Paths
 from vinci.theme_intelligence.documents import Declared, read_document
@@ -187,7 +188,8 @@ def test_the_same_text_in_another_file_is_nothing_to_import(tmp_path: Path) -> N
     copy = tmp_path / "copy.pdf"
     copy.write_bytes(MS_PDF.read_bytes() + b"\n%% a trailing comment: another file, same text\n")
     model = FakeModel()
-    res = _upload(tmp_path, remote, model, path=copy)
+    res = _upload(tmp_path, remote, model, path=copy,  # no author stated: never asked for one
+                  declared=Declared(source_id="ms_research", llm_permitted=True))
     assert res.outcome == "nothing to push" and model.calls == [] and _head(remote) == head
     assert any("the same text is already registered" in x for x in res.lines)
 
@@ -379,3 +381,59 @@ def test_the_ledger_reconciliation_refuses(before: dict[str, tuple[str, float | 
         up._reconcile(before, after, "RUN", cost, 2.0)
     assert "1 new, all the import's, $0.3000" in up._reconcile(
         {"a": ("R1", 0.1)}, {"a": ("R1", 0.1), "b": ("RUN", 0.3)}, "RUN", 0.3, 2.0)
+
+
+def test_a_new_version_of_an_article_whose_authors_are_held_needs_none_stated(
+        tmp_path: Path) -> None:
+    """Review of #769: the author gate read only the new file, so a fuller version of an article
+    whose authors the registry holds was refused — though it keeps them (ingest._as_version_of)
+    and QA would pass. And the gate ran before the identity check (pinned above: a copy of a
+    held text is nothing to import, author or not)."""
+    remote = _remote(tmp_path)
+    _actions(tmp_path, remote)
+    _upload(tmp_path, remote, FakeModel())  # held, its author stated
+    st = _laptop(tmp_path)
+    [doc] = st.documents()
+    art = st.article(doc.article_id or "")
+    assert art is not None and art.authors
+    st.close()
+    fuller = tmp_path / "fuller.md"
+    fuller.write_text("---\ntitle: Synthetic Utilities Note: AI Power Demand (full)\n"
+                      "date: 2026-10-01\n---\n\n[SYNTHETIC TEST FIXTURE — invented content]\n\n"
+                      + " ".join(["On-site gas turbine orders are projected to grow 30% in 2027 "
+                                  "as AI load outruns the grid, in this invented note."] * 6)
+                      + "\n")
+    unauthored = Declared(source_id="ms_research", llm_permitted=True)
+    res = _upload(tmp_path, remote, None, path=fuller, declared=unauthored,
+                  same_as=art.article_id, dry_run=True)
+    assert res.outcome == "dry run"
+    assert any(f"a version of {art.article_id}" in x for x in res.lines)
+    with pytest.raises(UploadError, match="names no author"):  # a NEW article still needs one
+        _upload(tmp_path, remote, None, path=fuller, declared=unauthored, as_new=True,
+                dry_run=True)
+
+
+def test_a_refusal_says_what_the_upload_did_before_it(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str],
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #769: a refusal printed only its reason — the pull's backup path, the replay and
+    the import's cost were lost with it."""
+    remote = _remote(tmp_path)
+    _actions(tmp_path, remote)
+    _upload(tmp_path, remote, FakeModel())  # a local registry exists: the next pull backs it up
+    with pytest.raises(UploadError) as err:
+        _upload(tmp_path, remote, FakeModel(), budget=0.01, path=tmp_path / "x.md")
+    assert err.value.lines[0] == "1 pull (cache-only):"
+    assert any("local registry backed up to" in x for x in err.value.lines)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    note = tmp_path / "new.md"
+    note.write_text("---\ntitle: Another Synthetic Note\ndate: 2026-10-01\nauthor: A\n---\n\n"
+                    + " ".join(["Invented sentence about grid queues for this test only."] * 8)
+                    + "\n")
+    code = main(["--data-dir", str(tmp_path / "laptop" / "ti"), "upload", "--remote", remote,
+                 "--path", str(note), "--source", "ms_research", "--budget", "0.01",
+                 "--llm-permitted"])
+    out = capsys.readouterr().out
+    assert code == 1
+    assert out.index("1 pull (cache-only):") < out.index("upload refused at preflight: cost")
+    assert "local registry backed up to" in out
