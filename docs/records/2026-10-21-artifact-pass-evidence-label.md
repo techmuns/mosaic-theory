@@ -2,7 +2,7 @@
 id: 2026-10-21-artifact-pass-evidence-label
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [767]
 supersedes:
 superseded-by:
 ---
