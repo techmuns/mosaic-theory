@@ -28,7 +28,7 @@ from __future__ import annotations
 import re
 from collections import Counter, defaultdict
 from collections.abc import Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, NamedTuple
@@ -92,6 +92,7 @@ from vinci.theme_intelligence.priority import (
 from vinci.theme_intelligence.report import (
     _OPEN_CAUSE,
     MANUAL_MODES,
+    PRICE_ONLY_MODES,
     REVIEW_WARNINGS,
     AsOf,
     Dashboard,
@@ -340,6 +341,11 @@ class Week:
     runs: tuple[WeeklyRun, ...]
     failed: tuple[WeeklyRun, ...]
     scanned: bool
+    #: a week of manual runs that FOLLOWS a weekly scan — never "no weekly scan yet"
+    after_scan: bool = False
+    #: the latest as-of of the price refreshes that joined a scan's week (`PRICE_ONLY_MODES`):
+    #: said in the label when it is later than the week, so newer prices never pass as the scan's
+    priced_to: date | None = None
 
     @property
     def run_ids(self) -> frozenset[str]:
@@ -347,8 +353,13 @@ class Week:
 
     @property
     def label(self) -> str:
-        return (f"Week of {_span(self.start, self.end)}" if self.scanned else
-                f"{_span(self.start, self.end)} — manual runs, no weekly scan yet")
+        span = _span(self.start, self.end)
+        if self.scanned:
+            later = self.priced_to is not None and self.priced_to > self.end
+            return f"Week of {span}" + (f" · prices as of {_day(self.priced_to)}"
+                                        if later and self.priced_to is not None else "")
+        return (f"{span} — manual runs since the last weekly scan" if self.after_scan else
+                f"{span} — manual runs, no weekly scan yet")
 
 
 def desk_weeks(store: Store, run: WeeklyRun) -> list[Week]:
@@ -357,30 +368,42 @@ def desk_weeks(store: Store, run: WeeklyRun) -> list[Week]:
     scans = sorted((r for r in runs if r.mode == "scan"), key=lambda r: r.started_at)
     out: list[Week] = []
     prev: datetime | None = None
-    for s in scans:
+
+    def done(r: WeeklyRun) -> bool:  # finished and not failed — or the run being rendered
+        return r.status not in (RunStatus.FAILED, RunStatus.RUNNING) or (
+            r.run_id == run.run_id and r.status is not RunStatus.FAILED)
+
+    def refresh(r: WeeklyRun) -> bool:  # a price refresh that follows a scan: that scan's
+        return r.mode in PRICE_ONLY_MODES and prev is not None
+
+    for i, s in enumerate(scans):
         failed = tuple(r for r in runs if r.mode in MANUAL_MODES and r.status is RunStatus.FAILED
                        and r.started_at < s.started_at
-                       and (prev is None or r.started_at > prev))
-        out.append(Week(key="", start=s.window_from or s.as_of, end=s.window_to or s.as_of,
-                        runs=tuple(report_runs(store, s)), failed=failed, scanned=True))
+                       and (prev is None or r.started_at > prev) and not refresh(r))
         prev = s.started_at
+        nxt = scans[i + 1].started_at if i + 1 < len(scans) else None
+        after = [r for r in runs if refresh(r) and r.started_at > prev
+                 and (nxt is None or r.started_at < nxt)]
+        priced = [r for r in after if done(r)]
+        out.append(Week(key="", start=s.window_from or s.as_of, end=s.window_to or s.as_of,
+                        runs=(*report_runs(store, s), *priced),
+                        failed=(*failed, *(r for r in after if r.status is RunStatus.FAILED)),
+                        scanned=True, priced_to=max((r.as_of for r in priced), default=None)))
     if run.mode != "scan":
         tail = [r for r in runs if (r.mode in MANUAL_MODES or r.run_id == run.run_id)
-                and (prev is None or r.started_at > prev)]
-        ok = [r for r in tail if r.status not in (RunStatus.FAILED, RunStatus.RUNNING)
-              or r.run_id == run.run_id]
-        if ok:
-            ds = [r.as_of for r in ok]
-            out.append(Week(key="", start=min(ds), end=max(ds), runs=tuple(ok),
-                            failed=tuple(r for r in tail if r.status is RunStatus.FAILED
-                                         and r.run_id != run.run_id), scanned=False))
+                and (prev is None or r.started_at > prev) and not refresh(r)]
+        ok = [r for r in tail if done(r)]
+        failed = tuple(r for r in tail if r.status is RunStatus.FAILED)
+        if ok or failed:
+            ds = [r.as_of for r in ok or failed]
+            out.append(Week(key="", start=min(ds), end=max(ds), runs=tuple(ok), failed=failed,
+                            scanned=False, after_scan=prev is not None))
     seen: Counter[str] = Counter()
     keyed: list[Week] = []
     for w in out:
         base = w.end.isoformat()
         seen[base] += 1
-        keyed.append(Week(key=base if seen[base] == 1 else f"{base}-{seen[base]}", start=w.start,
-                          end=w.end, runs=w.runs, failed=w.failed, scanned=w.scanned))
+        keyed.append(replace(w, key=base if seen[base] == 1 else f"{base}-{seen[base]}"))
     return keyed
 
 
