@@ -1,11 +1,23 @@
 {"origin_id": "ES-044b50fe7b56", "payload": "{\"origin_id\":\"ES-044b50fe7b56\",\"name\":\"JPM WM Solutions. Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-2247eb10ad22", "payload": "{\"origin_id\":\"ES-2247eb10ad22\",\"name\":\"Brad Gerstner\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-376a4a64f9cb", "payload": "{\"origin_id\":\"ES-376a4a64f9cb\",\"name\":\"The Elec\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-58bc9d037d4c", "payload": "{\"origin_id\":\"ES-58bc9d037d4c\",\"name\":\"Atlantic Council CBDC Tracker\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-64fb15b3322c", "payload": "{\"origin_id\":\"ES-64fb15b3322c\",\"name\":\"Bank for International Settlements (BIS)\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-7661d1cfece8", "payload": "{\"origin_id\":\"ES-7661d1cfece8\",\"name\":\"SemiAnalysis (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-78e9a9132853", "payload": "{\"origin_id\":\"ES-78e9a9132853\",\"name\":\"SemiAnalysis Energy Model\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-80d1e591e420", "payload": "{\"origin_id\":\"ES-80d1e591e420\",\"name\":\"TrendForce (own analysis)\",\"kind\":\"publisher_own\"}"}
+{"origin_id": "ES-830d54dc4aae", "payload": "{\"origin_id\":\"ES-830d54dc4aae\",\"name\":\"Morgan Stanley AlphaWise\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-87c3eafb58fd", "payload": "{\"origin_id\":\"ES-87c3eafb58fd\",\"name\":\"Bureau of Labor Statistics + Haver Analytics\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-87e28a692503", "payload": "{\"origin_id\":\"ES-87e28a692503\",\"name\":\"Morgan Stanley Research + United Nations\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-9054521ac923", "payload": "{\"origin_id\":\"ES-9054521ac923\",\"name\":\"SemiAnalysis Datacenter Industry Model\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-96049bd84655", "payload": "{\"origin_id\":\"ES-96049bd84655\",\"name\":\"Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-a1797c7540c2", "payload": "{\"origin_id\":\"ES-a1797c7540c2\",\"name\":\"bankrate.com\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-aab273bf90d4", "payload": "{\"origin_id\":\"ES-aab273bf90d4\",\"name\":\"Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-af9b7e755d4f", "payload": "{\"origin_id\":\"ES-af9b7e755d4f\",\"name\":\"pymnts.com\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-b20f79378f16", "payload": "{\"origin_id\":\"ES-b20f79378f16\",\"name\":\"Citi (own analysis)\",\"kind\":\"publisher_own\"}"}
+{"origin_id": "ES-b273a4ebae6e", "payload": "{\"origin_id\":\"ES-b273a4ebae6e\",\"name\":\"market consensus\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-f1a195435792", "payload": "{\"origin_id\":\"ES-f1a195435792\",\"name\":\"Atlantic Council\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-f41ee4fccc95", "payload": "{\"origin_id\":\"ES-f41ee4fccc95\",\"name\":\"Morgan Stanley (own analysis)\",\"kind\":\"publisher_own\"}"}
+{"origin_id": "ES-f8175a623c1d", "payload": "{\"origin_id\":\"ES-f8175a623c1d\",\"name\":\"AlphaWise + Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-fc428945cc0a", "payload": "{\"origin_id\":\"ES-fc428945cc0a\",\"name\":\"J.P. Morgan Private Bank (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-feb5010783c6", "payload": "{\"origin_id\":\"ES-feb5010783c6\",\"name\":\"ASML\",\"kind\":\"data_vendor\"}"}
