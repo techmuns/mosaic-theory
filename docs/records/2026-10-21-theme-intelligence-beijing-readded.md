@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-beijing-readded
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [764]
 supersedes:
 superseded-by:
 ---
