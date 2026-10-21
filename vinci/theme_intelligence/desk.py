@@ -340,6 +340,8 @@ class Week:
     runs: tuple[WeeklyRun, ...]
     failed: tuple[WeeklyRun, ...]
     scanned: bool
+    #: a week of manual runs that FOLLOWS a weekly scan — never "no weekly scan yet"
+    after_scan: bool = False
 
     @property
     def run_ids(self) -> frozenset[str]:
@@ -347,8 +349,18 @@ class Week:
 
     @property
     def label(self) -> str:
-        return (f"Week of {_span(self.start, self.end)}" if self.scanned else
-                f"{_span(self.start, self.end)} — manual runs, no weekly scan yet")
+        span = _span(self.start, self.end)
+        if self.scanned:
+            return f"Week of {span}"
+        return (f"{span} — manual runs since the last weekly scan" if self.after_scan else
+                f"{span} — manual runs, no weekly scan yet")
+
+
+#: runs that analyse no article — the "Is it priced?" refresh the weekly job runs right after its
+#: scan. One never opens a week of its own: alone after a scan, it joins that scan's week. Until
+#: 2026-10-21 the weekly job's market step opened an EMPTY week ("no weekly scan yet", 0 articles)
+#: and the desk opened on it, the scan's week pushed back to "previous".
+PRICE_ONLY_MODES = ("market",)
 
 
 def desk_weeks(store: Store, run: WeeklyRun) -> list[Week]:
@@ -369,18 +381,23 @@ def desk_weeks(store: Store, run: WeeklyRun) -> list[Week]:
                 and (prev is None or r.started_at > prev)]
         ok = [r for r in tail if r.status not in (RunStatus.FAILED, RunStatus.RUNNING)
               or r.run_id == run.run_id]
-        if ok:
+        failed = tuple(r for r in tail if r.status is RunStatus.FAILED and r.run_id != run.run_id)
+        if ok and out and not failed and all(r.mode in PRICE_ONLY_MODES for r in ok):
+            last = out[-1]
+            out[-1] = Week(key="", start=last.start, end=last.end, runs=(*last.runs, *ok),
+                           failed=last.failed, scanned=True)
+        elif ok:
             ds = [r.as_of for r in ok]
-            out.append(Week(key="", start=min(ds), end=max(ds), runs=tuple(ok),
-                            failed=tuple(r for r in tail if r.status is RunStatus.FAILED
-                                         and r.run_id != run.run_id), scanned=False))
+            out.append(Week(key="", start=min(ds), end=max(ds), runs=tuple(ok), failed=failed,
+                            scanned=False, after_scan=bool(out)))
     seen: Counter[str] = Counter()
     keyed: list[Week] = []
     for w in out:
         base = w.end.isoformat()
         seen[base] += 1
         keyed.append(Week(key=base if seen[base] == 1 else f"{base}-{seen[base]}", start=w.start,
-                          end=w.end, runs=w.runs, failed=w.failed, scanned=w.scanned))
+                          end=w.end, runs=w.runs, failed=w.failed, scanned=w.scanned,
+                          after_scan=w.after_scan))
     return keyed
 
 
