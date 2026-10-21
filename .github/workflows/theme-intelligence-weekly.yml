@@ -85,11 +85,16 @@ jobs:
       # The LLM cache holds model OUTPUT keyed by content hash, so a re-run of an unchanged article
       # costs nothing. The raw-page cache is deliberately NOT carried between runs: third-party
       # article text stays on the runner that fetched it and dies with it.
+      # RESTORE AND SAVE ARE TWO STEPS (U31f). The combined `actions/cache` saves in its post-step
+      # only when the JOB succeeds — and this job fails on purpose when the scan fails or QA does
+      # not pass (the last step), so a failed run's PAID answers were thrown away and the retry
+      # paid for them again. The key carries the attempt, because a cache key is written once: a
+      # re-run of the same run must save under its own key, or its new answers are not kept.
       - name: Restore the LLM cache (content-addressed; a miss only costs money and time)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: data/theme_intelligence/llm_cache
-          key: theme-intelligence-llm-${{ github.run_id }}
+          key: theme-intelligence-llm-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: theme-intelligence-llm-
 
       - name: Scan
@@ -108,6 +113,16 @@ jobs:
             *) echo "::error::scan FAILED (exit $code) — its run record is still committed below" ;;
           esac
           exit 0
+
+      # Saved WHATEVER the scan's outcome (U31f): every answer it paid for is kept for the next
+      # run, a failed or partial one included. Not when the scan never ran (the gate failed), and
+      # not when it wrote no cache at all.
+      - name: Save the LLM cache, whatever the scan's outcome
+        if: always() && steps.scan.outcome != 'skipped' && hashFiles('data/theme_intelligence/llm_cache/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: data/theme_intelligence/llm_cache
+          key: theme-intelligence-llm-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: QA the run's stored records
         id: qa

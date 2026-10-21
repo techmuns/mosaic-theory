@@ -235,4 +235,13 @@ def require_env(name: str) -> str:
             f"Required environment variable {name!r} is not set. "
             "Set it locally or as a GitHub Actions secret."
         )
+    # A secret pasted with a trailing space or newline cannot travel in an HTTP header: the
+    # request fails deep in the client as a "Connection error" that names neither the variable
+    # nor the cause — the first theme-intelligence Actions run, 2026-10-20, on ANTHROPIC_API_KEY.
+    # Refused here, by name, before any request is made (the value is never printed).
+    if value != value.strip():
+        raise RuntimeError(
+            f"Required environment variable {name!r} has leading or trailing whitespace. "
+            "Re-save it (locally or as the GitHub Actions secret) without it."
+        )
     return value

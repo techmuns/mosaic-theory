@@ -82,7 +82,9 @@ from vinci.theme_intelligence.config import (
 from vinci.theme_intelligence.display import clip
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.priority import (
+    F8_CONTESTED,
     _fundamental_change,
+    counter_verdict,
     exposures_counted,
     unverified_words,
     watch_reasons_of,
@@ -502,6 +504,7 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
     rids = week.run_ids
     retired = {r.id: r for r in load_retired_sources()}
     linked = {i.ref_id for i in store.issues() if i.code == "LINKED_REPORT_UPLOAD"}
+    unread = unread_documents(reg.documents, set(retired))
     rows: dict[str, ArticleRow] = {}
     for r in week.runs:
         if r.mode in ("reassess", "enrich", "market"):  # none of these reads an article
@@ -568,16 +571,30 @@ def week_articles(reg: _Registry, week: Week, *, latest: bool) -> list[ArticleRo
                              if (av := store.article_version(x.article_version_id))
                              and av.article_id == aid), None)
             row.notes.append(_fates(rep_last))
-        if row.state == "PARTIAL" and row.source_id in retired:  # history: never asked for
+        if row.state != "PARTIAL":
+            continue
+        # WHAT IS ASKED comes from the ONE partial-awaiting-full rule, the weekly report's and
+        # Uploads' (`partial_ask`, U56) — this kept a third copy that never read unreadable pages,
+        # so it asked for "the full report" where the document was supplied and a VISUAL check is
+        # what is outstanding, and where only back matter was unreadable (19 of 81 PARTIAL rows in
+        # the local registries disagreed with the rule, 2026-10-20). The lines below say why
+        # nothing is asked.
+        ask = partial_ask(reg.article(aid), reg.versions(aid), unread=unread.get(aid),
+                          source=reg.sources.get(row.source_id), linked_upload=aid in linked,
+                          retired=set(retired))
+        if ask is not None and ask[0] == "visual":
+            row.follow_up, row.follow_link = "Check the unreadable pages", "uploads.html"
+        elif ask is not None:
+            row.follow_up, row.follow_link = "Supply the full report", "uploads.html"
+        elif row.source_id in retired:  # history: never asked for
             gone = retired[row.source_id]
             row.follow_up = (f"Not requested — {gone.publisher} retired "
                              f"{_day(date.fromisoformat(gone.retired))}")
-        elif (row.state == "PARTIAL" and aid not in linked
-              and (s := reg.sources.get(row.source_id)) is not None
+        elif unread.get(aid) is not None:  # the rule's back-matter case: the analysis is whole
+            row.follow_up = "Nothing to ask — only back-matter pages could not be read"
+        elif (aid not in linked and (s := reg.sources.get(row.source_id)) is not None
               and s.paywalled_posts == "preview_only"):
             row.follow_up = "Preview only — by decision, never requested"
-        elif row.state == "PARTIAL":
-            row.follow_up, row.follow_link = "Supply the full report", "uploads.html"
     # manual runs that FAILED: their article listed as failed — or, when a later run of the week
     # completed it, as completed after the failed attempt(s)
     for fr in week.failed:
@@ -854,11 +871,16 @@ def gates(v: ThesisVersion, groups: list[str], nt: NearTerm, *,
         Gate(f.get("F1_source_reliability") != "low", "Source reliability",
              f.get("F1_source_reliability", "not stated")),
     ]
-    action = v.priority.research_action.value
-    if action == "WATCH" and all(g.ok for g in out):
+    # THE STORED VERDICT, never elimination: this gate was inferred only when every other gate
+    # passed, so a WATCH held by counter-evidence AND by anything else never showed it — 15 of the
+    # 16 such versions in the local registries (2026-10-20), while the card and the weekly report
+    # named it (`cards.why_reasons` reads the same F8 value, U53).
+    verdict = counter_verdict(v.priority)
+    if verdict is not None:
         out.append(Gate(False, "Not outweighed by counter-evidence",
-                        "the decision trace records the counter-evidence as outweighing the "
-                        "support (audit view)"))
+                        "independent sources directly contradict it, at least as many as support "
+                        "it" if verdict == F8_CONTESTED else
+                        "its own sources' counter-observations outweigh its support"))
     return out
 
 
