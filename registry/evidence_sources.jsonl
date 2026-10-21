@@ -1,5 +1,6 @@
 {"origin_id": "ES-044b50fe7b56", "payload": "{\"origin_id\":\"ES-044b50fe7b56\",\"name\":\"JPM WM Solutions. Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-2247eb10ad22", "payload": "{\"origin_id\":\"ES-2247eb10ad22\",\"name\":\"Brad Gerstner\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-370bfea99a7f", "payload": "{\"origin_id\":\"ES-370bfea99a7f\",\"name\":\"State Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-376a4a64f9cb", "payload": "{\"origin_id\":\"ES-376a4a64f9cb\",\"name\":\"The Elec\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-58bc9d037d4c", "payload": "{\"origin_id\":\"ES-58bc9d037d4c\",\"name\":\"Atlantic Council CBDC Tracker\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-64fb15b3322c", "payload": "{\"origin_id\":\"ES-64fb15b3322c\",\"name\":\"Bank for International Settlements (BIS)\",\"kind\":\"data_vendor\"}"}
@@ -19,5 +20,6 @@
 {"origin_id": "ES-f1a195435792", "payload": "{\"origin_id\":\"ES-f1a195435792\",\"name\":\"Atlantic Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f41ee4fccc95", "payload": "{\"origin_id\":\"ES-f41ee4fccc95\",\"name\":\"Morgan Stanley (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-f8175a623c1d", "payload": "{\"origin_id\":\"ES-f8175a623c1d\",\"name\":\"AlphaWise + Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-fb02348db7fb", "payload": "{\"origin_id\":\"ES-fb02348db7fb\",\"name\":\"Anthropic\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-fc428945cc0a", "payload": "{\"origin_id\":\"ES-fc428945cc0a\",\"name\":\"J.P. Morgan Private Bank (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-feb5010783c6", "payload": "{\"origin_id\":\"ES-feb5010783c6\",\"name\":\"ASML\",\"kind\":\"data_vendor\"}"}
