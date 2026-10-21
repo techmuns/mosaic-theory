@@ -313,7 +313,7 @@ def test_market_contexts_are_append_only_and_a_v6_registry_migrates(tmp_path: Pa
     db = tmp_path / "r.db"
     Store(db, migrations=[m for m in MIGRATIONS if m[0] <= 6]).close()
     st = Store(db)
-    assert st.schema_version() == 7
+    assert st.schema_version() == max(v for v, _ in MIGRATIONS)  # v6 → every later step
     st.close()
     pipe = _jpm(tmp_path / "p")
     pipe.run_market(as_of=JPM_AS_OF, prices=_prices(), eps=_no_eps)  # type: ignore[arg-type]

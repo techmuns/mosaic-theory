@@ -683,7 +683,8 @@ Every run's output folder opens on the desk (`index.html`); the weekly report
   links to its exact card line; a line's scope note is in the audit view, as on the reading page.
   Resolved and historical findings stay below, each saying what resolved it; the open completeness
   items below them are grouped under their article. The page is read-only; a finding closes only
-  through the record (an analyst correction or a re-read).
+  through the record: a re-review, an analyst correction, or a reviewer's dismissal (below). Each
+  open finding's key and the command that dismisses it are in the audit view.
 - **Uploads** — everything to supply or clear, never dismissed by age, each with its publisher,
   dates and the command to run (folded on its row; the source id is in the command and the audit
   view). A source's request lists its articles by title, linked, and says what is already held of
@@ -763,9 +764,32 @@ automatic publishing after the first few weekly runs look right.
 - **A. A safe one-step weekly upload command:** a cache-only state pull, identity and licence
   checks, a cost preflight, an explicitly budgeted import, QA, ledger reconciliation, and a
   fast-forward-only push. No implicit paid replay.
-- **B. Append-only review resolution:** version-specific findings, with reviewer, time, reason,
-  and a verified correction or dismissal; full history kept. Accepting a warning must never itself
-  make unsupported evidence valid.
+
+**Review resolution (follow-up B, built 2026-10-21 — `resolve.py`).** A reviewer can close a
+card-review WARNING with a name and a reason, $0:
+
+    python -m vinci.theme_intelligence review list [--thesis TH-…] [--history]
+    python -m vinci.theme_intelligence review dismiss --finding F-… --reviewer NAME --reason "…"
+    python -m vinci.theme_intelligence review reopen --finding F-… --reviewer NAME --reason "…"
+
+- Each finding has a key, bound to the review that made it and the line as it reads now. Carried
+  onto a later unreviewed version on the same words and evidence, it keeps its dismissal. A
+  changed line, or a new review's finding, gets a new key and is open again.
+- A dismissal closes the finding as an OPEN item on the card, the desk's Review screen and the
+  weekly report. It is shown as history with who, when and why. It verifies nothing: the line
+  keeps its label cap (at most SOURCE OPINION), and no research-action rule reads the record.
+- **Never dismissible:**
+  - a withheld line — it closes by an analyst correction that passes the card checks
+    (`reassess --corrections`) or by a re-review;
+  - a line changed since its review (NOT RE-REVIEWED).
+- Every dismissal and reopening is a run of mode `review` in an append-only table. Each row
+  names the resolution(s) its reviewer saw (`supersedes`), and a finding's state is the row no
+  later row supersedes — never the later of two machines' clocks. A dismissal and a reopening
+  made apart (between pulls) are a conflict: the finding reads OPEN until a new resolution
+  supersedes both.
+- `qa` re-checks each row against the finding it names. `state pull` carries a local review run
+  whole. A page rendered as of an earlier run never shows a later dismissal.
+- Push the registry (`state push`) for the weekly run and the published desk to carry it.
 
 ## Scheduling
 
@@ -844,7 +868,8 @@ bin/theme-intelligence-weekly
 
 - Registry: SQLite (WAL) at `data/theme_intelligence/registry.db` — its own namespace, never the
   fund's `data/vinci.db`. History tables (article versions, claims, mentions, resolutions, thesis
-  versions, links, contributions, relations, events, snapshots, issues, LLM calls) are append-only:
+  versions, links, contributions, relations, events, snapshots, issues, LLM calls, enrichment sets,
+  market contexts, review resolutions) are append-only:
   UPDATE and DELETE abort at the database level. An id can never mean two things.
 - Migrations: numbered, append-only (`store.MIGRATIONS`); a fresh or older registry migrates on
   open; code refuses to open a registry NEWER than itself.

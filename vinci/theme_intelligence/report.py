@@ -25,6 +25,7 @@ reads as a quiet one.
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
 import re
@@ -51,6 +52,7 @@ from vinci.theme_intelligence.cards import (
     _line_name,
     broad_market_instruments,
     cited_claim_ids,
+    dismissal_words,
     e,
     exposure_instruments,
     exposures_of,
@@ -90,6 +92,7 @@ from vinci.theme_intelligence.schemas import (
     Provenance,
     ResearchAction,
     RetrievalState,
+    ReviewResolution,
     RunStatus,
     Thesis,
     ThesisClaimLink,
@@ -124,7 +127,7 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
 
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
-MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market")
+MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market", "review")
 #: runs that analyse no article — the "Is it priced?" refresh, which the weekly job runs right
 #: after its scan. ONE rule, read by `report_runs` and `desk.desk_weeks`: a refresh belongs to the
 #: week of the scan it FOLLOWS (before any scan, it is a manual run like the rest). It never opens
@@ -136,8 +139,9 @@ PRICE_ONLY_MODES = ("market",)
 #: (`PRICE_ONLY_MODES`) or the companies their steps imply ("enrich" — display only, never read by
 #: a priority rule). Every one follows the rule above — a manual `enrich` after the scan opened an
 #: EMPTY week the desk opened on (2026-10-21, the one-registry desk: "21 Oct — manual runs since
-#: the last weekly scan", 0 articles, 0 rows), as the market step had.
-REFRESH_MODES = (*PRICE_ONLY_MODES, "enrich")
+#: the last weekly scan", 0 articles, 0 rows), as the market step had. A REVIEWER's resolution of
+#: a card-review finding ("review", resolve.py) changes only what a card shows too.
+REFRESH_MODES = (*PRICE_ONLY_MODES, "enrich", "review")
 
 
 def follows(r: WeeklyRun, scan: WeeklyRun | None) -> bool:
@@ -160,6 +164,8 @@ def _no_discovery(mode: str) -> str:
             "steps imply; one model call per thesis, no article read)" if mode == "enrich" else
             "none read — market context for stored theses (prices and filings as of the date; "
             "display only, no model call)" if mode == "market" else
+            "none read — a reviewer's resolution of card-review findings (no fetch, no model "
+            "call)" if mode == "review" else
             "none discovered — articles already held, analysed again under the current taxonomy "
             "(re-analysis; their earlier theses retired)" if mode == "reanalyse" else
             "single article (manual URL) — no source discovery")
@@ -745,6 +751,7 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
     articles = {c.article_id: a for c in contribs if (a := store.article(c.article_id))}
     vf = _findings(store, t.thesis_id, v, {})
     blocked, flagged, corrected, resolved = vf.blocked, vf.flagged, vf.corrected, vf.resolved
+    dismissed = dismissed_findings(store, t.thesis_id, v, until=until)
     links = store.links(t.thesis_id)
     groups, unread = _group_read(store, links)
     claims = {i: c for i in cited_claim_ids(v.content) if (c := store.claim(i)) is not None}
@@ -770,7 +777,8 @@ def card_context(store: Store, t: Thesis, v: ThesisVersion, *, generated: str,
     return RenderContext(history=history, attributions=attributions, blocked=blocked,
                          articles=articles, generated_note=generated, status_note=status_note,
                          flagged=flagged, retrieval_now=retrieval_now, corrected=corrected,
-                         priority=v.priority, resolved=resolved, claims=claims,
+                         priority=v.priority, resolved=resolved, dismissed=dismissed,
+                         claims=claims,
                          roles={lk.claim_id: lk.role.value for lk in links},
                          groups=groups, groups_unread=unread, carry=vf.carry,
                          enrichment=sets[-1] if sets else None,
@@ -827,6 +835,94 @@ def review_not_run(store: Store, thesis_id: str, v: ThesisVersion) -> str | None
     None when the review ran."""
     return next((i.detail for i in store.issues(run_id=v.run_id)
                  if i.code == "REVIEW_NOT_RUN" and i.ref_id == thesis_id), None)
+
+
+def finding_key(thesis_id: str, f: CarriedFinding, text: str, claim_ids: Sequence[str]) -> str:
+    """A card-review finding's identity AS IT STANDS: the version whose review made it, its stored
+    words, and the line's words and cited evidence now. A reviewer's resolution binds to it
+    (resolve.py). The same finding read onto a later unreviewed version on the same words keeps
+    its key; a changed line, or a NEW review's finding (another version), has a new key — open
+    again, never covered by an earlier dismissal."""
+    raw = json.dumps([thesis_id, f.origin_version, f.code, f.detail, text, list(claim_ids)])
+    return "F-" + hashlib.sha256(raw.encode()).hexdigest()[:12]
+
+
+@dataclass(frozen=True)
+class LineFinding:
+    """One open card-review finding on a line of one version, with its key."""
+    key: str
+    thesis_id: str
+    version: int
+    sentence_id: str
+    text: str
+    claim_ids: tuple[str, ...]
+    finding: CarriedFinding
+    #: the line is WITHHELD on this version — by this finding, or by a deterministic card check
+    #: beside a review warning (the pilot's TH-16225B12C4 s06.1: NUMBER_NOT_IN_CITED_CLAIMS)
+    withheld: bool
+    #: a reviewer may dismiss it: a WARNING on a line still printed, on the words and evidence
+    #: the review read. Never a withheld line (it closes by a verified analyst correction or a
+    #: re-review), never a line changed since the review (NOT RE-REVIEWED: nobody read it)
+    dismissible: bool
+
+
+def review_findings(store: Store, thesis_id: str, v: ThesisVersion) -> list[LineFinding]:
+    """Every open card-review finding on one version's lines — withheld or questioned — with its
+    key (`finding_key`), read from `_findings`: the card, the desk and the reviewer's command
+    see one list."""
+    vf = _findings(store, thesis_id, v, {})
+    sents = card_sentences(v.content)
+    out: list[LineFinding] = []
+    for sid, f in vf.open.items():
+        if sid not in vf.flagged and sid not in vf.blocked:
+            continue
+        text, _prov, cids = sents[sid]
+        withheld = sid in vf.blocked
+        out.append(LineFinding(
+            finding_key(thesis_id, f, text, cids), thesis_id, v.version, sid, text, tuple(cids),
+            f, withheld=withheld, dismissible=(not withheld and not f.blocked and not f.changed
+                                               and f.code in REVIEW_WARNINGS)))
+    return out
+
+
+def resolution_heads(rows: Sequence[ReviewResolution]) -> list[ReviewResolution]:
+    """The resolutions of ONE finding that no other of them supersedes — what a reviewer
+    deciding now must supersede. One head, unless two were made apart, each unseen by the
+    other (on two machines between pulls)."""
+    gone = {s for r in rows for s in r.supersedes}
+    return [r for r in rows if r.resolution_id not in gone]
+
+
+def resolution_state(rows: Sequence[ReviewResolution]) -> ReviewResolution | None:
+    """The state of ONE finding: its head. Heads that agree read as the latest of them; heads
+    that DISAGREE (a dismissal and a reopening made apart) are a conflict and read None — the
+    finding is OPEN (fail-safe) until a resolution supersedes them all. The order is what each
+    reviewer SAW, never two machines' clocks (review of #768: a reopening stamped by a slow
+    clock sorted before the dismissal it answered, and the dismissal won)."""
+    heads = resolution_heads(rows)
+    if not heads or len({h.action for h in heads}) > 1:
+        return None
+    return max(heads, key=lambda r: (r.created_at, r.resolution_id))
+
+
+def dismissed_findings(store: Store, thesis_id: str, v: ThesisVersion, *,
+                       until: datetime | None = None) -> dict[str, ReviewResolution]:
+    """Sentence id -> the reviewer's dismissal in force on that line of `v`: the state
+    (`resolution_state`) of a dismissible finding's key is "dismissed" (with `until`, as the
+    registry held it then). The line stays in `flagged` — its label stays capped, a dismissal
+    never makes the evidence valid — and a surface that counts OPEN findings leaves it out."""
+    by_key: dict[str, list[ReviewResolution]] = {}
+    for r in store.review_resolutions(thesis_id):
+        if until is None or r.created_at <= until:
+            by_key.setdefault(r.finding_key, []).append(r)
+    if not by_key:
+        return {}
+    out: dict[str, ReviewResolution] = {}
+    for lf in review_findings(store, thesis_id, v):
+        st = resolution_state(by_key.get(lf.key, ()))
+        if lf.dismissible and st is not None and st.action == "dismissed":
+            out[lf.sentence_id] = st
+    return out
 
 
 @dataclass
@@ -1084,7 +1180,8 @@ class DashRow:
     why: list[str] = field(default_factory=list)
     #: (line anchor, line name, what is open) of every withheld / review-flagged line on the card
     review_lines: list[tuple[str, str, str]] = field(default_factory=list)
-    #: review findings a later version resolved: (line anchor, line name, why) — history
+    #: review findings a later version resolved, or a reviewer dismissed: (line anchor, line name,
+    #: why) — history
     resolved_lines: list[tuple[str, str, str]] = field(default_factory=list)
     #: the earnings chain in step names, and the step closest to profits in the source's words
     impact_chain: list[str] = field(default_factory=list)
@@ -1182,7 +1279,7 @@ _ACTION_WORDS = {ResearchAction.RESEARCH_NOW: "Research Now", ResearchAction.WAT
 
 def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[ThesisVersion],
                   this_run: list[ThesisVersion], evs: list[ChangeEvent], rids: set[str],
-                  mech_label: dict[str, str]) -> dict[str, Any]:
+                  mech_label: dict[str, str], until: datetime | None = None) -> dict[str, Any]:
     """A thesis as the redesigned weekly overview shows it — read from the stored version and the
     report's events, never from rendered text: the central mechanism in words; the change lines
     and earnings steps without engine tags; why the action, in plain words; the card lines still
@@ -1217,8 +1314,10 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
             if st.step != "market_reaction" and i != mi]
     said = [(i, st) for i, st in rest if st.provenance in SOURCE_LABELS and f"s03.{i}" not in skip]
     unknown = any(st.text.startswith("UNKNOWN") for _i, st in rest)
+    dismissed = dismissed_findings(store, t.thesis_id, cur, until=until)
     review = [(sid, blocked.get(sid) and "withheld — failed source verification"
-               or flagged[sid]) for sid in card_sentences(c) if sid in blocked or sid in flagged]
+               or flagged[sid]) for sid in card_sentences(c)
+              if sid in blocked or (sid in flagged and sid not in dismissed)]
     src = c.s09_sources[-1] if c.s09_sources else None
     vs = store.article_versions(src.article_id) if src else []
     partial = bool(vs) and vs[-1].retrieval_state is not RetrievalState.FULL
@@ -1237,7 +1336,9 @@ def _analyst_view(store: Store, t: Thesis, cur: ThesisVersion, before: list[Thes
                         if unknown else "No earnings step stated by the source."),
         "groups": groups,
         "resolved_lines": [(_card_anchor(sid), name, why) for (sid, (why, _w)), name
-                           in zip(resolved.items(), finding_names(list(resolved)), strict=True)],
+                           in zip(resolved.items(), finding_names(list(resolved)), strict=True)]
+        + [(_card_anchor(sid), name, dismissal_words(r)) for (sid, r), name
+           in zip(dismissed.items(), finding_names(list(dismissed)), strict=True)],
         "changed_plain": [_plain(it.text) for it in c.s02_what_changed.items],
         "implications": [f"{STEP_LABEL.get(st.step, st.step)}: {_plain(st.text)}"
                          for st in c.s03_transmission if st.step != "market_reaction"],
@@ -1312,7 +1413,8 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
         if t.status is ThesisStatus.REVIEW_NEEDED:
             flags.append("REVIEW_NEEDED")
         hdr = cur.content.header
-        view = _analyst_view(store, t, cur, before, this_run, evs, rids, mech_label)
+        view = _analyst_view(store, t, cur, before, this_run, evs, rids, mech_label,
+                             until=run.finished_at)
         row = DashRow(
             category=cat.value, thesis_id=tid, title=t.title, action=now_action.value,
             previous_action=prev_action.value if prev_action else None,
@@ -1709,9 +1811,10 @@ def _review_html(d: Dashboard, rows: list[DashRow], print_mode: bool) -> str:
            f'evidence no thesis carries, or a proposition dropped</summary>' + items(alerts)
            + "</details>",
            f'<details class="sec rqd"{op}><summary>Resolved or historical ({n["historical"]}) — '
-           f'past validation failures since corrected; review findings a later version resolved'
-           f'</summary><div class="note">Kept as history: the stored records are never edited. '
-           f'None of these bears on a current card.</div>'
+           f'past validation failures since corrected; review findings a later version resolved '
+           f'or a reviewer dismissed</summary><div class="note">Kept as history: the stored '
+           f'records are never edited. None of these is an open finding; a dismissed one stays '
+           f'on its card line, said as dismissed, and verifies nothing.</div>'
            + (f"<ul>{hist_html}</ul>" if hist_html else "") + (items(sup) if sup else "")
            + ('<div class="empty">None.</div>' if not hist and not sup else "") + "</details>"]
     return "".join(out)

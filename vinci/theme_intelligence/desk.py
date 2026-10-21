@@ -48,6 +48,7 @@ from vinci.theme_intelligence.cards import (
     broad_market_instruments,
     card_steps,
     counted_exposures,
+    dismissal_words,
     e,
     enrichment_lines,
     enrichment_listing,
@@ -98,13 +99,16 @@ from vinci.theme_intelligence.report import (
     AsOf,
     Dashboard,
     DashRow,
+    LineFinding,
     build_dashboard,
     card_context,
+    dismissed_findings,
     follows,
     line_findings,
     partial_ask,
     report_runs,
     review_carry,
+    review_findings,
     source_health_as_of,
     theses_as_of_run,
     unread_documents,
@@ -960,14 +964,29 @@ def _first_raised(store: Store, tid: str, versions: list[ThesisVersion], text: s
     return None
 
 
+def finding_audit(lf: LineFinding | None) -> str:
+    """A finding's key and how it closes (audit view) — the command a reviewer runs to dismiss
+    it, where it may be dismissed."""
+    if lf is None:
+        return ""
+    if lf.dismissible:
+        return (f" · finding {lf.key} — to dismiss: python -m vinci.theme_intelligence review "
+                f'dismiss --finding {lf.key} --reviewer NAME --reason "…"')
+    return (f" · finding {lf.key} — closes by an analyst correction or a re-review, never a "
+            f"dismissal")
+
+
 def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
-                    nt: NearTerm | None = None) -> tuple[list[Finding], list[Finding]]:
+                    nt: NearTerm | None = None, until: datetime | None = None
+                    ) -> tuple[list[Finding], list[Finding]]:
     """(open, history) findings of one thesis's version: the lines withheld or questioned
     (report.line_findings — the card's own reading, earlier findings included when this version
     was not reviewed), a version the card review never read, a near-term timing conflict; and, as
-    history, findings a later version resolved, analyst corrections, and findings on lines no
-    longer on the card."""
+    history, findings a later version resolved, findings a reviewer dismissed (with `until`, as the
+    registry held them then), analyst corrections, and findings on lines no longer on the card."""
     blocked, flagged, corrected, resolved = line_findings(store, t.thesis_id, v)
+    dismissed = dismissed_findings(store, t.thesis_id, v, until=until)
+    keyed = {lf.sentence_id: lf for lf in review_findings(store, t.thesis_id, v)}
     carry = review_carry(store, t.thesis_id, v)
     sents = card_sentences(v.content)
     versions = [x for x in store.thesis_versions(t.thesis_id) if x.version <= v.version]
@@ -986,8 +1005,8 @@ def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
                                            "verified",
                                   raised=cf.origin_as_of if cf else v.as_of,
                                   raised_version=cf.origin_version if cf else v.version,
-                                  audit=blocked[sid]))
-        elif sid in flagged:
+                                  audit=blocked[sid] + finding_audit(keyed.get(sid))))
+        elif sid in flagged and sid not in dismissed:
             first = ((cf.origin_as_of, cf.origin_version) if cf else next(
                 ((x.as_of, x.version) for x in [_first_raised(
                     store, t.thesis_id, versions, text, flagged[sid])] if x is not None),
@@ -1002,7 +1021,8 @@ def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
                                   decision=("the line restates evidence the research action "
                                             "counts (" + ", ".join(hit) + ")") if hit else "",
                                   raised=first[0], raised_version=first[1],
-                                  audit=f"{t.thesis_id}:{sid} · " + ", ".join(cids)))
+                                  audit=f"{t.thesis_id}:{sid} · " + ", ".join(cids)
+                                  + finding_audit(keyed.get(sid))))
     if carry.not_run is not None:
         opened.append(Finding(
             **base, sid="", line=f"Version {v.version} was not reviewed", kind="not_reviewed",
@@ -1029,6 +1049,14 @@ def thesis_findings(store: Store, t: Thesis, v: ThesisVersion, *, area: str,
         hist.append(Finding(**base, sid=sid, line=plain(sents[sid][0]), kind="review", said=said,
                             decision="", raised=v.as_of, raised_version=v.version,
                             history=f"Resolved — {why}."))
+    for sid, r in dismissed.items():  # closed by a reviewer — the finding's words kept
+        hist.append(Finding(**base, sid=sid, line=plain(sents[sid][0]), kind="review",
+                            said=flagged[sid], decision="",
+                            raised=keyed[sid].finding.origin_as_of,
+                            raised_version=keyed[sid].finding.origin_version,
+                            history=dismissal_words(r) + ".",
+                            audit=f"{t.thesis_id}:{sid} · finding {r.finding_key} · "
+                                  f"{r.resolution_id} (run {r.run_id})"))
     for sid, why in corrected.items():
         hist.append(Finding(**base, sid=sid, line=plain(sents[sid][0]), kind="review",
                             said=why, decision="", raised=v.as_of, raised_version=v.version,
@@ -1609,7 +1637,8 @@ class Desk:
         self.open: list[Finding] = []
         self.history: list[Finding] = []
         for tid, (t, v) in self.asof.items():
-            o, h = thesis_findings(store, t, v, area=self.area[tid], nt=self.near[tid])
+            o, h = thesis_findings(store, t, v, area=self.area[tid], nt=self.near[tid],
+                                   until=run.finished_at)
             if t.status is ThesisStatus.ARCHIVED:
                 for f in o:
                     f.history = "The thesis is archived — kept for the record."
@@ -2112,8 +2141,10 @@ class Desk:
                 f'{_pl(len(self.open), "open finding")} · '
                 f'{_theses(len(groups))} · {dec} affect a research action · '
                 f'{old} open 4+ weeks</p><p class="hint">Findings that affect a research action '
-                f'come first, then Research Now, then the oldest. Read-only: a finding closes '
-                f'through an analyst correction or a re-read.</p>'
+                f'come first, then Research Now, then the oldest. Read-only here: a finding '
+                f'closes through a re-review, an analyst correction, or — a warning only, never '
+                f'a withheld line — a reviewer\'s dismissal recorded with a name and a reason '
+                f'(its command is in the audit view). A dismissal verifies nothing.</p>'
                 '<div class="filters"><label class="pillcheck"><input type="checkbox" id="fdec" '
                 'onchange="fr2()"> Affects action</label><label class="pillcheck"><input '
                 'type="checkbox" id="frn" onchange="fr2()"> Research Now</label><label '
