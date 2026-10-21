@@ -158,6 +158,20 @@ jobs:
           git diff --staged --quiet || git commit -m "theme intelligence: Actions run ${{ github.run_id }} (scan exit ${{ steps.scan.outputs.code }}, qa ${{ steps.qa.outcome }}, market ${{ steps.market.outcome }})"
           git push origin HEAD:theme-intelligence-state
 
+      # The app shows a PUBLISHED copy of the desk (`frontend/theme-intelligence/`, committed to
+      # main by a publish PR), never this branch: said here every week when it is behind, so a
+      # desk left on an old run is never discovered late. A warning, never a failure.
+      - name: Say whether the app's research desk is behind the registry
+        if: always() && steps.restore.outcome == 'success'
+        continue-on-error: true
+        run: |
+          set +e
+          msg=$(python -m vinci.theme_intelligence publish --check)
+          code=$?
+          echo "$msg"
+          if [ "$code" -ne 0 ]; then echo "::warning::$msg"; fi
+          exit 0
+
       - name: Fail the job when the scan failed or QA did not pass
         if: (steps.scan.outputs.code != '0' && steps.scan.outputs.code != '2') || steps.qa.outcome == 'failure'
         run: exit 1

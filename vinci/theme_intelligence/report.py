@@ -134,6 +134,19 @@ MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market"
 PRICE_ONLY_MODES = ("market",)
 
 
+def follows(r: WeeklyRun, scan: WeeklyRun | None) -> bool:
+    """`r`, started after `scan`, belongs to THAT scan's week — never a week of its own, never the
+    next scan's: a price refresh (`PRICE_ONLY_MODES`), or a REPLAY (`replay_of`: research
+    re-read, as a `state pull` does) dated BEFORE the scan's day — older research read again
+    late. A replay keeps its original as-of, so as a week of its own it opened a "latest" week
+    dated before the scan it followed (the one-registry merge, 2026-10-21: "13–14 Oct" after
+    "12–21 Oct"). A replay dated ON the scan's day or later is research that arrived after the
+    scan (a laptop's upload, replayed by a pull): the next week's, as every manual run after a
+    scan. One rule, read by `report_runs` and `desk.desk_weeks`."""
+    return scan is not None and (r.mode in PRICE_ONLY_MODES or (
+        bool(r.replay_of) and r.as_of < (scan.window_to or scan.as_of)))
+
+
 def _no_discovery(mode: str) -> str:
     return ("none read — a reassessment of stored evidence under the current rules (no fetch, no "
             "model call)" if mode == "reassess" else
@@ -156,12 +169,12 @@ def report_runs(store: Store, run: WeeklyRun) -> list[WeeklyRun]:
     if run.mode != "scan":
         return [run]
     runs = store.runs()
-    prev = max((r.started_at for r in runs if r.mode == "scan" and not r.ledger_only
-                and r.started_at < run.started_at), default=None)
+    last = max((r for r in runs if r.mode == "scan" and not r.ledger_only
+                and r.started_at < run.started_at), key=lambda r: r.started_at, default=None)
+    prev = last.started_at if last is not None else None
     manual = sorted((r for r in runs if r.mode in MANUAL_MODES
                      and not r.ledger_only  # carried for its record: its evidence is elsewhere
-                     # a refresh after the previous scan belongs to THAT scan's week
-                     and not (prev is not None and r.mode in PRICE_ONLY_MODES)
+                     and not follows(r, last)  # the previous scan's (a refresh, a late replay)
                      and r.started_at < run.started_at
                      and (prev is None or r.started_at > prev)
                      and (run.window_from is None or r.as_of >= run.window_from)

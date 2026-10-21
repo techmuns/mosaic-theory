@@ -29,6 +29,7 @@ refused unless `allow_test_data` — synthetic data never reaches the app by acc
 
 from __future__ import annotations
 
+import html
 import json
 import re
 import shutil
@@ -157,6 +158,50 @@ def _marker(out: Path) -> dict[str, Any] | None:
     return data if isinstance(data, dict) else None
 
 
+def _title(page: Path) -> str:
+    """A published page's heading, as text ("" when it has none)."""
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", page.read_text(), re.S)
+    return html.unescape(re.sub(r"<[^>]+>", "", m.group(1))).strip() if m else ""
+
+
+def retired_theses(marker: dict[str, Any] | None, out: Path, kept: set[str],
+                   today: str) -> dict[str, dict[str, str]]:
+    """Every thesis a publication of this folder has dropped, by id: its title, the day it left and
+    the last run that showed it — carried from publication to publication, so a link someone saved
+    to a retired thesis is answered by name, never by a missing page (the one-registry merge,
+    2026-10-21, dropped 14). A thesis published again leaves the list."""
+    if marker is None:
+        return {}
+    gone = {k: v for k, v in (marker.get("retired") or {}).items() if k not in kept}
+    before = {Path(f).stem for f in marker.get("files", []) if f.startswith("site/theses/TH-")}
+    for tid in sorted(before - kept):
+        page = out / "site" / "theses" / f"{tid}.html"
+        gone[tid] = {"title": _title(page) if page.exists() else "", "retired_on": today,
+                     "last_run": str(marker.get("run_id", ""))}
+    return dict(sorted(gone.items()))
+
+
+def publication_lag(store: Store, out: Path) -> str | None:
+    """Why the app's published desk is behind the registry, in one sentence — or None when it
+    shows the registry's latest run. The weekly job runs this after it commits, so a desk left on
+    an old run is said every week rather than discovered (the 2026-10-17 desk outlived two weekly
+    runs and a merge before anyone noticed)."""
+    marker = _marker(out) if out.exists() else None
+    runs = store.runs()
+    if not runs:
+        return None
+    latest = max(runs, key=lambda r: r.started_at)
+    if marker is None:
+        return (f"nothing is published in {out}; the registry's latest run is {latest.run_id} "
+                f"(as of {latest.as_of.isoformat()}) — publish it")
+    if marker.get("run_id") == latest.run_id:
+        return None
+    return (f"the app's research desk shows run {marker.get('run_id')} (as of "
+            f"{marker.get('run_as_of')}, published {marker.get('published_at')}); the "
+            f"registry's latest run is {latest.run_id} (as of {latest.as_of.isoformat()}) — "
+            f"republish: python -m vinci.theme_intelligence publish")
+
+
 def publish(store: Store, run_id: str, out: Path, *, allow_test_data: bool = False
             ) -> dict[str, Any]:
     """Render `run_id` and replace the publication in `out` with it. Refused — nothing written —
@@ -200,14 +245,17 @@ def publish(store: Store, run_id: str, out: Path, *, allow_test_data: bool = Fal
         (staging / "intel.css").write_text(app_css())
         weeks = desk_weeks(store, run)
         week = weeks[-1] if weeks else None
+        now = datetime.now(tz=UTC)
+        kept = {p.stem for p in (staging / "site" / "theses").glob("TH-*.html")}
         manifest = {
             "kind": KIND, "run_id": run.run_id, "run_mode": run.mode,
             "run_as_of": run.as_of.isoformat(),
             "week": week.label if week else None,
-            "published_at": datetime.now(tz=UTC).isoformat(timespec="seconds"),
+            "published_at": now.isoformat(timespec="seconds"),
             "test_data": bool(test),
-            "theses": len(list((staging / "site" / "theses").glob("TH-*.html"))),
+            "theses": len(kept),
             "files": sorted(["desk.js", "intel.css", *(f"site/{p}" for p in pages)]),
+            "retired": retired_theses(marker, out, kept, now.date().isoformat()),
         }
         (staging / "index.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
         if out.exists():
