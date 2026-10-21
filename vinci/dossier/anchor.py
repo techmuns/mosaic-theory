@@ -66,6 +66,10 @@ _REVENUE_TAG_PREFERENCE = (
 # there, shared).
 DQ_REVENUE_TAG_CONFLICT = "revenue_tag_conflict"
 _DILUTED_TAG = "WeightedAverageNumberOfDilutedSharesOutstanding"
+#: The same 10-Q's BASIC weighted average: diluted minus basic, over the one period both tag, is the
+#: dilutive increment the filer itself counts (options and RSUs by treasury stock, convertibles
+#: if-converted) — the only dilution figure this repo reads rather than estimates.
+_BASIC_TAG = "WeightedAverageNumberOfSharesOutstandingBasic"
 _NOTE = (
     "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 "
     "underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored "
@@ -168,8 +172,10 @@ class AnchorInput(BaseModel, frozen=True):
 #: The block's R1 VALUE fields — R1's screen arithmetic. `recipe_hint`, `applicable`, `reason` and
 #: the confidence/provenance fields are the block's identity, not R1's inputs.
 R1_VALUE_FIELDS: tuple[str, ...] = (
-    "multiple_basis", "margin", "multiple", "d_and_a", "net_debt", "diluted_shares", "ltm_revenue",
-    "ltm_fcf", "anchor_base_value_per_share", "midcycle_gap", "anchor_ev_ebit")
+    "multiple_basis", "margin", "multiple", "d_and_a", "net_debt", "diluted_shares",
+    "shares_outstanding", "dilutive_increment", "ltm_revenue", "ltm_fcf",
+    "anchor_base_value_per_share", "anchor_base_value_per_share_diluted", "midcycle_gap",
+    "anchor_ev_ebit")
 
 
 class ScenarioEligibility(BaseModel, frozen=True):
@@ -229,6 +235,14 @@ class Anchor(BaseModel, frozen=True):
     d_and_a: AnchorInput | None = None
     net_debt: AnchorInput | None = None
     diluted_shares: AnchorInput | None = None
+    # (2026-10-21) THE PER-SHARE DENOMINATOR, AND DILUTION BESIDE IT. The base value per share was
+    # `equity ÷ diluted_shares` — a WEIGHTED AVERAGE over the latest quarter, which lags a buyback
+    # by the quarter's pace (TJX: 1.117B against 1.100B outstanding on the cover, 1.5%) — while the
+    # scenario template and `valuation_basis.exit_share_count` divide by the POINT-IN-TIME count
+    # (item 24). The base now divides by that same count, and dilution is TESTED separately: the
+    # filer's own diluted-minus-basic increment over the 10-Q's quarter, added to it.
+    shares_outstanding: AnchorInput | None = None
+    dilutive_increment: AnchorInput | None = None
     ltm_revenue: AnchorInput | None = None
     # (R2 cohort, 2026-07-21) Free cash flow — the SURVIVAL input. A negative value IS the burn the
     # R2 gate divides cash+facilities by, so its basis is stated on the block rather than assumed:
@@ -237,6 +251,9 @@ class Anchor(BaseModel, frozen=True):
     # The R2 record takes this as a DEFAULT the analyst may override with a reason. Additive/opt.
     ltm_fcf: AnchorInput | None = None
     anchor_base_value_per_share: float | None = None   # the spot-independent fundamental
+    # the same equity over point-in-time shares PLUS the dilutive increment — the dilution test;
+    # absent when the filer tags no basic weighted average for the diluted figure's own period
+    anchor_base_value_per_share_diluted: float | None = None
     # (2026-09-21) Set only when the last twelve months sit MIDCYCLE_GAP_PTS or more from the
     # median margin; absent otherwise, and DROPPED from the JSON when absent (see
     # `insert_anchor_block`), so an anchor that does not fire serialises byte-identically.
@@ -589,11 +606,9 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     beats any duration — it cannot BE a cumulative, which is the thing being excluded. No caller
     currently mixes the two: the sole call site reads the diluted weighted average, a duration.
 
-    **THIS ALSO MOVES THE COMMITTED ANCHOR.** ``anchor_base_value_per_share`` is ``equity ÷
-    dil.value`` (below), and ``tagger._leverage`` / ``audit_r1.check_leverage`` read it — so a
-    fresh recompute now diverges from committed JSON on SMPL (41.60→43.33, +4.16%), BRBR
-    (55.41→55.97, +1.02%) and CNXC (62.33→62.55, +0.35%). The committed values are the ones
-    carrying the defect; they are corrected by an anchor backfill, not by this function."""
+    (History: until 2026-10-21 ``anchor_base_value_per_share`` was ``equity ÷`` this figure, so
+    the span fix moved committed anchors — SMPL +4.16%, BRBR +1.02%, CNXC +0.35%. The base now
+    divides by the point-in-time count and this figure feeds the dilution test only.)"""
     pts = points_for_tag(facts, tag)
     if not pts:
         return None
@@ -681,6 +696,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
     dil = _latest_point(facts, _DILUTED_TAG)
+    out, out_src = _shares_outstanding(mechanical)
+    inc = _dilutive_increment(facts, dil)
     ltm_rev = _ltm_revenue_from_fs(mechanical)
     fcf = _latest_fcf(facts)
 
@@ -707,7 +724,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             vendor.append("ltm_fcf")
     return {
         "vendor_filled": vendor,
-        "da": da, "nd_val": nd_val, "dil": dil, "ltm_rev": ltm_rev,
+        "da": da, "nd_val": nd_val, "dil": dil, "ltm_rev": ltm_rev, "out": out,
+        "inc": inc[0] if inc else None,
         "d_and_a": AnchorInput(
             value=(round(da[0] / _USD_M, 3) if da else None), unit="$M",
             basis=(da[2] if da else "consolidated latest FY"),
@@ -723,6 +741,16 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                                       basis="diluted weighted-average (latest 10-Q)",
                                       source=(f"EDGAR {_DILUTED_TAG}" if dil
                                               else "UNKNOWN — no diluted WA tag")),
+        "shares_outstanding": AnchorInput(
+            value=out, unit="shares",
+            basis="point-in-time shares outstanding — the per-share denominator (item 24)",
+            source=out_src),
+        "dilutive_increment": AnchorInput(
+            value=(inc[0] if inc else None), unit="shares",
+            basis="diluted less basic weighted average over the latest 10-Q quarter — the "
+                  "dilution test",
+            source=(inc[1] if inc else "UNKNOWN — the 10-Q tags no basic weighted average for "
+                                       "the diluted figure's own period")),
         "ltm_revenue": AnchorInput(value=(round(ltm_rev, 3) if ltm_rev is not None else None),
                                    unit="$M", basis="LTM revenue",
                                    source="committed financial_summary.annual (LTM)"),
@@ -733,7 +761,48 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     }
 
 
-_BRIDGE_FIELDS = ("d_and_a", "net_debt", "diluted_shares", "ltm_revenue", "ltm_fcf")
+_BRIDGE_FIELDS = ("d_and_a", "net_debt", "diluted_shares", "shares_outstanding",
+                  "dilutive_increment", "ltm_revenue", "ltm_fcf")
+
+
+def _shares_outstanding(mechanical: dict[str, Any]) -> tuple[float | None, str]:
+    """(count, source) — the page's own POINT-IN-TIME count, `stock_info.shares_out`: the count its
+    market cap is struck on, guarded upstream for age and share class (`_stock_info`). Read, never
+    re-derived, so the anchor and the CMP cannot disagree about how many shares there are."""
+    so = ((mechanical.get("stock_info") or {}).get("shares_out") or {})
+    v = so.get("value") if so.get("status") == "present" else None
+    if isinstance(v, (int, float)) and v > 0:
+        return float(v), f"mechanical.stock_info.shares_out ({so.get('source_ref')})"
+    return None, f"UNKNOWN — stock_info.shares_out absent ({so.get('note') or 'no count'})"
+
+
+def _dilutive_increment(facts: dict[str, Any], dil: ConceptPoint | None,
+                        ) -> tuple[float, str] | None:
+    """(shares, source) — diluted less basic weighted average over the diluted figure's OWN period
+    (same start, same end), or None. Never two periods mixed: a basic count from another span
+    differs by the buyback pace, the very error this field keeps apart from dilution."""
+    if dil is None:
+        return None
+    basic = [p for p in points_for_tag(facts, _BASIC_TAG)
+             if p.period_end == dil.period_end and p.period_start == dil.period_start]
+    if not basic:
+        return None
+    b = max(basic, key=lambda p: p.filed)
+    span = f"{b.period_start.isoformat() if b.period_start else '?'}..{b.period_end.isoformat()}"
+    return (max(0.0, dil.value - b.value),
+            f"EDGAR {_DILUTED_TAG} {dil.value:,.0f} − {_BASIC_TAG} {b.value:,.0f} ({span})")
+
+
+def per_share_shares(anchor: dict[str, Any]) -> float | None:
+    """THE COUNT `anchor_base_value_per_share` IS DIVIDED BY — the one reading for every consumer
+    that rebuilds the anchor's equity (`tagger._leverage`, `audit_r1.check_leverage`). The
+    point-in-time count since 2026-10-21; an anchor written before it carries only the diluted
+    weighted average, which is what its base was struck on."""
+    for key in ("shares_outstanding", "diluted_shares"):
+        v = (anchor.get(key) or {}).get("value")
+        if isinstance(v, (int, float)) and v > 0:
+            return float(v)
+    return None
 
 
 def lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str | None]:
@@ -975,7 +1044,7 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # remaining source-bound inputs — the SAME gather every other return path uses, never a
     # second copy of the extraction logic (two gatherers of one fact is the drift class this
     # repo keeps re-learning).
-    da, nd_val, dil = bridge["da"], bridge["nd_val"], bridge["dil"]
+    da, nd_val = bridge["da"], bridge["nd_val"]
     ltm_rev = bridge["ltm_rev"]
 
     # --- BAND GUARDS: does this multiple describe THIS company? (VITL, 2026-07-21) --------------
@@ -1041,14 +1110,16 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # that survived the band guards. A tripped guard means the multiple's denominator is provably
     # not this company's EBITDA, so re-rating to it would publish a fabricated fundamental — the one
     # outcome the fail-loud rule exists to prevent. UNUSABLE until cleared, not merely "weak".
-    base = ev_ebit = None
-    if (da and nd_val is not None and dil and dil.value > 0 and ltm_rev is not None
-            and not band_tripped):
+    base = base_diluted = ev_ebit = None
+    out, inc = bridge["out"], bridge["inc"]
+    if (da and nd_val is not None and out and ltm_rev is not None and not band_tripped):
         sv = mc.scenario_value(
             mc.Scenario(name="base", revenue=ltm_rev, margin=margin_val, multiple=mult_median,
                         source="anchor default", d_and_a=da[0] / _USD_M),
-            net_debt=nd_val / _USD_M, shares=dil.value)
-        base = round(sv.equity * _USD_M / dil.value, 4)
+            net_debt=nd_val / _USD_M, shares=out)
+        base = round(sv.equity * _USD_M / out, 4)
+        if inc is not None:
+            base_diluted = round(sv.equity * _USD_M / (out + inc), 4)
         ev_ebit = round(sv.ev_ebit, 4) if sv.ev_ebit is not None else None
 
     # a periodicity mismatch or a band-guard trip is its own fail-loud data-quality event; raise it
@@ -1080,13 +1151,22 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         recipe_hint=RECIPE_R1, applicable=base is not None, computed_at=computed_at, reason=reason,
         margin=margin_blk, multiple=multiple_blk,
         **{k: bridge[k] for k in _BRIDGE_FIELDS},
-        anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall,
+        anchor_base_value_per_share=base, anchor_base_value_per_share_diluted=base_diluted,
+        anchor_ev_ebit=ev_ebit, overall_confidence=overall,
         data_quality=dq, data_quality_detail=detail,
         midcycle_gap=midcycle_gap(margin_val, margin_years, ltm_ebit=ltm_ebit,
                                   ltm_revenue=ltm_rev, median_source=margin_source,
                                   basis=(None if median_from_ciq
                                          else basis_check(ma.by_year, mechanical)),
                                   median_from_ciq=median_from_ciq))
+
+
+def anchor_absent_fields(anchor: Anchor) -> set[str]:
+    """Optional anchor keys written ABSENT, never null, when unset — so a page whose anchor does not
+    carry them serialises without them (`midcycle_gap` set only when it fires; the dilution test's
+    value only where the filer tags both weighted averages)."""
+    return {k for k in ("midcycle_gap", "anchor_base_value_per_share_diluted")
+            if getattr(anchor, k) is None}
 
 
 def insert_anchor_block(text: str, anchor: Anchor) -> str:
@@ -1096,7 +1176,7 @@ def insert_anchor_block(text: str, anchor: Anchor) -> str:
     uses this rather than a model round-trip, because re-serializing older-schema dossiers drifts
     their other fields (new-default materialisation) — a corruption the string insert avoids."""
     body = anchor.model_dump_json(  # a top-level-indented anchor object
-        indent=2, exclude={"midcycle_gap"} if anchor.midcycle_gap is None else None)
+        indent=2, exclude=anchor_absent_fields(anchor) or None)
     inner = "\n".join("  " + ln for ln in body.split("\n"))      # +2 so it sits at the field level
     field = '  "anchor": ' + inner.lstrip()                      # -> '  "anchor": {\n    …\n  }'
     end = text.rstrip()

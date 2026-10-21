@@ -138,8 +138,9 @@ def test_basis_triangulation_labels_are_part_of_each_pin() -> None:
     t = ps.basis_triangulation(
         "3.9x", "5.8x", 199.9, 10.7,
         gaap_gross_margin=28.6, impairment=32.5, revenue=427.5, ciq_adjusted_margin=36.0)
-    assert "net debt / EBITDA (CIQ, GAAP basis)" in t and "3.9x" in t
-    assert "total debt / EBITDA (CIQ comps, GAAP basis)" in t and "5.8x" in t
+    # CIQ's EBITDA is the vendor's, never labelled GAAP (2026-10-21, the TJX review)
+    assert f"{ps.CIQ_NET_DEBT_LABEL}: 3.9x" in t and "GAAP basis" not in t
+    assert f"{ps.CIQ_COMPS_LABEL}: 5.8x" in t
     assert "company-adjusted LTM EBITDA ($10.7M)" in t and "~18.7x" in t
     assert "covenant basis" in t and "UNKNOWN (not disclosed)" in t
     assert "GAAP 28.6%" in t and "impairment-excluded 36.0%" in t

@@ -52,8 +52,10 @@ Transform = Callable[[dict[str, Any]], dict[str, Any]]
 #: in `_TOP_LEVEL_REFRESHABLE` may be set: the mechanical layer, the synthesis and the anchor each
 #: have their own write path and guards, and this seam must not become a way around them.
 TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
+#: `caveats` since 2026-10-21, for ONE use: `leverage_caveat_transform` regenerates the leverage
+#: caveat from the page's stored ratio, and refuses if any other caveat would move.
 _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
-                                    "historical_forecast_error", "ev_bridge"})
+                                    "historical_forecast_error", "ev_bridge", "caveats"})
 
 
 class RefreshRefusedError(RuntimeError):
@@ -1064,6 +1066,90 @@ def lease_basis_transform(ticker: str, cik: str | None) -> Transform:
         if built is not None:
             val["lease_basis"] = json.loads(built.model_dump_json())
         return out
+
+    return _apply
+
+
+def valuation_bases_transform(ticker: str, cik: str | None) -> Transform:
+    """A `refresh_dossier` transform writing the three basis blocks of 2026-10-21 under a KEPT
+    synthesis, through the assembler's own builder (`mechanical.with_valuation_bases`):
+    `valuation.ev_ebitda_basis` (what CIQ's headline multiple divides, measured),
+    `valuation.ev_ebitda_ex_lease_at_price` (R1's basis at the page's price) and
+    `financial_summary.ebitda_reconciliation` (CIQ's EBITDA against the filings). It also renames
+    the triangulation's two CIQ rows, which called CIQ's EBITDA "GAAP basis".
+
+    NEW KEYS AND A RELABEL; NO STORED FIGURE MOVES. The reconciliation reads the quarterly CIQ
+    export, so it is written only when that export is the one the page's bands were built from (the
+    `lease_basis_transform` rule) — otherwise the other two still land and it stays absent."""
+    from vinci.config import get_config
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import file_provenance
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import MechanicalLayer
+    from vinci.edgar.client import EdgarClient
+    from vinci.edgar.primary_source import OLD_TRIANGULATION_LABELS
+    from vinci.sec import build_sec_http
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        if not isinstance(out.get("valuation"), dict) or not cik:
+            return out
+        cfg = get_config()
+        facts = EdgarClient.from_config(cfg).companyfacts(cik)
+        bundle: CiqBundle | None = None
+        bands = ((out["valuation"].get("own_history") or {}).get("value")) or []
+        stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
+        try:
+            cand = CiqBundle.from_files(ticker, LocalFolderStore.from_config(cfg).files(ticker))
+            wb = cand.workbook("financials", freq="quarterly")
+            if (wb is not None and len(stamps) == 1 and None not in stamps
+                    and file_provenance(wb.path)[0] in stamps):
+                bundle = cand
+        except (FileNotFoundError, CiqUnavailableError):
+            bundle = None
+        built = dm.with_valuation_bases(MechanicalLayer.model_validate(out), facts, bundle,
+                                        text_for=dm.release_text_fn(build_sec_http(cfg), cik))
+        for key in ("ev_ebitda_basis", "ev_ebitda_ex_lease_at_price"):
+            v = getattr(built.valuation, key)
+            if v is not None:
+                out["valuation"][key] = json.loads(v.model_dump_json())
+        fs = built.financial_summary
+        if fs is not None and fs.ebitda_reconciliation is not None:
+            out["financial_summary"]["ebitda_reconciliation"] = json.loads(
+                fs.ebitda_reconciliation.model_dump_json())
+        node = (out.get("primary_source") or {}).get("basis_triangulation") or {}
+        text = node.get("value")
+        if isinstance(text, str):
+            for old, new in OLD_TRIANGULATION_LABELS:
+                text = text.replace(old, new)
+            node["value"] = text
+        return out
+
+    return _apply
+
+
+def leverage_caveat_transform() -> TopLevelTransform:
+    """A top-level step REGENERATING the leverage caveat from the page's stored ratio — the one
+    caveat that called CIQ's EBITDA "(CIQ / consolidated GAAP)" (2026-10-21). Rebuilt through the
+    assembler's own `_leverage_basis_flag`, never string-edited, and REFUSED unless exactly that one
+    caveat moves: the seam that admits `caveats` must not carry any other change."""
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.schemas import Sourced
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        cav = list(doc.get("caveats") or [])
+        old = [i for i, c in enumerate(cav) if isinstance(c, str)
+               and c.startswith("Net debt/EBITDA (") and "(CIQ / consolidated GAAP)" in c]
+        if not old:
+            return {}
+        raw = ((doc.get("mechanical") or {}).get("quality") or {}).get("net_debt_to_ebitda")
+        fresh = dm._leverage_basis_flag(Sourced[float].model_validate(raw)) if raw else None
+        if fresh is None or len(old) != 1:
+            raise ValueError(f"{doc.get('ticker')}: the leverage caveat cannot be regenerated "
+                             f"from the stored ratio ({len(old)} candidate(s)) — re-assemble")
+        cav[old[0]] = fresh
+        return {"caveats": cav}
 
     return _apply
 

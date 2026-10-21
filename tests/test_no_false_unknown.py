@@ -117,8 +117,7 @@ def test_the_table_renders_each_state_verbatim() -> None:
     assert "covenant basis: 1.2x (net debt / covenant EBITDA)" in _tri(
         "1.2x (net debt / covenant EBITDA)")
     # the other three basis rows are untouched by this item
-    for row in ("net debt / EBITDA (CIQ, GAAP basis): 1.5x",
-                "total debt / EBITDA (CIQ comps, GAAP basis): 1.6x"):
+    for row in (f"{ps.CIQ_NET_DEBT_LABEL}: 1.5x", f"{ps.CIQ_COMPS_LABEL}: 1.6x"):
         assert row in _tri(None), row
 
 
