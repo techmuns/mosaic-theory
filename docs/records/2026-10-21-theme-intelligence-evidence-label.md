@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-evidence-label
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [766]
 supersedes:
 superseded-by:
 ---
