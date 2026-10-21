@@ -24,6 +24,7 @@ from tests.theme_intelligence_support import (
 from vinci.theme_intelligence import desk as dk
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.publish import publish
+from vinci.theme_intelligence.report import report_runs
 from vinci.theme_intelligence.schemas import RunStatus, WeeklyRun
 
 
@@ -35,9 +36,10 @@ def _scan(pipe: Pipeline) -> WeeklyRun:
     return pipe.finish_run(RunStatus.SUCCEEDED)
 
 
-def _run(pipe: Pipeline, mode: str, status: RunStatus = RunStatus.SUCCEEDED) -> WeeklyRun:
+def _run(pipe: Pipeline, mode: str, status: RunStatus = RunStatus.SUCCEEDED, *,
+         as_of: dt.date = JPM_AS_OF) -> WeeklyRun:
     """A run that analyses nothing — the price refresh, or a manual run that failed."""
-    pipe.start_run(mode, as_of=JPM_AS_OF)
+    pipe.start_run(mode, as_of=as_of)
     return pipe.finish_run(status)
 
 
@@ -68,17 +70,18 @@ def test_a_price_refresh_joins_the_scan_week_it_follows(tmp_path: Path) -> None:
 
 
 def test_research_after_a_scan_is_its_own_week_and_says_it_follows_one(tmp_path: Path) -> None:
-    """NEGATIVE: a manual ARTICLE after the scan is the week in progress (the price refresh after
-    it rides along) — labelled as following a scan, never "no weekly scan yet"."""
+    """NEGATIVE: a manual ARTICLE after the scan is the week in progress — labelled as following a
+    scan, never "no weekly scan yet". The price refresh after it is still the SCAN's: one rule."""
     pipe = make_pipeline(tmp_path)
-    _scan(pipe)
+    scan = _scan(pipe)
     pipe.start_run("article", as_of=CALM_AS_OF)
     ingest_calm(pipe)
     article = pipe.finish_run(RunStatus.SUCCEEDED)
     market = _run(pipe, "market")
     weeks = dk.desk_weeks(pipe.store, market)
     assert [w.scanned for w in weeks] == [True, False]
-    assert {article.run_id, market.run_id} <= weeks[-1].run_ids
+    assert weeks[-1].run_ids == {article.run_id}
+    assert {scan.run_id, market.run_id} <= weeks[0].run_ids
     assert weeks[-1].label.endswith("— manual runs since the last weekly scan")
 
 
@@ -108,3 +111,68 @@ def test_manual_runs_before_any_scan_still_say_there_was_none(tmp_path: Path) ->
     alone = make_pipeline(tmp_path / "alone")
     only = _run(alone, "market")
     assert [w.scanned for w in dk.desk_weeks(alone.store, only)] == [False]
+
+
+# --- the review of #759 (2026-10-21): one rule for a price refresh, wherever weeks are made ------
+
+def test_a_failed_refresh_does_not_reopen_an_empty_week(tmp_path: Path) -> None:
+    """The weekly job's market step failed (continue-on-error records it FAILED) and the operator
+    re-ran it: the failed refresh is listed as failed in the SCAN's week — it neither opens a week
+    nor stops the re-run joining the scan's."""
+    pipe = make_pipeline(tmp_path)
+    scan = _scan(pipe)
+    broke = _run(pipe, "market", RunStatus.FAILED)
+    rerun = _run(pipe, "market")
+    weeks = dk.desk_weeks(pipe.store, rerun)
+    assert [w.scanned for w in weeks] == [True]
+    assert {scan.run_id, rerun.run_id} <= weeks[-1].run_ids
+    assert [r.run_id for r in weeks[-1].failed] == [broke.run_id]
+
+
+def test_a_refresh_is_never_taken_into_the_next_scans_week(tmp_path: Path) -> None:
+    """A refresh belongs to the scan it follows — in `report_runs` too: the NEXT scan's report
+    must not count it (it took in every manual mode, the refresh included), so no run moves
+    between weeks when the next scan lands."""
+    pipe = make_pipeline(tmp_path)
+    first = _scan(pipe)
+    market = _run(pipe, "market")
+    broke = _run(pipe, "market", RunStatus.FAILED)
+    pipe.start_run("scan", as_of=JPM_AS_OF + dt.timedelta(days=7),
+                   window_from=JPM_AS_OF - dt.timedelta(days=2),
+                   window_to=JPM_AS_OF + dt.timedelta(days=7))
+    second = pipe.finish_run(RunStatus.SUCCEEDED)
+    assert market.run_id not in {r.run_id for r in report_runs(pipe.store, second)}
+    weeks = dk.desk_weeks(pipe.store, second)
+    assert [w.scanned for w in weeks] == [True, True]
+    assert {first.run_id, market.run_id} <= weeks[0].run_ids
+    assert market.run_id not in weeks[1].run_ids
+    # a failed refresh between the scans is listed ONCE, in the week it belongs to
+    assert [r.run_id for r in weeks[0].failed] == [broke.run_id] and not weeks[1].failed
+    # and a refresh after the second scan is the second scan's, never the first's
+    later = _run(pipe, "market", as_of=JPM_AS_OF + dt.timedelta(days=7))
+    weeks = dk.desk_weeks(pipe.store, later)
+    assert later.run_id in weeks[1].run_ids and later.run_id not in weeks[0].run_ids
+
+
+def test_prices_newer_than_the_scan_week_are_said(tmp_path: Path) -> None:
+    """A refresh as of a later day joins the scan's week, and the label says the prices are newer
+    than the week it names. NEGATIVE: a refresh inside the week adds nothing to the label."""
+    pipe = make_pipeline(tmp_path)
+    _scan(pipe)
+    same = _run(pipe, "market")
+    (week,) = dk.desk_weeks(pipe.store, same)
+    assert week.label.startswith("Week of ") and "prices as of" not in week.label
+    later = _run(pipe, "market", as_of=JPM_AS_OF + dt.timedelta(days=7))
+    (week,) = dk.desk_weeks(pipe.store, later)
+    assert week.label.endswith(" · prices as of 16 Feb 2026"), week.label
+
+
+def test_a_failed_refresh_rendered_on_its_own_is_listed_as_failed(tmp_path: Path) -> None:
+    """Rendering the failed refresh itself: it is in the scan week's FAILED runs, never among the
+    runs the week reports as done."""
+    pipe = make_pipeline(tmp_path)
+    _scan(pipe)
+    broke = _run(pipe, "market", RunStatus.FAILED)
+    (week,) = dk.desk_weeks(pipe.store, broke)
+    assert broke.run_id not in week.run_ids
+    assert [r.run_id for r in week.failed] == [broke.run_id]

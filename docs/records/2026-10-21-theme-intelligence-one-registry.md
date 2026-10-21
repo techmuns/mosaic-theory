@@ -13,12 +13,25 @@ superseded-by:
 go of the pilot now and only keep main?", then said "yes go ahead with 1–4, pay for the 3
 documents".
 1. **The desk's week.**
-   - A run that analyses no article — the `market` refresh the weekly job runs straight after its
-     scan — no longer opens a week of its own. Alone after a scan, it joins that scan's week
-     (`desk.PRICE_ONLY_MODES`).
+   - ONE rule for a run that analyses no article (`report.PRICE_ONLY_MODES`: the `market`
+     refresh the weekly job runs straight after its scan). It belongs to the week of the scan it
+     FOLLOWS, and both places that assign runs to weeks read it: `desk.desk_weeks` and
+     `report.report_runs`.
+     - It never opens a week of its own.
+     - The next scan's report never takes it in. It used to take every manual mode, so a run
+       moved weeks when the next scan landed.
+     - A FAILED refresh is listed as failed in that week. It never blocks the rule, and is never
+       shown among the week's done runs, even when it is the run being rendered.
+     - When its prices are later than the week, the label says so: "Week of … · prices as of …".
    - Manual RESEARCH after a scan is still the week in progress. It now reads "… — manual runs
      since the last weekly scan", never "no weekly scan yet".
-   - Before any scan the label is unchanged.
+   - Before any scan the label is unchanged, and a refresh is a manual run like the rest.
+   - The code review of #759 (2026-10-21) found four holes in the first, tail-only version:
+     - a failed refresh re-opened the empty week;
+     - the next scan still took the refresh in;
+     - a later as-of was hidden;
+     - a failed rendered refresh showed as done.
+     All four are closed by this rule.
 2. **One registry.**
    - The pilot (`pilot-2026-10-12`, which until now lived only on this machine) is merged into the
      shared registry the weekly job writes: `theme-intelligence-state`, bfdc5266 → **d1d192b7**,
@@ -71,19 +84,37 @@ documents".
   | registry | before | after |
   |---|---|---|
   | the weekly job's (scan → market) | opens on "21 Oct 2026 — manual runs, no weekly scan yet": 0 articles, 0 rows | opens on "Week of 12–21 Oct 2026": 7 articles, 10 rows |
-  | the merged registry of record | "13–21 Oct 2026 — manual runs, no weekly scan yet" | "13–21 Oct 2026 — manual runs since the last weekly scan": 8 articles, 12 rows, 5 Research Now of 21 active |
+  | the merged registry of record | "13–21 Oct 2026 — manual runs, no weekly scan yet" | "13–14 Oct 2026 — manual runs since the last weekly scan": 8 articles, 12 rows, 5 Research Now of 21 active |
+
+  - Every run now sits in ONE week. The 10-20 run's market step had been counted in the 10-21
+    scan's week; it is now its own scan's.
+  - The merged registry's week in progress is the two replay runs alone. They are dated 13–14 Oct
+    because a replay keeps the original as-of dates; both refreshes are the 10-21 scan's.
 
   - Screenshots of the preview published from the imported registry of record:
     `docs/theme_intelligence/desk-week-2026-10-21/` (home, articles).
-- **Pins** (`tests/test_theme_intelligence_desk_weeks.py`, 5, through the real pipeline on the
+- **Pins** (`tests/test_theme_intelligence_desk_weeks.py`, 9, through the real pipeline on the
   J.P. Morgan fixture):
   - END TO END through `publish`: the app's manifest and home heading name the scan's week and
     say "1 article read";
   - the refresh joins the scan week;
+  - a failed refresh does not re-open an empty week;
+  - the next scan's report and week never take the refresh in. A failed one between two scans is
+    listed once, and a refresh after the second scan is the second's;
+  - later prices are said in the label;
+  - a failed refresh rendered on its own is listed as failed;
   - NEGATIVES: research after a scan is its own, honestly labelled week; a failed manual run
     keeps its week; before any scan the label is unchanged, and a lone refresh still makes a week.
-- **Mutation:** 8 mutants, all killed. They include the old behaviour, no price-only mode, the
-  label, the flag lost in keying, a failed run folded away, and a fold with no scan to join.
+- **Mutation:** 11 mutants on the final code, all killed:
+  - `report_runs` taking the refresh in;
+  - the refresh left in the tail;
+  - the failed refresh unlisted, or listed twice;
+  - a rendered failed run counted as done;
+  - `priced_to` unset, or the later prices not said;
+  - no bound at the next scan;
+  - `after_scan` unset;
+  - a week of only failed runs dropped;
+  - fields lost in keying.
 
 **BOUNDARY.**
 - **Pilot counts** are from a backup-API copy of `pilot-2026-10-12/registry.db` taken 2026-10-21:

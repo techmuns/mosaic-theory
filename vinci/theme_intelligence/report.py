@@ -125,6 +125,13 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
 MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market")
+#: runs that analyse no article — the "Is it priced?" refresh, which the weekly job runs right
+#: after its scan. ONE rule, read by `report_runs` and `desk.desk_weeks`: a refresh belongs to the
+#: week of the scan it FOLLOWS (before any scan, it is a manual run like the rest). It never opens
+#: a week of its own, and the NEXT scan never takes it in. Until 2026-10-21 the weekly job's market
+#: step opened an EMPTY week ("no weekly scan yet", 0 articles) that the desk opened on, and the
+#: next scan's report counted a refresh of the previous week's theses as its own.
+PRICE_ONLY_MODES = ("market",)
 
 
 def _no_discovery(mode: str) -> str:
@@ -153,6 +160,8 @@ def report_runs(store: Store, run: WeeklyRun) -> list[WeeklyRun]:
                 and r.started_at < run.started_at), default=None)
     manual = sorted((r for r in runs if r.mode in MANUAL_MODES
                      and not r.ledger_only  # carried for its record: its evidence is elsewhere
+                     # a refresh after the previous scan belongs to THAT scan's week
+                     and not (prev is not None and r.mode in PRICE_ONLY_MODES)
                      and r.started_at < run.started_at
                      and (prev is None or r.started_at > prev)
                      and (run.window_from is None or r.as_of >= run.window_from)
