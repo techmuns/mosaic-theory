@@ -26,7 +26,7 @@ no prices, returns or outcomes (including the unmerged #695 audit's).
 | `scan --resume RUN_ID` | continue an interrupted scan with its ORIGINAL window and as-of; nothing is processed twice |
 | `article --url U --as-of D` | analyse one URL as of a date (publication-time replay: a later-published article is refused, a later-dated figure is blocked) |
 | `report --latest` / `--week 2026-10-05` or `2026-W41` / `--run RUN_ID` | re-render the dashboard and every card from the registry |
-| `qa --run RUN_ID\|latest` | re-check a run's stored records without any LLM (spans, figures, look-ahead, card facts, section order, hashes, triggers, coverage, render consistency) |
+| `qa --run RUN_ID\|latest` | re-check a run's stored records without any LLM (spans, figures, look-ahead, card facts, section order, hashes, triggers, coverage, render consistency). Exit **0**: every check passed · **3**: nothing broken, research left OPEN (a figure or an argument the reading could not verify — printed `[OPEN]`, a warning in the weekly job) · **1**: an integrity check FAILED, including a completeness pass that never ran (the weekly job fails only on this) |
 | `backup` · `export-state --out D` · `import-state --src D` | consistent SQLite copy · append-only JSONL export (no article text) · rebuild a fresh registry from an export |
 | `sources` | print the six configured channels (and the retired ones, as history) |
 | `ingest-file --path F --source S [--url U] [--llm-permitted]` | import one supplied document (PDF / HTML / Markdown / text) through the SAME pipeline — see *Manual documents* below |

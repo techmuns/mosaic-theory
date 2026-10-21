@@ -301,6 +301,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
 
     # completeness ledgers and authors for every article this run analysed ------------------------
     no_ledger: list[str] = []
+    no_pass: list[str] = []
     open_figs: list[str] = []
     open_blocks: list[str] = []
     n_figs = 0
@@ -318,6 +319,8 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 no_ledger.append(f"{aid} {av.version_id}")
                 continue
             rep = reps[-1]
+            if not rep.pass_ran:
+                no_pass.append(f"{aid} {av.version_id}")
             n_figs += len(rep.figures)
             open_figs += [f"{aid} {f.block_id} {f.figure!r} [{f.open_cause or 'unclassified'}]"
                           for f in rep.uncaptured]
@@ -325,6 +328,11 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                             for b in rep.unaccounted_blocks]
     add(QaCheck("completeness ledger recorded for every analysed article", not no_ledger,
                 _fail_list(no_ledger) or f"{len(article_ids)} article(s)"))
+    # the MACHINE not doing its job is broken, never open research: a completeness pass that
+    # did not run (a model outage, a cache-only replay) leaves every figure and argument open —
+    # as research it would pass green (review of #765, 2026-10-21)
+    add(QaCheck("the completeness pass ran for every analysed article", not no_pass,
+                _fail_list(no_pass) or f"{len(article_ids)} article(s)"))
     add(QaCheck("every reported figure captured or judged immaterial", not open_figs,
                 (f"OPEN — {len(open_figs)} of {n_figs} figure(s): " + _fail_list(open_figs, 12))
                 if open_figs else f"{n_figs} figure(s) accounted for", research=True))

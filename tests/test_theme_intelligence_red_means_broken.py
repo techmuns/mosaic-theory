@@ -39,7 +39,7 @@ ARGUMENT = ("We expect the shortage to persist through the next upgrade cycle be
             "are adding capacity far more slowly than hyperscalers are adding demand.")
 
 
-def _open_figure_run(tmp_path: Path) -> tuple[Any, str]:
+def _open_figure_run(tmp_path: Path, *, pass_runs: bool = True) -> tuple[Any, str]:
     """A run whose reading leaves one stated figure open ("7%": no claim, no account of it) and
     one argument paragraph unaccounted for."""
     pipe = make_pipeline(tmp_path)
@@ -52,8 +52,8 @@ def _open_figure_run(tmp_path: Path) -> tuple[Any, str]:
                period="3Q26")],
         [hyp("h1", "HBM contract prices rise", node="ai_infrastructure.memory",
              mechanism="pricing_cycle", geography="US", supporting=["c1"])]),
-        as_of=AS_OF, publisher=art.publisher, completeness={"figure_reviews": [],
-                                                           "block_reviews": []})
+        as_of=AS_OF, publisher=art.publisher,
+        completeness={"figure_reviews": [], "block_reviews": []} if pass_runs else None)
     rid = pipe.finish_run(RunStatus.SUCCEEDED).run_id
     write_run_outputs(pipe.store, rid, None)  # rendered, as `ingest-file` renders every run
     return pipe, rid
@@ -79,6 +79,20 @@ def test_open_research_is_said_and_never_fails_the_run(tmp_path: Path, capsys: A
     assert "[OPEN] every reported figure captured or judged immaterial" in out
     assert "[OPEN] every argument block accounted for" in out
     assert "'7%'" in out and "[FAIL]" not in out
+    assert "[PASS] the completeness pass ran for every analysed article" in out
+
+
+def test_a_completeness_pass_that_never_ran_is_broken_not_open(
+        tmp_path: Path, capsys: Any) -> None:
+    """The review of #765: with no model and no saved answer the completeness pass does not run,
+    leaving every figure and argument open. That is the machine not doing its job — a FAIL and
+    exit 1 — never research left open (it would have passed green as a warning)."""
+    pipe, rid = _open_figure_run(tmp_path, pass_runs=False)
+    res = run_qa(pipe.store, rid)
+    assert not res.ok
+    code, out = _qa_exit(pipe, rid, capsys)
+    assert code == 1 and "[FAIL] the completeness pass ran for every analysed article" in out
+    assert "[pass_not_run]" in out  # the open figures still say why they are open
 
 
 def test_a_broken_record_still_fails_the_run(tmp_path: Path, capsys: Any) -> None:

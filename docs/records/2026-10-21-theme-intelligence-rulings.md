@@ -19,7 +19,7 @@ superseded-by:
 | (d) turn on the article prompt cache | **Stays off** | It discounts only a split completeness pass. None of this week's 7 articles, and none of the merge's 8 completeness passes, was split: $0 to save. |
 | (e) pay ~$12 for a second Gridlock draw | **Skipped** | A measurement, not a fix: run-to-run variation cannot be switched off (no temperature on this model since 2026-09-24). Gridlock is not in the registry. |
 | (f) page 37's gas mechanism | **Closed: moot** | Gridlock is not in the registry. It matters only if Gridlock is uploaded. |
-| (f) the label "Direct confirmation — new evidence" | **Reworded, in its own render PR** | It names evidence that is not independent. On 0 cards today; on 4 in the pilot, none independent (3 other Morgan Stanley articles, 1 the same article re-read). |
+| (f) the label "Direct confirmation — new evidence" | **Reworded, in its own render PR** | It labels evidence that confirms no held figure. On the live desk (main 2b0a233f) it is printed on 16 evidence lines across 2 cards (TH-38CA111885 ×10, TH-DEB6560D7F ×6, and the same in their print versions) and 16 times in the printable weekly report: the 25 claim-level links of class NEW in 9939047e. In the pilot, 4 article-level contributions carried it, none independent (3 other Morgan Stanley articles, 1 the same article re-read). |
 | (k) do demand-driver names count as exposures? | **Yes, kept as is** | It changes no action. One active thesis carries one ("demand for generics", TH-DEB6560D7F), beside 4 other exposures. |
 | (l) one unverified figure turns the week red | **Fixed here: red means broken** | See below. |
 | (m) a cache-only replay says "$0" while skipping paid steps | **Fixed here** | See below. |
@@ -57,6 +57,18 @@ ruling on reading paid SemiAnalysis posts in full).
   is about. Its proof that neither reading pass was asked again (`replay.calls == []`) stays.
   Its wording assertion now reads the truth: from the cache, $0, and the card review NOT run.
 
+**A completeness pass that never ran stays a FAILURE** (review of #765, 2026-10-21).
+- A new integrity check, "the completeness pass ran for every analysed article", fails whenever a
+  run's completeness report records `pass_ran` False: a model outage, or a cache-only replay.
+- Without it, the figures such a pass leaves open (`pass_not_run`) would print OPEN and the job
+  would pass green.
+- Real data: the run that went red passes the check (7 of 7 articles: exit 3, research open). The
+  no-model rehearsal replay fails it and lists the documents whose pass never ran (exit 1).
+- `qa`'s exit codes (0 / 3 / 1) are now documented in `docs/theme_intelligence.md`.
+- **Correction:** the (f) basis first read "On 0 cards today". It had counted article-level
+  contributions; the label renders on CLAIM-level evidence lines, so the live desk carries it, as
+  the table now says.
+
 **HOW VERIFIED.**
 - **(l), on the real red run** (R-20261021T080508Z-scan, the Actions registry, its cards
   rendered as the scan renders them):
@@ -67,15 +79,16 @@ ruling on reading paid SemiAnalysis posts in full).
   - Its two replay lines now read "… NOT run: the completeness pass for 1 document(s) and 1 card
     review(s) …" and "… for 4 document(s) and 6 card review(s) …".
   - The first time, the same rehearsal printed "every model answer from the cache, $0".
-- **Pins** (`tests/test_theme_intelligence_red_means_broken.py`, 7):
+- **Pins** (`tests/test_theme_intelligence_red_means_broken.py`, 8):
   - END TO END through `cmd_qa`: an open figure and an open argument are OPEN with exit 3;
+  - a completeness pass that never ran is FAIL, exit 1;
   - NEGATIVE: a broken hash is FAIL, exit 1;
   - the workflow's QA step and fail step;
   - the local script;
   - END TO END through `state.pull`: the replay names its skipped pass and review;
   - NEGATIVES: nothing skipped adds nothing, and END TO END says "every model answer from the
     cache".
-- **Mutation:** 11 mutants, all killed.
+- **Mutation:** 14 mutants, all killed (3 for the never-ran check).
 
 **BOUNDARY.**
 - Registry counts: `theme-intelligence-state` 9939047e (30 theses, 21 active), 2026-10-21.
