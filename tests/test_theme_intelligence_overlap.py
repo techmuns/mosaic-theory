@@ -192,7 +192,24 @@ def test_independent_evidence_next_week_versions_the_same_thesis(pipe: Pipeline)
     assert srcs == recorded
     html = render_html(v2.content, card_context(pipe.store, t, v2, generated="t"))
     table = html.split('data-field="s09_sources"', 1)[1].split("Version history", 1)[0]
-    assert table.count("Initial record") == 1 and table.count("Direct confirmation") == 1
+    # the second publisher's evidence is NEW: it supports the thesis, it confirms no held figure
+    # — never "Direct confirmation" (operator ruling (f), 2026-10-21)
+    assert table.count("Initial record") == 1
+    assert table.count("New supporting evidence — not a confirmation") == 1
+    assert "Direct confirmation" not in table
+
+
+def test_only_an_independent_confirmation_is_called_a_confirmation() -> None:
+    """NEGATIVE: the class that confirms a held figure (a different origin, the same measure and
+    value) keeps its word; no other evidence line claims "confirmation" (operator ruling (f),
+    2026-10-21 — "Direct confirmation — new evidence" was printed on every NEW line)."""
+    from vinci.theme_intelligence.cards import _CHANGE_TAG
+
+    assert _CHANGE_TAG[ChangeClass.INDEPENDENT_CONFIRMATION] == (
+        "Direct confirmation — independent source")
+    claims = [c for c, words in _CHANGE_TAG.items()
+              if "confirmation" in words.lower() and "not a confirmation" not in words.lower()]
+    assert claims == [ChangeClass.INDEPENDENT_CONFIRMATION]
 
 
 # --- 4. later contradiction: a moved launch date -------------------------------------------------

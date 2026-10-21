@@ -216,7 +216,8 @@ Record `docs/records/2026-10-11-theme-intelligence-review-round-3.md`.
   from its key's, is re-keyed — same id, versions and evidence, the old key recorded
   (`KEY_CORRECTED`), never onto a key another thesis holds.
 - **Evidence roles.** Only evidence of the SAME identity reaches a thesis's own history —
-  *Direct confirmation* (new evidence, or an independent source) or *Repeated source*
+  *New supporting evidence — not a confirmation*, *Direct confirmation — independent source*
+  (a different origin reports the same figure) or *Repeated source*
   (attribution only). A related thesis is a registry LINK with a role, never evidence:
   *Adjacent support* (same direction, another segment / mechanism / node, or the same claim at an
   overlapping but different geography — context, never a strengthening) or *Related* (the
