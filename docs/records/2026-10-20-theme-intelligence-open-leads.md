@@ -102,7 +102,8 @@ writing).
 - **Suite:** ruff and `mypy --strict` clean; `pytest -m "not network"` with the store moved
   aside, 6,021 passed / 526 skipped.
 
-**THE FIRST WEEKLY RUN ON ACTIONS — it FAILED on a malformed secret, and U31f is NOT yet proven.**
+**THE FIRST WEEKLY RUN ON ACTIONS — it FAILED on a malformed secret, and did not exercise U31f**
+**(the second run below did).**
 Started 2026-10-20 17:55 UTC on `fix/theme-intelligence-open-leads` (run 39470335127), with a
 10-day window and at most 25 articles.
 - **What happened.** The gate, the restore, QA, market context and the state-branch commit
@@ -130,10 +131,53 @@ Started 2026-10-20 17:55 UTC on `fix/theme-intelligence-open-leads` (run 3947033
   - `validate_keys.py` FAILS a padded Anthropic or Polygon key before pinging it.
   - Pinned: a padded value refused by name, a clean one returned as it is, and the validator
     failing both padded keys without printing them. 3 mutants, all killed.
-- **OPERATOR, to unblock:**
+- **OPERATOR, to unblock (all three done 2026-10-21 — see the second run below):**
   1. Re-save the `ANTHROPIC_API_KEY` Actions secret without the trailing whitespace.
   2. Run `validate-keys`, which now fails a padded key.
   3. Run `theme-intelligence-weekly` again. Its first paid call is U31f's proof.
+
+**THE SECOND WEEKLY RUN (2026-10-21) — the scan SUCCEEDED and U31f is PROVEN; the job is red on
+one open figure, and Tiingo refuses the Actions key.** The operator re-saved `ANTHROPIC_API_KEY`
+(2026-10-21 07:56 UTC); `validate-keys` passed every key (run 39565632511). The weekly run
+39565710165 started 07:57 UTC on this branch at cea86303, with the same 10-day window and
+25-article cap.
+- **The scan.** Window 2026-10-12 to 2026-10-21; exit 0.
+  - 7 articles analysed (5 full, 2 partial): J.P. Morgan 1, TrendForce 4, SemiAnalysis 2.
+    Citi listed 20, none in the window. Morgan Stanley and Goldman Sachs are manual-first and
+    blocked, so nothing was fetched from them.
+  - 150 claims extracted and 150 verified. 10 theses created: 3 Research Now and 7 Watch.
+  - **Cost $4.445**: 38 model calls, none cached; 355,606 input and 106,679 output tokens; no
+    prompt-cache reads, because (d) is still off.
+- **U31f is PROVEN, on exactly the case it was built for.**
+  - The restore found no cache, as expected for a first paid run.
+  - The save step ran on a job that went on to FAIL and wrote
+    `theme-intelligence-llm-39565710165-1` (54,124 bytes).
+  - The combined `actions/cache` main carried saves only on job success, so it would have thrown
+    this run's $4.445 of answers away.
+- **QA 21 of 22, so the job is red.** One of 124 figures is open (`capture_not_verified`).
+  - TrendForce A-373089a2ba59 b007 is a section heading: "… shipment growth expected to
+    approach 36% in 2027".
+  - It restates b009's "AI server shipments are projected to increase by nearly 36% YoY", which
+    pass 1 captured and verified (C-c935d5c9c651cc).
+  - Pass 1b named that claim, but `completeness.states_figure` refused the match. The words beside
+    the figure are {approach, expected} in the heading and {increase, nearly, yoy} in the quote,
+    with no shared word. A two-digit figure is not "precise" either.
+  - Shown by running the function on the two stored sentences.
+  - The rule is conservative on purpose: a shared small number is not identity, after the Citi
+    transformer false match of 2026-10-11. Here it is a recall miss on a synonym.
+  - **Not changed here.** Loosening it trades against that false match. Lead (l) is the agent's.
+- **Market context: Tiingo refused every request from Actions.**
+  - 43 requests across 32 tickers, every one `Non-retryable 403`. The panel fell back to the two
+    years Polygon serves and said so on every row, as designed.
+  - The local `TIINGO_API_KEY` gets 200 on the run's exact URL (AMD, 2021-10-01 to 2024-12-31:
+    817 rows).
+  - Tiingo also answers 403 for an invalid token (`{"detail":"Invalid token."}`), and the run's
+    stored error text is cut at 120 characters, before Tiingo's detail.
+  - So the Actions secret (saved 2026-10-16 09:03 UTC, never used on Actions before this run) most
+    likely does not hold the working key. A refusal of the runner's address is not excluded.
+  - `validate-keys` does not check Tiingo, which is why this surfaced only now.
+- **Committed to `theme-intelligence-state`:** `bfdc5266` ("scan exit 0, qa failure, market
+  success"), the registry plus both readouts.
 
 **(d) The stale test branch is deleted.** `theme-intelligence-state-test-20261011` held only
 SYNTHETIC commits from 2026-10-11, with no PR. Tip `8d9d00a73fa025fc05974f91f870637f85503d7c`;
@@ -157,4 +201,9 @@ restore with `git push origin 8d9d00a73fa025fc05974f91f870637f85503d7c:refs/head
   - (e) a second Gridlock draw (~$12);
   - (f) page 37's card;
   - (g) a paid re-enrichment;
-  - (k) demand-driver names as exposures.
+  - (k) demand-driver names as exposures;
+  - re-save the `TIINGO_API_KEY` Actions secret with the key that works locally (the second run).
+- **Still open, the agent's, awaiting a go:**
+  - (l) a restated figure whose two sentences share no word beside it stays open and turns the
+    week's QA red (the second run's one open figure);
+  - `validate-keys` covering Tiingo and printing Tiingo's own refusal detail.
